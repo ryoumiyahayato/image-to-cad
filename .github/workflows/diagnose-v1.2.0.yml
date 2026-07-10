@@ -101,13 +101,26 @@ jobs:
           "ISCC=$iscc" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Compile Inno Setup installer
+        id: inno
         if: steps.pyinstaller.outcome == 'success'
+        continue-on-error: true
         shell: pwsh
         run: |
           Set-Location $env:PROJECT_ROOT
           New-Item -ItemType Directory -Force packaging/output | Out-Null
-          & $env:ISCC "/DMyAppVersion=1.2.0" packaging/installer.iss
-          if ($LASTEXITCODE -ne 0) { throw "Inno Setup returned $LASTEXITCODE" }
+          $log = Join-Path $env:RUNNER_TEMP "inno-setup.log"
+          & $env:ISCC "/DMyAppVersion=1.2.0" packaging/installer.iss *>&1 | Tee-Object -FilePath $log
+          $code = $LASTEXITCODE
+          if ($code -ne 0) { exit $code }
+
+      - name: Upload Inno Setup diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-v1.2.0-inno-log
+          path: ${{ runner.temp }}/inno-setup.log
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Create portable ZIP
         if: steps.pyinstaller.outcome == 'success'
@@ -125,7 +138,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Fail when PyInstaller failed
-        if: steps.pyinstaller.outcome == 'failure'
+      - name: Fail when packaging failed
+        if: steps.pyinstaller.outcome == 'failure' || steps.inno.outcome == 'failure'
         shell: pwsh
         run: exit 1
