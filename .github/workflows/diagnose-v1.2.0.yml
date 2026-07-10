@@ -67,13 +67,31 @@ jobs:
           '@ | python -
 
       - name: Build PyInstaller application
+        id: pyinstaller
+        continue-on-error: true
         shell: pwsh
         run: |
           Set-Location $env:PROJECT_ROOT
-          python -m PyInstaller --noconfirm --clean packaging/CADPhotoToDXF.spec
-          if (-not (Test-Path dist/CADPhotoToDXF/CADPhotoToDXF.exe)) { throw "PyInstaller executable is missing" }
+          $log = Join-Path $env:RUNNER_TEMP "pyinstaller.log"
+          & python -m PyInstaller --noconfirm --clean packaging/CADPhotoToDXF.spec *>&1 | Tee-Object -FilePath $log
+          $code = $LASTEXITCODE
+          if ($code -ne 0) { exit $code }
+          if (-not (Test-Path dist/CADPhotoToDXF/CADPhotoToDXF.exe)) {
+            "PyInstaller executable is missing" | Add-Content $log
+            exit 1
+          }
+
+      - name: Upload PyInstaller diagnostic log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-v1.2.0-pyinstaller-log
+          path: ${{ runner.temp }}/pyinstaller.log
+          if-no-files-found: error
+          retention-days: 7
 
       - name: Install Inno Setup
+        if: steps.pyinstaller.outcome == 'success'
         shell: pwsh
         run: |
           choco install innosetup -y --no-progress
@@ -82,6 +100,7 @@ jobs:
           "ISCC=$iscc" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Compile Inno Setup installer
+        if: steps.pyinstaller.outcome == 'success'
         shell: pwsh
         run: |
           Set-Location $env:PROJECT_ROOT
@@ -90,15 +109,22 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup returned $LASTEXITCODE" }
 
       - name: Create portable ZIP
+        if: steps.pyinstaller.outcome == 'success'
         shell: pwsh
         run: |
           Set-Location $env:PROJECT_ROOT
           Compress-Archive -Path dist/CADPhotoToDXF/* -DestinationPath packaging/output/CADPhotoToDXF_Modern_x64_Portable_v1.2.0.zip -CompressionLevel Optimal
 
       - name: Upload diagnostic build products
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: CADPhotoToDXF-v1.2.0-diagnostic-products
           path: ${{ runner.temp }}/source/release_min_src/packaging/output/*
           if-no-files-found: warn
           retention-days: 7
+
+      - name: Fail when PyInstaller failed
+        if: steps.pyinstaller.outcome == 'failure'
+        shell: pwsh
+        run: exit 1
