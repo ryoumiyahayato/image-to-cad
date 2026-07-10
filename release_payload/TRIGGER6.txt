@@ -1,0 +1,1 @@
+Capture Inno Setup compiler diagnostics for v1.2.0.
