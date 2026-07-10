@@ -1,0 +1,1 @@
+Retry v1.2.0 after correcting the PyInstaller project root.
