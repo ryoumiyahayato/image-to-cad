@@ -1,0 +1,141 @@
+name: Publish v1.2.0
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    env:
+      VERSION: "1.2.0"
+
+    steps:
+      - name: Checkout staging branch
+        uses: actions/checkout@v4
+        with:
+          ref: build-v1.2.0
+
+      - name: Reconstruct and verify source archive
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $parts = Get-ChildItem "release_payload" -Filter "source.part*.b64" | Sort-Object Name
+          if ($parts.Count -ne 6) { throw "Expected 6 source payload parts, found $($parts.Count)" }
+          $base64 = ($parts | ForEach-Object { Get-Content $_.FullName -Raw }) -join ""
+          $archive = Join-Path $env:RUNNER_TEMP "cad-photo-to-dxf-v1.2.0.tar.xz"
+          [IO.File]::WriteAllBytes($archive, [Convert]::FromBase64String($base64))
+          $expected = (Get-Content "release_payload/SHA256.txt" -Raw).Trim().ToLowerInvariant()
+          $actual = (Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "Source payload hash mismatch: $actual" }
+          $extractRoot = Join-Path $env:RUNNER_TEMP "source"
+          New-Item -ItemType Directory -Force $extractRoot | Out-Null
+          tar -xJf $archive -C $extractRoot
+          $projectRoot = Join-Path $extractRoot "release_min_src"
+          if (-not (Test-Path (Join-Path $projectRoot "main.py"))) { throw "Reconstructed source is incomplete" }
+          $spec = Join-Path $projectRoot "packaging/CADPhotoToDXF.spec"
+          $specText = Get-Content $spec -Raw
+          $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`r`n", "")
+          $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`n", "")
+          Set-Content -Path $spec -Value $specText -Encoding UTF8
+          "PROJECT_ROOT=$projectRoot" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+          Copy-Item "RELEASE_v1.2.0.md" (Join-Path $env:RUNNER_TEMP "RELEASE_v1.2.0.md") -Force
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        shell: pwsh
+        working-directory: ${{ env.PROJECT_ROOT }}
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt -r requirements-build.txt
+
+      - name: Run regression and static checks
+        shell: pwsh
+        working-directory: ${{ env.PROJECT_ROOT }}
+        run: |
+          python -m pytest -q
+          python -m ruff check .
+          python -m compileall -q app legacy main.py
+
+      - name: Build Modern x64 installer and portable package
+        shell: pwsh
+        working-directory: ${{ env.PROJECT_ROOT }}
+        run: |
+          .\packaging\build_windows.ps1 -SkipTests
+
+      - name: Prepare release assets
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releaseDir = Join-Path $env:RUNNER_TEMP "release-assets"
+          New-Item -ItemType Directory -Force $releaseDir | Out-Null
+          Copy-Item "$env:PROJECT_ROOT/packaging/output/*" $releaseDir -Force
+          Compress-Archive -Path "$env:PROJECT_ROOT/*" -DestinationPath "$releaseDir/cad_photo_to_dxf_source_v1.2.0.zip" -CompressionLevel Optimal
+          Compress-Archive -Path "$env:PROJECT_ROOT/legacy/*" -DestinationPath "$releaseDir/cad_photo_to_dxf_legacy_source_v1.2.0.zip" -CompressionLevel Optimal
+          foreach ($doc in @("README.md", "COMPATIBILITY_MATRIX.md", "WINDOWS_LEGACY_ADAPTATION_AUDIT_v1.2.0.md", "SECURITY_AUDIT.md", "CHANGELOG.md")) {
+            Copy-Item (Join-Path $env:PROJECT_ROOT $doc) $releaseDir -Force
+          }
+          $hashFile = Join-Path $releaseDir "SHA256SUMS.txt"
+          $lines = Get-ChildItem $releaseDir -File | Where-Object { $_.Name -ne "SHA256SUMS.txt" } | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          }
+          $lines | Set-Content $hashFile -Encoding ascii
+          "RELEASE_DIR=$releaseDir" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Push completed v1.2.0 source branch
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan release-v1.2.0-source
+          git rm -rf .
+          Get-ChildItem -Force $env:PROJECT_ROOT | ForEach-Object {
+            Copy-Item $_.FullName $env:GITHUB_WORKSPACE -Recurse -Force
+          }
+          git add -A
+          git commit -m "release: publish CAD Photo to DXF v1.2.0"
+          git branch -M "release/v1.2.0"
+          git push origin "release/v1.2.0" --force
+          $releaseCommit = (git rev-parse HEAD).Trim()
+          "RELEASE_COMMIT=$releaseCommit" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Create GitHub Release v1.2.0
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = "Stop"
+          gh release view "v$env:VERSION" --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            gh release delete "v$env:VERSION" --repo $env:GITHUB_REPOSITORY --yes --cleanup-tag
+          }
+          $assets = Get-ChildItem $env:RELEASE_DIR -File | ForEach-Object { $_.FullName }
+          $args = @(
+            "release", "create", "v$env:VERSION",
+            "--repo", $env:GITHUB_REPOSITORY,
+            "--target", $env:RELEASE_COMMIT,
+            "--title", "CAD Photo to DXF v$env:VERSION",
+            "--notes-file", (Join-Path $env:RUNNER_TEMP "RELEASE_v1.2.0.md")
+          ) + $assets
+          & gh @args
+          if ($LASTEXITCODE -ne 0) { throw "GitHub Release creation failed" }
+
+      - name: Upload CI artifact copy
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-v1.2.0-release-assets
+          path: ${{ env.RELEASE_DIR }}/*
+          if-no-files-found: error
+          retention-days: 30
