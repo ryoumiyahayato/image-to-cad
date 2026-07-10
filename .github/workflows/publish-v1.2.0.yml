@@ -44,6 +44,7 @@ jobs:
           if (-not (Test-Path (Join-Path $projectRoot "main.py"))) { throw "Reconstructed source is incomplete" }
           $spec = Join-Path $projectRoot "packaging/CADPhotoToDXF.spec"
           $specText = Get-Content $spec -Raw
+          $specText = $specText.Replace('ROOT = Path(SPECPATH).parent.parent', 'ROOT = Path(SPECPATH).parent')
           $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`r`n", "")
           $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`n", "")
           Set-Content -Path $spec -Value $specText -Encoding UTF8
