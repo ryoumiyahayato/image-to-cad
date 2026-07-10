@@ -54,23 +54,23 @@ jobs:
 
       - name: Install dependencies
         shell: pwsh
-        working-directory: ${{ env.PROJECT_ROOT }}
         run: |
+          Set-Location $env:PROJECT_ROOT
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt -r requirements-build.txt
 
       - name: Run regression and static checks
         shell: pwsh
-        working-directory: ${{ env.PROJECT_ROOT }}
         run: |
+          Set-Location $env:PROJECT_ROOT
           python -m pytest -q
           python -m ruff check .
           python -m compileall -q app legacy main.py
 
       - name: Build Modern x64 installer and portable package
         shell: pwsh
-        working-directory: ${{ env.PROJECT_ROOT }}
         run: |
+          Set-Location $env:PROJECT_ROOT
           .\packaging\build_windows.ps1 -SkipTests
 
       - name: Prepare release assets
@@ -136,6 +136,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CADPhotoToDXF-v1.2.0-release-assets
-          path: ${{ env.RELEASE_DIR }}/*
+          path: ${{ runner.temp }}/release-assets/*
           if-no-files-found: error
           retention-days: 30
