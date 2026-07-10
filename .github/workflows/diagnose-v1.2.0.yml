@@ -37,6 +37,7 @@ jobs:
           $project = Join-Path $root release_min_src
           $spec = Join-Path $project packaging/CADPhotoToDXF.spec
           $text = Get-Content $spec -Raw
+          $text = $text.Replace('ROOT = Path(SPECPATH).parent.parent', 'ROOT = Path(SPECPATH).parent')
           $text = $text.Replace('    (str(ROOT / "samples"), "samples"),' + "`r`n", "")
           $text = $text.Replace('    (str(ROOT / "samples"), "samples"),' + "`n", "")
           Set-Content $spec $text -Encoding UTF8
