@@ -1,3 +1,3 @@
-"""CAD photo to editable DXF MVP package."""
+"""CAD photo to editable DXF application package."""
 
-__version__ = "0.1.0"
+__version__ = "1.1.0"
