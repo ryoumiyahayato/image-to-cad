@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+cad_photo_to_dxf/build/
+cad_photo_to_dxf/dist/
+cad_photo_to_dxf/installer/output/
+cad_photo_to_dxf/.audit-deps/
+cad_photo_to_dxf/test-output/

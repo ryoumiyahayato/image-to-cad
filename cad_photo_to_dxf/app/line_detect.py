@@ -6,6 +6,8 @@ import math
 import cv2
 import numpy as np
 
+from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+
 
 @dataclass
 class LineSegment:
@@ -16,6 +18,10 @@ class LineSegment:
     width: float = 1.0
     confidence: float = 1.0
     layer: str = "DETAIL"
+    source_ids: tuple[str, ...] = ()
+    history: tuple[str, ...] = ()
+    classification_confidence: float = 1.0
+    classification_reasons: tuple[str, ...] = ()
 
     @property
     def p1(self) -> np.ndarray:
@@ -38,7 +44,7 @@ class LineSegment:
     def midpoint(self) -> np.ndarray:
         return (self.p1 + self.p2) / 2.0
 
-    def copy(self, **changes: float | str) -> "LineSegment":
+    def copy(self, **changes: object) -> "LineSegment":
         values = {
             "x1": self.x1,
             "y1": self.y1,
@@ -47,6 +53,10 @@ class LineSegment:
             "width": self.width,
             "confidence": self.confidence,
             "layer": self.layer,
+            "source_ids": self.source_ids,
+            "history": self.history,
+            "classification_confidence": self.classification_confidence,
+            "classification_reasons": self.classification_reasons,
         }
         values.update(changes)
         return LineSegment(**values)
@@ -62,12 +72,23 @@ class LineDetectionParams:
 
 
 def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
+    vector = segment.p2 - segment.p1
+    norm = float(np.linalg.norm(vector))
+    if norm <= 1e-9:
+        return 1.0
+    normal = np.array([-vector[1], vector[0]], dtype=float) / norm
+    search_radius = max(4, min(20, int(round(segment.length * 0.025))))
     samples = []
     for t in np.linspace(0.1, 0.9, 7):
-        x = int(round(segment.x1 + (segment.x2 - segment.x1) * t))
-        y = int(round(segment.y1 + (segment.y2 - segment.y1) * t))
-        if 0 <= y < distance_map.shape[0] and 0 <= x < distance_map.shape[1]:
-            samples.append(float(distance_map[y, x]) * 2.0)
+        point = segment.p1 + vector * t
+        profile = []
+        for offset in range(-search_radius, search_radius + 1):
+            sample = point + normal * offset
+            x, y = int(round(sample[0])), int(round(sample[1]))
+            if 0 <= y < distance_map.shape[0] and 0 <= x < distance_map.shape[1]:
+                profile.append(float(distance_map[y, x]) * 2.0)
+        if profile:
+            samples.append(max(profile))
     return max(1.0, float(np.median(samples))) if samples else 1.0
 
 
@@ -78,10 +99,14 @@ def _normalize_endpoint_order(segment: LineSegment) -> LineSegment:
 
 
 def detect_lines(
-    binary_image: np.ndarray, params: LineDetectionParams | None = None
+    binary_image: np.ndarray,
+    params: LineDetectionParams | None = None,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
 ) -> list[LineSegment]:
     """Detect candidate line segments from a binary image."""
     params = params or LineDetectionParams()
+    checkpoint(cancellation_token)
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
 
@@ -94,8 +119,10 @@ def detect_lines(
     )
     edges = cv2.Canny(foreground, 40, 140, apertureSize=3)
     distance_map = cv2.distanceTransform(foreground, cv2.DIST_L2, 3)
+    report_progress(progress_callback, "line-preparation", 0.15)
 
     segments: list[LineSegment] = []
+    checkpoint(cancellation_token)
     hough = cv2.HoughLinesP(
         edges,
         rho=1,
@@ -104,27 +131,55 @@ def detect_lines(
         minLineLength=max(5, int(params.min_line_length)),
         maxLineGap=max(0, int(params.max_line_gap)),
     )
+    checkpoint(cancellation_token)
     if hough is not None:
-        for x1, y1, x2, y2 in hough[:, 0, :]:
-            segment = LineSegment(float(x1), float(y1), float(x2), float(y2))
+        for index, (x1, y1, x2, y2) in enumerate(hough[:, 0, :], start=1):
+            if index % 128 == 0:
+                checkpoint(cancellation_token)
+            source_id = f"HOUGH-{index:06d}"
+            segment = LineSegment(
+                float(x1),
+                float(y1),
+                float(x2),
+                float(y2),
+                source_ids=(source_id,),
+                history=("detected:hough",),
+            )
             if segment.length >= params.min_line_length:
                 segment.width = _estimate_width(distance_map, segment)
                 segments.append(_normalize_endpoint_order(segment))
+    report_progress(progress_callback, "hough", 0.55)
 
     if params.use_lsd:
+        checkpoint(cancellation_token)
         detector = cv2.createLineSegmentDetector(cv2.LSD_REFINE_STD)
         detected = detector.detect(foreground)[0]
+        checkpoint(cancellation_token)
         if detected is not None:
-            for item in detected[:, 0, :]:
+            for index, item in enumerate(detected[:, 0, :], start=1):
+                if index % 128 == 0:
+                    checkpoint(cancellation_token)
                 x1, y1, x2, y2 = map(float, item)
-                segment = LineSegment(x1, y1, x2, y2, confidence=0.8)
+                source_id = f"LSD-{index:06d}"
+                segment = LineSegment(
+                    x1,
+                    y1,
+                    x2,
+                    y2,
+                    confidence=0.8,
+                    source_ids=(source_id,),
+                    history=("detected:lsd",),
+                )
                 if segment.length >= params.min_line_length:
                     segment.width = _estimate_width(distance_map, segment)
                     segments.append(_normalize_endpoint_order(segment))
+    report_progress(progress_callback, "lsd", 0.9)
 
     # Prefer longer and stronger lines if a noisy image creates an excessive number.
     segments.sort(key=lambda line: (line.length * line.confidence, line.width), reverse=True)
-    return segments[: params.max_segments]
+    checkpoint(cancellation_token)
+    report_progress(progress_callback, "line-detection", 1.0)
+    return segments[: max(0, int(params.max_segments))]
 
 
 def render_line_preview(
@@ -142,6 +197,7 @@ def render_line_preview(
         "WALL_OR_FRAME": (0, 150, 0),
         "GRID_OR_AXIS": (220, 80, 0),
         "HATCH": (180, 0, 180),
+        "HATCH_CANDIDATE": (180, 120, 0),
         "DETAIL": (0, 160, 220),
     }
     for line in lines:

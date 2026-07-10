@@ -1,194 +1,153 @@
-# 纸质 CAD 图纸照片转可编辑 DXF — MVP
+# 纸质 CAD 图纸照片转可编辑 DXF v1.1
 
-这是一个电脑端 Python MVP：导入手机拍摄的黑白打印 CAD 图纸照片，完成纸张透视校正、去阴影、二值化、线段检测、基础几何修正、启发式图层分类，并导出可在 AutoCAD、中望 CAD、浩辰 CAD中打开和编辑的 DXF R2010 文件。
+这是一个半自动图纸矢量化工具：导入手机拍摄的纸质 CAD 图纸，完成纸张校正、去阴影、二值化、直线检测、基础几何修正、图层分类和比例校准，最终导出 DXF R2010。
 
-导出的主体是独立 `LINE` 实体，不是嵌入图片，因此可以在 CAD 软件中单独选择、删除、移动和继续绘制。
+它不会恢复原始 DWG，也不会把概率性的 OCR、圆弧或建筑符号候选直接写入 DXF 主体。
 
-## 1. 环境要求
+## 环境与安装
 
 - Windows 10/11、macOS 或 Linux
 - Python 3.11 或更高版本
-- 建议使用虚拟环境
-
-## 2. 安装依赖
-
-在项目根目录执行：
-
-```bash
-python -m venv .venv
-```
-
-Windows PowerShell：
 
 ```powershell
+python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-```
-
-macOS / Linux：
-
-```bash
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-## 3. 启动 GUI
-
-```bash
 python main.py
 ```
 
-主流程：
+可选 OCR：
 
-1. 点击“导入图片”，选择 JPG、JPEG 或 PNG 图纸照片。
-2. 点击“自动识别纸张并校正”。
-3. 自动识别失败时，点击“手动点击四角并校正”。
-4. 点击“图像预处理”，生成去阴影后的黑白图。
-5. 点击“识别并清理线条”，查看识别线条预览。
-6. 可点击“点击两点校准比例”，输入对应的实际毫米长度。
-7. 点击“导出可编辑 DXF”。
-
-鼠标滚轮可以缩放图像；非选点状态下可拖动画面。
-
-## 4. 手动选择四个角点
-
-1. 点击“手动点击四角并校正”。
-2. 在“原图”页中点击纸张的四个角。
-3. 四点顺序不限，程序会自动排序为左上、右上、右下、左下。
-4. 第四个点点击完成后，程序自动执行透视变换并切换到校正图。
-5. 方向不正确时，可使用旋转 90°、180°、270°按钮。
-
-角点应尽量落在纸张外边缘，而不是图框内边缘。
-
-## 5. 图像预处理
-
-预处理包含：
-
-- 灰度化
-- 中值去噪
-- 形态学背景估计与去阴影
-- 局部对比度增强
-- 自适应阈值二值化
-- 小噪点清理
-
-“二值化强度”越大，通常保留的浅色线条越少；如果细线消失，可适当减小。如果阴影和灰底残留较多，可适当增大。
-
-## 6. 线条识别与几何修正
-
-MVP 同时使用概率霍夫变换和 LSD 线段检测，并执行：
-
-- 过短线段过滤
-- 接近水平/垂直的线条正交化
-- 相近端点吸附
-- 小间隔断线连接
-- 共线线段合并
-- 近重复线删除
-
-参数建议：
-
-- 最小线段长度：图纸分辨率较高时增大，细节较多时减小。
-- 最大断线连接距离：过大会跨越真实开口，过小则断线无法连接。
-- 端点吸附距离：用于合并非常接近的交点。
-- 水平/垂直角度容差：建议 2°–5°。明显斜线不会被强行拉直。
-- 保留填充线：取消后，会丢弃被判断为 HATCH 的密集平行线。
-
-## 7. 比例校准
-
-1. 点击“点击两点校准比例”。
-2. 在校正图上点击两个已知点，例如一条标注尺寸线的两个端点。
-3. 输入实际长度，例如 `12000` mm。
-4. 软件计算 `mm/px` 比例，并在导出时应用到所有线段。
-
-如果不进行比例校准，程序会提示“未校准真实尺寸”，并按 `1 像素 = 1 毫米图形单位` 导出。此时结构仍可编辑，但尺寸不代表真实工程尺寸。
-
-## 8. DXF 图层
-
-输出至少包含以下图层：
-
-- `OUTLINE`：较粗的主要外轮廓
-- `WALL_OR_FRAME`：墙体、房间边界、框架线
-- `GRID_OR_AXIS`：较长的轴网线、参考线
-- `HATCH`：局部密集平行填充线
-- `DETAIL`：其他细节线
-
-图层分类为启发式结果，设计目标是降低填充线对主体编辑的干扰，而不是保证建筑语义完全正确。
-
-## 9. 命令行无界面运行
-
-用于批处理或快速验收：
-
-```bash
-python main.py --headless --input samples/test.jpg --output output/output.dxf --preview output/preview.png
+```powershell
+pip install -r requirements-ocr.txt
 ```
 
-可选参数：
+`pytesseract` 仍要求系统另行安装 Tesseract 可执行程序。OCR 在 v1.1 中只进入辅助报告。
 
-```bash
-python main.py --headless \
-  --input samples/test.jpg \
-  --output output/output.dxf \
-  --preview output/preview.png \
-  --min-line-length 35 \
-  --threshold-strength 12
+## GUI 作业流程
+
+1. 导入 JPG、JPEG 或 PNG 原始照片。
+2. 选择纸张规格和方向；未知规格只能视为结构模式。
+3. 自动识别纸张，或手动点击纸张外边缘四角。
+4. 检查透视校正结果；纸张规格会约束目标长宽比。
+5. 执行图像预处理，在“预处理阶段”页检查灰度、去噪、去阴影、对比度、阈值和清噪结果。
+6. 执行线条识别与清理。任务在后台运行，GUI 显示进度并允许请求取消。
+7. 检查识别预览和各图层数量。
+8. 已知纸张规格时比例由纸张外边界推导；仍建议用图内已知尺寸复核或重新两点校准。
+9. 导出 DXF；同目录会生成 `.report.json`，包含参数、阶段修改数量和完整线段谱系。
+
+修改二值化、检线、吸附、分类或 HATCH 参数后，旧识别结果会自动失效，必须重新处理后才能导出。
+
+## 命令行
+
+v1.1 默认采用严格模式：无法识别纸张或没有有效线时返回非零退出码。
+
+```powershell
+python main.py --headless `
+  --input samples/test.jpg `
+  --output output/output.dxf `
+  --preview output/preview.png `
+  --report output/report.json `
+  --debug-dir output/debug `
+  --paper-size A4 `
+  --paper-orientation landscape `
+  --auxiliary `
+  --verbose
 ```
 
-加入 `--no-hatch` 可丢弃疑似填充线。
+重要参数：
 
-## 10. 输出文件
+- `--paper-size`：`A0`～`A4`、`LETTER`、`LEGAL` 或 `UNKNOWN`。
+- `--paper-width-mm`、`--paper-height-mm`：自定义纸张尺寸，必须同时提供。
+- `--paper-orientation`：`auto`、`portrait` 或 `landscape`。
+- `--allow-uncorrected`：纸张识别失败后仍按原图处理。
+- `--allow-empty`：允许生成 0 条线的空 DXF。
+- `--no-hatch`：只删除高置信度 HATCH；不确定对象保留在 `HATCH_CANDIDATE`。
+- `--debug-dir`：输出每个预处理算子的图像。
+- `--auxiliary`：生成圆和矩形符号辅助候选。
+- `--ocr`：调用可选 OCR，并把文字和尺寸文字候选写入报告。
 
-默认输出目录：
+退出码：
 
-```text
-output/
-  output.dxf
-  preview.png
+- `0`：成功。
+- `2`：参数错误。
+- `3`：输入不存在、不可用或接近空白。
+- `4`：纸张边界识别失败。
+- `5`：没有有效线实体。
+- `130`：合作式取消。
+
+## 报告与谱系
+
+JSON 报告包含：
+
+- 软件和报告模式版本。
+- 输入、校正角点、置信度和目标纸张比例。
+- 图像质量、阴影和折叠风险。
+- 全部处理参数及逐算子调试文件。
+- 原始检测线数量、几何阶段修改数量和图层数量。
+- 每个 `HOUGH-*`、`LSD-*` 原始源线到最终 `LINE-*` 实体的映射。
+- 被过滤源线、合并操作和最终实体坐标。
+- 圆、OCR、尺寸文字和矩形符号辅助候选。
+- 导出比例、实体数量和警告。
+
+## 图层
+
+- `OUTLINE`：明确的长粗线。
+- `WALL_OR_FRAME`：正交的中长墙体或框架线。
+- `GRID_OR_AXIS`：长而较细的轴线。
+- `HATCH`：高置信度、间距规律且具有保守封闭边界支持的填充线。
+- `HATCH_CANDIDATE`：疑似填充但封闭关系或其他证据不足。
+- `DETAIL`：其他线条。
+
+## 参数注意事项
+
+- 二值化强度过大可能删除浅色细线。
+- 最大断线距离过大可能跨越真实门洞。
+- 端点吸附采用最大簇直径约束，但仍应检查密集节点。
+- 正交容差过大会破坏真实斜线，通常建议 2°～5°。
+- 不建议删除 `HATCH_CANDIDATE`；应在 CAD 中关闭或人工检查。
+- 纸张比例只能校正整体单应性，不能修复局部波浪。
+
+## 仍然存在的技术边界
+
+- 严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。系统会记录风险，不会输出虚假的精度保证。
+- 后台取消会在处理阶段和 Python 循环内检查，但不能安全强制中断正在执行的单次 OpenCV 或 OCR 原生调用。
+- 线段谱系已覆盖当前 Hough/LSD 原始源线、合并、过滤、分类和最终实体；像素级证据到源线的逐像素谱系不在 v1.1 范围。
+- HATCH 综合平行度、间距、长度、线宽、密度和封闭边界；封闭区域包含关系仍采用保守的轴对齐近似。
+- GUI 已提供逐算子独立预览页，CLI 可通过 `--debug-dir` 输出全部阶段图像。
+- OCR、圆弧、尺寸文字和建筑符号仍是辅助识别结果，不自动进入 DXF 主体。
+
+## 测试
+
+```powershell
+python -m unittest discover -s tests -v
 ```
 
-`output.dxf` 使用 DXF R2010，图形单位设置为毫米。每条识别线段均导出为独立 `LINE` 实体。
+回归测试覆盖空白图拒绝、四角排序、纸张比例、细线保留、粗线宽度、受限吸附、共享交点、完整谱系、HATCH 防误删、合作式取消、辅助圆检测、JSON 报告和 DXF 审计。
 
-## 11. 当前 MVP 限制
+## Windows v1.1 构建和安装包
 
-- 不能 100% 还原原始 DWG，也不尝试猜测原始 CAD 的全部对象类型和图层。
-- 小文字、尺寸标注、引线、箭头暂不保证识别；第一版未启用 OCR。
-- 模糊、弯曲、反光、阴影严重或纸张折叠明显的照片需要人工选择角点并调节参数。
-- 图层分类为启发式，不保证完全准确。
-- 双线墙体会以多条独立 LINE 表示，暂不自动转成建筑墙对象。
-- 圆、圆弧、样条曲线目前可能被拆成短线段或遗漏。
-- 门窗、楼梯、柱子等建筑符号尚未做专门语义识别。
-- 未校准比例时，DXF 的真实尺寸不准确。
+本地构建：
 
-## 12. 拍照建议
-
-- 尽量让整张纸完整入镜，四角清晰。
-- 镜头尽量垂直于纸面，减少强透视。
-- 使用均匀照明，避免手臂、手机或顶灯形成大块阴影。
-- 不要使用过度压缩或聊天软件二次压缩后的图片。
-- 黑白打印线条越清晰，主体结构还原效果越稳定。
-
-## 13. 项目结构
-
-```text
-cad_photo_to_dxf/
-  main.py
-  requirements.txt
-  README.md
-  app/
-    __init__.py
-    gui.py
-    image_loader.py
-    perspective.py
-    preprocess.py
-    line_detect.py
-    geometry_cleaner.py
-    layer_classifier.py
-    scale_calibrator.py
-    dxf_exporter.py
-    pipeline.py
-  samples/
-    test.jpg
-  output/
-    output.dxf
-    preview.png
+```powershell
+pip install -r requirements-dev.txt
+python -m unittest discover -s tests -v
+pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows_smoke.ps1 `
+  -Executable .\dist\CADPhotoToDXF\CADPhotoToDXF.exe `
+  -Sample .\samples\test.jpg `
+  -WorkingDirectory "$env:TEMP\cad-photo-portable-smoke"
 ```
+
+安装包由 Inno Setup 配置 `installer/cad_photo_to_dxf.iss` 生成。GitHub Actions 工作流会执行：
+
+1. 安装 Python 3.11 和依赖。
+2. 运行回归测试。
+3. 使用 PyInstaller 构建便携版。
+4. 对便携 EXE 执行无界面转换冒烟测试。
+5. 生成 Inno Setup 安装包。
+6. 静默安装、启动无界面转换、静默卸载并验证文件清理。
+7. 上传便携目录和 `CADPhotoToDXF-1.1.0-Setup.exe`。
+
+旧 v1.0.0 EXE 不包含 v1.1 修改，不能通过替换说明文档升级。正式 v1.1.0 安装包必须由 Windows Runner 或受控 Windows 构建机重新构建，并以工作流的安装、启动和卸载冒烟结果作为发布依据。

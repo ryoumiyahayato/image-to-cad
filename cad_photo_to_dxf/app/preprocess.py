@@ -5,14 +5,26 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
+from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+
 
 @dataclass
 class PreprocessParams:
     threshold_strength: int = 12
     adaptive_block_size: int = 41
     shadow_kernel_size: int = 35
-    denoise_strength: int = 3
+    # Median filtering with a 3x3 kernel erases valid one-pixel CAD strokes.
+    # It is therefore opt-in; connected-component cleanup is used by default.
+    denoise_strength: int = 1
     remove_small_noise: bool = True
+    noise_min_area: int = 4
+    noise_min_extent: int = 5
+
+
+@dataclass
+class PreprocessResult:
+    image: np.ndarray
+    stages: dict[str, np.ndarray]
 
 
 def _odd(value: int, minimum: int = 3) -> int:
@@ -29,24 +41,56 @@ def remove_shadow(gray: np.ndarray, kernel_size: int = 35) -> np.ndarray:
     return cv2.normalize(normalized, None, 0, 255, cv2.NORM_MINMAX)
 
 
-def preprocess_image(
-    image: np.ndarray, params: PreprocessParams | None = None
+def _remove_small_components(
+    foreground: np.ndarray,
+    min_area: int,
+    min_extent: int,
 ) -> np.ndarray:
-    """Return a cleaned binary image with black drawing strokes on a white background."""
+    """Remove compact specks while retaining long thin strokes in every direction."""
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(foreground, connectivity=8)
+    cleaned = np.zeros_like(foreground)
+    for label in range(1, count):
+        x, y, width, height, area = stats[label]
+        if area >= min_area or max(width, height) >= min_extent:
+            cleaned[labels == label] = 255
+    return cleaned
+
+
+def preprocess_image_with_stages(
+    image: np.ndarray,
+    params: PreprocessParams | None = None,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
+) -> PreprocessResult:
+    """Return the final binary image and operator-level diagnostic stages."""
     params = params or PreprocessParams()
+    checkpoint(cancellation_token)
+    report_progress(progress_callback, "grayscale", 0.05)
     if image.ndim == 3:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     else:
         gray = image.copy()
+    stages: dict[str, np.ndarray] = {"01_grayscale": gray.copy()}
 
+    checkpoint(cancellation_token)
     denoise = _odd(params.denoise_strength, 1)
     if denoise > 1:
         gray = cv2.medianBlur(gray, denoise)
+    stages["02_denoised"] = gray.copy()
+    report_progress(progress_callback, "denoise", 0.2)
 
+    checkpoint(cancellation_token)
     flattened = remove_shadow(gray, params.shadow_kernel_size)
+    stages["03_shadow_removed"] = flattened.copy()
+    report_progress(progress_callback, "shadow-removal", 0.4)
+
+    checkpoint(cancellation_token)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     enhanced = clahe.apply(flattened)
+    stages["04_contrast_enhanced"] = enhanced.copy()
+    report_progress(progress_callback, "contrast", 0.58)
 
+    checkpoint(cancellation_token)
     block_size = _odd(params.adaptive_block_size, 11)
     binary = cv2.adaptiveThreshold(
         enhanced,
@@ -56,27 +100,33 @@ def preprocess_image(
         block_size,
         int(params.threshold_strength),
     )
+    stages["05_thresholded"] = binary.copy()
+    report_progress(progress_callback, "threshold", 0.78)
 
+    checkpoint(cancellation_token)
     if params.remove_small_noise:
-        # Remove isolated black specks while preserving long one-pixel lines.
-        foreground = 255 - binary
-        opened = cv2.morphologyEx(
-            foreground,
-            cv2.MORPH_OPEN,
-            cv2.getStructuringElement(cv2.MORPH_CROSS, (2, 2)),
+        foreground = _remove_small_components(
+            255 - binary,
+            max(1, int(params.noise_min_area)),
+            max(1, int(params.noise_min_extent)),
         )
-        # Recombine with long horizontal/vertical structures that opening can weaken.
-        horizontal = cv2.morphologyEx(
-            foreground,
-            cv2.MORPH_OPEN,
-            cv2.getStructuringElement(cv2.MORPH_RECT, (5, 1)),
-        )
-        vertical = cv2.morphologyEx(
-            foreground,
-            cv2.MORPH_OPEN,
-            cv2.getStructuringElement(cv2.MORPH_RECT, (1, 5)),
-        )
-        foreground = cv2.max(opened, cv2.max(horizontal, vertical))
         binary = 255 - foreground
+    stages["06_noise_cleaned"] = binary.copy()
+    report_progress(progress_callback, "noise-cleanup", 1.0)
+    checkpoint(cancellation_token)
+    return PreprocessResult(binary, stages)
 
-    return binary
+
+def preprocess_image(
+    image: np.ndarray,
+    params: PreprocessParams | None = None,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
+) -> np.ndarray:
+    """Return a cleaned binary image with black drawing strokes on a white background."""
+    return preprocess_image_with_stages(
+        image,
+        params,
+        cancellation_token=cancellation_token,
+        progress_callback=progress_callback,
+    ).image
