@@ -55,12 +55,29 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install dependencies and restore generated icon
         shell: pwsh
         run: |
           Set-Location $env:PROJECT_ROOT
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt -r requirements-build.txt
+          New-Item -ItemType Directory -Force assets | Out-Null
+          @'
+          from pathlib import Path
+          from PIL import Image, ImageDraw
+
+          canvas = Image.new("RGBA", (256, 256), (31, 78, 121, 255))
+          draw = ImageDraw.Draw(canvas)
+          draw.rounded_rectangle((35, 24, 221, 232), radius=14, fill=(248, 249, 250, 255), outline=(255, 255, 255, 255), width=5)
+          draw.line((58, 70, 198, 70), fill=(31, 78, 121, 255), width=9)
+          draw.line((58, 104, 198, 104), fill=(31, 78, 121, 255), width=7)
+          draw.rectangle((58, 132, 122, 198), outline=(31, 78, 121, 255), width=8)
+          draw.line((148, 132, 198, 182), fill=(31, 78, 121, 255), width=8)
+          draw.line((198, 132, 148, 182), fill=(31, 78, 121, 255), width=8)
+          output = Path("assets/app_icon.ico")
+          canvas.save(output, format="ICO", sizes=[(16, 16), (24, 24), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)])
+          print(f"Generated {output} ({output.stat().st_size} bytes)")
+          '@ | python -
 
       - name: Run regression and static checks
         shell: pwsh
