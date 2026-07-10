@@ -42,12 +42,19 @@ jobs:
           tar -xJf $archive -C $extractRoot
           $projectRoot = Join-Path $extractRoot "release_min_src"
           if (-not (Test-Path (Join-Path $projectRoot "main.py"))) { throw "Reconstructed source is incomplete" }
+
           $spec = Join-Path $projectRoot "packaging/CADPhotoToDXF.spec"
           $specText = Get-Content $spec -Raw
           $specText = $specText.Replace('ROOT = Path(SPECPATH).parent.parent', 'ROOT = Path(SPECPATH).parent')
           $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`r`n", "")
           $specText = $specText.Replace('    (str(ROOT / "samples"), "samples"),' + "`n", "")
           Set-Content -Path $spec -Value $specText -Encoding UTF8
+
+          $installer = Join-Path $projectRoot "packaging/installer.iss"
+          $installerText = Get-Content $installer -Raw
+          $installerText = $installerText.Replace('Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"', 'Name: "english"; MessagesFile: "compiler:Default.isl"')
+          Set-Content -Path $installer -Value $installerText -Encoding UTF8
+
           "PROJECT_ROOT=$projectRoot" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
           Copy-Item "RELEASE_v1.2.0.md" (Join-Path $env:RUNNER_TEMP "RELEASE_v1.2.0.md") -Force
 
