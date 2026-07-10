@@ -1,0 +1,1 @@
+Final v1.2.0 release retry with built-in Inno Setup language file.
