@@ -1,0 +1,1 @@
+Run stepwise Windows packaging diagnostics for v1.2.0.
