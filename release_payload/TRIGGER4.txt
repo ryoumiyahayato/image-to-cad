@@ -1,0 +1,1 @@
+Capture PyInstaller diagnostic log for v1.2.0.
