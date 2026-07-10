@@ -1,5 +1,0 @@
--r requirements.txt
-pytesseract>=0.3.13,<0.4
-
-# pytesseract also requires a separately installed Tesseract executable.
-# OCR remains optional and review-only in v1.1.
