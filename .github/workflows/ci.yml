@@ -34,13 +34,21 @@ jobs:
       - name: Install runtime and test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt pytest ruff
+          python -m pip install -r requirements.txt -r requirements-test.txt
 
       - name: Run unit tests
         run: python -m pytest -q
 
       - name: Run static checks
         run: python -m ruff check app tests validation main.py
+
+      - name: Run incremental core type checks
+        run: |
+          python -m mypy \
+            app/resolution.py \
+            app/scale_calibrator.py \
+            app/reporting.py \
+            app/auxiliary_recognition.py
 
       - name: Compile Python sources
         run: python -m compileall -q app tests validation main.py
