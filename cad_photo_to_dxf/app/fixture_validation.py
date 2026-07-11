@@ -25,6 +25,7 @@ _PLACEHOLDERS = {
 }
 _ALLOWED_COORDINATE_MODES = {"paper_mm", "model_mm"}
 _ALLOWED_ORIENTATIONS = {"portrait", "landscape"}
+_ALLOWED_OUTCOMES = {"vectorized_dxf", "paper_rejected"}
 _ALLOWED_CATEGORIES = {
     "flat_scan",
     "mild_perspective",
@@ -43,6 +44,8 @@ _ALLOWED_CATEGORIES = {
 class FixtureValidationResult:
     fixture_directory: Path
     fixture_id: str | None
+    expected_outcome: str | None
+    fixture_categories: tuple[str, ...]
     passed: bool
     errors: tuple[str, ...]
 
@@ -84,7 +87,12 @@ def _meaningful_text(value: object) -> bool:
     return isinstance(value, str) and value.strip().casefold() not in _PLACEHOLDERS
 
 
-def _safe_child(directory: Path, value: object, field: str, errors: list[str]) -> Path | None:
+def _safe_child(
+    directory: Path,
+    value: object,
+    field: str,
+    errors: list[str],
+) -> Path | None:
     if not isinstance(value, str) or not value.strip():
         errors.append(f"{field} must be a non-empty relative path")
         return None
@@ -98,6 +106,40 @@ def _safe_child(directory: Path, value: object, field: str, errors: list[str]) -
         errors.append(f"{field} escapes the fixture directory")
         return None
     return candidate
+
+
+def _validate_file(
+    path: Path | None,
+    field: str,
+    allowed_suffixes: set[str],
+    errors: list[str],
+) -> None:
+    if path is None:
+        return
+    if not path.is_file():
+        errors.append(f"{field} does not exist: {path.name}")
+    elif path.suffix.casefold() not in allowed_suffixes:
+        errors.append(f"{field} has an unsupported extension")
+
+
+def _validate_sha(
+    path: Path | None,
+    expected: object,
+    field: str,
+    errors: list[str],
+) -> None:
+    if not isinstance(expected, str) or len(expected) != 64:
+        errors.append(f"{field} must be a lowercase SHA-256 hex digest")
+        return
+    try:
+        int(expected, 16)
+    except ValueError:
+        errors.append(f"{field} must be hexadecimal")
+        return
+    if expected != expected.lower():
+        errors.append(f"{field} must use lowercase hexadecimal")
+    if path is not None and path.is_file() and _sha256(path) != expected:
+        errors.append(f"{field} does not match {path.name}")
 
 
 def _positive_numbers(value: object, field: str, errors: list[str]) -> list[float]:
@@ -152,6 +194,16 @@ def _validate_corners(value: object, errors: list[str]) -> None:
                 return
 
 
+def _validate_corner_tolerance(value: object, errors: list[str]) -> None:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+        or float(value) < 0
+    ):
+        errors.append("corner_tolerance_px must be finite and non-negative")
+
+
 def _validate_expected_counts(manifest: dict[str, Any], errors: list[str]) -> None:
     entities = manifest.get("expected_entities")
     if not isinstance(entities, dict) or set(entities) != {"line_min", "line_max"}:
@@ -196,40 +248,77 @@ def _validate_expected_counts(manifest: dict[str, Any], errors: list[str]) -> No
                 errors.append(f"expected_layers.{name} range is invalid")
 
 
+def _validate_calibration_reference(value: object, errors: list[str]) -> None:
+    if not isinstance(value, dict):
+        errors.append("model_mm fixture requires calibration_reference")
+        return
+    if set(value) != {"start_px", "end_px", "length_mm"}:
+        errors.append("calibration_reference must contain start_px, end_px and length_mm")
+        return
+    for field in ("start_px", "end_px"):
+        point = value.get(field)
+        if not isinstance(point, list) or len(point) != 2:
+            errors.append(f"calibration_reference.{field} must contain two coordinates")
+            continue
+        if any(
+            isinstance(item, bool)
+            or not isinstance(item, (int, float))
+            or not math.isfinite(float(item))
+            for item in point
+        ):
+            errors.append(f"calibration_reference.{field} must be finite numbers")
+    length = value.get("length_mm")
+    if (
+        isinstance(length, bool)
+        or not isinstance(length, (int, float))
+        or not math.isfinite(float(length))
+        or float(length) <= 0
+    ):
+        errors.append("calibration_reference.length_mm must be finite and positive")
+
+
+def _read_manifest(directory: Path) -> tuple[dict[str, Any] | None, tuple[str, ...]]:
+    manifest_path = directory / "manifest.json"
+    if not manifest_path.is_file():
+        return None, ("manifest.json is missing",)
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, (f"manifest.json cannot be read: {exc}",)
+    if not isinstance(manifest, dict):
+        return None, ("manifest.json must contain an object",)
+    return manifest, ()
+
+
 def validate_fixture_directory(
     directory: str | Path,
     *,
     required_freecad_version: str = REQUIRED_FREECAD_VERSION,
 ) -> FixtureValidationResult:
     fixture_directory = Path(directory)
+    manifest, manifest_errors = _read_manifest(fixture_directory)
+    if manifest is None:
+        return FixtureValidationResult(
+            fixture_directory,
+            None,
+            None,
+            (),
+            False,
+            manifest_errors,
+        )
+
     errors: list[str] = []
-    manifest_path = fixture_directory / "manifest.json"
-    if not manifest_path.is_file():
-        return FixtureValidationResult(
-            fixture_directory,
-            None,
-            False,
-            ("manifest.json is missing",),
-        )
-
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return FixtureValidationResult(
-            fixture_directory,
-            None,
-            False,
-            (f"manifest.json cannot be read: {exc}",),
-        )
-    if not isinstance(manifest, dict):
-        return FixtureValidationResult(
-            fixture_directory,
-            None,
-            False,
-            ("manifest.json must contain an object",),
-        )
-
     fixture_id = manifest.get("id") if isinstance(manifest.get("id"), str) else None
+    expected_outcome = (
+        manifest.get("expected_outcome")
+        if isinstance(manifest.get("expected_outcome"), str)
+        else None
+    )
+    raw_categories = manifest.get("fixture_categories")
+    categories = tuple(
+        item for item in raw_categories if isinstance(item, str)
+    ) if isinstance(raw_categories, list) else ()
+
     if not _meaningful_text(fixture_id):
         errors.append("id must be meaningful")
     if manifest.get("is_real_capture") is not True:
@@ -239,19 +328,22 @@ def validate_fixture_directory(
     if not _meaningful_text(manifest.get("licence")):
         errors.append("licence must permit the fixture's intended repository use")
     if not _meaningful_text(manifest.get("reviewed_by")):
-        errors.append("reviewed_by must identify the ground-truth reviewer")
+        errors.append("reviewed_by must identify the fixture reviewer")
+    if expected_outcome not in _ALLOWED_OUTCOMES:
+        errors.append("expected_outcome must be vectorized_dxf or paper_rejected")
 
-    categories = manifest.get("fixture_categories")
-    if not isinstance(categories, list) or not categories:
+    if not isinstance(raw_categories, list) or not raw_categories:
         errors.append("fixture_categories must contain at least one category")
     else:
         invalid_categories = sorted(
             category
-            for category in categories
+            for category in raw_categories
             if not isinstance(category, str) or category not in _ALLOWED_CATEGORIES
         )
         if invalid_categories:
             errors.append(f"unknown fixture categories: {invalid_categories}")
+        if len(set(categories)) != len(categories):
+            errors.append("fixture_categories must not contain duplicates")
 
     source_path = _safe_child(
         fixture_directory,
@@ -259,40 +351,36 @@ def validate_fixture_directory(
         "source_file",
         errors,
     )
+    _validate_file(source_path, "source_file", {".jpg", ".jpeg", ".png"}, errors)
+    _validate_sha(source_path, manifest.get("source_sha256"), "source_sha256", errors)
+
+    if expected_outcome == "paper_rejected":
+        if "non_paper_negative" not in categories:
+            errors.append("paper_rejected fixture must include non_paper_negative category")
+        if manifest.get("expected_rejection") != "paper_detection":
+            errors.append("paper_rejected fixture must expect paper_detection rejection")
+        return FixtureValidationResult(
+            fixture_directory=fixture_directory,
+            fixture_id=fixture_id,
+            expected_outcome=expected_outcome,
+            fixture_categories=categories,
+            passed=not errors,
+            errors=tuple(errors),
+        )
+
     ground_truth_path = _safe_child(
         fixture_directory,
         manifest.get("ground_truth_file"),
         "ground_truth_file",
         errors,
     )
-    for path, field, allowed_suffixes in (
-        (source_path, "source_file", {".jpg", ".jpeg", ".png"}),
-        (ground_truth_path, "ground_truth_file", {".dxf"}),
-    ):
-        if path is None:
-            continue
-        if not path.is_file():
-            errors.append(f"{field} does not exist: {path.name}")
-        elif path.suffix.casefold() not in allowed_suffixes:
-            errors.append(f"{field} has an unsupported extension")
-
-    for path, field in (
-        (source_path, "source_sha256"),
-        (ground_truth_path, "ground_truth_sha256"),
-    ):
-        expected = manifest.get(field)
-        if not isinstance(expected, str) or len(expected) != 64:
-            errors.append(f"{field} must be a lowercase SHA-256 hex digest")
-            continue
-        try:
-            int(expected, 16)
-        except ValueError:
-            errors.append(f"{field} must be hexadecimal")
-            continue
-        if expected != expected.lower():
-            errors.append(f"{field} must use lowercase hexadecimal")
-        if path is not None and path.is_file() and _sha256(path) != expected:
-            errors.append(f"{field} does not match {path.name}")
+    _validate_file(ground_truth_path, "ground_truth_file", {".dxf"}, errors)
+    _validate_sha(
+        ground_truth_path,
+        manifest.get("ground_truth_sha256"),
+        "ground_truth_sha256",
+        errors,
+    )
 
     paper = manifest.get("paper")
     if not isinstance(paper, dict):
@@ -303,9 +391,14 @@ def validate_fixture_directory(
         if paper.get("orientation") not in _ALLOWED_ORIENTATIONS:
             errors.append("paper.orientation must be portrait or landscape")
 
-    if manifest.get("coordinate_mode") not in _ALLOWED_COORDINATE_MODES:
+    coordinate_mode = manifest.get("coordinate_mode")
+    if coordinate_mode not in _ALLOWED_COORDINATE_MODES:
         errors.append("coordinate_mode must be paper_mm or model_mm")
+    if coordinate_mode == "model_mm":
+        _validate_calibration_reference(manifest.get("calibration_reference"), errors)
+
     _validate_corners(manifest.get("expected_corners_px"), errors)
+    _validate_corner_tolerance(manifest.get("corner_tolerance_px"), errors)
     calibration_dimensions = _positive_numbers(
         manifest.get("calibration_dimensions"),
         "calibration_dimensions",
@@ -323,6 +416,8 @@ def validate_fixture_directory(
             )
     _validate_tolerances(manifest.get("tolerances"), errors)
     _validate_expected_counts(manifest, errors)
+    if not isinstance(manifest.get("intentional_open_contours"), bool):
+        errors.append("intentional_open_contours must be boolean")
 
     if manifest.get("freecad_version") != required_freecad_version:
         errors.append(
@@ -344,6 +439,8 @@ def validate_fixture_directory(
     return FixtureValidationResult(
         fixture_directory=fixture_directory,
         fixture_id=fixture_id,
+        expected_outcome=expected_outcome,
+        fixture_categories=categories,
         passed=not errors,
         errors=tuple(errors),
     )
