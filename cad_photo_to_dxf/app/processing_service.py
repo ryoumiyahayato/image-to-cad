@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Callable
 
 import numpy as np
 
@@ -81,7 +80,12 @@ def process_corrected_image(
             corrected,
             config.preprocess,
             cancellation_token=cancellation_token,
-            progress_callback=_subprogress(progress_callback, "preprocess", 0.00, 0.28),
+            progress_callback=_subprogress(
+                progress_callback,
+                "preprocess",
+                0.00,
+                0.28,
+            ),
         )
         binary = preprocessing.image
         stages = preprocessing.stages
@@ -97,7 +101,12 @@ def process_corrected_image(
         binary,
         effective_detection,
         cancellation_token=cancellation_token,
-        progress_callback=_subprogress(progress_callback, "detect", 0.30, 0.64),
+        progress_callback=_subprogress(
+            progress_callback,
+            "detect",
+            0.30,
+            0.64,
+        ),
     )
 
     report_progress(progress_callback, "geometry", 0.68)
@@ -121,7 +130,12 @@ def process_corrected_image(
             binary,
             enable_ocr=config.enable_ocr,
             cancellation_token=cancellation_token,
-            progress_callback=_subprogress(progress_callback, "auxiliary", 0.84, 0.96),
+            progress_callback=_subprogress(
+                progress_callback,
+                "auxiliary",
+                0.84,
+                0.96,
+            ),
         )
 
     checkpoint(cancellation_token)
