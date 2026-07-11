@@ -39,10 +39,26 @@ jobs:
 
       - name: Run tests
         shell: pwsh
-        run: python -m pytest -q
+        run: |
+          python -m pytest -q 2>&1 | Tee-Object -FilePath validation-pytest.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run static checks
         shell: pwsh
         run: |
-          python -m compileall -q app main.py
-          python -m ruff check .
+          python -m compileall -q app main.py 2>&1 | Tee-Object -FilePath validation-compile.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m ruff check . 2>&1 | Tee-Object -FilePath validation-ruff.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Upload validation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-diagnostics
+          path: |
+            cad_photo_to_dxf/validation-pytest.txt
+            cad_photo_to_dxf/validation-compile.txt
+            cad_photo_to_dxf/validation-ruff.txt
+          if-no-files-found: warn
+          retention-days: 7
