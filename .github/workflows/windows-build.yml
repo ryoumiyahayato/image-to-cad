@@ -39,10 +39,12 @@ jobs:
           python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Read canonical application version
+        id: version
         shell: pwsh
         run: |
           $version = (python -c "from app import __version__; print(__version__)").Trim()
           if (-not $version) { throw "Application version is empty" }
+          "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Run regression and static checks
@@ -90,8 +92,8 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-Windows-${{ env.VERSION }}
+          name: CADPhotoToDXF-Windows-${{ steps.version.outputs.value }}
           if-no-files-found: error
           path: |
             cad_photo_to_dxf/dist/CADPhotoToDXF/**
-            cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ env.VERSION }}-Setup.exe
+            cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
