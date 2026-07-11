@@ -36,15 +36,36 @@ jobs:
 
       - name: Run tests
         working-directory: cad_photo_to_dxf
-        run: python -m pytest -q
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p output/source-validation
+          python -m pytest -q 2>&1 | tee output/source-validation/pytest.txt
 
       - name: Compile sources
         working-directory: cad_photo_to_dxf
-        run: python -m compileall -q app scripts main.py
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p output/source-validation
+          python -m compileall -q app scripts main.py 2>&1 | tee output/source-validation/compileall.txt
 
       - name: Run Ruff
         working-directory: cad_photo_to_dxf
-        run: python -m ruff check .
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p output/source-validation
+          python -m ruff check . 2>&1 | tee output/source-validation/ruff.txt
+
+      - name: Upload source validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-validation-${{ github.sha }}
+          path: cad_photo_to_dxf/output/source-validation/**
+          if-no-files-found: warn
+          retention-days: 14
 
   freecad-import:
     runs-on: ubuntu-22.04
