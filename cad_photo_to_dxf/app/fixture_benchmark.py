@@ -11,7 +11,7 @@ import numpy as np
 from scipy.spatial import cKDTree
 
 from .fixture_validation import validate_fixture_directory
-from .pipeline import run_pipeline
+from .pipeline import PaperDetectionError, run_pipeline
 from .scale_calibrator import ScaleCalibration
 
 
@@ -61,6 +61,7 @@ class GeometryMetrics:
 class FixtureBenchmarkResult:
     fixture_directory: Path
     fixture_id: str | None
+    expected_outcome: str | None
     passed: bool
     errors: tuple[str, ...]
     metrics: GeometryMetrics | None
@@ -228,6 +229,59 @@ def _maximum_corner_error(
     return float(np.max(np.linalg.norm(actual_array - expected_array, axis=1)))
 
 
+def _run_paper_rejection_fixture(
+    fixture: Path,
+    fixture_id: str,
+    manifest: dict[str, Any],
+    output_directory: Path,
+) -> FixtureBenchmarkResult:
+    output_dxf = output_directory / "unexpected.dxf"
+    report_path = output_directory / "unexpected-report.json"
+    try:
+        run_pipeline(
+            input_path=fixture / manifest["source_file"],
+            output_path=output_dxf,
+            preview_path=output_directory / "unexpected-preview.png",
+            report_path=report_path,
+            debug_dir=output_directory / "debug",
+            strict_perspective=True,
+            fail_on_empty=True,
+        )
+    except PaperDetectionError:
+        return FixtureBenchmarkResult(
+            fixture_directory=fixture,
+            fixture_id=fixture_id,
+            expected_outcome="paper_rejected",
+            passed=True,
+            errors=(),
+            metrics=None,
+            output_dxf=None,
+            report_path=None,
+        )
+    except Exception as exc:
+        return FixtureBenchmarkResult(
+            fixture_directory=fixture,
+            fixture_id=fixture_id,
+            expected_outcome="paper_rejected",
+            passed=False,
+            errors=(f"unexpected rejection failure: {exc}",),
+            metrics=None,
+            output_dxf=output_dxf if output_dxf.exists() else None,
+            report_path=report_path if report_path.exists() else None,
+        )
+
+    return FixtureBenchmarkResult(
+        fixture_directory=fixture,
+        fixture_id=fixture_id,
+        expected_outcome="paper_rejected",
+        passed=False,
+        errors=("non-paper fixture was accepted as a paper drawing",),
+        metrics=None,
+        output_dxf=output_dxf if output_dxf.exists() else None,
+        report_path=report_path if report_path.exists() else None,
+    )
+
+
 def run_fixture_benchmark(
     fixture_directory: str | Path,
     output_root: str | Path,
@@ -236,19 +290,29 @@ def run_fixture_benchmark(
     qualification = validate_fixture_directory(fixture)
     if not qualification.passed:
         return FixtureBenchmarkResult(
-            fixture,
-            qualification.fixture_id,
-            False,
-            tuple(f"qualification: {error}" for error in qualification.errors),
-            None,
-            None,
-            None,
+            fixture_directory=fixture,
+            fixture_id=qualification.fixture_id,
+            expected_outcome=qualification.expected_outcome,
+            passed=False,
+            errors=tuple(f"qualification: {error}" for error in qualification.errors),
+            metrics=None,
+            output_dxf=None,
+            report_path=None,
         )
 
     manifest = json.loads((fixture / "manifest.json").read_text(encoding="utf-8"))
     fixture_id = str(manifest["id"])
     output_directory = Path(output_root) / fixture_id
     output_directory.mkdir(parents=True, exist_ok=True)
+
+    if manifest["expected_outcome"] == "paper_rejected":
+        return _run_paper_rejection_fixture(
+            fixture,
+            fixture_id,
+            manifest,
+            output_directory,
+        )
+
     output_dxf = output_directory / "candidate.dxf"
     preview_path = output_directory / "preview.png"
     report_path = output_directory / "processing-report.json"
@@ -272,13 +336,14 @@ def run_fixture_benchmark(
         )
     except Exception as exc:
         return FixtureBenchmarkResult(
-            fixture,
-            fixture_id,
-            False,
-            (f"pipeline failed: {exc}",),
-            None,
-            output_dxf if output_dxf.exists() else None,
-            report_path if report_path.exists() else None,
+            fixture_directory=fixture,
+            fixture_id=fixture_id,
+            expected_outcome="vectorized_dxf",
+            passed=False,
+            errors=(f"pipeline failed: {exc}",),
+            metrics=None,
+            output_dxf=output_dxf if output_dxf.exists() else None,
+            report_path=report_path if report_path.exists() else None,
         )
 
     expected_mode = manifest["coordinate_mode"]
@@ -292,7 +357,7 @@ def run_fixture_benchmark(
         pipeline_result.perspective.corners if pipeline_result.perspective else None,
         manifest["expected_corners_px"],
     )
-    corner_tolerance = float(manifest.get("corner_tolerance_px", 10.0))
+    corner_tolerance = float(manifest["corner_tolerance_px"])
     if corner_error > corner_tolerance:
         errors.append(
             f"paper corner error {corner_error:.6f}px exceeds {corner_tolerance:.6f}px"
@@ -347,6 +412,7 @@ def run_fixture_benchmark(
     return FixtureBenchmarkResult(
         fixture_directory=fixture,
         fixture_id=fixture_id,
+        expected_outcome="vectorized_dxf",
         passed=not errors,
         errors=tuple(errors),
         metrics=metrics,
