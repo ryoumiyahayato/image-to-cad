@@ -149,6 +149,29 @@ class DetectionAndGeometryTests(unittest.TestCase):
         self.assertTrue(lineage["source_to_final"]["H1"])
         self.assertTrue(lineage["source_to_final"]["L1"])
 
+    def test_final_output_is_canonical_unique_and_nonzero(self) -> None:
+        raw = [
+            line(100, 0, 0, 0, source="A"),
+            line(0, 0, 100, 0, source="B"),
+            line(25, 25, 25, 25, source="ZERO"),
+        ]
+        result = clean_geometry_with_report(
+            raw,
+            GeometryCleanParams(
+                snap_distance=0,
+                max_bridge_gap=-200,
+                angle_tolerance=0.1,
+                collinear_distance=0.1,
+                duplicate_distance=0.1,
+                min_line_length=0,
+            ),
+        )
+        self.assertEqual(len(result.lines), 1)
+        final = result.lines[0]
+        self.assertLessEqual((final.x1, final.y1), (final.x2, final.y2))
+        self.assertGreater(final.length, 0.0)
+        self.assertEqual(set(final.source_ids), {"A", "B"})
+
     def test_cancelled_geometry_stops_cooperatively(self) -> None:
         token = CancellationToken()
         token.cancel()
