@@ -34,6 +34,23 @@ def _odd(value: int, minimum: int = 3) -> int:
     return value if value % 2 == 1 else value + 1
 
 
+def _to_grayscale(image: np.ndarray) -> np.ndarray:
+    if image.dtype != np.uint8:
+        raise ValueError("Input image must use 8-bit unsigned pixels")
+    if image.ndim == 2:
+        return image.copy()
+    if image.ndim != 3:
+        raise ValueError("Input image must be grayscale, BGR, or BGRA")
+    channels = int(image.shape[2])
+    if channels == 1:
+        return image[:, :, 0].copy()
+    if channels == 3:
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if channels == 4:
+        return cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    raise ValueError("Input image must have 1, 3, or 4 channels")
+
+
 def remove_shadow(gray: np.ndarray, kernel_size: int = 35) -> np.ndarray:
     """Estimate the paper background and divide it out to reduce shadows and folds."""
     size = _odd(kernel_size, 9)
@@ -71,10 +88,7 @@ def preprocess_image_with_stages(
     scale = image_resolution_scale(image.shape)
     checkpoint(cancellation_token)
     report_progress(progress_callback, "grayscale", 0.05)
-    if image.ndim == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image.copy()
+    gray = _to_grayscale(image)
     stages: dict[str, np.ndarray] = {"01_grayscale": gray.copy()}
 
     checkpoint(cancellation_token)
