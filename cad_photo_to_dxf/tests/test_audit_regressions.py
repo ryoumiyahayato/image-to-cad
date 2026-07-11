@@ -184,13 +184,15 @@ class AuditRegressionTests(unittest.TestCase):
         self.assertFalse(result["passed"])
         self.assertEqual(result["object_count"], 0)
 
-    def test_freecad_nonempty_import_with_zero_exit_is_accepted(self) -> None:
+    def test_freecad_nonempty_import_with_embedded_json_is_accepted(self) -> None:
         completed = SimpleNamespace(
             returncode=0,
             stdout=(
                 "FreeCAD startup noise\n"
-                'DXF_VALIDATION_JSON={"passed": true, "object_count": 7, '
-                '"freecad_version": ["0", "21", "2"]}\n'
+                "\t(16.0 %)DXF_VALIDATION_JSON="
+                '{"passed": true, "object_count": 7, '
+                '"freecad_version": ["0", "21", "2"]}'
+                " trailing progress (17.0 %)\n"
             ),
             stderr="",
         )
