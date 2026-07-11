@@ -8,7 +8,11 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox
 
 from . import gui as _gui
 from .auxiliary_recognition import CircleCandidate
-from .dxf_exporter import ExportResult, export_dxf
+from .dxf_exporter import (
+    ExportResult,
+    export_dxf,
+    filter_exportable_circles,
+)
 from .quality import assess_image_quality
 from .report_builder import ReportBuilder
 from .reporting import write_json_report
@@ -63,7 +67,7 @@ def export_from_window(
         QMessageBox.information(
             window,
             "未校准尺寸",
-            "当前未设置比例。DXF 将按像素图形单位导出，结构可编辑，但尺寸不准确。",
+            "当前未设置比例。DXF 将按无单位图形坐标导出，结构可编辑，但尺寸不准确。",
         )
     elif coordinate_space == "paper_mm":
         QMessageBox.information(
@@ -73,6 +77,7 @@ def export_from_window(
         )
 
     approved_circles = list(circles or [])
+    exported_circles = filter_exportable_circles(approved_circles)
     try:
         result = export_dxf(
             window.lines,
@@ -148,7 +153,7 @@ def export_from_window(
             calibration_source=calibration_source,
             coordinate_space=coordinate_space,
             warnings=warnings,
-            confirmed_circles=approved_circles,
+            confirmed_circles=exported_circles,
             started_at_utc=window._run_started_at,
             duration_seconds=window._run_duration_seconds,
         )
@@ -157,6 +162,11 @@ def export_from_window(
         QMessageBox.critical(window, "导出失败", str(exc))
         return None
 
+    scale_text = (
+        f"比例：{result.mm_per_pixel:.6f} mm/px"
+        if result.calibrated
+        else "比例：未校准（1 px = 1 个无单位图形单位）"
+    )
     QMessageBox.information(
         window,
         "导出完成",
@@ -165,7 +175,7 @@ def export_from_window(
         f"人工确认 CIRCLE 数量：{result.circle_count}\n"
         f"处理报告：{report_path}\n"
         f"坐标空间：{coordinate_space}\n"
-        f"比例：{result.mm_per_pixel:.6f} mm/px",
+        f"{scale_text}",
     )
     window.statusBar().showMessage(f"DXF 已导出：{result.path}")
     return result, report_path
