@@ -138,6 +138,8 @@ class PipelineService:
             max_pair_checks=clean_params.max_pair_checks,
             cancellation_token=cancellation_token,
         )
+        setattr(geometry.report, "intersection_split_report", topology.split_report)
+        setattr(geometry.report, "topology_report", topology.validation_report)
         if topology.split_report.pair_limit_reached:
             warnings.append("交点分割达到最大比较次数，拓扑验证可能不完整。")
         if topology.validation_report.exact_duplicate_lines:
