@@ -9,7 +9,7 @@ from app import __version__
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Convert a photographed printed CAD drawing into an editable DXF."
+        description="Convert a photographed printed CAD drawing into editable DXF lines."
     )
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument("--headless", action="store_true", help="Run without the GUI")
@@ -91,14 +91,19 @@ def run_headless(args: argparse.Namespace) -> int:
     print(f"Editable LINE entities: {result.export.line_count}")
     print(f"Preview: {args.preview}")
     print(f"Report: {result.report_path}")
-    print(
-        "Scale: "
-        + (
-            f"calibrated, {result.export.mm_per_pixel:.6f} mm/px"
-            if result.export.calibrated
-            else "uncalibrated, 1 pixel = 1 drawing millimetre unit"
+    if result.export.coordinate_mode == "model_mm":
+        scale_description = (
+            f"model-space millimetres, {result.export.mm_per_pixel:.6f} mm/px; "
+            "verify against an independent known dimension"
         )
-    )
+    elif result.export.coordinate_mode == "paper_mm":
+        scale_description = (
+            f"paper-space millimetres, {result.export.mm_per_pixel:.6f} mm/px; "
+            "this is printed-sheet size, not engineering model size"
+        )
+    else:
+        scale_description = "uncalibrated unitless pixel coordinates"
+    print(f"Coordinate mode: {scale_description}")
     if result.report.get("warnings"):
         print(f"Warnings: {len(result.report['warnings'])}")
     return 0
@@ -107,7 +112,7 @@ def run_headless(args: argparse.Namespace) -> int:
 def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
-        from app.gui import MainWindow
+        from app.safe_gui import MainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
