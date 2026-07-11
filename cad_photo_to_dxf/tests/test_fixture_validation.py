@@ -49,9 +49,10 @@ def create_valid_fixture(root: Path) -> Path:
         "source_sha256": sha256(source),
         "source_provenance": "Project-owned camera capture of a printed test sheet",
         "licence": "Project test fixture; redistribution permitted",
+        "reviewed_by": "Independent CAD reviewer",
+        "expected_outcome": "vectorized_dxf",
         "ground_truth_file": ground_truth.name,
         "ground_truth_sha256": sha256(ground_truth),
-        "reviewed_by": "Independent CAD reviewer",
         "paper": {"size": "A4", "orientation": "landscape"},
         "coordinate_mode": "model_mm",
         "calibration_reference": {
@@ -81,6 +82,34 @@ def create_valid_fixture(root: Path) -> Path:
     return fixture
 
 
+def create_negative_fixture(root: Path) -> Path:
+    fixture = root / "non-paper-001"
+    fixture.mkdir(parents=True)
+    source = fixture / "source.png"
+    image = np.full((160, 160, 3), 255, np.uint8)
+    cv2.circle(image, (80, 80), 55, (0, 0, 0), 5)
+    if not cv2.imwrite(str(source), image):
+        raise RuntimeError("negative test image could not be written")
+
+    manifest = {
+        "id": "non-paper-001",
+        "is_real_capture": True,
+        "fixture_categories": ["non_paper_negative"],
+        "source_file": source.name,
+        "source_sha256": sha256(source),
+        "source_provenance": "Project-owned camera capture of a non-paper object",
+        "licence": "Project test fixture; redistribution permitted",
+        "reviewed_by": "Independent fixture reviewer",
+        "expected_outcome": "paper_rejected",
+        "expected_rejection": "paper_detection",
+    }
+    (fixture / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return fixture
+
+
 class FixtureValidationTests(unittest.TestCase):
     def test_complete_real_photo_fixture_qualifies(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -89,6 +118,16 @@ class FixtureValidationTests(unittest.TestCase):
 
         self.assertTrue(result.passed, result.errors)
         self.assertEqual(result.fixture_id, "real-photo-001")
+        self.assertEqual(result.expected_outcome, "vectorized_dxf")
+
+    def test_non_paper_fixture_qualifies_without_ground_truth_dxf(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = create_negative_fixture(Path(directory))
+            result = validate_fixture_directory(fixture)
+
+        self.assertTrue(result.passed, result.errors)
+        self.assertEqual(result.expected_outcome, "paper_rejected")
+        self.assertEqual(result.fixture_categories, ("non_paper_negative",))
 
     def test_placeholder_provenance_and_synthetic_capture_are_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -117,6 +156,7 @@ class FixtureValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             create_valid_fixture(root)
+            create_negative_fixture(root)
             report_path = root / "qualification.json"
             with patch.object(
                 sys,
@@ -136,6 +176,7 @@ class FixtureValidationTests(unittest.TestCase):
         self.assertEqual(status, 1)
         self.assertFalse(report["category_coverage_passed"])
         self.assertIn("flat_scan", report["missing_categories"])
+        self.assertNotIn("non_paper_negative", report["missing_categories"])
         self.assertEqual(report["benchmarks"], [])
 
 
