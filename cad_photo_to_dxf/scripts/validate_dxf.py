@@ -61,11 +61,26 @@ print(json.dumps({
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Validate DXF structure, duplicate geometry, and optional FreeCAD import."
+        description=(
+            "Validate DXF structure, duplicates, topology diagnostics, "
+            "and optional FreeCAD import."
+        )
     )
     parser.add_argument("input", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--tolerance", type=float, default=1e-6)
+    parser.add_argument(
+        "--gap-tolerance",
+        type=float,
+        default=0.5,
+        help="Distance used to report nearby unjoined endpoints",
+    )
+    parser.add_argument(
+        "--max-intersection-checks",
+        type=int,
+        default=2_000_000,
+        help="Maximum line-pair checks for unsplit intersection diagnostics",
+    )
     parser.add_argument(
         "--freecad-command",
         help="Optional FreeCADCmd executable path for independent import validation",
@@ -75,7 +90,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> int:
     args = build_parser().parse_args()
-    result = validate_dxf(args.input, tolerance=args.tolerance)
+    result = validate_dxf(
+        args.input,
+        tolerance=args.tolerance,
+        gap_tolerance=args.gap_tolerance,
+        max_intersection_checks=args.max_intersection_checks,
+    )
     report: dict[str, Any] = {
         "dxf": result.to_dict(),
         "freecad": None,
