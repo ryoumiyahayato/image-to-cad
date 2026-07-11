@@ -8,7 +8,6 @@ from typing import Any
 
 import numpy as np
 
-from . import __version__
 from .auxiliary_recognition import AuxiliaryRecognitionResult
 from .cancellation import (
     CancellationToken,
@@ -31,7 +30,8 @@ from .perspective import (
 from .pipeline_service import PipelineService
 from .preprocess import PreprocessParams
 from .quality import ImageQualityAssessment, assess_image_quality
-from .reporting import REPORT_SCHEMA_VERSION, build_lineage, write_json_report
+from .report_builder import ReportBuilder
+from .reporting import write_json_report
 from .scale_calibrator import ScaleCalibration
 
 
@@ -215,29 +215,20 @@ def run_pipeline(
         )
 
     elapsed = time.perf_counter() - started_clock
-    lineage = build_lineage(raw_lines, lines)
-    geometry_report = asdict(vectorization.geometry_report)
-    geometry_report["resolution_scale"] = vectorization.geometry_resolution_scale
-    report: dict[str, Any] = {
-        "schema_version": REPORT_SCHEMA_VERSION,
-        "application_version": __version__,
-        "started_at_utc": started_at.isoformat(),
-        "duration_seconds": elapsed,
-        "input": {
-            "path": str(Path(input_path)),
-            "shape": list(original.shape),
-        },
-        "perspective": {
+    report = ReportBuilder.build(
+        input_path=input_path,
+        original_shape=original.shape,
+        corrected_shape=corrected.shape,
+        perspective={
             "applied": perspective_result is not None,
             "automatic": perspective_result.automatic if perspective_result else False,
             "confidence": perspective_result.confidence if perspective_result else 0.0,
             "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
             "corners": perspective_result.corners if perspective_result else None,
             "target_aspect_ratio": target_aspect_ratio,
-            "corrected_shape": list(corrected.shape),
         },
-        "quality": asdict(quality),
-        "parameters": {
+        quality=quality,
+        parameters={
             "preprocess": asdict(preprocess_params),
             "line_detection": asdict(detection_params),
             "geometry_cleaning": asdict(clean_params),
@@ -249,46 +240,24 @@ def run_pipeline(
             "auxiliary_enabled": enable_auxiliary or enable_ocr,
             "ocr_enabled": enable_ocr,
         },
-        "preprocessing": {
-            "stages": {
-                name: list(image.shape)
-                for name, image in vectorization.preprocess_stages.items()
-            },
-            "resolution_scale": vectorization.preprocess_resolution_scale,
-            "debug_directory": str(debug_dir) if debug_dir is not None else None,
-        },
-        "detection": {
-            "raw_line_count": len(raw_lines),
-            "resolution_scale": vectorization.detection_resolution_scale,
-            "thick_stroke_centering": detection_params.center_thick_strokes,
-        },
-        "geometry": geometry_report,
-        "classification": asdict(vectorization.classification_report),
-        "auxiliary": (
-            asdict(vectorization.auxiliary)
-            if vectorization.auxiliary is not None
-            else None
-        ),
-        "lineage": lineage,
-        "export": {
-            "path": str(export_result.path),
-            "line_count": export_result.line_count,
-            "skipped_line_count": export_result.skipped_line_count,
-            "mm_per_pixel": export_result.mm_per_pixel,
-            "calibrated": export_result.calibrated,
-            "calibration_source": calibration_source,
-            "coordinate_space": coordinate_space,
-        },
-        "warnings": list(dict.fromkeys(warnings)),
-        "technical_limits": [
-            "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
-            "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
-            "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
-            "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
-            "paper_mm 仅表示打印纸面坐标；未校准图纸比例时不得解释为工程 model_mm。",
-            "粗笔画中心化属于保守启发式，墙体边界语义仍需人工复核。",
-        ],
-    }
+        preprocess_stages=vectorization.preprocess_stages,
+        preprocess_resolution_scale=vectorization.preprocess_resolution_scale,
+        detection_resolution_scale=vectorization.detection_resolution_scale,
+        thick_stroke_centering=detection_params.center_thick_strokes,
+        raw_lines=raw_lines,
+        lines=lines,
+        geometry_report=vectorization.geometry_report,
+        geometry_resolution_scale=vectorization.geometry_resolution_scale,
+        classification_report=vectorization.classification_report,
+        auxiliary=vectorization.auxiliary,
+        export_result=export_result,
+        calibration_source=calibration_source,
+        coordinate_space=coordinate_space,
+        warnings=warnings,
+        started_at_utc=started_at,
+        duration_seconds=elapsed,
+        debug_directory=debug_dir,
+    )
     written_report_path: Path | None = None
     if report_path is not None:
         written_report_path = write_json_report(report_path, report)
