@@ -11,6 +11,7 @@ from app.layer_classifier import ClassificationReport
 from app.line_detect import LineDetectionParams, LineSegment
 from app.pipeline_service import PipelineService
 from app.report_builder import ReportBuilder
+from app.topology import IntersectionSplitReport, TopologyValidationReport
 
 
 def test_shared_pipeline_service_vectorizes_existing_binary() -> None:
@@ -27,7 +28,9 @@ def test_shared_pipeline_service_vectorizes_existing_binary() -> None:
     assert result.lines
     assert result.binary.shape == binary.shape
     assert result.preview.shape[:2] == binary.shape
-    assert result.classification_report.input_lines == len(result.geometry_report and result.lines) or result.classification_report.input_lines >= len(result.lines)
+    assert result.classification_report.input_lines >= len(result.lines)
+    assert result.intersection_split_report.output_lines >= len(result.lines)
+    assert result.topology_report.line_count == result.intersection_split_report.output_lines
 
 
 def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
@@ -61,6 +64,17 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
         lines=final,
         geometry_report=GeometryCleanReport(input_lines=1, output_lines=1),
         geometry_resolution_scale=1.0,
+        intersection_split_report=IntersectionSplitReport(
+            input_lines=1,
+            output_lines=1,
+        ),
+        topology_report=TopologyValidationReport(
+            line_count=1,
+            endpoint_nodes=2,
+            dangling_endpoints=2,
+            connected_components=1,
+            open_components=1,
+        ),
         classification_report=ClassificationReport(
             input_lines=1,
             layer_counts={"DETAIL": 1},
@@ -77,6 +91,8 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
     assert report["duration_seconds"] == 0.25
     assert report["parameters"]["strict_perspective"] is True
     assert report["geometry"]["resolution_scale"] == 1.0
+    assert report["topology"]["intersection_splitting"]["output_lines"] == 1
+    assert report["topology"]["validation"]["dangling_endpoints"] == 2
     assert report["lineage"]["final_entity_count"] == 1
     assert report["export"]["coordinate_space"] == "pixel"
     assert report["warnings"] == ["review required"]
