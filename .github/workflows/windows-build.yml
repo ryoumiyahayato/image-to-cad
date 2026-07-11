@@ -1,4 +1,4 @@
-name: Windows v1.1 build and smoke test
+name: Windows build and smoke test
 
 on:
   workflow_dispatch:
@@ -10,9 +10,13 @@ on:
       - "cad_photo_to_dxf/**"
       - ".github/workflows/windows-build.yml"
 
+permissions:
+  contents: read
+
 jobs:
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 90
     defaults:
       run:
         working-directory: cad_photo_to_dxf
@@ -33,6 +37,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Resolve application version
+        id: version
+        shell: pwsh
+        run: |
+          $version = (python -c "from app import __version__; print(__version__)").Trim()
+          if (-not $version) { throw "Application version is empty" }
+          "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Run regression tests
         shell: pwsh
@@ -64,14 +76,15 @@ jobs:
         run: |
           Set-ExecutionPolicy -Scope Process Bypass -Force
           ./scripts/installer_smoke.ps1 `
-            -Installer ./installer/output/CADPhotoToDXF-1.1.0-Setup.exe `
+            -Installer "./installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe" `
             -Sample ./samples/test.jpg `
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-Windows-v1.1.0
+          name: CADPhotoToDXF-Windows-v${{ steps.version.outputs.value }}
           if-no-files-found: error
+          retention-days: 14
           path: |
             cad_photo_to_dxf/dist/CADPhotoToDXF/**
-            cad_photo_to_dxf/installer/output/CADPhotoToDXF-1.1.0-Setup.exe
+            cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
