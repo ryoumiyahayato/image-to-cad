@@ -9,7 +9,7 @@ from typing import Any
 import numpy as np
 
 from . import __version__
-from .auxiliary_recognition import AuxiliaryRecognitionResult, recognize_auxiliary
+from .auxiliary_recognition import AuxiliaryRecognitionResult
 from .cancellation import (
     CancellationToken,
     ProgressCallback,
@@ -17,24 +17,18 @@ from .cancellation import (
     report_progress,
 )
 from .dxf_exporter import ExportResult, export_dxf
-from .geometry_cleaner import (
-    GeometryCleanParams,
-    GeometryCleanReport,
-    clean_geometry_with_report,
-)
+from .geometry_cleaner import GeometryCleanParams, GeometryCleanReport
 from .image_loader import load_image, save_image
-from .layer_classifier import (
-    ClassificationReport,
-    classify_layers_with_report,
-)
-from .line_detect import LineDetectionParams, LineSegment, detect_lines, render_line_preview
+from .layer_classifier import ClassificationReport
+from .line_detect import LineDetectionParams, LineSegment
 from .perspective import (
     PerspectiveResult,
     auto_correct,
     resolve_paper_aspect_ratio,
     resolve_paper_dimensions_mm,
 )
-from .preprocess import PreprocessParams, preprocess_image_with_stages
+from .preprocess import PreprocessParams
+from .processing_service import ProcessingConfig, process_corrected_image
 from .quality import ImageQualityAssessment, assess_image_quality
 from .reporting import REPORT_SCHEMA_VERSION, build_lineage, write_json_report
 from .scale_calibrator import ScaleCalibration
@@ -181,67 +175,42 @@ def run_pipeline(
         warnings.append("当前导出为无单位像素坐标；未声明毫米或工程真实尺寸。")
 
     checkpoint(cancellation_token)
-    preprocessing = preprocess_image_with_stages(
+    processing = process_corrected_image(
         corrected,
-        preprocess_params,
+        ProcessingConfig(
+            preprocess=preprocess_params,
+            detection=detection_params,
+            cleaning=clean_params,
+            preserve_hatch=preserve_hatch,
+            enable_auxiliary=enable_auxiliary,
+            enable_ocr=enable_ocr,
+        ),
         cancellation_token=cancellation_token,
-        progress_callback=_subprogress(progress_callback, "preprocess", 0.10, 0.32),
+        progress_callback=_subprogress(progress_callback, "processing", 0.10, 0.86),
     )
-    binary = preprocessing.image
+    binary = processing.binary
+    raw_lines = processing.raw_lines
+    lines = processing.lines
+    auxiliary = processing.auxiliary
 
+    if processing.geometry_report.merge_pair_limit_reached:
+        warnings.append("共线合并达到最大比较次数，部分候选保持未合并状态。")
+    if auxiliary is not None:
+        warnings.extend(auxiliary.warnings)
+    if not lines and fail_on_empty:
+        raise NoLinesDetectedError("No valid line entities were detected")
+
+    if preview_path is not None:
+        save_image(preview_path, processing.preview)
     if debug_dir is not None:
         diagnostics = Path(debug_dir)
         diagnostics.mkdir(parents=True, exist_ok=True)
         save_image(diagnostics / "00_corrected.png", corrected)
-        for stage_name, stage_image in preprocessing.stages.items():
+        for stage_name, stage_image in processing.preprocess_stages.items():
             save_image(diagnostics / f"{stage_name}.png", stage_image)
+        save_image(diagnostics / "90_line_preview.png", processing.preview)
 
-    checkpoint(cancellation_token)
-    raw_lines = detect_lines(
-        binary,
-        detection_params,
-        cancellation_token=cancellation_token,
-        progress_callback=_subprogress(progress_callback, "detect", 0.34, 0.58),
-    )
-    report_progress(progress_callback, "geometry", 0.60)
-    geometry_result = clean_geometry_with_report(
-        raw_lines,
-        clean_params,
-        cancellation_token=cancellation_token,
-    )
-    if geometry_result.report.merge_pair_limit_reached:
-        warnings.append("共线合并达到最大比较次数，部分候选保持未合并状态。")
-
-    checkpoint(cancellation_token)
-    report_progress(progress_callback, "classification", 0.72)
-    classification_result = classify_layers_with_report(
-        geometry_result.lines,
-        binary.shape,
-        preserve_hatch=preserve_hatch,
-        cancellation_token=cancellation_token,
-    )
-    lines = classification_result.lines
-    if not lines and fail_on_empty:
-        raise NoLinesDetectedError("No valid line entities were detected")
-
-    auxiliary: AuxiliaryRecognitionResult | None = None
-    if enable_auxiliary or enable_ocr:
-        auxiliary = recognize_auxiliary(
-            binary,
-            enable_ocr=enable_ocr,
-            cancellation_token=cancellation_token,
-            progress_callback=_subprogress(progress_callback, "auxiliary", 0.75, 0.86),
-        )
-        warnings.extend(auxiliary.warnings)
-
-    checkpoint(cancellation_token)
-    preview = render_line_preview(binary, lines)
-    if preview_path is not None:
-        save_image(preview_path, preview)
-    if debug_dir is not None:
-        save_image(Path(debug_dir) / "90_line_preview.png", preview)
-
-    report_progress(progress_callback, "export", 0.9)
+    report_progress(progress_callback, "export", 0.90)
     export_result = export_dxf(
         lines,
         output_path,
@@ -276,7 +245,13 @@ def run_pipeline(
         "quality": asdict(quality),
         "parameters": {
             "preprocess": asdict(preprocess_params),
-            "line_detection": asdict(detection_params),
+            "line_detection_requested": asdict(detection_params),
+            "line_detection_effective": asdict(
+                processing.effective_detection_params
+            ),
+            "line_detection_resolution_factor": (
+                processing.detection_resolution_factor
+            ),
             "geometry_cleaning": asdict(clean_params),
             "paper_size": paper_size,
             "paper_orientation": paper_orientation,
@@ -287,13 +262,14 @@ def run_pipeline(
         },
         "preprocessing": {
             "stages": {
-                name: list(image.shape) for name, image in preprocessing.stages.items()
+                name: list(image.shape)
+                for name, image in processing.preprocess_stages.items()
             },
             "debug_directory": str(debug_dir) if debug_dir is not None else None,
         },
         "detection": {"raw_line_count": len(raw_lines)},
-        "geometry": asdict(geometry_result.report),
-        "classification": asdict(classification_result.report),
+        "geometry": asdict(processing.geometry_report),
+        "classification": asdict(processing.classification_report),
         "auxiliary": asdict(auxiliary) if auxiliary is not None else None,
         "lineage": lineage,
         "export": {
@@ -331,13 +307,13 @@ def run_pipeline(
         binary=binary,
         raw_lines=raw_lines,
         lines=lines,
-        preview=preview,
+        preview=processing.preview,
         export=export_result,
-        preprocess_stages=preprocessing.stages,
+        preprocess_stages=processing.preprocess_stages,
         perspective=perspective_result,
         quality=quality,
-        geometry_report=geometry_result.report,
-        classification_report=classification_result.report,
+        geometry_report=processing.geometry_report,
+        classification_report=processing.classification_report,
         auxiliary=auxiliary,
         report=report,
         report_path=written_report_path,
