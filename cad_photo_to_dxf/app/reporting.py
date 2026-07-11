@@ -127,6 +127,8 @@ def build_processing_report(
     technical_limits: Iterable[str] = DEFAULT_TECHNICAL_LIMITS,
 ) -> dict[str, Any]:
     """Build the single report schema used by CLI and GUI exports."""
+    raw_line_list = list(raw_lines)
+    final_line_list = list(final_lines)
     unit_name = str(getattr(export_result, "unit_name", "pixel_unit"))
     coordinate_mode = str(
         getattr(export_result, "coordinate_mode", "pixel_units")
@@ -153,12 +155,12 @@ def build_processing_report(
             ),
         },
         "detection": {
-            "raw_line_count": sum(1 for _ in raw_lines),
+            "raw_line_count": len(raw_line_list),
         },
         "geometry": geometry_report,
         "classification": classification_report,
         "auxiliary": auxiliary,
-        "lineage": build_lineage(raw_lines, final_lines),
+        "lineage": build_lineage(raw_line_list, final_line_list),
         "export": {
             "path": str(getattr(export_result, "path")),
             "line_count": int(getattr(export_result, "line_count")),
