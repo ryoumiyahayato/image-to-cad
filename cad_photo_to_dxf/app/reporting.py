@@ -8,7 +8,15 @@ from typing import Any, Iterable
 import numpy as np
 
 
-REPORT_SCHEMA_VERSION = "1.1"
+REPORT_SCHEMA_VERSION = "1.2"
+
+DEFAULT_TECHNICAL_LIMITS = (
+    "paper_mm 仅表示打印纸面坐标；恢复工程设计尺寸必须使用已知尺寸或图纸比例校准。",
+    "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
+    "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
+    "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
+    "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
+)
 
 
 def _json_value(value: Any) -> Any:
@@ -51,11 +59,17 @@ def build_lineage(
     raw_source_ids = sorted(set(raw_source_ids))
 
     final_entities: list[dict[str, Any]] = []
-    source_to_final: dict[str, list[str]] = {source_id: [] for source_id in raw_source_ids}
+    source_to_final: dict[str, list[str]] = {
+        source_id: [] for source_id in raw_source_ids
+    }
     for index, line in enumerate(final_lines, start=1):
         entity_id = f"LINE-{index:06d}"
-        source_ids = sorted(set(str(item) for item in getattr(line, "source_ids", ())))
-        operations = list(dict.fromkeys(str(item) for item in getattr(line, "history", ())))
+        source_ids = sorted(
+            set(str(item) for item in getattr(line, "source_ids", ()))
+        )
+        operations = list(
+            dict.fromkeys(str(item) for item in getattr(line, "history", ()))
+        )
         final_entities.append(
             {
                 "entity_id": entity_id,
@@ -88,3 +102,78 @@ def build_lineage(
         "dropped_source_ids": dropped,
         "final_entities": final_entities,
     }
+
+
+def build_processing_report(
+    *,
+    application_version: str,
+    started_at_utc: str,
+    duration_seconds: float,
+    input_path: str | Path | None,
+    input_shape: Iterable[int] | None,
+    perspective: dict[str, Any],
+    quality: Any,
+    parameters: dict[str, Any],
+    preprocess_stages: dict[str, np.ndarray],
+    debug_directory: str | Path | None,
+    raw_lines: Iterable[Any],
+    final_lines: Iterable[Any],
+    geometry_report: Any,
+    classification_report: Any,
+    auxiliary: Any,
+    export_result: Any,
+    calibration_source: str,
+    warnings: Iterable[str] = (),
+    technical_limits: Iterable[str] = DEFAULT_TECHNICAL_LIMITS,
+) -> dict[str, Any]:
+    """Build the single report schema used by CLI and GUI exports."""
+    unit_name = str(getattr(export_result, "unit_name", "pixel_unit"))
+    coordinate_mode = str(
+        getattr(export_result, "coordinate_mode", "pixel_units")
+    )
+    scale_per_pixel = float(getattr(export_result, "mm_per_pixel", 1.0))
+    report = {
+        "schema_version": REPORT_SCHEMA_VERSION,
+        "application_version": application_version,
+        "started_at_utc": started_at_utc,
+        "duration_seconds": float(duration_seconds),
+        "input": {
+            "path": str(input_path) if input_path is not None else None,
+            "shape": list(input_shape) if input_shape is not None else None,
+        },
+        "perspective": perspective,
+        "quality": quality,
+        "parameters": parameters,
+        "preprocessing": {
+            "stages": {
+                name: list(image.shape) for name, image in preprocess_stages.items()
+            },
+            "debug_directory": (
+                str(debug_directory) if debug_directory is not None else None
+            ),
+        },
+        "detection": {
+            "raw_line_count": sum(1 for _ in raw_lines),
+        },
+        "geometry": geometry_report,
+        "classification": classification_report,
+        "auxiliary": auxiliary,
+        "lineage": build_lineage(raw_lines, final_lines),
+        "export": {
+            "path": str(getattr(export_result, "path")),
+            "line_count": int(getattr(export_result, "line_count")),
+            "skipped_line_count": int(
+                getattr(export_result, "skipped_line_count", 0)
+            ),
+            "scale_per_pixel": scale_per_pixel,
+            "mm_per_pixel": scale_per_pixel if unit_name == "mm" else None,
+            "calibrated": bool(getattr(export_result, "calibrated", False)),
+            "calibration_source": calibration_source,
+            "coordinate_mode": coordinate_mode,
+            "unit_name": unit_name,
+            "is_engineering_model_scale": coordinate_mode == "model_mm",
+        },
+        "warnings": list(dict.fromkeys(str(item) for item in warnings)),
+        "technical_limits": list(technical_limits),
+    }
+    return _json_value(report)
