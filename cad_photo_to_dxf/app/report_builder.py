@@ -84,13 +84,18 @@ class ReportBuilder:
             geometry["resolution_scale"] = float(geometry_resolution_scale)
 
         normalized_perspective = dict(perspective or {})
-        normalized_perspective.setdefault("applied", corrected_shape is not None)
+        normalized_perspective.setdefault("applied", False)
         normalized_perspective.setdefault("automatic", False)
         normalized_perspective.setdefault("confidence", 0.0)
         normalized_perspective.setdefault("corners", None)
         normalized_perspective["corrected_shape"] = (
             list(corrected_shape) if corrected_shape is not None else None
         )
+
+        calibrated_mm_per_pixel = (
+            float(export_result.mm_per_pixel) if export_result.calibrated else None
+        )
+        drawing_units_per_pixel = float(export_result.mm_per_pixel)
 
         return {
             "schema_version": REPORT_SCHEMA_VERSION,
@@ -134,7 +139,8 @@ class ReportBuilder:
                 "circle_count": export_result.circle_count,
                 "skipped_circle_count": export_result.skipped_circle_count,
                 "confirmed_circles": [_to_dict(item) for item in confirmed_circles],
-                "mm_per_pixel": export_result.mm_per_pixel,
+                "mm_per_pixel": calibrated_mm_per_pixel,
+                "drawing_units_per_pixel": drawing_units_per_pixel,
                 "calibrated": export_result.calibrated,
                 "calibration_source": calibration_source,
                 "coordinate_space": coordinate_space,
