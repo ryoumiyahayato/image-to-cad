@@ -107,7 +107,7 @@ def run_headless(args: argparse.Namespace) -> int:
         + (
             f"calibrated, {result.export.mm_per_pixel:.6f} mm/px"
             if result.export.calibrated
-            else "uncalibrated, 1 pixel = 1 drawing millimetre unit"
+            else "uncalibrated, 1 pixel = 1 unitless drawing unit"
         )
     )
     if result.report.get("warnings"):
