@@ -5,9 +5,11 @@ import tempfile
 import unittest
 
 import cv2
+import ezdxf
 import numpy as np
 
 from app import __version__
+from app.dxf_validator import validate_dxf
 from app.line_detect import LineSegment, _refine_to_centerline
 from scripts.versioning import parse_version, write_windows_version_info
 
@@ -43,6 +45,23 @@ class AuditRegressionTests(unittest.TestCase):
             content = output.read_text(encoding="utf-8")
         self.assertIn(f"FileVersion', u'{__version__}'", content)
         self.assertIn(f"ProductVersion', u'{__version__}'", content)
+
+    def test_dxf_validator_detects_duplicates_and_zero_length_lines(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "invalid_geometry.dxf"
+            document = ezdxf.new("R2010")
+            modelspace = document.modelspace()
+            modelspace.add_line((0, 0), (100, 0))
+            modelspace.add_line((100, 0), (0, 0))
+            modelspace.add_line((25, 25), (25, 25))
+            document.saveas(path)
+
+            result = validate_dxf(path)
+
+        self.assertFalse(result.passed)
+        self.assertEqual(result.duplicate_line_count, 1)
+        self.assertEqual(result.zero_length_count, 1)
+        self.assertEqual(result.invalid_coordinate_count, 0)
 
 
 if __name__ == "__main__":
