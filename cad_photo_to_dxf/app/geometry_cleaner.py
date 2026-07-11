@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 
 import numpy as np
@@ -19,11 +19,14 @@ class GeometryCleanParams:
     duplicate_distance: float = 3.0
     min_line_length: float = 12.0
     max_pair_checks: int = 2_000_000
+    scale_with_resolution: bool = True
+    reference_long_edge: float = 2000.0
 
 
 @dataclass
 class GeometryCleanReport:
     input_lines: int = 0
+    resolution_scale_factor: float = 1.0
     initial_orthogonalized: int = 0
     initial_short_removed: int = 0
     first_snap_moved_endpoints: int = 0
@@ -42,6 +45,44 @@ class GeometryCleanReport:
 class GeometryCleanResult:
     lines: list[LineSegment]
     report: GeometryCleanReport
+
+
+def effective_geometry_params(
+    params: GeometryCleanParams,
+    lines: list[LineSegment],
+) -> tuple[GeometryCleanParams, float]:
+    """Scale pixel tolerances relative to the observed drawing coordinate extent."""
+    if not params.scale_with_resolution or not lines:
+        return params, 1.0
+    if params.reference_long_edge <= 0:
+        raise ValueError("reference_long_edge must be greater than zero")
+    coordinates = np.array(
+        [[line.x1, line.y1, line.x2, line.y2] for line in lines], dtype=float
+    )
+    if not np.isfinite(coordinates).all():
+        finite = coordinates[np.isfinite(coordinates)]
+        if finite.size == 0:
+            return replace(params, scale_with_resolution=False), 1.0
+    xs = np.concatenate((coordinates[:, 0], coordinates[:, 2]))
+    ys = np.concatenate((coordinates[:, 1], coordinates[:, 3]))
+    extent = max(
+        float(np.ptp(xs)),
+        float(np.ptp(ys)),
+        float(np.max(np.abs(xs))),
+        float(np.max(np.abs(ys))),
+        1.0,
+    )
+    factor = float(np.clip(extent / params.reference_long_edge, 0.25, 4.0))
+    effective = replace(
+        params,
+        snap_distance=params.snap_distance * factor,
+        max_bridge_gap=params.max_bridge_gap * factor,
+        collinear_distance=params.collinear_distance * factor,
+        duplicate_distance=params.duplicate_distance * factor,
+        min_line_length=params.min_line_length * factor,
+        scale_with_resolution=False,
+    )
+    return effective, factor
 
 
 def _angle_difference(a: float, b: float) -> float:
@@ -108,7 +149,6 @@ def _snap_endpoints_with_count(
     for pair_index, (a, b) in enumerate(pairs):
         if pair_index % 256 == 0:
             checkpoint(cancellation_token)
-        # Never collapse both endpoints of the same source segment.
         if a % count == b % count:
             continue
         ra, rb = find(a), find(b)
@@ -118,8 +158,6 @@ def _snap_endpoints_with_count(
         candidate_points = points[candidate_members]
         deltas = candidate_points[:, None, :] - candidate_points[None, :, :]
         diameter = float(np.max(np.linalg.norm(deltas, axis=2)))
-        # Complete-linkage bound prevents a 0-5-10 chain from exceeding a
-        # 6-pixel snap threshold through transitive union.
         if diameter <= distance + 1e-9:
             union(ra, rb)
 
@@ -232,7 +270,6 @@ def _merge_collinear_with_report(
     params: GeometryCleanParams,
     cancellation_token: CancellationToken | None = None,
 ) -> tuple[list[LineSegment], int, bool]:
-    """Greedily merge overlapping or narrowly separated collinear segments."""
     work = sorted(lines, key=lambda line: line.length, reverse=True)
     changed = True
     pair_checks = 0
@@ -259,7 +296,6 @@ def _merge_collinear_with_report(
                 if pair_checks % 2048 == 0:
                     checkpoint(cancellation_token)
                 candidate = work[j]
-                # Midpoint proximity prefilter limits unnecessary geometric checks.
                 max_distance = merged.length + candidate.length + params.max_bridge_gap
                 if np.linalg.norm(candidate.midpoint - merged.midpoint) > max_distance:
                     continue
@@ -286,8 +322,6 @@ def _remove_duplicates_with_count(
     params: GeometryCleanParams,
     cancellation_token: CancellationToken | None = None,
 ) -> tuple[list[LineSegment], int]:
-    # Duplicate candidates have almost identical endpoints, so their midpoints also
-    # fall in the same small spatial bucket. This avoids an O(n²) full comparison.
     kept: list[LineSegment] = []
     cell_size = max(1.0, params.duplicate_distance * 3.0)
     buckets: dict[tuple[int, int], list[int]] = {}
@@ -340,7 +374,6 @@ def remove_duplicates(
 
 
 def _canonicalize_endpoints(line: LineSegment) -> LineSegment:
-    """Use one deterministic endpoint order before final duplicate checks and export."""
     start = (float(line.x1), float(line.y1))
     end = (float(line.x2), float(line.y2))
     if start <= end:
@@ -371,7 +404,7 @@ def clean_geometry_with_report(
     params: GeometryCleanParams | None = None,
     cancellation_token: CancellationToken | None = None,
 ) -> GeometryCleanResult:
-    params = params or GeometryCleanParams()
+    requested_params = params or GeometryCleanParams()
     report = GeometryCleanReport(input_lines=len(lines))
     prepared = [
         line
@@ -379,6 +412,9 @@ def clean_geometry_with_report(
         else line.copy(source_ids=(f"INPUT-{index:06d}",), history=("input",))
         for index, line in enumerate(lines, start=1)
     ]
+    params, report.resolution_scale_factor = effective_geometry_params(
+        requested_params, prepared
+    )
     checkpoint(cancellation_token)
 
     cleaned = [orthogonalize(line, params.angle_tolerance) for line in prepared]
@@ -404,8 +440,6 @@ def clean_geometry_with_report(
     report.final_orthogonalized = sum(
         1 for before, after in zip(before_orthogonal, cleaned) if before is not after
     )
-    # Snapping remains the last geometric adjustment. Canonicalization only
-    # changes endpoint order and therefore cannot pull a shared junction apart.
     cleaned, report.final_snap_moved_endpoints = _snap_endpoints_with_count(
         cleaned, params.snap_distance, cancellation_token
     )
@@ -418,8 +452,6 @@ def clean_geometry_with_report(
     report.final_canonicalized = sum(
         1 for before, after in zip(before_canonical, cleaned) if before is not after
     )
-    # Orthogonalization and snapping can move previously distinct candidates to
-    # identical coordinates. A mandatory second pass keeps exported entities unique.
     cleaned, report.final_duplicate_merges = _remove_duplicates_with_count(
         cleaned, params, cancellation_token
     )
