@@ -3,8 +3,10 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import cv2
 import ezdxf
@@ -14,6 +16,7 @@ from app.fixture_validation import (
     validate_fixture_directory,
     validate_fixture_set,
 )
+from scripts import validate_fixtures as fixture_cli
 
 
 def sha256(path: Path) -> str:
@@ -109,6 +112,31 @@ class FixtureValidationTests(unittest.TestCase):
         self.assertFalse(result.passed)
         self.assertEqual(result.qualifying_count, 0)
         self.assertIn("minimum required is 1", result.errors[0])
+
+    def test_release_gate_requires_all_capture_categories(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            create_valid_fixture(root)
+            report_path = root / "qualification.json"
+            with patch.object(
+                sys,
+                "argv",
+                [
+                    "validate_fixtures.py",
+                    str(root),
+                    "--minimum",
+                    "1",
+                    "--output",
+                    str(report_path),
+                ],
+            ):
+                status = fixture_cli.main()
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(status, 1)
+        self.assertFalse(report["category_coverage_passed"])
+        self.assertIn("flat_scan", report["missing_categories"])
+        self.assertEqual(report["benchmarks"], [])
 
 
 if __name__ == "__main__":
