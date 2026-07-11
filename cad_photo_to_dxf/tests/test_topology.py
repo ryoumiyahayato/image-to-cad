@@ -56,6 +56,16 @@ def test_small_gap_between_dangling_endpoints_is_reported() -> None:
     assert report.open_components == 2
 
 
+def test_short_open_line_is_not_its_own_gap() -> None:
+    report = validate_topology(
+        [_line(0, 0, 3, 0, "SHORT")],
+        endpoint_tolerance=0.1,
+        gap_tolerance=5.0,
+    )
+    assert report.dangling_endpoints == 2
+    assert report.small_gap_pairs == 0
+
+
 def test_duplicate_lines_are_reported() -> None:
     lines = [
         _line(0, 0, 100, 0, "A"),
@@ -63,3 +73,27 @@ def test_duplicate_lines_are_reported() -> None:
     ]
     report = validate_topology(lines, endpoint_tolerance=0.1, gap_tolerance=2.0)
     assert report.exact_duplicate_lines == 1
+
+
+def test_near_duplicate_requires_matching_direction_and_length() -> None:
+    near_parallel = [
+        _line(0, 0, 100, 0, "A"),
+        _line(0.05, 0.04, 100.05, 0.04, "B"),
+    ]
+    report = validate_topology(
+        near_parallel,
+        endpoint_tolerance=0.1,
+        gap_tolerance=2.0,
+    )
+    assert report.near_duplicate_pairs == 1
+
+    different_direction = [
+        _line(0, 0, 1, 0, "H"),
+        _line(0.02, 0.02, 0.02, 1.02, "V"),
+    ]
+    report = validate_topology(
+        different_direction,
+        endpoint_tolerance=0.5,
+        gap_tolerance=2.0,
+    )
+    assert report.near_duplicate_pairs == 0
