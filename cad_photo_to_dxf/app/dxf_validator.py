@@ -129,7 +129,7 @@ def _component_counts(
                 if neighbour not in visited:
                     visited.add(neighbour)
                     stack.append(neighbour)
-        if nodes and all(len(adjacency[node]) >= 2 for node in nodes):
+        if nodes and all(len(adjacency[node]) == 2 for node in nodes):
             closed_count += 1
         else:
             open_count += 1
@@ -244,6 +244,7 @@ def validate_dxf(
 
     passed = (
         len(audit_errors) == 0
+        and len(audit_fixes) == 0
         and invalid_coordinate_count == 0
         and zero_length_count == 0
         and duplicate_line_count == 0
