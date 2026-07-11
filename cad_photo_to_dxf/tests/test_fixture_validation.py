@@ -51,7 +51,13 @@ def create_valid_fixture(root: Path) -> Path:
         "reviewed_by": "Independent CAD reviewer",
         "paper": {"size": "A4", "orientation": "landscape"},
         "coordinate_mode": "model_mm",
+        "calibration_reference": {
+            "start_px": [10.0, 10.0],
+            "end_px": [170.0, 10.0],
+            "length_mm": 100.0,
+        },
         "expected_corners_px": [[10, 10], [170, 10], [170, 110], [10, 110]],
+        "corner_tolerance_px": 3.0,
         "calibration_dimensions": [100.0],
         "verification_dimensions": [50.0],
         "expected_entities": {"line_min": 2, "line_max": 4},
