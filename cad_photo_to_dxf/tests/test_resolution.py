@@ -5,7 +5,10 @@ import numpy as np
 import pytest
 
 from app.geometry_cleaner import GeometryCleanParams
-from app.geometry_normalized import effective_geometry_params
+from app.geometry_normalized import (
+    clean_geometry_with_report as clean_normalized_geometry,
+    effective_geometry_params,
+)
 from app.line_detect import LineDetectionParams, LineSegment, detect_lines
 from app.preprocess import preprocess_image_with_stages
 from app.resolution import (
@@ -58,6 +61,18 @@ def test_geometry_distances_scale_together() -> None:
     assert effective.collinear_distance == pytest.approx(3.0 * scale)
     assert effective.duplicate_distance == pytest.approx(3.0 * scale)
     assert effective.min_line_length == pytest.approx(12.0 * scale)
+
+
+def test_invalid_candidates_do_not_block_geometry_filtering() -> None:
+    invalid = LineSegment(float("nan"), 0, 100, 0, source_ids=("BAD",))
+    valid = LineSegment(0, 0, 100, 0, source_ids=("GOOD",))
+    result = clean_normalized_geometry(
+        [invalid, valid],
+        GeometryCleanParams(min_line_length=1),
+    )
+    assert result.report.final_invalid_removed == 1
+    assert len(result.lines) == 1
+    assert result.lines[0].source_ids == ("GOOD",)
 
 
 def test_sparse_drawing_uses_full_image_scale_when_supplied() -> None:
