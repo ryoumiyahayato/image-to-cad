@@ -94,13 +94,66 @@ def effective_line_detection_params(
     return effective, factor
 
 
-def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
+def _normal_and_radius(segment: LineSegment) -> tuple[np.ndarray, int] | None:
     vector = segment.p2 - segment.p1
     norm = float(np.linalg.norm(vector))
     if norm <= 1e-9:
-        return 1.0
+        return None
     normal = np.array([-vector[1], vector[0]], dtype=float) / norm
-    search_radius = max(4, min(20, int(round(segment.length * 0.025))))
+    search_radius = max(4, min(24, int(round(segment.length * 0.025))))
+    return normal, search_radius
+
+
+def _refine_to_centerline(
+    distance_map: np.ndarray,
+    segment: LineSegment,
+) -> LineSegment:
+    """Move an edge-derived candidate to the nearest stable stroke ridge."""
+    geometry = _normal_and_radius(segment)
+    if geometry is None:
+        return segment
+    normal, search_radius = geometry
+    vector = segment.p2 - segment.p1
+    offsets: list[float] = []
+    improvements: list[float] = []
+    for t in np.linspace(0.15, 0.85, 7):
+        point = segment.p1 + vector * t
+        profile: list[tuple[int, float]] = []
+        for offset in range(-search_radius, search_radius + 1):
+            sample = point + normal * offset
+            x, y = int(round(sample[0])), int(round(sample[1]))
+            if 0 <= y < distance_map.shape[0] and 0 <= x < distance_map.shape[1]:
+                profile.append((offset, float(distance_map[y, x])))
+        if not profile:
+            continue
+        base = min(profile, key=lambda item: abs(item[0]))[1]
+        best_offset, best_value = max(profile, key=lambda item: item[1])
+        offsets.append(float(best_offset))
+        improvements.append(best_value - base)
+    if not offsets or float(np.median(improvements)) < 0.75:
+        return segment
+    shift = float(np.median(offsets))
+    if abs(shift) < 0.5:
+        return segment
+    # Reject unstable searches that point to different neighbouring strokes.
+    if float(np.median(np.abs(np.asarray(offsets) - shift))) > 2.5:
+        return segment
+    delta = normal * shift
+    return segment.copy(
+        x1=float(segment.x1 + delta[0]),
+        y1=float(segment.y1 + delta[1]),
+        x2=float(segment.x2 + delta[0]),
+        y2=float(segment.y2 + delta[1]),
+        history=tuple(dict.fromkeys(segment.history + ("refine_centerline",))),
+    )
+
+
+def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
+    geometry = _normal_and_radius(segment)
+    if geometry is None:
+        return 1.0
+    normal, search_radius = geometry
+    vector = segment.p2 - segment.p1
     samples = []
     for t in np.linspace(0.1, 0.9, 7):
         point = segment.p1 + vector * t
@@ -137,7 +190,6 @@ def detect_lines(
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
 
     foreground = 255 - binary_image
-    # Scale the close kernel with image resolution while keeping it odd.
     close_size = max(3, int(round(3.0 * resolution_factor)))
     if close_size % 2 == 0:
         close_size += 1
@@ -175,6 +227,7 @@ def detect_lines(
                 history=("detected:hough",),
             )
             if segment.length >= params.min_line_length:
+                segment = _refine_to_centerline(distance_map, segment)
                 segment.width = _estimate_width(distance_map, segment)
                 segments.append(_normalize_endpoint_order(segment))
     report_progress(progress_callback, "hough", 0.55)
@@ -200,11 +253,11 @@ def detect_lines(
                     history=("detected:lsd",),
                 )
                 if segment.length >= params.min_line_length:
+                    segment = _refine_to_centerline(distance_map, segment)
                     segment.width = _estimate_width(distance_map, segment)
                     segments.append(_normalize_endpoint_order(segment))
     report_progress(progress_callback, "lsd", 0.9)
 
-    # Prefer longer and stronger lines if a noisy image creates an excessive number.
     segments.sort(key=lambda line: (line.length * line.confidence, line.width), reverse=True)
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-detection", 1.0)
