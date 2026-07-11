@@ -16,6 +16,9 @@ from app.line_detect import LineSegment
 from app.topology import validate_topology
 
 
+SUPPORTED_ENTITY_TYPES = {"LINE", "CIRCLE"}
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -62,7 +65,7 @@ def main() -> int:
     args = _parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     evidence: dict[str, object] = {
-        "schema_version": "dxf-validation/2",
+        "schema_version": "dxf-validation/3",
         "started_at_utc": datetime.now(timezone.utc).isoformat(),
         "input": str(args.input.resolve()),
         "success": False,
@@ -74,6 +77,16 @@ def main() -> int:
         document = ezdxf.readfile(str(args.input))
         auditor = document.audit()
         modelspace = document.modelspace()
+        entity_type_counts = Counter(entity.dxftype() for entity in modelspace)
+        unexpected_entity_types = sorted(
+            entity_type
+            for entity_type in entity_type_counts
+            if entity_type not in SUPPORTED_ENTITY_TYPES
+        )
+        unexpected_entity_count = sum(
+            entity_type_counts[entity_type] for entity_type in unexpected_entity_types
+        )
+
         lines: list[LineSegment] = []
         circles: list[tuple[float, float, float, str]] = []
         layers: Counter[str] = Counter()
@@ -121,6 +134,8 @@ def main() -> int:
             circles.append((*values, layer))
             layers[layer] += 1
 
+        supported_entity_count = len(lines) + len(circles)
+        empty_geometry = supported_entity_count == 0
         line_keys = Counter(_canonical_line_key(line) for line in lines)
         exact_line_duplicates = sum(
             count - 1 for count in line_keys.values() if count > 1
@@ -165,6 +180,11 @@ def main() -> int:
                 "audit_fix_count": len(auditor.fixes),
                 "audit_errors": [str(item) for item in auditor.errors],
                 "audit_fixes": [str(item) for item in auditor.fixes],
+                "entity_type_counts": dict(sorted(entity_type_counts.items())),
+                "supported_entity_count": supported_entity_count,
+                "unexpected_entity_types": unexpected_entity_types,
+                "unexpected_entity_count": unexpected_entity_count,
+                "empty_geometry": empty_geometry,
                 "line_count": len(lines),
                 "circle_count": len(circles),
                 "layer_counts": dict(sorted(layers.items())),
@@ -180,6 +200,8 @@ def main() -> int:
         )
         evidence["success"] = (
             len(auditor.errors) == 0
+            and not empty_geometry
+            and unexpected_entity_count == 0
             and nonfinite_lines == 0
             and zero_length_lines == 0
             and exact_line_duplicates == 0
