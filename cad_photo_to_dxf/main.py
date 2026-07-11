@@ -107,7 +107,7 @@ def run_headless(args: argparse.Namespace) -> int:
 def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
-        from app.gui import MainWindow
+        from app.gui_guard import MainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
