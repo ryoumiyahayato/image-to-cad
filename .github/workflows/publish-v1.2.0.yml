@@ -16,13 +16,18 @@ jobs:
   test:
     runs-on: windows-latest
     timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: cad_photo_to_dxf
 
     steps:
       - name: Checkout triggering commit
         uses: actions/checkout@v4
+
+      - name: Initialize diagnostics
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force validation-diagnostics | Out-Null
+          "workspace=$env:GITHUB_WORKSPACE" | Set-Content validation-diagnostics/start.txt
+          "project_exists=$(Test-Path cad_photo_to_dxf)" | Add-Content validation-diagnostics/start.txt
+          Get-ChildItem -Force | Select-Object Name, Length | Out-String | Add-Content validation-diagnostics/start.txt
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -32,23 +37,26 @@ jobs:
       - name: Install validation dependencies
         shell: pwsh
         run: |
-          python -m pip install --upgrade pip 2>&1 | Tee-Object -FilePath validation-setup.txt
+          Set-Location cad_photo_to_dxf
+          python -m pip install --upgrade pip 2>&1 | Tee-Object -FilePath ../validation-diagnostics/setup.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          pip install -r requirements.txt "pytest>=8,<9" "ruff>=0.9,<1" 2>&1 | Tee-Object -FilePath validation-setup.txt -Append
+          pip install -r requirements.txt "pytest>=8,<9" "ruff>=0.9,<1" 2>&1 | Tee-Object -FilePath ../validation-diagnostics/setup.txt -Append
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run tests
         shell: pwsh
         run: |
-          python -m pytest -q 2>&1 | Tee-Object -FilePath validation-pytest.txt
+          Set-Location cad_photo_to_dxf
+          python -m pytest -q 2>&1 | Tee-Object -FilePath ../validation-diagnostics/pytest.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run static checks
         shell: pwsh
         run: |
-          python -m compileall -q app main.py 2>&1 | Tee-Object -FilePath validation-compile.txt
+          Set-Location cad_photo_to_dxf
+          python -m compileall -q app main.py 2>&1 | Tee-Object -FilePath ../validation-diagnostics/compile.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m ruff check . 2>&1 | Tee-Object -FilePath validation-ruff.txt
+          python -m ruff check . 2>&1 | Tee-Object -FilePath ../validation-diagnostics/ruff.txt
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Upload validation diagnostics
@@ -56,10 +64,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: validation-diagnostics
-          path: |
-            cad_photo_to_dxf/validation-setup.txt
-            cad_photo_to_dxf/validation-pytest.txt
-            cad_photo_to_dxf/validation-compile.txt
-            cad_photo_to_dxf/validation-ruff.txt
-          if-no-files-found: warn
+          path: validation-diagnostics/*
+          if-no-files-found: error
           retention-days: 7
