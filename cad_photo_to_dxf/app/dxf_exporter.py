@@ -7,7 +7,7 @@ import ezdxf
 from ezdxf import units
 import numpy as np
 
-from .auxiliary_recognition import CircleCandidate
+from .auxiliary_recognition import MIN_CIRCLE_EXPORT_CONFIDENCE, CircleCandidate
 from .line_detect import LineSegment
 from .scale_calibrator import ScaleCalibration
 
@@ -42,7 +42,11 @@ def export_dxf(
     *,
     circles: list[CircleCandidate] | None = None,
 ) -> ExportResult:
-    """Export editable LINE entities and explicitly confirmed CIRCLE entities."""
+    """Export editable LINE entities and explicitly confirmed CIRCLE entities.
+
+    Circle confidence is rechecked at the file boundary. This prevents callers
+    from bypassing the GUI review gate by passing a weak raw candidate directly.
+    """
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     scale = calibration.mm_per_pixel if calibration is not None else 1.0
@@ -79,7 +83,11 @@ def export_dxf(
             [circle.center[0], circle.center[1], circle.radius, circle.confidence],
             dtype=float,
         )
-        if not np.isfinite(values).all() or circle.radius <= 1e-9:
+        if (
+            not np.isfinite(values).all()
+            or circle.radius <= 1e-9
+            or circle.confidence < MIN_CIRCLE_EXPORT_CONFIDENCE
+        ):
             continue
         center = (
             circle.center[0] * scale,
