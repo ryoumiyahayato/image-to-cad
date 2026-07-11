@@ -5,8 +5,6 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$installerPath = (Resolve-Path -LiteralPath $Installer).Path
-$samplePath = (Resolve-Path -LiteralPath $Sample).Path
 $work = [System.IO.Path]::GetFullPath($WorkingDirectory)
 $installDir = Join-Path $work "installed"
 $runDir = Join-Path $work "run"
@@ -20,6 +18,10 @@ function Write-SmokeLog([string]$Message) {
 
 $gui = $null
 try {
+    Write-SmokeLog "Resolving installer path: $Installer"
+    $installerPath = (Resolve-Path -LiteralPath $Installer).Path
+    $samplePath = (Resolve-Path -LiteralPath $Sample).Path
+
     Write-SmokeLog "Starting silent install: $installerPath"
     $installArguments = @(
         "/VERYSILENT",
