@@ -10,7 +10,12 @@ from .geometry_cleaner import GeometryCleanParams, GeometryCleanReport
 from .geometry_normalized import clean_geometry_with_report
 from .layer_classifier import ClassificationReport, classify_layers_with_report
 from .line_detect import LineDetectionParams, LineSegment, detect_lines, render_line_preview
-from .preprocess import PreprocessParams, PreprocessResult, preprocess_image_with_stages
+from .preprocess import (
+    PreprocessParams,
+    PreprocessResult,
+    _to_grayscale,
+    preprocess_image_with_stages,
+)
 from .resolution import image_resolution_scale
 from .topology import (
     IntersectionSplitReport,
@@ -113,14 +118,15 @@ class PipelineService:
         else:
             if existing_binary.size == 0:
                 raise ValueError("Existing binary image must not be empty")
-            if existing_binary.ndim not in (2, 3):
-                raise ValueError("Existing binary image must be grayscale or color")
             if existing_binary.shape[:2] != corrected_image.shape[:2]:
                 raise ValueError(
                     "Existing binary image dimensions do not match the corrected image; "
                     "run preprocessing again"
                 )
-            binary = existing_binary.copy()
+            # Validate both images with the same format gate used by a fresh
+            # preprocessing run. Only the cached binary is used downstream.
+            _to_grayscale(corrected_image)
+            binary = _to_grayscale(existing_binary)
             preprocess_scale = image_resolution_scale(binary.shape)
             report_progress(progress_callback, "preprocess:reuse", 0.25)
 
