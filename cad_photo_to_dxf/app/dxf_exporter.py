@@ -12,6 +12,7 @@ from .scale_calibrator import ScaleCalibration
 
 
 COORDINATE_MODES = {"pixel_units", "paper_mm", "model_mm"}
+DXF_UNITLESS = 0
 
 
 @dataclass(frozen=True)
@@ -57,9 +58,9 @@ def export_dxf(
 
     doc = ezdxf.new("R2010", setup=True)
     if mode == "pixel_units":
-        doc.units = units.UNITLESS
+        doc.units = DXF_UNITLESS
         doc.header["$MEASUREMENT"] = 0
-        doc.header["$INSUNITS"] = units.UNITLESS
+        doc.header["$INSUNITS"] = DXF_UNITLESS
         unit_name = "pixel_unit"
     else:
         doc.units = units.MM
