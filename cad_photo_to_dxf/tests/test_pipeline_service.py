@@ -4,6 +4,7 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import pytest
 
 from app.dxf_exporter import ExportResult
 from app.geometry_cleaner import GeometryCleanParams, GeometryCleanReport
@@ -31,6 +32,13 @@ def test_shared_pipeline_service_vectorizes_existing_binary() -> None:
     assert result.classification_report.input_lines >= len(result.lines)
     assert result.intersection_split_report.output_lines >= len(result.lines)
     assert result.topology_report.line_count == result.intersection_split_report.output_lines
+
+
+def test_shared_pipeline_rejects_stale_binary_dimensions() -> None:
+    corrected = np.full((500, 700, 3), 255, np.uint8)
+    stale_binary = np.full((480, 700), 255, np.uint8)
+    with pytest.raises(ValueError, match="dimensions do not match"):
+        PipelineService.vectorize(corrected, existing_binary=stale_binary)
 
 
 def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
