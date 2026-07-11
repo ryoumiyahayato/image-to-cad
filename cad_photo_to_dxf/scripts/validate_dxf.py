@@ -11,12 +11,15 @@ from typing import Any
 from app.dxf_validator import validate_dxf
 
 
+_FREECAD_JSON_PREFIX = "DXF_VALIDATION_JSON="
+
+
 def validate_with_freecad(
     path: Path,
     freecad_command: str,
 ) -> dict[str, Any]:
     """Import a DXF with FreeCADCmd and return machine-readable evidence."""
-    script = """from __future__ import annotations
+    script = f'''from __future__ import annotations
 import json
 import sys
 
@@ -27,12 +30,16 @@ input_path = sys.argv[-1]
 document = FreeCAD.newDocument("DXFValidation")
 importDXF.insert(input_path, document.Name)
 document.recompute()
-print(json.dumps({
-    "passed": True,
-    "object_count": len(document.Objects),
+object_count = len(document.Objects)
+payload = {{
+    "passed": object_count > 0,
+    "object_count": object_count,
     "freecad_version": list(FreeCAD.Version()),
-}, ensure_ascii=False))
-"""
+}}
+print("{_FREECAD_JSON_PREFIX}" + json.dumps(payload, ensure_ascii=False))
+if object_count <= 0:
+    raise SystemExit(2)
+'''
     with tempfile.TemporaryDirectory() as directory:
         script_path = Path(directory) / "freecad_validate.py"
         script_path.write_text(script, encoding="utf-8")
@@ -43,19 +50,38 @@ print(json.dumps({
             check=False,
             timeout=120,
         )
-    output_lines = [line for line in completed.stdout.splitlines() if line.strip()]
+
+    parsed: dict[str, Any] | None = None
+    for line in reversed(completed.stdout.splitlines()):
+        stripped = line.strip()
+        if not stripped.startswith(_FREECAD_JSON_PREFIX):
+            continue
+        try:
+            value = json.loads(stripped[len(_FREECAD_JSON_PREFIX) :])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict):
+            parsed = value
+            break
+
     payload: dict[str, Any] = {
         "command": freecad_command,
         "return_code": completed.returncode,
-        "passed": completed.returncode == 0,
         "stdout": completed.stdout,
         "stderr": completed.stderr,
     }
-    if output_lines:
-        try:
-            payload.update(json.loads(output_lines[-1]))
-        except json.JSONDecodeError:
-            payload["parse_warning"] = "FreeCAD output did not end with JSON"
+    if parsed is None:
+        payload["parse_warning"] = "FreeCAD output did not contain validation JSON"
+        payload["passed"] = False
+        return payload
+
+    payload.update(parsed)
+    object_count = int(parsed.get("object_count", 0) or 0)
+    payload["passed"] = (
+        completed.returncode == 0
+        and bool(parsed.get("passed"))
+        and object_count > 0
+    )
     return payload
 
 
