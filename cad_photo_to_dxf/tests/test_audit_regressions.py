@@ -63,6 +63,25 @@ class AuditRegressionTests(unittest.TestCase):
         self.assertEqual(result.zero_length_count, 1)
         self.assertEqual(result.invalid_coordinate_count, 0)
 
+    def test_topology_diagnostics_do_not_reject_open_drawing_details(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "topology.dxf"
+            document = ezdxf.new("R2010")
+            modelspace = document.modelspace()
+            modelspace.add_line((0, 0), (10, 0))
+            modelspace.add_line((10.2, 0), (20, 0))
+            modelspace.add_line((5, -5), (5, 5))
+            document.saveas(path)
+
+            result = validate_dxf(path, gap_tolerance=0.5)
+
+        self.assertTrue(result.passed)
+        self.assertEqual(result.near_gap_count, 1)
+        self.assertEqual(result.unsplit_intersection_count, 1)
+        self.assertEqual(result.open_component_count, 3)
+        self.assertEqual(result.closed_component_count, 0)
+        self.assertEqual(result.dangling_endpoint_count, 6)
+
 
 if __name__ == "__main__":
     unittest.main()
