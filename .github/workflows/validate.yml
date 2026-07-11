@@ -49,6 +49,8 @@ jobs:
   freecad-import:
     runs-on: ubuntu-22.04
     timeout-minutes: 45
+    env:
+      FREECAD_APT_VERSION: 0.19.2+dfsg1-3ubuntu1
 
     steps:
       - name: Checkout triggering commit
@@ -67,22 +69,22 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
-      - name: Install and record FreeCAD package
+      - name: Install pinned FreeCAD package and record environment
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update
-          candidate="$(apt-cache policy freecad | awk '/Candidate:/ {print $2}')"
-          if [[ -z "$candidate" || "$candidate" == "(none)" ]]; then
-            echo "No FreeCAD package candidate is available" >&2
+          if ! apt-cache madison freecad | awk '{print $3}' | grep -Fx "$FREECAD_APT_VERSION"; then
+            echo "Pinned FreeCAD package is unavailable: $FREECAD_APT_VERSION" >&2
+            apt-cache policy freecad >&2
             exit 1
           fi
-          sudo apt-get install -y "freecad=$candidate"
+          sudo apt-get install -y "freecad=$FREECAD_APT_VERSION"
           mkdir -p cad_photo_to_dxf/output/freecad
           {
             echo "runner=ubuntu-22.04"
             echo "apt_package=freecad"
-            echo "apt_version=$candidate"
+            echo "pinned_apt_version=$FREECAD_APT_VERSION"
             dpkg-query -W -f='installed_version=${Version}\n' freecad
           } | tee cad_photo_to_dxf/output/freecad/freecad-package.txt
 
@@ -101,7 +103,7 @@ jobs:
             --paper-orientation landscape \
             --auxiliary
 
-      - name: Validate DXF with fixed FreeCAD environment
+      - name: Validate DXF with pinned FreeCAD environment
         working-directory: cad_photo_to_dxf
         shell: bash
         run: |
