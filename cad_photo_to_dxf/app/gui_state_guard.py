@@ -7,8 +7,27 @@ from PySide6.QtWidgets import QMessageBox
 from .gui_review import MainWindow as _ReviewedMainWindow
 
 
+UNSCALED_LABEL = "比例：未校准（1 px = 1 个无单位图形单位）"
+
+
 class MainWindow(_ReviewedMainWindow):
     """Final GUI entry point with transactional image-state changes."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        if self.calibration is None:
+            self.info_label.setText(UNSCALED_LABEL)
+
+    def import_image(self) -> None:
+        revision_before = self._state_revision
+        super().import_image()
+        if self._state_revision != revision_before and self.calibration is None:
+            self.info_label.setText(UNSCALED_LABEL)
+
+    def _apply_paper_calibration(self) -> None:
+        super()._apply_paper_calibration()
+        if self.calibration is None:
+            self.info_label.setText(UNSCALED_LABEL)
 
     def auto_perspective(self) -> None:
         if self._is_processing():
@@ -37,3 +56,5 @@ class MainWindow(_ReviewedMainWindow):
             # Restore metadata because the guarded parent may otherwise append a
             # rotation record even though the pixels did not change.
             self._perspective_metadata = metadata_before
+        elif self.calibration is None:
+            self.info_label.setText(UNSCALED_LABEL)
