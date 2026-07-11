@@ -33,6 +33,8 @@ class GeometryCleanReport:
     final_orthogonalized: int = 0
     final_snap_moved_endpoints: int = 0
     final_short_removed: int = 0
+    final_canonicalized: int = 0
+    final_duplicate_merges: int = 0
     output_lines: int = 0
 
 
@@ -337,6 +339,25 @@ def remove_duplicates(
     return _remove_duplicates_with_count(lines, params, cancellation_token)[0]
 
 
+def _canonicalize_endpoints(line: LineSegment) -> LineSegment:
+    """Use one deterministic endpoint order before final duplicate checks and export."""
+    start = (float(line.x1), float(line.y1))
+    end = (float(line.x2), float(line.y2))
+    if start <= end:
+        return line
+    return line.copy(
+        x1=line.x2,
+        y1=line.y2,
+        x2=line.x1,
+        y2=line.y1,
+        history=tuple(dict.fromkeys(line.history + ("canonicalize_endpoints",))),
+    )
+
+
+def _valid_length(line: LineSegment, minimum: float) -> bool:
+    return line.length > 1e-9 and line.length >= minimum
+
+
 def clean_geometry(
     lines: list[LineSegment],
     params: GeometryCleanParams | None = None,
@@ -365,7 +386,7 @@ def clean_geometry_with_report(
         1 for before, after in zip(prepared, cleaned) if before is not after
     )
     before_count = len(cleaned)
-    cleaned = [line for line in cleaned if line.length >= params.min_line_length]
+    cleaned = [line for line in cleaned if _valid_length(line, params.min_line_length)]
     report.initial_short_removed = before_count - len(cleaned)
 
     cleaned, report.first_snap_moved_endpoints = _snap_endpoints_with_count(
@@ -383,14 +404,26 @@ def clean_geometry_with_report(
     report.final_orthogonalized = sum(
         1 for before, after in zip(before_orthogonal, cleaned) if before is not after
     )
-    # Snapping is deliberately the final coordinate-changing operation so a
-    # shared endpoint cannot be pulled apart by a later orthogonalization pass.
+    # Snapping remains the last geometric adjustment. Canonicalization only
+    # changes endpoint order and therefore cannot pull a shared junction apart.
     cleaned, report.final_snap_moved_endpoints = _snap_endpoints_with_count(
         cleaned, params.snap_distance, cancellation_token
     )
     before_count = len(cleaned)
-    cleaned = [line for line in cleaned if line.length >= params.min_line_length]
+    cleaned = [line for line in cleaned if _valid_length(line, params.min_line_length)]
     report.final_short_removed = before_count - len(cleaned)
+
+    before_canonical = cleaned
+    cleaned = [_canonicalize_endpoints(line) for line in cleaned]
+    report.final_canonicalized = sum(
+        1 for before, after in zip(before_canonical, cleaned) if before is not after
+    )
+    # Orthogonalization and snapping can move previously distinct candidates to
+    # identical coordinates. A mandatory second pass keeps exported entities unique.
+    cleaned, report.final_duplicate_merges = _remove_duplicates_with_count(
+        cleaned, params, cancellation_token
+    )
+
     report.output_lines = len(cleaned)
     checkpoint(cancellation_token)
     return GeometryCleanResult(cleaned, report)
