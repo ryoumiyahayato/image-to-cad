@@ -102,6 +102,9 @@ class SharedProcessingTests(unittest.TestCase):
 
         self.assertEqual(report["export"]["coordinate_mode"], "pixel_units")
         self.assertIsNone(report["export"]["mm_per_pixel"])
+        self.assertTrue(report["validation"]["passed"])
+        self.assertEqual(report["validation"]["duplicate_line_count"], 0)
+        self.assertEqual(report["validation"]["zero_length_count"], 0)
         self.assertEqual(
             report["lineage"]["final_entity_count"],
             len(processed.lines),
