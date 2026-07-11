@@ -64,6 +64,14 @@ def create_valid_fixture(root: Path) -> Path:
         "corner_tolerance_px": 3.0,
         "calibration_dimensions": [100.0],
         "verification_dimensions": [50.0],
+        "verification_references": [
+            {
+                "id": "independent-height",
+                "ground_truth_start": [100.0, 0.0],
+                "ground_truth_end": [100.0, 50.0],
+                "expected_mm": 50.0,
+            }
+        ],
         "expected_entities": {"line_min": 2, "line_max": 4},
         "expected_layers": {"WALL": {"min": 2, "max": 4}},
         "intentional_open_contours": True,
@@ -151,6 +159,35 @@ class FixtureValidationTests(unittest.TestCase):
         self.assertFalse(result.passed)
         self.assertEqual(result.qualifying_count, 0)
         self.assertIn("minimum required is 1", result.errors[0])
+
+    def test_manifest_check_rejects_unmeasurable_verification_dimensions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            fixture = create_valid_fixture(root)
+            manifest_path = fixture / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["verification_references"][0]["expected_mm"] = 40.0
+            manifest["verification_dimensions"] = [40.0]
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            report_path = root / "qualification.json"
+            with patch.object(
+                sys,
+                "argv",
+                [
+                    "validate_fixtures.py",
+                    str(root),
+                    "--minimum",
+                    "0",
+                    "--output",
+                    str(report_path),
+                ],
+            ):
+                status = fixture_cli.main()
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(status, 1)
+        self.assertFalse(report["reference_validation_passed"])
+        self.assertIn("real-photo-001", report["reference_errors"])
 
     def test_release_gate_requires_all_capture_categories(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
