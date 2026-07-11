@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from pathlib import Path
+import tempfile
 import unittest
 
 import cv2
 import numpy as np
 
+from app import __version__
 from app.line_detect import LineSegment, _refine_to_centerline
+from scripts.versioning import parse_version, write_windows_version_info
 
 
 class AuditRegressionTests(unittest.TestCase):
@@ -28,6 +32,17 @@ class AuditRegressionTests(unittest.TestCase):
         self.assertAlmostEqual(refined.y1, 120.0, delta=1.0)
         self.assertAlmostEqual(refined.y2, 120.0, delta=1.0)
         self.assertIn("refine_centerline", refined.history)
+
+    def test_windows_version_metadata_uses_application_version(self) -> None:
+        self.assertEqual(parse_version(__version__), (1, 1, 0, 0))
+        with tempfile.TemporaryDirectory() as directory:
+            output = write_windows_version_info(
+                Path(directory) / "version_info.txt",
+                __version__,
+            )
+            content = output.read_text(encoding="utf-8")
+        self.assertIn(f"FileVersion', u'{__version__}'", content)
+        self.assertIn(f"ProductVersion', u'{__version__}'", content)
 
 
 if __name__ == "__main__":
