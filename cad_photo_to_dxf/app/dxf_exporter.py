@@ -11,12 +11,17 @@ from .line_detect import LineSegment
 from .scale_calibrator import ScaleCalibration
 
 
+COORDINATE_MODES = {"pixel_units", "paper_mm", "model_mm"}
+
+
 @dataclass(frozen=True)
 class ExportResult:
     path: Path
     line_count: int
     mm_per_pixel: float
     calibrated: bool
+    coordinate_mode: str
+    unit_name: str
     skipped_line_count: int = 0
 
 
@@ -35,16 +40,32 @@ def export_dxf(
     output_path: str | Path,
     image_height: int,
     calibration: ScaleCalibration | None = None,
+    *,
+    coordinate_mode: str | None = None,
 ) -> ExportResult:
     """Export independently editable LINE entities to a DXF R2010 document."""
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     scale = calibration.mm_per_pixel if calibration is not None else 1.0
+    mode = coordinate_mode or ("model_mm" if calibration is not None else "pixel_units")
+    if mode not in COORDINATE_MODES:
+        raise ValueError(f"Unknown coordinate mode: {mode}")
+    if mode in {"paper_mm", "model_mm"} and calibration is None:
+        raise ValueError(f"Coordinate mode {mode} requires a scale calibration")
+    if mode == "pixel_units" and calibration is not None:
+        raise ValueError("Pixel coordinate mode cannot use a millimetre calibration")
 
     doc = ezdxf.new("R2010", setup=True)
-    doc.units = units.MM
-    doc.header["$MEASUREMENT"] = 1
-    doc.header["$INSUNITS"] = units.MM
+    if mode == "pixel_units":
+        doc.units = units.UNITLESS
+        doc.header["$MEASUREMENT"] = 0
+        doc.header["$INSUNITS"] = units.UNITLESS
+        unit_name = "pixel_unit"
+    else:
+        doc.units = units.MM
+        doc.header["$MEASUREMENT"] = 1
+        doc.header["$INSUNITS"] = units.MM
+        unit_name = "mm"
     doc.header["$LUNITS"] = 2
 
     for layer_name, style in LAYER_STYLES.items():
@@ -83,5 +104,7 @@ def export_dxf(
         len(valid_lines),
         scale,
         calibration is not None,
+        coordinate_mode=mode,
+        unit_name=unit_name,
         skipped_line_count=len(lines) - len(valid_lines),
     )
