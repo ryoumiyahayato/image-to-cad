@@ -40,6 +40,19 @@ def test_geometry_distances_scale_together() -> None:
     assert effective.min_line_length == pytest.approx(12.0 * scale)
 
 
+def test_sparse_drawing_uses_full_image_scale_when_supplied() -> None:
+    sparse = [LineSegment(100, 100, 300, 100, source_ids=("A",))]
+    image_scale = image_resolution_scale((3500, 5000))
+    effective, scale = effective_geometry_params(
+        sparse,
+        GeometryCleanParams(),
+        resolution_scale=image_scale,
+    )
+    assert scale == pytest.approx(5000 / 2400)
+    assert effective.snap_distance == pytest.approx(6.0 * scale)
+    assert effective.min_line_length == pytest.approx(12.0 * scale)
+
+
 def test_thick_stroke_candidates_are_recentred() -> None:
     image = np.full((1000, 1600), 255, np.uint8)
     cv2.line(image, (150, 500), (1450, 500), 0, 36)
