@@ -18,6 +18,7 @@
     "paper",
     "coordinate_mode",
     "expected_corners_px",
+    "corner_tolerance_px",
     "calibration_dimensions",
     "verification_dimensions",
     "expected_entities",
@@ -65,6 +66,26 @@
       }
     },
     "coordinate_mode": {"enum": ["paper_mm", "model_mm"]},
+    "calibration_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_px", "end_px", "length_mm"],
+      "properties": {
+        "start_px": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "end_px": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "length_mm": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
     "expected_corners_px": {
       "type": "array",
       "minItems": 4,
@@ -76,6 +97,7 @@
         "items": {"type": "number"}
       }
     },
+    "corner_tolerance_px": {"type": "number", "minimum": 0},
     "calibration_dimensions": {
       "type": "array",
       "minItems": 1,
@@ -126,5 +148,13 @@
       }
     },
     "freecad_version": {"const": "0.19.2"}
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"coordinate_mode": {"const": "model_mm"}}
+      },
+      "then": {"required": ["calibration_reference"]}
+    }
+  ]
 }
