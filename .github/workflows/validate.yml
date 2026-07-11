@@ -115,10 +115,19 @@ jobs:
             exit 1
           fi
           "$freecad_cmd" --version | tee output/freecad/freecad-command-version.txt
+          set +e
           python scripts/validate_dxf.py \
             output/freecad/sample.dxf \
             --output output/freecad/freecad-validation.json \
-            --freecad-command "$freecad_cmd"
+            --freecad-command "$freecad_cmd" \
+            > output/freecad/validator-console.txt 2>&1
+          validator_status=$?
+          set -e
+          echo "$validator_status" > output/freecad/validator-exit-code.txt
+          cat output/freecad/validator-console.txt
+          if [[ $validator_status -ne 0 ]]; then
+            exit "$validator_status"
+          fi
           python - <<'PY'
           import json
           from pathlib import Path
