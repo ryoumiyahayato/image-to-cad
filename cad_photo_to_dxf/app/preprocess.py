@@ -52,7 +52,7 @@ def _remove_small_components(
     count, labels, stats, _ = cv2.connectedComponentsWithStats(foreground, connectivity=8)
     cleaned = np.zeros_like(foreground)
     for label in range(1, count):
-        x, y, width, height, area = stats[label]
+        _x, _y, width, height, area = stats[label]
         if area >= min_area or max(width, height) >= min_extent:
             cleaned[labels == label] = 255
     return cleaned
@@ -78,7 +78,11 @@ def preprocess_image_with_stages(
     stages: dict[str, np.ndarray] = {"01_grayscale": gray.copy()}
 
     checkpoint(cancellation_token)
-    denoise = scaled_odd(params.denoise_strength, scale, minimum=1)
+    denoise = (
+        1
+        if params.denoise_strength <= 1
+        else scaled_odd(params.denoise_strength, scale, minimum=3)
+    )
     if denoise > 1:
         gray = cv2.medianBlur(gray, denoise)
     stages["02_denoised"] = gray.copy()
