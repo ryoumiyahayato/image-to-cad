@@ -107,6 +107,8 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
     assert report["topology"]["validation"]["dangling_endpoints"] == 2
     assert report["lineage"]["final_entity_count"] == 1
     assert report["export"]["coordinate_space"] == "pixel"
+    assert report["export"]["mm_per_pixel"] is None
+    assert report["export"]["drawing_units_per_pixel"] == 1.0
     assert report["export"]["circle_count"] == 1
     assert report["export"]["confirmed_circles"] == [
         {"center": (50.0, 60.0), "radius": 12.0, "confidence": 0.95}
