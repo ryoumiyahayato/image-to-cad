@@ -15,6 +15,7 @@ from app import __version__
 from app.dxf_validator import validate_dxf
 from app.line_detect import LineSegment, _refine_to_centerline
 import main
+from scripts.validate_dxf import validate_with_freecad
 from scripts.versioning import parse_version, write_windows_version_info
 
 
@@ -150,6 +151,55 @@ class AuditRegressionTests(unittest.TestCase):
         self.assertTrue(calls.get("window_created"))
         self.assertTrue(calls.get("window_shown"))
         self.assertTrue(calls.get("executed"))
+
+    def test_freecad_nonzero_exit_cannot_be_overridden_by_success_json(self) -> None:
+        completed = SimpleNamespace(
+            returncode=1,
+            stdout=(
+                "FreeCAD startup noise\n"
+                'DXF_VALIDATION_JSON={"passed": true, "object_count": 3, '
+                '"freecad_version": ["0", "21", "2"]}\n'
+            ),
+            stderr="import failed after reporting",
+        )
+        with patch("scripts.validate_dxf.subprocess.run", return_value=completed):
+            result = validate_with_freecad(Path("drawing.dxf"), "FreeCADCmd")
+
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["return_code"], 1)
+        self.assertEqual(result["object_count"], 3)
+
+    def test_freecad_zero_object_import_is_rejected(self) -> None:
+        completed = SimpleNamespace(
+            returncode=0,
+            stdout=(
+                'DXF_VALIDATION_JSON={"passed": false, "object_count": 0, '
+                '"freecad_version": ["0", "21", "2"]}\n'
+            ),
+            stderr="",
+        )
+        with patch("scripts.validate_dxf.subprocess.run", return_value=completed):
+            result = validate_with_freecad(Path("empty.dxf"), "FreeCADCmd")
+
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["object_count"], 0)
+
+    def test_freecad_nonempty_import_with_zero_exit_is_accepted(self) -> None:
+        completed = SimpleNamespace(
+            returncode=0,
+            stdout=(
+                "FreeCAD startup noise\n"
+                'DXF_VALIDATION_JSON={"passed": true, "object_count": 7, '
+                '"freecad_version": ["0", "21", "2"]}\n'
+            ),
+            stderr="",
+        )
+        with patch("scripts.validate_dxf.subprocess.run", return_value=completed):
+            result = validate_with_freecad(Path("drawing.dxf"), "FreeCADCmd")
+
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["object_count"], 7)
+        self.assertEqual(result["freecad_version"], ["0", "21", "2"])
 
     def test_topology_diagnostics_do_not_reject_open_drawing_details(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
