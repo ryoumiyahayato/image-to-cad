@@ -3,12 +3,13 @@ from __future__ import annotations
 from dataclasses import asdict, is_dataclass
 import json
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any, Iterable
 
 import numpy as np
 
 
-REPORT_SCHEMA_VERSION = "1.2"
+REPORT_SCHEMA_VERSION = "1.3"
 
 
 def _json_value(value: Any) -> Any:
@@ -28,15 +29,32 @@ def _json_value(value: Any) -> Any:
 
 
 def write_json_report(path: str | Path, report: dict[str, Any]) -> Path:
-    """Write a UTF-8 JSON report atomically."""
+    """Write a UTF-8 JSON report atomically without shared temp-name races."""
     output_path = Path(path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = output_path.with_name(f".{output_path.name}.tmp")
-    temporary.write_text(
-        json.dumps(_json_value(report), ensure_ascii=False, indent=2, sort_keys=True),
-        encoding="utf-8",
-    )
-    temporary.replace(output_path)
+    temporary_path: Path | None = None
+    try:
+        with NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=output_path.parent,
+            prefix=f".{output_path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as handle:
+            temporary_path = Path(handle.name)
+            json.dump(
+                _json_value(report),
+                handle,
+                ensure_ascii=False,
+                indent=2,
+                sort_keys=True,
+            )
+            handle.write("\n")
+        temporary_path.replace(output_path)
+    finally:
+        if temporary_path is not None and temporary_path.exists():
+            temporary_path.unlink()
     return output_path
 
 
