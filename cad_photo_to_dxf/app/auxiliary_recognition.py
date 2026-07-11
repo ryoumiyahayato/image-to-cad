@@ -9,6 +9,9 @@ import numpy as np
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 
 
+MIN_CIRCLE_EXPORT_CONFIDENCE = 0.90
+
+
 @dataclass(frozen=True)
 class CircleCandidate:
     center: tuple[float, float]
@@ -40,6 +43,16 @@ class AuxiliaryRecognitionResult:
     warnings: list[str]
 
 
+def confirmable_circles(
+    circles: list[CircleCandidate],
+    minimum_confidence: float = MIN_CIRCLE_EXPORT_CONFIDENCE,
+) -> list[CircleCandidate]:
+    """Return circle candidates eligible for explicit human confirmation."""
+    if not 0.0 <= minimum_confidence <= 1.0:
+        raise ValueError("Circle confidence threshold must be between 0 and 1")
+    return [circle for circle in circles if circle.confidence >= minimum_confidence]
+
+
 def _detect_circles(binary_image: np.ndarray) -> list[CircleCandidate]:
     foreground = 255 - binary_image
     contours, _ = cv2.findContours(foreground, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -59,7 +72,7 @@ def _detect_circles(binary_image: np.ndarray) -> list[CircleCandidate]:
         (x, y), radius = cv2.minEnclosingCircle(contour)
         if radius < 3.0:
             continue
-        bx, by, width, height = cv2.boundingRect(contour)
+        _bx, _by, width, height = cv2.boundingRect(contour)
         aspect = min(width, height) / max(width, height, 1)
         if aspect < 0.82:
             continue
@@ -100,13 +113,19 @@ def _detect_rectangular_symbols(binary_image: np.ndarray) -> list[SymbolCandidat
         else:
             kind = "rectangular_symbol_candidate"
         results.append(
-            SymbolCandidate(kind, (int(x), int(y), int(width), int(height)), 0.4 + 0.4 * rectangularity)
+            SymbolCandidate(
+                kind,
+                (int(x), int(y), int(width), int(height)),
+                0.4 + 0.4 * rectangularity,
+            )
         )
     results.sort(key=lambda item: item.confidence, reverse=True)
     return results[:300]
 
 
-def _run_optional_ocr(binary_image: np.ndarray) -> tuple[list[TextCandidate], str | None]:
+def _run_optional_ocr(
+    binary_image: np.ndarray,
+) -> tuple[list[TextCandidate], str | None]:
     try:
         import pytesseract  # type: ignore[import-not-found]
     except ImportError:
@@ -137,7 +156,11 @@ def _run_optional_ocr(binary_image: np.ndarray) -> tuple[list[TextCandidate], st
             int(data["width"][index]),
             int(data["height"][index]),
         )
-        kind = "dimension_text_candidate" if re.fullmatch(r"[ØRr]?\s*\d+(?:[.,]\d+)?", text) else "text_candidate"
+        kind = (
+            "dimension_text_candidate"
+            if re.fullmatch(r"[ØRr]?\s*\d+(?:[.,]\d+)?", text)
+            else "text_candidate"
+        )
         results.append(TextCandidate(text, bbox, confidence, kind))
     return results, None
 
@@ -150,8 +173,9 @@ def recognize_auxiliary(
 ) -> AuxiliaryRecognitionResult:
     """Detect non-LINE information as review-only candidates.
 
-    Candidates are deliberately excluded from the DXF geometry because circle,
-    OCR, dimension and symbol semantics remain probabilistic in v1.1.
+    Circle candidates above ``MIN_CIRCLE_EXPORT_CONFIDENCE`` may be exported
+    only after explicit human confirmation in the GUI. OCR, dimensions, arcs
+    and symbols remain report-only candidates.
     """
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
@@ -164,7 +188,8 @@ def recognize_auxiliary(
     report_progress(progress_callback, "auxiliary-symbols", 0.65)
 
     warnings = [
-        "圆弧、OCR、尺寸文字和建筑符号仅作为辅助候选，不自动写入 DXF 主体。"
+        "圆形候选只有在达到置信度阈值并经人工确认后才可导出 CIRCLE；"
+        "圆弧、OCR、尺寸文字和建筑符号仍仅作为辅助候选。"
     ]
     texts: list[TextCandidate] = []
     if enable_ocr:
