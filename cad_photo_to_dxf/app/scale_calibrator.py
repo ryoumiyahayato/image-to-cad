@@ -25,9 +25,15 @@ class ScaleCalibration:
 
 
 def create_calibration(
-    points: Iterable[Iterable[float]], actual_length_mm: float
+    points: Iterable[Iterable[float]],
+    actual_length_mm: float,
 ) -> ScaleCalibration:
-    values = [tuple(map(float, point)) for point in points]
+    values: list[tuple[float, float]] = []
+    for point in points:
+        coordinates = tuple(map(float, point))
+        if len(coordinates) != 2:
+            raise ValueError("Each calibration point must contain exactly two coordinates")
+        values.append((coordinates[0], coordinates[1]))
     if len(values) != 2:
         raise ValueError("Exactly two calibration points are required")
     calibration = ScaleCalibration(values[0], values[1], float(actual_length_mm))
