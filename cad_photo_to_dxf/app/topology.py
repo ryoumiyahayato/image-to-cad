@@ -49,6 +49,11 @@ def _cross(a: np.ndarray, b: np.ndarray) -> float:
     return float(a[0] * b[1] - a[1] * b[0])
 
 
+def _angle_difference(left: LineSegment, right: LineSegment) -> float:
+    delta = abs(left.angle - right.angle) % 180.0
+    return min(delta, 180.0 - delta)
+
+
 def _intersection_parameters(
     a: LineSegment,
     b: LineSegment,
@@ -264,6 +269,10 @@ def validate_topology(
     node_centers = {
         root: points[indexes].mean(axis=0) for root, indexes in node_members.items()
     }
+    node_line_indexes = {
+        root: {index % line_count for index in indexes}
+        for root, indexes in node_members.items()
+    }
     degree: dict[int, int] = {root: 0 for root in node_members}
     _graph_parent, graph_find, graph_union = _union_find(len(node_members))
     roots = list(node_members)
@@ -295,9 +304,15 @@ def validate_topology(
     if len(dangling_roots) > 1 and gap_tolerance > endpoint_tolerance:
         dangling_points = np.array([node_centers[root] for root in dangling_roots])
         dangling_tree = cKDTree(dangling_points)
-        for left, right in dangling_tree.query_pairs(gap_tolerance):
+        for left_index, right_index in dangling_tree.query_pairs(gap_tolerance):
+            left_root = dangling_roots[left_index]
+            right_root = dangling_roots[right_index]
+            if node_line_indexes[left_root] & node_line_indexes[right_root]:
+                # The two endpoints belong to the same short open line; that is
+                # an intentional segment, not a missing connection between lines.
+                continue
             distance = float(
-                np.linalg.norm(dangling_points[left] - dangling_points[right])
+                np.linalg.norm(dangling_points[left_index] - dangling_points[right_index])
             )
             if distance > endpoint_tolerance:
                 report.small_gap_pairs += 1
@@ -319,7 +334,13 @@ def validate_topology(
             + np.linalg.norm(left.p2 - right.p1)
         )
         endpoint_error = min(direct, reverse)
-        if exact_quantization * 4.0 < endpoint_error <= endpoint_tolerance * 4.0:
+        same_direction = _angle_difference(left, right) <= 2.0
+        similar_length = abs(left.length - right.length) <= endpoint_tolerance * 2.0
+        if (
+            exact_quantization * 4.0 < endpoint_error <= endpoint_tolerance * 4.0
+            and same_direction
+            and similar_length
+        ):
             report.near_duplicate_pairs += 1
 
         result = _intersection_parameters(left, right, intersection_tolerance)
