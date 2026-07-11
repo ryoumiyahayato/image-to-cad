@@ -9,6 +9,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 APP_ROOT = PROJECT_ROOT / "app"
 
 
+def imported_modules(tree: ast.AST) -> set[str]:
+    modules: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            modules.update(alias.name for alias in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            modules.add(node.module)
+    return modules
+
+
 class GuiArchitectureTests(unittest.TestCase):
     def test_compatibility_gui_contains_no_processing_pipeline(self) -> None:
         source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
@@ -27,16 +37,16 @@ class GuiArchitectureTests(unittest.TestCase):
         }
         self.assertTrue(forbidden_functions.isdisjoint(defined_functions))
 
-        forbidden_import_fragments = (
+        imported = imported_modules(tree)
+        forbidden_modules = {
             "line_detect",
             "geometry_cleaner",
             "layer_classifier",
             "dxf_exporter",
             "reporting",
             "processing_service",
-        )
-        for fragment in forbidden_import_fragments:
-            self.assertNotIn(fragment, source)
+        }
+        self.assertTrue(forbidden_modules.isdisjoint(imported))
 
     def test_active_entrypoint_uses_audited_window(self) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
