@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cad-photo-to-dxf/fixture-manifest.schema.json",
+  "title": "CAD Photo to DXF fixture manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fixture_id",
+    "input_image",
+    "source",
+    "paper",
+    "coordinate_space",
+    "expected",
+    "validation"
+  ],
+  "properties": {
+    "fixture_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]+$"
+    },
+    "description": {
+      "type": "string"
+    },
+    "input_image": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "width_px", "height_px"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "width_px": {"type": "integer", "minimum": 1},
+        "height_px": {"type": "integer", "minimum": 1},
+        "capture_device": {"type": ["string", "null"]},
+        "capture_notes": {"type": ["string", "null"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "license", "redistribution_allowed"],
+      "properties": {
+        "owner": {"type": "string", "minLength": 1},
+        "license": {"type": "string", "minLength": 1},
+        "source_url_or_record": {"type": ["string", "null"]},
+        "redistribution_allowed": {"type": "boolean"}
+      }
+    },
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["size", "orientation", "corners_px"],
+      "properties": {
+        "size": {"type": "string"},
+        "orientation": {"enum": ["portrait", "landscape"]},
+        "width_mm": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "height_mm": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "corners_px": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {"type": "number"}
+          }
+        }
+      }
+    },
+    "coordinate_space": {
+      "enum": ["paper_mm", "model_mm"]
+    },
+    "ground_truth": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["path", "sha256", "format"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "format": {"enum": ["DXF", "DWG", "SVG", "JSON"]},
+        "model_scale_source": {"type": ["string", "null"]}
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "paper_detection_should_succeed",
+        "dxf_audit_errors",
+        "nonfinite_entities",
+        "zero_length_entities",
+        "exact_duplicate_entities"
+      ],
+      "properties": {
+        "paper_detection_should_succeed": {"type": "boolean"},
+        "dxf_audit_errors": {"type": "integer", "minimum": 0},
+        "nonfinite_entities": {"type": "integer", "minimum": 0},
+        "zero_length_entities": {"type": "integer", "minimum": 0},
+        "exact_duplicate_entities": {"type": "integer", "minimum": 0},
+        "allowed_open_components": {"type": ["integer", "null"], "minimum": 0},
+        "expected_layers": {
+          "type": "object",
+          "additionalProperties": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint_error_mm", "angle_error_deg", "scale_error_percent"],
+      "properties": {
+        "endpoint_error_mm": {"type": ["number", "null"], "minimum": 0},
+        "angle_error_deg": {"type": ["number", "null"], "minimum": 0},
+        "hausdorff_error_mm": {"type": ["number", "null"], "minimum": 0},
+        "scale_error_percent": {"type": ["number", "null"], "minimum": 0},
+        "freecad_required": {"type": "boolean", "default": true}
+      }
+    }
+  }
+}
