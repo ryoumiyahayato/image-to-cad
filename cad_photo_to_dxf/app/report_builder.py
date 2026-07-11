@@ -68,6 +68,15 @@ class ReportBuilder:
         else:
             started_value = str(started_at_utc)
 
+        if intersection_split_report is None:
+            intersection_split_report = getattr(
+                geometry_report,
+                "intersection_split_report",
+                None,
+            )
+        if topology_report is None:
+            topology_report = getattr(geometry_report, "topology_report", None)
+
         geometry = _to_dict(geometry_report) or {}
         if isinstance(geometry, dict):
             geometry["resolution_scale"] = float(geometry_resolution_scale)
