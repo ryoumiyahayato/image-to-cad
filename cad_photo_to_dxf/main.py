@@ -1,10 +1,31 @@
 from __future__ import annotations
 
 import argparse
+from math import isfinite
 from pathlib import Path
 import sys
 
 from app import __version__
+
+
+def _positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer") from exc
+    if parsed <= 0:
+        raise argparse.ArgumentTypeError("must be greater than zero")
+    return parsed
+
+
+def _positive_finite_float(value: str) -> float:
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be a number") from exc
+    if not isfinite(parsed) or parsed <= 0:
+        raise argparse.ArgumentTypeError("must be a positive finite number")
+    return parsed
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -16,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--input", type=Path, help="Input JPG/PNG for headless mode")
     parser.add_argument("--output", type=Path, default=Path("output/output.dxf"))
     parser.add_argument("--preview", type=Path, default=Path("output/preview.png"))
-    parser.add_argument("--min-line-length", type=int, default=35)
+    parser.add_argument("--min-line-length", type=_positive_int, default=35)
     parser.add_argument("--threshold-strength", type=int, default=12)
     parser.add_argument(
         "--no-hatch",
@@ -34,8 +55,8 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("auto", "portrait", "landscape"),
         default="auto",
     )
-    parser.add_argument("--paper-width-mm", type=float)
-    parser.add_argument("--paper-height-mm", type=float)
+    parser.add_argument("--paper-width-mm", type=_positive_finite_float)
+    parser.add_argument("--paper-height-mm", type=_positive_finite_float)
     parser.add_argument(
         "--allow-uncorrected",
         action="store_true",
