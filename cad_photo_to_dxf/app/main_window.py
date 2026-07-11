@@ -2,19 +2,13 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QMessageBox
 
-from .gui import MainWindow as _LegacyMainWindow
 from .safe_gui import MainWindow as _AuditedMainWindow
+from .ui_shell import MainWindow as _UiShellMainWindow
 from .workflow_state import WorkflowState, WorkflowStateError
 
 
 class MainWindow(_AuditedMainWindow):
-    """Active application window built on the audited compatibility layer.
-
-    New behaviour belongs here while the remaining legacy widget construction is
-    split into smaller modules. In particular, starting a second scale selection
-    must not discard a valid existing calibration before the user completes the
-    replacement measurement.
-    """
+    """Active GUI window with audited workflow and shared processing services."""
 
     def start_scale_calibration(self) -> None:
         try:
@@ -27,7 +21,7 @@ class MainWindow(_AuditedMainWindow):
             )
             return
 
-        # Call the legacy UI selection implementation directly. The audited
-        # completion handler in safe_gui._on_corrected_point replaces the scale
-        # and workflow state only after two points and a valid length are accepted.
-        _LegacyMainWindow.start_scale_calibration(self)
+        # The UI shell only enters two-point selection mode. The audited
+        # completion handler replaces the existing scale after the new
+        # measurement has been accepted and validated.
+        _UiShellMainWindow.start_scale_calibration(self)
