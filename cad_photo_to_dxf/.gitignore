@@ -1,0 +1,32 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Packaging and generated application artifacts
+build/
+dist/
+installer/output/
+packaging/output/
+*.egg-info/
+
+# Local pipeline and validation output
+output/
+test-output/
+*.report.json
+*.validation.json
+*.freecad.json
+
+# Local editor and operating-system metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
