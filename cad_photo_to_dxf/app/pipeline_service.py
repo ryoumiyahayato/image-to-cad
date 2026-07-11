@@ -86,6 +86,8 @@ class PipelineService:
     ) -> VectorizationResult:
         if corrected_image is None or corrected_image.size == 0:
             raise ValueError("Corrected image must not be empty")
+        if corrected_image.ndim not in (2, 3):
+            raise ValueError("Corrected image must be a grayscale or color image")
         preprocess_params = preprocess_params or PreprocessParams()
         detection_params = detection_params or LineDetectionParams()
         clean_params = clean_params or GeometryCleanParams()
@@ -111,6 +113,13 @@ class PipelineService:
         else:
             if existing_binary.size == 0:
                 raise ValueError("Existing binary image must not be empty")
+            if existing_binary.ndim not in (2, 3):
+                raise ValueError("Existing binary image must be grayscale or color")
+            if existing_binary.shape[:2] != corrected_image.shape[:2]:
+                raise ValueError(
+                    "Existing binary image dimensions do not match the corrected image; "
+                    "run preprocessing again"
+                )
             binary = existing_binary.copy()
             preprocess_scale = image_resolution_scale(binary.shape)
             report_progress(progress_callback, "preprocess:reuse", 0.25)
@@ -180,11 +189,16 @@ class PipelineService:
 
         auxiliary: AuxiliaryRecognitionResult | None = None
         if enable_auxiliary or enable_ocr:
-            report_progress(progress_callback, "auxiliary", 0.90)
             auxiliary = recognize_auxiliary(
                 binary,
                 enable_ocr=enable_ocr,
                 cancellation_token=cancellation_token,
+                progress_callback=_subprogress(
+                    progress_callback,
+                    "auxiliary",
+                    0.86,
+                    0.97,
+                ),
             )
             warnings.extend(auxiliary.warnings)
 
