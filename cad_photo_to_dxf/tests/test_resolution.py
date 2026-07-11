@@ -8,7 +8,12 @@ from app.geometry_cleaner import GeometryCleanParams
 from app.geometry_normalized import effective_geometry_params
 from app.line_detect import LineDetectionParams, LineSegment, detect_lines
 from app.preprocess import preprocess_image_with_stages
-from app.resolution import image_resolution_scale
+from app.resolution import (
+    coordinate_resolution_scale,
+    image_resolution_scale,
+    scaled_int,
+    spatial_bucket,
+)
 
 
 def test_image_resolution_scale_is_bounded_and_reference_based() -> None:
@@ -16,6 +21,21 @@ def test_image_resolution_scale_is_bounded_and_reference_based() -> None:
     assert image_resolution_scale((800, 1200)) == pytest.approx(0.5)
     assert image_resolution_scale((3500, 5000)) == pytest.approx(5000 / 2400)
     assert image_resolution_scale((9000, 12000)) == 3.0
+
+
+def test_resolution_helpers_reject_invalid_values() -> None:
+    with pytest.raises(ValueError, match="Reference long edge"):
+        image_resolution_scale((400, 600), reference_long_edge_px=0)
+    with pytest.raises(ValueError, match="dimensions"):
+        image_resolution_scale((0, 600))
+    with pytest.raises(ValueError, match="finite"):
+        coordinate_resolution_scale([(0.0, 0.0), (float("nan"), 1.0)])
+    with pytest.raises(ValueError, match="non-negative"):
+        scaled_int(-1, 1.0)
+    with pytest.raises(ValueError, match="positive finite"):
+        scaled_int(1, 0.0)
+    with pytest.raises(ValueError, match="finite"):
+        spatial_bucket(float("inf"), 10.0)
 
 
 def test_preprocessing_records_effective_resolution_scale() -> None:
