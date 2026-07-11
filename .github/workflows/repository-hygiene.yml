@@ -1,0 +1,36 @@
+name: Repository hygiene
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tracked-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check tracked generated artifacts and large files
+        working-directory: cad_photo_to_dxf
+        run: |
+          python scripts/check_repository_hygiene.py \
+            --repository-root .. \
+            --json-output repository-hygiene.json
+
+      - name: Upload hygiene evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repository-hygiene
+          path: cad_photo_to_dxf/repository-hygiene.json
+          if-no-files-found: warn
+          retention-days: 7
