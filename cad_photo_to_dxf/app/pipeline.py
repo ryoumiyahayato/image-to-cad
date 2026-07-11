@@ -30,7 +30,7 @@ from .perspective import (
 from .preprocess import PreprocessParams
 from .processing_service import ProcessingConfig, process_corrected_image
 from .quality import ImageQualityAssessment, assess_image_quality
-from .reporting import REPORT_SCHEMA_VERSION, build_lineage, write_json_report
+from .reporting import build_processing_report, write_json_report
 from .scale_calibrator import ScaleCalibration
 
 
@@ -224,17 +224,13 @@ def run_pipeline(
         )
 
     elapsed = time.perf_counter() - started_clock
-    lineage = build_lineage(raw_lines, lines)
-    report: dict[str, Any] = {
-        "schema_version": REPORT_SCHEMA_VERSION,
-        "application_version": __version__,
-        "started_at_utc": started_at.isoformat(),
-        "duration_seconds": elapsed,
-        "input": {
-            "path": str(Path(input_path)),
-            "shape": list(original.shape),
-        },
-        "perspective": {
+    report = build_processing_report(
+        application_version=__version__,
+        started_at_utc=started_at.isoformat(),
+        duration_seconds=elapsed,
+        input_path=input_path,
+        input_shape=original.shape,
+        perspective={
             "applied": perspective_result is not None,
             "automatic": perspective_result.automatic if perspective_result else False,
             "confidence": perspective_result.confidence if perspective_result else 0.0,
@@ -242,8 +238,8 @@ def run_pipeline(
             "target_aspect_ratio": target_aspect_ratio,
             "corrected_shape": list(corrected.shape),
         },
-        "quality": asdict(quality),
-        "parameters": {
+        quality=quality,
+        parameters={
             "preprocess": asdict(preprocess_params),
             "line_detection_requested": asdict(detection_params),
             "line_detection_effective": asdict(
@@ -260,41 +256,17 @@ def run_pipeline(
             "auxiliary_enabled": enable_auxiliary or enable_ocr,
             "ocr_enabled": enable_ocr,
         },
-        "preprocessing": {
-            "stages": {
-                name: list(image.shape)
-                for name, image in processing.preprocess_stages.items()
-            },
-            "debug_directory": str(debug_dir) if debug_dir is not None else None,
-        },
-        "detection": {"raw_line_count": len(raw_lines)},
-        "geometry": asdict(processing.geometry_report),
-        "classification": asdict(processing.classification_report),
-        "auxiliary": asdict(auxiliary) if auxiliary is not None else None,
-        "lineage": lineage,
-        "export": {
-            "path": str(export_result.path),
-            "line_count": export_result.line_count,
-            "skipped_line_count": export_result.skipped_line_count,
-            "scale_per_pixel": export_result.mm_per_pixel,
-            "mm_per_pixel": (
-                export_result.mm_per_pixel if export_result.unit_name == "mm" else None
-            ),
-            "calibrated": export_result.calibrated,
-            "calibration_source": calibration_source,
-            "coordinate_mode": export_result.coordinate_mode,
-            "unit_name": export_result.unit_name,
-            "is_engineering_model_scale": export_result.coordinate_mode == "model_mm",
-        },
-        "warnings": list(dict.fromkeys(warnings)),
-        "technical_limits": [
-            "paper_mm 仅表示打印纸面坐标；恢复工程设计尺寸必须使用已知尺寸或图纸比例校准。",
-            "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
-            "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
-            "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
-            "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
-        ],
-    }
+        preprocess_stages=processing.preprocess_stages,
+        debug_directory=debug_dir,
+        raw_lines=raw_lines,
+        final_lines=lines,
+        geometry_report=processing.geometry_report,
+        classification_report=processing.classification_report,
+        auxiliary=auxiliary,
+        export_result=export_result,
+        calibration_source=calibration_source,
+        warnings=warnings,
+    )
     written_report_path: Path | None = None
     if report_path is not None:
         written_report_path = write_json_report(report_path, report)
