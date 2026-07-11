@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 import pytest
 
+from app.auxiliary_recognition import CircleCandidate
 from app.dxf_exporter import ExportResult
 from app.geometry_cleaner import GeometryCleanParams, GeometryCleanReport
 from app.layer_classifier import ClassificationReport
@@ -46,11 +47,13 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
         LineSegment(0, 0, 100, 0, source_ids=("HOUGH-000001",), history=("input",))
     ]
     final = [raw[0].copy(layer="DETAIL")]
+    confirmed_circle = CircleCandidate((50.0, 60.0), 12.0, 0.95)
     export = ExportResult(
         path=Path("output.dxf"),
         line_count=1,
         mm_per_pixel=1.0,
         calibrated=False,
+        circle_count=1,
     )
     report = ReportBuilder.build(
         input_path="input.png",
@@ -92,6 +95,7 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
         calibration_source="uncalibrated",
         coordinate_space="pixel",
         warnings=["review required"],
+        confirmed_circles=[confirmed_circle],
         duration_seconds=0.25,
     )
     assert report["perspective"]["corners"]
@@ -103,4 +107,8 @@ def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
     assert report["topology"]["validation"]["dangling_endpoints"] == 2
     assert report["lineage"]["final_entity_count"] == 1
     assert report["export"]["coordinate_space"] == "pixel"
+    assert report["export"]["circle_count"] == 1
+    assert report["export"]["confirmed_circles"] == [
+        {"center": (50.0, 60.0), "radius": 12.0, "confidence": 0.95}
+    ]
     assert report["warnings"] == ["review required"]
