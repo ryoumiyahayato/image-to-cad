@@ -19,7 +19,7 @@ from app.geometry_cleaner import (
 from app.layer_classifier import classify_layers_with_report
 from app.line_detect import LineDetectionParams, LineSegment, detect_lines
 from app.perspective import detect_paper_corners, order_points, warp_perspective
-from app.pipeline import InvalidInputError, run_pipeline
+from app.pipeline import InvalidInputError, PaperDetectionError, run_pipeline
 from app.preprocess import PreprocessParams, preprocess_image_with_stages
 from app.reporting import build_lineage
 
@@ -59,6 +59,16 @@ class PerspectiveTests(unittest.TestCase):
     def test_blank_image_is_not_paper(self) -> None:
         blank = np.full((300, 500, 3), 255, np.uint8)
         self.assertIsNone(detect_paper_corners(blank))
+
+    def test_internal_black_frame_on_white_background_is_not_paper(self) -> None:
+        image = np.full((500, 700, 3), 255, np.uint8)
+        cv2.rectangle(image, (100, 80), (600, 420), (0, 0, 0), 8)
+        self.assertIsNone(detect_paper_corners(image))
+
+    def test_black_circle_on_white_background_is_not_paper(self) -> None:
+        image = np.full((500, 700, 3), 255, np.uint8)
+        cv2.circle(image, (350, 250), 170, (0, 0, 0), -1)
+        self.assertIsNone(detect_paper_corners(image))
 
 
 class PreprocessTests(unittest.TestCase):
@@ -199,6 +209,23 @@ class PipelineTests(unittest.TestCase):
                 run_pipeline(
                     source,
                     root / "blank.dxf",
+                    strict_perspective=True,
+                    fail_on_empty=True,
+                )
+
+    def test_internal_frame_strict_pipeline_fails_paper_detection(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "frame.png"
+            image = np.full((500, 700, 3), 255, np.uint8)
+            cv2.rectangle(image, (100, 80), (600, 420), (0, 0, 0), 8)
+            cv2.imwrite(str(source), image)
+            with self.assertRaises(PaperDetectionError):
+                run_pipeline(
+                    source,
+                    root / "frame.dxf",
+                    paper_size="A4",
+                    paper_orientation="landscape",
                     strict_perspective=True,
                     fail_on_empty=True,
                 )
