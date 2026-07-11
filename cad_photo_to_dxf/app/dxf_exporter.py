@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
+from math import isfinite
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 
 import ezdxf
 from ezdxf import units
@@ -34,6 +37,27 @@ LAYER_STYLES = {
 }
 
 
+def filter_exportable_circles(
+    circles: Sequence[CircleCandidate],
+) -> list[CircleCandidate]:
+    """Return the exact candidates eligible to become DXF CIRCLE entities."""
+    valid: list[CircleCandidate] = []
+    for circle in circles:
+        values = (
+            float(circle.center[0]),
+            float(circle.center[1]),
+            float(circle.radius),
+            float(circle.confidence),
+        )
+        if (
+            all(isfinite(value) for value in values)
+            and circle.radius > 1e-9
+            and circle.confidence >= MIN_CIRCLE_EXPORT_CONFIDENCE
+        ):
+            valid.append(circle)
+    return valid
+
+
 def export_dxf(
     lines: list[LineSegment],
     output_path: str | Path,
@@ -47,10 +71,14 @@ def export_dxf(
     Uncalibrated coordinates remain unitless. A DXF is declared millimetres only
     when a paper- or model-space calibration was supplied.
     """
+    if int(image_height) <= 0:
+        raise ValueError("Image height must be greater than zero")
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     calibrated = calibration is not None
     scale = calibration.mm_per_pixel if calibrated else 1.0
+    if not isfinite(float(scale)) or scale <= 0:
+        raise ValueError("Export scale must be a positive finite number")
 
     doc = ezdxf.new("R2010", setup=True)
     if calibrated:
@@ -70,7 +98,6 @@ def export_dxf(
 
     modelspace = doc.modelspace()
     valid_lines: list[LineSegment] = []
-    valid_circles: list[CircleCandidate] = []
     coordinates: list[tuple[float, float]] = []
     for line in lines:
         values = np.array([line.x1, line.y1, line.x2, line.y2], dtype=float)
@@ -84,18 +111,9 @@ def export_dxf(
         valid_lines.append(line)
         coordinates.extend((start, end))
 
-    requested_circles = circles or []
-    for circle in requested_circles:
-        values = np.array(
-            [circle.center[0], circle.center[1], circle.radius, circle.confidence],
-            dtype=float,
-        )
-        if (
-            not np.isfinite(values).all()
-            or circle.radius <= 1e-9
-            or circle.confidence < MIN_CIRCLE_EXPORT_CONFIDENCE
-        ):
-            continue
+    requested_circles = list(circles or [])
+    valid_circles = filter_exportable_circles(requested_circles)
+    for circle in valid_circles:
         center = (
             circle.center[0] * scale,
             (image_height - 1 - circle.center[1]) * scale,
@@ -106,7 +124,6 @@ def export_dxf(
             radius,
             dxfattribs={"layer": "CIRCLE_CONFIRMED"},
         )
-        valid_circles.append(circle)
         coordinates.extend(
             (
                 (center[0] - radius, center[1] - radius),
@@ -123,13 +140,25 @@ def export_dxf(
         doc.header["$EXTMIN"] = (0.0, 0.0, 0.0)
         doc.header["$EXTMAX"] = (0.0, 0.0, 0.0)
 
-    temporary = path.with_name(f".{path.name}.tmp")
-    doc.saveas(temporary)
-    temporary.replace(path)
+    temporary_path: Path | None = None
+    try:
+        with NamedTemporaryFile(
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp.dxf",
+            delete=False,
+        ) as handle:
+            temporary_path = Path(handle.name)
+        doc.saveas(temporary_path)
+        temporary_path.replace(path)
+    finally:
+        if temporary_path is not None and temporary_path.exists():
+            temporary_path.unlink()
+
     return ExportResult(
         path,
         len(valid_lines),
-        scale,
+        float(scale),
         calibrated,
         skipped_line_count=len(lines) - len(valid_lines),
         circle_count=len(valid_circles),
