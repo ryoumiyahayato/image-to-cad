@@ -11,13 +11,20 @@ import numpy as np
 
 from app.auxiliary_recognition import recognize_auxiliary
 from app.cancellation import CancellationToken, ProcessingCancelled
+from app.dxf_exporter import DXF_UNITLESS, export_dxf
 from app.geometry_cleaner import (
     GeometryCleanParams,
     clean_geometry_with_report,
+    effective_geometry_params,
     snap_endpoints,
 )
 from app.layer_classifier import classify_layers_with_report
-from app.line_detect import LineDetectionParams, LineSegment, detect_lines
+from app.line_detect import (
+    LineDetectionParams,
+    LineSegment,
+    detect_lines,
+    effective_line_detection_params,
+)
 from app.perspective import detect_paper_corners, order_points, warp_perspective
 from app.pipeline import InvalidInputError, PaperDetectionError, run_pipeline
 from app.preprocess import PreprocessParams, preprocess_image_with_stages
@@ -87,6 +94,38 @@ class PreprocessTests(unittest.TestCase):
 
 
 class DetectionAndGeometryTests(unittest.TestCase):
+    def test_detection_thresholds_scale_with_long_edge(self) -> None:
+        requested = LineDetectionParams(
+            min_line_length=40,
+            max_line_gap=12,
+            hough_threshold=36,
+            reference_long_edge=2000,
+        )
+        small, small_factor = effective_line_detection_params(requested, (1000, 800))
+        large, large_factor = effective_line_detection_params(requested, (4000, 3000))
+        self.assertAlmostEqual(small_factor, 0.5)
+        self.assertAlmostEqual(large_factor, 2.0)
+        self.assertEqual(small.min_line_length, 20)
+        self.assertEqual(large.min_line_length, 80)
+        self.assertEqual(small.max_line_gap, 6)
+        self.assertEqual(large.max_line_gap, 24)
+
+    def test_geometry_thresholds_scale_with_coordinate_extent(self) -> None:
+        requested = GeometryCleanParams(
+            snap_distance=6,
+            max_bridge_gap=12,
+            min_line_length=20,
+            reference_long_edge=2000,
+        )
+        effective, factor = effective_geometry_params(
+            requested,
+            [line(0, 0, 1000, 0, source="A")],
+        )
+        self.assertAlmostEqual(factor, 0.5)
+        self.assertAlmostEqual(effective.snap_distance, 3.0)
+        self.assertAlmostEqual(effective.max_bridge_gap, 6.0)
+        self.assertAlmostEqual(effective.min_line_length, 10.0)
+
     def test_thick_stroke_width_uses_centerline_search(self) -> None:
         image = np.full((240, 420), 255, np.uint8)
         cv2.line(image, (40, 120), (380, 120), 0, 12)
@@ -118,6 +157,7 @@ class DetectionAndGeometryTests(unittest.TestCase):
                 collinear_distance=0.1,
                 duplicate_distance=0.1,
                 min_line_length=1,
+                scale_with_resolution=False,
             ),
         )
         self.assertEqual(len(result.lines), 2)
@@ -141,6 +181,7 @@ class DetectionAndGeometryTests(unittest.TestCase):
                 collinear_distance=1,
                 duplicate_distance=1,
                 min_line_length=1,
+                scale_with_resolution=False,
             ),
         )
         self.assertEqual(len(result.lines), 1)
@@ -164,6 +205,7 @@ class DetectionAndGeometryTests(unittest.TestCase):
                 collinear_distance=0.1,
                 duplicate_distance=0.1,
                 min_line_length=0,
+                scale_with_resolution=False,
             ),
         )
         self.assertEqual(len(result.lines), 1)
@@ -220,6 +262,22 @@ class AuxiliaryTests(unittest.TestCase):
         result = recognize_auxiliary(image)
         self.assertTrue(result.circles)
         self.assertTrue(result.warnings)
+
+
+class ExportTests(unittest.TestCase):
+    def test_uncalibrated_export_is_unitless(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "unitless.dxf"
+            result = export_dxf(
+                [line(0, 0, 100, 0, source="A")],
+                output,
+                image_height=200,
+            )
+            document = ezdxf.readfile(output)
+            self.assertEqual(result.coordinate_mode, "pixel_units")
+            self.assertEqual(result.unit_name, "pixel_unit")
+            self.assertEqual(document.header["$INSUNITS"], DXF_UNITLESS)
+            self.assertFalse(result.calibrated)
 
 
 class PipelineTests(unittest.TestCase):
@@ -282,10 +340,13 @@ class PipelineTests(unittest.TestCase):
             )
             self.assertGreater(result.export.line_count, 0)
             self.assertTrue(result.export.calibrated)
+            self.assertEqual(result.export.coordinate_mode, "paper_mm")
             self.assertTrue(report_path.exists())
             self.assertTrue((root / "debug" / "01_grayscale.png").exists())
             report = json.loads(report_path.read_text(encoding="utf-8"))
             self.assertEqual(report["application_version"], "1.1.0")
+            self.assertEqual(report["export"]["coordinate_mode"], "paper_mm")
+            self.assertFalse(report["export"]["is_engineering_model_scale"])
             self.assertEqual(
                 report["lineage"]["final_entity_count"], result.export.line_count
             )
