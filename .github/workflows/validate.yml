@@ -45,3 +45,98 @@ jobs:
       - name: Run Ruff
         working-directory: cad_photo_to_dxf
         run: python -m ruff check .
+
+  freecad-import:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout triggering commit
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements.txt
+
+      - name: Install application dependencies
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Install and record FreeCAD package
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          candidate="$(apt-cache policy freecad | awk '/Candidate:/ {print $2}')"
+          if [[ -z "$candidate" || "$candidate" == "(none)" ]]; then
+            echo "No FreeCAD package candidate is available" >&2
+            exit 1
+          fi
+          sudo apt-get install -y "freecad=$candidate"
+          mkdir -p cad_photo_to_dxf/output/freecad
+          {
+            echo "runner=ubuntu-22.04"
+            echo "apt_package=freecad"
+            echo "apt_version=$candidate"
+            dpkg-query -W -f='installed_version=${Version}\n' freecad
+          } | tee cad_photo_to_dxf/output/freecad/freecad-package.txt
+
+      - name: Generate smoke DXF
+        working-directory: cad_photo_to_dxf
+        run: |
+          mkdir -p output/freecad/debug
+          python main.py \
+            --headless \
+            --input samples/test.jpg \
+            --output output/freecad/sample.dxf \
+            --preview output/freecad/preview.png \
+            --report output/freecad/report.json \
+            --debug-dir output/freecad/debug \
+            --paper-size A4 \
+            --paper-orientation landscape \
+            --auxiliary
+
+      - name: Validate DXF with fixed FreeCAD environment
+        working-directory: cad_photo_to_dxf
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v FreeCADCmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v FreeCADCmd)"
+          elif command -v freecadcmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v freecadcmd)"
+          else
+            echo "FreeCAD command-line executable was not installed" >&2
+            exit 1
+          fi
+          "$freecad_cmd" --version | tee output/freecad/freecad-command-version.txt
+          python scripts/validate_dxf.py \
+            output/freecad/sample.dxf \
+            --output output/freecad/freecad-validation.json \
+            --freecad-command "$freecad_cmd"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          evidence = json.loads(
+              Path("output/freecad/freecad-validation.json").read_text(encoding="utf-8")
+          )
+          assert evidence["dxf"]["passed"], evidence
+          assert evidence["freecad"]["passed"], evidence
+          assert evidence["freecad"]["object_count"] > 0, evidence
+          print(json.dumps(evidence["freecad"], ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload FreeCAD validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecad-validation-${{ github.sha }}
+          path: cad_photo_to_dxf/output/freecad/**
+          if-no-files-found: warn
+          retention-days: 30
