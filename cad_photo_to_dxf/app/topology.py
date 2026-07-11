@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 import math
 
@@ -181,7 +182,13 @@ def split_lines_at_intersections(
     return output, report
 
 
-def _union_find(size: int) -> tuple[np.ndarray, callable, callable]:
+def _union_find(
+    size: int,
+) -> tuple[
+    np.ndarray,
+    Callable[[int], int],
+    Callable[[int, int], None],
+]:
     parent = np.arange(size)
 
     def find(index: int) -> int:
@@ -213,7 +220,7 @@ def validate_topology(
 
     valid: list[LineSegment] = []
     exact_keys: dict[tuple[int, int, int, int], int] = {}
-    quantization = max(endpoint_tolerance, 1e-6)
+    exact_quantization = 1e-6
     for line in lines:
         coordinates = np.array([line.x1, line.y1, line.x2, line.y2], dtype=float)
         if not np.isfinite(coordinates).all():
@@ -225,10 +232,14 @@ def validate_topology(
         first = (line.x1, line.y1)
         second = (line.x2, line.y2)
         start, end = sorted((first, second))
-        key = tuple(int(round(value / quantization)) for value in (*start, *end))
+        key = tuple(
+            int(round(value / exact_quantization)) for value in (*start, *end)
+        )
         exact_keys[key] = exact_keys.get(key, 0) + 1
         valid.append(line)
-    report.exact_duplicate_lines = sum(count - 1 for count in exact_keys.values() if count > 1)
+    report.exact_duplicate_lines = sum(
+        count - 1 for count in exact_keys.values() if count > 1
+    )
     if not valid:
         return report
 
@@ -254,7 +265,7 @@ def validate_topology(
         root: points[indexes].mean(axis=0) for root, indexes in node_members.items()
     }
     degree: dict[int, int] = {root: 0 for root in node_members}
-    graph_parent, graph_find, graph_union = _union_find(len(node_members))
+    _graph_parent, graph_find, graph_union = _union_find(len(node_members))
     roots = list(node_members)
     root_position = {root: position for position, root in enumerate(roots)}
     for index in range(line_count):
@@ -285,16 +296,32 @@ def validate_topology(
         dangling_points = np.array([node_centers[root] for root in dangling_roots])
         dangling_tree = cKDTree(dangling_points)
         for left, right in dangling_tree.query_pairs(gap_tolerance):
-            distance = float(np.linalg.norm(dangling_points[left] - dangling_points[right]))
+            distance = float(
+                np.linalg.norm(dangling_points[left] - dangling_points[right])
+            )
             if distance > endpoint_tolerance:
                 report.small_gap_pairs += 1
 
-    pairs = _candidate_pairs(valid, intersection_tolerance)
+    pair_tolerance = max(intersection_tolerance, endpoint_tolerance * 2.0)
+    pairs = _candidate_pairs(valid, pair_tolerance)
     for pair_number, (left_index, right_index) in enumerate(pairs):
         if pair_number % 512 == 0:
             checkpoint(cancellation_token)
         left = valid[left_index]
         right = valid[right_index]
+
+        direct = float(
+            np.linalg.norm(left.p1 - right.p1)
+            + np.linalg.norm(left.p2 - right.p2)
+        )
+        reverse = float(
+            np.linalg.norm(left.p1 - right.p2)
+            + np.linalg.norm(left.p2 - right.p1)
+        )
+        endpoint_error = min(direct, reverse)
+        if exact_quantization * 4.0 < endpoint_error <= endpoint_tolerance * 4.0:
+            report.near_duplicate_pairs += 1
+
         result = _intersection_parameters(left, right, intersection_tolerance)
         if result is None:
             continue
@@ -303,11 +330,6 @@ def validate_topology(
         right_eps = intersection_tolerance / max(right.length, 1.0)
         if left_eps < t < 1.0 - left_eps or right_eps < u < 1.0 - right_eps:
             report.unresolved_interior_intersections += 1
-
-        direct = np.linalg.norm(left.p1 - right.p1) + np.linalg.norm(left.p2 - right.p2)
-        reverse = np.linalg.norm(left.p1 - right.p2) + np.linalg.norm(left.p2 - right.p1)
-        if quantization < min(direct, reverse) <= endpoint_tolerance * 4.0:
-            report.near_duplicate_pairs += 1
 
     return report
 
