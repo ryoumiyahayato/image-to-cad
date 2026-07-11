@@ -29,6 +29,7 @@ from .layer_classifier import (
 )
 from .line_detect import LineDetectionParams, LineSegment, detect_lines, render_line_preview
 from .perspective import (
+    MIN_AUTOMATIC_PAPER_CONFIDENCE,
     PerspectiveResult,
     auto_correct,
     resolve_paper_aspect_ratio,
@@ -156,11 +157,19 @@ def run_pipeline(
             )
         corrected = original.copy()
         warnings.append("自动纸张识别失败，已按未校正原图继续处理。")
+    elif strict_perspective and (
+        perspective_result.confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE
+    ):
+        raise PaperDetectionError(
+            "Paper boundary confidence is too low for strict mode; "
+            "confirm four manual corners or use --allow-uncorrected"
+        )
     else:
         corrected = perspective_result.image
         warnings.extend(perspective_result.warnings)
 
     calibration_source = "explicit" if calibration is not None else "uncalibrated"
+    coordinate_space = "model_mm" if calibration is not None else "pixel"
     if calibration is None and paper_dimensions is not None and perspective_result is not None:
         calibration = ScaleCalibration(
             (0.0, 0.0),
@@ -168,7 +177,11 @@ def run_pipeline(
             float(paper_dimensions[0]),
         )
         calibration_source = "paper_dimensions"
-        warnings.append("导出比例由纸张外边界尺寸推导；角点必须准确落在纸张外缘。")
+        coordinate_space = "paper_mm"
+        warnings.append(
+            "导出坐标为纸面毫米（paper_mm），不是原始设计模型尺寸；"
+            "恢复 model_mm 必须提供图纸比例或已知实际尺寸。"
+        )
 
     checkpoint(cancellation_token)
     preprocessing = preprocess_image_with_stages(
@@ -253,6 +266,7 @@ def run_pipeline(
             "applied": perspective_result is not None,
             "automatic": perspective_result.automatic if perspective_result else False,
             "confidence": perspective_result.confidence if perspective_result else 0.0,
+            "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
             "corners": perspective_result.corners if perspective_result else None,
             "target_aspect_ratio": target_aspect_ratio,
             "corrected_shape": list(corrected.shape),
@@ -265,6 +279,7 @@ def run_pipeline(
             "paper_size": paper_size,
             "paper_orientation": paper_orientation,
             "paper_dimensions_mm": paper_dimensions,
+            "strict_perspective": strict_perspective,
             "preserve_hatch": preserve_hatch,
             "auxiliary_enabled": enable_auxiliary or enable_ocr,
             "ocr_enabled": enable_ocr,
@@ -287,6 +302,7 @@ def run_pipeline(
             "mm_per_pixel": export_result.mm_per_pixel,
             "calibrated": export_result.calibrated,
             "calibration_source": calibration_source,
+            "coordinate_space": coordinate_space,
         },
         "warnings": list(dict.fromkeys(warnings)),
         "technical_limits": [
@@ -294,6 +310,7 @@ def run_pipeline(
             "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
             "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
             "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
+            "paper_mm 仅表示打印纸面坐标；未校准图纸比例时不得解释为工程 model_mm。",
         ],
     }
     written_report_path: Path | None = None
