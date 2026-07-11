@@ -31,7 +31,7 @@ def test_circle_confirmation_rejects_mismatched_review_rows() -> None:
         select_approved_circles([circle], [])
 
 
-def test_exporter_writes_only_confirmed_circle_entities() -> None:
+def test_exporter_rechecks_circle_confidence() -> None:
     line = LineSegment(
         10,
         20,
@@ -40,7 +40,12 @@ def test_exporter_writes_only_confirmed_circle_entities() -> None:
         source_ids=("L1",),
         history=("test",),
     )
-    circle = CircleCandidate((50.0, 60.0), 12.0, 0.95)
+    high = CircleCandidate((50.0, 60.0), 12.0, 0.95)
+    low = CircleCandidate(
+        (80.0, 90.0),
+        8.0,
+        MIN_CIRCLE_EXPORT_CONFIDENCE - 0.01,
+    )
 
     with tempfile.TemporaryDirectory() as directory:
         output = Path(directory) / "confirmed-circle.dxf"
@@ -48,7 +53,7 @@ def test_exporter_writes_only_confirmed_circle_entities() -> None:
             [line],
             output,
             image_height=200,
-            circles=[circle],
+            circles=[high, low],
         )
         document = ezdxf.readfile(output)
         circles = list(document.modelspace().query("CIRCLE"))
@@ -56,7 +61,7 @@ def test_exporter_writes_only_confirmed_circle_entities() -> None:
 
     assert result.line_count == 1
     assert result.circle_count == 1
-    assert result.skipped_circle_count == 0
+    assert result.skipped_circle_count == 1
     assert len(lines) == 1
     assert len(circles) == 1
     entity = circles[0]
