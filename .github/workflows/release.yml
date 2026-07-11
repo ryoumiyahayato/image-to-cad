@@ -75,6 +75,15 @@ jobs:
           fi
           sudo apt-get install -y "freecad=$FREECAD_APT_VERSION"
 
+      - name: Require qualifying real-photo ground truth
+        working-directory: cad_photo_to_dxf
+        run: |
+          mkdir -p output/release-freecad
+          python scripts/validate_fixtures.py \
+            tests/fixtures \
+            --minimum 1 \
+            --output output/release-freecad/fixture-qualification.json
+
       - name: Generate and validate release smoke DXF
         working-directory: cad_photo_to_dxf
         shell: bash
@@ -124,6 +133,11 @@ jobs:
           evidence = json.loads(
               (output_dir / "freecad-validation.json").read_text(encoding="utf-8")
           )
+          fixture_qualification = json.loads(
+              (output_dir / "fixture-qualification.json").read_text(encoding="utf-8")
+          )
+          assert fixture_qualification["passed"], fixture_qualification
+          assert fixture_qualification["qualifying_count"] >= 1, fixture_qualification
           assert evidence["dxf"]["passed"], evidence
           assert evidence["freecad"]["passed"], evidence
           assert evidence["freecad"]["object_count"] > 0, evidence
@@ -136,6 +150,7 @@ jobs:
               return digest.hexdigest()
 
           paths = {
+              "fixture_qualification": output_dir / "fixture-qualification.json",
               "input_image": Path("samples/test.jpg"),
               "output_dxf": output_dir / "sample.dxf",
               "processing_report": output_dir / "report.json",
@@ -150,6 +165,9 @@ jobs:
               "source_commit": subprocess.check_output(
                   ["git", "rev-parse", "HEAD"], text=True
               ).strip(),
+              "qualifying_real_photo_fixtures": fixture_qualification[
+                  "qualifying_count"
+              ],
               "freecad_apt_version": os.environ["FREECAD_APT_VERSION"],
               "freecad_version": evidence["freecad"]["freecad_version"],
               "freecad_object_count": evidence["freecad"]["object_count"],
@@ -166,12 +184,13 @@ jobs:
           print(json.dumps(provenance, ensure_ascii=False, indent=2))
           PY
 
-      - name: Upload release FreeCAD evidence
+      - name: Upload release qualification evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-${{ steps.version.outputs.value }}-freecad-evidence
+          name: CADPhotoToDXF-${{ steps.version.outputs.value }}-release-qualification
           path: cad_photo_to_dxf/output/release-freecad/**
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 30
 
   release:
@@ -316,7 +335,7 @@ jobs:
             workflow_run_id = $env:GITHUB_RUN_ID
             repository = $env:GITHUB_REPOSITORY
             python = (python --version)
-            freecad_verification_job = "freecad-verify"
+            release_qualification_job = "freecad-verify"
             generated_at_utc = [DateTime]::UtcNow.ToString("o")
           } | ConvertTo-Json -Depth 4
           $provenance | Set-Content (Join-Path $releaseDir "provenance.json") -Encoding utf8
