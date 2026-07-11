@@ -21,6 +21,7 @@ class WorkflowStateError(RuntimeError):
 @dataclass
 class WorkflowStateMachine:
     state: WorkflowState = WorkflowState.EMPTY
+    calibration_completed: bool = False
 
     def require(self, minimum: WorkflowState, action: str) -> None:
         if self.state < minimum:
@@ -28,12 +29,18 @@ class WorkflowStateMachine:
                 f"{action} requires {minimum.name}, current state is {self.state.name}"
             )
 
+    def clear(self) -> None:
+        self.state = WorkflowState.EMPTY
+        self.calibration_completed = False
+
     def import_image(self) -> None:
         self.state = WorkflowState.IMPORTED
+        self.calibration_completed = False
 
     def confirm_perspective(self) -> None:
         self.require(WorkflowState.IMPORTED, "perspective confirmation")
         self.state = WorkflowState.PERSPECTIVE_CONFIRMED
+        self.calibration_completed = False
 
     def mark_preprocessed(self) -> None:
         self.require(WorkflowState.PERSPECTIVE_CONFIRMED, "preprocessing")
@@ -47,8 +54,8 @@ class WorkflowStateMachine:
 
     def mark_calibrated(self) -> None:
         self.require(WorkflowState.VECTORIZED, "calibration")
-        if self.state < WorkflowState.CALIBRATED:
-            self.state = WorkflowState.CALIBRATED
+        self.state = WorkflowState.CALIBRATED
+        self.calibration_completed = True
 
     def mark_exported(self) -> None:
         self.require(WorkflowState.VECTORIZED, "export")
@@ -60,6 +67,8 @@ class WorkflowStateMachine:
                 f"cannot invalidate forward from {self.state.name} to {target.name}"
             )
         self.state = target
+        if target < WorkflowState.CALIBRATED:
+            self.calibration_completed = False
 
     @property
     def perspective_confirmed(self) -> bool:
@@ -71,4 +80,4 @@ class WorkflowStateMachine:
 
     @property
     def calibrated(self) -> bool:
-        return self.state in {WorkflowState.CALIBRATED, WorkflowState.EXPORTED}
+        return self.calibration_completed
