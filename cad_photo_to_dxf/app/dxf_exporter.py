@@ -44,17 +44,24 @@ def export_dxf(
 ) -> ExportResult:
     """Export editable LINE entities and explicitly confirmed CIRCLE entities.
 
-    Circle confidence is rechecked at the file boundary. This prevents callers
-    from bypassing the GUI review gate by passing a weak raw candidate directly.
+    Uncalibrated coordinates remain unitless. A DXF is declared millimetres only
+    when a paper- or model-space calibration was supplied.
     """
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    scale = calibration.mm_per_pixel if calibration is not None else 1.0
+    calibrated = calibration is not None
+    scale = calibration.mm_per_pixel if calibrated else 1.0
 
     doc = ezdxf.new("R2010", setup=True)
-    doc.units = units.MM
-    doc.header["$MEASUREMENT"] = 1
-    doc.header["$INSUNITS"] = units.MM
+    if calibrated:
+        doc.units = units.MM
+        doc.header["$MEASUREMENT"] = 1
+        doc.header["$INSUNITS"] = units.MM
+    else:
+        # DXF $INSUNITS value 0 means unitless. This prevents CAD software from
+        # interpreting raw pixel coordinates as physical millimetres.
+        doc.units = 0
+        doc.header["$INSUNITS"] = 0
     doc.header["$LUNITS"] = 2
 
     for layer_name, style in LAYER_STYLES.items():
@@ -123,7 +130,7 @@ def export_dxf(
         path,
         len(valid_lines),
         scale,
-        calibration is not None,
+        calibrated,
         skipped_line_count=len(lines) - len(valid_lines),
         circle_count=len(valid_circles),
         skipped_circle_count=len(requested_circles) - len(valid_circles),
