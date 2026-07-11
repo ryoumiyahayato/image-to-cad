@@ -11,6 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.fixture_benchmark import run_fixture_benchmark  # noqa: E402
+from app.fixture_dimensions import parse_verification_references  # noqa: E402
 from app.fixture_validation import (  # noqa: E402
     REQUIRED_FREECAD_VERSION,
     validate_fixture_set,
@@ -63,6 +64,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _load_manifest(path: Path) -> dict[str, object]:
+    value = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError("manifest must contain an object")
+    return value
+
+
 def main() -> int:
     args = build_parser().parse_args()
     qualification = validate_fixture_set(
@@ -73,14 +81,24 @@ def main() -> int:
 
     vector_categories: set[str] = set()
     rejection_categories: set[str] = set()
+    reference_errors: dict[str, str] = {}
     for fixture in qualification.fixtures:
         if not fixture.passed:
             continue
         if fixture.expected_outcome == "vectorized_dxf":
             vector_categories.update(fixture.fixture_categories)
+            try:
+                manifest = _load_manifest(
+                    fixture.fixture_directory / "manifest.json"
+                )
+                parse_verification_references(manifest)
+            except (OSError, json.JSONDecodeError, ValueError) as exc:
+                fixture_key = fixture.fixture_id or str(fixture.fixture_directory)
+                reference_errors[fixture_key] = str(exc)
         elif fixture.expected_outcome == "paper_rejected":
             rejection_categories.update(fixture.fixture_categories)
 
+    reference_validation_passed = not reference_errors
     missing_vector_categories = sorted(
         REQUIRED_VECTOR_CATEGORIES - vector_categories
     )
@@ -96,7 +114,12 @@ def main() -> int:
     )
 
     benchmarks = []
-    if args.minimum > 0 and qualification.passed and category_coverage_passed:
+    if (
+        args.minimum > 0
+        and qualification.passed
+        and reference_validation_passed
+        and category_coverage_passed
+    ):
         for fixture in qualification.fixtures:
             if fixture.passed:
                 benchmarks.append(
@@ -114,8 +137,15 @@ def main() -> int:
             and all(result.passed for result in benchmarks)
         )
     )
-    passed = qualification.passed and category_coverage_passed and benchmark_passed
+    passed = (
+        qualification.passed
+        and reference_validation_passed
+        and category_coverage_passed
+        and benchmark_passed
+    )
     report = qualification.to_dict()
+    report["reference_validation_passed"] = reference_validation_passed
+    report["reference_errors"] = reference_errors
     report["category_coverage_required"] = category_coverage_required
     report["required_vector_categories"] = sorted(REQUIRED_VECTOR_CATEGORIES)
     report["required_rejection_categories"] = sorted(
