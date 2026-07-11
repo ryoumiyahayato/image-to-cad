@@ -49,6 +49,23 @@ def test_preprocessing_records_effective_resolution_scale() -> None:
     assert result.image.shape == image.shape[:2]
 
 
+def test_preprocessing_accepts_bgra_and_single_channel_images() -> None:
+    bgra = np.full((120, 180, 4), 255, np.uint8)
+    bgra[:, :, 3] = 128
+    single_channel = np.full((120, 180, 1), 255, np.uint8)
+    assert preprocess_image_with_stages(bgra).image.shape == (120, 180)
+    assert preprocess_image_with_stages(single_channel).image.shape == (120, 180)
+
+
+def test_preprocessing_rejects_unsupported_shapes_and_dtypes() -> None:
+    with pytest.raises(ValueError, match="grayscale, BGR, or BGRA"):
+        preprocess_image_with_stages(np.zeros((2, 3, 4, 5), np.uint8))
+    with pytest.raises(ValueError, match="8-bit unsigned"):
+        preprocess_image_with_stages(np.zeros((120, 180), np.float32))
+    with pytest.raises(ValueError, match="1, 3, or 4 channels"):
+        preprocess_image_with_stages(np.zeros((120, 180, 2), np.uint8))
+
+
 def test_geometry_distances_scale_together() -> None:
     lines = [
         LineSegment(0, 0, 5000, 0, source_ids=("A",)),
