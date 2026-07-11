@@ -19,6 +19,25 @@ from app.dxf_validator import validate_dxf  # noqa: E402
 _FREECAD_JSON_PREFIX = "DXF_VALIDATION_JSON="
 
 
+def _extract_freecad_payload(stdout: str) -> dict[str, Any] | None:
+    """Extract one JSON object even when FreeCAD progress text shares its line."""
+    decoder = json.JSONDecoder()
+    search_from = 0
+    while True:
+        marker_index = stdout.find(_FREECAD_JSON_PREFIX, search_from)
+        if marker_index < 0:
+            return None
+        json_start = marker_index + len(_FREECAD_JSON_PREFIX)
+        try:
+            value, _end = decoder.raw_decode(stdout[json_start:].lstrip())
+        except json.JSONDecodeError:
+            search_from = json_start
+            continue
+        if isinstance(value, dict):
+            return value
+        search_from = json_start
+
+
 def validate_with_freecad(
     path: Path,
     freecad_command: str,
@@ -41,7 +60,7 @@ payload = {{
     "object_count": object_count,
     "freecad_version": list(FreeCAD.Version()),
 }}
-print("{_FREECAD_JSON_PREFIX}" + json.dumps(payload, ensure_ascii=False))
+print("{_FREECAD_JSON_PREFIX}" + json.dumps(payload, ensure_ascii=False), flush=True)
 if object_count <= 0:
     raise SystemExit(2)
 '''
@@ -56,19 +75,7 @@ if object_count <= 0:
             timeout=120,
         )
 
-    parsed: dict[str, Any] | None = None
-    for line in reversed(completed.stdout.splitlines()):
-        stripped = line.strip()
-        if not stripped.startswith(_FREECAD_JSON_PREFIX):
-            continue
-        try:
-            value = json.loads(stripped[len(_FREECAD_JSON_PREFIX) :])
-        except json.JSONDecodeError:
-            continue
-        if isinstance(value, dict):
-            parsed = value
-            break
-
+    parsed = _extract_freecad_payload(completed.stdout)
     payload: dict[str, Any] = {
         "command": freecad_command,
         "return_code": completed.returncode,
