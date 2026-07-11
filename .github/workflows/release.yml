@@ -31,15 +31,13 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
-          cache-dependency-path: |
-            cad_photo_to_dxf/requirements.txt
-            cad_photo_to_dxf/requirements-dev.txt
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
 
       - name: Install build dependencies
         shell: pwsh
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt -r requirements-dev.txt pytest ruff
+          python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Verify tag matches canonical application version
         shell: pwsh
@@ -56,6 +54,7 @@ jobs:
         run: |
           python -m pytest -q
           python -m ruff check app tests validation main.py
+          python -m mypy app/resolution.py app/scale_calibrator.py app/reporting.py app/auxiliary_recognition.py
           python -m compileall -q app tests validation main.py
 
       - name: Build portable application
