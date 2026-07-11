@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .resolution import image_resolution_scale, scaled_int, scaled_odd
 
 
 @dataclass
@@ -69,15 +70,26 @@ class LineDetectionParams:
     hough_threshold: int = 35
     use_lsd: bool = True
     max_segments: int = 6000
+    center_thick_strokes: bool = True
+    min_center_width: float = 4.0
 
 
-def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
+def _estimate_width(
+    distance_map: np.ndarray,
+    segment: LineSegment,
+    resolution_scale: float = 1.0,
+) -> float:
     vector = segment.p2 - segment.p1
     norm = float(np.linalg.norm(vector))
     if norm <= 1e-9:
         return 1.0
     normal = np.array([-vector[1], vector[0]], dtype=float) / norm
-    search_radius = max(4, min(20, int(round(segment.length * 0.025))))
+    minimum_radius = scaled_int(4, resolution_scale, minimum=2)
+    maximum_radius = scaled_int(20, resolution_scale, minimum=minimum_radius)
+    search_radius = max(
+        minimum_radius,
+        min(maximum_radius, int(round(segment.length * 0.025))),
+    )
     samples = []
     for t in np.linspace(0.1, 0.9, 7):
         point = segment.p1 + vector * t
@@ -92,10 +104,90 @@ def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
     return max(1.0, float(np.median(samples))) if samples else 1.0
 
 
+def _recenter_thick_stroke(
+    distance_map: np.ndarray,
+    segment: LineSegment,
+    resolution_scale: float,
+    minimum_width: float,
+) -> LineSegment:
+    """Move edge detections to a stable local stroke centerline.
+
+    Both Canny/Hough edges of one thick printed stroke tend to converge on the
+    same distance-transform ridge, after which the geometry duplicate pass can
+    merge them. Thin independent CAD boundaries are left unchanged.
+    """
+    if segment.width < minimum_width * resolution_scale:
+        return segment
+    vector = segment.p2 - segment.p1
+    norm = float(np.linalg.norm(vector))
+    if norm <= 1e-9:
+        return segment
+    normal = np.array([-vector[1], vector[0]], dtype=float) / norm
+    radius = max(
+        scaled_int(3, resolution_scale, minimum=2),
+        min(
+            scaled_int(36, resolution_scale, minimum=6),
+            int(round(segment.width * 1.25)),
+        ),
+    )
+    offsets: list[float] = []
+    ridge_values: list[float] = []
+    for t in np.linspace(0.15, 0.85, 7):
+        point = segment.p1 + vector * t
+        best_offset = 0
+        best_value = -1.0
+        for offset in range(-radius, radius + 1):
+            sample = point + normal * offset
+            x, y = int(round(sample[0])), int(round(sample[1]))
+            if 0 <= y < distance_map.shape[0] and 0 <= x < distance_map.shape[1]:
+                value = float(distance_map[y, x])
+                if value > best_value:
+                    best_value = value
+                    best_offset = offset
+        if best_value >= max(1.25, minimum_width * resolution_scale * 0.35):
+            offsets.append(float(best_offset))
+            ridge_values.append(best_value)
+    if len(offsets) < 4:
+        return segment
+    shift = float(np.median(offsets))
+    spread = float(np.median(np.abs(np.asarray(offsets) - shift)))
+    if abs(shift) < 0.5 or spread > max(1.5, segment.width * 0.35):
+        return segment
+    delta = normal * shift
+    return segment.copy(
+        x1=float(segment.x1 + delta[0]),
+        y1=float(segment.y1 + delta[1]),
+        x2=float(segment.x2 + delta[0]),
+        y2=float(segment.y2 + delta[1]),
+        history=tuple(dict.fromkeys(segment.history + ("recenter_thick_stroke",))),
+    )
+
+
 def _normalize_endpoint_order(segment: LineSegment) -> LineSegment:
     if (segment.x2, segment.y2) < (segment.x1, segment.y1):
         return segment.copy(x1=segment.x2, y1=segment.y2, x2=segment.x1, y2=segment.y1)
     return segment
+
+
+def _prepare_segment(
+    distance_map: np.ndarray,
+    segment: LineSegment,
+    params: LineDetectionParams,
+    resolution_scale: float,
+) -> LineSegment:
+    width = _estimate_width(distance_map, segment, resolution_scale)
+    prepared = segment.copy(width=width)
+    if params.center_thick_strokes:
+        prepared = _recenter_thick_stroke(
+            distance_map,
+            prepared,
+            resolution_scale,
+            params.min_center_width,
+        )
+        prepared = prepared.copy(
+            width=_estimate_width(distance_map, prepared, resolution_scale)
+        )
+    return _normalize_endpoint_order(prepared)
 
 
 def detect_lines(
@@ -104,18 +196,31 @@ def detect_lines(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> list[LineSegment]:
-    """Detect candidate line segments from a binary image."""
+    """Detect resolution-normalized candidate line segments from a binary image."""
     params = params or LineDetectionParams()
     checkpoint(cancellation_token)
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
+    if binary_image.size == 0:
+        return []
+
+    resolution_scale = image_resolution_scale(binary_image.shape)
+    effective_min_length = scaled_int(params.min_line_length, resolution_scale, minimum=5)
+    effective_max_gap = scaled_int(params.max_line_gap, resolution_scale, minimum=0)
+    effective_hough_threshold = scaled_int(
+        params.hough_threshold,
+        resolution_scale,
+        minimum=10,
+    )
 
     foreground = 255 - binary_image
-    # A slight close repairs tiny breaks before line detection.
+    # A slight close repairs tiny breaks before line detection. Its physical
+    # footprint scales with the photographed sheet resolution.
+    morphology_size = scaled_odd(3, resolution_scale, minimum=1)
     foreground = cv2.morphologyEx(
         foreground,
         cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
+        cv2.getStructuringElement(cv2.MORPH_RECT, (morphology_size, morphology_size)),
     )
     edges = cv2.Canny(foreground, 40, 140, apertureSize=3)
     distance_map = cv2.distanceTransform(foreground, cv2.DIST_L2, 3)
@@ -127,9 +232,9 @@ def detect_lines(
         edges,
         rho=1,
         theta=np.pi / 720.0,
-        threshold=max(10, int(params.hough_threshold)),
-        minLineLength=max(5, int(params.min_line_length)),
-        maxLineGap=max(0, int(params.max_line_gap)),
+        threshold=effective_hough_threshold,
+        minLineLength=effective_min_length,
+        maxLineGap=effective_max_gap,
     )
     checkpoint(cancellation_token)
     if hough is not None:
@@ -145,9 +250,10 @@ def detect_lines(
                 source_ids=(source_id,),
                 history=("detected:hough",),
             )
-            if segment.length >= params.min_line_length:
-                segment.width = _estimate_width(distance_map, segment)
-                segments.append(_normalize_endpoint_order(segment))
+            if segment.length >= effective_min_length:
+                segments.append(
+                    _prepare_segment(distance_map, segment, params, resolution_scale)
+                )
     report_progress(progress_callback, "hough", 0.55)
 
     if params.use_lsd:
@@ -170,9 +276,10 @@ def detect_lines(
                     source_ids=(source_id,),
                     history=("detected:lsd",),
                 )
-                if segment.length >= params.min_line_length:
-                    segment.width = _estimate_width(distance_map, segment)
-                    segments.append(_normalize_endpoint_order(segment))
+                if segment.length >= effective_min_length:
+                    segments.append(
+                        _prepare_segment(distance_map, segment, params, resolution_scale)
+                    )
     report_progress(progress_callback, "lsd", 0.9)
 
     # Prefer longer and stronger lines if a noisy image creates an excessive number.
