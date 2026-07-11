@@ -120,7 +120,11 @@ jobs:
       - name: Build installer
         shell: pwsh
         working-directory: cad_photo_to_dxf
-        run: '& "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" ./installer/cad_photo_to_dxf.iss'
+        run: |
+          & "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" `
+            "/DMyAppVersion=${{ steps.version.outputs.value }}" `
+            "./installer/cad_photo_to_dxf.iss"
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup build failed" }
 
       - name: Install, launch, and uninstall smoke test
         shell: pwsh
