@@ -23,7 +23,7 @@ def export_from_window(
     """Run the active GUI export and unified report path.
 
     ``circles`` must contain only candidates already approved by the explicit
-    circle-review dialog. The exporter itself never promotes raw candidates.
+    circle-review dialog. The exporter independently rechecks their validity.
     """
     if window._is_processing():
         QMessageBox.information(window, "正在处理", "请等待当前任务完成后再导出。")
@@ -35,7 +35,12 @@ def export_from_window(
             "请先完成“识别并清理线条”，确认预览后再导出。",
         )
         return None
-    if window.binary_image is None or window.corrected_image is None:
+    if (
+        window.original_image is None
+        or window.binary_image is None
+        or window.corrected_image is None
+    ):
+        QMessageBox.warning(window, "状态不完整", "图像处理状态不完整，请重新导入并处理。")
         return None
 
     default_dir = Path.cwd() / "output"
@@ -81,9 +86,14 @@ def export_from_window(
         warnings = list(window._last_warnings)
         warnings.extend(quality.warnings)
         warnings.extend(semantic_warnings)
-        if approved_circles:
+        if result.circle_count:
             warnings.append(
-                f"已依据人工确认导出 {len(approved_circles)} 个 DXF CIRCLE 实体。"
+                f"已依据人工确认导出 {result.circle_count} 个 DXF CIRCLE 实体。"
+            )
+        if result.skipped_circle_count:
+            warnings.append(
+                "导出边界再次校验时跳过 "
+                f"{result.skipped_circle_count} 个无效或低置信度圆形候选。"
             )
         if window._perspective_metadata is not None:
             warnings.extend(window._perspective_metadata.get("warnings", []))
@@ -138,6 +148,7 @@ def export_from_window(
             calibration_source=calibration_source,
             coordinate_space=coordinate_space,
             warnings=warnings,
+            confirmed_circles=approved_circles,
             started_at_utc=window._run_started_at,
             duration_seconds=window._run_duration_seconds,
         )
