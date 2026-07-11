@@ -48,8 +48,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--report", type=Path, default=Path("output/report.json"))
     parser.add_argument("--debug-dir", type=Path)
-    parser.add_argument("--auxiliary", action="store_true", help="Detect review-only circles and symbols")
-    parser.add_argument("--ocr", action="store_true", help="Run optional review-only OCR")
+    parser.add_argument(
+        "--auxiliary",
+        action="store_true",
+        help="Detect review-only circles and symbols",
+    )
+    parser.add_argument(
+        "--ocr",
+        action="store_true",
+        help="Run optional review-only OCR",
+    )
     parser.add_argument("--verbose", action="store_true")
     return parser
 
@@ -64,6 +72,7 @@ def run_headless(args: argparse.Namespace) -> int:
 
     progress = None
     if args.verbose:
+
         def progress(stage: str, fraction: float) -> None:
             print(f"[{fraction * 100:5.1f}%] {stage}", file=sys.stderr)
 
@@ -73,7 +82,9 @@ def run_headless(args: argparse.Namespace) -> int:
         preview_path=args.preview,
         preprocess_params=PreprocessParams(threshold_strength=args.threshold_strength),
         detection_params=LineDetectionParams(min_line_length=args.min_line_length),
-        clean_params=GeometryCleanParams(min_line_length=max(5, args.min_line_length * 0.45)),
+        clean_params=GeometryCleanParams(
+            min_line_length=max(5, args.min_line_length * 0.45)
+        ),
         preserve_hatch=not args.no_hatch,
         report_path=args.report,
         debug_dir=args.debug_dir,
@@ -107,7 +118,8 @@ def run_headless(args: argparse.Namespace) -> int:
 def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
-        from app.gui_guard import MainWindow
+
+        from app.gui_review import MainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
