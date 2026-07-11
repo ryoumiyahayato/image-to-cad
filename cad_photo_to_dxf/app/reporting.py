@@ -135,6 +135,11 @@ def build_processing_report(
         getattr(export_result, "coordinate_mode", "pixel_units")
     )
     scale_per_pixel = float(getattr(export_result, "mm_per_pixel", 1.0))
+    validation_result = (
+        validation
+        if validation is not None
+        else getattr(export_result, "validation", None)
+    )
     report = {
         "schema_version": REPORT_SCHEMA_VERSION,
         "application_version": application_version,
@@ -176,7 +181,7 @@ def build_processing_report(
             "unit_name": unit_name,
             "is_engineering_model_scale": coordinate_mode == "model_mm",
         },
-        "validation": validation,
+        "validation": validation_result,
         "warnings": list(dict.fromkeys(str(item) for item in warnings)),
         "technical_limits": list(technical_limits),
     }
