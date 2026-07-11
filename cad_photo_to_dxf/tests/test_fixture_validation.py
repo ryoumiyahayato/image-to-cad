@@ -1,0 +1,109 @@
+from __future__ import annotations
+
+import hashlib
+import json
+from pathlib import Path
+import tempfile
+import unittest
+
+import cv2
+import ezdxf
+import numpy as np
+
+from app.fixture_validation import (
+    validate_fixture_directory,
+    validate_fixture_set,
+)
+
+
+def sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def create_valid_fixture(root: Path) -> Path:
+    fixture = root / "real-photo-001"
+    fixture.mkdir(parents=True)
+    source = fixture / "source.png"
+    image = np.full((120, 180, 3), 255, np.uint8)
+    cv2.rectangle(image, (10, 10), (170, 110), (0, 0, 0), 2)
+    if not cv2.imwrite(str(source), image):
+        raise RuntimeError("test image could not be written")
+
+    ground_truth = fixture / "ground_truth.dxf"
+    document = ezdxf.new("R2010")
+    modelspace = document.modelspace()
+    modelspace.add_line((0, 0), (100, 0), dxfattribs={"layer": "WALL"})
+    modelspace.add_line((100, 0), (100, 50), dxfattribs={"layer": "WALL"})
+    document.saveas(ground_truth)
+
+    manifest = {
+        "id": "real-photo-001",
+        "is_real_capture": True,
+        "fixture_categories": ["mild_perspective", "original_cad_dimensions"],
+        "source_file": source.name,
+        "source_sha256": sha256(source),
+        "source_provenance": "Project-owned camera capture of a printed test sheet",
+        "licence": "Project test fixture; redistribution permitted",
+        "ground_truth_file": ground_truth.name,
+        "ground_truth_sha256": sha256(ground_truth),
+        "reviewed_by": "Independent CAD reviewer",
+        "paper": {"size": "A4", "orientation": "landscape"},
+        "coordinate_mode": "model_mm",
+        "expected_corners_px": [[10, 10], [170, 10], [170, 110], [10, 110]],
+        "calibration_dimensions": [100.0],
+        "verification_dimensions": [50.0],
+        "expected_entities": {"line_min": 2, "line_max": 4},
+        "expected_layers": {"WALL": {"min": 2, "max": 4}},
+        "intentional_open_contours": True,
+        "tolerances": {
+            "endpoint_mm": 1.0,
+            "angle_degrees": 1.0,
+            "scale_relative": 0.02,
+            "hausdorff_mm": 2.0,
+        },
+        "freecad_version": "0.19.2",
+    }
+    (fixture / "manifest.json").write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return fixture
+
+
+class FixtureValidationTests(unittest.TestCase):
+    def test_complete_real_photo_fixture_qualifies(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = create_valid_fixture(Path(directory))
+            result = validate_fixture_directory(fixture)
+
+        self.assertTrue(result.passed, result.errors)
+        self.assertEqual(result.fixture_id, "real-photo-001")
+
+    def test_placeholder_provenance_and_synthetic_capture_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = create_valid_fixture(Path(directory))
+            manifest_path = fixture / "manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["is_real_capture"] = False
+            manifest["source_provenance"] = "unknown"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            result = validate_fixture_directory(fixture)
+
+        self.assertFalse(result.passed)
+        self.assertTrue(any("is_real_capture" in error for error in result.errors))
+        self.assertTrue(any("source_provenance" in error for error in result.errors))
+
+    def test_release_minimum_blocks_empty_fixture_set(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            result = validate_fixture_set(directory, minimum_required=1)
+
+        self.assertFalse(result.passed)
+        self.assertEqual(result.qualifying_count, 0)
+        self.assertIn("minimum required is 1", result.errors[0])
+
+
+if __name__ == "__main__":
+    unittest.main()
