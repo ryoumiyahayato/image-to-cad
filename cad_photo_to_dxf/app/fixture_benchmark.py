@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 import json
 import math
 from pathlib import Path
@@ -10,6 +10,10 @@ import ezdxf
 import numpy as np
 from scipy.spatial import cKDTree
 
+from .fixture_dimensions import (
+    VerificationReference,
+    parse_verification_references,
+)
 from .fixture_validation import validate_fixture_directory
 from .pipeline import PaperDetectionError, run_pipeline
 from .scale_calibrator import ScaleCalibration
@@ -47,6 +51,17 @@ class DxfLine:
 
 
 @dataclass(frozen=True)
+class VerificationMeasurement:
+    reference_id: str
+    expected_mm: float
+    measured_mm: float
+    absolute_error_mm: float
+    relative_error: float
+    start_offset_mm: float
+    end_offset_mm: float
+
+
+@dataclass(frozen=True)
 class GeometryMetrics:
     candidate_line_count: int
     ground_truth_line_count: int
@@ -55,6 +70,10 @@ class GeometryMetrics:
     maximum_angle_error_degrees: float
     scale_relative_error: float
     candidate_layer_counts: dict[str, int]
+    verification_max_endpoint_offset_mm: float = 0.0
+    verification_max_absolute_error_mm: float = 0.0
+    verification_max_relative_error: float = 0.0
+    verification_measurements: tuple[VerificationMeasurement, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -191,6 +210,94 @@ def compare_dxf_lines(
     )
 
 
+def _closest_point_on_line(
+    point: np.ndarray,
+    line: DxfLine,
+) -> tuple[np.ndarray, float]:
+    start = np.asarray(line.start, dtype=float)
+    end = np.asarray(line.end, dtype=float)
+    vector = end - start
+    denominator = float(np.dot(vector, vector))
+    if denominator <= 1e-18:
+        closest = start
+    else:
+        fraction = float(np.dot(point - start, vector) / denominator)
+        closest = start + min(1.0, max(0.0, fraction)) * vector
+    return closest, float(np.linalg.norm(point - closest))
+
+
+def _closest_point_on_geometry(
+    point: tuple[float, float],
+    lines: list[DxfLine],
+) -> tuple[np.ndarray, float]:
+    if not lines:
+        return np.asarray(point, dtype=float), math.inf
+    target = np.asarray(point, dtype=float)
+    best_point: np.ndarray | None = None
+    best_distance = math.inf
+    for line in lines:
+        candidate, distance = _closest_point_on_line(target, line)
+        if distance < best_distance:
+            best_point = candidate
+            best_distance = distance
+    if best_point is None:
+        return target, math.inf
+    return best_point, best_distance
+
+
+def measure_verification_references(
+    candidate: list[DxfLine],
+    references: tuple[VerificationReference, ...],
+) -> tuple[VerificationMeasurement, ...]:
+    measurements: list[VerificationMeasurement] = []
+    for reference in references:
+        measured_start, start_offset = _closest_point_on_geometry(
+            reference.ground_truth_start,
+            candidate,
+        )
+        measured_end, end_offset = _closest_point_on_geometry(
+            reference.ground_truth_end,
+            candidate,
+        )
+        measured_mm = float(np.linalg.norm(measured_end - measured_start))
+        absolute_error = abs(measured_mm - reference.expected_mm)
+        relative_error = absolute_error / reference.expected_mm
+        measurements.append(
+            VerificationMeasurement(
+                reference_id=reference.reference_id,
+                expected_mm=reference.expected_mm,
+                measured_mm=measured_mm,
+                absolute_error_mm=absolute_error,
+                relative_error=relative_error,
+                start_offset_mm=start_offset,
+                end_offset_mm=end_offset,
+            )
+        )
+    return tuple(measurements)
+
+
+def _with_verification_measurements(
+    metrics: GeometryMetrics,
+    candidate: list[DxfLine],
+    references: tuple[VerificationReference, ...],
+) -> GeometryMetrics:
+    measurements = measure_verification_references(candidate, references)
+    return replace(
+        metrics,
+        verification_max_endpoint_offset_mm=max(
+            max(item.start_offset_mm, item.end_offset_mm)
+            for item in measurements
+        ),
+        verification_max_absolute_error_mm=max(
+            item.absolute_error_mm for item in measurements
+        ),
+        verification_max_relative_error=max(
+            item.relative_error for item in measurements
+        ),
+        verification_measurements=measurements,
+    )
+
+
 def _calibration_from_manifest(manifest: dict[str, Any]) -> ScaleCalibration | None:
     if manifest.get("coordinate_mode") != "model_mm":
         return None
@@ -319,6 +426,7 @@ def run_fixture_benchmark(
     errors: list[str] = []
 
     try:
+        verification_references = parse_verification_references(manifest)
         calibration = _calibration_from_manifest(manifest)
         paper = manifest["paper"]
         pipeline_result = run_pipeline(
@@ -365,7 +473,11 @@ def run_fixture_benchmark(
 
     candidate_lines = read_dxf_lines(output_dxf)
     truth_lines = read_dxf_lines(fixture / manifest["ground_truth_file"])
-    metrics = compare_dxf_lines(candidate_lines, truth_lines)
+    metrics = _with_verification_measurements(
+        compare_dxf_lines(candidate_lines, truth_lines),
+        candidate_lines,
+        verification_references,
+    )
 
     expected_entities = manifest["expected_entities"]
     if not (
@@ -403,6 +515,16 @@ def run_fixture_benchmark(
             "sampled Hausdorff",
             metrics.sampled_hausdorff,
             float(tolerances["hausdorff_mm"]),
+        ),
+        (
+            "verification endpoint",
+            metrics.verification_max_endpoint_offset_mm,
+            float(tolerances["endpoint_mm"]),
+        ),
+        (
+            "verification dimension",
+            metrics.verification_max_relative_error,
+            float(tolerances["scale_relative"]),
         ),
     )
     for label, actual, maximum in checks:
