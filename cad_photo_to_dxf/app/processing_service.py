@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -23,6 +23,11 @@ from .line_detect import (
     render_line_preview,
 )
 from .preprocess import PreprocessParams, PreprocessResult, preprocess_image_with_stages
+from .topology import (
+    TopologyParams,
+    TopologyReport,
+    split_lines_at_intersections,
+)
 
 
 @dataclass(frozen=True)
@@ -30,6 +35,7 @@ class ProcessingConfig:
     preprocess: PreprocessParams
     detection: LineDetectionParams
     cleaning: GeometryCleanParams
+    topology: TopologyParams = field(default_factory=TopologyParams)
     preserve_hatch: bool = True
     enable_auxiliary: bool = False
     enable_ocr: bool = False
@@ -42,6 +48,7 @@ class ProcessingResult:
     raw_lines: list[LineSegment]
     lines: list[LineSegment]
     geometry_report: GeometryCleanReport
+    topology_report: TopologyReport
     classification_report: ClassificationReport
     auxiliary: AuxiliaryRecognitionResult | None
     preview: np.ndarray
@@ -105,20 +112,27 @@ def process_corrected_image(
             progress_callback,
             "detect",
             0.30,
-            0.64,
+            0.62,
         ),
     )
 
-    report_progress(progress_callback, "geometry", 0.68)
+    report_progress(progress_callback, "geometry", 0.66)
     geometry = clean_geometry_with_report(
         raw_lines,
         config.cleaning,
         cancellation_token,
     )
 
+    report_progress(progress_callback, "topology", 0.76)
+    topology = split_lines_at_intersections(
+        geometry.lines,
+        config.topology,
+        cancellation_token,
+    )
+
     report_progress(progress_callback, "classification", 0.82)
     classification = classify_layers_with_report(
-        geometry.lines,
+        topology.lines,
         binary.shape,
         preserve_hatch=config.preserve_hatch,
         cancellation_token=cancellation_token,
@@ -147,6 +161,7 @@ def process_corrected_image(
         raw_lines=raw_lines,
         lines=classification.lines,
         geometry_report=geometry.report,
+        topology_report=topology.report,
         classification_report=classification.report,
         auxiliary=auxiliary,
         preview=preview,
