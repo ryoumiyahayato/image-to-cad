@@ -29,13 +29,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install test dependencies
+      - name: Install validation dependencies
         shell: pwsh
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          if (Test-Path requirements-dev.txt) { pip install -r requirements-dev.txt }
-          pip install "pytest>=8,<9" "ruff>=0.9,<1"
+          python -m pip install --upgrade pip 2>&1 | Tee-Object -FilePath validation-setup.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pip install -r requirements.txt "pytest>=8,<9" "ruff>=0.9,<1" 2>&1 | Tee-Object -FilePath validation-setup.txt -Append
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Run tests
         shell: pwsh
@@ -57,6 +57,7 @@ jobs:
         with:
           name: validation-diagnostics
           path: |
+            cad_photo_to_dxf/validation-setup.txt
             cad_photo_to_dxf/validation-pytest.txt
             cad_photo_to_dxf/validation-compile.txt
             cad_photo_to_dxf/validation-ruff.txt
