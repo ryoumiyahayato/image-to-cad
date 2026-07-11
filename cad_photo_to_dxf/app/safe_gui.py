@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 from typing import Callable
 
+import numpy as np
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 
 from . import __version__
@@ -15,11 +16,16 @@ from .geometry_cleaner import GeometryCleanParams
 from .gui import MainWindow as _LegacyMainWindow
 from .line_detect import LineDetectionParams
 from .perspective import (
+    PerspectiveResult,
     auto_correct,
     resolve_paper_dimensions_mm,
     warp_perspective,
 )
-from .preprocess import PreprocessParams
+from .preprocess import (
+    PreprocessParams,
+    PreprocessResult,
+    preprocess_image_with_stages,
+)
 from .processing_service import (
     ProcessingConfig,
     ProcessingResult,
@@ -27,12 +33,18 @@ from .processing_service import (
 )
 from .quality import assess_image_quality
 from .reporting import build_processing_report, write_json_report
+from .workflow_state import (
+    WorkflowState,
+    WorkflowStateError,
+    WorkflowStateMachine,
+)
 
 
 class MainWindow(_LegacyMainWindow):
     """GUI entrypoint with strict workflow state and one shared pipeline."""
 
     def __init__(self) -> None:
+        self._workflow = WorkflowStateMachine()
         self._coordinate_mode = "pixel_units"
         self._calibration_source = "uncalibrated"
         self._imported_at = datetime.now(timezone.utc)
@@ -50,11 +62,7 @@ class MainWindow(_LegacyMainWindow):
         super().__init__()
         self.info_label.setText("坐标：未校准的无单位像素坐标")
 
-    def import_image(self) -> None:
-        previous_path = self.current_path
-        super().import_image()
-        if self.current_path is None or self.current_path == previous_path:
-            return
+    def _reset_session_metadata(self) -> None:
         self._coordinate_mode = "pixel_units"
         self._calibration_source = "uncalibrated"
         self._imported_at = datetime.now(timezone.utc)
@@ -71,8 +79,47 @@ class MainWindow(_LegacyMainWindow):
         self._last_processing_result = None
         self.info_label.setText("坐标：未校准的无单位像素坐标")
 
-    def _require_corrected(self) -> bool:
+    def import_image(self) -> None:
+        previous_revision = self._state_revision
+        super().import_image()
+        if self._state_revision == previous_revision or self.original_image is None:
+            return
+        self._workflow.import_image()
+        self._reset_session_metadata()
+        self.statusBar().showMessage(
+            f"已导入：{self.current_path.name}；状态 {self._workflow.state.name}"
+        )
+
+    def _invalidate_line_results(self, *_args: object) -> None:
+        previous_state = self._workflow.state
+        super()._invalidate_line_results(*_args)
+        self._last_processing_config = None
+        self._last_processing_result = None
+        if previous_state >= WorkflowState.VECTORIZED:
+            target = (
+                WorkflowState.PREPROCESSED
+                if self.binary_image is not None
+                else WorkflowState.PERSPECTIVE_CONFIRMED
+            )
+            self._workflow.invalidate_to(target)
+
+    def _invalidate_preprocess_results(self, *_args: object) -> None:
+        previous_state = self._workflow.state
+        super()._invalidate_preprocess_results(*_args)
         if self.corrected_image is not None:
+            if previous_state >= WorkflowState.PERSPECTIVE_CONFIRMED:
+                self._workflow.invalidate_to(WorkflowState.PERSPECTIVE_CONFIRMED)
+        elif self.original_image is not None:
+            if previous_state >= WorkflowState.IMPORTED:
+                self._workflow.invalidate_to(WorkflowState.IMPORTED)
+        else:
+            self._workflow.clear()
+
+    def _require_corrected(self) -> bool:
+        if (
+            self.corrected_image is not None
+            and self._workflow.perspective_confirmed
+        ):
             return True
         if not self._require_original():
             return False
@@ -82,7 +129,9 @@ class MainWindow(_LegacyMainWindow):
             "请先执行“自动透视校正”，或使用“手动点击四角并校正”。\n"
             "系统不会再把原始照片静默当作已校正图像。",
         )
-        self.statusBar().showMessage("处理已阻止：必须先确认纸张四角和透视校正")
+        self.statusBar().showMessage(
+            "处理已阻止：必须先进入 PERSPECTIVE_CONFIRMED 状态"
+        )
         return False
 
     def _apply_paper_calibration(self) -> None:
@@ -111,8 +160,14 @@ class MainWindow(_LegacyMainWindow):
             "target_aspect_ratio": None,
             "corrected_shape": None,
         }
+        if self.original_image is not None:
+            self._workflow.import_image()
+        else:
+            self._workflow.clear()
 
     def rotate_corrected(self, degrees: int) -> None:
+        if not self._require_corrected():
+            return
         super().rotate_corrected(degrees)
         if self.corrected_image is not None:
             self._coordinate_mode = "pixel_units"
@@ -121,6 +176,9 @@ class MainWindow(_LegacyMainWindow):
                 self.corrected_image.shape
             )
             self.info_label.setText("旋转后比例已失效；当前为无单位像素坐标")
+            self.statusBar().showMessage(
+                f"已旋转 {degrees}°；状态 {self._workflow.state.name}"
+            )
 
     def auto_perspective(self) -> None:
         if not self._require_original():
@@ -144,33 +202,40 @@ class MainWindow(_LegacyMainWindow):
             if revision != self._state_revision:
                 self.statusBar().showMessage("参数已变化，已丢弃过期的校正结果")
                 return
-            result = value
-            if result is None:
+            if value is None:
                 QMessageBox.information(
                     self,
                     "未识别纸张边界",
                     "自动识别失败或置信度不足。请使用手动四角校正。",
                 )
                 return
-            self.corrected_image = result.image
+            if not isinstance(value, PerspectiveResult):
+                raise TypeError("Perspective service returned an invalid result")
+            if self._workflow.state > WorkflowState.IMPORTED:
+                self._workflow.invalidate_to(WorkflowState.IMPORTED)
+            self._workflow.confirm_perspective()
+            self.corrected_image = value.image
             self._invalidate_preprocess_results()
             self._apply_paper_calibration()
             self.original_canvas.clear_overlays()
-            for index, point in enumerate(result.corners, start=1):
+            for index, point in enumerate(value.corners, start=1):
                 self.original_canvas.add_point(tuple(point), str(index))
             self.corrected_canvas.set_image(self.corrected_image)
             self.tabs.setCurrentWidget(self.corrected_canvas)
             self._perspective_metadata = {
                 "applied": True,
                 "automatic": True,
-                "confidence": float(result.confidence),
-                "corners": result.corners.copy(),
+                "confidence": float(value.confidence),
+                "corners": value.corners.copy(),
                 "target_aspect_ratio": ratio,
                 "corrected_shape": list(self.corrected_image.shape),
             }
-            message = f"自动透视校正完成；置信度 {result.confidence:.2f}"
-            if result.warnings:
-                message += f"；警告 {len(result.warnings)} 项"
+            message = (
+                f"自动透视校正完成；置信度 {value.confidence:.2f}；"
+                f"状态 {self._workflow.state.name}"
+            )
+            if value.warnings:
+                message += f"；警告 {len(value.warnings)} 项"
             self.statusBar().showMessage(message)
 
         self._start_processing(operation, completed, "正在识别纸张并校正…")
@@ -206,6 +271,11 @@ class MainWindow(_LegacyMainWindow):
             if revision != self._state_revision:
                 self.statusBar().showMessage("参数已变化，已丢弃过期的校正结果")
                 return
+            if not isinstance(value, np.ndarray):
+                raise TypeError("Manual perspective service returned an invalid image")
+            if self._workflow.state > WorkflowState.IMPORTED:
+                self._workflow.invalidate_to(WorkflowState.IMPORTED)
+            self._workflow.confirm_perspective()
             self.corrected_image = value
             self._invalidate_preprocess_results()
             self._apply_paper_calibration()
@@ -219,25 +289,50 @@ class MainWindow(_LegacyMainWindow):
                 "target_aspect_ratio": ratio,
                 "corrected_shape": list(self.corrected_image.shape),
             }
-            self.statusBar().showMessage("手动四角透视校正完成")
+            self.statusBar().showMessage(
+                f"手动四角透视校正完成；状态 {self._workflow.state.name}"
+            )
 
         self._start_processing(operation, completed, "正在执行手动透视校正…")
 
-    def _on_corrected_point(self, x: float, y: float) -> None:
-        previous_calibration = self.calibration
-        was_scale_selection = self.selection_mode == "scale"
-        super()._on_corrected_point(x, y)
-        if (
-            was_scale_selection
-            and self.calibration is not None
-            and self.calibration is not previous_calibration
-        ):
-            self._coordinate_mode = "model_mm"
-            self._calibration_source = "known_dimension"
-            self.info_label.setText(
-                f"坐标：工程模型毫米 {self.calibration.mm_per_pixel:.6f} mm/px；"
-                "请用第二个独立尺寸复核"
+    def preprocess(self) -> None:
+        if not self._require_corrected():
+            return
+        if self._workflow.state > WorkflowState.PERSPECTIVE_CONFIRMED:
+            self._workflow.invalidate_to(WorkflowState.PERSPECTIVE_CONFIRMED)
+        params = PreprocessParams(threshold_strength=self.threshold_spin.value())
+        source = self.corrected_image.copy()
+        revision = self._state_revision
+
+        def operation(
+            token: CancellationToken,
+            progress: Callable[[str, float], None],
+        ) -> object:
+            return preprocess_image_with_stages(
+                source,
+                params,
+                cancellation_token=token,
+                progress_callback=progress,
             )
+
+        def completed(value: object) -> None:
+            if revision != self._state_revision:
+                self.statusBar().showMessage("参数已变化，已丢弃过期的预处理结果")
+                return
+            if not isinstance(value, PreprocessResult):
+                raise TypeError("Preprocess service returned an invalid result")
+            self.binary_image = value.image
+            self.preprocess_stages = value.stages
+            self._invalidate_line_results()
+            self.corrected_canvas.set_image(self.binary_image)
+            self._show_preprocess_stages(value.stages)
+            self.tabs.setCurrentWidget(self.preprocess_tabs)
+            self._workflow.mark_preprocessed()
+            self.statusBar().showMessage(
+                f"逐算子预处理完成；状态 {self._workflow.state.name}"
+            )
+
+        self._start_processing(operation, completed, "正在执行图像预处理…")
 
     def detect_and_clean(self) -> None:
         if not self._require_corrected():
@@ -269,6 +364,12 @@ class MainWindow(_LegacyMainWindow):
         existing_binary = (
             self.binary_image.copy() if self.binary_image is not None else None
         )
+        if self._workflow.state > WorkflowState.PREPROCESSED:
+            self._workflow.invalidate_to(
+                WorkflowState.PREPROCESSED
+                if existing_binary is not None
+                else WorkflowState.PERSPECTIVE_CONFIRMED
+            )
         corrected = self.corrected_image.copy()
         revision = self._state_revision
 
@@ -288,27 +389,32 @@ class MainWindow(_LegacyMainWindow):
             if revision != self._state_revision:
                 self.statusBar().showMessage("参数已变化，已丢弃过期的识别结果")
                 return
-            result = value
-            if not isinstance(result, ProcessingResult):
+            if not isinstance(value, ProcessingResult):
                 raise TypeError("Shared processing service returned an invalid result")
 
-            self.binary_image = result.binary
-            if result.preprocess_stages:
-                self.preprocess_stages = result.preprocess_stages
+            self.binary_image = value.binary
+            if value.preprocess_stages:
+                self.preprocess_stages = value.preprocess_stages
                 self._show_preprocess_stages(self.preprocess_stages)
-            self.raw_lines = result.raw_lines
-            self.lines = result.lines
-            self.geometry_report = result.geometry_report
-            self.classification_report = result.classification_report
-            self.auxiliary_result = result.auxiliary
-            self.detected_canvas.set_image(result.preview)
+            self.raw_lines = value.raw_lines
+            self.lines = value.lines
+            self.geometry_report = value.geometry_report
+            self.classification_report = value.classification_report
+            self.auxiliary_result = value.auxiliary
+            self.detected_canvas.set_image(value.preview)
             self.tabs.setCurrentWidget(self.detected_canvas)
             self._last_processing_config = config
-            self._last_processing_result = result
+            self._last_processing_result = value
+
+            if self._workflow.state < WorkflowState.PREPROCESSED:
+                self._workflow.mark_preprocessed()
+            self._workflow.mark_vectorized()
+            if self.calibration is not None:
+                self._workflow.mark_calibrated()
 
             counts = self.classification_report.layer_counts or {}
             details = ", ".join(
-                f"{key}:{value}" for key, value in sorted(counts.items())
+                f"{key}:{count}" for key, count in sorted(counts.items())
             )
             auxiliary_details = ""
             if self.auxiliary_result is not None:
@@ -320,14 +426,58 @@ class MainWindow(_LegacyMainWindow):
             self.statusBar().showMessage(
                 f"共享管线识别后共 {len(self.lines)} 条线；"
                 f"{details}{auxiliary_details}；"
-                f"分辨率系数 {result.detection_resolution_factor:.3f}"
+                f"分辨率系数 {value.detection_resolution_factor:.3f}；"
+                f"状态 {self._workflow.state.name}"
             )
 
         self._start_processing(operation, completed, "正在通过共享管线识别和清理…")
 
+    def start_scale_calibration(self) -> None:
+        try:
+            self._workflow.require(WorkflowState.VECTORIZED, "尺寸校准")
+        except WorkflowStateError:
+            QMessageBox.warning(
+                self,
+                "尚未完成矢量化",
+                "请先完成透视校正、预处理和识别，再进行模型尺寸校准。",
+            )
+            return
+        if self._workflow.state > WorkflowState.VECTORIZED:
+            self._workflow.invalidate_to(WorkflowState.VECTORIZED)
+        super().start_scale_calibration()
+
+    def _on_corrected_point(self, x: float, y: float) -> None:
+        previous_calibration = self.calibration
+        was_scale_selection = self.selection_mode == "scale"
+        super()._on_corrected_point(x, y)
+        if (
+            was_scale_selection
+            and self.calibration is not None
+            and self.calibration is not previous_calibration
+        ):
+            self._coordinate_mode = "model_mm"
+            self._calibration_source = "known_dimension"
+            self._workflow.mark_calibrated()
+            self.info_label.setText(
+                f"坐标：工程模型毫米 {self.calibration.mm_per_pixel:.6f} mm/px；"
+                "请用第二个独立尺寸复核"
+            )
+            self.statusBar().showMessage(
+                f"模型尺寸校准完成；状态 {self._workflow.state.name}"
+            )
+
     def export_file(self) -> None:
         if self._is_processing():
             QMessageBox.information(self, "正在处理", "请等待当前任务完成后再导出。")
+            return
+        try:
+            self._workflow.require(WorkflowState.VECTORIZED, "DXF 导出")
+        except WorkflowStateError:
+            QMessageBox.warning(
+                self,
+                "尚未完成矢量化",
+                "请先完成透视校正、预处理和识别，再导出 DXF。",
+            )
             return
         if not self.lines or self.binary_image is None:
             QMessageBox.warning(self, "尚未识别", "请先完成识别并确认预览。")
@@ -412,6 +562,7 @@ class MainWindow(_LegacyMainWindow):
                     "preserve_hatch": config.preserve_hatch,
                     "auxiliary_enabled": config.enable_auxiliary,
                     "ocr_enabled": config.enable_ocr,
+                    "workflow_state_before_export": self._workflow.state.name,
                 },
                 preprocess_stages=self.preprocess_stages,
                 debug_directory=None,
@@ -430,6 +581,20 @@ class MainWindow(_LegacyMainWindow):
             QMessageBox.critical(self, "导出失败", str(exc))
             return
 
+        validation_passed = bool(
+            result.validation and result.validation.get("passed")
+        )
+        if validation_passed:
+            self._workflow.mark_exported()
+        else:
+            QMessageBox.critical(
+                self,
+                "DXF 验证失败",
+                f"文件已生成，但结构验证未通过。请查看报告：{report_path}",
+            )
+            self.statusBar().showMessage("DXF 已生成但验证失败；未进入 EXPORTED 状态")
+            return
+
         if result.coordinate_mode == "model_mm":
             scale_text = f"工程模型毫米，{result.mm_per_pixel:.6f} mm/px"
         elif result.coordinate_mode == "paper_mm":
@@ -442,6 +607,9 @@ class MainWindow(_LegacyMainWindow):
             f"已生成：{result.path}\n"
             f"可编辑 LINE 数量：{result.line_count}\n"
             f"处理报告：{report_path}\n"
-            f"坐标模式：{scale_text}",
+            f"坐标模式：{scale_text}\n"
+            f"状态：{self._workflow.state.name}",
         )
-        self.statusBar().showMessage(f"DXF 已导出：{result.path}")
+        self.statusBar().showMessage(
+            f"DXF 已导出并验证：{result.path}；状态 {self._workflow.state.name}"
+        )
