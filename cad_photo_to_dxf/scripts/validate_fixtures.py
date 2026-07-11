@@ -17,12 +17,27 @@ from app.fixture_validation import (  # noqa: E402
 )
 
 
+REQUIRED_RELEASE_CATEGORIES = {
+    "flat_scan",
+    "mild_perspective",
+    "severe_perspective",
+    "blur_shadow_fold",
+    "hidden_paper_edge",
+    "non_paper_negative",
+    "multi_resolution",
+    "portrait_landscape",
+    "mixed_geometry",
+    "original_cad_dimensions",
+}
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
             "Validate real-photo CAD fixture provenance and ground truth. "
-            "When --minimum is greater than zero, qualifying fixtures are also "
-            "processed and compared with their ground-truth DXF files."
+            "When --minimum is greater than zero, all required capture categories "
+            "must be represented and qualifying fixtures are processed against "
+            "their ground-truth DXF files."
         )
     )
     parser.add_argument(
@@ -45,6 +60,17 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _fixture_categories(manifest_path: Path) -> set[str]:
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return set()
+    categories = manifest.get("fixture_categories") if isinstance(manifest, dict) else None
+    if not isinstance(categories, list):
+        return set()
+    return {item for item in categories if isinstance(item, str)}
+
+
 def main() -> int:
     args = build_parser().parse_args()
     qualification = validate_fixture_set(
@@ -53,8 +79,20 @@ def main() -> int:
         required_freecad_version=args.freecad_version,
     )
 
+    covered_categories: set[str] = set()
+    for fixture in qualification.fixtures:
+        if fixture.passed:
+            covered_categories.update(
+                _fixture_categories(fixture.fixture_directory / "manifest.json")
+            )
+    missing_categories = sorted(REQUIRED_RELEASE_CATEGORIES - covered_categories)
+    category_coverage_required = args.minimum > 0
+    category_coverage_passed = (
+        not category_coverage_required or not missing_categories
+    )
+
     benchmarks = []
-    if args.minimum > 0 and qualification.passed:
+    if args.minimum > 0 and qualification.passed and category_coverage_passed:
         for fixture in qualification.fixtures:
             if fixture.passed:
                 benchmarks.append(
@@ -72,8 +110,12 @@ def main() -> int:
             and all(result.passed for result in benchmarks)
         )
     )
-    passed = qualification.passed and benchmark_passed
+    passed = qualification.passed and category_coverage_passed and benchmark_passed
     report = qualification.to_dict()
+    report["category_coverage_required"] = category_coverage_required
+    report["covered_categories"] = sorted(covered_categories)
+    report["missing_categories"] = missing_categories
+    report["category_coverage_passed"] = category_coverage_passed
     report["benchmark_required"] = benchmark_required
     report["benchmark_passed"] = benchmark_passed
     report["benchmarks"] = [result.to_dict() for result in benchmarks]
