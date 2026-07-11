@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+import sys
 import tempfile
+from types import ModuleType, SimpleNamespace
 import unittest
+from unittest.mock import patch
 
 import cv2
 import ezdxf
@@ -11,6 +14,7 @@ import numpy as np
 from app import __version__
 from app.dxf_validator import validate_dxf
 from app.line_detect import LineSegment, _refine_to_centerline
+import main
 from scripts.versioning import parse_version, write_windows_version_info
 
 
@@ -62,6 +66,90 @@ class AuditRegressionTests(unittest.TestCase):
         self.assertEqual(result.duplicate_line_count, 1)
         self.assertEqual(result.zero_length_count, 1)
         self.assertEqual(result.invalid_coordinate_count, 0)
+
+    def test_dxf_audit_fixes_are_not_accepted_as_clean_validation(self) -> None:
+        fake_modelspace = SimpleNamespace(query=lambda _kind: [])
+        fake_document = SimpleNamespace(
+            audit=lambda: SimpleNamespace(errors=[], fixes=["automatic repair"]),
+            modelspace=lambda: fake_modelspace,
+        )
+        with patch("app.dxf_validator.ezdxf.readfile", return_value=fake_document):
+            result = validate_dxf("repaired-by-auditor.dxf")
+
+        self.assertFalse(result.passed)
+        self.assertEqual(result.audit_error_count, 0)
+        self.assertEqual(result.audit_fix_count, 1)
+
+    def test_branching_cycle_network_is_not_reported_as_one_closed_loop(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "branching_cycles.dxf"
+            document = ezdxf.new("R2010")
+            modelspace = document.modelspace()
+            center = (0, 0)
+            left_top = (-10, 10)
+            left_bottom = (-10, -10)
+            right_top = (10, 10)
+            right_bottom = (10, -10)
+            for start, end in (
+                (center, left_top),
+                (left_top, left_bottom),
+                (left_bottom, center),
+                (center, right_top),
+                (right_top, right_bottom),
+                (right_bottom, center),
+            ):
+                modelspace.add_line(start, end)
+            document.saveas(path)
+
+            result = validate_dxf(path)
+
+        self.assertTrue(result.passed)
+        self.assertEqual(result.connected_component_count, 1)
+        self.assertEqual(result.open_component_count, 1)
+        self.assertEqual(result.closed_component_count, 0)
+
+    def test_gui_entrypoint_uses_the_audited_main_window(self) -> None:
+        calls: dict[str, object] = {}
+
+        class FakeApplication:
+            def __init__(self, argv: list[str]) -> None:
+                calls["argv"] = argv
+
+            def setApplicationName(self, name: str) -> None:
+                calls["application_name"] = name
+
+            def exec(self) -> int:
+                calls["executed"] = True
+                return 0
+
+        class FakeWindow:
+            def __init__(self) -> None:
+                calls["window_created"] = True
+
+            def show(self) -> None:
+                calls["window_shown"] = True
+
+        pyside_module = ModuleType("PySide6")
+        widgets_module = ModuleType("PySide6.QtWidgets")
+        widgets_module.QApplication = FakeApplication
+        pyside_module.QtWidgets = widgets_module
+        main_window_module = ModuleType("app.main_window")
+        main_window_module.MainWindow = FakeWindow
+
+        with patch.dict(
+            sys.modules,
+            {
+                "PySide6": pyside_module,
+                "PySide6.QtWidgets": widgets_module,
+                "app.main_window": main_window_module,
+            },
+        ):
+            result = main.run_gui()
+
+        self.assertEqual(result, 0)
+        self.assertTrue(calls.get("window_created"))
+        self.assertTrue(calls.get("window_shown"))
+        self.assertTrue(calls.get("executed"))
 
     def test_topology_diagnostics_do_not_reject_open_drawing_details(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
