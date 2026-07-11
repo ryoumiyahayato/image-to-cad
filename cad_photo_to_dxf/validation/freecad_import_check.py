@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 import traceback
+from typing import Any
 
 
 def _sha256(path: Path) -> str:
@@ -15,6 +16,14 @@ def _sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _has_nonempty_shape(item: Any) -> bool:
+    try:
+        shape = item.Shape
+        return shape is not None and not shape.isNull()
+    except Exception:
+        return False
 
 
 def _parse_args() -> argparse.Namespace:
@@ -30,7 +39,7 @@ def main() -> int:
     args = _parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     evidence: dict[str, object] = {
-        "schema_version": "freecad-import-check/1",
+        "schema_version": "freecad-import-check/2",
         "started_at_utc": datetime.now(timezone.utc).isoformat(),
         "input": str(args.input.resolve()),
         "success": False,
@@ -67,20 +76,29 @@ def main() -> int:
             raise RuntimeError("FreeCAD DXF importer returned no document")
         document.recompute()
         objects = list(document.Objects)
-        evidence["document_name"] = document.Name
-        evidence["object_count"] = len(objects)
-        evidence["objects"] = [
+        object_records = [
             {
                 "name": item.Name,
                 "label": item.Label,
                 "type_id": item.TypeId,
-                "has_shape": hasattr(item, "Shape") and not item.Shape.isNull(),
+                "has_shape": _has_nonempty_shape(item),
             }
             for item in objects
         ]
-        evidence["success"] = len(objects) > 0
-        if not evidence["success"]:
+        shape_object_count = sum(
+            1 for record in object_records if bool(record["has_shape"])
+        )
+        evidence["document_name"] = document.Name
+        evidence["object_count"] = len(objects)
+        evidence["shape_object_count"] = shape_object_count
+        evidence["objects"] = object_records
+        evidence["success"] = len(objects) > 0 and shape_object_count > 0
+        if not objects:
             raise RuntimeError("FreeCAD imported the DXF but created no document objects")
+        if shape_object_count == 0:
+            raise RuntimeError(
+                "FreeCAD created document objects but none contained non-empty geometry"
+            )
         return_code = 0
     except Exception as exc:
         evidence["error_type"] = type(exc).__name__
