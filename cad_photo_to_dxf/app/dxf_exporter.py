@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import ezdxf
 from ezdxf import units
 import numpy as np
 
+from .dxf_validator import validate_dxf
 from .line_detect import LineSegment
 from .scale_calibrator import ScaleCalibration
 
@@ -24,6 +26,7 @@ class ExportResult:
     coordinate_mode: str
     unit_name: str
     skipped_line_count: int = 0
+    validation: dict[str, Any] | None = None
 
 
 LAYER_STYLES = {
@@ -44,7 +47,7 @@ def export_dxf(
     *,
     coordinate_mode: str | None = None,
 ) -> ExportResult:
-    """Export independently editable LINE entities to a DXF R2010 document."""
+    """Export editable LINE entities and validate the resulting DXF."""
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     scale = calibration.mm_per_pixel if calibration is not None else 1.0
@@ -80,7 +83,6 @@ def export_dxf(
         values = np.array([line.x1, line.y1, line.x2, line.y2], dtype=float)
         if not np.isfinite(values).all() or line.length <= 1e-9:
             continue
-        # Image Y grows downward; CAD Y grows upward.
         start = (line.x1 * scale, (image_height - 1 - line.y1) * scale)
         end = (line.x2 * scale, (image_height - 1 - line.y2) * scale)
         layer = line.layer if line.layer in LAYER_STYLES else "DETAIL"
@@ -100,6 +102,7 @@ def export_dxf(
     temporary = path.with_name(f".{path.name}.tmp")
     doc.saveas(temporary)
     temporary.replace(path)
+    validation = validate_dxf(path).to_dict()
     return ExportResult(
         path,
         len(valid_lines),
@@ -108,4 +111,5 @@ def export_dxf(
         coordinate_mode=mode,
         unit_name=unit_name,
         skipped_line_count=len(lines) - len(valid_lines),
+        validation=validation,
     )
