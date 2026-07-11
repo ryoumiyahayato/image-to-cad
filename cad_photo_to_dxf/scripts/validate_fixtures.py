@@ -17,18 +17,21 @@ from app.fixture_validation import (  # noqa: E402
 )
 
 
-REQUIRED_RELEASE_CATEGORIES = {
+REQUIRED_VECTOR_CATEGORIES = {
     "flat_scan",
     "mild_perspective",
     "severe_perspective",
     "blur_shadow_fold",
     "hidden_paper_edge",
-    "non_paper_negative",
     "multi_resolution",
     "portrait_landscape",
     "mixed_geometry",
     "original_cad_dimensions",
 }
+REQUIRED_REJECTION_CATEGORIES = {"non_paper_negative"}
+REQUIRED_RELEASE_CATEGORIES = (
+    REQUIRED_VECTOR_CATEGORIES | REQUIRED_REJECTION_CATEGORIES
+)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,8 +39,8 @@ def build_parser() -> argparse.ArgumentParser:
         description=(
             "Validate real-photo CAD fixture provenance and ground truth. "
             "When --minimum is greater than zero, all required capture categories "
-            "must be represented and qualifying fixtures are processed against "
-            "their ground-truth DXF files."
+            "must be represented by the correct fixture outcome and every qualifying "
+            "fixture is executed against its declared acceptance policy."
         )
     )
     parser.add_argument(
@@ -60,17 +63,6 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def _fixture_categories(manifest_path: Path) -> set[str]:
-    try:
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return set()
-    categories = manifest.get("fixture_categories") if isinstance(manifest, dict) else None
-    if not isinstance(categories, list):
-        return set()
-    return {item for item in categories if isinstance(item, str)}
-
-
 def main() -> int:
     args = build_parser().parse_args()
     qualification = validate_fixture_set(
@@ -79,13 +71,25 @@ def main() -> int:
         required_freecad_version=args.freecad_version,
     )
 
-    covered_categories: set[str] = set()
+    vector_categories: set[str] = set()
+    rejection_categories: set[str] = set()
     for fixture in qualification.fixtures:
-        if fixture.passed:
-            covered_categories.update(
-                _fixture_categories(fixture.fixture_directory / "manifest.json")
-            )
-    missing_categories = sorted(REQUIRED_RELEASE_CATEGORIES - covered_categories)
+        if not fixture.passed:
+            continue
+        if fixture.expected_outcome == "vectorized_dxf":
+            vector_categories.update(fixture.fixture_categories)
+        elif fixture.expected_outcome == "paper_rejected":
+            rejection_categories.update(fixture.fixture_categories)
+
+    missing_vector_categories = sorted(
+        REQUIRED_VECTOR_CATEGORIES - vector_categories
+    )
+    missing_rejection_categories = sorted(
+        REQUIRED_REJECTION_CATEGORIES - rejection_categories
+    )
+    missing_categories = sorted(
+        set(missing_vector_categories) | set(missing_rejection_categories)
+    )
     category_coverage_required = args.minimum > 0
     category_coverage_passed = (
         not category_coverage_required or not missing_categories
@@ -113,7 +117,17 @@ def main() -> int:
     passed = qualification.passed and category_coverage_passed and benchmark_passed
     report = qualification.to_dict()
     report["category_coverage_required"] = category_coverage_required
-    report["covered_categories"] = sorted(covered_categories)
+    report["required_vector_categories"] = sorted(REQUIRED_VECTOR_CATEGORIES)
+    report["required_rejection_categories"] = sorted(
+        REQUIRED_REJECTION_CATEGORIES
+    )
+    report["covered_vector_categories"] = sorted(vector_categories)
+    report["covered_rejection_categories"] = sorted(rejection_categories)
+    report["covered_categories"] = sorted(
+        vector_categories | rejection_categories
+    )
+    report["missing_vector_categories"] = missing_vector_categories
+    report["missing_rejection_categories"] = missing_rejection_categories
     report["missing_categories"] = missing_categories
     report["category_coverage_passed"] = category_coverage_passed
     report["benchmark_required"] = benchmark_required
