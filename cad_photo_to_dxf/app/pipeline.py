@@ -152,23 +152,33 @@ def run_pipeline(
     if perspective_result is None:
         if strict_perspective:
             raise PaperDetectionError(
-                "Paper boundary could not be detected; use manual corners or --allow-uncorrected"
+                "Paper boundary could not be detected with sufficient confidence; "
+                "use manual corners or --allow-uncorrected"
             )
         corrected = original.copy()
-        warnings.append("自动纸张识别失败，已按未校正原图继续处理。")
+        warnings.append("自动纸张识别失败或置信度不足，已按未校正原图继续处理。")
     else:
         corrected = perspective_result.image
         warnings.extend(perspective_result.warnings)
 
-    calibration_source = "explicit" if calibration is not None else "uncalibrated"
+    coordinate_mode = "model_mm" if calibration is not None else "pixel_units"
+    calibration_source = "known_dimension" if calibration is not None else "uncalibrated"
+    if calibration is not None:
+        warnings.append("模型尺寸由用户提供的已知长度校准；仍需用独立尺寸复核。")
     if calibration is None and paper_dimensions is not None and perspective_result is not None:
         calibration = ScaleCalibration(
             (0.0, 0.0),
             (float(max(1, corrected.shape[1] - 1)), 0.0),
             float(paper_dimensions[0]),
         )
+        coordinate_mode = "paper_mm"
         calibration_source = "paper_dimensions"
-        warnings.append("导出比例由纸张外边界尺寸推导；角点必须准确落在纸张外缘。")
+        warnings.append(
+            "当前导出为 paper-space 纸面毫米坐标，不是原始工程 model-space 设计尺寸。"
+        )
+        warnings.append("纸面比例由纸张外边界推导；角点必须准确落在纸张外缘。")
+    elif calibration is None:
+        warnings.append("当前导出为无单位像素坐标；未声明毫米或工程真实尺寸。")
 
     checkpoint(cancellation_token)
     preprocessing = preprocess_image_with_stages(
@@ -232,7 +242,13 @@ def run_pipeline(
         save_image(Path(debug_dir) / "90_line_preview.png", preview)
 
     report_progress(progress_callback, "export", 0.9)
-    export_result = export_dxf(lines, output_path, binary.shape[0], calibration)
+    export_result = export_dxf(
+        lines,
+        output_path,
+        binary.shape[0],
+        calibration,
+        coordinate_mode=coordinate_mode,
+    )
     if export_result.skipped_line_count:
         warnings.append(
             f"导出时跳过 {export_result.skipped_line_count} 条无效或零长度线。"
@@ -284,12 +300,19 @@ def run_pipeline(
             "path": str(export_result.path),
             "line_count": export_result.line_count,
             "skipped_line_count": export_result.skipped_line_count,
-            "mm_per_pixel": export_result.mm_per_pixel,
+            "scale_per_pixel": export_result.mm_per_pixel,
+            "mm_per_pixel": (
+                export_result.mm_per_pixel if export_result.unit_name == "mm" else None
+            ),
             "calibrated": export_result.calibrated,
             "calibration_source": calibration_source,
+            "coordinate_mode": export_result.coordinate_mode,
+            "unit_name": export_result.unit_name,
+            "is_engineering_model_scale": export_result.coordinate_mode == "model_mm",
         },
         "warnings": list(dict.fromkeys(warnings)),
         "technical_limits": [
+            "paper_mm 仅表示打印纸面坐标；恢复工程设计尺寸必须使用已知尺寸或图纸比例校准。",
             "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
             "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
             "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
