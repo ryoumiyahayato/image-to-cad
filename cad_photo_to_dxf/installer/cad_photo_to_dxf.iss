@@ -1,7 +1,8 @@
 #define MyAppName "CAD Photo to DXF"
-#define MyAppVersion "1.1.0"
 #define MyAppPublisher "CAD Photo to DXF"
 #define MyAppExeName "CADPhotoToDXF.exe"
+#define MyAppExePath "..\dist\CADPhotoToDXF\CADPhotoToDXF.exe"
+#define MyAppVersion GetFileVersion(MyAppExePath)
 
 [Setup]
 AppId={{D8F2917B-7357-4A84-9251-30105D8BF1A1}
@@ -12,7 +13,7 @@ DefaultDirName={autopf}\CADPhotoToDXF
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=output
-OutputBaseFilename=CADPhotoToDXF-1.1.0-Setup
+OutputBaseFilename=CADPhotoToDXF-{#MyAppVersion}-Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
