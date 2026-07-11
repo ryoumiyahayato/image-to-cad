@@ -81,10 +81,13 @@ jobs:
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke"
 
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: CADPhotoToDXF-Windows-v${{ steps.version.outputs.value }}
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 14
           path: |
             cad_photo_to_dxf/dist/CADPhotoToDXF/**
             cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
+            ${{ runner.temp }}/cad-photo-portable-smoke/**
+            ${{ runner.temp }}/cad-photo-installer-smoke/**
