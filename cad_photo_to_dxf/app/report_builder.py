@@ -15,7 +15,8 @@ TECHNICAL_LIMITS = [
     "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
     "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
     "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
-    "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
+    "圆形只有在达到置信度阈值并经人工确认后才导出；"
+    "圆弧、OCR、尺寸文字和建筑符号仍仅作为辅助候选。",
     "paper_mm 仅表示打印纸面坐标；未校准图纸比例时不得解释为工程 model_mm。",
     "粗笔画中心化属于保守启发式，墙体边界语义仍需人工复核。",
 ]
@@ -129,6 +130,8 @@ class ReportBuilder:
                 "path": str(export_result.path),
                 "line_count": export_result.line_count,
                 "skipped_line_count": export_result.skipped_line_count,
+                "circle_count": export_result.circle_count,
+                "skipped_circle_count": export_result.skipped_circle_count,
                 "mm_per_pixel": export_result.mm_per_pixel,
                 "calibrated": export_result.calibrated,
                 "calibration_source": calibration_source,
