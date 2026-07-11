@@ -144,6 +144,8 @@ def run_pipeline(
     checkpoint(cancellation_token)
     report_progress(progress_callback, "perspective", 0.08)
     perspective_result = auto_correct(original, target_aspect_ratio)
+    perspective_applied = False
+    rejected_low_confidence = False
     if perspective_result is None:
         if strict_perspective:
             raise PaperDetectionError(
@@ -151,20 +153,26 @@ def run_pipeline(
             )
         corrected = original.copy()
         warnings.append("自动纸张识别失败，已按未校正原图继续处理。")
-    elif strict_perspective and (
-        perspective_result.confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE
-    ):
-        raise PaperDetectionError(
-            "Paper boundary confidence is too low for strict mode; "
-            "confirm four manual corners or use --allow-uncorrected"
+    elif perspective_result.confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE:
+        if strict_perspective:
+            raise PaperDetectionError(
+                "Paper boundary confidence is too low for strict mode; "
+                "confirm four manual corners or use --allow-uncorrected"
+            )
+        corrected = original.copy()
+        rejected_low_confidence = True
+        warnings.extend(perspective_result.warnings)
+        warnings.append(
+            "自动纸张候选置信度不足，未应用透视变换；已按原图继续处理。"
         )
     else:
         corrected = perspective_result.image
+        perspective_applied = True
         warnings.extend(perspective_result.warnings)
 
     calibration_source = "explicit" if calibration is not None else "uncalibrated"
     coordinate_space = "model_mm" if calibration is not None else "pixel"
-    if calibration is None and paper_dimensions is not None and perspective_result is not None:
+    if calibration is None and paper_dimensions is not None and perspective_applied:
         calibration = ScaleCalibration(
             (0.0, 0.0),
             (float(max(1, corrected.shape[1] - 1)), 0.0),
@@ -220,12 +228,14 @@ def run_pipeline(
         original_shape=original.shape,
         corrected_shape=corrected.shape,
         perspective={
-            "applied": perspective_result is not None,
+            "candidate_detected": perspective_result is not None,
+            "applied": perspective_applied,
             "automatic": perspective_result.automatic if perspective_result else False,
             "confidence": perspective_result.confidence if perspective_result else 0.0,
             "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
             "corners": perspective_result.corners if perspective_result else None,
             "target_aspect_ratio": target_aspect_ratio,
+            "rejected_low_confidence": rejected_low_confidence,
         },
         quality=quality,
         parameters={
