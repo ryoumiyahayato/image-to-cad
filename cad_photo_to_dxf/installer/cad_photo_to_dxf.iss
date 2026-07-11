@@ -2,7 +2,9 @@
 #define MyAppPublisher "CAD Photo to DXF"
 #define MyAppExeName "CADPhotoToDXF.exe"
 #define MyAppExePath "..\dist\CADPhotoToDXF\CADPhotoToDXF.exe"
+#ifndef MyAppVersion
 #define MyAppVersion GetFileVersion(MyAppExePath)
+#endif
 
 [Setup]
 AppId={{D8F2917B-7357-4A84-9251-30105D8BF1A1}
