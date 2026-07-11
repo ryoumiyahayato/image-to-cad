@@ -123,6 +123,7 @@ def build_processing_report(
     auxiliary: Any,
     export_result: Any,
     calibration_source: str,
+    validation: Any = None,
     warnings: Iterable[str] = (),
     technical_limits: Iterable[str] = DEFAULT_TECHNICAL_LIMITS,
 ) -> dict[str, Any]:
@@ -175,6 +176,7 @@ def build_processing_report(
             "unit_name": unit_name,
             "is_engineering_model_scale": coordinate_mode == "model_mm",
         },
+        "validation": validation,
         "warnings": list(dict.fromkeys(str(item) for item in warnings)),
         "technical_limits": list(technical_limits),
     }
