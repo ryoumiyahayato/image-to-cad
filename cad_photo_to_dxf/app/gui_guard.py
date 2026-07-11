@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QMessageBox
 
-from .gui import MainWindow as _LegacyMainWindow
+from . import gui as _gui
+from .geometry_normalized import clean_geometry_with_report as _normalized_geometry_clean
+
+# The active GUI still lives in the legacy module, but route its runtime global
+# through the same resolution-normalized geometry service used by the CLI.
+_gui.clean_geometry_with_report = _normalized_geometry_clean
+_LegacyMainWindow = _gui.MainWindow
 
 
 class MainWindow(_LegacyMainWindow):
