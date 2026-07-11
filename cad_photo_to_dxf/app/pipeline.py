@@ -17,11 +17,8 @@ from .cancellation import (
     report_progress,
 )
 from .dxf_exporter import ExportResult, export_dxf
-from .geometry_cleaner import (
-    GeometryCleanParams,
-    GeometryCleanReport,
-    clean_geometry_with_report,
-)
+from .geometry_cleaner import GeometryCleanParams, GeometryCleanReport
+from .geometry_normalized import clean_geometry_with_report
 from .image_loader import load_image, save_image
 from .layer_classifier import (
     ClassificationReport,
@@ -38,6 +35,7 @@ from .perspective import (
 from .preprocess import PreprocessParams, preprocess_image_with_stages
 from .quality import ImageQualityAssessment, assess_image_quality
 from .reporting import REPORT_SCHEMA_VERSION, build_lineage, write_json_report
+from .resolution import image_resolution_scale
 from .scale_calibrator import ScaleCalibration
 
 
@@ -253,6 +251,10 @@ def run_pipeline(
 
     elapsed = time.perf_counter() - started_clock
     lineage = build_lineage(raw_lines, lines)
+    geometry_report = asdict(geometry_result.report)
+    geometry_report["resolution_scale"] = float(
+        getattr(geometry_result.report, "resolution_scale", 1.0)
+    )
     report: dict[str, Any] = {
         "schema_version": REPORT_SCHEMA_VERSION,
         "application_version": __version__,
@@ -288,10 +290,15 @@ def run_pipeline(
             "stages": {
                 name: list(image.shape) for name, image in preprocessing.stages.items()
             },
+            "resolution_scale": preprocessing.resolution_scale,
             "debug_directory": str(debug_dir) if debug_dir is not None else None,
         },
-        "detection": {"raw_line_count": len(raw_lines)},
-        "geometry": asdict(geometry_result.report),
+        "detection": {
+            "raw_line_count": len(raw_lines),
+            "resolution_scale": image_resolution_scale(binary.shape),
+            "thick_stroke_centering": detection_params.center_thick_strokes,
+        },
+        "geometry": geometry_report,
         "classification": asdict(classification_result.report),
         "auxiliary": asdict(auxiliary) if auxiliary is not None else None,
         "lineage": lineage,
@@ -311,6 +318,7 @@ def run_pipeline(
             "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
             "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
             "paper_mm 仅表示打印纸面坐标；未校准图纸比例时不得解释为工程 model_mm。",
+            "粗笔画中心化属于保守启发式，墙体边界语义仍需人工复核。",
         ],
     }
     written_report_path: Path | None = None
