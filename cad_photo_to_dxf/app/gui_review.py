@@ -33,6 +33,13 @@ class MainWindow(_GuardedMainWindow):
         super()._invalidate_line_results()
         self._approved_circles = []
 
+    def detect_and_clean(self) -> None:
+        # A new vectorization result creates a different candidate set even
+        # when the visible parameters did not change. Previous approvals must
+        # never be carried into the new result.
+        self._approved_circles = []
+        super().detect_and_clean()
+
     def review_layers(self) -> None:
         if not self.lines:
             QMessageBox.warning(
