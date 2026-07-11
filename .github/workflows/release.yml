@@ -9,12 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  release:
+  build:
     runs-on: windows-latest
     timeout-minutes: 75
-    environment: production-release
-    permissions:
-      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.value }}
     defaults:
       run:
         working-directory: cad_photo_to_dxf
@@ -40,6 +39,7 @@ jobs:
           python -m pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Verify tag matches canonical application version
+        id: version
         shell: pwsh
         run: |
           $version = (python -c "from app import __version__; print(__version__)").Trim()
@@ -47,6 +47,7 @@ jobs:
           if ($env:GITHUB_REF_NAME -ne $expectedTag) {
             throw "Tag $env:GITHUB_REF_NAME does not match application version $expectedTag"
           }
+          "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Run release checks
@@ -82,10 +83,20 @@ jobs:
             ./installer/cad_photo_to_dxf.iss
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup build failed" }
 
+      - name: Smoke test installer
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass -Force
+          ./scripts/installer_smoke.ps1 `
+            -Installer "./installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" `
+            -Sample ./samples/test.jpg `
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-release-installer-smoke"
+
       - name: Prepare immutable release assets
         shell: pwsh
         run: |
-          $releaseDir = Join-Path $env:RUNNER_TEMP "release-assets"
+          $releaseDir = Join-Path $env:GITHUB_WORKSPACE "release-assets"
+          Remove-Item $releaseDir -Recurse -Force -ErrorAction SilentlyContinue
           New-Item -ItemType Directory -Force $releaseDir | Out-Null
           Compress-Archive `
             -Path ./dist/CADPhotoToDXF/* `
@@ -99,38 +110,58 @@ jobs:
             "$hash  $($_.Name)"
           }
           $hashLines | Set-Content "$releaseDir/SHA256SUMS.txt" -Encoding ascii
-          "RELEASE_DIR=$releaseDir" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
-      - name: Refuse to overwrite an existing release
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release view "$env:GITHUB_REF_NAME" --repo $env:GITHUB_REPOSITORY *> $null
-          if ($LASTEXITCODE -eq 0) {
-            throw "Release $env:GITHUB_REF_NAME already exists; refusing to overwrite it"
-          }
-          $global:LASTEXITCODE = 0
-
-      - name: Create release for exact tagged commit
-        shell: pwsh
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          $assets = Get-ChildItem $env:RELEASE_DIR -File | ForEach-Object { $_.FullName }
-          gh release create "$env:GITHUB_REF_NAME" `
-            --repo $env:GITHUB_REPOSITORY `
-            --verify-tag `
-            --target $env:GITHUB_SHA `
-            --title "CAD Photo to DXF $env:GITHUB_REF_NAME" `
-            --generate-notes `
-            @assets
-          if ($LASTEXITCODE -ne 0) { throw "GitHub Release creation failed" }
-
-      - name: Preserve CI artifact copy
+      - name: Upload validated release assets
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-${{ env.VERSION }}-release-assets
+          name: CADPhotoToDXF-${{ steps.version.outputs.value }}-release-assets
           if-no-files-found: error
           retention-days: 30
-          path: ${{ runner.temp }}/release-assets/*
+          path: ${{ github.workspace }}/release-assets/*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production-release
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out exact tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Download validated release assets
+        uses: actions/download-artifact@v4
+        with:
+          name: CADPhotoToDXF-${{ needs.build.outputs.version }}-release-assets
+          path: release-assets
+
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists; refusing to overwrite it" >&2
+            exit 1
+          fi
+
+      - name: Create release for exact tagged commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mapfile -d '' assets < <(find release-assets -maxdepth 1 -type f -print0 | sort -z)
+          if [ "${#assets[@]}" -eq 0 ]; then
+            echo "No validated release assets found" >&2
+            exit 1
+          fi
+          gh release create "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --target "$GITHUB_SHA" \
+            --title "CAD Photo to DXF $GITHUB_REF_NAME" \
+            --generate-notes \
+            "${assets[@]}"
