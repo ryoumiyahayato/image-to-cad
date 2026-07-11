@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Sequence
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
@@ -18,6 +19,41 @@ from PySide6.QtWidgets import (
 
 from .layer_classifier import LAYERS
 from .line_detect import LineSegment
+
+
+def apply_layer_overrides(
+    lines: Sequence[LineSegment],
+    selected_layers: Sequence[str],
+) -> tuple[list[LineSegment], int]:
+    """Apply reviewed layers while preserving automatic classification evidence."""
+    if len(lines) != len(selected_layers):
+        raise ValueError("Each line must have exactly one reviewed layer")
+
+    reviewed: list[LineSegment] = []
+    changed = 0
+    for line, layer in zip(lines, selected_layers):
+        if layer not in LAYERS:
+            raise ValueError(f"Unknown layer: {layer}")
+        if layer == line.layer:
+            reviewed.append(line)
+            continue
+        changed += 1
+        reviewed.append(
+            line.copy(
+                layer=layer,
+                history=tuple(
+                    dict.fromkeys(line.history + ("manual_layer_review",))
+                ),
+                classification_confidence=1.0,
+                classification_reasons=tuple(
+                    dict.fromkeys(
+                        line.classification_reasons
+                        + (f"manual_override:{line.layer}->{layer}",)
+                    )
+                ),
+            )
+        )
+    return reviewed, changed
 
 
 class LayerReviewDialog(QDialog):
@@ -45,10 +81,18 @@ class LayerReviewDialog(QDialog):
         self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.table.verticalHeader().setVisible(False)
-        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
-        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeToContents)
-        self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeToContents)
-        self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeToContents)
+        self.table.horizontalHeader().setSectionResizeMode(
+            0, QHeaderView.ResizeToContents
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            1, QHeaderView.ResizeToContents
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            2, QHeaderView.ResizeToContents
+        )
+        self.table.horizontalHeader().setSectionResizeMode(
+            3, QHeaderView.ResizeToContents
+        )
         self.table.horizontalHeader().setSectionResizeMode(4, QHeaderView.Stretch)
         self.table.horizontalHeader().setSectionResizeMode(5, QHeaderView.Stretch)
 
@@ -57,7 +101,9 @@ class LayerReviewDialog(QDialog):
             selector = QComboBox(self.table)
             selector.addItems(LAYERS)
             index = selector.findText(line.layer)
-            selector.setCurrentIndex(index if index >= 0 else selector.findText("DETAIL"))
+            selector.setCurrentIndex(
+                index if index >= 0 else selector.findText("DETAIL")
+            )
             self.table.setCellWidget(row, 1, selector)
             self._selectors.append(selector)
             self._set_read_only(row, 2, f"{line.classification_confidence:.3f}")
@@ -86,31 +132,11 @@ class LayerReviewDialog(QDialog):
         self.table.setItem(row, column, item)
 
     def reviewed_lines(self) -> tuple[list[LineSegment], int]:
-        reviewed: list[LineSegment] = []
-        changed = 0
-        for line, selector in zip(self._lines, self._selectors):
-            layer = selector.currentText()
-            if layer == line.layer:
-                reviewed.append(line)
-                continue
-            changed += 1
-            reviewed.append(
-                line.copy(
-                    layer=layer,
-                    history=tuple(
-                        dict.fromkeys(line.history + ("manual_layer_review",))
-                    ),
-                    classification_confidence=1.0,
-                    classification_reasons=tuple(
-                        dict.fromkeys(
-                            line.classification_reasons
-                            + (f"manual_override:{line.layer}->{layer}",)
-                        )
-                    ),
-                )
-            )
-        return reviewed, changed
+        return apply_layer_overrides(
+            self._lines,
+            [selector.currentText() for selector in self._selectors],
+        )
 
 
-def layer_counts(lines: list[LineSegment]) -> dict[str, int]:
+def layer_counts(lines: Sequence[LineSegment]) -> dict[str, int]:
     return dict(sorted(Counter(line.layer for line in lines).items()))
