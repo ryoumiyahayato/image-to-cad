@@ -1,0 +1,137 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 75
+    environment: production-release
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: cad_photo_to_dxf
+
+    steps:
+      - name: Check out tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            cad_photo_to_dxf/requirements.txt
+            cad_photo_to_dxf/requirements-dev.txt
+
+      - name: Install build dependencies
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-dev.txt pytest ruff
+
+      - name: Verify tag matches canonical application version
+        shell: pwsh
+        run: |
+          $version = (python -c "from app import __version__; print(__version__)").Trim()
+          $expectedTag = "v$version"
+          if ($env:GITHUB_REF_NAME -ne $expectedTag) {
+            throw "Tag $env:GITHUB_REF_NAME does not match application version $expectedTag"
+          }
+          "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Run release checks
+        shell: pwsh
+        run: |
+          python -m pytest -q
+          python -m ruff check app tests main.py
+          python -m compileall -q app tests main.py
+
+      - name: Build portable application
+        shell: pwsh
+        run: pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+
+      - name: Smoke test portable application
+        shell: pwsh
+        run: |
+          Set-ExecutionPolicy -Scope Process Bypass -Force
+          ./scripts/windows_smoke.ps1 `
+            -Executable ./dist/CADPhotoToDXF/CADPhotoToDXF.exe `
+            -Sample ./samples/test.jpg `
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-release-smoke"
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          & "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" `
+            "/DMyAppVersion=$env:VERSION" `
+            ./installer/cad_photo_to_dxf.iss
+          if ($LASTEXITCODE -ne 0) { throw "Inno Setup build failed" }
+
+      - name: Prepare immutable release assets
+        shell: pwsh
+        run: |
+          $releaseDir = Join-Path $env:RUNNER_TEMP "release-assets"
+          New-Item -ItemType Directory -Force $releaseDir | Out-Null
+          Compress-Archive `
+            -Path ./dist/CADPhotoToDXF/* `
+            -DestinationPath "$releaseDir/CADPhotoToDXF-$env:VERSION-portable.zip" `
+            -CompressionLevel Optimal
+          Copy-Item `
+            "./installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" `
+            $releaseDir
+          $hashLines = Get-ChildItem $releaseDir -File | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          }
+          $hashLines | Set-Content "$releaseDir/SHA256SUMS.txt" -Encoding ascii
+          "RELEASE_DIR=$releaseDir" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Refuse to overwrite an existing release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "$env:GITHUB_REF_NAME" --repo $env:GITHUB_REPOSITORY *> $null
+          if ($LASTEXITCODE -eq 0) {
+            throw "Release $env:GITHUB_REF_NAME already exists; refusing to overwrite it"
+          }
+          $global:LASTEXITCODE = 0
+
+      - name: Create release for exact tagged commit
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $assets = Get-ChildItem $env:RELEASE_DIR -File | ForEach-Object { $_.FullName }
+          gh release create "$env:GITHUB_REF_NAME" `
+            --repo $env:GITHUB_REPOSITORY `
+            --verify-tag `
+            --target $env:GITHUB_SHA `
+            --title "CAD Photo to DXF $env:GITHUB_REF_NAME" `
+            --generate-notes `
+            @assets
+          if ($LASTEXITCODE -ne 0) { throw "GitHub Release creation failed" }
+
+      - name: Preserve CI artifact copy
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-${{ env.VERSION }}-release-assets
+          if-no-files-found: error
+          retention-days: 30
+          path: ${{ runner.temp }}/release-assets/*
