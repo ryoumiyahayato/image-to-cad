@@ -119,7 +119,7 @@ def order_points(points: Iterable[Iterable[float]]) -> np.ndarray:
 
 
 def _appearance_score(gray: np.ndarray, ordered: np.ndarray) -> float | None:
-    """Score a sheet-like bright region against its immediate outside background."""
+    """Score a bright sheet against the background outside the candidate."""
     polygon = np.round(ordered).astype(np.int32)
     mask = np.zeros(gray.shape, dtype=np.uint8)
     cv2.fillConvexPoly(mask, polygon, 255)
@@ -127,21 +127,25 @@ def _appearance_score(gray: np.ndarray, ordered: np.ndarray) -> float | None:
     characteristic = max(3, int(round(min(gray.shape[:2]) * 0.012)))
     if characteristic % 2 == 0:
         characteristic += 1
-    kernel = np.ones((characteristic, characteristic), np.uint8)
-    inner = cv2.erode(mask, kernel, iterations=1)
-    outer = cv2.dilate(mask, kernel, iterations=1)
-    ring = cv2.subtract(outer, mask)
+    inner_kernel = np.ones((characteristic, characteristic), np.uint8)
+    guard_size = characteristic * 3
+    if guard_size % 2 == 0:
+        guard_size += 1
+    guard_kernel = np.ones((guard_size, guard_size), np.uint8)
 
+    inner = cv2.erode(mask, inner_kernel, iterations=1)
+    outside_guard = cv2.dilate(mask, guard_kernel, iterations=1)
     interior = gray[inner > 0]
-    exterior = gray[ring > 0]
-    if interior.size < 64 or exterior.size < 32:
+    exterior = gray[outside_guard == 0]
+    if interior.size < 64 or exterior.size < 64:
         return None
 
     interior_mean = float(np.mean(interior))
-    exterior_mean = float(np.mean(exterior))
-    contrast = interior_mean - exterior_mean
-    # A black frame or black circle on an otherwise white background has no
-    # sheet/background contrast and must not be treated as the paper boundary.
+    # The median prevents a narrow black frame line from masquerading as the
+    # background. A true sheet normally remains brighter than the broad area
+    # outside its boundary; an internal frame on a white page does not.
+    exterior_level = float(np.median(exterior))
+    contrast = interior_mean - exterior_level
     if contrast < 8.0:
         return None
 
