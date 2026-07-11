@@ -1,0 +1,64 @@
+from __future__ import annotations
+
+import ast
+from pathlib import Path
+import unittest
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+APP_ROOT = PROJECT_ROOT / "app"
+
+
+class GuiArchitectureTests(unittest.TestCase):
+    def test_compatibility_gui_contains_no_processing_pipeline(self) -> None:
+        source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        defined_functions = {
+            node.name
+            for node in ast.walk(tree)
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        forbidden_functions = {
+            "auto_perspective",
+            "preprocess",
+            "detect_and_clean",
+            "export_file",
+            "build_processing_report",
+        }
+        self.assertTrue(forbidden_functions.isdisjoint(defined_functions))
+
+        forbidden_import_fragments = (
+            "line_detect",
+            "geometry_cleaner",
+            "layer_classifier",
+            "dxf_exporter",
+            "reporting",
+            "processing_service",
+        )
+        for fragment in forbidden_import_fragments:
+            self.assertNotIn(fragment, source)
+
+    def test_active_entrypoint_uses_audited_window(self) -> None:
+        main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
+        active_source = (APP_ROOT / "main_window.py").read_text(encoding="utf-8")
+        self.assertIn("from app.main_window import MainWindow", main_source)
+        self.assertIn("from .safe_gui import MainWindow", active_source)
+        self.assertIn("from .ui_shell import MainWindow", active_source)
+        self.assertNotIn("from .gui import MainWindow", active_source)
+
+    def test_ui_shell_has_no_cad_algorithm_imports(self) -> None:
+        source = (APP_ROOT / "ui_shell.py").read_text(encoding="utf-8")
+        forbidden_import_fragments = (
+            "detect_lines",
+            "clean_geometry",
+            "classify_layers",
+            "export_dxf",
+            "build_processing_report",
+            "process_corrected_image",
+        )
+        for fragment in forbidden_import_fragments:
+            self.assertNotIn(fragment, source)
+
+
+if __name__ == "__main__":
+    unittest.main()
