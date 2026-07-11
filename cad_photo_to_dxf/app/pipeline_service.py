@@ -98,7 +98,12 @@ class PipelineService:
                 corrected_image,
                 preprocess_params,
                 cancellation_token=cancellation_token,
-                progress_callback=_subprogress(progress_callback, "preprocess", 0.0, 0.25),
+                progress_callback=_subprogress(
+                    progress_callback,
+                    "preprocess",
+                    0.0,
+                    0.25,
+                ),
             )
             binary = preprocessing.image
             stages = preprocessing.stages
@@ -110,12 +115,18 @@ class PipelineService:
             preprocess_scale = image_resolution_scale(binary.shape)
             report_progress(progress_callback, "preprocess:reuse", 0.25)
 
+        detection_scale = image_resolution_scale(binary.shape)
         checkpoint(cancellation_token)
         raw_lines = detect_lines(
             binary,
             detection_params,
             cancellation_token=cancellation_token,
-            progress_callback=_subprogress(progress_callback, "detect", 0.27, 0.58),
+            progress_callback=_subprogress(
+                progress_callback,
+                "detect",
+                0.27,
+                0.58,
+            ),
         )
 
         report_progress(progress_callback, "geometry", 0.62)
@@ -123,6 +134,7 @@ class PipelineService:
             raw_lines,
             clean_params,
             cancellation_token,
+            resolution_scale=detection_scale,
         )
         geometry_scale = float(getattr(geometry.report, "resolution_scale", 1.0))
         if geometry.report.merge_pair_limit_reached:
@@ -144,7 +156,8 @@ class PipelineService:
             warnings.append("交点分割达到最大比较次数，拓扑验证可能不完整。")
         if topology.validation_report.exact_duplicate_lines:
             warnings.append(
-                f"拓扑验证仍发现 {topology.validation_report.exact_duplicate_lines} 条完全重复线。"
+                "拓扑验证仍发现 "
+                f"{topology.validation_report.exact_duplicate_lines} 条完全重复线。"
             )
         if topology.validation_report.unresolved_interior_intersections:
             warnings.append(
@@ -190,7 +203,7 @@ class PipelineService:
             auxiliary=auxiliary,
             preview=preview,
             preprocess_resolution_scale=preprocess_scale,
-            detection_resolution_scale=image_resolution_scale(binary.shape),
+            detection_resolution_scale=detection_scale,
             geometry_resolution_scale=geometry_scale,
             warnings=tuple(dict.fromkeys(warnings)),
         )
