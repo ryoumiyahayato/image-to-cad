@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from math import isfinite
 
 from .cancellation import CancellationToken
 from .geometry_cleaner import (
@@ -13,11 +14,14 @@ from .resolution import coordinate_resolution_scale
 
 
 def geometry_resolution_scale(lines: list[LineSegment]) -> float:
-    points = [
-        point
-        for line in lines
-        for point in ((float(line.x1), float(line.y1)), (float(line.x2), float(line.y2)))
-    ]
+    points: list[tuple[float, float]] = []
+    for line in lines:
+        coordinates = (float(line.x1), float(line.y1), float(line.x2), float(line.y2))
+        if not all(isfinite(value) for value in coordinates):
+            # Invalid geometry is deliberately left for the cleaner's filtering
+            # report; it must not prevent scale estimation for valid candidates.
+            continue
+        points.extend(((coordinates[0], coordinates[1]), (coordinates[2], coordinates[3])))
     return coordinate_resolution_scale(points)
 
 
@@ -41,8 +45,8 @@ def effective_geometry_params(
         if resolution_scale is None
         else float(resolution_scale)
     )
-    if scale <= 0:
-        raise ValueError("Resolution scale must be greater than zero")
+    if not isfinite(scale) or scale <= 0:
+        raise ValueError("Resolution scale must be a positive finite number")
     return (
         replace(
             base,
