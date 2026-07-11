@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import math
 
 import cv2
@@ -69,6 +69,29 @@ class LineDetectionParams:
     hough_threshold: int = 35
     use_lsd: bool = True
     max_segments: int = 6000
+    scale_with_resolution: bool = True
+    reference_long_edge: float = 2000.0
+
+
+def effective_line_detection_params(
+    params: LineDetectionParams,
+    image_shape: tuple[int, ...],
+) -> tuple[LineDetectionParams, float]:
+    """Scale pixel thresholds from a reference long edge to the current image."""
+    if not params.scale_with_resolution:
+        return params, 1.0
+    if params.reference_long_edge <= 0:
+        raise ValueError("reference_long_edge must be greater than zero")
+    long_edge = float(max(image_shape[:2]))
+    factor = float(np.clip(long_edge / params.reference_long_edge, 0.25, 4.0))
+    effective = replace(
+        params,
+        min_line_length=max(5, int(round(params.min_line_length * factor))),
+        max_line_gap=max(0, int(round(params.max_line_gap * factor))),
+        hough_threshold=max(10, int(round(params.hough_threshold * math.sqrt(factor)))),
+        scale_with_resolution=False,
+    )
+    return effective, factor
 
 
 def _estimate_width(distance_map: np.ndarray, segment: LineSegment) -> float:
@@ -105,17 +128,23 @@ def detect_lines(
     progress_callback: ProgressCallback | None = None,
 ) -> list[LineSegment]:
     """Detect candidate line segments from a binary image."""
-    params = params or LineDetectionParams()
+    requested_params = params or LineDetectionParams()
+    params, resolution_factor = effective_line_detection_params(
+        requested_params, binary_image.shape
+    )
     checkpoint(cancellation_token)
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
 
     foreground = 255 - binary_image
-    # A slight close repairs tiny breaks before line detection.
+    # Scale the close kernel with image resolution while keeping it odd.
+    close_size = max(3, int(round(3.0 * resolution_factor)))
+    if close_size % 2 == 0:
+        close_size += 1
     foreground = cv2.morphologyEx(
         foreground,
         cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
+        cv2.getStructuringElement(cv2.MORPH_RECT, (close_size, close_size)),
     )
     edges = cv2.Canny(foreground, 40, 140, apertureSize=3)
     distance_map = cv2.distanceTransform(foreground, cv2.DIST_L2, 3)
