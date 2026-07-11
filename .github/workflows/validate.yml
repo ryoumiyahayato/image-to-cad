@@ -58,6 +58,14 @@ jobs:
           mkdir -p output/source-validation
           python -m ruff check . 2>&1 | tee output/source-validation/ruff.txt
 
+      - name: Validate any real-photo fixture manifests
+        working-directory: cad_photo_to_dxf
+        run: |
+          python scripts/validate_fixtures.py \
+            tests/fixtures \
+            --minimum 0 \
+            --output output/source-validation/fixtures.json
+
       - name: Upload source validation evidence
         if: always()
         uses: actions/upload-artifact@v4
