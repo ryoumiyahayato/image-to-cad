@@ -18,8 +18,14 @@ from app.geometry_cleaner import (
 )
 from app.layer_classifier import classify_layers_with_report
 from app.line_detect import LineDetectionParams, LineSegment, detect_lines
-from app.perspective import detect_paper_corners, order_points, warp_perspective
-from app.pipeline import InvalidInputError, run_pipeline
+from app.perspective import (
+    MIN_AUTOMATIC_PAPER_CONFIDENCE,
+    auto_correct,
+    detect_paper_corners,
+    order_points,
+    warp_perspective,
+)
+from app.pipeline import InvalidInputError, PaperDetectionError, run_pipeline
 from app.preprocess import PreprocessParams, preprocess_image_with_stages
 from app.reporting import build_lineage
 
@@ -59,6 +65,25 @@ class PerspectiveTests(unittest.TestCase):
     def test_blank_image_is_not_paper(self) -> None:
         blank = np.full((300, 500, 3), 255, np.uint8)
         self.assertIsNone(detect_paper_corners(blank))
+
+    def test_internal_black_frame_on_white_background_is_not_paper(self) -> None:
+        image = np.full((500, 700, 3), 255, np.uint8)
+        cv2.rectangle(image, (100, 100), (600, 400), (0, 0, 0), 6)
+        self.assertIsNone(auto_correct(image, target_aspect_ratio=297.0 / 210.0))
+
+    def test_black_circle_is_not_paper(self) -> None:
+        image = np.full((500, 700, 3), 255, np.uint8)
+        cv2.circle(image, (350, 250), 150, (0, 0, 0), -1)
+        self.assertIsNone(auto_correct(image, target_aspect_ratio=297.0 / 210.0))
+
+    def test_clear_sheet_exceeds_strict_confidence(self) -> None:
+        image = np.full((420, 640, 3), 50, np.uint8)
+        cv2.rectangle(image, (40, 40), (600, 380), (255, 255, 255), -1)
+        cv2.rectangle(image, (40, 40), (600, 380), (0, 0, 0), 4)
+        result = auto_correct(image, target_aspect_ratio=297.0 / 210.0)
+        self.assertIsNotNone(result)
+        assert result is not None
+        self.assertGreaterEqual(result.confidence, MIN_AUTOMATIC_PAPER_CONFIDENCE)
 
 
 class PreprocessTests(unittest.TestCase):
@@ -139,6 +164,43 @@ class DetectionAndGeometryTests(unittest.TestCase):
         self.assertTrue(lineage["source_to_final"]["H1"])
         self.assertTrue(lineage["source_to_final"]["L1"])
 
+    def test_final_snap_duplicates_are_removed_and_lineage_is_merged(self) -> None:
+        # This fixture previously produced two coincident segments only after
+        # the final orthogonalization/snap pass.
+        raw = [
+            line(2.9269615525, 11.3803862825, 37.7234740625, 9.9308263498, source="0"),
+            line(1.1371511362, 17.7149278235, -2.2889548350, 58.8239200503, source="1"),
+            line(9.3037162704, 2.0352096877, 5.9589627418, 47.4757844199, source="2"),
+            line(19.3244831869, 11.9628042627, 16.5017612816, 47.2551766396, source="3"),
+            line(14.3569525662, 11.6433421780, 14.2987226052, 74.9764771152, source="4"),
+            line(2.1187277612, 14.6855856500, 38.7206310517, 11.8738760768, source="5"),
+        ]
+        result = clean_geometry_with_report(
+            raw,
+            GeometryCleanParams(
+                snap_distance=6,
+                max_bridge_gap=12,
+                angle_tolerance=3,
+                collinear_distance=3,
+                duplicate_distance=0.2,
+                min_line_length=1,
+            ),
+        )
+        keys = {
+            (
+                round(item.x1, 8),
+                round(item.y1, 8),
+                round(item.x2, 8),
+                round(item.y2, 8),
+            )
+            for item in result.lines
+        }
+        self.assertEqual(len(keys), len(result.lines))
+        self.assertGreaterEqual(result.report.final_duplicate_merges, 1)
+        self.assertTrue(
+            any({"0", "5"}.issubset(set(item.source_ids)) for item in result.lines)
+        )
+
     def test_cancelled_geometry_stops_cooperatively(self) -> None:
         token = CancellationToken()
         token.cancel()
@@ -203,6 +265,23 @@ class PipelineTests(unittest.TestCase):
                     fail_on_empty=True,
                 )
 
+    def test_non_paper_strict_pipeline_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "circle.png"
+            image = np.full((500, 700, 3), 255, np.uint8)
+            cv2.circle(image, (350, 250), 150, (0, 0, 0), -1)
+            cv2.imwrite(str(source), image)
+            with self.assertRaises(PaperDetectionError):
+                run_pipeline(
+                    source,
+                    root / "circle.dxf",
+                    paper_size="A4",
+                    paper_orientation="landscape",
+                    strict_perspective=True,
+                    fail_on_empty=True,
+                )
+
     def test_pipeline_writes_report_debug_stages_and_valid_dxf(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -236,6 +315,7 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue((root / "debug" / "01_grayscale.png").exists())
             report = json.loads(report_path.read_text(encoding="utf-8"))
             self.assertEqual(report["application_version"], "1.1.0")
+            self.assertEqual(report["export"]["coordinate_space"], "paper_mm")
             self.assertEqual(
                 report["lineage"]["final_entity_count"], result.export.line_count
             )
