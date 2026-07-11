@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cad-photo-to-dxf-fixture.schema.json",
+  "title": "CAD photo to DXF real-image fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "source_file",
+    "source_sha256",
+    "source_provenance",
+    "licence",
+    "ground_truth_file",
+    "paper",
+    "coordinate_mode",
+    "expected_corners_px",
+    "tolerances",
+    "freecad_version"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "source_file": {"type": "string", "minLength": 1},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_provenance": {"type": "string", "minLength": 1},
+    "licence": {"type": "string", "minLength": 1},
+    "ground_truth_file": {"type": "string", "minLength": 1},
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["size", "orientation"],
+      "properties": {
+        "size": {"type": "string"},
+        "orientation": {"enum": ["portrait", "landscape"]}
+      }
+    },
+    "coordinate_mode": {"enum": ["paper_mm", "model_mm"]},
+    "expected_corners_px": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {"type": "number"}
+      }
+    },
+    "calibration_dimensions": {
+      "type": "array",
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "verification_dimensions": {
+      "type": "array",
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "intentional_open_contours": {"type": "boolean", "default": false},
+    "tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpoint_mm",
+        "angle_degrees",
+        "scale_relative",
+        "hausdorff_mm"
+      ],
+      "properties": {
+        "endpoint_mm": {"type": "number", "minimum": 0},
+        "angle_degrees": {"type": "number", "minimum": 0},
+        "scale_relative": {"type": "number", "minimum": 0},
+        "hausdorff_mm": {"type": "number", "minimum": 0}
+      }
+    },
+    "freecad_version": {"type": "string", "minLength": 1}
+  }
+}
