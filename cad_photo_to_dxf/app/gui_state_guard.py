@@ -25,7 +25,7 @@ class MainWindow(_ReviewedMainWindow):
         self._perspective_metadata = None
         self._invalidate_preprocess_results()
         self.corrected_canvas.set_image(None)
-        self.info_label.setText("比例：正在重新识别纸张，旧校正结果已失效")
+        self.info_label.setText("比例：未校准（旧校正结果已失效）")
         super().auto_perspective()
 
     def rotate_corrected(self, degrees: int) -> None:
