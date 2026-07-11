@@ -42,6 +42,13 @@ def test_shared_pipeline_rejects_stale_binary_dimensions() -> None:
         PipelineService.vectorize(corrected, existing_binary=stale_binary)
 
 
+def test_shared_pipeline_rejects_invalid_cached_binary_format() -> None:
+    corrected = np.full((500, 700, 3), 255, np.uint8)
+    invalid_binary = np.full((500, 700), 1.0, np.float32)
+    with pytest.raises(ValueError, match="8-bit unsigned"):
+        PipelineService.vectorize(corrected, existing_binary=invalid_binary)
+
+
 def test_report_builder_emits_same_complete_schema_for_any_frontend() -> None:
     raw = [
         LineSegment(0, 0, 100, 0, source_ids=("HOUGH-000001",), history=("input",))
