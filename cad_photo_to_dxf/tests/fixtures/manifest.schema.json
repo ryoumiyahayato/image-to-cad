@@ -6,30 +6,61 @@
   "additionalProperties": false,
   "required": [
     "id",
+    "is_real_capture",
+    "fixture_categories",
     "source_file",
     "source_sha256",
     "source_provenance",
     "licence",
     "ground_truth_file",
+    "ground_truth_sha256",
+    "reviewed_by",
     "paper",
     "coordinate_mode",
     "expected_corners_px",
+    "calibration_dimensions",
+    "verification_dimensions",
+    "expected_entities",
+    "expected_layers",
+    "intentional_open_contours",
     "tolerances",
     "freecad_version"
   ],
   "properties": {
     "id": {"type": "string", "minLength": 1},
+    "is_real_capture": {"const": true},
+    "fixture_categories": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "flat_scan",
+          "mild_perspective",
+          "severe_perspective",
+          "blur_shadow_fold",
+          "hidden_paper_edge",
+          "non_paper_negative",
+          "multi_resolution",
+          "portrait_landscape",
+          "mixed_geometry",
+          "original_cad_dimensions"
+        ]
+      }
+    },
     "source_file": {"type": "string", "minLength": 1},
     "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "source_provenance": {"type": "string", "minLength": 1},
     "licence": {"type": "string", "minLength": 1},
     "ground_truth_file": {"type": "string", "minLength": 1},
+    "ground_truth_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reviewed_by": {"type": "string", "minLength": 1},
     "paper": {
       "type": "object",
       "additionalProperties": false,
       "required": ["size", "orientation"],
       "properties": {
-        "size": {"type": "string"},
+        "size": {"type": "string", "minLength": 1},
         "orientation": {"enum": ["portrait", "landscape"]}
       }
     },
@@ -47,13 +78,37 @@
     },
     "calibration_dimensions": {
       "type": "array",
+      "minItems": 1,
       "items": {"type": "number", "exclusiveMinimum": 0}
     },
     "verification_dimensions": {
       "type": "array",
+      "minItems": 1,
       "items": {"type": "number", "exclusiveMinimum": 0}
     },
-    "intentional_open_contours": {"type": "boolean", "default": false},
+    "expected_entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["line_min", "line_max"],
+      "properties": {
+        "line_min": {"type": "integer", "minimum": 0},
+        "line_max": {"type": "integer", "minimum": 0}
+      }
+    },
+    "expected_layers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["min", "max"],
+        "properties": {
+          "min": {"type": "integer", "minimum": 0},
+          "max": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "intentional_open_contours": {"type": "boolean"},
     "tolerances": {
       "type": "object",
       "additionalProperties": false,
@@ -70,6 +125,6 @@
         "hausdorff_mm": {"type": "number", "minimum": 0}
       }
     },
-    "freecad_version": {"type": "string", "minLength": 1}
+    "freecad_version": {"const": "0.19.2"}
   }
 }
