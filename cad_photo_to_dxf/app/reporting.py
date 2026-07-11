@@ -8,7 +8,7 @@ from typing import Any, Iterable
 import numpy as np
 
 
-REPORT_SCHEMA_VERSION = "1.1"
+REPORT_SCHEMA_VERSION = "1.2"
 
 
 def _json_value(value: Any) -> Any:
