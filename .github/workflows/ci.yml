@@ -40,7 +40,7 @@ jobs:
         run: python -m pytest -q
 
       - name: Run static checks
-        run: python -m ruff check app tests main.py
+        run: python -m ruff check app tests validation main.py
 
       - name: Compile Python sources
-        run: python -m compileall -q app tests main.py
+        run: python -m compileall -q app tests validation main.py
