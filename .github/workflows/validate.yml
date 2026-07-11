@@ -51,6 +51,7 @@ jobs:
     timeout-minutes: 45
     env:
       FREECAD_APT_VERSION: 0.19.2+dfsg1-3ubuntu1
+      AUDITED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
     steps:
       - name: Checkout triggering commit
@@ -83,6 +84,8 @@ jobs:
           mkdir -p cad_photo_to_dxf/output/freecad
           {
             echo "runner=ubuntu-22.04"
+            echo "runner_image_os=${ImageOS:-unknown}"
+            echo "runner_image_version=${ImageVersion:-unknown}"
             echo "apt_package=freecad"
             echo "pinned_apt_version=$FREECAD_APT_VERSION"
             dpkg-query -W -f='installed_version=${Version}\n' freecad
@@ -131,16 +134,56 @@ jobs:
             exit "$validator_status"
           fi
           python - <<'PY'
+          import hashlib
           import json
+          import os
           from pathlib import Path
+          import subprocess
 
+          output_dir = Path("output/freecad")
           evidence = json.loads(
-              Path("output/freecad/freecad-validation.json").read_text(encoding="utf-8")
+              (output_dir / "freecad-validation.json").read_text(encoding="utf-8")
           )
           assert evidence["dxf"]["passed"], evidence
           assert evidence["freecad"]["passed"], evidence
           assert evidence["freecad"]["object_count"] > 0, evidence
-          print(json.dumps(evidence["freecad"], ensure_ascii=False, indent=2))
+
+          def sha256(path: Path) -> str:
+              digest = hashlib.sha256()
+              with path.open("rb") as handle:
+                  for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                      digest.update(chunk)
+              return digest.hexdigest()
+
+          paths = {
+              "input_image": Path("samples/test.jpg"),
+              "output_dxf": output_dir / "sample.dxf",
+              "processing_report": output_dir / "report.json",
+              "freecad_validation": output_dir / "freecad-validation.json",
+          }
+          provenance = {
+              "schema_version": 1,
+              "repository": os.environ.get("GITHUB_REPOSITORY"),
+              "workflow": os.environ.get("GITHUB_WORKFLOW"),
+              "workflow_run_id": os.environ.get("GITHUB_RUN_ID"),
+              "checked_out_commit": subprocess.check_output(
+                  ["git", "rev-parse", "HEAD"], text=True
+              ).strip(),
+              "audited_head_commit": os.environ.get("AUDITED_HEAD_SHA"),
+              "freecad_apt_version": os.environ["FREECAD_APT_VERSION"],
+              "freecad_version": evidence["freecad"]["freecad_version"],
+              "freecad_object_count": evidence["freecad"]["object_count"],
+              "files": {
+                  name: {"path": str(path), "sha256": sha256(path)}
+                  for name, path in paths.items()
+              },
+          }
+          (output_dir / "provenance.json").write_text(
+              json.dumps(provenance, ensure_ascii=False, indent=2, sort_keys=True)
+              + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(provenance, ensure_ascii=False, indent=2))
           PY
 
       - name: Upload FreeCAD validation evidence
