@@ -1,0 +1,47 @@
+name: Validate source
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout triggering commit
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements.txt
+
+      - name: Install validation dependencies
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt "pytest>=8,<9" "ruff>=0.9,<1"
+
+      - name: Run tests
+        working-directory: cad_photo_to_dxf
+        run: python -m pytest -q
+
+      - name: Compile sources
+        working-directory: cad_photo_to_dxf
+        run: python -m compileall -q app scripts main.py
+
+      - name: Run Ruff
+        working-directory: cad_photo_to_dxf
+        run: python -m ruff check .
