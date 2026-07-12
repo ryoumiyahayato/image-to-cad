@@ -4,7 +4,7 @@ from dataclasses import asdict, is_dataclass
 import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
 import numpy as np
 
@@ -13,8 +13,12 @@ REPORT_SCHEMA_VERSION = "1.3"
 
 
 def _json_value(value: Any) -> Any:
-    if is_dataclass(value):
-        return {key: _json_value(item) for key, item in asdict(value).items()}
+    if is_dataclass(value) and not isinstance(value, type):
+        dataclass_value = cast(Any, value)
+        return {
+            key: _json_value(item)
+            for key, item in asdict(dataclass_value).items()
+        }
     if isinstance(value, dict):
         return {str(key): _json_value(item) for key, item in value.items()}
     if isinstance(value, (list, tuple, set)):
