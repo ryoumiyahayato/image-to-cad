@@ -45,16 +45,22 @@ class GuiArchitectureTests(unittest.TestCase):
             "dxf_exporter",
             "reporting",
             "processing_service",
+            "pipeline_service",
         }
         self.assertTrue(forbidden_modules.isdisjoint(imported))
 
-    def test_active_entrypoint_uses_audited_window(self) -> None:
+    def test_active_entrypoint_preserves_guard_and_review_chain(self) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
-        active_source = (APP_ROOT / "main_window.py").read_text(encoding="utf-8")
-        self.assertIn("from app.main_window import MainWindow", main_source)
-        self.assertIn("from .safe_gui import MainWindow", active_source)
-        self.assertIn("from .ui_shell import MainWindow", active_source)
-        self.assertNotIn("from .gui import MainWindow", active_source)
+        state_source = (APP_ROOT / "gui_state_guard.py").read_text(encoding="utf-8")
+        review_source = (APP_ROOT / "gui_review.py").read_text(encoding="utf-8")
+        guard_source = (APP_ROOT / "gui_guard.py").read_text(encoding="utf-8")
+        compatibility_source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
+
+        self.assertIn("from app.gui_state_guard import MainWindow", main_source)
+        self.assertIn("from .gui_review import MainWindow", state_source)
+        self.assertIn("from .gui_guard import MainWindow", review_source)
+        self.assertIn("from . import gui as _gui", guard_source)
+        self.assertIn("from .ui_shell import MainWindow", compatibility_source)
 
     def test_ui_shell_has_no_cad_algorithm_imports(self) -> None:
         source = (APP_ROOT / "ui_shell.py").read_text(encoding="utf-8")
@@ -65,6 +71,7 @@ class GuiArchitectureTests(unittest.TestCase):
             "export_dxf",
             "build_processing_report",
             "process_corrected_image",
+            "PipelineService",
         )
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
