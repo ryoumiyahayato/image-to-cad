@@ -26,13 +26,27 @@ def _has_nonempty_shape(item: Any) -> bool:
         return False
 
 
-def _parse_args() -> argparse.Namespace:
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Import a DXF with FreeCAD and emit machine-readable evidence."
     )
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
-    return parser.parse_args()
+
+    raw_arguments = list(sys.argv[1:] if argv is None else argv)
+    # FreeCADCmd keeps the executed Python script path in sys.argv.  Normal
+    # Python does not.  Remove only this exact path so both launch modes share
+    # the same strict argument parser.
+    script_path = Path(__file__).resolve()
+    filtered_arguments: list[str] = []
+    for argument in raw_arguments:
+        try:
+            if Path(argument).resolve() == script_path:
+                continue
+        except (OSError, RuntimeError, ValueError):
+            pass
+        filtered_arguments.append(argument)
+    return parser.parse_args(filtered_arguments)
 
 
 def main() -> int:
