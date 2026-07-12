@@ -9,7 +9,203 @@ permissions:
   contents: read
 
 jobs:
+  qualify:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    env:
+      FREECAD_APT_VERSION: 0.19.2+dfsg1-3ubuntu1
+    defaults:
+      run:
+        working-directory: cad_photo_to_dxf
+
+    steps:
+      - name: Check out exact tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+
+      - name: Verify immutable tag and canonical version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python -c 'from app import __version__; print(__version__)')"
+          expected_tag="v$version"
+          if [[ "$GITHUB_REF_NAME" != "$expected_tag" ]]; then
+            echo "Tag $GITHUB_REF_NAME does not match application version $expected_tag" >&2
+            exit 1
+          fi
+          tag_commit="$(git rev-list -n 1 "$GITHUB_REF_NAME")"
+          head_commit="$(git rev-parse HEAD)"
+          if [[ "$tag_commit" != "$head_commit" || "$head_commit" != "$GITHUB_SHA" ]]; then
+            echo "Release source is not the exact immutable tagged commit" >&2
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Install application dependencies and pinned FreeCAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          sudo apt-get update
+          if ! apt-cache madison freecad | awk '{print $3}' | grep -Fx "$FREECAD_APT_VERSION"; then
+            echo "Pinned FreeCAD package is unavailable: $FREECAD_APT_VERSION" >&2
+            apt-cache policy freecad >&2
+            exit 1
+          fi
+          sudo apt-get install -y "freecad=$FREECAD_APT_VERSION"
+
+      - name: Require licensed real-photo ground truth
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/release-qualification/fixture-results
+          python scripts/validate_fixtures.py \
+            tests/fixtures \
+            --minimum 1 \
+            --output output/release-qualification/fixture-qualification.json
+          python scripts/run_fixture_benchmarks.py \
+            tests/fixtures \
+            --minimum 1 \
+            --output-dir output/release-qualification/fixture-results \
+            --report output/release-qualification/fixture-benchmarks.json
+
+      - name: Generate release smoke DXF
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p output/release-qualification/debug
+          python main.py \
+            --headless \
+            --input samples/test.jpg \
+            --output output/release-qualification/sample.dxf \
+            --preview output/release-qualification/preview.png \
+            --report output/release-qualification/report.json \
+            --debug-dir output/release-qualification/debug \
+            --paper-size A4 \
+            --paper-orientation landscape \
+            --auxiliary
+
+      - name: Validate with pinned FreeCAD and write provenance
+        shell: bash
+        run: |
+          set -euo pipefail
+          output_dir="output/release-qualification"
+          if command -v FreeCADCmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v FreeCADCmd)"
+          elif command -v freecadcmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v freecadcmd)"
+          else
+            echo "FreeCAD command-line executable was not installed" >&2
+            exit 1
+          fi
+          "$freecad_cmd" --version | tee "$output_dir/freecad-command-version.txt"
+          {
+            echo "runner=ubuntu-22.04"
+            echo "runner_image_os=${ImageOS:-unknown}"
+            echo "runner_image_version=${ImageVersion:-unknown}"
+            echo "apt_package=freecad"
+            echo "pinned_apt_version=$FREECAD_APT_VERSION"
+            dpkg-query -W -f='installed_version=${Version}\n' freecad
+          } | tee "$output_dir/freecad-package.txt"
+          python scripts/validate_dxf.py \
+            "$output_dir/sample.dxf" \
+            --output "$output_dir/freecad-validation.json" \
+            --freecad-command "$freecad_cmd"
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+
+          output_dir = Path("output/release-qualification")
+          fixture_qualification = json.loads(
+              (output_dir / "fixture-qualification.json").read_text(encoding="utf-8")
+          )
+          fixture_benchmarks = json.loads(
+              (output_dir / "fixture-benchmarks.json").read_text(encoding="utf-8")
+          )
+          freecad = json.loads(
+              (output_dir / "freecad-validation.json").read_text(encoding="utf-8")
+          )
+          assert fixture_qualification["passed"], fixture_qualification
+          assert fixture_qualification["qualifying_count"] >= 1, fixture_qualification
+          assert fixture_benchmarks["passed"], fixture_benchmarks
+          assert freecad["dxf"]["passed"], freecad
+          assert freecad["freecad"]["passed"], freecad
+          assert freecad["freecad"]["object_count"] > 0, freecad
+          assert freecad["freecad"]["nonempty_shape_count"] > 0, freecad
+
+          def sha256(path: Path) -> str:
+              digest = hashlib.sha256()
+              with path.open("rb") as handle:
+                  for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                      digest.update(chunk)
+              return digest.hexdigest()
+
+          files = {
+              "fixture_qualification": output_dir / "fixture-qualification.json",
+              "fixture_benchmarks": output_dir / "fixture-benchmarks.json",
+              "input_image": Path("samples/test.jpg"),
+              "output_dxf": output_dir / "sample.dxf",
+              "processing_report": output_dir / "report.json",
+              "freecad_validation": output_dir / "freecad-validation.json",
+          }
+          provenance = {
+              "schema_version": 1,
+              "repository": os.environ.get("GITHUB_REPOSITORY"),
+              "workflow": os.environ.get("GITHUB_WORKFLOW"),
+              "workflow_run_id": os.environ.get("GITHUB_RUN_ID"),
+              "release_tag": os.environ.get("GITHUB_REF_NAME"),
+              "source_commit": subprocess.check_output(
+                  ["git", "rev-parse", "HEAD"], text=True
+              ).strip(),
+              "qualifying_real_photo_fixtures": fixture_qualification[
+                  "qualifying_count"
+              ],
+              "freecad_apt_version": os.environ["FREECAD_APT_VERSION"],
+              "freecad_version": freecad["freecad"]["freecad_version"],
+              "freecad_object_count": freecad["freecad"]["object_count"],
+              "freecad_nonempty_shape_count": freecad["freecad"][
+                  "nonempty_shape_count"
+              ],
+              "files": {
+                  name: {"path": str(path), "sha256": sha256(path)}
+                  for name, path in files.items()
+              },
+          }
+          (output_dir / "provenance.json").write_text(
+              json.dumps(provenance, ensure_ascii=False, indent=2, sort_keys=True)
+              + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(provenance, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload release qualification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-${{ steps.version.outputs.value }}-qualification
+          path: cad_photo_to_dxf/output/release-qualification/**
+          if-no-files-found: warn
+          retention-days: 30
+
   build:
+    needs: qualify
     runs-on: windows-latest
     timeout-minutes: 75
     outputs:
@@ -19,7 +215,7 @@ jobs:
         working-directory: cad_photo_to_dxf
 
     steps:
-      - name: Check out tagged commit
+      - name: Check out exact tagged commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
@@ -47,6 +243,11 @@ jobs:
           if ($env:GITHUB_REF_NAME -ne $expectedTag) {
             throw "Tag $env:GITHUB_REF_NAME does not match application version $expectedTag"
           }
+          $tagCommit = (git rev-list -n 1 $env:GITHUB_REF_NAME).Trim()
+          $headCommit = (git rev-parse HEAD).Trim()
+          if ($tagCommit -ne $headCommit -or $headCommit -ne $env:GITHUB_SHA) {
+            throw "Release source is not the exact immutable tagged commit"
+          }
           "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
@@ -54,9 +255,9 @@ jobs:
         shell: pwsh
         run: |
           python -m pytest -q
-          python -m ruff check app tests validation main.py
+          python -m ruff check app tests validation scripts main.py
           python -m mypy app/resolution.py app/scale_calibrator.py app/reporting.py app/auxiliary_recognition.py
-          python -m compileall -q app tests validation main.py
+          python -m compileall -q app tests validation scripts main.py
 
       - name: Build portable application
         shell: pwsh
@@ -120,7 +321,9 @@ jobs:
           path: ${{ github.workspace }}/release-assets/*
 
   publish:
-    needs: build
+    needs:
+      - qualify
+      - build
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment: production-release
@@ -139,6 +342,21 @@ jobs:
         with:
           name: CADPhotoToDXF-${{ needs.build.outputs.version }}-release-assets
           path: release-assets
+
+      - name: Download qualification evidence
+        uses: actions/download-artifact@v4
+        with:
+          name: CADPhotoToDXF-${{ needs.qualify.outputs.version }}-qualification
+          path: release-evidence
+
+      - name: Package qualification evidence and update hashes
+        run: |
+          set -euo pipefail
+          evidence_name="CADPhotoToDXF-${{ needs.build.outputs.version }}-qualification.zip"
+          (cd release-evidence && zip -qr "../release-assets/$evidence_name" .)
+          hash="$(sha256sum "release-assets/$evidence_name" | awk '{print $1}')"
+          echo "$hash  $evidence_name" >> release-assets/SHA256SUMS.txt
+          sort -k2,2 -o release-assets/SHA256SUMS.txt release-assets/SHA256SUMS.txt
 
       - name: Refuse to overwrite an existing release
         env:
