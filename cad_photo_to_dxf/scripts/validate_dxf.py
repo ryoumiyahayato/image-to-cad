@@ -16,69 +16,34 @@ if str(PROJECT_ROOT) not in sys.path:
 from app.dxf_validator import validate_dxf  # noqa: E402
 
 
-_FREECAD_JSON_PREFIX = "DXF_VALIDATION_JSON="
-
-
-def _extract_freecad_payload(stdout: str) -> dict[str, Any] | None:
-    """Extract one JSON object even when FreeCAD progress text shares its line."""
-    decoder = json.JSONDecoder()
-    search_from = 0
-    while True:
-        marker_index = stdout.find(_FREECAD_JSON_PREFIX, search_from)
-        if marker_index < 0:
-            return None
-        json_start = marker_index + len(_FREECAD_JSON_PREFIX)
-        try:
-            value, _end = decoder.raw_decode(stdout[json_start:].lstrip())
-        except json.JSONDecodeError:
-            search_from = json_start
-            continue
-        if isinstance(value, dict):
-            return value
-        search_from = json_start
-
-
 def validate_with_freecad(path: Path, freecad_command: str) -> dict[str, Any]:
-    """Import a DXF with FreeCADCmd and return machine-readable evidence."""
-    script = f'''from __future__ import annotations
-import json
-import sys
-
-import FreeCAD
-import importDXF
-
-input_path = sys.argv[-1]
-document = FreeCAD.newDocument("DXFValidation")
-importDXF.insert(input_path, document.Name)
-document.recompute()
-object_count = len(document.Objects)
-nonempty_shape_count = sum(
-    1
-    for item in document.Objects
-    if hasattr(item, "Shape") and not item.Shape.isNull()
-)
-payload = {{
-    "passed": object_count > 0 and nonempty_shape_count > 0,
-    "object_count": object_count,
-    "nonempty_shape_count": nonempty_shape_count,
-    "freecad_version": list(FreeCAD.Version()),
-}}
-print("{_FREECAD_JSON_PREFIX}" + json.dumps(payload, ensure_ascii=False), flush=True)
-if not payload["passed"]:
-    raise SystemExit(2)
-'''
+    """Run the canonical FreeCAD import checker and normalize its evidence."""
+    checker = PROJECT_ROOT / "validation" / "freecad_import_check.py"
     with tempfile.TemporaryDirectory() as directory:
-        script_path = Path(directory) / "freecad_validate.py"
-        script_path.write_text(script, encoding="utf-8")
+        output_path = Path(directory) / "freecad-import.json"
         completed = subprocess.run(
-            [freecad_command, str(script_path), str(path)],
+            [
+                freecad_command,
+                str(checker),
+                "--input",
+                str(path),
+                "--output",
+                str(output_path),
+            ],
             capture_output=True,
             text=True,
             check=False,
-            timeout=120,
+            timeout=180,
         )
+        parsed: dict[str, Any] | None = None
+        if output_path.is_file():
+            try:
+                value = json.loads(output_path.read_text(encoding="utf-8"))
+                if isinstance(value, dict):
+                    parsed = value
+            except (OSError, json.JSONDecodeError):
+                parsed = None
 
-    parsed = _extract_freecad_payload(completed.stdout)
     payload: dict[str, Any] = {
         "command": freecad_command,
         "return_code": completed.returncode,
@@ -86,18 +51,27 @@ if not payload["passed"]:
         "stderr": completed.stderr,
     }
     if parsed is None:
-        payload["parse_warning"] = "FreeCAD output did not contain validation JSON"
         payload["passed"] = False
+        payload["parse_warning"] = (
+            "Canonical FreeCAD checker did not produce machine-readable evidence"
+        )
         return payload
 
-    payload.update(parsed)
+    payload["evidence"] = parsed
     object_count = int(parsed.get("object_count", 0) or 0)
-    nonempty_shape_count = int(parsed.get("nonempty_shape_count", 0) or 0)
-    payload["passed"] = (
-        completed.returncode == 0
-        and bool(parsed.get("passed"))
-        and object_count > 0
-        and nonempty_shape_count > 0
+    shape_count = int(parsed.get("shape_object_count", 0) or 0)
+    payload.update(
+        {
+            "freecad_version": parsed.get("freecad_version"),
+            "object_count": object_count,
+            "nonempty_shape_count": shape_count,
+            "passed": (
+                completed.returncode == 0
+                and bool(parsed.get("success"))
+                and object_count > 0
+                and shape_count > 0
+            ),
+        }
     )
     return payload
 
@@ -142,7 +116,10 @@ def main() -> int:
     report: dict[str, Any] = {"dxf": result.to_dict(), "freecad": None}
     if args.freecad_command:
         try:
-            report["freecad"] = validate_with_freecad(args.input, args.freecad_command)
+            report["freecad"] = validate_with_freecad(
+                args.input,
+                args.freecad_command,
+            )
         except (OSError, subprocess.SubprocessError) as exc:
             report["freecad"] = {"passed": False, "error": str(exc)}
 
