@@ -34,8 +34,8 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--output", required=True, type=Path)
 
     raw_arguments = list(sys.argv[1:] if argv is None else argv)
-    # FreeCADCmd keeps the executed Python script path in sys.argv.  Normal
-    # Python does not.  Remove only this exact path so both launch modes share
+    # FreeCADCmd keeps the executed Python script path in sys.argv. Normal
+    # Python does not. Remove only this exact path so both launch modes share
     # the same strict argument parser.
     script_path = Path(__file__).resolve()
     filtered_arguments: list[str] = []
@@ -53,7 +53,7 @@ def main() -> int:
     args = _parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     evidence: dict[str, object] = {
-        "schema_version": "freecad-import-check/2",
+        "schema_version": "freecad-import-check/3",
         "started_at_utc": datetime.now(timezone.utc).isoformat(),
         "input": str(args.input.resolve()),
         "success": False,
@@ -85,9 +85,11 @@ def main() -> int:
         preferences.SetBool("dxfCreateSketch", False)
         preferences.SetBool("dxfstarblocks", False)
 
-        document = importDXF.open(str(args.input.resolve()))
-        if document is None:
-            raise RuntimeError("FreeCAD DXF importer returned no document")
+        # FreeCAD 0.19 can import successfully while importDXF.open() returns
+        # None. Create the target document explicitly and insert into it so the
+        # evidence always refers to a known document object.
+        document = App.newDocument("DXFValidation")
+        importDXF.insert(str(args.input.resolve()), document.Name)
         document.recompute()
         objects = list(document.Objects)
         object_records = [
