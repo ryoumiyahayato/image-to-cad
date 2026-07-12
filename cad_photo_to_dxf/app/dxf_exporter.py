@@ -76,7 +76,10 @@ def export_dxf(
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     calibrated = calibration is not None
-    scale = calibration.mm_per_pixel if calibrated else 1.0
+    try:
+        scale = calibration.mm_per_pixel if calibrated else 1.0
+    except ValueError as exc:
+        raise ValueError("Export scale must be a positive finite number") from exc
     if not isfinite(float(scale)) or scale <= 0:
         raise ValueError("Export scale must be a positive finite number")
 
