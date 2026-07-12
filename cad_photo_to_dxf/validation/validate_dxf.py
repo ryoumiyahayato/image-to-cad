@@ -12,8 +12,7 @@ import traceback
 
 import ezdxf
 
-from app.line_detect import LineSegment
-from app.topology import validate_topology
+from app.dxf_validator import validate_dxf
 
 
 SUPPORTED_ENTITY_TYPES = {"LINE", "CIRCLE"}
@@ -25,16 +24,6 @@ def _sha256(path: Path) -> str:
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
-
-
-def _canonical_line_key(line: LineSegment, decimals: int = 9) -> tuple[float, ...]:
-    start, end = sorted(
-        (
-            (round(line.x1, decimals), round(line.y1, decimals)),
-            (round(line.x2, decimals), round(line.y2, decimals)),
-        )
-    )
-    return (*start, *end)
 
 
 def _canonical_circle_key(
@@ -58,6 +47,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--endpoint-tolerance", type=float, default=1e-6)
     parser.add_argument("--gap-tolerance", type=float, default=0.5)
+    parser.add_argument("--max-intersection-checks", type=int, default=2_000_000)
     return parser.parse_args()
 
 
@@ -65,7 +55,7 @@ def main() -> int:
     args = _parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     evidence: dict[str, object] = {
-        "schema_version": "dxf-validation/3",
+        "schema_version": "dxf-validation/4",
         "started_at_utc": datetime.now(timezone.utc).isoformat(),
         "input": str(args.input.resolve()),
         "success": False,
@@ -74,8 +64,14 @@ def main() -> int:
     try:
         if not args.input.is_file():
             raise FileNotFoundError(args.input)
+
+        line_validation = validate_dxf(
+            args.input,
+            tolerance=max(1e-9, args.endpoint_tolerance),
+            gap_tolerance=max(args.endpoint_tolerance, args.gap_tolerance),
+            max_intersection_checks=args.max_intersection_checks,
+        )
         document = ezdxf.readfile(str(args.input))
-        auditor = document.audit()
         modelspace = document.modelspace()
         entity_type_counts = Counter(entity.dxftype() for entity in modelspace)
         unexpected_entity_types = sorted(
@@ -87,37 +83,26 @@ def main() -> int:
             entity_type_counts[entity_type] for entity_type in unexpected_entity_types
         )
 
-        lines: list[LineSegment] = []
-        circles: list[tuple[float, float, float, str]] = []
         layers: Counter[str] = Counter()
-        nonfinite_lines = 0
-        zero_length_lines = 0
-        nonfinite_circles = 0
-        nonpositive_radius_circles = 0
-
-        for index, entity in enumerate(modelspace.query("LINE"), start=1):
+        xs: list[float] = []
+        ys: list[float] = []
+        for entity in modelspace.query("LINE"):
             start = entity.dxf.start
             end = entity.dxf.end
-            coordinates = (
+            values = (
                 float(start.x),
                 float(start.y),
                 float(end.x),
                 float(end.y),
             )
-            if not all(math.isfinite(value) for value in coordinates):
-                nonfinite_lines += 1
-                continue
-            segment = LineSegment(
-                *coordinates,
-                layer=str(entity.dxf.layer),
-                source_ids=(f"DXF-LINE-{index:06d}",),
-                history=("validation-import",),
-            )
-            if segment.length <= 1e-9:
-                zero_length_lines += 1
-            lines.append(segment)
-            layers[segment.layer] += 1
+            if all(math.isfinite(value) for value in values):
+                xs.extend((values[0], values[2]))
+                ys.extend((values[1], values[3]))
+                layers[str(entity.dxf.layer)] += 1
 
+        circles: list[tuple[float, float, float, str]] = []
+        nonfinite_circles = 0
+        nonpositive_radius_circles = 0
         for entity in modelspace.query("CIRCLE"):
             center = entity.dxf.center
             values = (
@@ -133,13 +118,9 @@ def main() -> int:
             layer = str(entity.dxf.layer)
             circles.append((*values, layer))
             layers[layer] += 1
+            xs.extend((values[0] - values[2], values[0] + values[2]))
+            ys.extend((values[1] - values[2], values[1] + values[2]))
 
-        supported_entity_count = len(lines) + len(circles)
-        empty_geometry = supported_entity_count == 0
-        line_keys = Counter(_canonical_line_key(line) for line in lines)
-        exact_line_duplicates = sum(
-            count - 1 for count in line_keys.values() if count > 1
-        )
         circle_keys = Counter(
             _canonical_circle_key(center_x, center_y, radius)
             for center_x, center_y, radius, _layer in circles
@@ -147,21 +128,11 @@ def main() -> int:
         exact_circle_duplicates = sum(
             count - 1 for count in circle_keys.values() if count > 1
         )
-        topology = validate_topology(
-            lines,
-            endpoint_tolerance=max(1e-9, args.endpoint_tolerance),
-            gap_tolerance=max(args.endpoint_tolerance, args.gap_tolerance),
-            intersection_tolerance=max(1e-9, args.endpoint_tolerance),
-        )
-
-        xs = [coordinate for line in lines for coordinate in (line.x1, line.x2)]
-        ys = [coordinate for line in lines for coordinate in (line.y1, line.y2)]
-        for center_x, center_y, radius, _layer in circles:
-            xs.extend((center_x - radius, center_x + radius))
-            ys.extend((center_y - radius, center_y + radius))
-        bounds: dict[str, float] | None
-        if xs and ys:
-            bounds = {
+        circle_count = int(entity_type_counts.get("CIRCLE", 0))
+        supported_entity_count = line_validation.line_count + circle_count
+        empty_geometry = supported_entity_count == 0
+        bounds = (
+            {
                 "min_x": min(xs),
                 "min_y": min(ys),
                 "max_x": max(xs),
@@ -169,47 +140,59 @@ def main() -> int:
                 "width": max(xs) - min(xs),
                 "height": max(ys) - min(ys),
             }
-        else:
-            bounds = None
+            if xs and ys
+            else None
+        )
+        topology = {
+            "dangling_endpoint_count": line_validation.dangling_endpoint_count,
+            "unique_endpoint_count": line_validation.unique_endpoint_count,
+            "connected_component_count": line_validation.connected_component_count,
+            "open_component_count": line_validation.open_component_count,
+            "closed_component_count": line_validation.closed_component_count,
+            "near_gap_count": line_validation.near_gap_count,
+            "unsplit_intersection_count": line_validation.unsplit_intersection_count,
+            "intersection_pair_checks": line_validation.intersection_pair_checks,
+            "intersection_check_limit_reached": (
+                line_validation.intersection_check_limit_reached
+            ),
+        }
 
+        success = (
+            line_validation.passed
+            and not empty_geometry
+            and unexpected_entity_count == 0
+            and nonfinite_circles == 0
+            and nonpositive_radius_circles == 0
+            and exact_circle_duplicates == 0
+        )
         evidence.update(
             {
                 "input_sha256": _sha256(args.input),
                 "dxf_version": document.dxfversion,
-                "audit_error_count": len(auditor.errors),
-                "audit_fix_count": len(auditor.fixes),
-                "audit_errors": [str(item) for item in auditor.errors],
-                "audit_fixes": [str(item) for item in auditor.fixes],
+                "audit_error_count": line_validation.audit_error_count,
+                "audit_fix_count": line_validation.audit_fix_count,
+                "audit_errors": list(line_validation.audit_errors),
+                "audit_fixes": list(line_validation.audit_fixes),
                 "entity_type_counts": dict(sorted(entity_type_counts.items())),
                 "supported_entity_count": supported_entity_count,
                 "unexpected_entity_types": unexpected_entity_types,
                 "unexpected_entity_count": unexpected_entity_count,
                 "empty_geometry": empty_geometry,
-                "line_count": len(lines),
-                "circle_count": len(circles),
+                "line_count": line_validation.line_count,
+                "circle_count": circle_count,
                 "layer_counts": dict(sorted(layers.items())),
                 "bounds": bounds,
-                "nonfinite_line_count": nonfinite_lines,
-                "zero_length_line_count": zero_length_lines,
-                "exact_duplicate_line_count": exact_line_duplicates,
+                "nonfinite_line_count": line_validation.invalid_coordinate_count,
+                "zero_length_line_count": line_validation.zero_length_count,
+                "exact_duplicate_line_count": line_validation.duplicate_line_count,
                 "nonfinite_circle_count": nonfinite_circles,
                 "nonpositive_radius_circle_count": nonpositive_radius_circles,
                 "exact_duplicate_circle_count": exact_circle_duplicates,
-                "topology": topology.__dict__,
+                "topology": topology,
+                "success": success,
             }
         )
-        evidence["success"] = (
-            len(auditor.errors) == 0
-            and not empty_geometry
-            and unexpected_entity_count == 0
-            and nonfinite_lines == 0
-            and zero_length_lines == 0
-            and exact_line_duplicates == 0
-            and nonfinite_circles == 0
-            and nonpositive_radius_circles == 0
-            and exact_circle_duplicates == 0
-        )
-        return_code = 0 if evidence["success"] else 1
+        return_code = 0 if success else 1
     except Exception as exc:
         evidence["error_type"] = type(exc).__name__
         evidence["error"] = str(exc)
