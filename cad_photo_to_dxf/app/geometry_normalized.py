@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from math import isfinite
+from math import hypot, isfinite
 
 from .cancellation import CancellationToken
 from .geometry_cleaner import (
@@ -11,6 +11,13 @@ from .geometry_cleaner import (
 )
 from .line_detect import LineSegment
 from .resolution import coordinate_resolution_scale
+
+
+def _is_invalid_candidate(line: LineSegment) -> bool:
+    coordinates = (float(line.x1), float(line.y1), float(line.x2), float(line.y2))
+    if not all(isfinite(value) for value in coordinates):
+        return True
+    return hypot(coordinates[2] - coordinates[0], coordinates[3] - coordinates[1]) <= 1e-9
 
 
 def geometry_resolution_scale(lines: list[LineSegment]) -> float:
@@ -67,12 +74,21 @@ def clean_geometry_with_report(
     *,
     resolution_scale: float | None = None,
 ) -> GeometryCleanResult:
+    invalid_input_count = sum(1 for line in lines if _is_invalid_candidate(line))
     effective, scale = effective_geometry_params(
         lines,
         params,
         resolution_scale=resolution_scale,
     )
     result = _clean_geometry_with_report(lines, effective, cancellation_token)
+    # The core cleaner historically grouped invalid or zero-length input with
+    # short-line removal during its initial gate. Preserve its API while exposing
+    # accurate report semantics to the shared normalized pipeline.
+    result.report.final_invalid_removed += invalid_input_count
+    result.report.initial_short_removed = max(
+        0,
+        result.report.initial_short_removed - invalid_input_count,
+    )
     # Keep the existing report dataclass compatible while exposing the actual
     # scale selected by the shared pipeline.
     setattr(result.report, "resolution_scale", scale)
