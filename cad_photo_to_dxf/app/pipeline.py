@@ -8,8 +8,7 @@ from typing import Any
 
 import numpy as np
 
-from . import __version__
-from .auxiliary_recognition import AuxiliaryRecognitionResult, recognize_auxiliary
+from .auxiliary_recognition import AuxiliaryRecognitionResult
 from .cancellation import (
     CancellationToken,
     ProgressCallback,
@@ -17,26 +16,22 @@ from .cancellation import (
     report_progress,
 )
 from .dxf_exporter import ExportResult, export_dxf
-from .geometry_cleaner import (
-    GeometryCleanParams,
-    GeometryCleanReport,
-    clean_geometry_with_report,
-)
+from .geometry_cleaner import GeometryCleanParams, GeometryCleanReport
 from .image_loader import load_image, save_image
-from .layer_classifier import (
-    ClassificationReport,
-    classify_layers_with_report,
-)
-from .line_detect import LineDetectionParams, LineSegment, detect_lines, render_line_preview
+from .layer_classifier import ClassificationReport
+from .line_detect import LineDetectionParams, LineSegment
 from .perspective import (
+    MIN_AUTOMATIC_PAPER_CONFIDENCE,
     PerspectiveResult,
     auto_correct,
     resolve_paper_aspect_ratio,
     resolve_paper_dimensions_mm,
 )
-from .preprocess import PreprocessParams, preprocess_image_with_stages
+from .pipeline_service import PipelineService
+from .preprocess import PreprocessParams
 from .quality import ImageQualityAssessment, assess_image_quality
-from .reporting import REPORT_SCHEMA_VERSION, build_lineage, write_json_report
+from .report_builder import ReportBuilder
+from .reporting import write_json_report
 from .scale_calibrator import ScaleCalibration
 
 
@@ -149,6 +144,8 @@ def run_pipeline(
     checkpoint(cancellation_token)
     report_progress(progress_callback, "perspective", 0.08)
     perspective_result = auto_correct(original, target_aspect_ratio)
+    perspective_applied = False
+    rejected_low_confidence = False
     if perspective_result is None:
         if strict_perspective:
             raise PaperDetectionError(
@@ -156,82 +153,69 @@ def run_pipeline(
             )
         corrected = original.copy()
         warnings.append("自动纸张识别失败，已按未校正原图继续处理。")
+    elif perspective_result.confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE:
+        if strict_perspective:
+            raise PaperDetectionError(
+                "Paper boundary confidence is too low for strict mode; "
+                "confirm four manual corners or use --allow-uncorrected"
+            )
+        corrected = original.copy()
+        rejected_low_confidence = True
+        warnings.extend(perspective_result.warnings)
+        warnings.append(
+            "自动纸张候选置信度不足，未应用透视变换；已按原图继续处理。"
+        )
     else:
         corrected = perspective_result.image
+        perspective_applied = True
         warnings.extend(perspective_result.warnings)
 
     calibration_source = "explicit" if calibration is not None else "uncalibrated"
-    if calibration is None and paper_dimensions is not None and perspective_result is not None:
+    coordinate_space = "model_mm" if calibration is not None else "pixel"
+    if calibration is None and paper_dimensions is not None and perspective_applied:
         calibration = ScaleCalibration(
             (0.0, 0.0),
             (float(max(1, corrected.shape[1] - 1)), 0.0),
             float(paper_dimensions[0]),
         )
         calibration_source = "paper_dimensions"
-        warnings.append("导出比例由纸张外边界尺寸推导；角点必须准确落在纸张外缘。")
+        coordinate_space = "paper_mm"
+        warnings.append(
+            "导出坐标为纸面毫米（paper_mm），不是原始设计模型尺寸；"
+            "恢复 model_mm 必须提供图纸比例或已知实际尺寸。"
+        )
 
-    checkpoint(cancellation_token)
-    preprocessing = preprocess_image_with_stages(
+    vectorization = PipelineService.vectorize(
         corrected,
-        preprocess_params,
+        preprocess_params=preprocess_params,
+        detection_params=detection_params,
+        clean_params=clean_params,
+        preserve_hatch=preserve_hatch,
+        enable_auxiliary=enable_auxiliary,
+        enable_ocr=enable_ocr,
         cancellation_token=cancellation_token,
-        progress_callback=_subprogress(progress_callback, "preprocess", 0.10, 0.32),
+        progress_callback=_subprogress(progress_callback, "vectorize", 0.10, 0.86),
     )
-    binary = preprocessing.image
+    warnings.extend(vectorization.warnings)
+    binary = vectorization.binary
+    raw_lines = vectorization.raw_lines
+    lines = vectorization.lines
+    preview = vectorization.preview
+    if not lines and fail_on_empty:
+        raise NoLinesDetectedError("No valid line entities were detected")
 
     if debug_dir is not None:
         diagnostics = Path(debug_dir)
         diagnostics.mkdir(parents=True, exist_ok=True)
         save_image(diagnostics / "00_corrected.png", corrected)
-        for stage_name, stage_image in preprocessing.stages.items():
+        for stage_name, stage_image in vectorization.preprocess_stages.items():
             save_image(diagnostics / f"{stage_name}.png", stage_image)
-
-    checkpoint(cancellation_token)
-    raw_lines = detect_lines(
-        binary,
-        detection_params,
-        cancellation_token=cancellation_token,
-        progress_callback=_subprogress(progress_callback, "detect", 0.34, 0.58),
-    )
-    report_progress(progress_callback, "geometry", 0.60)
-    geometry_result = clean_geometry_with_report(
-        raw_lines,
-        clean_params,
-        cancellation_token=cancellation_token,
-    )
-    if geometry_result.report.merge_pair_limit_reached:
-        warnings.append("共线合并达到最大比较次数，部分候选保持未合并状态。")
-
-    checkpoint(cancellation_token)
-    report_progress(progress_callback, "classification", 0.72)
-    classification_result = classify_layers_with_report(
-        geometry_result.lines,
-        binary.shape,
-        preserve_hatch=preserve_hatch,
-        cancellation_token=cancellation_token,
-    )
-    lines = classification_result.lines
-    if not lines and fail_on_empty:
-        raise NoLinesDetectedError("No valid line entities were detected")
-
-    auxiliary: AuxiliaryRecognitionResult | None = None
-    if enable_auxiliary or enable_ocr:
-        auxiliary = recognize_auxiliary(
-            binary,
-            enable_ocr=enable_ocr,
-            cancellation_token=cancellation_token,
-            progress_callback=_subprogress(progress_callback, "auxiliary", 0.75, 0.86),
-        )
-        warnings.extend(auxiliary.warnings)
-
-    checkpoint(cancellation_token)
-    preview = render_line_preview(binary, lines)
+        save_image(diagnostics / "90_line_preview.png", preview)
     if preview_path is not None:
         save_image(preview_path, preview)
-    if debug_dir is not None:
-        save_image(Path(debug_dir) / "90_line_preview.png", preview)
 
-    report_progress(progress_callback, "export", 0.9)
+    checkpoint(cancellation_token)
+    report_progress(progress_callback, "export", 0.90)
     export_result = export_dxf(lines, output_path, binary.shape[0], calibration)
     if export_result.skipped_line_count:
         warnings.append(
@@ -239,63 +223,51 @@ def run_pipeline(
         )
 
     elapsed = time.perf_counter() - started_clock
-    lineage = build_lineage(raw_lines, lines)
-    report: dict[str, Any] = {
-        "schema_version": REPORT_SCHEMA_VERSION,
-        "application_version": __version__,
-        "started_at_utc": started_at.isoformat(),
-        "duration_seconds": elapsed,
-        "input": {
-            "path": str(Path(input_path)),
-            "shape": list(original.shape),
-        },
-        "perspective": {
-            "applied": perspective_result is not None,
+    report = ReportBuilder.build(
+        input_path=input_path,
+        original_shape=original.shape,
+        corrected_shape=corrected.shape,
+        perspective={
+            "candidate_detected": perspective_result is not None,
+            "applied": perspective_applied,
             "automatic": perspective_result.automatic if perspective_result else False,
             "confidence": perspective_result.confidence if perspective_result else 0.0,
+            "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
             "corners": perspective_result.corners if perspective_result else None,
             "target_aspect_ratio": target_aspect_ratio,
-            "corrected_shape": list(corrected.shape),
+            "rejected_low_confidence": rejected_low_confidence,
         },
-        "quality": asdict(quality),
-        "parameters": {
+        quality=quality,
+        parameters={
             "preprocess": asdict(preprocess_params),
             "line_detection": asdict(detection_params),
             "geometry_cleaning": asdict(clean_params),
             "paper_size": paper_size,
             "paper_orientation": paper_orientation,
             "paper_dimensions_mm": paper_dimensions,
+            "strict_perspective": strict_perspective,
             "preserve_hatch": preserve_hatch,
             "auxiliary_enabled": enable_auxiliary or enable_ocr,
             "ocr_enabled": enable_ocr,
         },
-        "preprocessing": {
-            "stages": {
-                name: list(image.shape) for name, image in preprocessing.stages.items()
-            },
-            "debug_directory": str(debug_dir) if debug_dir is not None else None,
-        },
-        "detection": {"raw_line_count": len(raw_lines)},
-        "geometry": asdict(geometry_result.report),
-        "classification": asdict(classification_result.report),
-        "auxiliary": asdict(auxiliary) if auxiliary is not None else None,
-        "lineage": lineage,
-        "export": {
-            "path": str(export_result.path),
-            "line_count": export_result.line_count,
-            "skipped_line_count": export_result.skipped_line_count,
-            "mm_per_pixel": export_result.mm_per_pixel,
-            "calibrated": export_result.calibrated,
-            "calibration_source": calibration_source,
-        },
-        "warnings": list(dict.fromkeys(warnings)),
-        "technical_limits": [
-            "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
-            "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
-            "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
-            "OCR、圆弧、尺寸文字和建筑符号仅作为辅助候选。",
-        ],
-    }
+        preprocess_stages=vectorization.preprocess_stages,
+        preprocess_resolution_scale=vectorization.preprocess_resolution_scale,
+        detection_resolution_scale=vectorization.detection_resolution_scale,
+        thick_stroke_centering=detection_params.center_thick_strokes,
+        raw_lines=raw_lines,
+        lines=lines,
+        geometry_report=vectorization.geometry_report,
+        geometry_resolution_scale=vectorization.geometry_resolution_scale,
+        classification_report=vectorization.classification_report,
+        auxiliary=vectorization.auxiliary,
+        export_result=export_result,
+        calibration_source=calibration_source,
+        coordinate_space=coordinate_space,
+        warnings=warnings,
+        started_at_utc=started_at,
+        duration_seconds=elapsed,
+        debug_directory=debug_dir,
+    )
     written_report_path: Path | None = None
     if report_path is not None:
         written_report_path = write_json_report(report_path, report)
@@ -310,12 +282,12 @@ def run_pipeline(
         lines=lines,
         preview=preview,
         export=export_result,
-        preprocess_stages=preprocessing.stages,
+        preprocess_stages=vectorization.preprocess_stages,
         perspective=perspective_result,
         quality=quality,
-        geometry_report=geometry_result.report,
-        classification_report=classification_result.report,
-        auxiliary=auxiliary,
+        geometry_report=vectorization.geometry_report,
+        classification_report=vectorization.classification_report,
+        auxiliary=vectorization.auxiliary,
         report=report,
         report_path=written_report_path,
     )

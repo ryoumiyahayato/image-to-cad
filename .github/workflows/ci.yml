@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    defaults:
+      run:
+        working-directory: cad_photo_to_dxf
+
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libegl1 \
+            libgl1 \
+            libxkbcommon-x11-0 \
+            libxcb-cursor0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+
+      - name: Install runtime and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+
+      - name: Run unit tests
+        run: python -m pytest -q
+
+      - name: Validate existing real-photo fixture manifests
+        run: |
+          mkdir -p output/ci
+          python scripts/validate_fixtures.py \
+            tests/fixtures \
+            --minimum 0 \
+            --output output/ci/fixture-qualification.json
+
+      - name: Run static checks
+        run: python -m ruff check app tests validation scripts main.py
+
+      - name: Run incremental core type checks
+        run: |
+          python -m mypy \
+            app/resolution.py \
+            app/scale_calibrator.py \
+            app/reporting.py \
+            app/auxiliary_recognition.py
+
+      - name: Compile Python sources
+        run: python -m compileall -q app tests validation scripts main.py
+
+      - name: Upload CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-evidence-${{ github.sha }}
+          path: cad_photo_to_dxf/output/ci/**
+          if-no-files-found: warn
+          retention-days: 14

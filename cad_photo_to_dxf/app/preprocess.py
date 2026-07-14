@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .resolution import image_resolution_scale, scaled_int, scaled_odd
 
 
 @dataclass
@@ -25,11 +26,29 @@ class PreprocessParams:
 class PreprocessResult:
     image: np.ndarray
     stages: dict[str, np.ndarray]
+    resolution_scale: float = 1.0
 
 
 def _odd(value: int, minimum: int = 3) -> int:
     value = max(minimum, int(value))
     return value if value % 2 == 1 else value + 1
+
+
+def _to_grayscale(image: np.ndarray) -> np.ndarray:
+    if image.dtype != np.uint8:
+        raise ValueError("Input image must use 8-bit unsigned pixels")
+    if image.ndim == 2:
+        return image.copy()
+    if image.ndim != 3:
+        raise ValueError("Input image must be grayscale, BGR, or BGRA")
+    channels = int(image.shape[2])
+    if channels == 1:
+        return image[:, :, 0].copy()
+    if channels == 3:
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    if channels == 4:
+        return cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    raise ValueError("Input image must have 1, 3, or 4 channels")
 
 
 def remove_shadow(gray: np.ndarray, kernel_size: int = 35) -> np.ndarray:
@@ -50,7 +69,7 @@ def _remove_small_components(
     count, labels, stats, _ = cv2.connectedComponentsWithStats(foreground, connectivity=8)
     cleaned = np.zeros_like(foreground)
     for label in range(1, count):
-        x, y, width, height, area = stats[label]
+        _x, _y, width, height, area = stats[label]
         if area >= min_area or max(width, height) >= min_extent:
             cleaned[labels == label] = 255
     return cleaned
@@ -62,25 +81,30 @@ def preprocess_image_with_stages(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> PreprocessResult:
-    """Return the final binary image and operator-level diagnostic stages."""
+    """Return a resolution-normalized binary image and diagnostic stages."""
     params = params or PreprocessParams()
+    if image is None or image.size == 0:
+        raise ValueError("Input image must not be empty")
+    scale = image_resolution_scale(image.shape)
     checkpoint(cancellation_token)
     report_progress(progress_callback, "grayscale", 0.05)
-    if image.ndim == 3:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    else:
-        gray = image.copy()
+    gray = _to_grayscale(image)
     stages: dict[str, np.ndarray] = {"01_grayscale": gray.copy()}
 
     checkpoint(cancellation_token)
-    denoise = _odd(params.denoise_strength, 1)
+    denoise = (
+        1
+        if params.denoise_strength <= 1
+        else scaled_odd(params.denoise_strength, scale, minimum=3)
+    )
     if denoise > 1:
         gray = cv2.medianBlur(gray, denoise)
     stages["02_denoised"] = gray.copy()
     report_progress(progress_callback, "denoise", 0.2)
 
     checkpoint(cancellation_token)
-    flattened = remove_shadow(gray, params.shadow_kernel_size)
+    shadow_kernel = scaled_odd(params.shadow_kernel_size, scale, minimum=9)
+    flattened = remove_shadow(gray, shadow_kernel)
     stages["03_shadow_removed"] = flattened.copy()
     report_progress(progress_callback, "shadow-removal", 0.4)
 
@@ -91,7 +115,7 @@ def preprocess_image_with_stages(
     report_progress(progress_callback, "contrast", 0.58)
 
     checkpoint(cancellation_token)
-    block_size = _odd(params.adaptive_block_size, 11)
+    block_size = scaled_odd(params.adaptive_block_size, scale, minimum=11)
     binary = cv2.adaptiveThreshold(
         enhanced,
         255,
@@ -107,14 +131,14 @@ def preprocess_image_with_stages(
     if params.remove_small_noise:
         foreground = _remove_small_components(
             255 - binary,
-            max(1, int(params.noise_min_area)),
-            max(1, int(params.noise_min_extent)),
+            scaled_int(params.noise_min_area, scale * scale, minimum=1),
+            scaled_int(params.noise_min_extent, scale, minimum=1),
         )
         binary = 255 - foreground
     stages["06_noise_cleaned"] = binary.copy()
     report_progress(progress_callback, "noise-cleanup", 1.0)
     checkpoint(cancellation_token)
-    return PreprocessResult(binary, stages)
+    return PreprocessResult(binary, stages, resolution_scale=scale)
 
 
 def preprocess_image(

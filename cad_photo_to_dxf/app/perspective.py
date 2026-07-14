@@ -7,6 +7,9 @@ import cv2
 import numpy as np
 
 
+MIN_AUTOMATIC_PAPER_CONFIDENCE = 0.60
+
+
 @dataclass(frozen=True)
 class PerspectiveResult:
     image: np.ndarray
@@ -113,8 +116,107 @@ def order_points(points: Iterable[Iterable[float]]) -> np.ndarray:
     return ordered
 
 
-def _detect_paper_candidate(image: np.ndarray) -> tuple[np.ndarray, float] | None:
-    """Return the best quadrilateral and a conservative confidence score."""
+def _clip01(value: float) -> float:
+    return float(np.clip(value, 0.0, 1.0))
+
+
+def _quad_dimensions(ordered: np.ndarray) -> tuple[float, float]:
+    tl, tr, br, bl = ordered
+    width = (float(np.linalg.norm(tr - tl)) + float(np.linalg.norm(br - bl))) / 2.0
+    height = (float(np.linalg.norm(bl - tl)) + float(np.linalg.norm(br - tr))) / 2.0
+    return width, height
+
+
+def _candidate_tone_scores(gray: np.ndarray, ordered: np.ndarray) -> tuple[float, float, float]:
+    """Return inside brightness, outside brightness and paper/background contrast."""
+    polygon = np.round(ordered).astype(np.int32)
+    mask = np.zeros(gray.shape, dtype=np.uint8)
+    cv2.fillConvexPoly(mask, polygon, 255)
+
+    inside_span = max(3, int(round(min(gray.shape[:2]) * 0.012)))
+    near_span = max(3, int(round(min(gray.shape[:2]) * 0.010)))
+    far_span = max(near_span + 2, int(round(min(gray.shape[:2]) * 0.060)))
+    inside_kernel = np.ones((inside_span, inside_span), np.uint8)
+    near_kernel = np.ones((near_span, near_span), np.uint8)
+    far_kernel = np.ones((far_span, far_span), np.uint8)
+    inside_mask = cv2.erode(mask, inside_kernel, iterations=1)
+    near_outer = cv2.dilate(mask, near_kernel, iterations=1)
+    far_outer = cv2.dilate(mask, far_kernel, iterations=1)
+    # Skip the immediate border because a dark printed frame can otherwise
+    # masquerade as a dark background around an internal white rectangle.
+    outer_ring = cv2.subtract(far_outer, near_outer)
+
+    inside_values = gray[inside_mask > 0]
+    outside_values = gray[outer_ring > 0]
+    if inside_values.size < 25 or outside_values.size < 25:
+        return 0.0, 0.0, -255.0
+
+    inside = float(np.median(inside_values))
+    outside = float(np.median(outside_values))
+    return inside, outside, inside - outside
+
+
+def _score_paper_candidate(
+    gray: np.ndarray,
+    contour: np.ndarray,
+    ordered: np.ndarray,
+    area_ratio: float,
+    touches: int,
+    target_aspect_ratio: float | None,
+) -> float | None:
+    """Validate and score a quadrilateral as an actual sheet boundary."""
+    min_rect = cv2.minAreaRect(contour)
+    rect_area = float(min_rect[1][0] * min_rect[1][1])
+    if rect_area <= 1.0:
+        return None
+    rectangularity = float(cv2.contourArea(contour)) / rect_area
+    if rectangularity < 0.72:
+        return None
+
+    inside, outside, contrast = _candidate_tone_scores(gray, ordered)
+    # A printed sheet should normally be brighter than the immediately
+    # surrounding background. This deliberately rejects internal drawing
+    # frames on a white page and dark circular/non-paper objects.
+    if inside < 105.0 or contrast < 6.0:
+        return None
+
+    width, height = _quad_dimensions(ordered)
+    if min(width, height) < 20.0:
+        return None
+    observed_ratio = width / height
+    aspect_score = 1.0
+    if target_aspect_ratio is not None:
+        if not np.isfinite(target_aspect_ratio) or target_aspect_ratio <= 0:
+            raise ValueError("Target paper aspect ratio must be greater than zero")
+        ratio_error = abs(np.log(observed_ratio / target_aspect_ratio))
+        # Perspective can distort the observed ratio, so use a deliberately
+        # broad gate while still rejecting implausible internal frames.
+        if ratio_error > np.log(2.25):
+            return None
+        aspect_score = _clip01(1.0 - ratio_error / np.log(2.25))
+
+    area_score = _clip01((area_ratio - 0.18) / 0.54)
+    brightness_score = _clip01((inside - 105.0) / 130.0)
+    contrast_score = _clip01((contrast - 6.0) / 54.0)
+    rectangularity_score = _clip01((rectangularity - 0.72) / 0.28)
+    border_score = 1.0 - touches / 4.0
+
+    confidence = (
+        0.30 * area_score
+        + 0.25 * contrast_score
+        + 0.15 * brightness_score
+        + 0.15 * rectangularity_score
+        + 0.10 * aspect_score
+        + 0.05 * border_score
+    )
+    return _clip01(confidence)
+
+
+def _detect_paper_candidate(
+    image: np.ndarray,
+    target_aspect_ratio: float | None = None,
+) -> tuple[np.ndarray, float] | None:
+    """Return the best validated quadrilateral and a conservative confidence score."""
     if image is None or image.size == 0:
         return None
 
@@ -134,7 +236,7 @@ def _detect_paper_candidate(image: np.ndarray) -> tuple[np.ndarray, float] | Non
     candidates: list[tuple[float, float, np.ndarray]] = []
 
     for mask in (edges, bright):
-        contours, _ = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for contour in contours:
             area = float(cv2.contourArea(contour))
             area_ratio = area / max(image_area, 1.0)
@@ -159,27 +261,29 @@ def _detect_paper_candidate(image: np.ndarray) -> tuple[np.ndarray, float] | Non
             )
             if touches >= 3:
                 continue
-            border_score = 1.0 - touches / 4.0
-            confidence = min(1.0, area_ratio / 0.72) * 0.8 + border_score * 0.2
-            candidates.append((confidence, area, ordered))
+            confidence = _score_paper_candidate(
+                gray,
+                contour,
+                ordered,
+                area_ratio,
+                touches,
+                target_aspect_ratio,
+            )
+            if confidence is not None:
+                candidates.append((confidence, area, ordered))
 
-    if candidates:
-        confidence, _, best = max(candidates, key=lambda item: (item[0], item[1]))
-        return best / scale, float(confidence)
-
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if contours:
-        contour = max(contours, key=cv2.contourArea)
-        area_ratio = float(cv2.contourArea(contour)) / max(image_area, 1.0)
-        if 0.25 <= area_ratio <= 0.92:
-            box = cv2.boxPoints(cv2.minAreaRect(contour)).astype(np.float32)
-            return order_points(box / scale), 0.35
-    return None
+    if not candidates:
+        return None
+    confidence, _, best = max(candidates, key=lambda item: (item[0], item[1]))
+    return best / scale, float(confidence)
 
 
-def detect_paper_corners(image: np.ndarray) -> np.ndarray | None:
-    """Detect the largest plausible quadrilateral representing the paper boundary."""
-    candidate = _detect_paper_candidate(image)
+def detect_paper_corners(
+    image: np.ndarray,
+    target_aspect_ratio: float | None = None,
+) -> np.ndarray | None:
+    """Detect a validated paper quadrilateral, never an unconditional rotated box."""
+    candidate = _detect_paper_candidate(image, target_aspect_ratio)
     return candidate[0] if candidate is not None else None
 
 
@@ -230,7 +334,7 @@ def auto_correct(
     image: np.ndarray,
     target_aspect_ratio: float | None = None,
 ) -> PerspectiveResult | None:
-    candidate = _detect_paper_candidate(image)
+    candidate = _detect_paper_candidate(image, target_aspect_ratio)
     if candidate is None:
         return None
     corners, confidence = candidate
@@ -238,8 +342,8 @@ def auto_correct(
     warnings: list[str] = []
     if ratio is None:
         warnings.append("未指定纸张真实长宽比，横纵尺寸可能存在非等比例误差。")
-    if confidence < 0.55:
-        warnings.append("纸张边界识别置信度较低，请人工确认四个角点。")
+    if confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE:
+        warnings.append("纸张边界识别置信度较低，必须人工确认四个角点。")
     return PerspectiveResult(
         warp_perspective(image, corners, ratio),
         corners,

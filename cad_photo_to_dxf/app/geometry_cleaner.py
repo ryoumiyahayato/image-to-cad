@@ -32,7 +32,9 @@ class GeometryCleanReport:
     duplicate_merges: int = 0
     final_orthogonalized: int = 0
     final_snap_moved_endpoints: int = 0
+    final_invalid_removed: int = 0
     final_short_removed: int = 0
+    final_duplicate_merges: int = 0
     output_lines: int = 0
 
 
@@ -193,8 +195,18 @@ def _can_merge(a: LineSegment, b: LineSegment, params: GeometryCleanParams) -> b
         return False
 
     origin = a.p1
-    a_values = sorted([float(np.dot(a.p1 - origin, direction)), float(np.dot(a.p2 - origin, direction))])
-    b_values = sorted([float(np.dot(b.p1 - origin, direction)), float(np.dot(b.p2 - origin, direction))])
+    a_values = sorted(
+        [
+            float(np.dot(a.p1 - origin, direction)),
+            float(np.dot(a.p2 - origin, direction)),
+        ]
+    )
+    b_values = sorted(
+        [
+            float(np.dot(b.p1 - origin, direction)),
+            float(np.dot(b.p2 - origin, direction)),
+        ]
+    )
     gap = max(a_values[0], b_values[0]) - min(a_values[1], b_values[1])
     return gap <= params.max_bridge_gap
 
@@ -297,7 +309,10 @@ def _remove_duplicates_with_count(
         if line_number % 256 == 0:
             checkpoint(cancellation_token)
         midpoint = line.midpoint
-        cell = (int(math.floor(midpoint[0] / cell_size)), int(math.floor(midpoint[1] / cell_size)))
+        cell = (
+            int(math.floor(midpoint[0] / cell_size)),
+            int(math.floor(midpoint[1] / cell_size)),
+        )
         candidates: list[int] = []
         for dx in (-1, 0, 1):
             for dy in (-1, 0, 1):
@@ -308,8 +323,12 @@ def _remove_duplicates_with_count(
             existing = kept[index]
             if _angle_difference(line.angle, existing.angle) > params.angle_tolerance:
                 continue
-            direct = np.linalg.norm(line.p1 - existing.p1) + np.linalg.norm(line.p2 - existing.p2)
-            reverse = np.linalg.norm(line.p1 - existing.p2) + np.linalg.norm(line.p2 - existing.p1)
+            direct = np.linalg.norm(line.p1 - existing.p1) + np.linalg.norm(
+                line.p2 - existing.p2
+            )
+            reverse = np.linalg.norm(line.p1 - existing.p2) + np.linalg.norm(
+                line.p2 - existing.p1
+            )
             if min(direct, reverse) <= params.duplicate_distance * 4.0:
                 duplicate = True
                 existing_sources = tuple(sorted(set(existing.source_ids + line.source_ids)))
@@ -335,6 +354,26 @@ def remove_duplicates(
     cancellation_token: CancellationToken | None = None,
 ) -> list[LineSegment]:
     return _remove_duplicates_with_count(lines, params, cancellation_token)[0]
+
+
+def _canonicalize_endpoints(line: LineSegment) -> LineSegment:
+    """Use one deterministic endpoint order without discarding provenance."""
+    start = (float(line.x1), float(line.y1))
+    end = (float(line.x2), float(line.y2))
+    if start <= end:
+        return line
+    return line.copy(
+        x1=line.x2,
+        y1=line.y2,
+        x2=line.x1,
+        y2=line.y1,
+        history=tuple(dict.fromkeys(line.history + ("canonicalize_endpoints",))),
+    )
+
+
+def _is_finite_nonzero(line: LineSegment) -> bool:
+    coordinates = np.array([line.x1, line.y1, line.x2, line.y2], dtype=float)
+    return bool(np.isfinite(coordinates).all() and line.length > 1e-9)
 
 
 def clean_geometry(
@@ -365,7 +404,11 @@ def clean_geometry_with_report(
         1 for before, after in zip(prepared, cleaned) if before is not after
     )
     before_count = len(cleaned)
-    cleaned = [line for line in cleaned if line.length >= params.min_line_length]
+    cleaned = [
+        line
+        for line in cleaned
+        if _is_finite_nonzero(line) and line.length >= params.min_line_length
+    ]
     report.initial_short_removed = before_count - len(cleaned)
 
     cleaned, report.first_snap_moved_endpoints = _snap_endpoints_with_count(
@@ -388,9 +431,19 @@ def clean_geometry_with_report(
     cleaned, report.final_snap_moved_endpoints = _snap_endpoints_with_count(
         cleaned, params.snap_distance, cancellation_token
     )
+
+    before_count = len(cleaned)
+    cleaned = [line for line in cleaned if _is_finite_nonzero(line)]
+    report.final_invalid_removed = before_count - len(cleaned)
+
     before_count = len(cleaned)
     cleaned = [line for line in cleaned if line.length >= params.min_line_length]
     report.final_short_removed = before_count - len(cleaned)
+
+    cleaned = [_canonicalize_endpoints(line) for line in cleaned]
+    cleaned, report.final_duplicate_merges = _remove_duplicates_with_count(
+        cleaned, params, cancellation_token
+    )
     report.output_lines = len(cleaned)
     checkpoint(cancellation_token)
     return GeometryCleanResult(cleaned, report)

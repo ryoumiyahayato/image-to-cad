@@ -1,47 +1,62 @@
-# 纸质 CAD 图纸照片转可编辑 DXF v1.1
+# 纸质 CAD 图纸照片转可编辑 DXF v1.1.0
 
-这是一个半自动图纸矢量化工具：导入手机拍摄的纸质 CAD 图纸，完成纸张校正、去阴影、二值化、直线检测、基础几何修正、图层分类和比例校准，最终导出 DXF R2010。
+这是一个半自动纸面矢量化工具：导入手机拍摄或扫描的纸质图纸，人工确认纸张边界、尺度和语义候选后，导出可编辑的 DXF `LINE`，以及经过置信度门槛和人工确认的 `CIRCLE`。
 
-它不会恢复原始 DWG，也不会把概率性的 OCR、圆弧或建筑符号候选直接写入 DXF 主体。
+它不是原始 CAD 恢复器。它不会自动恢复 DWG 约束、块、标注关联、设计意图或可靠工程尺寸，也不能在未经人工复核时用于制造、施工和尺寸交付。
+
+## 坐标模式
+
+报告和界面明确区分三种坐标空间：
+
+- `pixel`：尚未校准的图像坐标；DXF 声明为无单位，1 px 对应 1 个无单位图形单位；
+- `paper_mm`：根据已接受的纸张透视边界得到的纸面毫米坐标；
+- `model_mm`：通过图纸比例或已知实际尺寸进行独立人工校准后的模型坐标。
+
+纸面 A4 宽约 297 mm，并不表示图中标注为 12000 的对象已经恢复为 12000 mm。没有独立模型尺度校准时，不得把 `paper_mm` 解释为工程真实尺寸。
 
 ## 环境与安装
 
-- Windows 10/11、macOS 或 Linux
-- Python 3.11 或更高版本
+- Windows 10/11、macOS 或 Linux；
+- Python 3.11；
+- Windows GUI/安装包为主要发布目标。
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python main.py
 ```
 
 可选 OCR：
 
 ```powershell
-pip install -r requirements-ocr.txt
+python -m pip install -r requirements-ocr.txt
 ```
 
-`pytesseract` 仍要求系统另行安装 Tesseract 可执行程序。OCR 在 v1.1 中只进入辅助报告。
+`pytesseract` 仍要求系统另行安装 Tesseract。OCR 结果只进入辅助报告，不自动写入 DXF 主体。
 
 ## GUI 作业流程
 
-1. 导入 JPG、JPEG 或 PNG 原始照片。
-2. 选择纸张规格和方向；未知规格只能视为结构模式。
-3. 自动识别纸张，或手动点击纸张外边缘四角。
-4. 检查透视校正结果；纸张规格会约束目标长宽比。
-5. 执行图像预处理，在“预处理阶段”页检查灰度、去噪、去阴影、对比度、阈值和清噪结果。
-6. 执行线条识别与清理。任务在后台运行，GUI 显示进度并允许请求取消。
-7. 检查识别预览和各图层数量。
-8. 已知纸张规格时比例由纸张外边界推导；仍建议用图内已知尺寸复核或重新两点校准。
-9. 导出 DXF；同目录会生成 `.report.json`，包含参数、阶段修改数量和完整线段谱系。
+1. 导入 JPG、JPEG 或 PNG。
+2. 选择纸张规格和方向。
+3. 执行自动纸张识别，或手工点击纸张外边缘四角。
+4. 自动候选低于严格置信度阈值时，必须手工确认四角。
+5. 未确认透视时，GUI 会阻止预处理、识别和导出。
+6. 重新自动校正会先失效旧校正图、旧比例、旧几何和旧人工确认，避免失败后继续导出旧结果。
+7. 检查灰度、去噪、去阴影、对比度、阈值和清噪阶段。
+8. 执行共享矢量化管线：检线、粗线中心化、几何清理、最终去重、交点分割、拓扑检查和图层分类。
+9. 在“人工复核图层”中逐条确认或修改启发式图层；修改会保留自动分类理由和人工覆盖历史。
+10. 启用辅助识别后，可在“人工确认圆形”中查看达到置信度阈值的圆形候选。所有候选默认不导出，必须逐项勾选后才会写入 DXF `CIRCLE`。
+11. 检查预览、图层数量、警告、悬空端点和小间隙。
+12. 明确选择或复核 `pixel`、`paper_mm` 或 `model_mm` 尺度。
+13. 导出 DXF；同目录生成统一 `.report.json`。
 
-修改二值化、检线、吸附、分类或 HATCH 参数后，旧识别结果会自动失效，必须重新处理后才能导出。
+修改纸张、阈值、检线、吸附、分类或 HATCH 参数后，旧结果和已确认圆形会失效，必须重新处理并重新确认。
 
 ## 命令行
 
-v1.1 默认采用严格模式：无法识别纸张或没有有效线时返回非零退出码。
+默认采用严格模式：无法可靠识别纸张或没有有效线时返回非零退出码。
 
 ```powershell
 python main.py --headless `
@@ -56,98 +71,141 @@ python main.py --headless `
   --verbose
 ```
 
-重要参数：
+主要参数：
 
-- `--paper-size`：`A0`～`A4`、`LETTER`、`LEGAL` 或 `UNKNOWN`。
-- `--paper-width-mm`、`--paper-height-mm`：自定义纸张尺寸，必须同时提供。
-- `--paper-orientation`：`auto`、`portrait` 或 `landscape`。
-- `--allow-uncorrected`：纸张识别失败后仍按原图处理。
-- `--allow-empty`：允许生成 0 条线的空 DXF。
-- `--no-hatch`：只删除高置信度 HATCH；不确定对象保留在 `HATCH_CANDIDATE`。
-- `--debug-dir`：输出每个预处理算子的图像。
-- `--auxiliary`：生成圆和矩形符号辅助候选。
-- `--ocr`：调用可选 OCR，并把文字和尺寸文字候选写入报告。
+- `--min-line-length`：必须是大于 0 的整数；
+- `--paper-size`：`A0`～`A4`、`LETTER`、`LEGAL` 或 `UNKNOWN`；
+- `--paper-width-mm`、`--paper-height-mm`：自定义纸张尺寸，必须同时提供，并且必须是有限正数；
+- `--paper-orientation`：`auto`、`portrait` 或 `landscape`；
+- `--allow-uncorrected`：纸张识别失败或候选置信度不足时保留原图继续处理，不应用可疑透视，也不自动生成 `paper_mm`；
+- `--allow-empty`：允许生成 0 条线的空 DXF，仅适合受控调试；正式验证器会拒绝空几何；
+- `--no-hatch`：删除高置信度 HATCH；不确定结果保留为 `HATCH_CANDIDATE`；
+- `--debug-dir`：输出各预处理阶段图像；
+- `--auxiliary`：生成圆形和矩形符号候选；
+- `--ocr`：生成文字和尺寸文字候选。
+
+命令行模式不会自动导出圆形。圆形 `CIRCLE` 导出必须经过 GUI 中的人工确认，且导出器会再次执行置信度门槛。
 
 退出码：
 
-- `0`：成功。
-- `2`：参数错误。
-- `3`：输入不存在、不可用或接近空白。
-- `4`：纸张边界识别失败。
-- `5`：没有有效线实体。
+- `0`：成功；
+- `2`：参数错误；
+- `3`：输入不存在、不可用或接近空白；
+- `4`：纸张边界或严格置信度校验失败；
+- `5`：没有有效几何；
 - `130`：合作式取消。
 
-## 报告与谱系
+## 处理链
 
-JSON 报告包含：
+GUI 和 CLI 共用 `PipelineService`：
 
-- 软件和报告模式版本。
-- 输入、校正角点、置信度和目标纸张比例。
-- 图像质量、阴影和折叠风险。
-- 全部处理参数及逐算子调试文件。
-- 原始检测线数量、几何阶段修改数量和图层数量。
-- 每个 `HOUGH-*`、`LSD-*` 原始源线到最终 `LINE-*` 实体的映射。
-- 被过滤源线、合并操作和最终实体坐标。
-- 圆、OCR、尺寸文字和矩形符号辅助候选。
-- 导出比例、实体数量和警告。
+1. 8 位灰度、单通道、BGR 或 BGRA 输入格式校验；
+2. 分辨率归一化预处理；
+3. Hough/LSD 直线候选；
+4. 保守粗线中心脊线校正；
+5. 正交化、吸附、共线合并和去重；
+6. 所有坐标修改完成后的最终规范化与再次去重；
+7. 交点分割；
+8. 端点图和拓扑指标；
+9. 图层启发式分类；
+10. 人工图层复核，以及可选的高置信度圆形人工确认；
+11. DXF 导出；
+12. 统一报告。
+
+缓存二值图必须与当前校正图尺寸一致，并通过与新预处理相同的通道和 dtype 校验。固定像素参数优先根据完整校正图长边统一缩放；独立几何工具没有图像上下文时才回退到线段跨度。默认一像素细线去噪保持关闭。
+
+## 报告
+
+GUI 和 CLI 均通过 `ReportBuilder` 生成 schema `1.3`，包含：
+
+- 应用版本、开始时间和运行时长；
+- 输入路径和图像尺寸；
+- 自动/手工角点、候选是否检测、是否应用、是否因低置信度被拒绝，以及相关警告；
+- 图像质量；
+- 全部处理参数和实际分辨率倍率；
+- 原始检测线、最终实体和源线谱系；
+- 正交化、吸附、合并、过滤和最终去重数量；
+- 交点分割、完全/近似重复、悬空端点、小间隙、连接分量和闭合/开放分量；
+- 自动图层理由和人工图层覆盖历史；
+- 辅助候选、人工确认圆形的中心、半径、置信度和实际导出数量；
+- `pixel`、`paper_mm` 或 `model_mm` 坐标模式；
+- 未校准时 `mm_per_pixel` 为 `null`，另以 `drawing_units_per_pixel` 记录无单位换算。
+
+报告通过唯一临时文件原子写入，避免并发进程共享同一个临时文件名。
 
 ## 图层
 
-- `OUTLINE`：明确的长粗线。
-- `WALL_OR_FRAME`：正交的中长墙体或框架线。
-- `GRID_OR_AXIS`：长而较细的轴线。
-- `HATCH`：高置信度、间距规律且具有保守封闭边界支持的填充线。
-- `HATCH_CANDIDATE`：疑似填充但封闭关系或其他证据不足。
-- `DETAIL`：其他线条。
+- `OUTLINE`：长粗外轮廓候选；
+- `WALL_OR_FRAME`：正交墙体或框架候选；
+- `GRID_OR_AXIS`：长细轴线候选；
+- `HATCH`：高置信度填充线；
+- `HATCH_CANDIDATE`：证据不足的疑似填充；
+- `DETAIL`：其他线条；
+- `CIRCLE_CONFIRMED`：达到门槛并由用户逐项确认的圆形实体。
 
-## 参数注意事项
+除 `CIRCLE_CONFIRMED` 的几何类型和人工确认事实外，其他图层名称仍属于启发式分类，不代表已经恢复设计语义。
 
-- 二值化强度过大可能删除浅色细线。
-- 最大断线距离过大可能跨越真实门洞。
-- 端点吸附采用最大簇直径约束，但仍应检查密集节点。
-- 正交容差过大会破坏真实斜线，通常建议 2°～5°。
-- 不建议删除 `HATCH_CANDIDATE`；应在 CAD 中关闭或人工检查。
-- 纸张比例只能校正整体单应性，不能修复局部波浪。
+## 验证
 
-## 仍然存在的技术边界
-
-- 严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。系统会记录风险，不会输出虚假的精度保证。
-- 后台取消会在处理阶段和 Python 循环内检查，但不能安全强制中断正在执行的单次 OpenCV 或 OCR 原生调用。
-- 线段谱系已覆盖当前 Hough/LSD 原始源线、合并、过滤、分类和最终实体；像素级证据到源线的逐像素谱系不在 v1.1 范围。
-- HATCH 综合平行度、间距、长度、线宽、密度和封闭边界；封闭区域包含关系仍采用保守的轴对齐近似。
-- GUI 已提供逐算子独立预览页，CLI 可通过 `--debug-dir` 输出全部阶段图像。
-- OCR、圆弧、尺寸文字和建筑符号仍是辅助识别结果，不自动进入 DXF 主体。
-
-## 测试
+运行单元测试、静态检查、首轮核心类型检查和语法编译：
 
 ```powershell
-python -m unittest discover -s tests -v
+python -m pip install -r requirements-test.txt
+python -m pytest -q
+python -m ruff check app tests validation main.py
+python -m mypy app/resolution.py app/scale_calibrator.py app/reporting.py app/auxiliary_recognition.py
+python -m compileall -q app tests validation main.py
 ```
 
-回归测试覆盖空白图拒绝、四角排序、纸张比例、细线保留、粗线宽度、受限吸附、共享交点、完整谱系、HATCH 防误删、合作式取消、辅助圆检测、JSON 报告和 DXF 审计。
-
-## Windows v1.1 构建和安装包
-
-本地构建：
+生成机器可读 DXF 验证证据：
 
 ```powershell
-pip install -r requirements-dev.txt
-python -m unittest discover -s tests -v
-pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\windows_smoke.ps1 `
-  -Executable .\dist\CADPhotoToDXF\CADPhotoToDXF.exe `
-  -Sample .\samples\test.jpg `
-  -WorkingDirectory "$env:TEMP\cad-photo-portable-smoke"
+python validation/validate_dxf.py `
+  --input output/output.dxf `
+  --output output/output.validation.json
 ```
 
-安装包由 Inno Setup 配置 `installer/cad_photo_to_dxf.iss` 生成。GitHub Actions 工作流会执行：
+验证器会检查 `ezdxf` audit、LINE/CIRCLE 数量、实体类型、空几何、非有限坐标、零长度线、非正圆半径、完全重复、图层、边界和拓扑指标。空 DXF 或出现产品未声明的模型空间实体类型会失败。
 
-1. 安装 Python 3.11 和依赖。
-2. 运行回归测试。
-3. 使用 PyInstaller 构建便携版。
-4. 对便携 EXE 执行无界面转换冒烟测试。
-5. 生成 Inno Setup 安装包。
-6. 静默安装、启动无界面转换、静默卸载并验证文件清理。
-7. 上传便携目录和 `CADPhotoToDXF-1.1.0-Setup.exe`。
+在安装 FreeCAD 的环境中执行独立导入：
 
-旧 v1.0.0 EXE 不包含 v1.1 修改，不能通过替换说明文档升级。正式 v1.1.0 安装包必须由 Windows Runner 或受控 Windows 构建机重新构建，并以工作流的安装、启动和卸载冒烟结果作为发布依据。
+```powershell
+FreeCADCmd validation/freecad_import_check.py `
+  --input output/output.dxf `
+  --output output/output.freecad.json
+```
+
+FreeCAD 脚本记录 FreeCAD 版本、输入 SHA-256、导入对象和非空 Shape 数量。只有至少一个对象包含非空几何才判成功。脚本存在不等于已经通过；正式发布必须保留实际成功的 JSON 证据。
+
+## Windows 构建与发布
+
+Windows PR 工作流执行：
+
+1. pytest、Ruff、核心 mypy 和 compileall；
+2. PyInstaller 便携版构建与冒烟测试；
+3. Inno Setup 安装器构建；
+4. 安装、启动和卸载冒烟测试；
+5. 上传按应用版本命名的产物。
+
+正式 Release 只允许通过 `v*` tag 触发：
+
+- tag 必须与 `app.__version__` 一致；
+- 只读 `build` job 构建、测试并上传经过验证的产物；
+- 只有依赖 build 成功、并通过 `production-release` Environment 审批的 `publish` job 获得 `contents: write`；
+- 已存在 Release 时失败，不删除或覆盖；
+- 发布资产生成 SHA-256；
+- 发布目标固定为触发 tag 的精确提交。
+
+仓库管理员必须在 GitHub 中配置 `production-release` Environment 的人工审批保护，否则引用该 Environment 本身不会自动产生审批门槛。
+
+## 技术边界
+
+- 严重折叠、局部波浪和复杂非刚性形变无法通过单一透视变换恢复；
+- Hough/LSD 仍从图像证据产生候选，粗线中心化不是墙体语义恢复；
+- 开放线、轴线和标注线可能合法存在，因此“悬空端点”是复核指标而非自动错误判定；
+- 只有达到阈值并经人工确认的完整圆形可导出为 `CIRCLE`；圆弧、文字、尺寸关联和建筑符号仍是辅助候选；
+- 图层分类、HATCH、闭合关系和最终端点吸附仍需人工检查；
+- 没有真实手机照片、原始 CAD ground truth 和明确误差阈值时，不能宣称工程精度；
+- Git 历史中的大文件清理属于独立仓库治理任务。
+
+整改进度和未完成事项见 [`../docs/AUDIT_REMEDIATION.md`](../docs/AUDIT_REMEDIATION.md)。

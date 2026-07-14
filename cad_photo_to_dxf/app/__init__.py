@@ -1,3 +1,6 @@
 """CAD photo to editable DXF application package."""
 
-__version__ = "1.1.0"
+from .version import __version__
+
+
+__all__ = ["__version__"]

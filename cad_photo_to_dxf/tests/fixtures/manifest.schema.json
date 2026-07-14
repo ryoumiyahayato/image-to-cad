@@ -1,0 +1,222 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/cad-photo-to-dxf-fixture.schema.json",
+  "title": "CAD photo to DXF real-image fixture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "is_real_capture",
+    "fixture_categories",
+    "source_file",
+    "source_sha256",
+    "source_provenance",
+    "licence",
+    "reviewed_by",
+    "expected_outcome"
+  ],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "is_real_capture": {"const": true},
+    "fixture_categories": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "flat_scan",
+          "mild_perspective",
+          "severe_perspective",
+          "blur_shadow_fold",
+          "hidden_paper_edge",
+          "non_paper_negative",
+          "multi_resolution",
+          "portrait_landscape",
+          "mixed_geometry",
+          "original_cad_dimensions"
+        ]
+      }
+    },
+    "source_file": {"type": "string", "minLength": 1},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_provenance": {"type": "string", "minLength": 1},
+    "licence": {"type": "string", "minLength": 1},
+    "reviewed_by": {"type": "string", "minLength": 1},
+    "expected_outcome": {"enum": ["vectorized_dxf", "paper_rejected"]},
+    "expected_rejection": {"const": "paper_detection"},
+    "ground_truth_file": {"type": "string", "minLength": 1},
+    "ground_truth_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "paper": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["size", "orientation"],
+      "properties": {
+        "size": {"type": "string", "minLength": 1},
+        "orientation": {"enum": ["portrait", "landscape"]}
+      }
+    },
+    "coordinate_mode": {"enum": ["paper_mm", "model_mm"]},
+    "calibration_reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_px", "end_px", "length_mm"],
+      "properties": {
+        "start_px": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "end_px": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "length_mm": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "expected_corners_px": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {"type": "number"}
+      }
+    },
+    "corner_tolerance_px": {"type": "number", "minimum": 0},
+    "calibration_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "verification_dimensions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "verification_references": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "ground_truth_start",
+          "ground_truth_end",
+          "expected_mm"
+        ],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "ground_truth_start": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {"type": "number"}
+          },
+          "ground_truth_end": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {"type": "number"}
+          },
+          "expected_mm": {"type": "number", "exclusiveMinimum": 0}
+        }
+      }
+    },
+    "expected_entities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["line_min", "line_max"],
+      "properties": {
+        "line_min": {"type": "integer", "minimum": 0},
+        "line_max": {"type": "integer", "minimum": 0}
+      }
+    },
+    "expected_layers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["min", "max"],
+        "properties": {
+          "min": {"type": "integer", "minimum": 0},
+          "max": {"type": "integer", "minimum": 0}
+        }
+      }
+    },
+    "intentional_open_contours": {"type": "boolean"},
+    "tolerances": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "endpoint_mm",
+        "angle_degrees",
+        "scale_relative",
+        "hausdorff_mm"
+      ],
+      "properties": {
+        "endpoint_mm": {"type": "number", "minimum": 0},
+        "angle_degrees": {"type": "number", "minimum": 0},
+        "scale_relative": {"type": "number", "minimum": 0},
+        "hausdorff_mm": {"type": "number", "minimum": 0}
+      }
+    },
+    "freecad_version": {"const": "0.19.2"}
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"expected_outcome": {"const": "vectorized_dxf"}},
+        "required": ["expected_outcome"]
+      },
+      "then": {
+        "required": [
+          "ground_truth_file",
+          "ground_truth_sha256",
+          "paper",
+          "coordinate_mode",
+          "expected_corners_px",
+          "corner_tolerance_px",
+          "calibration_dimensions",
+          "verification_dimensions",
+          "verification_references",
+          "expected_entities",
+          "expected_layers",
+          "intentional_open_contours",
+          "tolerances",
+          "freecad_version"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "expected_outcome": {"const": "vectorized_dxf"},
+          "coordinate_mode": {"const": "model_mm"}
+        },
+        "required": ["expected_outcome", "coordinate_mode"]
+      },
+      "then": {"required": ["calibration_reference"]}
+    },
+    {
+      "if": {
+        "properties": {"expected_outcome": {"const": "paper_rejected"}},
+        "required": ["expected_outcome"]
+      },
+      "then": {
+        "required": ["expected_rejection"],
+        "properties": {
+          "fixture_categories": {
+            "contains": {"const": "non_paper_negative"}
+          }
+        }
+      }
+    }
+  ]
+}

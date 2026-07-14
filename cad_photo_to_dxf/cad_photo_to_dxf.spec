@@ -1,7 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from pathlib import Path
+import sys
+
 from PyInstaller.utils.hooks import collect_data_files, collect_submodules
 
+
+ROOT = Path(SPECPATH)
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.version import __version__
+from scripts.versioning import write_windows_version_info
+
+
+version_info = write_windows_version_info(
+    ROOT / "build" / "version_info.generated.txt",
+    __version__,
+)
 hiddenimports = collect_submodules("ezdxf")
 hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
@@ -35,7 +51,7 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
-    version="version_info.txt",
+    version=str(version_info),
     icon=None,
 )
 

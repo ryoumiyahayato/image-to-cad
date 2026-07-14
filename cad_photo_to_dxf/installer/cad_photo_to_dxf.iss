@@ -1,5 +1,7 @@
 #define MyAppName "CAD Photo to DXF"
-#define MyAppVersion "1.1.0"
+#ifndef MyAppVersion
+  #error MyAppVersion must be supplied by the build command from app.__version__
+#endif
 #define MyAppPublisher "CAD Photo to DXF"
 #define MyAppExeName "CADPhotoToDXF.exe"
 
@@ -12,7 +14,7 @@ DefaultDirName={autopf}\CADPhotoToDXF
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=output
-OutputBaseFilename=CADPhotoToDXF-1.1.0-Setup
+OutputBaseFilename=CADPhotoToDXF-{#MyAppVersion}-Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern

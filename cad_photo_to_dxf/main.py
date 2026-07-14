@@ -1,10 +1,31 @@
 from __future__ import annotations
 
 import argparse
+from math import isfinite
 from pathlib import Path
 import sys
 
 from app import __version__
+
+
+def _positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer") from exc
+    if parsed <= 0:
+        raise argparse.ArgumentTypeError("must be greater than zero")
+    return parsed
+
+
+def _positive_finite_float(value: str) -> float:
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be a number") from exc
+    if not isfinite(parsed) or parsed <= 0:
+        raise argparse.ArgumentTypeError("must be a positive finite number")
+    return parsed
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -16,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--input", type=Path, help="Input JPG/PNG for headless mode")
     parser.add_argument("--output", type=Path, default=Path("output/output.dxf"))
     parser.add_argument("--preview", type=Path, default=Path("output/preview.png"))
-    parser.add_argument("--min-line-length", type=int, default=35)
+    parser.add_argument("--min-line-length", type=_positive_int, default=35)
     parser.add_argument("--threshold-strength", type=int, default=12)
     parser.add_argument(
         "--no-hatch",
@@ -34,8 +55,8 @@ def build_parser() -> argparse.ArgumentParser:
         choices=("auto", "portrait", "landscape"),
         default="auto",
     )
-    parser.add_argument("--paper-width-mm", type=float)
-    parser.add_argument("--paper-height-mm", type=float)
+    parser.add_argument("--paper-width-mm", type=_positive_finite_float)
+    parser.add_argument("--paper-height-mm", type=_positive_finite_float)
     parser.add_argument(
         "--allow-uncorrected",
         action="store_true",
@@ -48,8 +69,16 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--report", type=Path, default=Path("output/report.json"))
     parser.add_argument("--debug-dir", type=Path)
-    parser.add_argument("--auxiliary", action="store_true", help="Detect review-only circles and symbols")
-    parser.add_argument("--ocr", action="store_true", help="Run optional review-only OCR")
+    parser.add_argument(
+        "--auxiliary",
+        action="store_true",
+        help="Detect review-only circles and symbols",
+    )
+    parser.add_argument(
+        "--ocr",
+        action="store_true",
+        help="Run optional review-only OCR",
+    )
     parser.add_argument("--verbose", action="store_true")
     return parser
 
@@ -64,6 +93,7 @@ def run_headless(args: argparse.Namespace) -> int:
 
     progress = None
     if args.verbose:
+
         def progress(stage: str, fraction: float) -> None:
             print(f"[{fraction * 100:5.1f}%] {stage}", file=sys.stderr)
 
@@ -73,7 +103,9 @@ def run_headless(args: argparse.Namespace) -> int:
         preview_path=args.preview,
         preprocess_params=PreprocessParams(threshold_strength=args.threshold_strength),
         detection_params=LineDetectionParams(min_line_length=args.min_line_length),
-        clean_params=GeometryCleanParams(min_line_length=max(5, args.min_line_length * 0.45)),
+        clean_params=GeometryCleanParams(
+            min_line_length=max(5, args.min_line_length * 0.45)
+        ),
         preserve_hatch=not args.no_hatch,
         report_path=args.report,
         debug_dir=args.debug_dir,
@@ -96,7 +128,7 @@ def run_headless(args: argparse.Namespace) -> int:
         + (
             f"calibrated, {result.export.mm_per_pixel:.6f} mm/px"
             if result.export.calibrated
-            else "uncalibrated, 1 pixel = 1 drawing millimetre unit"
+            else "uncalibrated, 1 pixel = 1 unitless drawing unit"
         )
     )
     if result.report.get("warnings"):
@@ -107,7 +139,8 @@ def run_headless(args: argparse.Namespace) -> int:
 def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
-        from app.gui import MainWindow
+
+        from app.gui_state_guard import MainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"

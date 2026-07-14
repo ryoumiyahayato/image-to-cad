@@ -1,0 +1,159 @@
+name: FreeCAD validation
+
+on:
+  push:
+    branches:
+      - main
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  freecad-import:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 45
+    env:
+      FREECAD_APT_VERSION: 0.19.2+dfsg1-3ubuntu1
+      AUDITED_HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements.txt
+
+      - name: Install application dependencies
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
+      - name: Install pinned FreeCAD package and record environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          if ! apt-cache madison freecad | awk '{print $3}' | grep -Fx "$FREECAD_APT_VERSION"; then
+            echo "Pinned FreeCAD package is unavailable: $FREECAD_APT_VERSION" >&2
+            apt-cache policy freecad >&2
+            exit 1
+          fi
+          sudo apt-get install -y "freecad=$FREECAD_APT_VERSION"
+          mkdir -p cad_photo_to_dxf/output/freecad
+          {
+            echo "runner=ubuntu-22.04"
+            echo "runner_image_os=${ImageOS:-unknown}"
+            echo "runner_image_version=${ImageVersion:-unknown}"
+            echo "apt_package=freecad"
+            echo "pinned_apt_version=$FREECAD_APT_VERSION"
+            dpkg-query -W -f='installed_version=${Version}\n' freecad
+          } | tee cad_photo_to_dxf/output/freecad/freecad-package.txt
+
+      - name: Generate smoke DXF
+        working-directory: cad_photo_to_dxf
+        run: |
+          mkdir -p output/freecad/debug
+          python main.py \
+            --headless \
+            --input samples/test.jpg \
+            --output output/freecad/sample.dxf \
+            --preview output/freecad/preview.png \
+            --report output/freecad/report.json \
+            --debug-dir output/freecad/debug \
+            --paper-size A4 \
+            --paper-orientation landscape \
+            --auxiliary
+
+      - name: Validate DXF with pinned FreeCAD environment
+        working-directory: cad_photo_to_dxf
+        shell: bash
+        run: |
+          set -euo pipefail
+          if command -v FreeCADCmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v FreeCADCmd)"
+          elif command -v freecadcmd >/dev/null 2>&1; then
+            freecad_cmd="$(command -v freecadcmd)"
+          else
+            echo "FreeCAD command-line executable was not installed" >&2
+            exit 1
+          fi
+          "$freecad_cmd" --version | tee output/freecad/freecad-command-version.txt
+          python scripts/validate_dxf.py \
+            output/freecad/sample.dxf \
+            --output output/freecad/freecad-validation.json \
+            --freecad-command "$freecad_cmd"
+          python - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+          import subprocess
+
+          output_dir = Path("output/freecad")
+          evidence = json.loads(
+              (output_dir / "freecad-validation.json").read_text(encoding="utf-8")
+          )
+          assert evidence["dxf"]["passed"], evidence
+          assert evidence["freecad"]["passed"], evidence
+          assert evidence["freecad"]["object_count"] > 0, evidence
+          assert evidence["freecad"]["nonempty_shape_count"] > 0, evidence
+
+          def sha256(path: Path) -> str:
+              digest = hashlib.sha256()
+              with path.open("rb") as handle:
+                  for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                      digest.update(chunk)
+              return digest.hexdigest()
+
+          paths = {
+              "input_image": Path("samples/test.jpg"),
+              "output_dxf": output_dir / "sample.dxf",
+              "processing_report": output_dir / "report.json",
+              "freecad_validation": output_dir / "freecad-validation.json",
+          }
+          provenance = {
+              "schema_version": 1,
+              "repository": os.environ.get("GITHUB_REPOSITORY"),
+              "workflow": os.environ.get("GITHUB_WORKFLOW"),
+              "workflow_run_id": os.environ.get("GITHUB_RUN_ID"),
+              "checked_out_commit": subprocess.check_output(
+                  ["git", "rev-parse", "HEAD"], text=True
+              ).strip(),
+              "audited_head_commit": os.environ.get("AUDITED_HEAD_SHA"),
+              "freecad_apt_version": os.environ["FREECAD_APT_VERSION"],
+              "freecad_version": evidence["freecad"]["freecad_version"],
+              "freecad_object_count": evidence["freecad"]["object_count"],
+              "freecad_nonempty_shape_count": evidence["freecad"][
+                  "nonempty_shape_count"
+              ],
+              "files": {
+                  name: {"path": str(path), "sha256": sha256(path)}
+                  for name, path in paths.items()
+              },
+          }
+          (output_dir / "provenance.json").write_text(
+              json.dumps(provenance, ensure_ascii=False, indent=2, sort_keys=True)
+              + "\n",
+              encoding="utf-8",
+          )
+          print(json.dumps(provenance, ensure_ascii=False, indent=2))
+          PY
+
+      - name: Upload FreeCAD validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: freecad-validation-${{ github.sha }}
+          path: cad_photo_to_dxf/output/freecad/**
+          if-no-files-found: warn
+          retention-days: 30
