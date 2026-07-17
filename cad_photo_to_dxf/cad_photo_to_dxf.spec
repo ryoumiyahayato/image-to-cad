@@ -3,7 +3,7 @@
 from pathlib import Path
 import sys
 
-from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_submodules
 
 
 ROOT = Path(SPECPATH)
@@ -21,6 +21,13 @@ version_info = write_windows_version_info(
 hiddenimports = collect_submodules("ezdxf")
 hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
+binaries = []
+for package in ("pypdfium2", "pypdfium2_raw"):
+    package_datas, package_binaries, package_hiddenimports = collect_all(package)
+    datas += package_datas
+    binaries += package_binaries
+    hiddenimports += package_hiddenimports
+
 datas += [
     ("README.md", "."),
     ("samples/test.jpg", "samples"),
@@ -29,7 +36,7 @@ datas += [
 a = Analysis(
     ["main.py"],
     pathex=["."],
-    binaries=[],
+    binaries=binaries,
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
