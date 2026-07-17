@@ -58,9 +58,16 @@ class PerspectiveTests(unittest.TestCase):
 
     def test_target_aspect_ratio_is_preserved(self) -> None:
         image = np.full((800, 1000, 3), 255, np.uint8)
-        corners = np.array([[100, 100], [900, 150], [800, 550], [250, 600]], np.float32)
+        corners = np.array(
+            [[100, 100], [900, 150], [800, 550], [250, 600]],
+            np.float32,
+        )
         corrected = warp_perspective(image, corners, target_aspect_ratio=2.0)
-        self.assertAlmostEqual(corrected.shape[1] / corrected.shape[0], 2.0, delta=0.01)
+        self.assertAlmostEqual(
+            corrected.shape[1] / corrected.shape[0],
+            2.0,
+            delta=0.01,
+        )
 
     def test_blank_image_is_not_paper(self) -> None:
         blank = np.full((300, 500, 3), 255, np.uint8)
@@ -165,15 +172,49 @@ class DetectionAndGeometryTests(unittest.TestCase):
         self.assertTrue(lineage["source_to_final"]["L1"])
 
     def test_final_snap_duplicates_are_removed_and_lineage_is_merged(self) -> None:
-        # This fixture previously produced two coincident segments only after
-        # the final orthogonalization/snap pass.
         raw = [
-            line(2.9269615525, 11.3803862825, 37.7234740625, 9.9308263498, source="0"),
-            line(1.1371511362, 17.7149278235, -2.2889548350, 58.8239200503, source="1"),
-            line(9.3037162704, 2.0352096877, 5.9589627418, 47.4757844199, source="2"),
-            line(19.3244831869, 11.9628042627, 16.5017612816, 47.2551766396, source="3"),
-            line(14.3569525662, 11.6433421780, 14.2987226052, 74.9764771152, source="4"),
-            line(2.1187277612, 14.6855856500, 38.7206310517, 11.8738760768, source="5"),
+            line(
+                2.9269615525,
+                11.3803862825,
+                37.7234740625,
+                9.9308263498,
+                source="0",
+            ),
+            line(
+                1.1371511362,
+                17.7149278235,
+                -2.2889548350,
+                58.8239200503,
+                source="1",
+            ),
+            line(
+                9.3037162704,
+                2.0352096877,
+                5.9589627418,
+                47.4757844199,
+                source="2",
+            ),
+            line(
+                19.3244831869,
+                11.9628042627,
+                16.5017612816,
+                47.2551766396,
+                source="3",
+            ),
+            line(
+                14.3569525662,
+                11.6433421780,
+                14.2987226052,
+                74.9764771152,
+                source="4",
+            ),
+            line(
+                2.1187277612,
+                14.6855856500,
+                38.7206310517,
+                11.8738760768,
+                source="5",
+            ),
         ]
         result = clean_geometry_with_report(
             raw,
@@ -214,10 +255,21 @@ class DetectionAndGeometryTests(unittest.TestCase):
 class ClassificationTests(unittest.TestCase):
     def test_thick_parallel_walls_are_not_deleted_as_hatch(self) -> None:
         walls = [
-            line(100, 100 + index * 12, 400, 100 + index * 12, width=10, source=f"W{index}")
+            line(
+                100,
+                100 + index * 12,
+                400,
+                100 + index * 12,
+                width=10,
+                source=f"W{index}",
+            )
             for index in range(5)
         ]
-        result = classify_layers_with_report(walls, (1000, 1000), preserve_hatch=False)
+        result = classify_layers_with_report(
+            walls,
+            (1000, 1000),
+            preserve_hatch=False,
+        )
         self.assertEqual(len(result.lines), len(walls))
         self.assertNotIn("HATCH", [item.layer for item in result.lines])
 
@@ -229,7 +281,13 @@ class ClassificationTests(unittest.TestCase):
             line(240, 80, 240, 180, width=6, source="RIGHT"),
         ]
         hatch = [
-            line(100, 100 + index * 10, 220, 100 + index * 10, source=f"F{index}")
+            line(
+                100,
+                100 + index * 10,
+                220,
+                100 + index * 10,
+                source=f"F{index}",
+            )
             for index in range(7)
         ]
         result = classify_layers_with_report(
@@ -238,7 +296,9 @@ class ClassificationTests(unittest.TestCase):
             preserve_hatch=False,
         )
         self.assertGreaterEqual(result.report.hatch_lines_dropped, 5)
-        remaining_sources = {source for item in result.lines for source in item.source_ids}
+        remaining_sources = {
+            source for item in result.lines for source in item.source_ids
+        }
         self.assertTrue({"TOP", "BOTTOM", "LEFT", "RIGHT"}.issubset(remaining_sources))
 
 
@@ -314,10 +374,11 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue(report_path.exists())
             self.assertTrue((root / "debug" / "01_grayscale.png").exists())
             report = json.loads(report_path.read_text(encoding="utf-8"))
-            self.assertEqual(report["application_version"], "1.1.0")
+            self.assertEqual(report["application_version"], "1.2.0")
             self.assertEqual(report["export"]["coordinate_space"], "paper_mm")
             self.assertEqual(
-                report["lineage"]["final_entity_count"], result.export.line_count
+                report["lineage"]["final_entity_count"],
+                result.export.line_count,
             )
             document = ezdxf.readfile(output)
             self.assertFalse(document.audit().errors)
