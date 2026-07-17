@@ -17,7 +17,6 @@ from .dxf_exporter import (
     ExportResult,
     export_dxf,
     filter_exportable_circles,
-    filter_exportable_texts,
 )
 from .quality import assess_image_quality
 from .report_builder import ReportBuilder
@@ -123,7 +122,6 @@ def export_from_window(
         if export_ocr_text and window.auxiliary_result is not None
         else []
     )
-    exported_texts = filter_exportable_texts(requested_texts)
     dwg_error: str | None = None
 
     try:
