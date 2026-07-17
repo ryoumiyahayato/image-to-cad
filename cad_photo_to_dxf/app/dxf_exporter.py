@@ -129,6 +129,7 @@ def export_dxf(
         doc.header["$INSUNITS"] = 0
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
+    doc.header["$PROJECTNAME"] = ""
 
     for layer_name, style in LAYER_STYLES.items():
         if layer_name not in doc.layers:
@@ -148,9 +149,12 @@ def export_dxf(
             if raster_output_path is not None
             else path.with_name(f"{path.stem}.scan.png")
         )
+        underlay_path = underlay_path.resolve()
+        if underlay_path.parent != path.resolve().parent:
+            raise ValueError("Raster underlay must be saved beside the DXF")
         save_image(underlay_path, raster_image)
         image_def = doc.add_image_def(
-            filename=str(underlay_path.resolve()),
+            filename=underlay_path.name,
             size_in_pixel=(int(raster_width), int(raster_height)),
         )
         doc.set_raster_variables(
