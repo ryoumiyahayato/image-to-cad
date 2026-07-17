@@ -98,11 +98,11 @@ def test_machine_readable_validation_rejects_unexpected_entities(
     document = ezdxf.new("R2010")
     modelspace = document.modelspace()
     modelspace.add_line((0, 0), (100, 0))
-    modelspace.add_text("unexpected")
+    modelspace.add_arc((50, 50), 10, 0, 90)
     document.saveas(source)
 
     report = _run_validation(source, evidence, monkeypatch)
     assert report["_exit_code"] == 1
     assert report["success"] is False
-    assert report["unexpected_entity_types"] == ["TEXT"]
+    assert report["unexpected_entity_types"] == ["ARC"]
     assert report["unexpected_entity_count"] == 1
