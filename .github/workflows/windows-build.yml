@@ -71,7 +71,8 @@ jobs:
           ./scripts/windows_smoke.ps1 `
             -Executable ./dist/CADPhotoToDXF/CADPhotoToDXF.exe `
             -Sample ./samples/test.jpg `
-            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-portable-smoke"
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-portable-smoke" `
+            -ExpectedVersion $env:VERSION
 
       - name: Install Inno Setup
         shell: pwsh
@@ -92,7 +93,8 @@ jobs:
           ./scripts/installer_smoke.ps1 `
             -Installer "./installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" `
             -Sample ./samples/test.jpg `
-            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke"
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke" `
+            -ExpectedVersion $env:VERSION
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
