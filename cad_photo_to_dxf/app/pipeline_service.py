@@ -17,6 +17,7 @@ from .preprocess import (
     preprocess_image_with_stages,
 )
 from .resolution import image_resolution_scale
+from .text_protection import detect_text_region_mask, filter_text_like_lines
 from .topology import (
     IntersectionSplitReport,
     TopologyValidationReport,
@@ -86,6 +87,7 @@ class PipelineService:
         preserve_hatch: bool = True,
         enable_auxiliary: bool = False,
         enable_ocr: bool = False,
+        protect_text: bool = True,
         cancellation_token: CancellationToken | None = None,
         progress_callback: ProgressCallback | None = None,
     ) -> VectorizationResult:
@@ -113,7 +115,7 @@ class PipelineService:
                 ),
             )
             binary = preprocessing.image
-            stages = preprocessing.stages
+            stages = dict(preprocessing.stages)
             preprocess_scale = preprocessing.resolution_scale
         else:
             if existing_binary.size == 0:
@@ -123,26 +125,50 @@ class PipelineService:
                     "Existing binary image dimensions do not match the corrected image; "
                     "run preprocessing again"
                 )
-            # Validate both images with the same format gate used by a fresh
-            # preprocessing run. Only the cached binary is used downstream.
             _to_grayscale(corrected_image)
             binary = _to_grayscale(existing_binary)
             preprocess_scale = image_resolution_scale(binary.shape)
             report_progress(progress_callback, "preprocess:reuse", 0.25)
 
         detection_scale = image_resolution_scale(binary.shape)
+        protection = None
+        if protect_text:
+            checkpoint(cancellation_token)
+            report_progress(progress_callback, "text-protection", 0.27)
+            protection = detect_text_region_mask(binary)
+            if protection.text_region_count:
+                stages["文字保护掩膜"] = 255 - protection.mask
+
         checkpoint(cancellation_token)
-        raw_lines = detect_lines(
+        detected_lines = detect_lines(
             binary,
             detection_params,
             cancellation_token=cancellation_token,
             progress_callback=_subprogress(
                 progress_callback,
                 "detect",
-                0.27,
+                0.29,
                 0.58,
             ),
         )
+        raw_lines = detected_lines
+        if protection is not None:
+            raw_lines, protection = filter_text_like_lines(
+                detected_lines,
+                protection,
+                binary.shape,
+            )
+            if protection.rejected_line_count:
+                warnings.append(
+                    "文字保护已阻止 "
+                    f"{protection.rejected_line_count} 条位于文字区域内的短线进入 CAD。"
+                )
+            if protection.text_region_count:
+                warnings.append(
+                    "检测到 "
+                    f"{protection.text_region_count} 个疑似文字区域；"
+                    "文字仍保留在扫描底图中，矢量线不再尝试拼成文字。"
+                )
 
         report_progress(progress_callback, "geometry", 0.62)
         geometry = clean_geometry_with_report(
