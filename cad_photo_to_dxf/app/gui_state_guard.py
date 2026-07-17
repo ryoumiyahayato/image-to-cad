@@ -3,7 +3,7 @@ from __future__ import annotations
 from copy import deepcopy
 from pathlib import Path
 
-from PySide6.QtGui import QAction, QKeySequence
+from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -125,17 +125,17 @@ class MainWindow(_ReviewedMainWindow):
             for action in menu.actions():
                 if action.text() == "导入图片":
                     action.setText("导入图片 / 扫描 PDF")
-                    action.setShortcut(QKeySequence.Open)
+                    action.setShortcut("Ctrl+O")
                 elif action.text() == "导出 DXF":
                     action.setText("导出 CAD（DWG / DXF）")
-                    action.setShortcut(QKeySequence.SaveAs)
+                    action.setShortcut("Ctrl+Shift+S")
 
         view_menu = self.menuBar().addMenu("视图")
         zoom_in = QAction("放大", self)
-        zoom_in.setShortcut(QKeySequence.ZoomIn)
+        zoom_in.setShortcut("Ctrl++")
         zoom_in.triggered.connect(self._zoom_in)
         zoom_out = QAction("缩小", self)
-        zoom_out.setShortcut(QKeySequence.ZoomOut)
+        zoom_out.setShortcut("Ctrl+-")
         zoom_out.triggered.connect(self._zoom_out)
         fit_action = QAction("适应窗口", self)
         fit_action.setShortcut("Ctrl+0")
