@@ -15,8 +15,11 @@ TECHNICAL_LIMITS = [
     "严重折叠、局部波浪和复杂非刚性形变不能保证整页误差小于 2%。",
     "取消在原生 OpenCV 或 OCR 单次调用返回后生效，无法安全强制终止调用内部。",
     "HATCH 封闭区域包含关系使用保守的轴对齐边界近似。",
-    "圆形只有在达到置信度阈值并经人工确认后才导出；"
-    "圆弧、OCR、尺寸文字和建筑符号仍仅作为辅助候选。",
+    "圆形只有在达到置信度阈值并经人工确认后才导出；圆弧和建筑符号仍需人工复核。",
+    "OCR TEXT 只导出高置信度候选，字符内容、位置和字体仍需人工校对。",
+    "疑似文字区域会阻止局部短线进入 CAD，但复杂符号和细小结构可能仍需手动修正。",
+    "扫描底图使用外部 IMAGE 引用，不嵌入 DXF/DWG；CAD 文件与 .scan.png 必须一起移动。",
+    "DWG 输出依赖用户本机安装的 ODA File Converter；DXF 是本程序的原生输出。",
     "paper_mm 仅表示打印纸面坐标；未校准图纸比例时不得解释为工程 model_mm。",
     "粗笔画中心化属于保守启发式，墙体边界语义仍需人工复核。",
 ]
@@ -105,6 +108,7 @@ class ReportBuilder:
             "input": {
                 "path": str(input_path) if input_path is not None else None,
                 "shape": list(original_shape) if original_shape is not None else None,
+                "pdf_page": parameters.get("pdf_page"),
             },
             "perspective": normalized_perspective,
             "quality": _to_dict(quality),
@@ -123,6 +127,9 @@ class ReportBuilder:
                 "raw_line_count": len(raw_lines),
                 "resolution_scale": float(detection_resolution_scale),
                 "thick_stroke_centering": bool(thick_stroke_centering),
+                "text_region_protection": bool(
+                    parameters.get("protect_text_regions", False)
+                ),
             },
             "geometry": geometry,
             "topology": {
@@ -134,11 +141,24 @@ class ReportBuilder:
             "lineage": build_lineage(raw_lines, lines),
             "export": {
                 "path": str(export_result.path),
+                "output_format": export_result.output_format,
+                "dwg_path": (
+                    str(export_result.dwg_path)
+                    if export_result.dwg_path is not None
+                    else None
+                ),
+                "underlay_path": (
+                    str(export_result.underlay_path)
+                    if export_result.underlay_path is not None
+                    else None
+                ),
                 "line_count": export_result.line_count,
                 "skipped_line_count": export_result.skipped_line_count,
                 "circle_count": export_result.circle_count,
                 "skipped_circle_count": export_result.skipped_circle_count,
                 "confirmed_circles": [_to_dict(item) for item in confirmed_circles],
+                "text_count": export_result.text_count,
+                "skipped_text_count": export_result.skipped_text_count,
                 "mm_per_pixel": calibrated_mm_per_pixel,
                 "drawing_units_per_pixel": drawing_units_per_pixel,
                 "calibrated": export_result.calibrated,
