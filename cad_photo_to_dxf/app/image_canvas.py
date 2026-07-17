@@ -38,19 +38,53 @@ class ImageCanvas(QGraphicsView):
         self._pixmap_item: QGraphicsPixmapItem | None = None
         self._selection_enabled = False
         self._overlay_items: list[object] = []
+        self._manual_zoom = False
         self.setDragMode(QGraphicsView.ScrollHandDrag)
         self.setRenderHint(QPainter.Antialiasing)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
 
     def set_image(self, image: np.ndarray | None) -> None:
         self._scene.clear()
         self._overlay_items.clear()
         self._pixmap_item = None
+        self.resetTransform()
+        self._manual_zoom = False
         if image is None:
             return
         pixmap = cv_to_qpixmap(image)
         self._pixmap_item = self._scene.addPixmap(pixmap)
         self._scene.setSceneRect(self._pixmap_item.boundingRect())
+        self.fit_image()
+
+    def fit_image(self) -> None:
+        if self._pixmap_item is None:
+            return
+        self.resetTransform()
         self.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)
+        self._manual_zoom = False
+
+    def actual_size(self) -> None:
+        if self._pixmap_item is None:
+            return
+        self.resetTransform()
+        self._manual_zoom = True
+
+    def zoom_by(self, factor: float) -> None:
+        if self._pixmap_item is None or factor <= 0:
+            return
+        current_scale = abs(float(self.transform().m11()))
+        target_scale = current_scale * factor
+        if target_scale < 0.02 or target_scale > 80.0:
+            return
+        self.scale(factor, factor)
+        self._manual_zoom = True
+
+    def zoom_in(self) -> None:
+        self.zoom_by(1.25)
+
+    def zoom_out(self) -> None:
+        self.zoom_by(0.8)
 
     def set_selection_enabled(self, enabled: bool) -> None:
         self._selection_enabled = enabled
@@ -98,6 +132,21 @@ class ImageCanvas(QGraphicsView):
         )
         self._overlay_items.append(item)
 
+    def wheelEvent(self, event) -> None:  # type: ignore[override]
+        delta = event.angleDelta().y()
+        if delta == 0 or self._pixmap_item is None:
+            super().wheelEvent(event)
+            return
+        self.zoom_by(1.25 if delta > 0 else 0.8)
+        event.accept()
+
+    def mouseDoubleClickEvent(self, event) -> None:  # type: ignore[override]
+        if not self._selection_enabled and self._pixmap_item is not None:
+            self.fit_image()
+            event.accept()
+            return
+        super().mouseDoubleClickEvent(event)
+
     def mousePressEvent(self, event) -> None:  # type: ignore[override]
         if self._selection_enabled and event.button() == Qt.LeftButton:
             scene_point = self.mapToScene(event.position().toPoint())
@@ -109,5 +158,5 @@ class ImageCanvas(QGraphicsView):
 
     def resizeEvent(self, event) -> None:  # type: ignore[override]
         super().resizeEvent(event)
-        if self._pixmap_item is not None:
+        if self._pixmap_item is not None and not self._manual_zoom:
             self.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)
