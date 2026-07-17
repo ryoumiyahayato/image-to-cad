@@ -61,10 +61,15 @@ class MainWindow(_ReviewedMainWindow):
             if replacement is not None:
                 button.setText(replacement)
 
+        paper_group: QGroupBox | None = None
         for group in scroll.findChildren(QGroupBox):
             if group.title() == "纸张坐标":
                 group.setTitle("2. 纸张规格与坐标")
+                paper_group = group
                 break
+        if paper_group is not None:
+            layout.removeWidget(paper_group)
+            layout.insertWidget(1, paper_group)
 
         self.enable_ocr.setText("启用 OCR 文字识别（需安装 Tesseract）")
 
@@ -111,9 +116,29 @@ class MainWindow(_ReviewedMainWindow):
         export_note.setWordWrap(True)
         export_layout.addWidget(export_note)
 
-        insert_index = max(0, layout.count() - 1)
-        layout.insertWidget(insert_index, view_group)
-        layout.insertWidget(insert_index + 1, export_group)
+        preprocess_button = next(
+            (
+                button
+                for button in scroll.findChildren(QPushButton)
+                if button.text().startswith("4. ")
+            ),
+            None,
+        )
+        export_button = next(
+            (
+                button
+                for button in scroll.findChildren(QPushButton)
+                if button.text().startswith("9. ")
+            ),
+            None,
+        )
+        view_index = layout.indexOf(preprocess_button) if preprocess_button else -1
+        layout.insertWidget(view_index if view_index >= 0 else 5, view_group)
+        export_index = layout.indexOf(export_button) if export_button else -1
+        layout.insertWidget(
+            export_index if export_index >= 0 else max(0, layout.count() - 1),
+            export_group,
+        )
         return scroll
 
     def _build_menu(self) -> None:
