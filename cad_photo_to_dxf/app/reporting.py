@@ -9,7 +9,7 @@ from typing import Any, Iterable, cast
 import numpy as np
 
 
-REPORT_SCHEMA_VERSION = "1.3"
+REPORT_SCHEMA_VERSION = "1.4"
 
 
 def _json_value(value: Any) -> Any:
@@ -81,32 +81,14 @@ def build_lineage(
         final_entities.append(
             {
                 "entity_id": entity_id,
-                "layer": getattr(line, "layer", "DETAIL"),
                 "source_ids": source_ids,
                 "operations": operations,
-                "classification_confidence": float(
-                    getattr(line, "classification_confidence", 1.0)
-                ),
-                "classification_reasons": list(
-                    getattr(line, "classification_reasons", ())
-                ),
-                "geometry": {
-                    "start": [float(line.x1), float(line.y1)],
-                    "end": [float(line.x2), float(line.y2)],
-                    "width_px": float(line.width),
-                },
             }
         )
         for source_id in source_ids:
             source_to_final.setdefault(source_id, []).append(entity_id)
-
-    dropped = sorted(
-        source_id for source_id, entity_ids in source_to_final.items() if not entity_ids
-    )
     return {
-        "raw_source_count": len(raw_source_ids),
-        "final_entity_count": len(final_entities),
-        "source_to_final": source_to_final,
-        "dropped_source_ids": dropped,
+        "raw_source_ids": raw_source_ids,
         "final_entities": final_entities,
+        "source_to_final": source_to_final,
     }
