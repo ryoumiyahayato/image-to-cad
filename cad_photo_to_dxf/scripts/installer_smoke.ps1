@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$Installer,
     [Parameter(Mandatory = $true)][string]$Sample,
-    [Parameter(Mandatory = $true)][string]$WorkingDirectory
+    [Parameter(Mandatory = $true)][string]$WorkingDirectory,
+    [Parameter(Mandatory = $true)][string]$ExpectedVersion
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,7 +23,11 @@ if (-not (Test-Path -LiteralPath $exe)) {
     throw "Installed executable not found: $exe"
 }
 
-& (Join-Path $PSScriptRoot "windows_smoke.ps1") -Executable $exe -Sample $samplePath -WorkingDirectory $runDir
+& (Join-Path $PSScriptRoot "windows_smoke.ps1") `
+    -Executable $exe `
+    -Sample $samplePath `
+    -WorkingDirectory $runDir `
+    -ExpectedVersion $ExpectedVersion
 
 $gui = Start-Process -FilePath $exe -PassThru -WindowStyle Hidden
 Start-Sleep -Seconds 3
