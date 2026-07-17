@@ -15,7 +15,7 @@ import ezdxf
 from app.dxf_validator import validate_dxf
 
 
-SUPPORTED_ENTITY_TYPES = {"LINE", "CIRCLE"}
+SUPPORTED_ENTITY_TYPES = {"LINE", "CIRCLE", "TEXT", "IMAGE"}
 
 
 def _sha256(path: Path) -> str:
@@ -121,6 +121,40 @@ def main() -> int:
             xs.extend((values[0] - values[2], values[0] + values[2]))
             ys.extend((values[1] - values[2], values[1] + values[2]))
 
+        invalid_text_count = 0
+        for entity in modelspace.query("TEXT"):
+            insert = entity.dxf.insert
+            text = str(entity.dxf.text).strip()
+            height = float(entity.dxf.height)
+            values = (float(insert.x), float(insert.y), height)
+            if not text or not all(math.isfinite(value) for value in values) or height <= 0:
+                invalid_text_count += 1
+                continue
+            layers[str(entity.dxf.layer)] += 1
+            xs.append(values[0])
+            ys.append(values[1])
+
+        invalid_image_count = 0
+        for entity in modelspace.query("IMAGE"):
+            insert = entity.dxf.insert
+            image_size = entity.dxf.image_size
+            values = (
+                float(insert.x),
+                float(insert.y),
+                float(image_size.x),
+                float(image_size.y),
+            )
+            if (
+                not all(math.isfinite(value) for value in values)
+                or values[2] <= 0
+                or values[3] <= 0
+            ):
+                invalid_image_count += 1
+                continue
+            layers[str(entity.dxf.layer)] += 1
+            xs.append(values[0])
+            ys.append(values[1])
+
         circle_keys = Counter(
             _canonical_circle_key(center_x, center_y, radius)
             for center_x, center_y, radius, _layer in circles
@@ -129,7 +163,11 @@ def main() -> int:
             count - 1 for count in circle_keys.values() if count > 1
         )
         circle_count = int(entity_type_counts.get("CIRCLE", 0))
-        supported_entity_count = line_validation.line_count + circle_count
+        text_count = int(entity_type_counts.get("TEXT", 0))
+        image_count = int(entity_type_counts.get("IMAGE", 0))
+        supported_entity_count = (
+            line_validation.line_count + circle_count + text_count + image_count
+        )
         empty_geometry = supported_entity_count == 0
         bounds = (
             {
@@ -164,6 +202,8 @@ def main() -> int:
             and nonfinite_circles == 0
             and nonpositive_radius_circles == 0
             and exact_circle_duplicates == 0
+            and invalid_text_count == 0
+            and invalid_image_count == 0
         )
         evidence.update(
             {
@@ -180,6 +220,8 @@ def main() -> int:
                 "empty_geometry": empty_geometry,
                 "line_count": line_validation.line_count,
                 "circle_count": circle_count,
+                "text_count": text_count,
+                "image_count": image_count,
                 "layer_counts": dict(sorted(layers.items())),
                 "bounds": bounds,
                 "nonfinite_line_count": line_validation.invalid_coordinate_count,
@@ -188,6 +230,8 @@ def main() -> int:
                 "nonfinite_circle_count": nonfinite_circles,
                 "nonpositive_radius_circle_count": nonpositive_radius_circles,
                 "exact_duplicate_circle_count": exact_circle_duplicates,
+                "invalid_text_count": invalid_text_count,
+                "invalid_image_count": invalid_image_count,
                 "topology": topology,
                 "success": success,
             }
