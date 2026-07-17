@@ -3,8 +3,13 @@ name: Windows build and smoke test
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - "v*"
+    paths:
+      - "cad_photo_to_dxf/**"
+      - ".github/workflows/windows-build.yml"
   pull_request:
     paths:
       - "cad_photo_to_dxf/**"
