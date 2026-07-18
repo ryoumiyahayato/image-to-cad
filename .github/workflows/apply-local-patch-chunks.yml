@@ -18,12 +18,32 @@ jobs:
         with:
           ref: fix/multipage-visual-review-fidelity
           fetch-depth: 0
-      - name: Reassemble and apply patch
+          show-progress: false
+      - name: Reassemble and validate patch
+        id: validate
+        shell: bash
+        run: |
+          set -uo pipefail
+          cat .automation/patch.part-* | base64 --decode > "$RUNNER_TEMP/multipage-fidelity.patch"
+          git apply --check "$RUNNER_TEMP/multipage-fidelity.patch" > "$RUNNER_TEMP/apply-check.txt" 2>&1
+          code=$?
+          cat "$RUNNER_TEMP/apply-check.txt"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          exit 0
+      - name: Upload patch diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch-application-diagnostics
+          path: |
+            ${{ runner.temp }}/apply-check.txt
+            ${{ runner.temp }}/multipage-fidelity.patch
+          if-no-files-found: error
+          retention-days: 2
+      - name: Apply and commit patch
+        if: steps.validate.outputs.code == '0'
         shell: bash
         run: |
           set -euo pipefail
-          cat .automation/patch.part-* | base64 --decode > "$RUNNER_TEMP/multipage-fidelity.patch"
-          git apply --check "$RUNNER_TEMP/multipage-fidelity.patch"
           git apply "$RUNNER_TEMP/multipage-fidelity.patch"
           rm -f .automation/patch.part-* .automation/ready
           git config user.name "github-actions[bot]"
@@ -31,3 +51,6 @@ jobs:
           git add -A
           git commit -m "feat: add multi-page scan fidelity and visual review"
           git push origin HEAD:fix/multipage-visual-review-fidelity
+      - name: Fail when patch is invalid
+        if: steps.validate.outputs.code != '0'
+        run: exit 1
