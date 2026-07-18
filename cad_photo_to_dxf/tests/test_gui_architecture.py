@@ -76,6 +76,17 @@ class GuiArchitectureTests(unittest.TestCase):
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
 
+    def test_normal_gui_uses_visual_review_without_circle_coordinate_dialog(self) -> None:
+        review_source = (APP_ROOT / "gui_review.py").read_text(encoding="utf-8")
+        state_source = (APP_ROOT / "gui_state_guard.py").read_text(encoding="utf-8")
+
+        self.assertIn("LayerReviewDialog", review_source)
+        self.assertIn("background=background", review_source)
+        self.assertNotIn("CircleReviewDialog", review_source)
+        self.assertNotIn("review_circles", review_source)
+        self.assertIn("PDF 页面与合并", state_source)
+        self.assertIn("document_pages_for_export", state_source)
+
 
 if __name__ == "__main__":
     unittest.main()

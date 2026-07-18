@@ -6,8 +6,9 @@ from typing import Any
 
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 
-from . import gui as _gui
+from . import __version__, gui as _gui
 from .auxiliary_recognition import CircleCandidate
+from .document_export import DocumentExportResult, export_scan_document
 from .dwg_converter import (
     DwgConversionUnavailable,
     configure_oda_converter,
@@ -20,7 +21,7 @@ from .dxf_exporter import (
 )
 from .quality import assess_image_quality
 from .report_builder import ReportBuilder
-from .reporting import write_json_report
+from .reporting import REPORT_SCHEMA_VERSION, write_json_report
 from .resolution import image_resolution_scale
 
 
@@ -46,6 +47,100 @@ def _choose_oda_converter(window: Any) -> Path:
     return converter_path
 
 
+
+def _select_output_path(window: Any, *, default_name: str) -> tuple[Path, bool] | None:
+    default_dir = Path.cwd() / "output"
+    default_dir.mkdir(parents=True, exist_ok=True)
+    selected_path, selected_filter = QFileDialog.getSaveFileName(
+        window,
+        "导出 CAD",
+        str(default_dir / default_name),
+        "AutoCAD DWG (*.dwg);;Drawing Exchange Format (*.dxf)",
+    )
+    if not selected_path:
+        return None
+    requested_path = Path(selected_path)
+    if requested_path.suffix.lower() not in {".dwg", ".dxf"}:
+        requested_path = requested_path.with_suffix(
+            ".dwg" if selected_filter.startswith("AutoCAD DWG") else ".dxf"
+        )
+    return requested_path, requested_path.suffix.lower() == ".dwg"
+
+
+def _export_pdf_document(window: Any) -> tuple[DocumentExportResult, Path] | None:
+    selection = _select_output_path(window, default_name="document.dwg")
+    if selection is None:
+        return None
+    requested_path, requested_dwg = selection
+    dxf_path = requested_path.with_suffix(".dxf") if requested_dwg else requested_path
+    report_path = requested_path.with_suffix(".report.json")
+    dwg_path: Path | None = None
+    dwg_error: str | None = None
+    try:
+        result = export_scan_document(window.document_pages_for_export(), dxf_path)
+        if requested_dwg:
+            try:
+                converter = _choose_oda_converter(window)
+                target_version = (
+                    window.dwg_version_combo.currentData()
+                    if getattr(window, "dwg_version_combo", None) is not None
+                    else "R2018"
+                )
+                dwg_path = convert_dxf_to_dwg(
+                    dxf_path,
+                    requested_path,
+                    version=str(target_version or "R2018"),
+                    converter_executable=(
+                        converter
+                        if converter.name.lower() != "odafileconverter.exe"
+                        else None
+                    ),
+                )
+            except DwgConversionUnavailable as exc:
+                dwg_error = str(exc)
+        report = {
+            "schema_version": REPORT_SCHEMA_VERSION,
+            "app_version": __version__,
+            "input": str(window.current_path),
+            "mode": "multi_page_scan_document",
+            "page_count": result.page_count,
+            "editable_line_count": result.line_count,
+            "layouts": list(result.layout_names),
+            "scan_underlays": [str(path) for path in result.underlay_paths],
+            "dxf": str(result.path),
+            "dwg": str(dwg_path) if dwg_path is not None else None,
+            "warnings": [
+                "扫描底图是视觉基准；自动矢量线仅是辅助结果，必须人工复核。",
+                "CAD 文件与所有 page-###.scan.png 必须放在同一目录并一起移动。",
+                *(
+                    [f"DWG 转换未完成：{dwg_error}"]
+                    if dwg_error
+                    else []
+                ),
+            ],
+        }
+        write_json_report(report_path, report)
+    except Exception as exc:
+        QMessageBox.critical(window, "导出失败", str(exc))
+        return None
+
+    lines = [
+        *( [f"DWG：{dwg_path}"] if dwg_path is not None else [] ),
+        f"DXF：{result.path}",
+        f"PDF 页面：{result.page_count}",
+        f"页面布局：{', '.join(result.layout_names)}",
+        f"扫描底图：{len(result.underlay_paths)} 个 PNG",
+        f"可编辑 LINE：{result.line_count}",
+        f"处理报告：{report_path}",
+    ]
+    if dwg_error:
+        lines.append(f"DWG 未生成：{dwg_error}")
+        QMessageBox.warning(window, "DXF 已导出，DWG 未生成", "\n".join(lines))
+    else:
+        QMessageBox.information(window, "多页 CAD 导出完成", "\n".join(lines))
+    window.statusBar().showMessage(f"多页 CAD 已导出：{dwg_path or result.path}")
+    return result, report_path
+
 def export_from_window(
     window: Any,
     *,
@@ -55,6 +150,8 @@ def export_from_window(
     if window._is_processing():
         QMessageBox.information(window, "正在处理", "请等待当前任务完成后再导出。")
         return None
+    if bool(getattr(window, "_native_pdf_mode", False)):
+        return _export_pdf_document(window)
     if not window.lines:
         QMessageBox.warning(
             window,
@@ -70,23 +167,10 @@ def export_from_window(
         QMessageBox.warning(window, "状态不完整", "图像处理状态不完整，请重新导入并处理。")
         return None
 
-    default_dir = Path.cwd() / "output"
-    default_dir.mkdir(parents=True, exist_ok=True)
-    selected_path, selected_filter = QFileDialog.getSaveFileName(
-        window,
-        "导出 CAD",
-        str(default_dir / "output.dwg"),
-        "AutoCAD DWG (*.dwg);;Drawing Exchange Format (*.dxf)",
-    )
-    if not selected_path:
+    selection = _select_output_path(window, default_name="output.dwg")
+    if selection is None:
         return None
-
-    requested_path = Path(selected_path)
-    if requested_path.suffix.lower() not in {".dwg", ".dxf"}:
-        requested_path = requested_path.with_suffix(
-            ".dwg" if selected_filter.startswith("AutoCAD DWG") else ".dxf"
-        )
-    requested_dwg = requested_path.suffix.lower() == ".dwg"
+    requested_path, requested_dwg = selection
     dxf_path = requested_path.with_suffix(".dxf") if requested_dwg else requested_path
     report_path = requested_path.with_suffix(".report.json")
     scan_path = dxf_path.with_name(f"{dxf_path.stem}.scan.png")
@@ -222,7 +306,7 @@ def export_from_window(
                 "ocr_enabled": window.enable_ocr.isChecked(),
                 "ocr_text_export_requested": export_ocr_text,
                 "scan_underlay_requested": include_underlay,
-                "circle_export_requires_confirmation": True,
+                "circle_export_requires_confirmation": False,
                 "requested_output_format": "DWG" if requested_dwg else "DXF",
             },
             preprocess_stages=window.preprocess_stages,
@@ -267,7 +351,6 @@ def export_from_window(
     output_lines.extend(
         (
             f"可编辑 LINE：{result.line_count}",
-            f"人工确认 CIRCLE：{result.circle_count}",
             f"可编辑 OCR TEXT：{result.text_count}",
             f"处理报告：{report_path}",
             f"坐标空间：{coordinate_space}",
