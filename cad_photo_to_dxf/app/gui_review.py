@@ -24,7 +24,7 @@ class MainWindow(_GuardedMainWindow):
             layout.insertWidget(7, review_button)
         return scroll
 
-    def _current_review_circles(self):
+    def _current_visual_circles(self):
         reviewed = getattr(self, "_reviewed_circles", None)
         if reviewed is not None:
             return list(reviewed)
@@ -45,7 +45,7 @@ class MainWindow(_GuardedMainWindow):
                 "请先导入图纸并完成照片校正；可在没有自动识别结果时手工新增实体。",
             )
             return
-        circles = self._current_review_circles()
+        circles = self._current_visual_circles()
         texts = (
             list(self.auxiliary_result.texts)
             if self.auxiliary_result is not None
@@ -111,4 +111,4 @@ class MainWindow(_GuardedMainWindow):
         self.statusBar().showMessage(warning)
 
     def export_file(self) -> None:
-        export_from_window(self, circles=self._current_review_circles())
+        export_from_window(self, circles=self._current_visual_circles())
