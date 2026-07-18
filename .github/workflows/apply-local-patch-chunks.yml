@@ -19,38 +19,29 @@ jobs:
           ref: fix/multipage-visual-review-fidelity
           fetch-depth: 0
           show-progress: false
-      - name: Reassemble and validate patch
-        id: validate
+      - name: Apply verified patch or persist diagnostics
         shell: bash
         run: |
-          set -uo pipefail
-          cat .automation/patch.part-* | base64 --decode > "$RUNNER_TEMP/multipage-fidelity.patch"
-          git apply --check "$RUNNER_TEMP/multipage-fidelity.patch" > "$RUNNER_TEMP/apply-check.txt" 2>&1
-          code=$?
-          cat "$RUNNER_TEMP/apply-check.txt"
-          echo "code=$code" >> "$GITHUB_OUTPUT"
-          exit 0
-      - name: Upload patch diagnostics
-        uses: actions/upload-artifact@v4
-        with:
-          name: patch-application-diagnostics
-          path: |
-            ${{ runner.temp }}/apply-check.txt
-            ${{ runner.temp }}/multipage-fidelity.patch
-          if-no-files-found: error
-          retention-days: 2
-      - name: Apply and commit patch
-        if: steps.validate.outputs.code == '0'
-        shell: bash
-        run: |
-          set -euo pipefail
-          git apply "$RUNNER_TEMP/multipage-fidelity.patch"
-          rm -f .automation/patch.part-* .automation/ready
+          set -u
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cat .automation/patch.part-* > "$RUNNER_TEMP/multipage-fidelity.b64"
+          if ! base64 --decode "$RUNNER_TEMP/multipage-fidelity.b64" > "$RUNNER_TEMP/multipage-fidelity.patch" 2> .automation/apply-error.txt; then
+            rm -f .automation/ready
+            git add -A
+            git commit -m "ci: persist patch decode failure"
+            git push origin HEAD:fix/multipage-visual-review-fidelity
+            exit 1
+          fi
+          if ! git apply --check "$RUNNER_TEMP/multipage-fidelity.patch" > .automation/apply-error.txt 2>&1; then
+            rm -f .automation/ready
+            git add -A
+            git commit -m "ci: persist patch validation failure"
+            git push origin HEAD:fix/multipage-visual-review-fidelity
+            exit 1
+          fi
+          git apply "$RUNNER_TEMP/multipage-fidelity.patch"
+          rm -f .automation/patch.part-* .automation/ready .automation/apply-error.txt
           git add -A
           git commit -m "feat: add multi-page scan fidelity and visual review"
           git push origin HEAD:fix/multipage-visual-review-fidelity
-      - name: Fail when patch is invalid
-        if: steps.validate.outputs.code != '0'
-        run: exit 1
