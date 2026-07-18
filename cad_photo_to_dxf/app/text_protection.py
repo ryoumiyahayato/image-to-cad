@@ -31,10 +31,11 @@ def _as_binary_gray(image: np.ndarray) -> np.ndarray:
 def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     """Find conservative rows or columns of glyph-like connected components.
 
-    The mask does not claim to understand the text. It only marks compact groups
-    of small printed components so their horizontal and vertical strokes are not
-    exported as independent CAD LINE entities.
+    The mask does not claim to understand the text. It marks compact groups of
+    small printed components so their strokes are not exported as independent
+    CAD LINE entities. The untouched scan remains the visual source of truth.
     """
+
     image = _as_binary_gray(binary_image)
     scale = image_resolution_scale(image.shape)
     foreground = np.where(image < 128, 255, 0).astype(np.uint8)
@@ -44,10 +45,10 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     )
 
     min_height = scaled_int(4, scale, minimum=3)
-    max_height = scaled_int(72, scale, minimum=18)
-    max_width = scaled_int(110, scale, minimum=24)
+    max_height = scaled_int(86, scale, minimum=22)
+    max_width = scaled_int(132, scale, minimum=28)
     min_area = max(4, int(round(5.0 * scale * scale)))
-    max_area = max(180, int(round(4200.0 * scale * scale)))
+    max_area = max(220, int(round(5600.0 * scale * scale)))
 
     candidate_mask = np.zeros_like(image)
     candidate_boxes: list[tuple[int, int, int, int]] = []
@@ -61,9 +62,9 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
             continue
         fill_ratio = area / max(float(width * height), 1.0)
         aspect = width / max(float(height), 1.0)
-        if not (0.025 <= fill_ratio <= 0.96):
+        if not (0.02 <= fill_ratio <= 0.97):
             continue
-        if not (0.06 <= aspect <= 10.0):
+        if not (0.05 <= aspect <= 12.0):
             continue
         candidate_mask[labels == label] = 255
         candidate_boxes.append((x, y, width, height))
@@ -74,15 +75,15 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     horizontal_kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
         (
-            scaled_int(12, scale, minimum=5),
-            scaled_int(2, scale, minimum=1),
+            scaled_int(16, scale, minimum=7),
+            scaled_int(3, scale, minimum=1),
         ),
     )
     vertical_kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
         (
-            scaled_int(2, scale, minimum=1),
-            scaled_int(12, scale, minimum=5),
+            scaled_int(3, scale, minimum=1),
+            scaled_int(16, scale, minimum=7),
         ),
     )
     grouped = cv2.max(
@@ -95,12 +96,10 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     )
 
     mask = np.zeros_like(image)
-    margin = scaled_int(2, scale, minimum=1)
+    margin = scaled_int(3, scale, minimum=1)
     accepted_regions = 0
     for group_label in range(1, group_count):
-        x, y, width, height, area = (
-            int(value) for value in group_stats[group_label]
-        )
+        x, y, width, height, area = (int(value) for value in group_stats[group_label])
         if width < min_height and height < min_height:
             continue
         components_in_group = 0
@@ -109,13 +108,13 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
             center_y = by + bh * 0.5
             if x <= center_x <= x + width and y <= center_y <= y + height:
                 components_in_group += 1
-        horizontal_text = width >= height * 1.2
-        vertical_text = height >= width * 1.2
+        horizontal_text = width >= height * 1.15
+        vertical_text = height >= width * 1.15
         compact_word = components_in_group >= 2 and (horizontal_text or vertical_text)
         dense_single = (
             components_in_group == 1
-            and area >= min_area * 6
-            and max(width, height) <= max_height * 1.25
+            and area >= min_area * 5
+            and max(width, height) <= max_height * 1.4
         )
         if not (compact_word or dense_single):
             continue
@@ -133,8 +132,8 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
             cv2.getStructuringElement(
                 cv2.MORPH_RECT,
                 (
-                    scaled_int(3, scale, minimum=1),
-                    scaled_int(3, scale, minimum=1),
+                    scaled_int(5, scale, minimum=1),
+                    scaled_int(5, scale, minimum=1),
                 ),
             ),
         )
@@ -146,7 +145,7 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
 
 
 def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
-    sample_count = max(8, min(256, int(math.ceil(line.length / 2.0))))
+    sample_count = max(8, min(512, int(math.ceil(line.length / 1.5))))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(int), 0, mask.shape[1] - 1)
@@ -159,20 +158,27 @@ def filter_text_like_lines(
     protection: TextProtectionResult,
     image_shape: tuple[int, ...],
 ) -> tuple[list[LineSegment], TextProtectionResult]:
-    """Reject short line candidates substantially contained by text regions."""
+    """Reject line candidates substantially contained by detected text regions.
+
+    The threshold is intentionally stricter than the v1.2.0 filter for scanned
+    PDF pages: glyph strokes can be hundreds of pixels long at 300 DPI. Long
+    structural lines crossing a text label remain because only a small fraction
+    of their samples lies inside the text mask.
+    """
+
     if protection.text_region_count == 0 or not lines:
         return list(lines), protection
 
     scale = image_resolution_scale(image_shape)
     diagonal = math.hypot(float(image_shape[0]), float(image_shape[1]))
-    local_line_limit = max(48.0 * scale, diagonal * 0.045)
+    local_line_limit = max(72.0 * scale, diagonal * 0.065)
     kept: list[LineSegment] = []
     rejected = 0
     for line in lines:
         coverage = _line_mask_coverage(line, protection.mask)
         reject = (
-            coverage >= 0.44 and line.length <= local_line_limit
-        ) or coverage >= 0.82
+            coverage >= 0.28 and line.length <= local_line_limit
+        ) or coverage >= 0.68
         if reject:
             rejected += 1
             continue
