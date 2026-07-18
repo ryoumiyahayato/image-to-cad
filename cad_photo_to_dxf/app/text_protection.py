@@ -44,10 +44,10 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     )
 
     min_height = scaled_int(4, scale, minimum=3)
-    max_height = scaled_int(72, scale, minimum=18)
-    max_width = scaled_int(110, scale, minimum=24)
+    max_height = scaled_int(120, scale, minimum=24)
+    max_width = scaled_int(180, scale, minimum=32)
     min_area = max(4, int(round(5.0 * scale * scale)))
-    max_area = max(180, int(round(4200.0 * scale * scale)))
+    max_area = max(320, int(round(12000.0 * scale * scale)))
 
     candidate_mask = np.zeros_like(image)
     candidate_boxes: list[tuple[int, int, int, int]] = []
@@ -74,15 +74,15 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     horizontal_kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
         (
-            scaled_int(12, scale, minimum=5),
-            scaled_int(2, scale, minimum=1),
+            scaled_int(28, scale, minimum=8),
+            scaled_int(7, scale, minimum=2),
         ),
     )
     vertical_kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT,
         (
-            scaled_int(2, scale, minimum=1),
-            scaled_int(12, scale, minimum=5),
+            scaled_int(7, scale, minimum=2),
+            scaled_int(28, scale, minimum=8),
         ),
     )
     grouped = cv2.max(
@@ -95,7 +95,7 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     )
 
     mask = np.zeros_like(image)
-    margin = scaled_int(2, scale, minimum=1)
+    margin = scaled_int(4, scale, minimum=2)
     accepted_regions = 0
     for group_label in range(1, group_count):
         x, y, width, height, area = (
@@ -111,7 +111,7 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
                 components_in_group += 1
         horizontal_text = width >= height * 1.2
         vertical_text = height >= width * 1.2
-        compact_word = components_in_group >= 2 and (horizontal_text or vertical_text)
+        compact_word = components_in_group >= 2 and (horizontal_text or vertical_text or components_in_group >= 4)
         dense_single = (
             components_in_group == 1
             and area >= min_area * 6
@@ -165,14 +165,14 @@ def filter_text_like_lines(
 
     scale = image_resolution_scale(image_shape)
     diagonal = math.hypot(float(image_shape[0]), float(image_shape[1]))
-    local_line_limit = max(48.0 * scale, diagonal * 0.045)
+    local_line_limit = max(72.0 * scale, diagonal * 0.08)
     kept: list[LineSegment] = []
     rejected = 0
     for line in lines:
         coverage = _line_mask_coverage(line, protection.mask)
         reject = (
-            coverage >= 0.44 and line.length <= local_line_limit
-        ) or coverage >= 0.82
+            coverage >= 0.28 and line.length <= local_line_limit
+        ) or coverage >= 0.72
         if reject:
             rejected += 1
             continue

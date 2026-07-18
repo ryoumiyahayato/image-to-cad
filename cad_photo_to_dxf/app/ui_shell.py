@@ -195,14 +195,29 @@ class MainWindow(QMainWindow):
         form.addRow("水平/垂直角度容差", self.angle_spin)
 
         self.keep_hatch = QCheckBox("保留填充线并放入 HATCH 层")
-        self.keep_hatch.setChecked(True)
+        self.keep_hatch.setChecked(False)
         form.addRow(self.keep_hatch)
         self.enable_auxiliary = QCheckBox("辅助识别圆和矩形符号（仅报告）")
-        self.enable_auxiliary.setChecked(True)
+        self.enable_auxiliary.setChecked(False)
         form.addRow(self.enable_auxiliary)
         self.enable_ocr = QCheckBox("启用可选 OCR（仅报告）")
         self.enable_ocr.setChecked(False)
         form.addRow(self.enable_ocr)
+        params_group.setTitle("高级参数（通常无需修改）")
+        params_group.setCheckable(True)
+        params_group.setChecked(False)
+        parameter_children = [
+            child for child in params_group.findChildren(QWidget) if child is not params_group
+        ]
+        for child in parameter_children:
+            child.setVisible(False)
+
+        def set_parameter_visibility(checked: bool) -> None:
+            for child in parameter_children:
+                child.setVisible(checked)
+            params_group.updateGeometry()
+
+        params_group.toggled.connect(set_parameter_visibility)
         layout.addWidget(params_group)
 
         self.info_label = QLabel("坐标：未校准的无单位像素坐标")

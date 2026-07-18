@@ -31,6 +31,32 @@ def pdf_page_count(path: str | Path) -> int:
     return count
 
 
+
+def pdf_page_size_mm(path: str | Path, page_index: int) -> tuple[float, float]:
+    """Return one PDF page size in millimetres without rendering the page."""
+    file_path = Path(path)
+    if not file_path.exists():
+        raise FileNotFoundError(file_path)
+    if file_path.suffix.lower() != ".pdf":
+        raise ValueError("Page dimensions are available only for PDF input")
+    try:
+        import pypdfium2 as pdfium
+    except ImportError as exc:
+        raise RuntimeError("缺少 PDF 读取组件 pypdfium2") from exc
+    document = pdfium.PdfDocument(str(file_path))
+    try:
+        if not 0 <= page_index < len(document):
+            raise IndexError(f"PDF 页码超出范围：{page_index + 1}/{len(document)}")
+        page = document[page_index]
+        try:
+            width_points, height_points = page.get_size()
+        finally:
+            page.close()
+    finally:
+        document.close()
+    factor = 25.4 / 72.0
+    return float(width_points) * factor, float(height_points) * factor
+
 def _load_pdf_page(
     file_path: Path,
     page_index: int,

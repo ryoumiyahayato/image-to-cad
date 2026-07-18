@@ -13,3 +13,14 @@
 - 增加严格 CLI 退出码、原子 DXF/JSON 写入和逐阶段进度。
 - 增加 PyInstaller、Inno Setup、Windows Runner 和安装/卸载冒烟配置。
 - 增加核心回归测试。
+
+## 1.3.0-preview.1
+
+- Added scan-faithful multi-page PDF export to one DXF/DWG document.
+- Added one paper-space layout per PDF page plus a model-space page stack.
+- Replaced table-only layer review with direct visual selection, re-layering, and deletion.
+- Removed the separate circle confirmation step from the normal workflow.
+- Added contrast-preserving level-of-detail rendering for zoomed-out large sheets.
+- Strengthened text-region suppression and kept the original scan as the visual source of truth.
+- Collapsed normal-mode algorithm parameters and made preprocessing implicit in vectorization.
+- Kept the build as an internal preview; vector reconstruction accuracy is not claimed as 95-98%.

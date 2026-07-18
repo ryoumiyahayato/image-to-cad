@@ -37,6 +37,8 @@ class ExportResult:
     underlay_path: Path | None = None
     dwg_path: Path | None = None
     output_format: str = "DXF"
+    underlay_paths: tuple[Path, ...] = ()
+    page_count: int = 1
 
 
 LAYER_STYLES = {

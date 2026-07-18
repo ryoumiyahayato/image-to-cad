@@ -374,7 +374,7 @@ class PipelineTests(unittest.TestCase):
             self.assertTrue(report_path.exists())
             self.assertTrue((root / "debug" / "01_grayscale.png").exists())
             report = json.loads(report_path.read_text(encoding="utf-8"))
-            self.assertEqual(report["application_version"], "1.2.0")
+            self.assertEqual(report["application_version"], "1.3.0-preview.1")
             self.assertEqual(report["export"]["coordinate_space"], "paper_mm")
             self.assertEqual(
                 report["lineage"]["final_entity_count"],
