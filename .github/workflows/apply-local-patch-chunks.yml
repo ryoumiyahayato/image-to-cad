@@ -1,0 +1,33 @@
+name: Apply local patch chunks
+
+on:
+  push:
+    branches:
+      - fix/multipage-visual-review-fidelity
+    paths:
+      - ".automation/ready"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/multipage-visual-review-fidelity
+          fetch-depth: 0
+      - name: Reassemble and apply patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .automation/patch.part-* | base64 --decode > "$RUNNER_TEMP/multipage-fidelity.patch"
+          git apply --check "$RUNNER_TEMP/multipage-fidelity.patch"
+          git apply "$RUNNER_TEMP/multipage-fidelity.patch"
+          rm -f .automation/patch.part-* .automation/ready
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "feat: add multi-page scan fidelity and visual review"
+          git push origin HEAD:fix/multipage-visual-review-fidelity
