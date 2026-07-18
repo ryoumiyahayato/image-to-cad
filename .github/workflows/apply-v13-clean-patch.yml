@@ -22,7 +22,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cat .automation/gz-* | tr -d '\r\n' | base64 --decode > "$RUNNER_TEMP/v13.patch.gz"
+          cat .automation/gzb-* > "$RUNNER_TEMP/v13.patch.gz"
           gzip -dc "$RUNNER_TEMP/v13.patch.gz" > "$RUNNER_TEMP/v13.patch"
           expected="5607e015aaef328ba492c7925b238c18d4fe48ea39d1129498e888981ed56776"
           actual="$(sha256sum "$RUNNER_TEMP/v13.patch" | awk '{print $1}')"
