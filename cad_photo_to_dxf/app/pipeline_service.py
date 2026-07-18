@@ -235,7 +235,7 @@ class PipelineService:
             warnings.extend(auxiliary.warnings)
 
         checkpoint(cancellation_token)
-        preview = render_line_preview(binary, classification.lines)
+        preview = render_line_preview(corrected_image, classification.lines)
         report_progress(progress_callback, "preview", 1.0)
         return VectorizationResult(
             binary=binary,

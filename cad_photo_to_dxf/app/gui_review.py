@@ -2,101 +2,113 @@ from __future__ import annotations
 
 from PySide6.QtWidgets import QDialog, QMessageBox
 
-from .auxiliary_recognition import CircleCandidate, confirmable_circles
-from .circle_review import CircleReviewDialog
+from .auxiliary_recognition import (
+    AuxiliaryRecognitionResult,
+    confirmable_circles,
+)
 from .gui_export import export_from_window
 from .gui_guard import MainWindow as _GuardedMainWindow
-from .layer_review import LayerReviewDialog, layer_counts
-from .line_detect import render_line_preview
+from .layer_review import layer_counts
+from .visual_review import VectorReviewDialog
 
 
 class MainWindow(_GuardedMainWindow):
-    """Guarded GUI with explicit semantic and circle review."""
-
-    def __init__(self) -> None:
-        self._approved_circles: list[CircleCandidate] = []
-        super().__init__()
+    """Guarded GUI with direct visual editing on top of the source scan."""
 
     def _build_controls(self):  # type: ignore[override]
         scroll = super()._build_controls()
         container = scroll.widget()
         layout = container.layout() if container is not None else None
         if layout is not None:
-            layer_button = self._button("5. 人工复核图层", self.review_layers)
-            circle_button = self._button("6. 人工确认圆形", self.review_circles)
-            # Insert after line detection and before scale calibration/export.
-            layout.insertWidget(7, layer_button)
-            layout.insertWidget(8, circle_button)
+            review_button = self._button("5. 可视化修改识别结果", self.review_layers)
+            layout.insertWidget(7, review_button)
         return scroll
 
-    def _invalidate_line_results(self) -> None:
-        super()._invalidate_line_results()
-        self._approved_circles = []
-
-    def detect_and_clean(self) -> None:
-        # A new vectorization result creates a different candidate set even
-        # when the visible parameters did not change. Previous approvals must
-        # never be carried into the new result.
-        self._approved_circles = []
-        super().detect_and_clean()
+    def _current_visual_circles(self):
+        reviewed = getattr(self, "_reviewed_circles", None)
+        if reviewed is not None:
+            return list(reviewed)
+        if self.auxiliary_result is None:
+            return []
+        return confirmable_circles(self.auxiliary_result.circles)
 
     def review_layers(self) -> None:
-        if not self.lines:
+        background = (
+            self.corrected_image
+            if self.corrected_image is not None
+            else self.binary_image
+        )
+        if background is None:
             QMessageBox.warning(
                 self,
-                "尚无可复核实体",
-                "请先完成“识别并清理线条”，再进行逐实体图层复核。",
+                "尚无可修改图纸",
+                "请先导入图纸并完成照片校正；可在没有自动识别结果时手工新增实体。",
             )
             return
-        if self.binary_image is None:
+        circles = self._current_visual_circles()
+        texts = (
+            list(self.auxiliary_result.texts)
+            if self.auxiliary_result is not None
+            else []
+        )
+        before_counts = (len(self.lines), len(circles), len(texts))
+        dialog = VectorReviewDialog(
+            background,
+            self.lines,
+            circles=circles,
+            texts=texts,
+            parent=self,
+        )
+        if dialog.exec() != QDialog.DialogCode.Accepted:
             return
-        dialog = LayerReviewDialog(self.lines, self)
-        if dialog.exec() != QDialog.Accepted:
-            return
-        reviewed, changed = dialog.reviewed_lines()
-        self.lines = reviewed
+        reviewed_lines, reviewed_circles, reviewed_texts = dialog.reviewed_entities()
+        self.lines = reviewed_lines
+        self._reviewed_circles = list(reviewed_circles)
         if self.classification_report is not None:
-            self.classification_report.layer_counts = layer_counts(reviewed)
-        preview = render_line_preview(self.binary_image, reviewed)
-        self.detected_canvas.set_image(preview)
-        self.tabs.setCurrentWidget(self.detected_canvas)
-        if changed:
-            warning = f"人工复核已修改 {changed} 条实体的图层。"
-            self._last_warnings = tuple(
-                dict.fromkeys((*self._last_warnings, warning))
-            )
-        self.statusBar().showMessage(
-            f"图层复核完成；共 {len(reviewed)} 条实体，人工修改 {changed} 条"
-        )
-
-    def review_circles(self) -> None:
+            self.classification_report.layer_counts = layer_counts(reviewed_lines)
         if self.auxiliary_result is None:
-            QMessageBox.warning(
-                self,
-                "尚无圆形候选",
-                "请启用辅助识别并重新执行“识别并清理线条”。",
+            self.auxiliary_result = AuxiliaryRecognitionResult(
+                circles=list(reviewed_circles),
+                texts=list(reviewed_texts),
+                dimension_texts=[
+                    text
+                    for text in reviewed_texts
+                    if text.kind == "dimension_text_candidate"
+                ],
+                symbols=[],
+                warnings=[],
             )
-            return
-        eligible = confirmable_circles(self.auxiliary_result.circles)
-        if not eligible:
-            QMessageBox.information(
-                self,
-                "没有可确认圆形",
-                "当前没有达到保守置信度阈值的圆形候选。不会导出 CIRCLE。",
-            )
-            self._approved_circles = []
-            return
-        dialog = CircleReviewDialog(self.auxiliary_result.circles, self)
-        if dialog.exec() != QDialog.Accepted:
-            return
-        self._approved_circles = dialog.approved_circles()
+        else:
+            self.auxiliary_result.circles = list(reviewed_circles)
+            self.auxiliary_result.texts = list(reviewed_texts)
+            self.auxiliary_result.dimension_texts = [
+                text
+                for text in reviewed_texts
+                if text.kind == "dimension_text_candidate"
+            ]
+        self.detected_canvas.set_vector_result(
+            background,
+            reviewed_lines,
+            circles=reviewed_circles,
+            texts=reviewed_texts,
+        )
+        self.tabs.setCurrentWidget(self.detected_canvas)
+        after_counts = (
+            len(reviewed_lines),
+            len(reviewed_circles),
+            len(reviewed_texts),
+        )
         warning = (
-            f"人工确认 {len(self._approved_circles)} 个圆形候选可导出为 DXF CIRCLE。"
+            "可视化修改已保存："
+            f"LINE {before_counts[0]}→{after_counts[0]}，"
+            f"CIRCLE {before_counts[1]}→{after_counts[1]}，"
+            f"TEXT {before_counts[2]}→{after_counts[2]}。"
         )
-        self._last_warnings = tuple(
-            dict.fromkeys((*self._last_warnings, warning))
-        )
+        self._last_warnings = tuple(dict.fromkeys((*self._last_warnings, warning)))
+        save_state = getattr(self, "_save_current_pdf_state", None)
+        if callable(save_state):
+            save_state()
         self.statusBar().showMessage(warning)
 
     def export_file(self) -> None:
-        export_from_window(self, circles=self._approved_circles)
+        export_from_window(self, circles=self._current_visual_circles())
