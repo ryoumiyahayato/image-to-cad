@@ -1,9 +1,9 @@
 name: Apply local patch chunks
 
 on:
-  push:
+  pull_request:
     branches:
-      - fix/multipage-visual-review-fidelity
+      - main
     paths:
       - ".automation/ready"
 
