@@ -4,13 +4,18 @@ from pathlib import Path
 import re
 
 
-_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+_VERSION_PATTERN = re.compile(
+    r"^(\d+)\.(\d+)\.(\d+)(?:[-+][0-9A-Za-z.-]+)?$"
+)
 
 
 def parse_version(version: str) -> tuple[int, int, int, int]:
     match = _VERSION_PATTERN.fullmatch(version.strip())
     if match is None:
-        raise ValueError("Version must use semantic form MAJOR.MINOR.PATCH")
+        raise ValueError(
+            "Version must use semantic form MAJOR.MINOR.PATCH with an optional "
+            "prerelease/build suffix"
+        )
     major, minor, patch = (int(value) for value in match.groups())
     return major, minor, patch, 0
 
