@@ -85,23 +85,27 @@ class GuiArchitectureTests(unittest.TestCase):
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
 
-    def test_normal_gui_uses_literal_trace_and_black_white_repair(self) -> None:
+    def test_normal_gui_uses_exact_cad_contours_and_visible_verification(self) -> None:
         release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
         trace_source = (APP_ROOT / "gui_trace_mode.py").read_text(encoding="utf-8")
         engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
         paint_source = (APP_ROOT / "trace_paint.py").read_text(encoding="utf-8")
+        export_source = (APP_ROOT / "trace_gui_export.py").read_text(encoding="utf-8")
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
-        self.assertIn("trace_image", release_source)
-        self.assertIn("完整拓印全部黑白线条", trace_source)
-        self.assertIn("图纸比例 1:", trace_source)
+        self.assertIn("生成当前 PDF 的全部页 CAD 轮廓", release_source)
+        self.assertIn("验证当前页与原图是否一致", release_source)
         self.assertIn("TracePaintDialog", trace_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
         self.assertIn("cv2.CHAIN_APPROX_NONE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
         self.assertNotIn("clean_geometry", engine_source)
-        self.assertIn("黑色：补充线条", paint_source)
-        self.assertIn("白色：擦除错误", paint_source)
+        self.assertIn("黑色：补充缺失内容", paint_source)
+        self.assertIn("白色：删除错误内容", paint_source)
+        self.assertIn("后台导出", export_source)
+        self.assertIn("TRACE_STRAIGHT", export_source)
+        self.assertIn("TRACE_CURVE", export_source)
+        self.assertIn("TRACE_TEXT_SYMBOL", export_source)
 
 
 if __name__ == "__main__":
