@@ -100,7 +100,7 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("CAD 轮廓预览", exact_source)
         self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
-        self.assertIn("cv2.CHAIN_APPROX_NONE", engine_source)
+        self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
         self.assertNotIn("clean_geometry", engine_source)
         self.assertIn("黑色：补充缺失内容", paint_source)
