@@ -11,12 +11,8 @@ from .cancellation import CancellationToken, ProgressCallback, checkpoint, repor
 from .document_export import DocumentExportResult, DocumentPage, _resolve_raster
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
-from .ocr_outline_export import add_ocr_outline_blocks
-from .trace_dxf_entities import (
-    TRACE_LAYER_STYLES,
-    TracePalette,
-    add_exact_trace_entities,
-)
+from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
+from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
 
 
 def _require_first_page(
@@ -43,10 +39,7 @@ def _page_layer_names(index: int) -> dict[str, str]:
 
 def _ensure_page_layers(doc, index: int) -> dict[str, str]:
     names = _page_layer_names(index)
-    styles = {
-        "SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"],
-        **TRACE_LAYER_STYLES,
-    }
+    styles = {"SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"], **TRACE_LAYER_STYLES}
     for base_name, layer_name in names.items():
         style = styles[base_name]
         if layer_name not in doc.layers:
@@ -85,13 +78,7 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Export pages as direct model-space geometry.
-
-    OCR lines are not written as font-dependent DXF TEXT. Each accepted line is
-    converted with a locally installed system font into one vector block, so
-    LibreCAD renders the visible characters consistently and selects the whole
-    line as one object.
-    """
+    """Export pages as direct model-space geometry and editable OCR characters."""
 
     first_page, remaining_pages = _require_first_page(pages)
 
@@ -191,19 +178,15 @@ def export_trace_document_streaming(
                 page_origin + (vector_height - y) * scale_y,
             )
 
-        (
-            current_path_count,
-            current_vertex_count,
-            _entities,
-            _bounds,
-        ) = add_exact_trace_entities(
+        exportable_texts = accepted_ocr_texts(page.texts)
+        current_path_count, current_vertex_count, _entities, _bounds = add_exact_trace_entities(
             modelspace,
             page.trace_paths,
             transform=transform,
             color=page.trace_color,
             source_size=(vector_width, vector_height),
             palette=palette,
-            ocr_texts=page.texts,
+            ocr_texts=exportable_texts,
             layer_names=layer_names,
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
@@ -211,7 +194,7 @@ def export_trace_document_streaming(
         current_text_count, _text_entities, _text_bounds = add_ocr_outline_blocks(
             doc,
             modelspace,
-            page.texts,
+            exportable_texts,
             transform=transform,
             layer_name=layer_names["OCR_TEXT"],
             block_prefix=f"PAGE_{index:03d}_OCR_LINE",
