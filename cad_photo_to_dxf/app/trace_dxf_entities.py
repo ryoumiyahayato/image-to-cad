@@ -4,6 +4,7 @@ from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 from math import atan2, degrees, hypot
+from unicodedata import east_asian_width
 
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
@@ -27,7 +28,6 @@ TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
     "TRACE_CURVE": {"color": 3, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
-    "TRACE_TEXT_OUTLINE": {"color": 8, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
 }
 
@@ -117,26 +117,26 @@ def _path_matches_ocr(
     min_x, min_y, max_x, max_y = _path_box(path)
     width = max_x - min_x + 1.0
     height = max_y - min_y + 1.0
+    path_area = width * height
     center_x = (min_x + max_x) * 0.5
     center_y = (min_y + max_y) * 0.5
     for text in texts:
         x, y, box_width, box_height = text.bbox
-        margin_x = max(2.0, box_width * 0.08)
-        margin_y = max(2.0, box_height * 0.12)
+        margin_x = max(3.0, box_width * 0.10)
+        margin_y = max(3.0, box_height * 0.18)
         left = float(x) - margin_x
         top = float(y) - margin_y
         right = float(x + box_width) + margin_x
         bottom = float(y + box_height) + margin_y
         center_inside = left <= center_x <= right and top <= center_y <= bottom
-        size_compatible = width <= (right - left) * 1.25 and height <= (bottom - top) * 1.35
+        size_compatible = width <= (right - left) * 1.35 and height <= (bottom - top) * 1.45
         if center_inside and size_compatible:
             return True
-        inside_points = sum(
-            1
-            for point_x, point_y in path.points
-            if left <= point_x <= right and top <= point_y <= bottom
-        )
-        if inside_points / max(len(path.points), 1) >= 0.80 and size_compatible:
+
+        intersection_width = max(0.0, min(max_x, right) - max(min_x, left))
+        intersection_height = max(0.0, min(max_y, bottom) - max(min_y, top))
+        overlap = intersection_width * intersection_height / max(path_area, 1.0)
+        if overlap >= 0.55 and size_compatible:
             return True
     return False
 
@@ -218,10 +218,11 @@ def add_exact_trace_entities(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Write independent editable contours without blocks or HATCH.
+    """Write editable non-text contours without blocks, HATCH, or OCR outlines.
 
-    OCR-matched character outlines are preserved on a separate fallback layer;
-    the exporter turns that layer off by default after adding editable CAD text.
+    When OCR has recognized a text line, matching raster contours are omitted
+    from the DXF. The recognized content is exported once as a complete CAD TEXT
+    entity, so LibreCAD does not show the same words again as fragmented lines.
     """
 
     if not trace_paths:
@@ -243,12 +244,17 @@ def add_exact_trace_entities(
     entities: list[object] = []
     bounds = [float("inf"), float("inf"), float("-inf"), float("-inf")]
     total_black = max(len(black_indices), 1)
+    exported_path_count = 0
+    exported_vertex_count = 0
 
     for position, index in enumerate(black_indices):
         if position % 64 == 0:
             checkpoint(cancellation_token)
             report_progress(progress_callback, "cad-entities", position / total_black)
         trace_path = trace_paths[index]
+        if _path_matches_ocr(trace_path, ocr_texts):
+            continue
+
         root_points = [transform(float(x), float(y)) for x, y in trace_path.points]
         if len(root_points) < 3:
             continue
@@ -258,21 +264,17 @@ def add_exact_trace_entities(
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
-        if _path_matches_ocr(trace_path, ocr_texts):
-            base_layer_name = "TRACE_TEXT_OUTLINE"
-            entity_color = 8
+        base_layer_name = _classify_region(
+            trace_path,
+            source_size=source_size,
+            hole_count=len(hole_indices),
+        )
+        if base_layer_name == "TRACE_STRAIGHT":
+            entity_color = _resolved_color(selected_palette.straight, 5)
+        elif base_layer_name == "TRACE_TEXT_SYMBOL":
+            entity_color = _resolved_color(selected_palette.text_symbol, 6)
         else:
-            base_layer_name = _classify_region(
-                trace_path,
-                source_size=source_size,
-                hole_count=len(hole_indices),
-            )
-            if base_layer_name == "TRACE_STRAIGHT":
-                entity_color = _resolved_color(selected_palette.straight, 5)
-            elif base_layer_name == "TRACE_TEXT_SYMBOL":
-                entity_color = _resolved_color(selected_palette.text_symbol, 6)
-            else:
-                entity_color = _resolved_color(selected_palette.curve, 3)
+            entity_color = _resolved_color(selected_palette.curve, 3)
         resolved_layer_name = _layer_name(base_layer_name, layer_names)
 
         entities.extend(
@@ -284,6 +286,8 @@ def add_exact_trace_entities(
             )
         )
         _expand_bounds(root_points, bounds)
+        exported_path_count += 1
+        exported_vertex_count += len(trace_path.points)
 
         for child_index in hole_indices:
             child_points = [
@@ -301,14 +305,16 @@ def add_exact_trace_entities(
                 )
             )
             _expand_bounds(child_points, bounds)
+            exported_path_count += 1
+            exported_vertex_count += len(trace_paths[child_index].points)
 
     report_progress(progress_callback, "cad-entities", 1.0)
     resolved_bounds = (
         [] if not entities else [(bounds[0], bounds[1]), (bounds[2], bounds[3])]
     )
     return (
-        len(trace_paths),
-        sum(len(path.points) for path in trace_paths),
+        exported_path_count,
+        exported_vertex_count,
         entities,
         resolved_bounds,
     )
@@ -326,6 +332,18 @@ def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
     )
 
 
+def _text_width_units(content: str) -> float:
+    units = 0.0
+    for character in content:
+        if character.isspace():
+            units += 0.35
+        elif east_asian_width(character) in {"W", "F", "A"}:
+            units += 1.0
+        else:
+            units += 0.58
+    return max(units, 1.0)
+
+
 def add_ocr_text_entities(
     layout,
     texts: Sequence[TextCandidate],
@@ -335,26 +353,30 @@ def add_ocr_text_entities(
     style_name: str = "OCR_CJK",
     minimum_confidence: float = 0.58,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
-    """Add one directly editable DXF TEXT entity for each accepted OCR item."""
+    """Add one complete, directly editable DXF TEXT per OCR line."""
 
     entities: list[object] = []
     bounds: list[tuple[float, float]] = []
     for candidate in texts:
-        content = candidate.text.replace("\r", " ").replace("\n", " ").strip()
+        content = " ".join(
+            candidate.text.replace("\r", " ").replace("\n", " ").split()
+        )
         if not content or candidate.confidence < minimum_confidence:
             continue
         quad = _candidate_quad(candidate)
         transformed = [transform(float(x), float(y)) for x, y in quad]
         top_left, top_right, bottom_right, bottom_left = transformed
-        char_height = max(
-            0.01,
-            0.85
-            * (
-                hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
-                + hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
-            )
-            * 0.5,
-        )
+        target_height = (
+            hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
+            + hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
+        ) * 0.5
+        target_width = (
+            hypot(top_right[0] - top_left[0], top_right[1] - top_left[1])
+            + hypot(bottom_right[0] - bottom_left[0], bottom_right[1] - bottom_left[1])
+        ) * 0.5
+        char_height = max(0.01, target_height * 0.82)
+        natural_width = char_height * _text_width_units(content)
+        width_factor = min(4.0, max(0.20, target_width / max(natural_width, 0.01)))
         rotation = degrees(
             atan2(bottom_right[1] - bottom_left[1], bottom_right[0] - bottom_left[0])
         )
@@ -366,6 +388,7 @@ def add_ocr_text_entities(
                 "color": 6,
                 "style": style_name,
                 "rotation": float(rotation),
+                "width": float(width_factor),
             },
         )
         entity.set_placement(bottom_left)
