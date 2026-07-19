@@ -27,10 +27,26 @@ TRACE_LAYER_STYLES = {
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
 }
 
+# Large multi-loop HATCH entities are not rendered consistently by LibreCAD and
+# several DWG importers.  They can be triangulated as page-spanning wedges even
+# though the contour tree itself is valid.  Exact outlines are always written;
+# solid fills are limited to small text/symbol regions where they are useful and
+# interoperable.
+_SAFE_FILL_MAX_VERTICES = 2048
+_SAFE_FILL_MAX_TOTAL_VERTICES = 8192
+_SAFE_FILL_MAX_HOLES = 32
+_SAFE_FILL_MAX_BOX_AREA_RATIO = 0.02
+
 
 def _resolved_color(value: int, fallback: int) -> int:
     color = int(value)
     return color if 1 <= color <= 255 else fallback
+
+
+def _path_box(path: TracePath) -> tuple[float, float, float, float]:
+    xs = [float(point[0]) for point in path.points]
+    ys = [float(point[1]) for point in path.points]
+    return min(xs), min(ys), max(xs), max(ys)
 
 
 def _classify_region(
@@ -49,10 +65,9 @@ def _classify_region(
     points = path.points
     if len(points) < 3:
         return "TRACE_STRAIGHT"
-    xs = [float(point[0]) for point in points]
-    ys = [float(point[1]) for point in points]
-    box_width = max(xs) - min(xs) + 1.0
-    box_height = max(ys) - min(ys) + 1.0
+    min_x, min_y, max_x, max_y = _path_box(path)
+    box_width = max_x - min_x + 1.0
+    box_height = max_y - min_y + 1.0
     short_side = max(1.0, min(box_width, box_height))
     long_side = max(box_width, box_height)
     aspect = long_side / short_side
@@ -106,6 +121,34 @@ def _classify_region(
     return "TRACE_CURVE"
 
 
+def _safe_fill_allowed(
+    path: TracePath,
+    hole_paths: Sequence[TracePath],
+    *,
+    layer_name: str,
+    source_size: tuple[int, int] | None,
+) -> bool:
+    """Return whether a solid HATCH is safe for broad CAD interoperability."""
+
+    if layer_name != "TRACE_TEXT_SYMBOL":
+        return False
+    if len(path.points) > _SAFE_FILL_MAX_VERTICES:
+        return False
+    if len(hole_paths) > _SAFE_FILL_MAX_HOLES:
+        return False
+    total_vertices = len(path.points) + sum(len(item.points) for item in hole_paths)
+    if total_vertices > _SAFE_FILL_MAX_TOTAL_VERTICES:
+        return False
+    if source_size is not None:
+        source_width, source_height = source_size
+        min_x, min_y, max_x, max_y = _path_box(path)
+        box_area = max(1.0, max_x - min_x + 1.0) * max(1.0, max_y - min_y + 1.0)
+        source_area = max(1.0, float(source_width) * float(source_height))
+        if box_area / source_area > _SAFE_FILL_MAX_BOX_AREA_RATIO:
+            return False
+    return True
+
+
 def _expand_bounds(
     points: Sequence[tuple[float, float]],
     bounds: list[float],
@@ -128,12 +171,13 @@ def add_exact_trace_entities(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Add exact editable boundaries and fills once in model space.
+    """Add exact editable contour boundaries once in model space.
 
-    Each contour is written as one closed LWPOLYLINE for broad CAD/FreeCAD
-    compatibility. Each connected black region also receives one solid HATCH
-    with its immediate white children as holes. PAGE layouts use viewports, so
-    these millions of coordinates are not duplicated a second time.
+    Every retained contour is written as one closed LWPOLYLINE.  Only small,
+    bounded text/symbol regions receive a correctly flagged solid HATCH so that
+    glyph strokes do not appear hollow.  Page-spanning and complex linework is
+    deliberately never hatched because common CAD viewers can render such
+    multi-loop fills as giant diagonal wedges and become unusably slow.
     """
 
     if not trace_paths:
@@ -174,6 +218,7 @@ def add_exact_trace_entities(
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
+        hole_paths = [trace_paths[child_index] for child_index in hole_indices]
         layer_name = _classify_region(
             trace_path,
             source_size=source_size,
@@ -194,13 +239,7 @@ def add_exact_trace_entities(
         entities.append(root_outline)
         _expand_bounds(root_points, bounds)
 
-        hatch = layout.add_hatch(
-            color=entity_color,
-            dxfattribs={"layer": layer_name, "color": entity_color},
-        )
-        hatch.set_solid_fill(color=entity_color)
-        hatch.paths.add_polyline_path(root_points, is_closed=True, flags=1)
-
+        transformed_holes: list[list[tuple[float, float]]] = []
         for child_index in hole_indices:
             child_points = [
                 transform(float(x), float(y))
@@ -214,10 +253,28 @@ def add_exact_trace_entities(
                 dxfattribs={"layer": layer_name, "color": entity_color},
             )
             entities.append(child_outline)
-            hatch.paths.add_polyline_path(child_points, is_closed=True, flags=0)
+            transformed_holes.append(child_points)
             _expand_bounds(child_points, bounds)
 
-        entities.append(hatch)
+        if _safe_fill_allowed(
+            trace_path,
+            hole_paths,
+            layer_name=layer_name,
+            source_size=source_size,
+        ):
+            hatch = layout.add_hatch(
+                color=entity_color,
+                dxfattribs={"layer": layer_name, "color": entity_color},
+            )
+            hatch.set_solid_fill(color=entity_color)
+            hatch.dxf.hatch_style = 0
+            # The POLYLINE flag (2) is mandatory.  External loop = 1 | 2;
+            # internal holes = 2.  The old 1/0 flags caused LibreCAD to
+            # triangulate complex loops as giant page-spanning wedges.
+            hatch.paths.add_polyline_path(root_points, is_closed=True, flags=3)
+            for child_points in transformed_holes:
+                hatch.paths.add_polyline_path(child_points, is_closed=True, flags=2)
+            entities.append(hatch)
 
     report_progress(progress_callback, "cad-entities", 1.0)
     resolved_bounds = (
