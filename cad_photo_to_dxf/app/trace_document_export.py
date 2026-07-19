@@ -5,18 +5,18 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import ezdxf
-from ezdxf import units, zoom
+from ezdxf import units
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
-from .document_export import (
-    DocumentExportResult,
-    DocumentPage,
-    _resolve_raster,
-    _safe_layout_name,
-)
+from .document_export import DocumentExportResult, DocumentPage, _resolve_raster
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
-from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
+from .trace_dxf_entities import (
+    TRACE_LAYER_STYLES,
+    TracePalette,
+    add_exact_trace_entities,
+    add_ocr_text_entities,
+)
 
 
 def _require_first_page(
@@ -30,19 +30,54 @@ def _require_first_page(
     return first, iterator
 
 
+def _page_layer_names(index: int) -> dict[str, str]:
+    prefix = f"PAGE_{index:03d}"
+    return {
+        "SCAN_UNDERLAY": f"{prefix}_SCAN_UNDERLAY",
+        "TRACE_STRAIGHT": f"{prefix}_TRACE_STRAIGHT",
+        "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
+        "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
+        "TRACE_TEXT_OUTLINE": f"{prefix}_TRACE_TEXT_OUTLINE",
+        "OCR_TEXT": f"{prefix}_OCR_TEXT",
+    }
+
+
+def _ensure_page_layers(doc, index: int) -> dict[str, str]:
+    names = _page_layer_names(index)
+    styles = {
+        "SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"],
+        **TRACE_LAYER_STYLES,
+    }
+    for base_name, layer_name in names.items():
+        style = styles[base_name]
+        if layer_name not in doc.layers:
+            doc.layers.add(layer_name, **style)
+        layer = doc.layers.get(layer_name)
+        if index > 1 or base_name == "TRACE_TEXT_OUTLINE":
+            layer.off()
+    return names
+
+
+def _ensure_ocr_style(doc) -> None:
+    if "OCR_CJK" not in doc.styles:
+        doc.styles.add("OCR_CJK", font="simsun.ttc")
+
+
 def _add_page_underlay(
     layout,
     image_def,
     *,
+    insert: tuple[float, float],
     width_units: float,
     height_units: float,
+    layer_name: str,
 ) -> object:
     return layout.add_image(
         image_def=image_def,
-        insert=(0.0, 0.0),
+        insert=insert,
         size_in_units=(width_units, height_units),
         rotation=0.0,
-        dxfattribs={"layer": "SCAN_UNDERLAY"},
+        dxfattribs={"layer": layer_name},
     )
 
 
@@ -57,19 +92,16 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Export independently editable entities without page-sized block wrappers.
+    """Export all pages as direct, editable model-space entities.
 
-    The first page is written directly into model space for immediate editing.
-    Every PDF page is also written directly into its own PAGE layout. No custom
-    BLOCK, INSERT, GROUP, HATCH, or page-wide selection wrapper is created.
-    AutoCAD therefore selects each contour or contour piece independently.
-
-    Only one page exists in model space, so opening and zooming the drawing does
-    not render every high-detail PDF page at once. Other pages remain directly
-    editable on their PAGE-### tabs.
+    LibreCAD may display entities from several paper-space layouts at the same
+    coordinates. To avoid that viewer-specific overlap, exact multi-page output
+    uses model space only. Pages are spatially separated and controlled by
+    PAGE_###_* layers. Page one is visible by default; later pages are present
+    but their layers start switched off. OCR text is exported as editable TEXT,
+    while the matching pixel outlines remain on a disabled fallback layer.
     """
 
-    _ = modelspace_gap_mm
     first_page, remaining_pages = _require_first_page(pages)
 
     def page_stream():
@@ -84,21 +116,17 @@ def export_trace_document_streaming(
     doc.header["$INSUNITS"] = units.MM
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
-    styles = {
-        "SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"],
-        **TRACE_LAYER_STYLES,
-    }
-    for layer_name, style in styles.items():
-        if layer_name not in doc.layers:
-            doc.layers.add(layer_name, **style)
+    _ensure_ocr_style(doc)
 
     modelspace = doc.modelspace()
     underlays: list[Path] = []
-    layout_names: list[str] = []
     trace_path_count = 0
     trace_vertex_count = 0
+    text_count = 0
     page_count = 0
     expected_pages = max(int(total_pages or 0), 1)
+    origin_y = 0.0
+    first_page_view: tuple[float, float] | None = None
 
     for index, page in enumerate(page_stream(), start=1):
         checkpoint(cancellation_token)
@@ -131,18 +159,10 @@ def export_trace_document_streaming(
         height_units = page_height_mm * page.drawing_scale
         scale_x = width_units / max(float(vector_width), 1.0)
         scale_y = height_units / max(float(vector_height), 1.0)
+        layer_names = _ensure_page_layers(doc, index)
+        if first_page_view is None:
+            first_page_view = (width_units, height_units)
 
-        layout_name = _safe_layout_name(index)
-        layout = doc.layouts.new(layout_name)
-        layout.page_setup(
-            size=(page_width_mm, page_height_mm),
-            margins=(0.0, 0.0, 0.0, 0.0),
-            units="mm",
-            rotation=0,
-        )
-        layout_names.append(layout_name)
-
-        image_def = None
         if include_underlay:
             assert raster is not None
             raster_height, raster_width = raster.shape[:2]
@@ -155,10 +175,12 @@ def export_trace_document_streaming(
                 name=f"SCAN_PAGE_{index:03d}",
             )
             _add_page_underlay(
-                layout,
+                modelspace,
                 image_def,
+                insert=(0.0, origin_y),
                 width_units=width_units,
                 height_units=height_units,
+                layer_name=layer_names["SCAN_UNDERLAY"],
             )
 
         page_base = (index - 1) / expected_pages
@@ -171,55 +193,49 @@ def export_trace_document_streaming(
                 page_base + page_span * fraction,
             )
 
+        transform = lambda x, y, page_origin=origin_y: (
+            x * scale_x,
+            page_origin + (vector_height - y) * scale_y,
+        )
         (
             current_path_count,
             current_vertex_count,
-            _layout_entities,
-            _layout_bounds,
+            _entities,
+            _bounds,
         ) = add_exact_trace_entities(
-            layout,
+            modelspace,
             page.trace_paths,
-            transform=lambda x, y: (
-                x * scale_x,
-                (vector_height - y) * scale_y,
-            ),
+            transform=transform,
             color=page.trace_color,
             source_size=(vector_width, vector_height),
             palette=palette,
+            ocr_texts=page.texts,
+            layer_names=layer_names,
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
         )
+        current_text_count, _text_entities, _text_bounds = add_ocr_text_entities(
+            modelspace,
+            page.texts,
+            transform=transform,
+            layer_name=layer_names["OCR_TEXT"],
+            style_name="OCR_CJK",
+        )
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
+        text_count += current_text_count
 
-        if index == 1:
-            if image_def is not None:
-                _add_page_underlay(
-                    modelspace,
-                    image_def,
-                    width_units=width_units,
-                    height_units=height_units,
-                )
-            add_exact_trace_entities(
-                modelspace,
-                page.trace_paths,
-                transform=lambda x, y: (
-                    x * scale_x,
-                    (vector_height - y) * scale_y,
-                ),
-                color=page.trace_color,
-                source_size=(vector_width, vector_height),
-                palette=palette,
-                cancellation_token=cancellation_token,
-                progress_callback=None,
-            )
+        gap_units = max(1.0, float(modelspace_gap_mm) * page.drawing_scale)
+        origin_y -= height_units + gap_units
         del raster
 
     doc.set_raster_variables(frame=0, quality=1, units="mm")
-    try:
-        zoom.extents(modelspace, factor=1.03)
-    except Exception:
-        pass
+    if first_page_view is not None:
+        first_width, first_height = first_page_view
+        doc.set_modelspace_vport(
+            height=max(1.0, first_height * 1.03),
+            center=(first_width * 0.5, first_height * 0.5),
+        )
 
     checkpoint(cancellation_token)
     report_progress(progress_callback, "写入 DXF 文件", 0.92)
@@ -244,10 +260,10 @@ def export_trace_document_streaming(
         page_count=page_count,
         line_count=0,
         circle_count=0,
-        text_count=0,
+        text_count=text_count,
         trace_path_count=trace_path_count,
         trace_vertex_count=trace_vertex_count,
         underlay_paths=tuple(underlays),
-        layout_names=tuple(layout_names),
+        layout_names=(),
         group_names=(),
     )
