@@ -37,7 +37,7 @@ def _binary_symbol() -> np.ndarray:
 
 def _ocr_text() -> TextCandidate:
     return TextCandidate(
-        "火灾自动报警及联动系统图",
+        "FIRE ALARM A1",
         (66, 34, 142, 36),
         0.96,
         "text_candidate",
@@ -46,7 +46,11 @@ def _ocr_text() -> TextCandidate:
     )
 
 
-def test_single_export_writes_one_complete_text_and_omits_ocr_outlines(
+def _xdata_text(insert) -> str:
+    return "".join(value for code, value in insert.get_xdata("OCR_LINE_TEXT") if code == 1000)
+
+
+def test_single_export_writes_one_vector_block_per_ocr_line(
     tmp_path: Path,
 ) -> None:
     binary = _binary_symbol()
@@ -70,16 +74,16 @@ def test_single_export_writes_one_complete_text_and_omits_ocr_outlines(
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
     outlines = list(modelspace.query("LWPOLYLINE"))
-    texts = list(modelspace.query("TEXT"))
+    inserts = list(modelspace.query("INSERT"))
     assert outlines
-    assert len(texts) == 1
-    assert texts[0].dxf.text == "火灾自动报警及联动系统图"
-    assert texts[0].dxf.layer == "OCR_TEXT"
-    assert texts[0].dxf.style == "OCR_CJK"
-    assert texts[0].dxf.width > 0
-    assert document.styles.get("OCR_CJK").dxf.font == "simhei.ttf"
-    assert "TRACE_TEXT_OUTLINE" not in document.layers
-    assert len(modelspace.query("INSERT")) == 0
+    assert len(inserts) == 1
+    assert inserts[0].dxf.layer == "OCR_TEXT"
+    assert inserts[0].dxf.xscale > 0
+    assert inserts[0].dxf.yscale > 0
+    assert _xdata_text(inserts[0]) == "FIRE ALARM A1"
+    text_block = document.blocks.get(inserts[0].dxf.name)
+    assert len(text_block.query("LWPOLYLINE")) > 0
+    assert len(modelspace.query("TEXT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert all(len(entity) <= MAX_EDITABLE_POLYLINE_VERTICES for entity in outlines)
     assert {entity.dxf.layer for entity in outlines} <= {
@@ -129,7 +133,7 @@ def _document_page(number: int, *, with_text: bool = False) -> DocumentPage:
     )
 
 
-def test_document_export_uses_modelspace_layers_and_complete_text(
+def test_document_export_uses_page_layer_and_one_ocr_line_block(
     tmp_path: Path,
 ) -> None:
     page = _document_page(1, with_text=True)
@@ -148,16 +152,14 @@ def test_document_export_uses_modelspace_layers_and_complete_text(
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
     outlines = list(modelspace.query("LWPOLYLINE"))
-    texts = list(modelspace.query("TEXT"))
+    inserts = list(modelspace.query("INSERT"))
 
     assert outlines
-    assert len(texts) == 1
-    assert texts[0].dxf.text == "火灾自动报警及联动系统图"
+    assert len(inserts) == 1
     assert all(entity.dxf.layer.startswith("PAGE_001_") for entity in outlines)
-    assert texts[0].dxf.layer == "PAGE_001_OCR_TEXT"
-    assert "PAGE_001_TRACE_TEXT_OUTLINE" not in document.layers
-    assert document.styles.get("OCR_CJK").dxf.font == "simhei.ttf"
-    assert len(modelspace.query("INSERT")) == 0
+    assert inserts[0].dxf.layer == "PAGE_001_OCR_TEXT"
+    assert _xdata_text(inserts[0]) == "FIRE ALARM A1"
+    assert len(modelspace.query("TEXT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert "PAGE_BLOCK_001" not in document.blocks
     assert "PAGE-001" not in document.layouts
