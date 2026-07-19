@@ -102,7 +102,7 @@ def _start_document_export(window: Any) -> None:
             window,
             "部分页面尚未生成 CAD 轮廓",
             f"尚未处理的页码：{page_text}\n\n"
-            "请先点击“生成当前 PDF 的全部页 CAD 轮廓”，再一次性导出。",
+            "请先点击“生成当前 PDF 全部页 CAD 轮廓”，再一次性导出。",
         )
         return
 
@@ -160,7 +160,7 @@ def _start_document_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "ocr_first_exact_cad_all_pdf_pages",
+            "mode": "ocr_complete_line_exact_cad_all_pdf_pages",
             "input": str(source_path),
             "page_count": result.page_count,
             "trace_path_count": result.trace_path_count,
@@ -179,14 +179,14 @@ def _start_document_export(window: Any) -> None:
                 "paper_space_layouts": False,
                 "all_pages_spatially_separated_in_modelspace": True,
                 "later_page_layers_default_off": True,
-                "ocr_text_as_cad_text": True,
-                "ocr_outline_fallback_default_off": True,
+                "ocr_complete_lines_as_cad_text": True,
+                "ocr_raster_outlines_exported": False,
                 "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "warnings": [
-                "为避免 LibreCAD 叠加纸空间布局，全部页面改为模型空间分离排布。",
+                "为避免 LibreCAD 叠加纸空间布局，全部页面采用模型空间分离排布。",
                 "第一页图层默认开启；后续页面图层默认关闭，可按 PAGE_### 前缀切换。",
-                "OCR 文字导出为可编辑 CAD TEXT；原字形轮廓保存在默认关闭的 TRACE_TEXT_OUTLINE 回退图层。",
+                "OCR 按完整文字行导出为可编辑 CAD TEXT；匹配到的扫描文字轮廓不再重复写入 DXF。",
                 "颜色分类只用于检查；不会简化、吸附或合并非文字轮廓坐标。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
@@ -209,12 +209,12 @@ def _start_document_export(window: Any) -> None:
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
             f"PDF 页面：{result.page_count}",
-            f"CAD 轮廓：{result.trace_path_count}",
-            f"可编辑文字：{result.text_count}",
+            f"非文字 CAD 轮廓：{result.trace_path_count}",
+            f"完整可编辑文字行：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
             "页面方式：模型空间分离排布；第 2 页起图层默认关闭",
-            "文字方式：OCR TEXT 可直接改内容；原字形轮廓保留在关闭图层",
+            "文字方式：每个 OCR 文字行是一个完整 TEXT，不再叠加扫描文字轮廓",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
@@ -303,7 +303,7 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "ocr_first_exact_cad_single_page",
+            "mode": "ocr_complete_line_exact_cad_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
                 "path_count": result.trace_path_count,
@@ -319,8 +319,8 @@ def _start_single_export(window: Any) -> None:
                 "block_wrappers": False,
                 "groups": False,
                 "hatches": False,
-                "ocr_text_as_cad_text": True,
-                "ocr_outline_fallback_default_off": True,
+                "ocr_complete_lines_as_cad_text": True,
+                "ocr_raster_outlines_exported": False,
                 "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "export": {
@@ -330,7 +330,7 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "OCR 文字导出为可编辑 CAD TEXT；原字形轮廓保存在默认关闭的回退图层。",
+                "OCR 按完整文字行导出为可编辑 CAD TEXT；匹配到的扫描文字轮廓不再重复写入 DXF。",
                 f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
@@ -352,11 +352,11 @@ def _start_single_export(window: Any) -> None:
         summary = [
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
-            f"CAD 轮廓：{result.trace_path_count}",
-            f"可编辑文字：{result.text_count}",
+            f"非文字 CAD 轮廓：{result.trace_path_count}",
+            f"完整可编辑文字行：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "文字方式：OCR TEXT 可直接修改；原字形轮廓在关闭图层",
+            "文字方式：每个 OCR 文字行是一个完整 TEXT，不再叠加扫描文字轮廓",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
