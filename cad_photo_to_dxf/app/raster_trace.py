@@ -57,21 +57,27 @@ def make_black_white(
 ) -> tuple[np.ndarray, int, dict[str, np.ndarray]]:
     """Create a literal black/white page without morphology or line cleanup.
 
-    Otsu supplies a data-dependent starting point. A conservative floor keeps
-    faint anti-aliased print strokes instead of discarding them as background.
-    No opening, closing, skeletonization, Hough transform, snapping, merging, or
-    semantic text suppression is performed.
+    PDF renderings generally have a perfectly white background. When at least
+    90% of the page is exactly white, every non-white anti-aliased pixel is
+    treated as printed content by using threshold 254. Photographs and noisy
+    scans instead use a conservative Otsu threshold. No opening, closing,
+    skeletonization, Hough transform, snapping, merging, or semantic text
+    suppression is performed.
     """
 
     gray = _to_gray(image)
-    otsu_value, _ = cv2.threshold(
-        gray,
-        0,
-        255,
-        cv2.THRESH_BINARY | cv2.THRESH_OTSU,
-    )
     if foreground_threshold is None:
-        threshold = int(min(245, max(200, round(float(otsu_value)))))
+        exact_white_ratio = float(np.count_nonzero(gray == 255)) / float(gray.size)
+        if exact_white_ratio >= 0.90:
+            threshold = 254
+        else:
+            otsu_value, _ = cv2.threshold(
+                gray,
+                0,
+                255,
+                cv2.THRESH_BINARY | cv2.THRESH_OTSU,
+            )
+            threshold = int(min(245, max(200, round(float(otsu_value)))))
     else:
         threshold = int(max(1, min(254, foreground_threshold)))
     _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
@@ -82,8 +88,8 @@ def make_black_white(
         binary = 255 - binary
 
     stages = {
-        "灰度原样": gray.copy(),
-        "黑白拓印图": binary.copy(),
+        "灰度原样": gray,
+        "黑白拓印图": binary,
     }
     return np.ascontiguousarray(binary), threshold, stages
 
