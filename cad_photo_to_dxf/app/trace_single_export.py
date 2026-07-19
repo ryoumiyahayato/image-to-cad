@@ -8,11 +8,12 @@ import ezdxf
 from ezdxf import units, zoom
 import numpy as np
 
+from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
 from .image_loader import save_image
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
-from .trace_dxf_entities import add_exact_trace_entities
+from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
 
 
 def export_exact_trace_dxf(
@@ -21,10 +22,14 @@ def export_exact_trace_dxf(
     image_height: int,
     calibration: ScaleCalibration | None = None,
     *,
+    image_width: int | None = None,
     drawing_multiplier: float = 1.0,
     trace_color: int = 7,
+    palette: TracePalette | None = None,
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
 ) -> ExportResult:
     if image_height <= 0:
         raise ValueError("Image height must be greater than zero")
@@ -38,6 +43,7 @@ def export_exact_trace_dxf(
     if not isfinite(scale) or scale <= 0:
         raise ValueError("Trace export scale must be positive and finite")
 
+    checkpoint(cancellation_token)
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     doc = ezdxf.new("R2010", setup=True)
@@ -50,18 +56,20 @@ def export_exact_trace_dxf(
         doc.header["$INSUNITS"] = 0
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
-    styles = {
-        **LAYER_STYLES,
-        "TRACE_OUTLINE": {"color": 7, "lineweight": 0},
-        "TRACE_FILL": {"color": 7, "lineweight": 0},
-    }
-    for layer_name, style in styles.items():
+    for layer_name, style in {**LAYER_STYLES, **TRACE_LAYER_STYLES}.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
 
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
     underlay_path: Path | None = None
+    resolved_width = int(image_width or 0)
+    if resolved_width <= 0:
+        resolved_width = max(
+            1,
+            int(round(max(float(x) for trace in trace_paths for x, _y in trace.points))) + 1,
+        )
+
     if raster_image is not None:
         if raster_image.size == 0 or raster_image.ndim not in (2, 3):
             raise ValueError("Raster underlay must be a non-empty image")
@@ -96,18 +104,25 @@ def export_exact_trace_dxf(
             ((0.0, 0.0), (raster_width * scale, raster_height * scale))
         )
 
+    def entity_progress(stage: str, fraction: float) -> None:
+        report_progress(progress_callback, stage, 0.05 + 0.85 * fraction)
+
     (
         trace_path_count,
         trace_vertex_count,
         _trace_entities,
-        trace_coordinates,
+        trace_bounds,
     ) = add_exact_trace_entities(
         modelspace,
         trace_paths,
         transform=lambda x, y: (x * scale, (image_height - y) * scale),
         color=trace_color,
+        source_size=(resolved_width, image_height),
+        palette=palette,
+        cancellation_token=cancellation_token,
+        progress_callback=entity_progress,
     )
-    coordinates.extend(trace_coordinates)
+    coordinates.extend(trace_bounds)
 
     if coordinates:
         xs = [point[0] for point in coordinates]
@@ -119,6 +134,8 @@ def export_exact_trace_dxf(
         except Exception:
             pass
 
+    checkpoint(cancellation_token)
+    report_progress(progress_callback, "cad-save", 0.92)
     temporary_path: Path | None = None
     try:
         with NamedTemporaryFile(
@@ -133,6 +150,7 @@ def export_exact_trace_dxf(
     finally:
         if temporary_path is not None and temporary_path.exists():
             temporary_path.unlink()
+    report_progress(progress_callback, "cad-save", 1.0)
 
     return ExportResult(
         path=path,
