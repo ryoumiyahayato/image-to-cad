@@ -97,7 +97,7 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("图纸比例 1:", trace_source)
         self.assertIn("TracePaintDialog", trace_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
-        self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
+        self.assertIn("cv2.CHAIN_APPROX_NONE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
         self.assertNotIn("clean_geometry", engine_source)
         self.assertIn("黑色：补充线条", paint_source)
