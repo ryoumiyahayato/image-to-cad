@@ -31,6 +31,14 @@ def _require_first_page(
     return first, iterator
 
 
+def _page_block_name(sequence_number: int) -> str:
+    return f"PAGE_BLOCK_{sequence_number:03d}"
+
+
+def _page_layer_name(sequence_number: int) -> str:
+    return f"PAGE_{sequence_number:03d}"
+
+
 def export_trace_document_streaming(
     pages: Iterable[DocumentPage],
     output_path: str | Path,
@@ -42,15 +50,16 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Write each page once in model space and show it through paper viewports.
+    """Write every exact page once as a block and expose one page at a time.
 
-    Exact contour boundaries are written once.  Solid HATCH is restricted to
-    small text/symbol regions; large or complex page linework remains editable
-    contour polylines because broad multi-loop HATCHes are rendered incorrectly
-    by some CAD viewers.  PAGE layouts are lightweight viewports and do not
-    duplicate the model geometry.
+    Every page is stored in one BLOCK definition. Model space contains one
+    INSERT per page at the same origin, but only PAGE_001 is visible by default;
+    the remaining page layers are off. Each PAGE layout inserts its own block
+    directly. This avoids rendering seven high-detail drawings simultaneously
+    when the file opens while preserving all pages in one DXF/DWG file.
     """
 
+    _ = modelspace_gap_mm
     first_page, remaining_pages = _require_first_page(pages)
 
     def page_stream():
@@ -76,7 +85,6 @@ def export_trace_document_streaming(
     trace_path_count = 0
     trace_vertex_count = 0
     page_count = 0
-    model_y = 0.0
     expected_pages = max(int(total_pages or 0), 1)
 
     for index, page in enumerate(page_stream(), start=1):
@@ -108,7 +116,8 @@ def export_trace_document_streaming(
 
         width_units = page_width_mm * page.drawing_scale
         height_units = page_height_mm * page.drawing_scale
-        page_entities: list[object] = []
+        block_name = _page_block_name(index)
+        block = doc.blocks.new(name=block_name)
 
         if include_underlay:
             assert raster is not None
@@ -121,14 +130,12 @@ def export_trace_document_streaming(
                 size_in_pixel=(int(raster_width), int(raster_height)),
                 name=f"SCAN_PAGE_{index:03d}",
             )
-            page_entities.append(
-                modelspace.add_image(
-                    image_def=image_def,
-                    insert=(0.0, model_y),
-                    size_in_units=(width_units, height_units),
-                    rotation=0.0,
-                    dxfattribs={"layer": "SCAN_UNDERLAY"},
-                )
+            block.add_image(
+                image_def=image_def,
+                insert=(0.0, 0.0),
+                size_in_units=(width_units, height_units),
+                rotation=0.0,
+                dxfattribs={"layer": "SCAN_UNDERLAY"},
             )
 
         scale_x = width_units / max(float(vector_width), 1.0)
@@ -146,14 +153,14 @@ def export_trace_document_streaming(
         (
             current_path_count,
             current_vertex_count,
-            trace_entities,
+            _trace_entities,
             _trace_bounds,
         ) = add_exact_trace_entities(
-            modelspace,
+            block,
             page.trace_paths,
-            transform=lambda x, y, sy=model_y: (
+            transform=lambda x, y: (
                 x * scale_x,
-                sy + (vector_height - y) * scale_y,
+                (vector_height - y) * scale_y,
             ),
             color=page.trace_color,
             source_size=(vector_width, vector_height),
@@ -161,14 +168,24 @@ def export_trace_document_streaming(
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
         )
-        page_entities.extend(trace_entities)
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
+
+        page_layer_name = _page_layer_name(index)
+        if page_layer_name not in doc.layers:
+            page_layer = doc.layers.add(page_layer_name, color=8)
+            if index > 1:
+                page_layer.off()
+        model_insert = modelspace.add_blockref(
+            block_name,
+            (0.0, 0.0),
+            dxfattribs={"layer": page_layer_name},
+        )
 
         group_name = _safe_group_name(index)
         try:
             group = doc.groups.new(group_name)
-            group.extend(page_entities)
+            group.extend([model_insert])
             group_names.append(group_name)
         except Exception:
             pass
@@ -181,16 +198,8 @@ def export_trace_document_streaming(
             units="mm",
             rotation=0,
         )
-        layout.add_viewport(
-            center=(page_width_mm / 2.0, page_height_mm / 2.0),
-            size=(page_width_mm, page_height_mm),
-            view_center_point=(width_units / 2.0, model_y + height_units / 2.0),
-            view_height=height_units,
-            dxfattribs={"status": 2},
-        )
+        layout.add_blockref(block_name, (0.0, 0.0), dxfattribs={"layer": "0"})
         layout_names.append(layout_name)
-
-        model_y += height_units + max(0.0, float(modelspace_gap_mm))
         del raster
 
     doc.set_raster_variables(frame=0, quality=1, units="mm")
