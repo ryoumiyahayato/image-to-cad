@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from math import isfinite
@@ -17,6 +18,7 @@ from .auxiliary_recognition import (
 )
 from .image_loader import save_image
 from .line_detect import LineSegment
+from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
 
 
@@ -34,6 +36,9 @@ class ExportResult:
     skipped_circle_count: int = 0
     text_count: int = 0
     skipped_text_count: int = 0
+    trace_path_count: int = 0
+    trace_vertex_count: int = 0
+    drawing_scale: float = 1.0
     underlay_path: Path | None = None
     dwg_path: Path | None = None
     output_format: str = "DXF"
@@ -49,13 +54,14 @@ LAYER_STYLES = {
     "DETAIL": {"color": 7, "lineweight": 9},
     "CIRCLE_CONFIRMED": {"color": 2, "lineweight": 18},
     "OCR_TEXT": {"color": 2, "lineweight": 9},
+    "TRACE_OUTLINE": {"color": 7, "lineweight": 0},
+    "TRACE_FILL": {"color": 7, "lineweight": 0},
 }
 
 
 def filter_exportable_circles(
     circles: Sequence[CircleCandidate],
 ) -> list[CircleCandidate]:
-    """Return the exact candidates eligible to become DXF CIRCLE entities."""
     valid: list[CircleCandidate] = []
     for circle in circles:
         values = (
@@ -91,6 +97,60 @@ def filter_exportable_texts(
     return valid
 
 
+def _add_trace_entities(
+    modelspace,
+    trace_paths: Sequence[TracePath],
+    *,
+    image_height: int,
+    scale: float,
+    color: int,
+) -> tuple[int, int, list[tuple[float, float]]]:
+    if not trace_paths:
+        return 0, 0, []
+    if not 1 <= color <= 255:
+        color = 7
+    transformed: list[list[tuple[float, float]]] = []
+    coordinates: list[tuple[float, float]] = []
+    for trace_path in trace_paths:
+        points = [
+            (float(x) * scale, (image_height - float(y)) * scale)
+            for x, y in trace_path.points
+        ]
+        transformed.append(points)
+        if len(points) < 3:
+            continue
+        modelspace.add_lwpolyline(
+            points,
+            close=True,
+            dxfattribs={"layer": "TRACE_OUTLINE", "color": color},
+        )
+        coordinates.extend(points)
+
+    by_root: dict[int, list[int]] = defaultdict(list)
+    for index, trace_path in enumerate(trace_paths):
+        by_root[int(trace_path.root)].append(index)
+    for indices in by_root.values():
+        usable = [index for index in indices if len(transformed[index]) >= 3]
+        if not usable:
+            continue
+        hatch = modelspace.add_hatch(
+            color=color,
+            dxfattribs={"layer": "TRACE_FILL", "color": color},
+        )
+        hatch.set_solid_fill(color=color)
+        for index in usable:
+            hatch.paths.add_polyline_path(
+                transformed[index],
+                is_closed=True,
+                flags=1 if trace_paths[index].depth == 0 else 0,
+            )
+    return (
+        len(trace_paths),
+        sum(len(path.points) for path in trace_paths),
+        coordinates,
+    )
+
+
 def export_dxf(
     lines: list[LineSegment],
     output_path: str | Path,
@@ -99,24 +159,27 @@ def export_dxf(
     *,
     circles: list[CircleCandidate] | None = None,
     texts: list[TextCandidate] | None = None,
+    trace_paths: Sequence[TracePath] | None = None,
+    drawing_scale: float = 1.0,
+    trace_color: int = 7,
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
 ) -> ExportResult:
-    """Export editable vectors and an optional linked scan underlay.
+    """Export editable vectors, literal trace regions and an optional scan underlay."""
 
-    Uncalibrated coordinates remain unitless. The raster image is linked as an
-    external IMAGE reference and is saved next to the DXF; it is not embedded.
-    """
     if int(image_height) <= 0:
         raise ValueError("Image height must be greater than zero")
     path = Path(output_path)
     path.parent.mkdir(parents=True, exist_ok=True)
     calibrated = calibration is not None
+    if not isfinite(float(drawing_scale)) or drawing_scale <= 0:
+        raise ValueError("Drawing scale must be a positive finite number")
     try:
-        scale = calibration.mm_per_pixel if calibrated else 1.0
+        paper_scale = calibration.mm_per_pixel if calibrated else 1.0
     except ValueError as exc:
         raise ValueError("Export scale must be a positive finite number") from exc
-    if not isfinite(float(scale)) or scale <= 0:
+    scale = float(paper_scale) * float(drawing_scale)
+    if not isfinite(scale) or scale <= 0:
         raise ValueError("Export scale must be a positive finite number")
 
     doc = ezdxf.new("R2010", setup=True)
@@ -230,6 +293,16 @@ def export_dxf(
             )
         )
 
+    requested_trace_paths = tuple(trace_paths or ())
+    trace_path_count, trace_vertex_count, trace_coordinates = _add_trace_entities(
+        modelspace,
+        requested_trace_paths,
+        image_height=image_height,
+        scale=scale,
+        color=int(trace_color),
+    )
+    coordinates.extend(trace_coordinates)
+
     if coordinates:
         xs = [point[0] for point in coordinates]
         ys = [point[1] for point in coordinates]
@@ -272,5 +345,8 @@ def export_dxf(
         skipped_circle_count=len(requested_circles) - len(valid_circles),
         text_count=len(valid_texts),
         skipped_text_count=len(requested_texts) - len(valid_texts),
+        trace_path_count=trace_path_count,
+        trace_vertex_count=trace_vertex_count,
+        drawing_scale=float(drawing_scale),
         underlay_path=underlay_path,
     )
