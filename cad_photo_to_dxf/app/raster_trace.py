@@ -6,6 +6,7 @@ from typing import Iterable
 import cv2
 import numpy as np
 
+from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 
 
@@ -33,6 +34,7 @@ class RasterTraceResult:
     foreground_pixels: int
     vertex_count: int
     warnings: tuple[str, ...] = ()
+    texts: tuple[TextCandidate, ...] = ()
 
 
 def _to_gray(image: np.ndarray) -> np.ndarray:
@@ -218,28 +220,65 @@ def trace_image(
     image: np.ndarray,
     *,
     foreground_threshold: int | None = None,
+    enable_ocr: bool = False,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> RasterTraceResult:
     checkpoint(cancellation_token)
-    report_progress(progress_callback, "foreground-mask", 0.02)
-    binary, threshold, stages = make_black_white(
+    texts: tuple[TextCandidate, ...] = ()
+    warnings: list[str] = []
+    stages: dict[str, np.ndarray] = {}
+
+    if enable_ocr:
+        from .ocr_recognition import recognize_text_candidates, render_ocr_overlay
+
+        report_progress(progress_callback, "ocr-before-trace", 0.01)
+        texts, ocr_warnings = recognize_text_candidates(
+            image,
+            cancellation_token=cancellation_token,
+            progress_callback=(
+                None
+                if progress_callback is None
+                else lambda stage, fraction: progress_callback(
+                    stage,
+                    0.02 + 0.28 * fraction,
+                )
+            ),
+        )
+        warnings.extend(ocr_warnings)
+        if texts:
+            stages["OCR 文字识别结果"] = render_ocr_overlay(image, texts)
+
+    report_progress(progress_callback, "foreground-mask", 0.32 if enable_ocr else 0.02)
+    binary, threshold, trace_stages = make_black_white(
         image,
         foreground_threshold=foreground_threshold,
     )
+    stages = {**trace_stages, **stages}
     paths = trace_binary(
         binary,
         cancellation_token=cancellation_token,
-        progress_callback=progress_callback,
+        progress_callback=(
+            progress_callback
+            if not enable_ocr or progress_callback is None
+            else lambda stage, fraction: progress_callback(
+                stage,
+                0.34 + 0.66 * fraction,
+            )
+        ),
     )
     foreground_pixels = int(np.count_nonzero(binary == 0))
     vertex_count = sum(len(path.points) for path in paths)
-    warnings: list[str] = []
     if not paths and foreground_pixels:
         warnings.append("前景内容存在，但未形成可导出的闭合 CAD 边界。")
     if vertex_count > 1_000_000:
         warnings.append(
             "CAD 边界超过 100 万个顶点；内容保持不变，但 DXF/DWG 文件会较大。"
+        )
+    if texts:
+        warnings.append(
+            f"已在轮廓生成前识别 {len(texts)} 个可编辑文字对象；"
+            "原文字轮廓将保留在默认关闭的回退图层。"
         )
     return RasterTraceResult(
         binary=binary,
@@ -249,4 +288,5 @@ def trace_image(
         foreground_pixels=foreground_pixels,
         vertex_count=vertex_count,
         warnings=tuple(warnings),
+        texts=texts,
     )
