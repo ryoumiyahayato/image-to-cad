@@ -78,7 +78,7 @@ class OcrGraphicsView(QGraphicsView):
 
 
 class OcrReviewDialog(QDialog):
-    """Visually review OCR boxes and edit the text exported to CAD."""
+    """Visually review complete OCR lines and edit the text exported to CAD."""
 
     def __init__(
         self,
@@ -99,9 +99,9 @@ class OcrReviewDialog(QDialog):
         root = QVBoxLayout(self)
         root.addWidget(
             QLabel(
-                "绿色框是将导出为 CAD TEXT 的识别结果。"
-                "点击图中的框或右侧文字即可修改；删除只取消该 OCR 文字，"
-                "原扫描轮廓仍保存在默认关闭的回退图层中。"
+                "每个绿色框代表一个将导出为完整 CAD TEXT 的文字行。"
+                "点击图中的框或右侧文字即可修改；删除后该文字行不会写入 DXF，"
+                "对应的碎片化扫描文字轮廓也不会重复导出。"
             )
         )
 
@@ -115,7 +115,7 @@ class OcrReviewDialog(QDialog):
 
         panel = QWidget(splitter)
         panel_layout = QVBoxLayout(panel)
-        panel_layout.addWidget(QLabel("识别文字"))
+        panel_layout.addWidget(QLabel("识别文字行"))
         self.result_list = QListWidget(panel)
         self.result_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         panel_layout.addWidget(self.result_list, 1)
@@ -128,7 +128,7 @@ class OcrReviewDialog(QDialog):
 
         action_row = QHBoxLayout()
         apply_button = QPushButton("应用修改", panel)
-        delete_button = QPushButton("删除该 OCR 文字", panel)
+        delete_button = QPushButton("删除该文字行", panel)
         fit_button = QPushButton("适应窗口", panel)
         action_row.addWidget(apply_button)
         action_row.addWidget(delete_button)
@@ -211,7 +211,7 @@ class OcrReviewDialog(QDialog):
         self.confidence_label.setText(
             f"置信度：{candidate.confidence:.1%}\n"
             f"来源：{candidate.source or 'unknown'}\n"
-            "此处修改的是可编辑 CAD 文字内容，不会改变扫描轮廓坐标。"
+            "此处修改的是完整 CAD 文字内容；导出时不会再叠加扫描文字轮廓。"
         )
         graphics_item = self._graphics_items.get(index)
         if graphics_item is not None:
@@ -249,14 +249,13 @@ class OcrReviewDialog(QDialog):
             return
         text = self.text_edit.text().strip()
         if not text:
-            QMessageBox.warning(self, "文字为空", "内容为空时请使用“删除该 OCR 文字”。")
+            QMessageBox.warning(self, "文字为空", "内容为空时请使用“删除该文字行”。")
             return
         updated = replace(self._candidates[index], text=text)
         self._candidates[index] = updated
         list_item = self._list_items.get(index)
         if list_item is not None:
             list_item.setText(text)
-        self.statusTip()
 
     def _delete_current(self) -> None:
         index = self._selected_index
@@ -272,7 +271,7 @@ class OcrReviewDialog(QDialog):
             self.result_list.takeItem(row)
         self._selected_index = None
         self.text_edit.clear()
-        self.confidence_label.setText("该 OCR 文字已删除")
+        self.confidence_label.setText("该 OCR 文字行已删除")
 
     def fit_image(self) -> None:
         self.view.fitInView(self.scene_object.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
