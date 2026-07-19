@@ -33,6 +33,8 @@ def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
                 "rotation_deg": item.rotation_deg,
                 "quad": [list(point) for point in item.quad] if item.quad else None,
                 "source": item.source,
+                "approved": item.approved,
+                "reviewed": item.reviewed,
             }
             for item in texts
         ],
@@ -68,6 +70,8 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
                 rotation_deg=float(item.get("rotation_deg", 0.0)),
                 quad=quad,
                 source=str(item.get("source", "cache")),
+                approved=bool(item.get("approved", True)),
+                reviewed=bool(item.get("reviewed", False)),
             )
         )
     return tuple(results)
