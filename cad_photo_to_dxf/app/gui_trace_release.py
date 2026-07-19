@@ -22,6 +22,62 @@ TRACE_PDF_DPI = 300
 class MainWindow(_TraceMainWindow):
     """Release candidate using the identical full-resolution trace path everywhere."""
 
+    def _has_explicit_model_calibration(self) -> bool:
+        if self._native_pdf_mode or self.calibration is None:
+            return False
+        try:
+            _source, coordinate_space, _warnings = self._calibration_semantics()
+        except Exception:
+            return False
+        return coordinate_space == "model_mm"
+
+    def _export_drawing_multiplier(self) -> float:
+        """Return the multiplier applied after pixel-to-mm calibration.
+
+        A PDF or paper-size calibration describes printed paper millimetres, so
+        a 1:n drawing ratio must expand it to model millimetres. A two-point
+        calibration already uses a known engineering length and must not be
+        multiplied a second time.
+        """
+
+        if self._has_explicit_model_calibration():
+            return 1.0
+        if self.calibration is None:
+            return 1.0
+        return self._drawing_scale()
+
+    def _update_scale_label(self) -> None:
+        label = getattr(self, "scale_result_label", None)
+        if label is None:
+            return
+        if self.calibration is None:
+            label.setText("尚未标定；请设置纸张比例或点击已知尺寸的两个端点")
+            return
+        if self._has_explicit_model_calibration():
+            label.setText(
+                f"已知尺寸标定：{self.calibration.mm_per_pixel:.6f} 模型 mm/px；"
+                "不会再叠加图纸比例"
+            )
+            self.info_label.setText(
+                f"工程模型坐标：{self.calibration.mm_per_pixel:.6f} mm/px；"
+                f"{self.calibration.pixel_distance:.2f} px = "
+                f"{self.calibration.actual_length_mm:.3f} mm"
+            )
+            return
+        ratio = self._drawing_scale()
+        model_mm_per_pixel = self.calibration.mm_per_pixel * ratio
+        label.setText(
+            f"图纸比例 1:{int(ratio)}；{model_mm_per_pixel:.6f} 模型 mm/px "
+            f"（纸面 {self.calibration.mm_per_pixel:.6f} mm/px）"
+        )
+        self.info_label.setText(
+            f"图纸比例 1:{int(ratio)}；模型坐标 {model_mm_per_pixel:.6f} mm/px"
+        )
+
+    def _on_corrected_point(self, x: float, y: float) -> None:
+        super()._on_corrected_point(x, y)
+        self._update_scale_label()
+
     def _load_trace_source_for_current_page(self):
         if not self._native_pdf_mode or self.current_path is None:
             return self.corrected_image.copy()
@@ -162,7 +218,13 @@ class MainWindow(_TraceMainWindow):
 
     def _current_document_page(self) -> DocumentPage | None:
         page = super()._current_document_page()
-        return replace(page, raster_dpi=TRACE_PDF_DPI) if page is not None else None
+        if page is None:
+            return None
+        return replace(
+            page,
+            raster_dpi=TRACE_PDF_DPI,
+            drawing_scale=self._export_drawing_multiplier(),
+        )
 
     def document_pages_for_export(self):
         if self._document_queue:
