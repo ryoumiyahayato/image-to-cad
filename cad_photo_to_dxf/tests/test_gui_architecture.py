@@ -79,22 +79,10 @@ class GuiArchitectureTests(unittest.TestCase):
 
         self.assertIn("from app.gui_librecad_release import MainWindow", main_source)
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
-        self.assertIn(
-            "MainWindow",
-            imported_names(librecad_source, "gui_exact_release"),
-        )
-        self.assertIn(
-            "MainWindow",
-            imported_names(exact_source, "gui_trace_release"),
-        )
-        self.assertIn(
-            "MainWindow",
-            imported_names(release_source, "gui_trace_mode"),
-        )
-        self.assertIn(
-            "MainWindow",
-            imported_names(trace_source, "gui_consolidated"),
-        )
+        self.assertIn("MainWindow", imported_names(librecad_source, "gui_exact_release"))
+        self.assertIn("MainWindow", imported_names(exact_source, "gui_trace_release"))
+        self.assertIn("MainWindow", imported_names(release_source, "gui_trace_mode"))
+        self.assertIn("MainWindow", imported_names(trace_source, "gui_consolidated"))
         self.assertIn("from .gui_state_guard import", consolidated_source)
         self.assertIn("from .gui_review import MainWindow", state_source)
         self.assertIn("from .gui_guard import MainWindow", review_source)
@@ -144,10 +132,11 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("CAD 轮廓预览", exact_source)
         self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("PDF 每页独立文件", librecad_source)
-        self.assertIn("字体无关的矢量块", librecad_source)
+        self.assertIn("单字可编辑文字", librecad_source)
         self.assertIn("one_dxf_per_pdf_page", export_source)
         self.assertIn("ocr_line_as_single_vector_block", export_source)
         self.assertIn("add_ocr_outline_blocks", outline_source)
+        self.assertIn("每个汉字、字母和数字", outline_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
         self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
