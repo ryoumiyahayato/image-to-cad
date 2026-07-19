@@ -90,6 +90,7 @@ def _get_rapidocr_engine() -> Any:
         "Global.text_score": MIN_OCR_CONFIDENCE,
         "Global.max_side_len": 4096,
         "Global.return_word_box": True,
+        "Global.return_single_char_box": True,
         "Global.log_level": "warning",
     }
     try:
@@ -153,6 +154,7 @@ def _recognize_rapidocr_pass(
         use_cls=True,
         use_rec=True,
         return_word_box=True,
+        return_single_char_box=True,
     )
     if result is None:
         return []
@@ -288,24 +290,12 @@ def render_ocr_overlay(
         overlay = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
     else:
         overlay = image.copy()
-    for index, candidate in enumerate(candidates, start=1):
+    for candidate in candidates:
         quad = candidate.quad
         if quad:
             polygon = np.asarray(quad, dtype=np.int32).reshape(-1, 1, 2)
             cv2.polylines(overlay, [polygon], True, (0, 180, 0), 2, cv2.LINE_AA)
-            anchor = tuple(int(round(value)) for value in quad[0])
         else:
             x, y, width, height = candidate.bbox
             cv2.rectangle(overlay, (x, y), (x + width, y + height), (0, 180, 0), 2)
-            anchor = (x, y)
-        cv2.putText(
-            overlay,
-            str(index),
-            anchor,
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.45,
-            (0, 0, 255),
-            1,
-            cv2.LINE_AA,
-        )
     return overlay
