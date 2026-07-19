@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import locale
 import os
 from pathlib import Path
+import shutil
+import subprocess
 import sys
+from tempfile import TemporaryDirectory
 from typing import Iterable
 
-from ezdxf.addons import odafc
+import ezdxf
 
 
 class DwgConversionUnavailable(RuntimeError):
@@ -14,6 +18,27 @@ class DwgConversionUnavailable(RuntimeError):
 
 _CONFIGURED_CONVERTER_PATH: Path | None = None
 _SETTINGS_FILENAME = "oda-file-converter-path.txt"
+_VERSION_MAP = {
+    "R12": "ACAD12",
+    "R13": "ACAD13",
+    "R14": "ACAD14",
+    "R2000": "ACAD2000",
+    "R2004": "ACAD2004",
+    "R2007": "ACAD2007",
+    "R2010": "ACAD2010",
+    "R2013": "ACAD2013",
+    "R2018": "ACAD2018",
+    "AC1009": "ACAD12",
+    "AC1012": "ACAD13",
+    "AC1014": "ACAD14",
+    "AC1015": "ACAD2000",
+    "AC1018": "ACAD2004",
+    "AC1021": "ACAD2007",
+    "AC1024": "ACAD2010",
+    "AC1027": "ACAD2013",
+    "AC1032": "ACAD2018",
+}
+_VALID_VERSIONS = set(_VERSION_MAP.values())
 
 
 def _settings_path() -> Path:
@@ -39,8 +64,6 @@ def _persist_converter_path(path: Path) -> None:
         temporary.write_text(str(path), encoding="utf-8")
         temporary.replace(target)
     except OSError:
-        # Conversion can still proceed for the current session when settings
-        # cannot be written, for example in a locked-down corporate profile.
         pass
 
 
@@ -93,11 +116,9 @@ def _installed_oda_candidates() -> Iterable[Path]:
         if not oda_root.is_dir():
             continue
         try:
-            # Current ODA installers commonly use a versioned directory such as
-            # "ODAFileConverter 27.11.0" below Program Files/ODA.
             matches = sorted(
                 oda_root.glob("**/ODAFileConverter.exe"),
-                key=lambda path: str(path).casefold(),
+                key=lambda item: str(item).casefold(),
                 reverse=True,
             )
         except OSError:
@@ -142,23 +163,61 @@ def find_oda_converter(executable: str | Path | None = None) -> Path | None:
 
 
 def configure_oda_converter(executable: str | Path | None = None) -> bool:
-    """Configure ODA and remember a user-selected executable across exports."""
+    """Remember the converter and configure ezdxf's ODA option correctly."""
 
     global _CONFIGURED_CONVERTER_PATH
-
     path = find_oda_converter(executable)
-    if path is not None:
-        if os.name == "nt":
-            odafc.win_exec_path = str(path)
-        else:
-            odafc.unix_exec_path = str(path)
-        _CONFIGURED_CONVERTER_PATH = path
-        if executable is not None:
-            _persist_converter_path(path)
-        # The executable exists and has been assigned explicitly. Let the real
-        # conversion call report any runtime or installation problem in detail.
-        return True
-    return bool(odafc.is_installed())
+    if path is None:
+        return False
+    _CONFIGURED_CONVERTER_PATH = path
+    if os.name == "nt":
+        ezdxf.options.set("odafc-addon", "win_exec_path", str(path))
+    else:
+        ezdxf.options.set("odafc-addon", "unix_exec_path", str(path))
+    if executable is not None:
+        _persist_converter_path(path)
+    return True
+
+
+def _mapped_version(version: str) -> str:
+    normalized = str(version or "R2018").upper()
+    mapped = _VERSION_MAP.get(normalized, normalized)
+    if mapped not in _VALID_VERSIONS:
+        raise DwgConversionUnavailable(f"不支持的 DWG 目标版本：{version}")
+    return mapped
+
+
+def _run_converter(
+    executable: Path,
+    source_path: Path,
+    output_dir: Path,
+    version: str,
+) -> subprocess.CompletedProcess[str]:
+    arguments = [
+        str(executable),
+        str(source_path.parent),
+        str(output_dir),
+        _mapped_version(version),
+        "DWG",
+        "0",
+        "1",
+        source_path.name,
+    ]
+    kwargs: dict[str, object] = {
+        "capture_output": True,
+        "text": True,
+        "encoding": locale.getpreferredencoding(False) or "utf-8",
+        "errors": "replace",
+        "timeout": 1800,
+        "check": False,
+    }
+    if os.name == "nt":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = startupinfo
+        kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
+    return subprocess.run(arguments, **kwargs)  # type: ignore[arg-type]
 
 
 def convert_dxf_to_dwg(
@@ -168,7 +227,7 @@ def convert_dxf_to_dwg(
     version: str = "R2018",
     converter_executable: str | Path | None = None,
 ) -> Path:
-    """Convert one generated DXF to DWG with an installed ODA File Converter."""
+    """Convert one DXF to DWG without showing ODA's folder-selection window."""
 
     source_path = Path(source).expanduser().resolve()
     destination_path = Path(destination).expanduser().resolve()
@@ -179,27 +238,43 @@ def convert_dxf_to_dwg(
     destination_path.parent.mkdir(parents=True, exist_ok=True)
 
     try:
-        available = configure_oda_converter(converter_executable)
+        executable = find_oda_converter(converter_executable)
     except Exception as exc:
         raise DwgConversionUnavailable(str(exc)) from exc
-    if not available:
+    if executable is None:
         raise DwgConversionUnavailable(
-            "未找到 ODA File Converter。可选择 ODAFileConverter.exe，"
-            "或将整个 ODAFileConverter 文件夹放到本程序安装目录旁边。"
+            "未找到 ODA File Converter。安装后程序会自动调用；"
+            "也可以只选择一次 ODAFileConverter.exe。"
         )
+    configure_oda_converter(executable)
 
     try:
-        odafc.convert(
-            source_path,
-            destination_path,
-            version=version,
-            audit=True,
-            replace=True,
-        )
+        with TemporaryDirectory(prefix="cadphoto_oda_") as temp_dir:
+            output_dir = Path(temp_dir)
+            completed = _run_converter(executable, source_path, output_dir, version)
+            candidates = sorted(output_dir.glob("*.dwg"))
+            expected = output_dir / source_path.with_suffix(".dwg").name
+            generated = expected if expected.is_file() else (candidates[0] if candidates else None)
+            if generated is None or generated.stat().st_size <= 0:
+                detail = (completed.stderr or completed.stdout or "ODA 未生成输出文件").strip()
+                raise DwgConversionUnavailable(
+                    f"DXF 转 DWG 失败（当前使用：{executable}）：{detail}"
+                )
+            if destination_path.exists():
+                destination_path.unlink()
+            try:
+                shutil.move(str(generated), str(destination_path))
+            except OSError:
+                shutil.copy2(generated, destination_path)
+    except subprocess.TimeoutExpired as exc:
+        raise DwgConversionUnavailable("ODA 转换超过 30 分钟，已终止。") from exc
+    except DwgConversionUnavailable:
+        raise
     except Exception as exc:
-        configured = find_oda_converter()
-        location = f"（当前使用：{configured}）" if configured is not None else ""
-        raise DwgConversionUnavailable(f"DXF 转 DWG 失败{location}：{exc}") from exc
+        raise DwgConversionUnavailable(
+            f"DXF 转 DWG 失败（当前使用：{executable}）：{exc}"
+        ) from exc
+
     if not destination_path.is_file() or destination_path.stat().st_size <= 0:
         raise DwgConversionUnavailable("ODA 未生成有效的 DWG 文件")
     return destination_path
