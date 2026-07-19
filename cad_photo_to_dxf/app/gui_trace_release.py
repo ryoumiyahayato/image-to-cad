@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 import time
 from typing import Any
 
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QGroupBox, QLabel, QMessageBox, QPushButton
 
 from .document_export import DocumentPage
 from .gui_trace_mode import MainWindow as _TraceMainWindow
@@ -17,19 +17,101 @@ from .raster_trace import RasterTraceResult, trace_image
 from .scale_calibrator import ScaleCalibration
 from .trace_gui_export import export_trace_from_window
 from .trace_storage import load_trace_cache, save_trace_cache
+from .trace_verification import TraceVerificationResult, verify_trace_paths
 
 
 TRACE_PDF_DPI = 300
 
 
 class MainWindow(_TraceMainWindow):
-    """Release candidate using the identical full-resolution trace path everywhere."""
+    """Exact CAD-contour workflow with responsive export and visual verification."""
 
     def __init__(self) -> None:
         self._trace_cache_tempdir = TemporaryDirectory(prefix="image-to-cad-trace-")
         self._trace_cache_by_key: dict[tuple[str, int | None], Path] = {}
-        self._queued_trace_cache_by_key: dict[tuple[str, int | None], Path] = {}
         super().__init__()
+        self._update_scale_label()
+
+    def _build_controls(self):  # type: ignore[override]
+        scroll = super()._build_controls()
+        container = scroll.widget()
+        layout = container.layout() if container is not None else None
+        if layout is None:
+            return scroll
+
+        for group in scroll.findChildren(QGroupBox):
+            if group.title() == "跨文件合并队列":
+                group.setVisible(False)
+            elif group.title() == "PDF 页面与合并":
+                group.setTitle("当前 PDF 页面")
+            elif group.title() == "拓印输出与比例尺":
+                group.setTitle("CAD 输出设置")
+
+        rename = {
+            "完整拓印全部黑白线条": "生成当前页 CAD 轮廓",
+            "在黑白拓印图上修补": "检查并修正当前页 CAD 轮廓",
+            "按已知尺寸校准（照片补充）": "按已知尺寸校准（可选）",
+            "导出同一 CAD（DWG / DXF）": "导出当前 PDF 全部页 CAD（DWG / DXF）",
+        }
+        review_button: QPushButton | None = None
+        for button in scroll.findChildren(QPushButton):
+            if button.text() in rename:
+                button.setText(rename[button.text()])
+            if button.text() == "检查并修正当前页 CAD 轮廓":
+                review_button = button
+
+        self.batch_pdf_button.setText("生成当前 PDF 的全部页 CAD 轮廓（可取消）")
+        self.drawing_scale_spin.blockSignals(True)
+        self.drawing_scale_spin.setValue(1)
+        self.drawing_scale_spin.blockSignals(False)
+        self.drawing_scale_spin.setToolTip(
+            "默认按 1:1 输出。只有明确需要按图纸比例还原模型尺寸时才修改。"
+        )
+
+        self.trace_color_combo.setVisible(False)
+        scale_group = next(
+            (
+                group
+                for group in scroll.findChildren(QGroupBox)
+                if group.title() == "CAD 输出设置"
+            ),
+            None,
+        )
+        if scale_group is not None:
+            for label in scale_group.findChildren(QLabel):
+                if label.text() == "CAD 拓印颜色":
+                    label.setVisible(False)
+            scale_layout = scale_group.layout()
+            if scale_layout is not None and hasattr(scale_layout, "addRow"):
+                palette_label = QLabel(
+                    "直线：蓝色；曲线：绿色；文字/符号：品红色。"
+                    "颜色分类只用于检查，不会改变轮廓坐标。",
+                    scale_group,
+                )
+                palette_label.setWordWrap(True)
+                scale_layout.addRow("自动分层颜色", palette_label)
+
+        verify_button = QPushButton("验证当前页与原图是否一致", container)
+        verify_button.clicked.connect(self.verify_current_trace)
+        review_index = layout.indexOf(review_button) if review_button is not None else -1
+        layout.insertWidget(review_index + 1 if review_index >= 0 else 5, verify_button)
+
+        self.include_underlay_checkbox.setChecked(False)
+        self.include_underlay_checkbox.setText(
+            "附加原扫描底图（仅需在 CAD 中对照时开启；会增加文件和导出时间）"
+        )
+        if hasattr(self, "page_summary_label"):
+            self.page_summary_label.setText(
+                "同一个 PDF 的所有页将一次性生成并导出为一个 CAD 文件。"
+            )
+        return scroll
+
+    def _drawing_scale(self) -> float:
+        spin = getattr(self, "drawing_scale_spin", None)
+        return float(spin.value()) if spin is not None else 1.0
+
+    def _trace_color(self) -> int:
+        return 7
 
     def _has_explicit_model_calibration(self) -> bool:
         if self._native_pdf_mode or self.calibration is None:
@@ -41,14 +123,6 @@ class MainWindow(_TraceMainWindow):
         return coordinate_space == "model_mm"
 
     def _export_drawing_multiplier(self) -> float:
-        """Return the multiplier applied after pixel-to-mm calibration.
-
-        A PDF or paper-size calibration describes printed paper millimetres, so
-        a 1:n drawing ratio must expand it to model millimetres. A two-point
-        calibration already uses a known engineering length and must not be
-        multiplied a second time.
-        """
-
         if self._has_explicit_model_calibration():
             return 1.0
         if self.calibration is None:
@@ -60,7 +134,7 @@ class MainWindow(_TraceMainWindow):
         if label is None:
             return
         if self.calibration is None:
-            label.setText("尚未标定；请设置纸张比例或点击已知尺寸的两个端点")
+            label.setText("输出比例 1:1；尚未标定纸面或模型尺寸")
             return
         if self._has_explicit_model_calibration():
             label.setText(
@@ -76,11 +150,11 @@ class MainWindow(_TraceMainWindow):
         ratio = self._drawing_scale()
         model_mm_per_pixel = self.calibration.mm_per_pixel * ratio
         label.setText(
-            f"图纸比例 1:{int(ratio)}；{model_mm_per_pixel:.6f} 模型 mm/px "
+            f"输出比例 1:{int(ratio)}；{model_mm_per_pixel:.6f} 模型 mm/px "
             f"（纸面 {self.calibration.mm_per_pixel:.6f} mm/px）"
         )
         self.info_label.setText(
-            f"图纸比例 1:{int(ratio)}；模型坐标 {model_mm_per_pixel:.6f} mm/px"
+            f"输出比例 1:{int(ratio)}；模型坐标 {model_mm_per_pixel:.6f} mm/px"
         )
 
     def _on_corrected_point(self, x: float, y: float) -> None:
@@ -132,8 +206,8 @@ class MainWindow(_TraceMainWindow):
         cache_path = self._store_current_trace()
         if cache_path is not None:
             state["trace_cache_path"] = str(cache_path)
-        # The full binary page and all contour vertices can be hundreds of MB.
-        # Keep them only for the visible page and store all inactive pages on disk.
+        state["drawing_scale"] = self._drawing_scale()
+        state["trace_color"] = 7
         state.pop("binary_image", None)
         state.pop("preprocess_stages", None)
         state.pop("trace_paths", None)
@@ -192,8 +266,8 @@ class MainWindow(_TraceMainWindow):
             width_mm,
         )
         self.preprocess_stages = {
-            "灰度原样": source,
-            "黑白拓印图": stored.binary,
+            "原图": source,
+            "CAD 轮廓来源": stored.binary,
         }
         self._show_preprocess_stages(self.preprocess_stages)
         self.original_canvas.set_image(source)
@@ -210,8 +284,8 @@ class MainWindow(_TraceMainWindow):
             except Exception as exc:
                 QMessageBox.warning(
                     self,
-                    "读取拓印缓存失败",
-                    f"第 {page_index + 1} 页将保留原始扫描图，但拓印结果需要重新生成。\n{exc}",
+                    "读取 CAD 轮廓缓存失败",
+                    f"第 {page_index + 1} 页需要重新生成。\n{exc}",
                 )
 
     def detect_and_clean(self) -> None:
@@ -238,7 +312,7 @@ class MainWindow(_TraceMainWindow):
 
         def completed(value: object) -> None:
             if revision != self._state_revision:
-                self.statusBar().showMessage("页面已变化，已丢弃过期拓印结果")
+                self.statusBar().showMessage("页面已变化，已丢弃过期结果")
                 return
             self._apply_trace_result(
                 value,  # type: ignore[arg-type]
@@ -246,11 +320,15 @@ class MainWindow(_TraceMainWindow):
                 duration=time.perf_counter() - started,
                 save_pdf_state=self._native_pdf_mode,
             )
+            self.statusBar().showMessage(
+                f"当前页 CAD 轮廓已生成：{len(self._trace_paths)} 个边界，"
+                f"{self._trace_vertex_count} 个顶点"
+            )
 
         self._start_processing(
             operation,
             completed,
-            f"正在以 {TRACE_PDF_DPI} DPI 完整拓印黑白图…",
+            f"正在以 {TRACE_PDF_DPI} DPI 生成当前页 CAD 轮廓…",
         )
 
     def batch_vectorize_pdf(self) -> None:
@@ -265,7 +343,6 @@ class MainWindow(_TraceMainWindow):
         started_at = datetime.now(timezone.utc)
         started = time.perf_counter()
         drawing_scale = self._drawing_scale()
-        trace_color = self._trace_color()
         cache_root = Path(self._trace_cache_tempdir.name)
 
         def operation(token, progress) -> object:
@@ -273,7 +350,7 @@ class MainWindow(_TraceMainWindow):
             for page_index in range(page_count):
                 token.checkpoint()
                 progress(
-                    f"完整拓印第 {page_index + 1}/{page_count} 页",
+                    f"生成第 {page_index + 1}/{page_count} 页 CAD 轮廓",
                     page_index / max(page_count, 1),
                 )
                 image = load_image(
@@ -301,11 +378,11 @@ class MainWindow(_TraceMainWindow):
                     "trace_foreground_pixels": result.foreground_pixels,
                     "trace_vertex_count": result.vertex_count,
                     "drawing_scale": drawing_scale,
-                    "trace_color": trace_color,
+                    "trace_color": 7,
                 }
                 del image
                 del result
-            progress("批量完整拓印完成", 1.0)
+            progress("全部页面 CAD 轮廓生成完成", 1.0)
             return results
 
         def completed(value: object) -> None:
@@ -319,60 +396,55 @@ class MainWindow(_TraceMainWindow):
             self._load_pdf_page(self._current_pdf_page_index, save_current=False)
             QMessageBox.information(
                 self,
-                "批量拓印完成",
-                f"已用与单页按钮完全相同的 {TRACE_PDF_DPI} DPI 流程处理 "
-                f"{page_count} 页；未降采样、未做 Hough 结构抽象。\n"
-                "非当前页面的高分辨率拓印结果已压缩到临时磁盘缓存，避免占满内存。",
+                "全部页面处理完成",
+                f"已用相同的 {TRACE_PDF_DPI} DPI 流程处理 {page_count} 页。\n"
+                "现在可一次性导出当前 PDF 的全部页面。",
             )
 
-        self._start_processing(operation, completed, "正在批量完整拓印 PDF…")
+        self._start_processing(operation, completed, "正在生成当前 PDF 的全部页 CAD 轮廓…")
 
-    def _document_page_from_pdf_state(
-        self,
-        page_index: int,
-        state: dict[str, Any],
-    ) -> DocumentPage:
-        return replace(
-            super()._document_page_from_pdf_state(page_index, state),
-            raster_dpi=TRACE_PDF_DPI,
-            trace_paths=(),
-        )
+    def verify_current_trace(self) -> None:
+        if self.binary_image is None or not self._trace_paths:
+            QMessageBox.warning(self, "尚无 CAD 轮廓", "请先生成当前页 CAD 轮廓。")
+            return
+        if self._is_processing():
+            QMessageBox.information(self, "正在处理", "请等待当前任务完成或取消。")
+            return
+        binary = self.binary_image.copy()
+        paths = tuple(self._trace_paths)
+        revision = self._state_revision
 
-    def _current_document_page(self) -> DocumentPage | None:
-        page = super()._current_document_page()
-        if page is None:
-            return None
-        cache_path = self._store_current_trace()
-        key = self._page_key(page)
-        if cache_path is not None:
-            self._queued_trace_cache_by_key[key] = cache_path
-        return replace(
-            page,
-            raster_dpi=TRACE_PDF_DPI,
-            trace_paths=(),
-            drawing_scale=self._export_drawing_multiplier(),
-        )
-
-    def _enqueue_page(self, page: DocumentPage) -> str:
-        key = self._page_key(page)
-        if page.source_path is not None and page.source_page_index is not None:
-            state = self._pdf_page_states.get(page.source_page_index, {})
-            cache_value = state.get("trace_cache_path")
-            if cache_value:
-                self._queued_trace_cache_by_key[key] = Path(str(cache_value))
-        return super()._enqueue_page(page)
-
-    def remove_last_queued_page(self) -> None:
-        if self._document_queue:
-            self._queued_trace_cache_by_key.pop(
-                self._page_key(self._document_queue[-1]),
-                None,
+        def operation(token, progress) -> object:
+            return verify_trace_paths(
+                binary,
+                paths,
+                cancellation_token=token,
+                progress_callback=progress,
             )
-        super().remove_last_queued_page()
 
-    def clear_document_queue(self) -> None:
-        self._queued_trace_cache_by_key.clear()
-        super().clear_document_queue()
+        def completed(value: object) -> None:
+            if revision != self._state_revision:
+                return
+            result: TraceVerificationResult = value  # type: ignore[assignment]
+            self.preprocess_stages["CAD 一致性验证"] = result.overlay
+            self._show_preprocess_stages(self.preprocess_stages)
+            canvas = self.preprocess_canvases.get("CAD 一致性验证")
+            if canvas is not None:
+                self.preprocess_tabs.setCurrentWidget(canvas)
+            self.tabs.setCurrentWidget(self.preprocess_tabs)
+            message = (
+                "蓝色：原图与将导出的 CAD 轮廓一致；红色：原图有但 CAD 缺失；"
+                "品红色：CAD 多出。\n\n"
+                f"一致像素：{result.matched_pixels}\n"
+                f"缺失像素：{result.missing_pixels}\n"
+                f"多余像素：{result.extra_pixels}"
+            )
+            if result.exact:
+                QMessageBox.information(self, "一致性验证通过", message)
+            else:
+                QMessageBox.warning(self, "一致性验证发现差异", message)
+
+        self._start_processing(operation, completed, "正在验证 CAD 轮廓与原图…")
 
     @staticmethod
     def _page_with_stored_trace(page: DocumentPage, cache_path: Path) -> DocumentPage:
@@ -385,19 +457,6 @@ class MainWindow(_TraceMainWindow):
         )
 
     def document_pages_for_export(self):
-        if self._document_queue:
-            queued_pages = tuple(self._document_queue)
-            cache_map = dict(self._queued_trace_cache_by_key)
-
-            def queued():
-                for page in queued_pages:
-                    cache_path = cache_map.get(self._page_key(page))
-                    if cache_path is not None and cache_path.exists():
-                        yield self._page_with_stored_trace(page, cache_path)
-                    else:
-                        yield page
-
-            return queued()
         if not self._native_pdf_mode or self.current_path is None:
             return iter(())
         self._save_current_pdf_state()
@@ -422,8 +481,8 @@ class MainWindow(_TraceMainWindow):
                     source_path=source_path,
                     source_page_index=page_index,
                     raster_dpi=TRACE_PDF_DPI,
-                    drawing_scale=float(state.get("drawing_scale", self._drawing_scale())),
-                    trace_color=int(state.get("trace_color", self._trace_color())),
+                    drawing_scale=float(state.get("drawing_scale", 1.0)),
+                    trace_color=7,
                 )
                 cache_value = state.get("trace_cache_path")
                 if cache_value and Path(str(cache_value)).exists():
