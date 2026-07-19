@@ -44,10 +44,11 @@ def export_trace_document_streaming(
 ) -> DocumentExportResult:
     """Write each page once in model space and show it through paper viewports.
 
-    The previous exporter duplicated millions of contour vertices in model space
-    and every PAGE layout, then duplicated them again as outlines plus HATCHes.
-    This exporter writes only the exact solid regions once. PAGE layouts are
-    lightweight viewports, which removes the main source of export stalls.
+    Exact contour boundaries are written once.  Solid HATCH is restricted to
+    small text/symbol regions; large or complex page linework remains editable
+    contour polylines because broad multi-loop HATCHes are rendered incorrectly
+    by some CAD viewers.  PAGE layouts are lightweight viewports and do not
+    duplicate the model geometry.
     """
 
     first_page, remaining_pages = _require_first_page(pages)
