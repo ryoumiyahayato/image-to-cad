@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections import defaultdict
 from collections.abc import Sequence
+from dataclasses import dataclass
 
 import cv2
 import numpy as np
@@ -23,6 +24,33 @@ class TraceVerificationResult:
         return self.missing_pixels == 0 and self.extra_pixels == 0
 
 
+def _opencv_hierarchy(trace_paths: Sequence[TracePath]) -> np.ndarray:
+    """Rebuild the RETR_TREE links preserved in ``TracePath`` objects."""
+
+    hierarchy = np.full((1, len(trace_paths), 4), -1, dtype=np.int32)
+    children: dict[int, list[int]] = defaultdict(list)
+    roots: list[int] = []
+    for index, path in enumerate(trace_paths):
+        if path.parent is None:
+            roots.append(index)
+        else:
+            parent = int(path.parent)
+            hierarchy[0, index, 3] = parent
+            children[parent].append(index)
+
+    sibling_groups = [roots, *children.values()]
+    for siblings in sibling_groups:
+        for position, index in enumerate(siblings):
+            if position + 1 < len(siblings):
+                hierarchy[0, index, 0] = siblings[position + 1]
+            if position > 0:
+                hierarchy[0, index, 1] = siblings[position - 1]
+    for parent, child_indices in children.items():
+        if child_indices:
+            hierarchy[0, parent, 2] = child_indices[0]
+    return hierarchy
+
+
 def reconstruct_trace_binary(
     shape: tuple[int, int],
     trace_paths: Sequence[TracePath],
@@ -35,21 +63,40 @@ def reconstruct_trace_binary(
     height, width = int(shape[0]), int(shape[1])
     if height <= 0 or width <= 0:
         raise ValueError("Verification image dimensions must be positive")
-    reconstructed = np.full((height, width), 255, dtype=np.uint8)
-    ordered = sorted(enumerate(trace_paths), key=lambda item: (item[1].depth, item[0]))
-    total = max(len(ordered), 1)
-    for position, (_index, path) in enumerate(ordered):
+    if not trace_paths:
+        return np.full((height, width), 255, dtype=np.uint8)
+
+    contours: list[np.ndarray] = []
+    total = max(len(trace_paths), 1)
+    for position, path in enumerate(trace_paths):
         if position % 256 == 0:
             checkpoint(cancellation_token)
-            report_progress(progress_callback, "verify-rasterize", 0.85 * position / total)
-        if len(path.points) < 3:
-            continue
+            report_progress(
+                progress_callback,
+                "verify-prepare",
+                0.55 * position / total,
+            )
         contour = np.asarray(path.points, dtype=np.float64)
         contour = np.rint(contour).astype(np.int32).reshape(-1, 1, 2)
-        fill_value = 0 if path.depth % 2 == 0 else 255
-        cv2.fillPoly(reconstructed, [contour], fill_value, lineType=cv2.LINE_8)
+        contours.append(contour)
+
+    hierarchy = _opencv_hierarchy(trace_paths)
+    foreground = np.zeros((height, width), dtype=np.uint8)
+    checkpoint(cancellation_token)
+    report_progress(progress_callback, "verify-rasterize", 0.60)
+    cv2.drawContours(
+        foreground,
+        contours,
+        contourIdx=-1,
+        color=255,
+        thickness=cv2.FILLED,
+        lineType=cv2.LINE_8,
+        hierarchy=hierarchy,
+        maxLevel=2**31 - 1,
+    )
+    checkpoint(cancellation_token)
     report_progress(progress_callback, "verify-rasterize", 0.85)
-    return reconstructed
+    return np.where(foreground > 0, 0, 255).astype(np.uint8)
 
 
 def verify_trace_paths(
