@@ -83,7 +83,7 @@ def export_trace_document(window: Any) -> tuple[DocumentExportResult, Path] | No
         return None
 
     summary = [
-        *( [f"DWG：{dwg_path}"] if dwg_path is not None else [] ),
+        *([f"DWG：{dwg_path}"] if dwg_path is not None else []),
         f"DXF：{result.path}",
         f"页面：{result.page_count}",
         f"拓印边界：{result.trace_path_count}",
@@ -119,7 +119,14 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
         getattr(window, "include_underlay_checkbox", None)
         and window.include_underlay_checkbox.isChecked()
     )
-    drawing_scale = float(window._drawing_scale())
+    multiplier_getter = getattr(window, "_export_drawing_multiplier", None)
+    drawing_multiplier = float(
+        multiplier_getter() if callable(multiplier_getter) else window._drawing_scale()
+    )
+    selected_ratio = float(window._drawing_scale())
+    explicit_model_calibration = bool(
+        getattr(window, "_has_explicit_model_calibration", lambda: False)()
+    )
     trace_color = int(window._trace_color())
     try:
         result = export_dxf(
@@ -128,7 +135,7 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
             window.binary_image.shape[0],
             window.calibration,
             trace_paths=trace_paths,
-            drawing_scale=drawing_scale,
+            drawing_scale=drawing_multiplier,
             trace_color=trace_color,
             raster_image=window.corrected_image if include_underlay else None,
             raster_output_path=scan_path if include_underlay else None,
@@ -141,6 +148,11 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
         )
         if dwg_path is not None:
             result = replace(result, dwg_path=dwg_path, output_format="DWG")
+        scale_description = (
+            "explicit_known_length"
+            if explicit_model_calibration
+            else f"1:{int(selected_ratio)}"
+        )
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
@@ -153,12 +165,15 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
                 "foreground_pixels": getattr(window, "_trace_foreground_pixels", 0),
                 "color_index": trace_color,
             },
-            "drawing_scale": f"1:{int(drawing_scale)}",
+            "scale_source": scale_description,
+            "drawing_multiplier": drawing_multiplier,
             "model_mm_per_pixel": result.mm_per_pixel,
             "export": {
                 **asdict(result),
                 "path": str(result.path),
-                "underlay_path": str(result.underlay_path) if result.underlay_path else None,
+                "underlay_path": (
+                    str(result.underlay_path) if result.underlay_path else None
+                ),
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
@@ -171,12 +186,17 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
         QMessageBox.critical(window, "拓印导出失败", str(exc))
         return None
 
+    scale_line = (
+        "尺寸来源：已知长度两点标定（不再叠加图纸比例）"
+        if explicit_model_calibration
+        else f"图纸比例：1:{int(selected_ratio)}"
+    )
     summary = [
-        *( [f"DWG：{result.dwg_path}"] if result.dwg_path is not None else [] ),
+        *([f"DWG：{result.dwg_path}"] if result.dwg_path is not None else []),
         f"DXF：{result.path}",
         f"拓印边界：{result.trace_path_count}",
         f"拓印顶点：{result.trace_vertex_count}",
-        f"图纸比例：1:{int(drawing_scale)}",
+        scale_line,
         f"模型坐标：{result.mm_per_pixel:.6f} mm/px",
         f"处理报告：{report_path}",
     ]
