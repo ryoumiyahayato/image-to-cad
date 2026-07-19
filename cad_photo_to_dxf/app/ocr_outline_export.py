@@ -9,6 +9,18 @@ from .auxiliary_recognition import TextCandidate
 
 PointTransform = Callable[[float, float], tuple[float, float]]
 _XDATA_APP = "OCR_CHARACTER"
+_AUTO_APPROVE_CONFIDENCE = 0.90
+_SINGLE_CHARACTER_CONFIDENCE = 0.97
+_SHORT_ASCII_CONFIDENCE = 0.94
+
+
+def _automatic_threshold(text: str) -> float:
+    compact = "".join(text.split())
+    if len(compact) <= 1:
+        return _SINGLE_CHARACTER_CONFIDENCE
+    if len(compact) <= 3 and compact.isascii():
+        return _SHORT_ASCII_CONFIDENCE
+    return _AUTO_APPROVE_CONFIDENCE
 
 
 def accepted_ocr_texts(
@@ -16,15 +28,19 @@ def accepted_ocr_texts(
     *,
     minimum_confidence: float = 0.58,
 ) -> tuple[TextCandidate, ...]:
-    """Return only OCR candidates explicitly approved for CAD export."""
+    """Return OCR candidates approved manually or safe for automatic export."""
 
-    return tuple(
-        item
-        for item in texts
-        if item.approved
-        and item.text.strip()
-        and float(item.confidence) >= minimum_confidence
-    )
+    accepted: list[TextCandidate] = []
+    for item in texts:
+        content = item.text.strip()
+        if not content or not item.approved:
+            continue
+        confidence = float(item.confidence)
+        if confidence < minimum_confidence:
+            continue
+        if item.reviewed or confidence >= _automatic_threshold(content):
+            accepted.append(item)
+    return tuple(accepted)
 
 
 def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
