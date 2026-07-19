@@ -37,7 +37,6 @@ def _page_layer_names(index: int) -> dict[str, str]:
         "TRACE_STRAIGHT": f"{prefix}_TRACE_STRAIGHT",
         "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
         "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
-        "TRACE_TEXT_OUTLINE": f"{prefix}_TRACE_TEXT_OUTLINE",
         "OCR_TEXT": f"{prefix}_OCR_TEXT",
     }
 
@@ -52,15 +51,14 @@ def _ensure_page_layers(doc, index: int) -> dict[str, str]:
         style = styles[base_name]
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-        layer = doc.layers.get(layer_name)
-        if index > 1 or base_name == "TRACE_TEXT_OUTLINE":
-            layer.off()
+        if index > 1:
+            doc.layers.get(layer_name).off()
     return names
 
 
 def _ensure_ocr_style(doc) -> None:
     if "OCR_CJK" not in doc.styles:
-        doc.styles.add("OCR_CJK", font="simsun.ttc")
+        doc.styles.add("OCR_CJK", font="simhei.ttf")
 
 
 def _add_page_underlay(
@@ -94,12 +92,9 @@ def export_trace_document_streaming(
 ) -> DocumentExportResult:
     """Export all pages as direct, editable model-space entities.
 
-    LibreCAD may display entities from several paper-space layouts at the same
-    coordinates. To avoid that viewer-specific overlap, exact multi-page output
-    uses model space only. Pages are spatially separated and controlled by
-    PAGE_###_* layers. Page one is visible by default; later pages are present
-    but their layers start switched off. OCR text is exported as editable TEXT,
-    while the matching pixel outlines remain on a disabled fallback layer.
+    Pages are spatially separated and controlled by PAGE_###_* layers. OCR
+    results are written once as complete editable TEXT objects. Matching raster
+    text contours are not exported, preventing duplicate fragmented characters.
     """
 
     first_page, remaining_pages = _require_first_page(pages)
