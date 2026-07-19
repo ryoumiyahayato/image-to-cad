@@ -193,10 +193,14 @@ def export_trace_document_streaming(
                 page_base + page_span * fraction,
             )
 
-        transform = lambda x, y, page_origin=origin_y: (
-            x * scale_x,
-            page_origin + (vector_height - y) * scale_y,
-        )
+        page_origin = origin_y
+
+        def transform(x: float, y: float) -> tuple[float, float]:
+            return (
+                x * scale_x,
+                page_origin + (vector_height - y) * scale_y,
+            )
+
         (
             current_path_count,
             current_vertex_count,
