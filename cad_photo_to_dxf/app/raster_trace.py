@@ -88,7 +88,9 @@ def make_black_white(
     return np.ascontiguousarray(binary), threshold, stages
 
 
-def _deduplicate_points(points: Iterable[tuple[float, float]]) -> tuple[tuple[float, float], ...]:
+def _deduplicate_points(
+    points: Iterable[tuple[float, float]],
+) -> tuple[tuple[float, float], ...]:
     result: list[tuple[float, float]] = []
     for point in points:
         normalized = (float(point[0]), float(point[1]))
@@ -119,7 +121,12 @@ def trace_binary(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[TracePath, ...]:
-    """Trace every connected black region at the binary image's full resolution."""
+    """Trace every connected black region at the binary image's full resolution.
+
+    ``CHAIN_APPROX_NONE`` intentionally retains every contour pixel. This is
+    larger than a simplified polyline, but it prevents diagonal strokes, glyph
+    edges, curves and irregular symbols from being replaced by an abstraction.
+    """
 
     if binary is None or binary.size == 0 or binary.ndim != 2:
         raise ValueError("Binary trace image must be a non-empty 2D image")
@@ -141,7 +148,7 @@ def trace_binary(
     contours, hierarchy = cv2.findContours(
         padded,
         cv2.RETR_TREE,
-        cv2.CHAIN_APPROX_SIMPLE,
+        cv2.CHAIN_APPROX_NONE,
     )
     if hierarchy is None or not contours:
         return ()
@@ -226,7 +233,7 @@ def trace_image(
         warnings.append("黑白图存在前景像素，但未形成可导出的闭合边界。")
     if vertex_count > 1_000_000:
         warnings.append(
-            "拓印边界超过 100 万个顶点；将完整保留细节，但 DXF/DWG 文件会较大。"
+            "精确像素拓印超过 100 万个顶点；不会简化细节，但 DXF/DWG 文件会较大。"
         )
     return RasterTraceResult(
         binary=binary,
