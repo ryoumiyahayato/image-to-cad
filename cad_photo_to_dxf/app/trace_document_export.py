@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterable, Iterator
+from dataclasses import replace
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -17,6 +18,7 @@ from .document_export import (
 )
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
+from .trace_dxf_entities import add_exact_trace_entities
 
 
 def _require_first_page(
@@ -90,6 +92,11 @@ def export_trace_document_streaming(
             size_in_pixel=(int(raster_width), int(raster_height)),
             name=f"SCAN_PAGE_{index:03d}",
         )
+        vector_width, vector_height = page.vector_size_px or (
+            raster_width,
+            raster_height,
+        )
+        base_page = replace(page, trace_paths=())
 
         layout_name = _safe_layout_name(index)
         layout = doc.layouts.new(layout_name)
@@ -103,39 +110,77 @@ def export_trace_document_streaming(
             layout_lines,
             layout_circles,
             layout_texts,
-            layout_trace_paths,
-            layout_trace_vertices,
-            _layout_entities,
+            _unused_layout_paths,
+            _unused_layout_vertices,
+            layout_entities,
         ) = _add_page_entities(
             layout,
             image_def,
-            page,
+            base_page,
             raster.shape,
             origin=(0.0, 0.0),
             drawing_multiplier=1.0,
         )
+        layout_scale_x = page_width_mm / max(float(vector_width), 1.0)
+        layout_scale_y = page_height_mm / max(float(vector_height), 1.0)
+        (
+            page_trace_paths,
+            page_trace_vertices,
+            trace_layout_entities,
+            _layout_coordinates,
+        ) = add_exact_trace_entities(
+            layout,
+            page.trace_paths,
+            transform=lambda x, y: (
+                x * layout_scale_x,
+                (vector_height - y) * layout_scale_y,
+            ),
+            color=page.trace_color,
+        )
+        layout_entities.extend(trace_layout_entities)
         line_count += layout_lines
         circle_count += layout_circles
         text_count += layout_texts
-        trace_path_count += layout_trace_paths
-        trace_vertex_count += layout_trace_vertices
+        trace_path_count += page_trace_paths
+        trace_vertex_count += page_trace_vertices
         layout_names.append(layout_name)
 
         (
             _model_lines,
             _model_circles,
             _model_texts,
-            _model_trace_paths,
-            _model_trace_vertices,
+            _unused_model_paths,
+            _unused_model_vertices,
             model_entities,
         ) = _add_page_entities(
             modelspace,
             image_def,
-            page,
+            base_page,
             raster.shape,
             origin=(0.0, model_y),
             drawing_multiplier=page.drawing_scale,
         )
+        model_scale_x = (
+            page_width_mm * page.drawing_scale / max(float(vector_width), 1.0)
+        )
+        model_scale_y = (
+            page_height_mm * page.drawing_scale / max(float(vector_height), 1.0)
+        )
+        (
+            _model_trace_paths,
+            _model_trace_vertices,
+            trace_model_entities,
+            _model_coordinates,
+        ) = add_exact_trace_entities(
+            modelspace,
+            page.trace_paths,
+            transform=lambda x, y: (
+                x * model_scale_x,
+                model_y + (vector_height - y) * model_scale_y,
+            ),
+            color=page.trace_color,
+        )
+        model_entities.extend(trace_model_entities)
         group_name = _safe_group_name(index)
         try:
             group = doc.groups.new(group_name)
