@@ -106,6 +106,17 @@ def _classify_region(
     return "TRACE_CURVE"
 
 
+def _expand_bounds(
+    points: Sequence[tuple[float, float]],
+    bounds: list[float],
+) -> None:
+    for x, y in points:
+        bounds[0] = min(bounds[0], x)
+        bounds[1] = min(bounds[1], y)
+        bounds[2] = max(bounds[2], x)
+        bounds[3] = max(bounds[3], y)
+
+
 def add_exact_trace_entities(
     layout,
     trace_paths: Sequence[TracePath],
@@ -117,12 +128,12 @@ def add_exact_trace_entities(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Add one editable solid HATCH per connected black region.
+    """Add exact editable boundaries and fills once in model space.
 
-    Earlier builds wrote every contour twice (outline plus hatch) and then wrote
-    the same geometry again in paper space. This function writes the minimum
-    exact representation: one hatch exterior plus its immediate white holes.
-    The contour coordinates themselves are unchanged.
+    Each contour is written as one closed LWPOLYLINE for broad CAD/FreeCAD
+    compatibility. Each connected black region also receives one solid HATCH
+    with its immediate white children as holes. PAGE layouts use viewports, so
+    these millions of coordinates are not duplicated a second time.
     """
 
     if not trace_paths:
@@ -130,7 +141,6 @@ def add_exact_trace_entities(
 
     checkpoint(cancellation_token)
     selected_palette = palette or TracePalette()
-    # A non-default legacy single-color request remains supported.
     if int(color) != 7:
         selected_palette = TracePalette(int(color), int(color), int(color))
 
@@ -143,8 +153,7 @@ def add_exact_trace_entities(
             black_indices.append(index)
 
     entities: list[object] = []
-    min_x = min_y = float("inf")
-    max_x = max_y = float("-inf")
+    bounds = [float("inf"), float("inf"), float("-inf"), float("-inf")]
     total_black = max(len(black_indices), 1)
 
     for position, index in enumerate(black_indices):
@@ -177,6 +186,14 @@ def add_exact_trace_entities(
         else:
             entity_color = _resolved_color(selected_palette.curve, 3)
 
+        root_outline = layout.add_lwpolyline(
+            root_points,
+            close=True,
+            dxfattribs={"layer": layer_name, "color": entity_color},
+        )
+        entities.append(root_outline)
+        _expand_bounds(root_points, bounds)
+
         hatch = layout.add_hatch(
             color=entity_color,
             dxfattribs={"layer": layer_name, "color": entity_color},
@@ -189,21 +206,28 @@ def add_exact_trace_entities(
                 transform(float(x), float(y))
                 for x, y in trace_paths[child_index].points
             ]
-            if len(child_points) >= 3:
-                hatch.paths.add_polyline_path(child_points, is_closed=True, flags=0)
+            if len(child_points) < 3:
+                continue
+            child_outline = layout.add_lwpolyline(
+                child_points,
+                close=True,
+                dxfattribs={"layer": layer_name, "color": entity_color},
+            )
+            entities.append(child_outline)
+            hatch.paths.add_polyline_path(child_points, is_closed=True, flags=0)
+            _expand_bounds(child_points, bounds)
 
         entities.append(hatch)
-        for x, y in root_points:
-            min_x = min(min_x, x)
-            min_y = min(min_y, y)
-            max_x = max(max_x, x)
-            max_y = max(max_y, y)
 
     report_progress(progress_callback, "cad-entities", 1.0)
-    bounds = [] if not entities else [(min_x, min_y), (max_x, max_y)]
+    resolved_bounds = (
+        []
+        if not entities
+        else [(bounds[0], bounds[1]), (bounds[2], bounds[3])]
+    )
     return (
         len(trace_paths),
         sum(len(path.points) for path in trace_paths),
         entities,
-        bounds,
+        resolved_bounds,
     )
