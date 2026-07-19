@@ -30,22 +30,7 @@ def _binary_symbol() -> np.ndarray:
     return binary
 
 
-def _page_with_small_text() -> np.ndarray:
-    binary = np.full((1000, 1400), 255, dtype=np.uint8)
-    cv2.putText(
-        binary,
-        "TEXT A1 9000",
-        (80, 110),
-        cv2.FONT_HERSHEY_SIMPLEX,
-        0.9,
-        0,
-        2,
-        cv2.LINE_8,
-    )
-    return binary
-
-
-def test_single_export_writes_compatible_exact_geometry(tmp_path: Path) -> None:
+def test_single_export_writes_outline_only_geometry(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (139.0, 0.0), 140.0)
@@ -65,11 +50,8 @@ def test_single_export_writes_compatible_exact_geometry(tmp_path: Path) -> None:
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
     outlines = list(modelspace.query("LWPOLYLINE"))
-    hatches = list(modelspace.query("HATCH"))
     assert len(outlines) == len(paths)
-    # On this deliberately tiny page the symbols are too large to qualify as
-    # safe text fills.  Exact boundaries remain, without a risky broad HATCH.
-    assert hatches == []
+    assert len(modelspace.query("HATCH")) == 0
     assert {entity.dxf.layer for entity in outlines} <= {
         "TRACE_STRAIGHT",
         "TRACE_CURVE",
@@ -79,89 +61,64 @@ def test_single_export_writes_compatible_exact_geometry(tmp_path: Path) -> None:
     assert not document.audit().errors
 
 
-def test_small_text_fill_uses_valid_polyline_boundary_flags(tmp_path: Path) -> None:
-    binary = _page_with_small_text()
-    paths = trace_binary(binary)
-    calibration = ScaleCalibration((0.0, 0.0), (1399.0, 0.0), 1400.0)
-
-    result = export_exact_trace_dxf(
-        paths,
-        tmp_path / "text-fill.dxf",
-        binary.shape[0],
-        calibration,
-        image_width=binary.shape[1],
-    )
-
-    document = ezdxf.readfile(result.path)
-    hatches = list(document.modelspace().query("HATCH"))
-    assert hatches
-    for hatch in hatches:
-        boundary_paths = hatch.paths.paths
-        assert boundary_paths
-        # Every polyline boundary must contain bit 2.  The outer loop also has
-        # bit 1; holes retain bit 2 without pretending to be external loops.
-        assert boundary_paths[0].path_type_flags & 2
-        assert boundary_paths[0].path_type_flags & 1
-        for hole in boundary_paths[1:]:
-            assert hole.path_type_flags & 2
-            assert not hole.path_type_flags & 1
-        assert hatch.dxf.hatch_style == 0
-    assert not document.audit().errors
-
-
-def test_page_spanning_regions_are_never_hatched(tmp_path: Path) -> None:
-    binary = np.full((800, 1200), 255, dtype=np.uint8)
-    polygon = np.array(((20, 20), (1180, 20), (850, 760), (20, 430)), dtype=np.int32)
-    cv2.fillPoly(binary, [polygon], 0)
-    cv2.rectangle(binary, (120, 120), (1080, 680), 255, 12)
-    paths = trace_binary(binary)
-    calibration = ScaleCalibration((0.0, 0.0), (1199.0, 0.0), 1200.0)
-
-    result = export_exact_trace_dxf(
-        paths,
-        tmp_path / "large-region.dxf",
-        binary.shape[0],
-        calibration,
-        image_width=binary.shape[1],
-    )
-
-    document = ezdxf.readfile(result.path)
-    assert len(document.modelspace().query("LWPOLYLINE")) == len(paths)
-    assert len(document.modelspace().query("HATCH")) == 0
-    assert not document.audit().errors
-
-
-def test_document_export_writes_geometry_once_and_uses_layout_viewport(tmp_path: Path) -> None:
+def _document_page(number: int) -> DocumentPage:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     raster = cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR)
-    page = DocumentPage(
-        page_number=1,
+    return DocumentPage(
+        page_number=number,
         raster=raster,
         page_size_mm=(140.0, 100.0),
         vector_size_px=(140, 100),
-        label="trace page",
+        label=f"trace page {number}",
         trace_paths=paths,
         drawing_scale=1.0,
         trace_color=7,
     )
 
+
+def test_document_export_uses_page_blocks_without_viewports_or_hatches(
+    tmp_path: Path,
+) -> None:
+    page = _document_page(1)
     result = export_trace_document_streaming(
         [page],
         tmp_path / "document.dxf",
         total_pages=1,
     )
 
-    assert result.trace_path_count == len(paths)
-    assert result.trace_vertex_count == sum(len(path.points) for path in paths)
+    assert result.trace_path_count == len(page.trace_paths)
+    assert result.trace_vertex_count == sum(len(path.points) for path in page.trace_paths)
     assert result.underlay_paths == ()
     document = ezdxf.readfile(result.path)
+    modelspace = document.modelspace()
     layout = document.layouts.get("PAGE-001")
-    assert len(layout.query("HATCH")) == 0
-    assert len(layout.query("LWPOLYLINE")) == 0
-    assert len(layout.query("VIEWPORT")) >= 1
-    assert len(document.modelspace().query("LWPOLYLINE")) == len(paths)
-    assert len(document.modelspace().query("HATCH")) == 0
-    assert len(document.modelspace().query("IMAGE")) == 0
+    block = document.blocks.get("PAGE_BLOCK_001")
+
+    assert len(modelspace.query("INSERT")) == 1
+    assert len(modelspace.query("LWPOLYLINE")) == 0
+    assert len(layout.query("INSERT")) == 1
+    assert len(layout.query("VIEWPORT")) == 0
+    assert len(block.query("LWPOLYLINE")) == len(page.trace_paths)
+    assert len(block.query("HATCH")) == 0
     assert result.group_names == ("PAGE_001",)
+    assert not document.audit().errors
+
+
+def test_only_first_page_layer_is_visible_by_default(tmp_path: Path) -> None:
+    pages = [_document_page(1), _document_page(2)]
+    result = export_trace_document_streaming(
+        pages,
+        tmp_path / "two-pages.dxf",
+        total_pages=2,
+    )
+
+    document = ezdxf.readfile(result.path)
+    inserts = list(document.modelspace().query("INSERT"))
+    assert len(inserts) == 2
+    assert {insert.dxf.layer for insert in inserts} == {"PAGE_001", "PAGE_002"}
+    assert document.layers.get("PAGE_001").is_off() is False
+    assert document.layers.get("PAGE_002").is_off() is True
+    assert len(document.layouts.get("PAGE-001").query("INSERT")) == 1
+    assert len(document.layouts.get("PAGE-002").query("INSERT")) == 1
     assert not document.audit().errors
