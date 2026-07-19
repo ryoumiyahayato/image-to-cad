@@ -11,11 +11,11 @@ from .cancellation import CancellationToken, ProgressCallback, checkpoint, repor
 from .document_export import DocumentExportResult, DocumentPage, _resolve_raster
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
+from .ocr_outline_export import add_ocr_outline_blocks
 from .trace_dxf_entities import (
     TRACE_LAYER_STYLES,
     TracePalette,
     add_exact_trace_entities,
-    add_ocr_text_entities,
 )
 
 
@@ -56,11 +56,6 @@ def _ensure_page_layers(doc, index: int) -> dict[str, str]:
     return names
 
 
-def _ensure_ocr_style(doc) -> None:
-    if "OCR_CJK" not in doc.styles:
-        doc.styles.add("OCR_CJK", font="simhei.ttf")
-
-
 def _add_page_underlay(
     layout,
     image_def,
@@ -90,11 +85,12 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Export all pages as direct, editable model-space entities.
+    """Export pages as direct model-space geometry.
 
-    Pages are spatially separated and controlled by PAGE_###_* layers. OCR
-    results are written once as complete editable TEXT objects. Matching raster
-    text contours are not exported, preventing duplicate fragmented characters.
+    OCR lines are not written as font-dependent DXF TEXT. Each accepted line is
+    converted with a locally installed system font into one vector block, so
+    LibreCAD renders the visible characters consistently and selects the whole
+    line as one object.
     """
 
     first_page, remaining_pages = _require_first_page(pages)
@@ -111,7 +107,6 @@ def export_trace_document_streaming(
     doc.header["$INSUNITS"] = units.MM
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
-    _ensure_ocr_style(doc)
 
     modelspace = doc.modelspace()
     underlays: list[Path] = []
@@ -213,12 +208,13 @@ def export_trace_document_streaming(
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
         )
-        current_text_count, _text_entities, _text_bounds = add_ocr_text_entities(
+        current_text_count, _text_entities, _text_bounds = add_ocr_outline_blocks(
+            doc,
             modelspace,
             page.texts,
             transform=transform,
             layer_name=layer_names["OCR_TEXT"],
-            style_name="OCR_CJK",
+            block_prefix=f"PAGE_{index:03d}_OCR_LINE",
         )
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
