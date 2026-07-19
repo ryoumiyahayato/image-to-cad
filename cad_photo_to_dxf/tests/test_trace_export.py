@@ -30,7 +30,7 @@ def _binary_symbol() -> np.ndarray:
     return binary
 
 
-def test_single_export_writes_one_exact_region_representation(tmp_path: Path) -> None:
+def test_single_export_writes_compatible_exact_geometry(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (139.0, 0.0), 140.0)
@@ -49,15 +49,16 @@ def test_single_export_writes_one_exact_region_representation(tmp_path: Path) ->
     assert result.mm_per_pixel == calibration.mm_per_pixel
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
-    assert len(modelspace.query("LWPOLYLINE")) == 0
+    outlines = list(modelspace.query("LWPOLYLINE"))
     hatches = list(modelspace.query("HATCH"))
+    assert len(outlines) == len(paths)
     assert len(hatches) == sum(path.depth % 2 == 0 for path in paths)
-    assert {hatch.dxf.layer for hatch in hatches} <= {
+    assert {entity.dxf.layer for entity in outlines + hatches} <= {
         "TRACE_STRAIGHT",
         "TRACE_CURVE",
         "TRACE_TEXT_SYMBOL",
     }
-    assert {hatch.dxf.color for hatch in hatches} <= {3, 5, 6}
+    assert {entity.dxf.color for entity in outlines + hatches} <= {3, 5, 6}
     assert not document.audit().errors
 
 
@@ -88,7 +89,9 @@ def test_document_export_writes_geometry_once_and_uses_layout_viewport(tmp_path:
     document = ezdxf.readfile(result.path)
     layout = document.layouts.get("PAGE-001")
     assert len(layout.query("HATCH")) == 0
+    assert len(layout.query("LWPOLYLINE")) == 0
     assert len(layout.query("VIEWPORT")) >= 1
+    assert len(document.modelspace().query("LWPOLYLINE")) == len(paths)
     assert len(document.modelspace().query("HATCH")) == sum(
         path.depth % 2 == 0 for path in paths
     )
