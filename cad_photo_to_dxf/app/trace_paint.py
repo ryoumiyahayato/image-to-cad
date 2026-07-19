@@ -151,26 +151,27 @@ class PaintView(QGraphicsView):
 
 
 class TracePaintDialog(QDialog):
-    """Repair the literal black/white source before vector boundaries are rebuilt."""
+    """Correct the source mask before the final CAD contours are rebuilt."""
 
     def __init__(self, binary: np.ndarray, parent=None) -> None:
         super().__init__(parent)
         if binary is None or binary.size == 0 or binary.ndim != 2:
-            raise ValueError("Trace repair requires a non-empty black/white image")
-        self.setWindowTitle("修补黑白拓印图")
+            raise ValueError("CAD contour correction requires a non-empty source mask")
+        self.setWindowTitle("检查并修正 CAD 轮廓来源")
         self.resize(1400, 900)
         layout = QVBoxLayout(self)
         layout.addWidget(
             QLabel(
-                "黑色画笔补线，白色画笔擦除。这里修改的是最终拓印源图，保存后会重新生成全部 CAD 边界。"
+                "黑色画笔补充缺失内容，白色画笔删除错误内容。"
+                "保存后会按修改结果重新生成最终 CAD 轮廓。"
             )
         )
 
         tools = QHBoxLayout()
         tools.addWidget(QLabel("画笔"))
         self.color_combo = QComboBox()
-        self.color_combo.addItem("黑色：补充线条", 0)
-        self.color_combo.addItem("白色：擦除错误", 255)
+        self.color_combo.addItem("黑色：补充缺失内容", 0)
+        self.color_combo.addItem("白色：删除错误内容", 255)
         tools.addWidget(self.color_combo)
         tools.addWidget(QLabel("笔宽"))
         self.width_slider = QSlider(Qt.Orientation.Horizontal)
@@ -204,7 +205,9 @@ class TracePaintDialog(QDialog):
             QDialogButtonBox.StandardButton.Save
             | QDialogButtonBox.StandardButton.Cancel
         )
-        buttons.button(QDialogButtonBox.StandardButton.Save).setText("保存并重新拓印")
+        buttons.button(QDialogButtonBox.StandardButton.Save).setText(
+            "保存并重新生成 CAD 轮廓"
+        )
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
