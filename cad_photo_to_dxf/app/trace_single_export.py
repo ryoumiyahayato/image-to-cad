@@ -70,9 +70,8 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-    doc.layers.get("TRACE_TEXT_OUTLINE").off()
     if "OCR_CJK" not in doc.styles:
-        doc.styles.add("OCR_CJK", font="simsun.ttc")
+        doc.styles.add("OCR_CJK", font="simhei.ttf")
 
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
