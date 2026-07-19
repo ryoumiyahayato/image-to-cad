@@ -41,5 +41,5 @@ def test_pdf_paper_coordinates_use_selected_drawing_ratio() -> None:
     assert not window._has_explicit_model_calibration()
     assert window._export_drawing_multiplier() == 50.0
     window._update_scale_label()
-    assert "图纸比例 1:50" in window.scale_result_label.text()
+    assert "输出比例 1:50" in window.scale_result_label.text()
     window.close()
