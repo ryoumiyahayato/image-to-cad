@@ -19,6 +19,16 @@ def imported_modules(tree: ast.AST) -> set[str]:
     return modules
 
 
+def imported_names(source: str, module: str) -> set[str]:
+    tree = ast.parse(source)
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ImportFrom) or node.module != module:
+            continue
+        names.update(alias.name for alias in node.names)
+    return names
+
+
 class GuiArchitectureTests(unittest.TestCase):
     def test_compatibility_gui_contains_no_processing_pipeline(self) -> None:
         source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
@@ -64,9 +74,9 @@ class GuiArchitectureTests(unittest.TestCase):
 
         self.assertIn("from app.gui_exact_release import MainWindow", main_source)
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
-        self.assertIn("from .gui_trace_release import MainWindow", exact_source)
-        self.assertIn("from .gui_trace_mode import MainWindow", release_source)
-        self.assertIn("from .gui_consolidated import MainWindow", trace_source)
+        self.assertIn("MainWindow", imported_names(exact_source, "gui_trace_release"))
+        self.assertIn("MainWindow", imported_names(release_source, "gui_trace_mode"))
+        self.assertIn("MainWindow", imported_names(trace_source, "gui_consolidated"))
         self.assertIn("from .gui_state_guard import", consolidated_source)
         self.assertIn("from .gui_review import MainWindow", state_source)
         self.assertIn("from .gui_guard import MainWindow", review_source)
@@ -93,6 +103,7 @@ class GuiArchitectureTests(unittest.TestCase):
         engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
         paint_source = (APP_ROOT / "trace_paint.py").read_text(encoding="utf-8")
         export_source = (APP_ROOT / "trace_gui_export.py").read_text(encoding="utf-8")
+        entity_source = (APP_ROOT / "trace_dxf_entities.py").read_text(encoding="utf-8")
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
         self.assertIn("生成当前 PDF 的全部页 CAD 轮廓", release_source)
@@ -106,9 +117,10 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("黑色：补充缺失内容", paint_source)
         self.assertIn("白色：删除错误内容", paint_source)
         self.assertIn("后台导出", export_source)
-        self.assertIn("TRACE_STRAIGHT", export_source)
-        self.assertIn("TRACE_CURVE", export_source)
-        self.assertIn("TRACE_TEXT_SYMBOL", export_source)
+        self.assertIn("TRACE_STRAIGHT", entity_source)
+        self.assertIn("TRACE_CURVE", entity_source)
+        self.assertIn("TRACE_TEXT_SYMBOL", entity_source)
+        self.assertIn("OCR_TEXT", entity_source)
 
 
 if __name__ == "__main__":
