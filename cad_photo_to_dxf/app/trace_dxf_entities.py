@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from math import hypot
+from math import atan2, degrees, hypot
 
+from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .raster_trace import TracePath
 
@@ -26,6 +27,8 @@ TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
     "TRACE_CURVE": {"color": 3, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
+    "TRACE_TEXT_OUTLINE": {"color": 8, "lineweight": 0},
+    "OCR_TEXT": {"color": 6, "lineweight": 0},
 }
 
 
@@ -105,6 +108,39 @@ def _classify_region(
     return "TRACE_CURVE"
 
 
+def _path_matches_ocr(
+    path: TracePath,
+    texts: Sequence[TextCandidate],
+) -> bool:
+    if not texts or len(path.points) < 3:
+        return False
+    min_x, min_y, max_x, max_y = _path_box(path)
+    width = max_x - min_x + 1.0
+    height = max_y - min_y + 1.0
+    center_x = (min_x + max_x) * 0.5
+    center_y = (min_y + max_y) * 0.5
+    for text in texts:
+        x, y, box_width, box_height = text.bbox
+        margin_x = max(2.0, box_width * 0.08)
+        margin_y = max(2.0, box_height * 0.12)
+        left = float(x) - margin_x
+        top = float(y) - margin_y
+        right = float(x + box_width) + margin_x
+        bottom = float(y + box_height) + margin_y
+        center_inside = left <= center_x <= right and top <= center_y <= bottom
+        size_compatible = width <= (right - left) * 1.25 and height <= (bottom - top) * 1.35
+        if center_inside and size_compatible:
+            return True
+        inside_points = sum(
+            1
+            for point_x, point_y in path.points
+            if left <= point_x <= right and top <= point_y <= bottom
+        )
+        if inside_points / max(len(path.points), 1) >= 0.80 and size_compatible:
+            return True
+    return False
+
+
 def _expand_bounds(
     points: Sequence[tuple[float, float]],
     bounds: list[float],
@@ -121,13 +157,7 @@ def _editable_polyline_chunks(
     *,
     max_vertices: int = MAX_EDITABLE_POLYLINE_VERTICES,
 ) -> list[tuple[list[tuple[float, float]], bool]]:
-    """Split a very long closed contour into small directly editable polylines.
-
-    Consecutive chunks share one endpoint, and the final chunk ends at the first
-    point. Therefore every original contour segment is retained exactly once.
-    Short contours stay closed and remain a convenient single character/stroke
-    object; only unusually long connected contours are divided.
-    """
+    """Split a very long closed contour into small directly editable polylines."""
 
     resolved = list(points)
     if len(resolved) < 3:
@@ -168,6 +198,13 @@ def _add_editable_contour(
     return entities
 
 
+def _layer_name(
+    base_name: str,
+    layer_names: Mapping[str, str] | None,
+) -> str:
+    return str(layer_names.get(base_name, base_name)) if layer_names else base_name
+
+
 def add_exact_trace_entities(
     layout,
     trace_paths: Sequence[TracePath],
@@ -176,16 +213,15 @@ def add_exact_trace_entities(
     color: int = 7,
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
+    ocr_texts: Sequence[TextCandidate] = (),
+    layer_names: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Write independent editable contour entities without blocks or HATCH.
+    """Write independent editable contours without blocks or HATCH.
 
-    Each short source contour is one closed LWPOLYLINE. Very long connected
-    contours are split into exact, endpoint-sharing pieces with at most 64
-    vertices so a user can delete or reshape a local part without selecting an
-    entire page-sized network. No coordinates are simplified, fitted, merged,
-    snapped, or converted into filled entities.
+    OCR-matched character outlines are preserved on a separate fallback layer;
+    the exporter turns that layer off by default after adding editable CAD text.
     """
 
     if not trace_paths:
@@ -222,23 +258,28 @@ def add_exact_trace_entities(
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
-        layer_name = _classify_region(
-            trace_path,
-            source_size=source_size,
-            hole_count=len(hole_indices),
-        )
-        if layer_name == "TRACE_STRAIGHT":
-            entity_color = _resolved_color(selected_palette.straight, 5)
-        elif layer_name == "TRACE_TEXT_SYMBOL":
-            entity_color = _resolved_color(selected_palette.text_symbol, 6)
+        if _path_matches_ocr(trace_path, ocr_texts):
+            base_layer_name = "TRACE_TEXT_OUTLINE"
+            entity_color = 8
         else:
-            entity_color = _resolved_color(selected_palette.curve, 3)
+            base_layer_name = _classify_region(
+                trace_path,
+                source_size=source_size,
+                hole_count=len(hole_indices),
+            )
+            if base_layer_name == "TRACE_STRAIGHT":
+                entity_color = _resolved_color(selected_palette.straight, 5)
+            elif base_layer_name == "TRACE_TEXT_SYMBOL":
+                entity_color = _resolved_color(selected_palette.text_symbol, 6)
+            else:
+                entity_color = _resolved_color(selected_palette.curve, 3)
+        resolved_layer_name = _layer_name(base_layer_name, layer_names)
 
         entities.extend(
             _add_editable_contour(
                 layout,
                 root_points,
-                layer_name=layer_name,
+                layer_name=resolved_layer_name,
                 color=entity_color,
             )
         )
@@ -255,7 +296,7 @@ def add_exact_trace_entities(
                 _add_editable_contour(
                     layout,
                     child_points,
-                    layer_name=layer_name,
+                    layer_name=resolved_layer_name,
                     color=entity_color,
                 )
             )
@@ -271,3 +312,63 @@ def add_exact_trace_entities(
         entities,
         resolved_bounds,
     )
+
+
+def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
+    if text.quad and len(text.quad) == 4:
+        return text.quad
+    x, y, width, height = text.bbox
+    return (
+        (float(x), float(y)),
+        (float(x + width), float(y)),
+        (float(x + width), float(y + height)),
+        (float(x), float(y + height)),
+    )
+
+
+def add_ocr_text_entities(
+    layout,
+    texts: Sequence[TextCandidate],
+    *,
+    transform: PointTransform,
+    layer_name: str = "OCR_TEXT",
+    style_name: str = "OCR_CJK",
+    minimum_confidence: float = 0.58,
+) -> tuple[int, list[object], list[tuple[float, float]]]:
+    """Add one directly editable DXF TEXT entity for each accepted OCR item."""
+
+    entities: list[object] = []
+    bounds: list[tuple[float, float]] = []
+    for candidate in texts:
+        content = candidate.text.replace("\r", " ").replace("\n", " ").strip()
+        if not content or candidate.confidence < minimum_confidence:
+            continue
+        quad = _candidate_quad(candidate)
+        transformed = [transform(float(x), float(y)) for x, y in quad]
+        top_left, top_right, bottom_right, bottom_left = transformed
+        char_height = max(
+            0.01,
+            0.85
+            * (
+                hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
+                + hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
+            )
+            * 0.5,
+        )
+        rotation = degrees(
+            atan2(bottom_right[1] - bottom_left[1], bottom_right[0] - bottom_left[0])
+        )
+        entity = layout.add_text(
+            content,
+            height=char_height,
+            dxfattribs={
+                "layer": layer_name,
+                "color": 6,
+                "style": style_name,
+                "rotation": float(rotation),
+            },
+        )
+        entity.set_placement(bottom_left)
+        entities.append(entity)
+        bounds.extend(transformed)
+    return len(entities), entities, bounds
