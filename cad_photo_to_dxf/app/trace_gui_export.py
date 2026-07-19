@@ -9,10 +9,11 @@ from PySide6.QtWidgets import QMessageBox
 from . import __version__
 from .document_export import DocumentExportResult
 from .dwg_converter import DwgConversionUnavailable, convert_dxf_to_dwg
-from .dxf_exporter import ExportResult, export_dxf
+from .dxf_exporter import ExportResult
 from .gui_export import _choose_oda_converter, _select_output_path
 from .reporting import REPORT_SCHEMA_VERSION, write_json_report
 from .trace_document_export import export_trace_document_streaming
+from .trace_single_export import export_exact_trace_dxf
 
 
 def _convert_if_requested(
@@ -133,13 +134,12 @@ def export_trace_single(window: Any) -> tuple[ExportResult, Path] | None:
     )
     trace_color = int(window._trace_color())
     try:
-        result = export_dxf(
-            [],
+        result = export_exact_trace_dxf(
+            trace_paths,
             dxf_path,
             window.binary_image.shape[0],
             window.calibration,
-            trace_paths=trace_paths,
-            drawing_scale=drawing_multiplier,
+            drawing_multiplier=drawing_multiplier,
             trace_color=trace_color,
             raster_image=window.corrected_image if include_underlay else None,
             raster_output_path=scan_path if include_underlay else None,
