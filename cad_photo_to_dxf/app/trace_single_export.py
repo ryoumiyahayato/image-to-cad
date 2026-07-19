@@ -56,7 +56,11 @@ def export_exact_trace_dxf(
         doc.header["$INSUNITS"] = 0
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
-    for layer_name, style in {**LAYER_STYLES, **TRACE_LAYER_STYLES}.items():
+    styles = {
+        "SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"],
+        **TRACE_LAYER_STYLES,
+    }
+    for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
 
