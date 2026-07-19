@@ -22,7 +22,7 @@ hiddenimports = collect_submodules("ezdxf")
 hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
 binaries = []
-for package in ("pypdfium2", "pypdfium2_raw"):
+for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime"):
     package_datas, package_binaries, package_hiddenimports = collect_all(package)
     datas += package_datas
     binaries += package_binaries
@@ -32,6 +32,7 @@ datas += [
     ("README.md", "."),
     ("samples/test.jpg", "samples"),
 ]
+
 
 a = Analysis(
     ["main.py"],
