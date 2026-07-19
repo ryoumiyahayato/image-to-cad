@@ -14,7 +14,7 @@ from .dxf_exporter import ExportResult
 from .gui_export import _choose_oda_converter, _select_output_path
 from .reporting import REPORT_SCHEMA_VERSION, write_json_report
 from .trace_document_export import export_trace_document_streaming
-from .trace_dxf_entities import TracePalette
+from .trace_dxf_entities import MAX_EDITABLE_POLYLINE_VERTICES, TracePalette
 from .trace_single_export import export_exact_trace_dxf
 
 
@@ -171,6 +171,14 @@ def _start_document_export(window: Any) -> None:
             "dxf": str(result.path),
             "dwg": str(dwg_path) if dwg_path is not None else None,
             "scale": scale_description,
+            "editable_entity_strategy": {
+                "page_block_wrappers": False,
+                "groups": False,
+                "hatches": False,
+                "first_page_direct_in_modelspace": True,
+                "all_pages_direct_in_layouts": True,
+                "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
+            },
             "color_layers": {
                 "straight": {"layer": "TRACE_STRAIGHT", "aci": 5},
                 "curve": {"layer": "TRACE_CURVE", "aci": 3},
@@ -178,7 +186,9 @@ def _start_document_export(window: Any) -> None:
             },
             "warnings": [
                 "颜色分类只用于区分检查；不会删减或改写任何轮廓坐标。",
-                "PAGE 布局通过视口引用模型空间，不再重复写入数百万个顶点。",
+                "第一页直接写入模型空间；全部页面直接写入各自 PAGE 布局。",
+                "不使用 BLOCK、INSERT、GROUP 或 HATCH 包裹页面内容。",
+                f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线，坐标不简化。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
         }
@@ -203,6 +213,8 @@ def _start_document_export(window: Any) -> None:
             f"CAD 轮廓：{result.trace_path_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
+            "编辑方式：独立轮廓/局部分段，不使用页面块或编组",
+            "模型空间：第 1 页；PAGE 布局：全部页面",
             "颜色：直线蓝色、曲线绿色、文字/符号品红色",
             f"处理报告：{completion.report_path}",
         ]
@@ -301,6 +313,12 @@ def _start_single_export(window: Any) -> None:
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
             "model_mm_per_pixel": result.mm_per_pixel,
+            "editable_entity_strategy": {
+                "block_wrappers": False,
+                "groups": False,
+                "hatches": False,
+                "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
+            },
             "color_layers": {
                 "straight": {"layer": "TRACE_STRAIGHT", "aci": 5},
                 "curve": {"layer": "TRACE_CURVE", "aci": 3},
@@ -314,6 +332,7 @@ def _start_single_export(window: Any) -> None:
             },
             "warnings": [
                 "颜色分类只用于检查；CAD 轮廓坐标保持不变。",
+                f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
         }
@@ -337,6 +356,7 @@ def _start_single_export(window: Any) -> None:
             f"CAD 轮廓：{result.trace_path_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
+            "编辑方式：独立轮廓/局部分段，不使用块或编组",
             "颜色：直线蓝色、曲线绿色、文字/符号品红色",
             f"处理报告：{completion.report_path}",
         ]
