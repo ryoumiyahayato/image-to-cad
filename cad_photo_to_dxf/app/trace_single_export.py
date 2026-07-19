@@ -12,14 +12,10 @@ from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
 from .image_loader import save_image
-from .ocr_outline_export import add_ocr_outline_blocks
+from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
-from .trace_dxf_entities import (
-    TRACE_LAYER_STYLES,
-    TracePalette,
-    add_exact_trace_entities,
-)
+from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
 
 
 def export_exact_trace_dxf(
@@ -63,10 +59,7 @@ def export_exact_trace_dxf(
         doc.header["$INSUNITS"] = 0
     doc.header["$LUNITS"] = 2
     doc.header["$LWDISPLAY"] = 1
-    styles = {
-        "SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"],
-        **TRACE_LAYER_STYLES,
-    }
+    styles = {"SCAN_UNDERLAY": LAYER_STYLES["SCAN_UNDERLAY"], **TRACE_LAYER_STYLES}
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
@@ -111,9 +104,7 @@ def export_exact_trace_dxf(
             rotation=0.0,
             dxfattribs={"layer": "SCAN_UNDERLAY"},
         )
-        coordinates.extend(
-            ((0.0, 0.0), (raster_width * scale, raster_height * scale))
-        )
+        coordinates.extend(((0.0, 0.0), (raster_width * scale, raster_height * scale)))
 
     def entity_progress(stage: str, fraction: float) -> None:
         report_progress(progress_callback, stage, 0.05 + 0.80 * fraction)
@@ -121,19 +112,15 @@ def export_exact_trace_dxf(
     def transform(x: float, y: float) -> tuple[float, float]:
         return (x * scale, (image_height - y) * scale)
 
-    (
-        trace_path_count,
-        trace_vertex_count,
-        _trace_entities,
-        trace_bounds,
-    ) = add_exact_trace_entities(
+    exportable_texts = accepted_ocr_texts(texts)
+    trace_path_count, trace_vertex_count, _trace_entities, trace_bounds = add_exact_trace_entities(
         modelspace,
         trace_paths,
         transform=transform,
         color=trace_color,
         source_size=(resolved_width, image_height),
         palette=palette,
-        ocr_texts=texts,
+        ocr_texts=exportable_texts,
         cancellation_token=cancellation_token,
         progress_callback=entity_progress,
     )
@@ -141,7 +128,7 @@ def export_exact_trace_dxf(
     text_count, _text_entities, text_bounds = add_ocr_outline_blocks(
         doc,
         modelspace,
-        texts,
+        exportable_texts,
         transform=transform,
         layer_name="OCR_TEXT",
         block_prefix="OCR_LINE",
