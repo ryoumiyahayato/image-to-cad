@@ -28,6 +28,8 @@ class TextCandidate:
     rotation_deg: float = 0.0
     quad: tuple[tuple[float, float], ...] | None = None
     source: str = "unknown"
+    approved: bool = True
+    reviewed: bool = False
 
 
 @dataclass(frozen=True)
@@ -171,6 +173,7 @@ def _run_optional_ocr(
                 confidence,
                 kind,
                 source="pytesseract",
+                approved=False,
             )
         )
     return results, None
