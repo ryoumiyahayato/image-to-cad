@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+import cv2
 import numpy as np
 
 from app import ocr_recognition
@@ -66,3 +67,23 @@ def test_low_confidence_ocr_is_not_exported(monkeypatch) -> None:
 
     assert candidates == ()
     assert warnings
+
+
+def test_installed_rapidocr_runtime_accepts_character_box_options(monkeypatch) -> None:
+    monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", None)
+    image = np.full((120, 260, 3), 255, dtype=np.uint8)
+    cv2.putText(
+        image,
+        "A1",
+        (55, 82),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        2.0,
+        (0, 0, 0),
+        4,
+        cv2.LINE_AA,
+    )
+
+    candidates = ocr_recognition._recognize_rapidocr_pass(image, rotation=0)
+
+    assert isinstance(candidates, list)
+    assert ocr_recognition._RAPID_OCR_ENGINE is not None
