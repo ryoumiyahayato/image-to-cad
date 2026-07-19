@@ -98,7 +98,9 @@ def test_document_export_uses_page_blocks_without_viewports_or_hatches(
     assert len(modelspace.query("INSERT")) == 1
     assert len(modelspace.query("LWPOLYLINE")) == 0
     assert len(layout.query("INSERT")) == 1
-    assert len(layout.query("VIEWPORT")) == 0
+    # Every paperspace layout owns one mandatory base viewport; no additional
+    # viewport is created to render the page geometry.
+    assert len(layout.query("VIEWPORT")) == 1
     assert len(block.query("LWPOLYLINE")) == len(page.trace_paths)
     assert len(block.query("HATCH")) == 0
     assert result.group_names == ("PAGE_001",)
