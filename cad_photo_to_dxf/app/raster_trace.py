@@ -13,9 +13,9 @@ from .cancellation import CancellationToken, ProgressCallback, checkpoint, repor
 class TracePath:
     """One closed boundary in source-image pixel coordinates.
 
-    The paths represent the printed black regions themselves rather than an
-    inferred wall/axis/structure model. ``parent`` and ``depth`` preserve the
-    contour nesting needed for counters in text and holes in symbols.
+    The paths represent the printed regions themselves rather than an inferred
+    wall/axis/structure model. ``parent`` and ``depth`` preserve the contour
+    nesting needed for counters in text and holes in symbols.
     """
 
     points: tuple[tuple[float, float], ...]
@@ -55,7 +55,7 @@ def make_black_white(
     *,
     foreground_threshold: int | None = None,
 ) -> tuple[np.ndarray, int, dict[str, np.ndarray]]:
-    """Create a literal black/white page without morphology or line cleanup.
+    """Create the literal foreground mask used to construct CAD boundaries.
 
     PDF renderings generally have a perfectly white background. When at least
     90% of the page is exactly white, every non-white anti-aliased pixel is
@@ -82,14 +82,12 @@ def make_black_white(
         threshold = int(max(1, min(254, foreground_threshold)))
     _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
 
-    # A scanned drawing normally has a white majority. Handle inverted scans
-    # deterministically without asking the user to tune another parameter.
     if int(np.count_nonzero(binary == 0)) > binary.size // 2:
         binary = 255 - binary
 
     stages = {
-        "灰度原样": gray,
-        "黑白拓印图": binary,
+        "灰度原图": gray,
+        "CAD 轮廓来源": binary,
     }
     return np.ascontiguousarray(binary), threshold, stages
 
@@ -127,11 +125,13 @@ def trace_binary(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[TracePath, ...]:
-    """Trace every connected black region at the binary image's full resolution.
+    """Trace every connected foreground region at full image resolution.
 
-    ``CHAIN_APPROX_NONE`` intentionally retains every contour pixel. This is
-    larger than a simplified polyline, but it prevents diagonal strokes, glyph
-    edges, curves and irregular symbols from being replaced by an abstraction.
+    ``CHAIN_APPROX_SIMPLE`` removes only intermediate points that lie on the
+    same horizontal, vertical, or diagonal run. It does not apply an epsilon,
+    curve fit, Hough transform, or semantic simplification. Filling the retained
+    contour tree reconstructs the same pixel mask while reducing CAD vertices
+    and export memory substantially.
     """
 
     if binary is None or binary.size == 0 or binary.ndim != 2:
@@ -154,7 +154,7 @@ def trace_binary(
     contours, hierarchy = cv2.findContours(
         padded,
         cv2.RETR_TREE,
-        cv2.CHAIN_APPROX_NONE,
+        cv2.CHAIN_APPROX_SIMPLE,
     )
     if hierarchy is None or not contours:
         return ()
@@ -222,7 +222,7 @@ def trace_image(
     progress_callback: ProgressCallback | None = None,
 ) -> RasterTraceResult:
     checkpoint(cancellation_token)
-    report_progress(progress_callback, "black-white", 0.02)
+    report_progress(progress_callback, "foreground-mask", 0.02)
     binary, threshold, stages = make_black_white(
         image,
         foreground_threshold=foreground_threshold,
@@ -236,10 +236,10 @@ def trace_image(
     vertex_count = sum(len(path.points) for path in paths)
     warnings: list[str] = []
     if not paths and foreground_pixels:
-        warnings.append("黑白图存在前景像素，但未形成可导出的闭合边界。")
+        warnings.append("前景内容存在，但未形成可导出的闭合 CAD 边界。")
     if vertex_count > 1_000_000:
         warnings.append(
-            "精确像素拓印超过 100 万个顶点；不会简化细节，但 DXF/DWG 文件会较大。"
+            "CAD 边界超过 100 万个顶点；内容保持不变，但 DXF/DWG 文件会较大。"
         )
     return RasterTraceResult(
         binary=binary,
