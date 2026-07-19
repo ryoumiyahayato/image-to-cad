@@ -18,7 +18,8 @@ from PySide6.QtWidgets import (
 )
 
 from .document_export import DocumentPage
-from .gui_trace_release import TRACE_PDF_DPI, MainWindow as _TraceReleaseMainWindow
+from .gui_trace_release import TRACE_PDF_DPI
+from .gui_trace_release import MainWindow as _TraceReleaseMainWindow
 from .image_loader import load_image
 from .ocr_recognition import render_ocr_overlay
 from .ocr_review import OcrReviewDialog
@@ -340,10 +341,12 @@ class MainWindow(_TraceReleaseMainWindow):
                 stages={
                     "CAD 轮廓来源（修改后）": edited.copy(),
                     **(
-                        {"OCR 文字识别结果": render_ocr_overlay(
-                            self.corrected_image,
-                            self._ocr_texts,
-                        )}
+                        {
+                            "OCR 文字识别结果": render_ocr_overlay(
+                                self.corrected_image,
+                                self._ocr_texts,
+                            )
+                        }
                         if self.corrected_image is not None and self._ocr_texts
                         else {}
                     ),
