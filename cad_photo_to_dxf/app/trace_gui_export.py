@@ -160,13 +160,14 @@ def _start_document_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "exact_cad_contours_all_pdf_pages",
+            "mode": "ocr_first_exact_cad_all_pdf_pages",
             "input": str(source_path),
             "page_count": result.page_count,
             "trace_path_count": result.trace_path_count,
             "trace_vertex_count": result.trace_vertex_count,
-            "layouts": list(result.layout_names),
-            "page_groups": list(result.group_names),
+            "editable_text_count": result.text_count,
+            "layouts": [],
+            "page_groups": [],
             "scan_underlays": [str(path) for path in result.underlay_paths],
             "dxf": str(result.path),
             "dwg": str(dwg_path) if dwg_path is not None else None,
@@ -175,20 +176,18 @@ def _start_document_export(window: Any) -> None:
                 "page_block_wrappers": False,
                 "groups": False,
                 "hatches": False,
-                "first_page_direct_in_modelspace": True,
-                "all_pages_direct_in_layouts": True,
+                "paper_space_layouts": False,
+                "all_pages_spatially_separated_in_modelspace": True,
+                "later_page_layers_default_off": True,
+                "ocr_text_as_cad_text": True,
+                "ocr_outline_fallback_default_off": True,
                 "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
-            "color_layers": {
-                "straight": {"layer": "TRACE_STRAIGHT", "aci": 5},
-                "curve": {"layer": "TRACE_CURVE", "aci": 3},
-                "text_or_symbol": {"layer": "TRACE_TEXT_SYMBOL", "aci": 6},
-            },
             "warnings": [
-                "颜色分类只用于区分检查；不会删减或改写任何轮廓坐标。",
-                "第一页直接写入模型空间；全部页面直接写入各自 PAGE 布局。",
-                "不使用 BLOCK、INSERT、GROUP 或 HATCH 包裹页面内容。",
-                f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线，坐标不简化。",
+                "为避免 LibreCAD 叠加纸空间布局，全部页面改为模型空间分离排布。",
+                "第一页图层默认开启；后续页面图层默认关闭，可按 PAGE_### 前缀切换。",
+                "OCR 文字导出为可编辑 CAD TEXT；原字形轮廓保存在默认关闭的 TRACE_TEXT_OUTLINE 回退图层。",
+                "颜色分类只用于检查；不会简化、吸附或合并非文字轮廓坐标。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
         }
@@ -211,11 +210,11 @@ def _start_document_export(window: Any) -> None:
             f"DXF：{result.path}",
             f"PDF 页面：{result.page_count}",
             f"CAD 轮廓：{result.trace_path_count}",
+            f"可编辑文字：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "编辑方式：独立轮廓/局部分段，不使用页面块或编组",
-            "模型空间：第 1 页；PAGE 布局：全部页面",
-            "颜色：直线蓝色、曲线绿色、文字/符号品红色",
+            "页面方式：模型空间分离排布；第 2 页起图层默认关闭",
+            "文字方式：OCR TEXT 可直接改内容；原字形轮廓保留在关闭图层",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
@@ -266,6 +265,7 @@ def _start_single_export(window: Any) -> None:
     source_path = Path(window.current_path) if window.current_path is not None else None
     threshold = getattr(window, "_trace_threshold", None)
     foreground_pixels = int(getattr(window, "_trace_foreground_pixels", 0))
+    texts = tuple(getattr(window, "_ocr_texts", ()))
 
     def operation(token: CancellationToken, progress: ProgressCallback) -> object:
         result = export_exact_trace_dxf(
@@ -277,6 +277,7 @@ def _start_single_export(window: Any) -> None:
             drawing_multiplier=drawing_multiplier,
             trace_color=7,
             palette=DEFAULT_PALETTE,
+            texts=texts,
             raster_image=raster_image,
             raster_output_path=scan_path if include_underlay else None,
             cancellation_token=token,
@@ -302,13 +303,14 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "exact_cad_contours_single_page",
+            "mode": "ocr_first_exact_cad_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "threshold": threshold,
                 "foreground_pixels": foreground_pixels,
+                "editable_text_count": result.text_count,
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
@@ -317,12 +319,9 @@ def _start_single_export(window: Any) -> None:
                 "block_wrappers": False,
                 "groups": False,
                 "hatches": False,
+                "ocr_text_as_cad_text": True,
+                "ocr_outline_fallback_default_off": True,
                 "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
-            },
-            "color_layers": {
-                "straight": {"layer": "TRACE_STRAIGHT", "aci": 5},
-                "curve": {"layer": "TRACE_CURVE", "aci": 3},
-                "text_or_symbol": {"layer": "TRACE_TEXT_SYMBOL", "aci": 6},
             },
             "export": {
                 **asdict(result),
@@ -331,7 +330,7 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "颜色分类只用于检查；CAD 轮廓坐标保持不变。",
+                "OCR 文字导出为可编辑 CAD TEXT；原字形轮廓保存在默认关闭的回退图层。",
                 f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
@@ -354,10 +353,10 @@ def _start_single_export(window: Any) -> None:
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
             f"CAD 轮廓：{result.trace_path_count}",
+            f"可编辑文字：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "编辑方式：独立轮廓/局部分段，不使用块或编组",
-            "颜色：直线蓝色、曲线绿色、文字/符号品红色",
+            "文字方式：OCR TEXT 可直接修改；原字形轮廓在关闭图层",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
