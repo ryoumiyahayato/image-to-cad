@@ -12,13 +12,13 @@ from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
 from .image_loader import save_image
+from .ocr_outline_export import add_ocr_outline_blocks
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
 from .trace_dxf_entities import (
     TRACE_LAYER_STYLES,
     TracePalette,
     add_exact_trace_entities,
-    add_ocr_text_entities,
 )
 
 
@@ -70,8 +70,6 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-    if "OCR_CJK" not in doc.styles:
-        doc.styles.add("OCR_CJK", font="simhei.ttf")
 
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
@@ -140,12 +138,13 @@ def export_exact_trace_dxf(
         progress_callback=entity_progress,
     )
     coordinates.extend(trace_bounds)
-    text_count, _text_entities, text_bounds = add_ocr_text_entities(
+    text_count, _text_entities, text_bounds = add_ocr_outline_blocks(
+        doc,
         modelspace,
         texts,
         transform=transform,
         layer_name="OCR_TEXT",
-        style_name="OCR_CJK",
+        block_prefix="OCR_LINE",
     )
     coordinates.extend(text_bounds)
 
