@@ -140,19 +140,18 @@ def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
 
-        # Keep the guarded document chain explicit for architecture checks.
         from app.gui_state_guard import MainWindow
-        from app.gui_consolidated import MainWindow as ConsolidatedMainWindow
+        from app.gui_trace_release import MainWindow as TraceMainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
         ) from exc
 
-    if not issubclass(ConsolidatedMainWindow, MainWindow):
-        raise RuntimeError("Consolidated GUI must preserve the guarded PR20 chain")
+    if not issubclass(TraceMainWindow, MainWindow):
+        raise RuntimeError("Trace GUI must preserve the guarded document window chain")
     app = QApplication(sys.argv)
     app.setApplicationName(f"CAD Photo to DXF {__version__}")
-    window = ConsolidatedMainWindow()
+    window = TraceMainWindow()
     window.show()
     return app.exec()
 
