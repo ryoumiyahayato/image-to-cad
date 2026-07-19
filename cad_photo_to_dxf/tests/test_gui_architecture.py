@@ -49,8 +49,9 @@ class GuiArchitectureTests(unittest.TestCase):
         }
         self.assertTrue(forbidden_modules.isdisjoint(imported))
 
-    def test_active_entrypoint_preserves_guard_chain_and_uses_trace_release(self) -> None:
+    def test_active_entrypoint_preserves_guard_chain_and_uses_exact_release(self) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
+        exact_source = (APP_ROOT / "gui_exact_release.py").read_text(encoding="utf-8")
         release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
         trace_source = (APP_ROOT / "gui_trace_mode.py").read_text(encoding="utf-8")
         consolidated_source = (APP_ROOT / "gui_consolidated.py").read_text(
@@ -61,8 +62,9 @@ class GuiArchitectureTests(unittest.TestCase):
         guard_source = (APP_ROOT / "gui_guard.py").read_text(encoding="utf-8")
         compatibility_source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
 
+        self.assertIn("from app.gui_exact_release import MainWindow", main_source)
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
-        self.assertIn("from app.gui_trace_release import MainWindow", main_source)
+        self.assertIn("from .gui_trace_release import MainWindow", exact_source)
         self.assertIn("from .gui_trace_mode import MainWindow", release_source)
         self.assertIn("from .gui_consolidated import MainWindow", trace_source)
         self.assertIn("from .gui_state_guard import", consolidated_source)
@@ -86,8 +88,8 @@ class GuiArchitectureTests(unittest.TestCase):
             self.assertNotIn(fragment, source)
 
     def test_normal_gui_uses_exact_cad_contours_and_visible_verification(self) -> None:
+        exact_source = (APP_ROOT / "gui_exact_release.py").read_text(encoding="utf-8")
         release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
-        trace_source = (APP_ROOT / "gui_trace_mode.py").read_text(encoding="utf-8")
         engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
         paint_source = (APP_ROOT / "trace_paint.py").read_text(encoding="utf-8")
         export_source = (APP_ROOT / "trace_gui_export.py").read_text(encoding="utf-8")
@@ -95,7 +97,8 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
         self.assertIn("生成当前 PDF 的全部页 CAD 轮廓", release_source)
         self.assertIn("验证当前页与原图是否一致", release_source)
-        self.assertIn("TracePaintDialog", trace_source)
+        self.assertIn("CAD 轮廓预览", exact_source)
+        self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
         self.assertIn("cv2.CHAIN_APPROX_NONE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
