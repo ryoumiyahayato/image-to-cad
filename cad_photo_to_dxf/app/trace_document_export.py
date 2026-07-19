@@ -12,7 +12,6 @@ from .document_export import (
     DocumentExportResult,
     DocumentPage,
     _resolve_raster,
-    _safe_group_name,
     _safe_layout_name,
 )
 from .dxf_exporter import LAYER_STYLES
@@ -31,12 +30,20 @@ def _require_first_page(
     return first, iterator
 
 
-def _page_block_name(sequence_number: int) -> str:
-    return f"PAGE_BLOCK_{sequence_number:03d}"
-
-
-def _page_layer_name(sequence_number: int) -> str:
-    return f"PAGE_{sequence_number:03d}"
+def _add_page_underlay(
+    layout,
+    image_def,
+    *,
+    width_units: float,
+    height_units: float,
+) -> object:
+    return layout.add_image(
+        image_def=image_def,
+        insert=(0.0, 0.0),
+        size_in_units=(width_units, height_units),
+        rotation=0.0,
+        dxfattribs={"layer": "SCAN_UNDERLAY"},
+    )
 
 
 def export_trace_document_streaming(
@@ -50,13 +57,16 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Write every exact page once as a block and expose one page at a time.
+    """Export independently editable entities without page-sized block wrappers.
 
-    Every page is stored in one BLOCK definition. Model space contains one
-    INSERT per page at the same origin, but only PAGE_001 is visible by default;
-    the remaining page layers are off. Each PAGE layout inserts its own block
-    directly. This avoids rendering seven high-detail drawings simultaneously
-    when the file opens while preserving all pages in one DXF/DWG file.
+    The first page is written directly into model space for immediate editing.
+    Every PDF page is also written directly into its own PAGE layout. No custom
+    BLOCK, INSERT, GROUP, HATCH, or page-wide selection wrapper is created.
+    AutoCAD therefore selects each contour or contour piece independently.
+
+    Only one page exists in model space, so opening and zooming the drawing does
+    not render every high-detail PDF page at once. Other pages remain directly
+    editable on their PAGE-### tabs.
     """
 
     _ = modelspace_gap_mm
@@ -85,7 +95,6 @@ def export_trace_document_streaming(
     modelspace = doc.modelspace()
     underlays: list[Path] = []
     layout_names: list[str] = []
-    group_names: list[str] = []
     trace_path_count = 0
     trace_vertex_count = 0
     page_count = 0
@@ -120,9 +129,20 @@ def export_trace_document_streaming(
 
         width_units = page_width_mm * page.drawing_scale
         height_units = page_height_mm * page.drawing_scale
-        block_name = _page_block_name(index)
-        block = doc.blocks.new(name=block_name)
+        scale_x = width_units / max(float(vector_width), 1.0)
+        scale_y = height_units / max(float(vector_height), 1.0)
 
+        layout_name = _safe_layout_name(index)
+        layout = doc.layouts.new(layout_name)
+        layout.page_setup(
+            size=(page_width_mm, page_height_mm),
+            margins=(0.0, 0.0, 0.0, 0.0),
+            units="mm",
+            rotation=0,
+        )
+        layout_names.append(layout_name)
+
+        image_def = None
         if include_underlay:
             assert raster is not None
             raster_height, raster_width = raster.shape[:2]
@@ -134,16 +154,13 @@ def export_trace_document_streaming(
                 size_in_pixel=(int(raster_width), int(raster_height)),
                 name=f"SCAN_PAGE_{index:03d}",
             )
-            block.add_image(
-                image_def=image_def,
-                insert=(0.0, 0.0),
-                size_in_units=(width_units, height_units),
-                rotation=0.0,
-                dxfattribs={"layer": "SCAN_UNDERLAY"},
+            _add_page_underlay(
+                layout,
+                image_def,
+                width_units=width_units,
+                height_units=height_units,
             )
 
-        scale_x = width_units / max(float(vector_width), 1.0)
-        scale_y = height_units / max(float(vector_height), 1.0)
         page_base = (index - 1) / expected_pages
         page_span = 0.88 / expected_pages
 
@@ -157,10 +174,10 @@ def export_trace_document_streaming(
         (
             current_path_count,
             current_vertex_count,
-            _trace_entities,
-            _trace_bounds,
+            _layout_entities,
+            _layout_bounds,
         ) = add_exact_trace_entities(
-            block,
+            layout,
             page.trace_paths,
             transform=lambda x, y: (
                 x * scale_x,
@@ -175,35 +192,27 @@ def export_trace_document_streaming(
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
 
-        page_layer_name = _page_layer_name(index)
-        if page_layer_name not in doc.layers:
-            page_layer = doc.layers.add(page_layer_name, color=8)
-            if index > 1:
-                page_layer.off()
-        model_insert = modelspace.add_blockref(
-            block_name,
-            (0.0, 0.0),
-            dxfattribs={"layer": page_layer_name},
-        )
-
-        group_name = _safe_group_name(index)
-        try:
-            group = doc.groups.new(group_name)
-            group.extend([model_insert])
-            group_names.append(group_name)
-        except Exception:
-            pass
-
-        layout_name = _safe_layout_name(index)
-        layout = doc.layouts.new(layout_name)
-        layout.page_setup(
-            size=(page_width_mm, page_height_mm),
-            margins=(0.0, 0.0, 0.0, 0.0),
-            units="mm",
-            rotation=0,
-        )
-        layout.add_blockref(block_name, (0.0, 0.0), dxfattribs={"layer": "0"})
-        layout_names.append(layout_name)
+        if index == 1:
+            if image_def is not None:
+                _add_page_underlay(
+                    modelspace,
+                    image_def,
+                    width_units=width_units,
+                    height_units=height_units,
+                )
+            add_exact_trace_entities(
+                modelspace,
+                page.trace_paths,
+                transform=lambda x, y: (
+                    x * scale_x,
+                    (vector_height - y) * scale_y,
+                ),
+                color=page.trace_color,
+                source_size=(vector_width, vector_height),
+                palette=palette,
+                cancellation_token=cancellation_token,
+                progress_callback=None,
+            )
         del raster
 
     doc.set_raster_variables(frame=0, quality=1, units="mm")
@@ -240,5 +249,5 @@ def export_trace_document_streaming(
         trace_vertex_count=trace_vertex_count,
         underlay_paths=tuple(underlays),
         layout_names=tuple(layout_names),
-        group_names=tuple(group_names),
+        group_names=(),
     )
