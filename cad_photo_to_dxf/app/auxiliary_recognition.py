@@ -25,6 +25,9 @@ class TextCandidate:
     bbox: tuple[int, int, int, int]
     confidence: float
     kind: str
+    rotation_deg: float = 0.0
+    quad: tuple[tuple[float, float], ...] | None = None
+    source: str = "unknown"
 
 
 @dataclass(frozen=True)
@@ -161,7 +164,15 @@ def _run_optional_ocr(
             if re.fullmatch(r"[ØRr]?\s*\d+(?:[.,]\d+)?", text)
             else "text_candidate"
         )
-        results.append(TextCandidate(text, bbox, confidence, kind))
+        results.append(
+            TextCandidate(
+                text,
+                bbox,
+                confidence,
+                kind,
+                source="pytesseract",
+            )
+        )
     return results, None
 
 
@@ -175,7 +186,8 @@ def recognize_auxiliary(
 
     Circle candidates above ``MIN_CIRCLE_EXPORT_CONFIDENCE`` may be exported
     only after explicit human confirmation in the GUI. OCR, dimensions, arcs
-    and symbols remain report-only candidates.
+    and symbols remain report-only candidates in the legacy semantic workflow.
+    The exact-contour workflow uses ``ocr_recognition`` to create editable text.
     """
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
@@ -189,13 +201,12 @@ def recognize_auxiliary(
 
     warnings = [
         "圆形候选只有在达到置信度阈值并经人工确认后才可导出 CIRCLE；"
-        "圆弧、OCR、尺寸文字和建筑符号仍仅作为辅助候选。"
+        "旧结构流程中的圆弧、OCR、尺寸文字和建筑符号仍仅作为辅助候选。"
     ]
     texts: list[TextCandidate] = []
     if enable_ocr:
         checkpoint(cancellation_token)
         texts, warning = _run_optional_ocr(binary_image)
-        # A native OCR call cannot be interrupted until it returns.
         checkpoint(cancellation_token)
         if warning:
             warnings.append(warning)
