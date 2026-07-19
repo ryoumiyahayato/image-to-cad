@@ -108,6 +108,39 @@ def _get_rapidocr_engine() -> Any:
     return _RAPID_OCR_ENGINE
 
 
+def _candidate_is_reasonable(
+    bbox: tuple[int, int, int, int],
+    *,
+    rotation: int,
+    original_shape: tuple[int, int],
+    text: str,
+) -> bool:
+    image_height, image_width = original_shape
+    x, y, width, height = bbox
+    if x < -2 or y < -2 or x + width > image_width + 2 or y + height > image_height + 2:
+        return False
+    if width <= 1 or height <= 1 or width * height <= 4:
+        return False
+    if len(text) > 180:
+        return False
+    image_area = max(float(image_width * image_height), 1.0)
+    if width * height > image_area * 0.06:
+        return False
+    if rotation == 0:
+        if height > max(48, int(image_height * 0.10)):
+            return False
+        if width > int(image_width * 0.95):
+            return False
+    else:
+        if width > max(48, int(image_width * 0.10)):
+            return False
+        if height > int(image_height * 0.32):
+            return False
+        if len(text) > 24:
+            return False
+    return True
+
+
 def _candidate_from_quad(
     text: str,
     confidence: float,
@@ -131,7 +164,12 @@ def _candidate_from_quad(
         original_shape=original_shape,
     )
     bbox = _bbox_from_quad(mapped)
-    if bbox[2] < 2 or bbox[3] < 2:
+    if not _candidate_is_reasonable(
+        bbox,
+        rotation=rotation,
+        original_shape=original_shape,
+        text=cleaned,
+    ):
         return None
     return TextCandidate(
         cleaned,
@@ -271,11 +309,12 @@ def recognize_text_candidates(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[tuple[TextCandidate, ...], tuple[str, ...]]:
-    """Recognize complete text lines before contour export.
+    """Recognize conservative horizontal text lines before contour export.
 
-    The editable DXF output uses RapidOCR line boxes instead of exporting one
-    CAD object per character. A second 90-degree pass recovers vertical labels.
-    OCR failure never blocks exact geometry tracing.
+    The previous unconditional 90-degree pass treated long drawing structures as
+    vertical paragraphs and created the tall magenta towers seen in LibreCAD.
+    Vertical OCR is disabled in the normal path until it can be reviewed as a
+    separate, explicitly requested operation.
     """
 
     if image is None or image.size == 0:
@@ -293,11 +332,8 @@ def recognize_text_candidates(
     candidates: list[TextCandidate] = []
     try:
         checkpoint(cancellation_token)
-        report_progress(progress_callback, "ocr-horizontal", 0.05)
+        report_progress(progress_callback, "ocr-horizontal", 0.10)
         candidates.extend(_recognize_rapidocr_pass(source, rotation=0))
-        checkpoint(cancellation_token)
-        report_progress(progress_callback, "ocr-vertical", 0.55)
-        candidates.extend(_recognize_rapidocr_pass(source, rotation=90))
         checkpoint(cancellation_token)
     except ImportError:
         warnings.append("未找到内置 RapidOCR 组件；已继续生成非文字 CAD 轮廓。")
@@ -306,7 +342,7 @@ def recognize_text_candidates(
 
     resolved = _deduplicate(candidates)
     if not resolved and not warnings:
-        warnings.append("OCR 未找到达到置信度阈值的完整文字行。")
+        warnings.append("OCR 未找到达到置信度阈值的完整横排文字行。")
     report_progress(progress_callback, "ocr-complete", 1.0)
     return resolved, tuple(warnings)
 
