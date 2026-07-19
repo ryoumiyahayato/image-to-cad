@@ -8,12 +8,18 @@ import ezdxf
 from ezdxf import units, zoom
 import numpy as np
 
+from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
 from .image_loader import save_image
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
-from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
+from .trace_dxf_entities import (
+    TRACE_LAYER_STYLES,
+    TracePalette,
+    add_exact_trace_entities,
+    add_ocr_text_entities,
+)
 
 
 def export_exact_trace_dxf(
@@ -26,6 +32,7 @@ def export_exact_trace_dxf(
     drawing_multiplier: float = 1.0,
     trace_color: int = 7,
     palette: TracePalette | None = None,
+    texts: tuple[TextCandidate, ...] = (),
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
     cancellation_token: CancellationToken | None = None,
@@ -63,6 +70,9 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
+    doc.layers.get("TRACE_TEXT_OUTLINE").off()
+    if "OCR_CJK" not in doc.styles:
+        doc.styles.add("OCR_CJK", font="simsun.ttc")
 
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
@@ -109,8 +119,9 @@ def export_exact_trace_dxf(
         )
 
     def entity_progress(stage: str, fraction: float) -> None:
-        report_progress(progress_callback, stage, 0.05 + 0.85 * fraction)
+        report_progress(progress_callback, stage, 0.05 + 0.80 * fraction)
 
+    transform = lambda x, y: (x * scale, (image_height - y) * scale)
     (
         trace_path_count,
         trace_vertex_count,
@@ -119,14 +130,23 @@ def export_exact_trace_dxf(
     ) = add_exact_trace_entities(
         modelspace,
         trace_paths,
-        transform=lambda x, y: (x * scale, (image_height - y) * scale),
+        transform=transform,
         color=trace_color,
         source_size=(resolved_width, image_height),
         palette=palette,
+        ocr_texts=texts,
         cancellation_token=cancellation_token,
         progress_callback=entity_progress,
     )
     coordinates.extend(trace_bounds)
+    text_count, _text_entities, text_bounds = add_ocr_text_entities(
+        modelspace,
+        texts,
+        transform=transform,
+        layer_name="OCR_TEXT",
+        style_name="OCR_CJK",
+    )
+    coordinates.extend(text_bounds)
 
     if coordinates:
         xs = [point[0] for point in coordinates]
@@ -161,6 +181,7 @@ def export_exact_trace_dxf(
         line_count=0,
         mm_per_pixel=scale,
         calibrated=calibration is not None,
+        text_count=text_count,
         trace_path_count=trace_path_count,
         trace_vertex_count=trace_vertex_count,
         drawing_scale=multiplier,
