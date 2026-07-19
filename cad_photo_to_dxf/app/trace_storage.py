@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import numpy as np
 
+from .auxiliary_recognition import TextCandidate
 from .raster_trace import RasterTraceResult, TracePath
 
 
@@ -17,6 +19,58 @@ class StoredTrace:
     foreground_pixels: int
     vertex_count: int
     warnings: tuple[str, ...]
+    texts: tuple[TextCandidate, ...] = ()
+
+
+def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
+    return json.dumps(
+        [
+            {
+                "text": item.text,
+                "bbox": list(item.bbox),
+                "confidence": item.confidence,
+                "kind": item.kind,
+                "rotation_deg": item.rotation_deg,
+                "quad": [list(point) for point in item.quad] if item.quad else None,
+                "source": item.source,
+            }
+            for item in texts
+        ],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+
+def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
+    if not value:
+        return ()
+    try:
+        payload = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Trace cache OCR text metadata is invalid JSON") from exc
+    results: list[TextCandidate] = []
+    for item in payload:
+        bbox = tuple(int(value) for value in item.get("bbox", ()))
+        if len(bbox) != 4:
+            continue
+        raw_quad = item.get("quad")
+        quad = None
+        if raw_quad:
+            points = tuple((float(point[0]), float(point[1])) for point in raw_quad)
+            if len(points) == 4:
+                quad = points
+        results.append(
+            TextCandidate(
+                text=str(item.get("text", "")),
+                bbox=(bbox[0], bbox[1], bbox[2], bbox[3]),
+                confidence=float(item.get("confidence", 0.0)),
+                kind=str(item.get("kind", "text_candidate")),
+                rotation_deg=float(item.get("rotation_deg", 0.0)),
+                quad=quad,
+                source=str(item.get("source", "cache")),
+            )
+        )
+    return tuple(results)
 
 
 def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
@@ -45,6 +99,7 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
         else np.empty((0, 2), dtype=np.float32)
     )
     warnings = np.asarray(result.warnings, dtype=np.str_)
+    texts_json = np.asarray([_serialize_texts(tuple(result.texts))], dtype=np.str_)
 
     temporary_path: Path | None = None
     try:
@@ -69,6 +124,7 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
                 ),
                 vertex_count=np.asarray([result.vertex_count], dtype=np.int64),
                 warnings=warnings,
+                texts_json=texts_json,
             )
         temporary_path.replace(target)
     finally:
@@ -109,6 +165,11 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         )
         vertex_count = int(np.asarray(archive["vertex_count"]).reshape(-1)[0])
         warnings = tuple(str(value) for value in archive["warnings"].tolist())
+        texts = (
+            _deserialize_texts(str(np.asarray(archive["texts_json"]).reshape(-1)[0]))
+            if "texts_json" in archive.files
+            else ()
+        )
 
     path_count = len(parent)
     if offsets.shape != (path_count + 1,):
@@ -147,4 +208,5 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         foreground_pixels=foreground_pixels,
         vertex_count=vertex_count,
         warnings=warnings,
+        texts=texts,
     )
