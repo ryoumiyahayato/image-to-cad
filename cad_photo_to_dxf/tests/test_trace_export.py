@@ -30,7 +30,7 @@ def _binary_symbol() -> np.ndarray:
     return binary
 
 
-def test_single_export_writes_every_trace_boundary_and_model_scale(tmp_path: Path) -> None:
+def test_single_export_writes_one_exact_region_representation(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (139.0, 0.0), 140.0)
@@ -40,24 +40,28 @@ def test_single_export_writes_every_trace_boundary_and_model_scale(tmp_path: Pat
         tmp_path / "trace.dxf",
         binary.shape[0],
         calibration,
-        drawing_multiplier=100.0,
-        trace_color=1,
+        image_width=binary.shape[1],
+        drawing_multiplier=1.0,
     )
 
     assert result.trace_path_count == len(paths)
     assert result.trace_vertex_count == sum(len(path.points) for path in paths)
-    assert result.mm_per_pixel == calibration.mm_per_pixel * 100.0
+    assert result.mm_per_pixel == calibration.mm_per_pixel
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
-    assert len(modelspace.query("LWPOLYLINE[layer=='TRACE_OUTLINE']")) == len(paths)
-    assert len(modelspace.query("HATCH[layer=='TRACE_FILL']")) == sum(
-        path.depth % 2 == 0 for path in paths
-    )
-    assert all(entity.dxf.color == 1 for entity in modelspace.query("LWPOLYLINE"))
+    assert len(modelspace.query("LWPOLYLINE")) == 0
+    hatches = list(modelspace.query("HATCH"))
+    assert len(hatches) == sum(path.depth % 2 == 0 for path in paths)
+    assert {hatch.dxf.layer for hatch in hatches} <= {
+        "TRACE_STRAIGHT",
+        "TRACE_CURVE",
+        "TRACE_TEXT_SYMBOL",
+    }
+    assert {hatch.dxf.color for hatch in hatches} <= {3, 5, 6}
     assert not document.audit().errors
 
 
-def test_document_export_keeps_paper_layout_and_scaled_modelspace(tmp_path: Path) -> None:
+def test_document_export_writes_geometry_once_and_uses_layout_viewport(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     raster = cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR)
@@ -68,24 +72,26 @@ def test_document_export_keeps_paper_layout_and_scaled_modelspace(tmp_path: Path
         vector_size_px=(140, 100),
         label="trace page",
         trace_paths=paths,
-        drawing_scale=50.0,
-        trace_color=5,
+        drawing_scale=1.0,
+        trace_color=7,
     )
 
-    result = export_trace_document_streaming([page], tmp_path / "document.dxf")
+    result = export_trace_document_streaming(
+        [page],
+        tmp_path / "document.dxf",
+        total_pages=1,
+    )
 
     assert result.trace_path_count == len(paths)
     assert result.trace_vertex_count == sum(len(path.points) for path in paths)
+    assert result.underlay_paths == ()
     document = ezdxf.readfile(result.path)
     layout = document.layouts.get("PAGE-001")
-    assert len(layout.query("LWPOLYLINE[layer=='TRACE_OUTLINE']")) == len(paths)
-    assert len(document.modelspace().query("LWPOLYLINE[layer=='TRACE_OUTLINE']")) == len(paths)
-    assert len(layout.query("HATCH[layer=='TRACE_FILL']")) == sum(
+    assert len(layout.query("HATCH")) == 0
+    assert len(layout.query("VIEWPORT")) >= 1
+    assert len(document.modelspace().query("HATCH")) == sum(
         path.depth % 2 == 0 for path in paths
     )
-    model_image = document.modelspace().query("IMAGE").first
-    layout_image = layout.query("IMAGE").first
-    assert model_image is not None and layout_image is not None
-    assert model_image.dxf.u_pixel[0] > layout_image.dxf.u_pixel[0]
+    assert len(document.modelspace().query("IMAGE")) == 0
     assert result.group_names == ("PAGE_001",)
     assert not document.audit().errors
