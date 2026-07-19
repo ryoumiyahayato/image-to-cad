@@ -10,6 +10,7 @@ from .raster_trace import TracePath
 
 
 PointTransform = Callable[[float, float], tuple[float, float]]
+MAX_EDITABLE_POLYLINE_VERTICES = 64
 
 
 @dataclass(frozen=True)
@@ -115,6 +116,58 @@ def _expand_bounds(
         bounds[3] = max(bounds[3], y)
 
 
+def _editable_polyline_chunks(
+    points: Sequence[tuple[float, float]],
+    *,
+    max_vertices: int = MAX_EDITABLE_POLYLINE_VERTICES,
+) -> list[tuple[list[tuple[float, float]], bool]]:
+    """Split a very long closed contour into small directly editable polylines.
+
+    Consecutive chunks share one endpoint, and the final chunk ends at the first
+    point. Therefore every original contour segment is retained exactly once.
+    Short contours stay closed and remain a convenient single character/stroke
+    object; only unusually long connected contours are divided.
+    """
+
+    resolved = list(points)
+    if len(resolved) < 3:
+        return []
+    limit = max(3, int(max_vertices))
+    if len(resolved) <= limit:
+        return [(resolved, True)]
+
+    cycle = [*resolved, resolved[0]]
+    chunks: list[tuple[list[tuple[float, float]], bool]] = []
+    start = 0
+    final_index = len(cycle) - 1
+    while start < final_index:
+        end = min(start + limit - 1, final_index)
+        chunk = cycle[start : end + 1]
+        if len(chunk) >= 2:
+            chunks.append((chunk, False))
+        start = end
+    return chunks
+
+
+def _add_editable_contour(
+    layout,
+    points: Sequence[tuple[float, float]],
+    *,
+    layer_name: str,
+    color: int,
+) -> list[object]:
+    entities: list[object] = []
+    for chunk, close in _editable_polyline_chunks(points):
+        entities.append(
+            layout.add_lwpolyline(
+                chunk,
+                close=close,
+                dxfattribs={"layer": layer_name, "color": color},
+            )
+        )
+    return entities
+
+
 def add_exact_trace_entities(
     layout,
     trace_paths: Sequence[TracePath],
@@ -126,13 +179,13 @@ def add_exact_trace_entities(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Write exact closed contour outlines without any HATCH fill entities.
+    """Write independent editable contour entities without blocks or HATCH.
 
-    LibreCAD and several DWG importers render complex or nested HATCH boundaries
-    inconsistently and may create page-spanning wedges at some zoom levels. The
-    retained contour coordinates are therefore exported only as closed
-    LWPOLYLINE entities. This keeps every detected boundary editable, prevents
-    zoom-dependent fill corruption, and removes the largest rendering cost.
+    Each short source contour is one closed LWPOLYLINE. Very long connected
+    contours are split into exact, endpoint-sharing pieces with at most 64
+    vertices so a user can delete or reshape a local part without selecting an
+    entire page-sized network. No coordinates are simplified, fitted, merged,
+    snapped, or converted into filled entities.
     """
 
     if not trace_paths:
@@ -181,11 +234,12 @@ def add_exact_trace_entities(
         else:
             entity_color = _resolved_color(selected_palette.curve, 3)
 
-        entities.append(
-            layout.add_lwpolyline(
+        entities.extend(
+            _add_editable_contour(
+                layout,
                 root_points,
-                close=True,
-                dxfattribs={"layer": layer_name, "color": entity_color},
+                layer_name=layer_name,
+                color=entity_color,
             )
         )
         _expand_bounds(root_points, bounds)
@@ -197,11 +251,12 @@ def add_exact_trace_entities(
             ]
             if len(child_points) < 3:
                 continue
-            entities.append(
-                layout.add_lwpolyline(
+            entities.extend(
+                _add_editable_contour(
+                    layout,
                     child_points,
-                    close=True,
-                    dxfattribs={"layer": layer_name, "color": entity_color},
+                    layer_name=layer_name,
+                    color=entity_color,
                 )
             )
             _expand_bounds(child_points, bounds)
