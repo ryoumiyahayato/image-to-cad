@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QVBoxLayout,
+    QWidget,
 )
 
 from .document_export import DocumentPage
@@ -29,45 +30,127 @@ from .trace_storage import load_trace_cache, save_trace_cache
 
 
 class MainWindow(_TraceReleaseMainWindow):
-    """Exact-CAD shell with OCR-first text export and visual review."""
+    """Exact-CAD shell with OCR-first text export and a reduced normal UI."""
 
     def __init__(self) -> None:
         self._dirty_trace_keys: set[tuple[str, int | None]] = set()
         self._ocr_texts = ()
         super().__init__()
 
+    @staticmethod
+    def _remove_from_layout(widget: QWidget | None) -> None:
+        if widget is None:
+            return
+        parent = widget.parentWidget()
+        parent_layout = parent.layout() if parent is not None else None
+        if parent_layout is not None:
+            parent_layout.removeWidget(widget)
+
     def _build_controls(self):  # type: ignore[override]
         scroll = super()._build_controls()
+
+        self.tabs.setTabText(self.tabs.indexOf(self.original_canvas), "原图")
         self.tabs.setTabText(self.tabs.indexOf(self.corrected_canvas), "校正图")
-        self.tabs.setTabText(self.tabs.indexOf(self.preprocess_tabs), "处理与验证")
         self.tabs.setTabText(self.tabs.indexOf(self.detected_canvas), "CAD 轮廓预览")
+        preprocess_index = self.tabs.indexOf(self.preprocess_tabs)
+        if preprocess_index >= 0:
+            self.tabs.removeTab(preprocess_index)
+        self.preprocess_tabs.setVisible(False)
 
         container = scroll.widget()
         layout = container.layout() if container is not None else None
         if layout is None:
             return scroll
+
+        for group in scroll.findChildren(QGroupBox):
+            if group.title() == "视图":
+                group.setVisible(False)
+            elif group.title().startswith("纸张与坐标"):
+                group.setVisible(False)
+            elif group.title() in {"高级识别参数", "参数"}:
+                group.setVisible(False)
+
+        if hasattr(self, "show_advanced_checkbox"):
+            self.show_advanced_checkbox.setVisible(False)
+        if getattr(self, "_params_group", None) is not None:
+            self._params_group.setVisible(False)
+        if getattr(self, "_preprocess_button", None) is not None:
+            self._preprocess_button.setVisible(False)
+        self.enable_ocr.setVisible(False)
+        self.enable_auxiliary.setVisible(False)
+
+        single_button: QPushButton | None = None
+        review_button: QPushButton | None = None
+        verify_button: QPushButton | None = None
+        for button in scroll.findChildren(QPushButton):
+            if button.text() == "生成当前页 CAD 轮廓":
+                single_button = button
+            elif button.text() == "检查并修正当前页 CAD 轮廓":
+                review_button = button
+            elif button.text() == "验证当前页与原图是否一致":
+                verify_button = button
+            elif button.text() == "按已知尺寸校准（可选）":
+                button.setVisible(False)
+
+        self.batch_pdf_button.setText("生成当前 PDF 全部页 CAD 轮廓")
+
+        generation_group = QGroupBox("CAD 轮廓生成", container)
+        generation_layout = QVBoxLayout(generation_group)
+        if single_button is not None:
+            self._remove_from_layout(single_button)
+            single_button.setParent(generation_group)
+            generation_layout.addWidget(single_button)
+        self._remove_from_layout(self.batch_pdf_button)
+        self.batch_pdf_button.setParent(generation_group)
+        generation_layout.addWidget(self.batch_pdf_button)
+
+        validation_group = QGroupBox("检查与验证", container)
+        validation_layout = QVBoxLayout(validation_group)
+        if review_button is not None:
+            self._remove_from_layout(review_button)
+            review_button.setParent(validation_group)
+            validation_layout.addWidget(review_button)
+        if verify_button is not None:
+            self._remove_from_layout(verify_button)
+            verify_button.setText("验证当前页")
+            verify_button.setParent(validation_group)
+            validation_layout.addWidget(verify_button)
+
+        page_group = next(
+            (
+                group
+                for group in scroll.findChildren(QGroupBox)
+                if group.title() == "当前 PDF 页面"
+            ),
+            None,
+        )
+        page_index = layout.indexOf(page_group) if page_group is not None else -1
+        insert_index = page_index + 1 if page_index >= 0 else 2
+        layout.insertWidget(insert_index, generation_group)
+        layout.insertWidget(insert_index + 1, validation_group)
+
         ocr_group = QGroupBox("文字 OCR 与可编辑文字", container)
         ocr_layout = QVBoxLayout(ocr_group)
         self.ocr_before_trace_checkbox = QCheckBox(
-            "先识别文字，再生成完整 CAD 轮廓（推荐）",
+            "先识别完整文字行，再生成非文字 CAD 轮廓（推荐）",
             ocr_group,
         )
         self.ocr_before_trace_checkbox.setChecked(True)
         self.ocr_before_trace_checkbox.setToolTip(
-            "识别出的中文、英文和数字将导出为可直接修改内容的 CAD TEXT；"
-            "原文字轮廓保存在默认关闭的回退图层中。"
+            "中文、英文和数字会按完整文字行导出为可直接修改内容的 CAD TEXT；"
+            "已识别文字的扫描轮廓不会在 DXF 中重复生成。"
         )
         ocr_layout.addWidget(self.ocr_before_trace_checkbox)
         note = QLabel(
-            "OCR 不会替代原图拓印。识别成功的文字会生成可编辑 TEXT，"
-            "原始字形轮廓仍保留，识别错误可在导出前可视化修改。",
+            "OCR 结果按完整文字行导出为一个可编辑 TEXT。"
+            "识别错误可在导出前直接修改；DXF 不再同时保留碎片化文字轮廓。",
             ocr_group,
         )
         note.setWordWrap(True)
         ocr_layout.addWidget(note)
-        review_button = QPushButton("检查并修改 OCR 文字", ocr_group)
-        review_button.clicked.connect(self.review_ocr_texts)
-        ocr_layout.addWidget(review_button)
+        ocr_review_button = QPushButton("检查并修改 OCR 文字", ocr_group)
+        ocr_review_button.clicked.connect(self.review_ocr_texts)
+        ocr_layout.addWidget(ocr_review_button)
 
         export_group = next(
             (
@@ -78,7 +161,12 @@ class MainWindow(_TraceReleaseMainWindow):
             None,
         )
         export_index = layout.indexOf(export_group) if export_group is not None else -1
-        layout.insertWidget(export_index if export_index >= 0 else 5, ocr_group)
+        layout.insertWidget(export_index if export_index >= 0 else insert_index + 2, ocr_group)
+
+        if hasattr(self, "page_summary_label"):
+            self.page_summary_label.setText(
+                "可生成当前页，也可一次生成当前 PDF 的全部页面。"
+            )
         return scroll
 
     def _ocr_enabled(self) -> bool:
@@ -112,7 +200,7 @@ class MainWindow(_TraceReleaseMainWindow):
         )
         if result.texts:
             self.statusBar().showMessage(
-                f"当前页 CAD 轮廓已生成；OCR 可编辑文字 {len(result.texts)} 个"
+                f"当前页 CAD 轮廓已生成；OCR 完整文字行 {len(result.texts)} 个"
             )
 
     def _restore_cached_trace_for_page(self, page_index: int) -> None:
@@ -124,6 +212,14 @@ class MainWindow(_TraceReleaseMainWindow):
         else:
             self._ocr_texts = ()
         self._dirty_trace_keys.discard(self._current_trace_key())
+
+    def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
+        super()._load_pdf_page(page_index, save_current=save_current)
+        if self._native_pdf_mode and hasattr(self, "page_summary_label"):
+            self.page_summary_label.setText(
+                f"已载入 {self._pdf_page_count} 页。"
+                "可生成当前页，也可一次生成全部页面。"
+            )
 
     def _store_current_trace(self) -> Path | None:
         """Reuse an unchanged page cache instead of recompressing it at export."""
@@ -200,7 +296,7 @@ class MainWindow(_TraceReleaseMainWindow):
             )
             self.statusBar().showMessage(
                 f"当前页 CAD 轮廓已生成：{len(result.paths)} 个边界，"
-                f"OCR 文字 {len(result.texts)} 个"
+                f"OCR 完整文字行 {len(result.texts)} 个"
             )
 
         label = "先识别文字，再生成 CAD 轮廓" if enable_ocr else "生成 CAD 轮廓"
@@ -284,8 +380,8 @@ class MainWindow(_TraceReleaseMainWindow):
             QMessageBox.information(
                 self,
                 "全部页面处理完成",
-                f"已用相同的 {TRACE_PDF_DPI} DPI 流程处理 {page_count} 页。\n"
-                f"识别出 {total_texts} 个可编辑 OCR 文字对象。\n"
+                f"已处理 {page_count} 页。\n"
+                f"识别出 {total_texts} 个可编辑完整文字行。\n"
                 "现在可一次性导出当前 PDF 的全部页面。",
             )
 
@@ -296,7 +392,7 @@ class MainWindow(_TraceReleaseMainWindow):
             QMessageBox.warning(
                 self,
                 "尚无 OCR 文字",
-                "请先勾选“先识别文字”并生成当前页 CAD 轮廓。",
+                "请先启用 OCR 并生成当前页 CAD 轮廓。",
             )
             return
         source = self.corrected_image if self.corrected_image is not None else self.original_image
@@ -315,7 +411,7 @@ class MainWindow(_TraceReleaseMainWindow):
         if self._native_pdf_mode:
             self._save_current_pdf_state()
         self.statusBar().showMessage(
-            f"已保存当前页 OCR 文字修改：{len(self._ocr_texts)} 个对象"
+            f"已保存当前页 OCR 文字修改：{len(self._ocr_texts)} 个完整文字行"
         )
 
     def review_layers(self) -> None:
