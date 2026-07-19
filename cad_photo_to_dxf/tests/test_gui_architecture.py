@@ -108,9 +108,7 @@ class GuiArchitectureTests(unittest.TestCase):
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
 
-    def test_normal_gui_uses_exact_cad_contours_and_visible_verification(
-        self,
-    ) -> None:
+    def test_normal_gui_uses_reduced_exact_cad_workflow(self) -> None:
         exact_source = (APP_ROOT / "gui_exact_release.py").read_text(encoding="utf-8")
         release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
         engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
@@ -121,8 +119,15 @@ class GuiArchitectureTests(unittest.TestCase):
         )
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
-        self.assertIn("生成当前 PDF 的全部页 CAD 轮廓", release_source)
-        self.assertIn("验证当前页与原图是否一致", release_source)
+        self.assertIn("CAD 轮廓生成", exact_source)
+        self.assertIn("生成当前页 CAD 轮廓", exact_source)
+        self.assertIn("生成当前 PDF 全部页 CAD 轮廓", exact_source)
+        self.assertIn("检查与验证", exact_source)
+        self.assertIn("验证当前页", exact_source)
+        self.assertIn("self.tabs.removeTab(preprocess_index)", exact_source)
+        self.assertIn('group.title() == "视图"', exact_source)
+        self.assertIn('group.title().startswith("纸张与坐标")', exact_source)
+        self.assertNotIn("生成当前 PDF 全部页 CAD 轮廓（可取消）", exact_source)
         self.assertIn("CAD 轮廓预览", exact_source)
         self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
@@ -136,6 +141,7 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("TRACE_CURVE", entity_source)
         self.assertIn("TRACE_TEXT_SYMBOL", entity_source)
         self.assertIn("OCR_TEXT", entity_source)
+        self.assertNotIn('"TRACE_TEXT_OUTLINE"', entity_source)
 
 
 if __name__ == "__main__":
