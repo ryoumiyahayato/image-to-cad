@@ -7,11 +7,12 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from . import __version__
-from .document_export import DocumentExportResult, export_scan_document
+from .document_export import DocumentExportResult
 from .dwg_converter import DwgConversionUnavailable, convert_dxf_to_dwg
 from .dxf_exporter import ExportResult, export_dxf
 from .gui_export import _choose_oda_converter, _select_output_path
 from .reporting import REPORT_SCHEMA_VERSION, write_json_report
+from .trace_document_export import export_trace_document_streaming
 
 
 def _convert_if_requested(
@@ -50,7 +51,10 @@ def export_trace_document(window: Any) -> tuple[DocumentExportResult, Path] | No
     dxf_path = requested_path.with_suffix(".dxf") if requested_dwg else requested_path
     report_path = requested_path.with_suffix(".report.json")
     try:
-        result = export_scan_document(window.document_pages_for_export(), dxf_path)
+        result = export_trace_document_streaming(
+            window.document_pages_for_export(),
+            dxf_path,
+        )
         dwg_path, dwg_error = _convert_if_requested(
             window,
             dxf_path,
