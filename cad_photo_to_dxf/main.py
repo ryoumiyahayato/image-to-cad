@@ -140,7 +140,7 @@ def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
 
-        from app.gui_exact_release import MainWindow as ExactMainWindow
+        from app.gui_librecad_release import MainWindow as ExactMainWindow
         from app.gui_state_guard import MainWindow
     except ImportError as exc:
         raise SystemExit(
@@ -158,28 +158,7 @@ def run_gui() -> int:
 
 def main() -> int:
     args = build_parser().parse_args()
-    if not args.headless:
-        return run_gui()
-    try:
-        return run_headless(args)
-    except ValueError as exc:
-        print(f"Invalid arguments: {exc}", file=sys.stderr)
-        return 2
-    except FileNotFoundError as exc:
-        print(f"Input not found: {exc}", file=sys.stderr)
-        return 3
-    except Exception as exc:
-        from app.cancellation import ProcessingCancelled
-        from app.pipeline import PipelineError
-
-        if isinstance(exc, ProcessingCancelled):
-            print("Processing cancelled", file=sys.stderr)
-            return 130
-        if isinstance(exc, PipelineError):
-            print(str(exc), file=sys.stderr)
-            return exc.exit_code
-        print(f"Processing failed: {exc}", file=sys.stderr)
-        return 1
+    return run_headless(args) if args.headless else run_gui()
 
 
 if __name__ == "__main__":
