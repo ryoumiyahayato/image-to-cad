@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
 
 from app import dwg_converter
 
@@ -12,7 +13,7 @@ def _isolate_settings(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(dwg_converter, "_CONFIGURED_CONVERTER_PATH", None)
 
 
-def test_selected_converter_is_remembered_when_worker_receives_none(
+def test_selected_converter_is_remembered_and_used_silently(
     monkeypatch,
     tmp_path: Path,
 ) -> None:
@@ -21,23 +22,22 @@ def test_selected_converter_is_remembered_when_worker_receives_none(
     converter.write_bytes(b"fake executable")
     source = tmp_path / "drawing.dxf"
     source.write_text("0\nSECTION\n0\nEOF\n", encoding="ascii")
-    destination = tmp_path / "drawing.dwg"
+    destination = tmp_path / "renamed-output.dwg"
     calls: dict[str, object] = {}
 
-    def fake_convert(source_path, destination_path, **kwargs) -> None:
-        calls["source"] = Path(source_path)
-        calls["destination"] = Path(destination_path)
-        calls["version"] = kwargs["version"]
-        Path(destination_path).write_bytes(b"fake dwg")
+    def fake_run(executable, source_path, output_dir, version):
+        calls["executable"] = executable
+        calls["source"] = source_path
+        calls["version"] = version
+        (output_dir / "drawing.dwg").write_bytes(b"fake dwg")
+        return subprocess.CompletedProcess([], 0, "", "")
 
-    monkeypatch.setattr(dwg_converter.odafc, "convert", fake_convert)
-    monkeypatch.setattr(dwg_converter.odafc, "is_installed", lambda: False)
+    monkeypatch.setattr(dwg_converter, "_run_converter", fake_run)
 
     assert dwg_converter.configure_oda_converter(converter)
     saved = dwg_converter._settings_path().read_text(encoding="utf-8").strip()
     assert Path(saved) == converter.resolve()
 
-    # Simulate a later worker or application run where the caller passes None.
     monkeypatch.setattr(dwg_converter, "_CONFIGURED_CONVERTER_PATH", None)
     result = dwg_converter.convert_dxf_to_dwg(
         source,
@@ -47,8 +47,9 @@ def test_selected_converter_is_remembered_when_worker_receives_none(
     )
 
     assert result == destination.resolve()
+    assert destination.read_bytes() == b"fake dwg"
+    assert calls["executable"] == converter.resolve()
     assert calls["source"] == source.resolve()
-    assert calls["destination"] == destination.resolve()
     assert calls["version"] == "R2018"
 
 
@@ -75,3 +76,32 @@ def test_app_local_oda_folder_is_detected(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr(dwg_converter.sys, "executable", str(app_executable))
 
     assert dwg_converter.find_oda_converter() == oda_executable.resolve()
+
+
+def test_oda_cli_arguments_do_not_open_folder_selection(monkeypatch, tmp_path: Path) -> None:
+    executable = tmp_path / "ODAFileConverter.exe"
+    executable.write_bytes(b"fake")
+    source = tmp_path / "drawing.dxf"
+    source.write_text("0\nEOF\n", encoding="ascii")
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+    captured: dict[str, object] = {}
+
+    def fake_subprocess_run(arguments, **kwargs):
+        captured["arguments"] = arguments
+        captured["kwargs"] = kwargs
+        return subprocess.CompletedProcess(arguments, 0, "", "")
+
+    monkeypatch.setattr(dwg_converter.subprocess, "run", fake_subprocess_run)
+    dwg_converter._run_converter(executable, source, output_dir, "R2010")
+
+    assert captured["arguments"] == [
+        str(executable),
+        str(tmp_path),
+        str(output_dir),
+        "ACAD2010",
+        "DWG",
+        "0",
+        "1",
+        "drawing.dxf",
+    ]
