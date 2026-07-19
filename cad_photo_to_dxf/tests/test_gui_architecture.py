@@ -49,8 +49,10 @@ class GuiArchitectureTests(unittest.TestCase):
         }
         self.assertTrue(forbidden_modules.isdisjoint(imported))
 
-    def test_active_entrypoint_preserves_guard_and_review_chain(self) -> None:
+    def test_active_entrypoint_preserves_guard_chain_and_uses_trace_release(self) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
+        release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
+        trace_source = (APP_ROOT / "gui_trace_mode.py").read_text(encoding="utf-8")
         consolidated_source = (APP_ROOT / "gui_consolidated.py").read_text(
             encoding="utf-8"
         )
@@ -60,7 +62,9 @@ class GuiArchitectureTests(unittest.TestCase):
         compatibility_source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
 
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
-        self.assertIn("from app.gui_consolidated import MainWindow", main_source)
+        self.assertIn("from app.gui_trace_release import MainWindow", main_source)
+        self.assertIn("from .gui_trace_mode import MainWindow", release_source)
+        self.assertIn("from .gui_consolidated import MainWindow", trace_source)
         self.assertIn("from .gui_state_guard import", consolidated_source)
         self.assertIn("from .gui_review import MainWindow", state_source)
         self.assertIn("from .gui_guard import MainWindow", review_source)
@@ -81,25 +85,23 @@ class GuiArchitectureTests(unittest.TestCase):
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
 
-    def test_normal_gui_uses_full_visual_review_without_coordinate_dialog(self) -> None:
-        review_source = (APP_ROOT / "gui_review.py").read_text(encoding="utf-8")
-        visual_source = (APP_ROOT / "visual_review.py").read_text(encoding="utf-8")
-        state_source = (APP_ROOT / "gui_state_guard.py").read_text(encoding="utf-8")
-        consolidated_source = (APP_ROOT / "gui_consolidated.py").read_text(
-            encoding="utf-8"
-        )
+    def test_normal_gui_uses_literal_trace_and_black_white_repair(self) -> None:
+        release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
+        trace_source = (APP_ROOT / "gui_trace_mode.py").read_text(encoding="utf-8")
+        engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
+        paint_source = (APP_ROOT / "trace_paint.py").read_text(encoding="utf-8")
 
-        self.assertIn("VectorReviewDialog", review_source)
-        self.assertIn("reviewed_entities", review_source)
-        self.assertIn("EditableLine", visual_source)
-        self.assertIn("EditableCircle", visual_source)
-        self.assertIn("EditableText", visual_source)
-        self.assertNotIn("CircleReviewDialog", review_source)
-        self.assertNotIn("review_circles", review_source)
-        self.assertIn("PDF 页面与合并", state_source)
-        self.assertIn("document_pages_for_export", state_source)
-        self.assertIn("跨文件合并队列", consolidated_source)
-        self.assertIn("PAGE_###", consolidated_source)
+        self.assertIn("TRACE_PDF_DPI = 300", release_source)
+        self.assertIn("trace_image", release_source)
+        self.assertIn("完整拓印全部黑白线条", trace_source)
+        self.assertIn("图纸比例 1:", trace_source)
+        self.assertIn("TracePaintDialog", trace_source)
+        self.assertIn("cv2.RETR_TREE", engine_source)
+        self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
+        self.assertNotIn("detect_lines(", engine_source)
+        self.assertNotIn("clean_geometry", engine_source)
+        self.assertIn("黑色：补充线条", paint_source)
+        self.assertIn("白色：擦除错误", paint_source)
 
 
 if __name__ == "__main__":
