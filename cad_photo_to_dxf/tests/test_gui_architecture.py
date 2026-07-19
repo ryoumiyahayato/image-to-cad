@@ -136,7 +136,7 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("one_dxf_per_pdf_page", export_source)
         self.assertIn("ocr_line_as_single_vector_block", export_source)
         self.assertIn("add_ocr_outline_blocks", outline_source)
-        self.assertIn("每个汉字、字母和数字", outline_source)
+        self.assertIn("Every Chinese character, Latin letter and digit", outline_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
         self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
