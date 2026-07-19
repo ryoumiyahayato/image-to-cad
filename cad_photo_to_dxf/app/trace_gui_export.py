@@ -23,12 +23,19 @@ DEFAULT_PALETTE = TracePalette(straight=5, curve=3, text_symbol=6)
 
 @dataclass(frozen=True)
 class TraceExportCompletion:
-    result: DocumentExportResult | ExportResult
+    result: DocumentExportResult | ExportResult | None
     report_path: Path
     dwg_path: Path | None
     dwg_error: str | None
     document_mode: bool
     scale_description: str = "1:1"
+    output_directory: Path | None = None
+    dxf_paths: tuple[Path, ...] = ()
+    dwg_paths: tuple[Path, ...] = ()
+    page_count: int = 0
+    trace_path_count: int = 0
+    trace_vertex_count: int = 0
+    text_count: int = 0
 
 
 def _resolve_converter_on_ui(
@@ -89,6 +96,10 @@ def _document_missing_pages(window: Any) -> list[int]:
     return missing
 
 
+def _multi_page_output_directory(requested_path: Path) -> Path:
+    return requested_path.parent / f"{requested_path.stem}-pages"
+
+
 def _start_document_export(window: Any) -> None:
     if not bool(getattr(window, "_native_pdf_mode", False)):
         return
@@ -102,16 +113,16 @@ def _start_document_export(window: Any) -> None:
             window,
             "部分页面尚未生成 CAD 轮廓",
             f"尚未处理的页码：{page_text}\n\n"
-            "请先点击“生成当前 PDF 全部页 CAD 轮廓”，再一次性导出。",
+            "请先点击“生成当前 PDF 全部页 CAD 轮廓”，再导出。",
         )
         return
 
-    selection = _select_output_path(window, default_name="drawing-all-pages.dwg")
+    selection = _select_output_path(window, default_name="drawing-pages.dwg")
     if selection is None:
         return
     requested_path, requested_dwg = selection
-    dxf_path = requested_path.with_suffix(".dxf") if requested_dwg else requested_path
-    report_path = requested_path.with_suffix(".report.json")
+    output_directory = _multi_page_output_directory(requested_path)
+    report_path = output_directory / "export.report.json"
     converter_path, converter_error = _resolve_converter_on_ui(window, requested_dwg)
     target_version = str(
         window.dwg_version_combo.currentData()
@@ -136,97 +147,149 @@ def _start_document_export(window: Any) -> None:
     )
 
     def operation(token: CancellationToken, progress: ProgressCallback) -> object:
-        result = export_trace_document_streaming(
-            pages,
-            dxf_path,
-            include_underlay=include_underlay,
-            total_pages=total_pages,
-            palette=DEFAULT_PALETTE,
-            cancellation_token=token,
-            progress_callback=lambda stage, fraction: progress(stage, 0.94 * fraction),
-        )
-        dwg_path, dwg_error = _convert_in_worker(
-            dxf_path,
-            requested_path,
-            requested_dwg,
-            converter_path,
-            target_version,
-            converter_error,
-            cancellation_token=token,
-            progress_callback=progress,
-        )
+        output_directory.mkdir(parents=True, exist_ok=True)
+        dxf_paths: list[Path] = []
+        dwg_paths: list[Path] = []
+        page_records: list[dict[str, Any]] = []
+        conversion_errors: list[str] = []
+        total_trace_paths = 0
+        total_trace_vertices = 0
+        total_text_lines = 0
+        processed_pages = 0
+
+        for page_index, page in enumerate(pages, start=1):
+            token.checkpoint()
+            processed_pages = page_index
+            page_dxf = output_directory / f"page-{page_index:03d}.dxf"
+            page_base = (page_index - 1) / max(total_pages, 1)
+            page_span = 0.88 / max(total_pages, 1)
+
+            def page_progress(stage: str, fraction: float) -> None:
+                progress(
+                    f"第 {page_index}/{total_pages} 页：{stage}",
+                    page_base + page_span * fraction,
+                )
+
+            result = export_trace_document_streaming(
+                [page],
+                page_dxf,
+                include_underlay=include_underlay,
+                total_pages=1,
+                palette=DEFAULT_PALETTE,
+                cancellation_token=token,
+                progress_callback=page_progress,
+            )
+            dxf_paths.append(result.path)
+            total_trace_paths += result.trace_path_count
+            total_trace_vertices += result.trace_vertex_count
+            total_text_lines += result.text_count
+
+            page_dwg: Path | None = None
+            page_error: str | None = None
+            if requested_dwg and converter_path is not None:
+                try:
+                    page_dwg = convert_dxf_to_dwg(
+                        result.path,
+                        output_directory / f"page-{page_index:03d}.dwg",
+                        version=target_version,
+                        converter_executable=(
+                            converter_path
+                            if converter_path.name.lower() != "odafileconverter.exe"
+                            else None
+                        ),
+                    )
+                    dwg_paths.append(page_dwg)
+                except DwgConversionUnavailable as exc:
+                    page_error = str(exc)
+                    conversion_errors.append(f"第 {page_index} 页：{exc}")
+            elif requested_dwg and converter_error:
+                page_error = converter_error
+
+            page_records.append(
+                {
+                    "page": page_index,
+                    "dxf": str(result.path),
+                    "dwg": str(page_dwg) if page_dwg is not None else None,
+                    "trace_path_count": result.trace_path_count,
+                    "trace_vertex_count": result.trace_vertex_count,
+                    "ocr_line_block_count": result.text_count,
+                    "scan_underlays": [str(path) for path in result.underlay_paths],
+                    "dwg_error": page_error,
+                }
+            )
+
         checkpoint(token)
-        report_progress(progress, "写入导出报告", 0.99)
+        report_progress(progress, "写入多页导出清单", 0.97)
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "ocr_complete_line_exact_cad_all_pdf_pages",
+            "mode": "librecad_stable_one_file_per_pdf_page",
             "input": str(source_path),
-            "page_count": result.page_count,
-            "trace_path_count": result.trace_path_count,
-            "trace_vertex_count": result.trace_vertex_count,
-            "editable_text_count": result.text_count,
-            "layouts": [],
-            "page_groups": [],
-            "scan_underlays": [str(path) for path in result.underlay_paths],
-            "dxf": str(result.path),
-            "dwg": str(dwg_path) if dwg_path is not None else None,
+            "output_directory": str(output_directory),
+            "page_count": processed_pages,
+            "pages": page_records,
             "scale": scale_description,
             "editable_entity_strategy": {
-                "page_block_wrappers": False,
-                "groups": False,
-                "hatches": False,
+                "one_dxf_per_pdf_page": True,
+                "combined_modelspace_file": False,
                 "paper_space_layouts": False,
-                "all_pages_spatially_separated_in_modelspace": True,
-                "later_page_layers_default_off": True,
-                "ocr_complete_lines_as_cad_text": True,
-                "ocr_raster_outlines_exported": False,
-                "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
+                "page_block_wrappers": False,
+                "ocr_line_as_single_vector_block": True,
+                "font_dependent_text_entities": False,
+                "ocr_unicode_preserved_as_insert_xdata": True,
+                "max_vertices_per_non_text_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "warnings": [
-                "为避免 LibreCAD 叠加纸空间布局，全部页面采用模型空间分离排布。",
-                "第一页图层默认开启；后续页面图层默认关闭，可按 PAGE_### 前缀切换。",
-                "OCR 按完整文字行导出为可编辑 CAD TEXT；匹配到的扫描文字轮廓不再重复写入 DXF。",
-                "颜色分类只用于检查；不会简化、吸附或合并非文字轮廓坐标。",
-                *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
+                "为彻底消除第一页固定在第二页左上角的问题，多页 PDF 不再合并到同一个 DXF 模型空间。",
+                "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
+                "LibreCAD 对 TTF/SHX 中文文字兼容不稳定，因此每个 OCR 文字行改为一个字体无关的矢量块。",
+                "文字内容可在导出前通过软件的 OCR 复核界面修改；DXF 中以 XDATA 保存原 Unicode 内容。",
+                *([converter_error] if requested_dwg and converter_error else []),
+                *conversion_errors,
             ],
         }
         write_json_report(report_path, report)
         report_progress(progress, "导出完成", 1.0)
         return TraceExportCompletion(
-            result=result,
+            result=None,
             report_path=report_path,
-            dwg_path=dwg_path,
-            dwg_error=dwg_error,
+            dwg_path=None,
+            dwg_error="\n".join(conversion_errors) or converter_error,
             document_mode=True,
-            scale_description=report["scale"],
+            scale_description=scale_description,
+            output_directory=output_directory,
+            dxf_paths=tuple(dxf_paths),
+            dwg_paths=tuple(dwg_paths),
+            page_count=processed_pages,
+            trace_path_count=total_trace_paths,
+            trace_vertex_count=total_trace_vertices,
+            text_count=total_text_lines,
         )
 
     def completed(value: object) -> None:
-        completion = value  # type: ignore[assignment]
-        result: DocumentExportResult = completion.result
+        completion: TraceExportCompletion = value  # type: ignore[assignment]
         summary = [
-            *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
-            f"DXF：{result.path}",
-            f"PDF 页面：{result.page_count}",
-            f"非文字 CAD 轮廓：{result.trace_path_count}",
-            f"完整可编辑文字行：{result.text_count}",
-            f"轮廓顶点：{result.trace_vertex_count}",
+            f"输出目录：{completion.output_directory}",
+            f"独立页面：{completion.page_count}",
+            f"DXF 文件：{len(completion.dxf_paths)}",
+            f"DWG 文件：{len(completion.dwg_paths)}",
+            f"非文字 CAD 轮廓：{completion.trace_path_count}",
+            f"OCR 整行矢量块：{completion.text_count}",
             f"输出比例：{completion.scale_description}",
-            "页面方式：模型空间分离排布；第 2 页起图层默认关闭",
-            "文字方式：每个 OCR 文字行是一个完整 TEXT，不再叠加扫描文字轮廓",
+            "页面方式：每页一个文件，不再生成 drawing-all-pages.dxf",
+            "文字方式：每行一个矢量块，不依赖 LibreCAD 字体解析",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
-            summary.append(f"DWG 未生成：{completion.dwg_error}")
-            QMessageBox.warning(window, "DXF 已完成，DWG 未生成", "\n".join(summary))
+            summary.append(f"部分或全部 DWG 未生成：{completion.dwg_error}")
+            QMessageBox.warning(window, "页面 DXF 已完成", "\n".join(summary))
         else:
-            QMessageBox.information(window, "CAD 导出完成", "\n".join(summary))
+            QMessageBox.information(window, "多页 CAD 导出完成", "\n".join(summary))
         window.statusBar().showMessage(
-            f"全部 PDF 页面 CAD 已导出：{completion.dwg_path or result.path}"
+            f"各 PDF 页面已独立导出：{completion.output_directory}"
         )
 
-    window._start_processing(operation, completed, "正在后台导出全部 PDF 页面 CAD…")
+    window._start_processing(operation, completed, "正在逐页导出独立 CAD 文件…")
 
 
 def _start_single_export(window: Any) -> None:
@@ -303,25 +366,26 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "ocr_complete_line_exact_cad_single_page",
+            "mode": "librecad_stable_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "threshold": threshold,
                 "foreground_pixels": foreground_pixels,
-                "editable_text_count": result.text_count,
+                "ocr_line_block_count": result.text_count,
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
             "model_mm_per_pixel": result.mm_per_pixel,
             "editable_entity_strategy": {
-                "block_wrappers": False,
+                "page_block_wrappers": False,
                 "groups": False,
                 "hatches": False,
-                "ocr_complete_lines_as_cad_text": True,
-                "ocr_raster_outlines_exported": False,
-                "max_vertices_per_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
+                "ocr_line_as_single_vector_block": True,
+                "font_dependent_text_entities": False,
+                "ocr_unicode_preserved_as_insert_xdata": True,
+                "max_vertices_per_non_text_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "export": {
                 **asdict(result),
@@ -330,8 +394,9 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "OCR 按完整文字行导出为可编辑 CAD TEXT；匹配到的扫描文字轮廓不再重复写入 DXF。",
-                f"超长连通轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆为独立可编辑折线。",
+                "每个 OCR 文字行以一个字体无关的矢量块显示，避免 LibreCAD 中文字体替换和菱形乱码。",
+                "原 Unicode 内容保存在块参照 XDATA 中；请在导出前通过 OCR 复核界面修改文字。",
+                f"超长非文字轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
         }
@@ -347,16 +412,16 @@ def _start_single_export(window: Any) -> None:
         )
 
     def completed(value: object) -> None:
-        completion = value  # type: ignore[assignment]
-        result: ExportResult = completion.result
+        completion: TraceExportCompletion = value  # type: ignore[assignment]
+        result: ExportResult = completion.result  # type: ignore[assignment]
         summary = [
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
             f"非文字 CAD 轮廓：{result.trace_path_count}",
-            f"完整可编辑文字行：{result.text_count}",
+            f"OCR 整行矢量块：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "文字方式：每个 OCR 文字行是一个完整 TEXT，不再叠加扫描文字轮廓",
+            "文字方式：每行一个矢量块，不依赖 LibreCAD 字体解析",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
