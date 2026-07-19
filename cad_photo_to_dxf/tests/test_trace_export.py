@@ -19,15 +19,15 @@ from app.trace_single_export import export_exact_trace_dxf
 
 
 def _binary_symbol() -> np.ndarray:
-    binary = np.full((100, 140), 255, dtype=np.uint8)
-    cv2.rectangle(binary, (10, 10), (130, 90), 0, 3)
+    binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.rectangle(binary, (10, 10), (210, 90), 0, 3)
     cv2.circle(binary, (45, 50), 18, 0, 3)
     cv2.putText(
         binary,
-        "A1",
+        "FIRE ALARM",
         (70, 62),
         cv2.FONT_HERSHEY_SIMPLEX,
-        0.8,
+        0.55,
         0,
         2,
         cv2.LINE_8,
@@ -37,21 +37,21 @@ def _binary_symbol() -> np.ndarray:
 
 def _ocr_text() -> TextCandidate:
     return TextCandidate(
-        "A1",
-        (66, 36, 48, 32),
+        "火灾自动报警及联动系统图",
+        (66, 34, 142, 36),
         0.96,
         "text_candidate",
-        quad=((66.0, 36.0), (114.0, 36.0), (114.0, 68.0), (66.0, 68.0)),
-        source="test",
+        quad=((66.0, 34.0), (208.0, 34.0), (208.0, 70.0), (66.0, 70.0)),
+        source="test-line",
     )
 
 
-def test_single_export_writes_editable_text_and_independent_outlines(
+def test_single_export_writes_one_complete_text_and_omits_ocr_outlines(
     tmp_path: Path,
 ) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
-    calibration = ScaleCalibration((0.0, 0.0), (139.0, 0.0), 140.0)
+    calibration = ScaleCalibration((0.0, 0.0), (219.0, 0.0), 220.0)
 
     result = export_exact_trace_dxf(
         paths,
@@ -63,8 +63,8 @@ def test_single_export_writes_editable_text_and_independent_outlines(
         texts=(_ocr_text(),),
     )
 
-    assert result.trace_path_count == len(paths)
-    assert result.trace_vertex_count == sum(len(path.points) for path in paths)
+    assert result.trace_path_count < len(paths)
+    assert result.trace_vertex_count < sum(len(path.points) for path in paths)
     assert result.text_count == 1
     assert result.mm_per_pixel == calibration.mm_per_pixel
     document = ezdxf.readfile(result.path)
@@ -73,17 +73,19 @@ def test_single_export_writes_editable_text_and_independent_outlines(
     texts = list(modelspace.query("TEXT"))
     assert outlines
     assert len(texts) == 1
-    assert texts[0].dxf.text == "A1"
+    assert texts[0].dxf.text == "火灾自动报警及联动系统图"
     assert texts[0].dxf.layer == "OCR_TEXT"
+    assert texts[0].dxf.style == "OCR_CJK"
+    assert texts[0].dxf.width > 0
+    assert document.styles.get("OCR_CJK").dxf.font == "simhei.ttf"
+    assert "TRACE_TEXT_OUTLINE" not in document.layers
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert all(len(entity) <= MAX_EDITABLE_POLYLINE_VERTICES for entity in outlines)
-    assert document.layers.get("TRACE_TEXT_OUTLINE").is_off()
     assert {entity.dxf.layer for entity in outlines} <= {
         "TRACE_STRAIGHT",
         "TRACE_CURVE",
         "TRACE_TEXT_SYMBOL",
-        "TRACE_TEXT_OUTLINE",
     }
     assert not document.audit().errors
 
@@ -117,8 +119,8 @@ def _document_page(number: int, *, with_text: bool = False) -> DocumentPage:
     return DocumentPage(
         page_number=number,
         raster=raster,
-        page_size_mm=(140.0, 100.0),
-        vector_size_px=(140, 100),
+        page_size_mm=(220.0, 100.0),
+        vector_size_px=(220, 100),
         label=f"trace page {number}",
         trace_paths=paths,
         drawing_scale=1.0,
@@ -127,7 +129,7 @@ def _document_page(number: int, *, with_text: bool = False) -> DocumentPage:
     )
 
 
-def test_document_export_uses_modelspace_page_layers_without_layout_overlap(
+def test_document_export_uses_modelspace_layers_and_complete_text(
     tmp_path: Path,
 ) -> None:
     page = _document_page(1, with_text=True)
@@ -137,8 +139,8 @@ def test_document_export_uses_modelspace_page_layers_without_layout_overlap(
         total_pages=1,
     )
 
-    assert result.trace_path_count == len(page.trace_paths)
-    assert result.trace_vertex_count == sum(len(path.points) for path in page.trace_paths)
+    assert result.trace_path_count < len(page.trace_paths)
+    assert result.trace_vertex_count < sum(len(path.points) for path in page.trace_paths)
     assert result.text_count == 1
     assert result.underlay_paths == ()
     assert result.layout_names == ()
@@ -150,9 +152,11 @@ def test_document_export_uses_modelspace_page_layers_without_layout_overlap(
 
     assert outlines
     assert len(texts) == 1
+    assert texts[0].dxf.text == "火灾自动报警及联动系统图"
     assert all(entity.dxf.layer.startswith("PAGE_001_") for entity in outlines)
     assert texts[0].dxf.layer == "PAGE_001_OCR_TEXT"
-    assert document.layers.get("PAGE_001_TRACE_TEXT_OUTLINE").is_off()
+    assert "PAGE_001_TRACE_TEXT_OUTLINE" not in document.layers
+    assert document.styles.get("OCR_CJK").dxf.font == "simhei.ttf"
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert "PAGE_BLOCK_001" not in document.blocks
