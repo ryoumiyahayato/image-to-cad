@@ -121,7 +121,9 @@ def export_exact_trace_dxf(
     def entity_progress(stage: str, fraction: float) -> None:
         report_progress(progress_callback, stage, 0.05 + 0.80 * fraction)
 
-    transform = lambda x, y: (x * scale, (image_height - y) * scale)
+    def transform(x: float, y: float) -> tuple[float, float]:
+        return (x * scale, (image_height - y) * scale)
+
     (
         trace_path_count,
         trace_vertex_count,
