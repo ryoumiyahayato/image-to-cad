@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from math import atan2, degrees
 from typing import Any
 
@@ -12,7 +12,7 @@ from .cancellation import CancellationToken, ProgressCallback, checkpoint, repor
 
 
 MIN_OCR_CONFIDENCE = 0.58
-MAX_OCR_CANDIDATES = 6000
+MAX_OCR_CANDIDATES = 3000
 _RAPID_OCR_ENGINE: Any | None = None
 
 
@@ -80,6 +80,16 @@ def _iter_word_results(value: Any) -> Iterable[tuple[str, float, Any]]:
             yield from _iter_word_results(item)
 
 
+def _as_sequence(value: Any) -> Sequence[Any]:
+    if value is None:
+        return ()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+        return value
+    return ()
+
+
 def _get_rapidocr_engine() -> Any:
     global _RAPID_OCR_ENGINE
     if _RAPID_OCR_ENGINE is not None:
@@ -89,8 +99,6 @@ def _get_rapidocr_engine() -> Any:
     params = {
         "Global.text_score": MIN_OCR_CONFIDENCE,
         "Global.max_side_len": 4096,
-        "Global.return_word_box": True,
-        "Global.return_single_char_box": True,
         "Global.log_level": "warning",
     }
     try:
@@ -109,7 +117,7 @@ def _candidate_from_quad(
     original_shape: tuple[int, int],
     source: str,
 ) -> TextCandidate | None:
-    cleaned = str(text).strip()
+    cleaned = " ".join(str(text).replace("\r", " ").replace("\n", " ").split())
     if not cleaned or not np.isfinite(float(confidence)):
         return None
     if float(confidence) < MIN_OCR_CONFIDENCE:
@@ -136,6 +144,53 @@ def _candidate_from_quad(
     )
 
 
+def _line_candidates(
+    result: Any,
+    *,
+    rotation: int,
+    original_shape: tuple[int, int],
+) -> list[TextCandidate]:
+    boxes = _as_sequence(getattr(result, "boxes", None))
+    texts = _as_sequence(getattr(result, "txts", None))
+    scores = _as_sequence(getattr(result, "scores", None))
+    candidates: list[TextCandidate] = []
+    for quad, text, confidence in zip(boxes, texts, scores, strict=False):
+        candidate = _candidate_from_quad(
+            str(text),
+            float(confidence),
+            quad,
+            rotation=rotation,
+            original_shape=original_shape,
+            source="rapidocr-line",
+        )
+        if candidate is not None:
+            candidates.append(candidate)
+    return candidates
+
+
+def _word_candidates(
+    result: Any,
+    *,
+    rotation: int,
+    original_shape: tuple[int, int],
+) -> list[TextCandidate]:
+    candidates: list[TextCandidate] = []
+    for text, confidence, quad in _iter_word_results(
+        getattr(result, "word_results", None)
+    ):
+        candidate = _candidate_from_quad(
+            text,
+            confidence,
+            quad,
+            rotation=rotation,
+            original_shape=original_shape,
+            source="rapidocr-word-fallback",
+        )
+        if candidate is not None:
+            candidates.append(candidate)
+    return candidates
+
+
 def _recognize_rapidocr_pass(
     image: np.ndarray,
     *,
@@ -153,47 +208,23 @@ def _recognize_rapidocr_pass(
         use_det=True,
         use_cls=True,
         use_rec=True,
-        return_word_box=True,
-        return_single_char_box=True,
     )
     if result is None:
         return []
 
     original_shape = tuple(int(value) for value in image.shape[:2])
-    candidates: list[TextCandidate] = []
-    word_results = getattr(result, "word_results", None)
-    for text, confidence, quad in _iter_word_results(word_results):
-        candidate = _candidate_from_quad(
-            text,
-            confidence,
-            quad,
-            rotation=rotation,
-            original_shape=original_shape,
-            source="rapidocr-character",
-        )
-        if candidate is not None:
-            candidates.append(candidate)
-
-    if candidates:
-        return candidates
-
-    boxes = getattr(result, "boxes", None)
-    texts = tuple(getattr(result, "txts", ()) or ())
-    scores = tuple(getattr(result, "scores", ()) or ())
-    if boxes is None:
-        return []
-    for quad, text, confidence in zip(boxes, texts, scores, strict=False):
-        candidate = _candidate_from_quad(
-            str(text),
-            float(confidence),
-            quad,
-            rotation=rotation,
-            original_shape=original_shape,
-            source="rapidocr-line",
-        )
-        if candidate is not None:
-            candidates.append(candidate)
-    return candidates
+    lines = _line_candidates(
+        result,
+        rotation=rotation,
+        original_shape=original_shape,
+    )
+    if lines:
+        return lines
+    return _word_candidates(
+        result,
+        rotation=rotation,
+        original_shape=original_shape,
+    )
 
 
 def _intersection_over_union(
@@ -218,11 +249,11 @@ def _deduplicate(candidates: Iterable[TextCandidate]) -> tuple[TextCandidate, ..
     kept: list[TextCandidate] = []
     for candidate in ordered:
         duplicate = any(
-            _intersection_over_union(candidate.bbox, existing.bbox) >= 0.45
+            _intersection_over_union(candidate.bbox, existing.bbox) >= 0.55
             and (
                 candidate.text == existing.text
                 or candidate.bbox[2] * candidate.bbox[3]
-                <= existing.bbox[2] * existing.bbox[3] * 1.35
+                <= existing.bbox[2] * existing.bbox[3] * 1.25
             )
             for existing in kept
         )
@@ -240,11 +271,11 @@ def recognize_text_candidates(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[tuple[TextCandidate, ...], tuple[str, ...]]:
-    """Recognize Chinese/English text before contour export.
+    """Recognize complete text lines before contour export.
 
-    RapidOCR is bundled with the Windows build and returns editable character or
-    line boxes. A second 90-degree pass recovers vertical engineering labels.
-    OCR failure never blocks exact contour generation.
+    The editable DXF output uses RapidOCR line boxes instead of exporting one
+    CAD object per character. A second 90-degree pass recovers vertical labels.
+    OCR failure never blocks exact geometry tracing.
     """
 
     if image is None or image.size == 0:
@@ -269,13 +300,13 @@ def recognize_text_candidates(
         candidates.extend(_recognize_rapidocr_pass(source, rotation=90))
         checkpoint(cancellation_token)
     except ImportError:
-        warnings.append("未找到内置 RapidOCR 组件；已保留原文字轮廓，不生成可编辑文字。")
+        warnings.append("未找到内置 RapidOCR 组件；已继续生成非文字 CAD 轮廓。")
     except Exception as exc:
-        warnings.append(f"RapidOCR 文字识别失败：{exc}；已保留原文字轮廓。")
+        warnings.append(f"RapidOCR 文字识别失败：{exc}；已继续生成非文字 CAD 轮廓。")
 
     resolved = _deduplicate(candidates)
     if not resolved and not warnings:
-        warnings.append("OCR 未找到达到置信度阈值的文字；已保留原文字轮廓。")
+        warnings.append("OCR 未找到达到置信度阈值的完整文字行。")
     report_progress(progress_callback, "ocr-complete", 1.0)
     return resolved, tuple(warnings)
 
