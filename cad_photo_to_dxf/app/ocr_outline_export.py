@@ -8,10 +8,18 @@ from ezdxf.enums import TextEntityAlignment
 from .auxiliary_recognition import TextCandidate
 from .font_library import (
     character_advance_units,
+    contains_cjk,
     ensure_dxf_font_style,
     find_font_face,
     font_metric_ratios,
     install_bundled_fonts_for_cad,
+)
+from .librecad_lff import (
+    LIBRECAD_FONT_FAMILY,
+    LIBRECAD_FONT_FILENAME,
+    ensure_librecad_dxf_style,
+    librecad_character_advance_units,
+    librecad_metric_ratios,
 )
 
 
@@ -69,6 +77,36 @@ def _normalised_content(value: str) -> str:
     return " ".join(value.replace("\r", " ").replace("\n", " ").split())
 
 
+def _font_strategy(doc, candidate: TextCandidate, content: str):
+    """Resolve the renderer that the target CAD can actually use.
+
+    LibreCAD does not render Windows TTF/OTF faces for DXF TEXT. Any line that
+    contains CJK characters is therefore forced to the native wqy-unicode LFF
+    style. Latin-only text may retain the explicitly selected system font.
+    """
+
+    use_librecad_lff = contains_cjk(content) or candidate.font_file.casefold().endswith(
+        ".lff"
+    )
+    if use_librecad_lff:
+        return (
+            ensure_librecad_dxf_style(doc),
+            [librecad_character_advance_units(character) for character in content],
+            librecad_metric_ratios(),
+            LIBRECAD_FONT_FAMILY,
+            LIBRECAD_FONT_FILENAME,
+        )
+
+    face = find_font_face(candidate.font_family, candidate.font_file, content)
+    return (
+        ensure_dxf_font_style(doc, face),
+        [character_advance_units(face, character) for character in content],
+        font_metric_ratios(face),
+        face.family,
+        face.filename,
+    )
+
+
 def add_ocr_outline_blocks(
     doc,
     layout,
@@ -81,10 +119,11 @@ def add_ocr_outline_blocks(
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
     """Write one native, editable DXF TEXT entity per approved character.
 
-    The selected font is registered for the application and installed for the
-    current Windows user when it comes from the bundled OFL library. Each DXF
-    STYLE stores both the raw font filename and the extended font-family data.
-    No character is converted into an INSERT block or outline polyline.
+    Chinese and mixed CJK lines use LibreCAD's native ``wqy-unicode.lff``
+    renderer. This is deliberately different from installing a Windows OTF
+    font: LibreCAD's own text engine resolves LFF files and otherwise displays
+    missing-glyph diamonds. No character is converted into an INSERT block or
+    outline polyline.
     """
 
     del block_prefix
@@ -101,12 +140,13 @@ def add_ocr_outline_blocks(
         content = _normalised_content(candidate.text)
         if not content:
             continue
-        face = find_font_face(
-            candidate.font_family,
-            candidate.font_file,
-            content,
-        )
-        style_name = ensure_dxf_font_style(doc, face)
+        (
+            style_name,
+            advance_units,
+            metric_ratios,
+            resolved_family,
+            resolved_filename,
+        ) = _font_strategy(doc, candidate, content)
 
         transformed = [
             transform(float(x), float(y)) for x, y in _candidate_quad(candidate)
@@ -125,7 +165,6 @@ def add_ocr_outline_blocks(
         if target_width <= 0.0 or target_height <= 0.0:
             continue
 
-        advance_units = [character_advance_units(face, character) for character in content]
         total_units = max(sum(advance_units), 0.01)
         height_from_box = target_height * 0.86
         height_from_width = target_width * 0.96 / total_units
@@ -140,7 +179,7 @@ def add_ocr_outline_blocks(
         upward_length = max(hypot(upward_dx, upward_dy), 1e-9)
         up_x = upward_dx / upward_length
         up_y = upward_dy / upward_length
-        _ascent_ratio, descent_ratio = font_metric_ratios(face)
+        _ascent_ratio, descent_ratio = metric_ratios
         free_height = max(0.0, target_height - character_height)
         baseline_lift = free_height * 0.5 + character_height * descent_ratio
         rotation = degrees(atan2(baseline_dy, baseline_dx))
@@ -174,6 +213,8 @@ def add_ocr_outline_blocks(
                         (1070, int(line_index)),
                         (1070, int(character_index)),
                         (1000, content),
+                        (1000, resolved_family),
+                        (1000, resolved_filename),
                         (1040, float(candidate.confidence)),
                         (1070, int(candidate.reviewed)),
                         (1040, float(candidate.font_match_score)),
