@@ -55,7 +55,7 @@
     "method": "Rebuild the foreground image from the retained contour hierarchy with cv2.drawContours(..., FILLED) and compare every pixel.",
     "result": "All seven pages reconstructed with 0 differing pixels."
   },
-  "latest_build": {
+  "latest_validated_application_build": {
     "commit": "7e3495ea9798ff50202922cae00ef030ca8410e7",
     "ci": "success",
     "freecad_import": "success",
