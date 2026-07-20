@@ -78,18 +78,16 @@ def add_ocr_outline_blocks(
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
     """Write one editable DXF TEXT per approved OCR character.
 
-    The function keeps its historical name for call-site compatibility. Each
-    candidate uses the font selected in the OCR review window. The same font
-    family is used for the in-app preview, while the DXF style stores the font
-    filename so LibreCAD/AutoCAD can form Chinese glyphs instead of displaying
-    replacement diamonds. No font binaries or absolute machine paths are stored.
+    Every Chinese character, Latin letter and digit becomes its own editable
+    TEXT entity. Each candidate uses the font selected in the OCR review window.
+    The same family is used for the in-app preview, while the DXF style stores
+    the font filename so LibreCAD/AutoCAD can form Chinese glyphs instead of
+    displaying replacement diamonds. No font binaries or absolute paths are stored.
     """
 
     del block_prefix
     if _XDATA_APP not in doc.appids:
         doc.appids.add(_XDATA_APP)
-    # R2010 stores Unicode strings, while this codepage hint improves older CAD
-    # readers that still inspect $DWGCODEPAGE before resolving CJK glyphs.
     doc.header["$DWGCODEPAGE"] = "ANSI_936"
 
     entities: list[object] = []
