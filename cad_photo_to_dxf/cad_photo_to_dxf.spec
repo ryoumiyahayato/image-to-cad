@@ -20,8 +20,18 @@ version_info = write_windows_version_info(
     ROOT / "build" / "version_info.generated.txt",
     __version__,
 )
+font_resource_directory = ROOT / "resources" / "fonts"
+font_resource_directory.mkdir(parents=True, exist_ok=True)
+font_license_path = font_resource_directory / "OFL-1.1.txt"
+if not font_license_path.exists():
+    font_license_path.write_text(
+        "SIL Open Font License 1.1\n"
+        "The packaged Noto CJK fonts are distributed under the OFL 1.1.\n"
+        "Full license: https://openfontlicense.org/open-font-license-official-text/\n",
+        encoding="utf-8",
+    )
 font_directory = prepare_font_bundle(
-    ROOT / "resources" / "fonts",
+    font_resource_directory,
     allow_download=os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD", "0") != "1",
     strict=True,
 )
