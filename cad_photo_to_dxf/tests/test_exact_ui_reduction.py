@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import numpy as np
 from PySide6.QtWidgets import QApplication, QGroupBox, QPushButton
 
+from app.auxiliary_recognition import TextCandidate
 from app.gui_exact_release import MainWindow
+from app.gui_librecad_release import LibreCadOcrReviewDialog
+from app.ocr_outline_export import accepted_ocr_texts
 
 
 def _application() -> QApplication:
@@ -47,3 +51,44 @@ def test_normal_exact_ui_hides_unused_panels_and_groups_generation() -> None:
         assert window.show_advanced_checkbox.isHidden()
     finally:
         window.close()
+
+
+def _pending_candidate() -> TextCandidate:
+    return TextCandidate(
+        text="A",
+        bbox=(10, 10, 30, 20),
+        confidence=0.80,
+        kind="text_candidate",
+        approved=True,
+        reviewed=False,
+    )
+
+
+def test_pending_ocr_is_not_approved_by_unchanged_save() -> None:
+    _application()
+    image = np.full((80, 120, 3), 255, dtype=np.uint8)
+    dialog = LibreCadOcrReviewDialog(image, (_pending_candidate(),))
+    try:
+        assert accepted_ocr_texts(dialog.reviewed_texts()) == ()
+        dialog.accept()
+        saved = dialog.reviewed_texts()[0]
+        assert not saved.reviewed
+        assert accepted_ocr_texts((saved,)) == ()
+    finally:
+        dialog.close()
+
+
+def test_editing_ocr_updates_preview_and_confirms_export() -> None:
+    _application()
+    image = np.full((80, 120, 3), 255, dtype=np.uint8)
+    dialog = LibreCadOcrReviewDialog(image, (_pending_candidate(),))
+    try:
+        dialog.text_edit.setText("B")
+        reviewed = dialog.reviewed_texts()[0]
+        assert reviewed.text == "B"
+        assert reviewed.reviewed
+        assert reviewed.approved
+        assert dialog.preview_item.text() == "B"
+        assert accepted_ocr_texts((reviewed,)) == (reviewed,)
+    finally:
+        dialog.close()
