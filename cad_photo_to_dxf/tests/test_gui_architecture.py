@@ -103,7 +103,7 @@ class GuiArchitectureTests(unittest.TestCase):
         for fragment in forbidden_import_fragments:
             self.assertNotIn(fragment, source)
 
-    def test_normal_gui_uses_reduced_librecad_stable_workflow(self) -> None:
+    def test_normal_gui_uses_reduced_editable_character_workflow(self) -> None:
         librecad_source = (APP_ROOT / "gui_librecad_release.py").read_text(
             encoding="utf-8"
         )
@@ -118,6 +118,7 @@ class GuiArchitectureTests(unittest.TestCase):
         outline_source = (APP_ROOT / "ocr_outline_export.py").read_text(
             encoding="utf-8"
         )
+        ocr_review_source = (APP_ROOT / "ocr_review.py").read_text(encoding="utf-8")
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
         self.assertIn("CAD 轮廓生成", exact_source)
@@ -134,9 +135,14 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("PDF 每页独立文件", librecad_source)
         self.assertIn("单字可编辑文字", librecad_source)
         self.assertIn("one_dxf_per_pdf_page", export_source)
-        self.assertIn("ocr_line_as_single_vector_block", export_source)
+        self.assertIn("ocr_per_character_text_entities", export_source)
+        self.assertIn('"ocr_line_as_single_vector_block": False', export_source)
+        self.assertIn("one_text_entity_per_non_space_character", export_source)
         self.assertIn("add_ocr_outline_blocks", outline_source)
         self.assertIn("Every Chinese character, Latin letter and digit", outline_source)
+        self.assertIn("检查、预览并确认 OCR 文字", ocr_review_source)
+        self.assertIn("self.text_edit.textChanged.connect", ocr_review_source)
+        self.assertIn("approved=bool(text.strip())", ocr_review_source)
         self.assertIn("cv2.RETR_TREE", engine_source)
         self.assertIn("cv2.CHAIN_APPROX_SIMPLE", engine_source)
         self.assertNotIn("detect_lines(", engine_source)
