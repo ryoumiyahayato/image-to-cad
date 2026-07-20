@@ -3,12 +3,15 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from math import atan2, degrees, hypot
 
+from ezdxf.enums import TextEntityAlignment
+
 from .auxiliary_recognition import TextCandidate
 from .font_library import (
     character_advance_units,
     ensure_dxf_font_style,
     find_font_face,
     font_metric_ratios,
+    install_bundled_fonts_for_cad,
 )
 
 
@@ -76,16 +79,16 @@ def add_ocr_outline_blocks(
     block_prefix: str = "OCR_LINE",
     minimum_confidence: float = 0.58,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
-    """Write one editable DXF TEXT per approved OCR character.
+    """Write one native, editable DXF TEXT entity per approved character.
 
-    Every Chinese character, Latin letter and digit becomes its own editable
-    TEXT entity. Each candidate uses the font selected in the OCR review window.
-    The same family is used for the in-app preview, while the DXF style stores
-    the font filename so LibreCAD/AutoCAD can form Chinese glyphs instead of
-    displaying replacement diamonds. No font binaries or absolute paths are stored.
+    The selected font is registered for the application and installed for the
+    current Windows user when it comes from the bundled OFL library. Each DXF
+    STYLE stores both the raw font filename and the extended font-family data.
+    No character is converted into an INSERT block or outline polyline.
     """
 
     del block_prefix
+    install_bundled_fonts_for_cad()
     if _XDATA_APP not in doc.appids:
         doc.appids.add(_XDATA_APP)
     doc.header["$DWGCODEPAGE"] = "ANSI_936"
@@ -124,7 +127,7 @@ def add_ocr_outline_blocks(
 
         advance_units = [character_advance_units(face, character) for character in content]
         total_units = max(sum(advance_units), 0.01)
-        height_from_box = target_height * 0.88
+        height_from_box = target_height * 0.86
         height_from_width = target_width * 0.96 / total_units
         character_height = max(0.01, min(height_from_box, height_from_width))
         rendered_width = character_height * total_units
@@ -160,15 +163,20 @@ def add_ocr_outline_blocks(
                         "color": 6,
                         "style": style_name,
                         "rotation": float(rotation),
+                        "width": 1.0,
+                        "oblique": 0.0,
+                        "generation_flags": 0,
                     },
                 )
-                entity.set_placement(insert)
+                entity.set_placement(insert, align=TextEntityAlignment.LEFT)
                 entity.set_xdata(
                     _XDATA_APP,
                     [
                         (1070, int(line_index)),
                         (1070, int(character_index)),
                         (1000, content),
+                        (1000, face.family),
+                        (1000, face.filename),
                         (1040, float(candidate.confidence)),
                         (1070, int(candidate.reviewed)),
                         (1040, float(candidate.font_match_score)),
