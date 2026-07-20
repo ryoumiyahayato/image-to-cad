@@ -171,8 +171,6 @@ def add_ocr_outline_blocks(
                         (1000, content),
                         (1040, float(candidate.confidence)),
                         (1070, int(candidate.reviewed)),
-                        (1000, face.family),
-                        (1000, face.filename),
                         (1040, float(candidate.font_match_score)),
                     ],
                 )
