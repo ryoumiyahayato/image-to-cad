@@ -55,9 +55,7 @@ def test_selected_cjk_font_is_used_for_each_editable_character() -> None:
     for entity in entities:
         xdata = entity.get_xdata("OCR_CHARACTER")
         text_values = [tag.value for tag in xdata if tag.code == 1000]
-        assert "火灾" in text_values
-        assert "SimHei" in text_values
-        assert "simhei.ttf" in text_values
+        assert text_values == ["火灾"]
     assert not document.audit().errors
 
 
