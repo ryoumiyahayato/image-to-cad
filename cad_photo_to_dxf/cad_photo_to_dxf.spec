@@ -1,5 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import os
 from pathlib import Path
 import sys
 
@@ -11,12 +12,18 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.version import __version__
+from scripts.prepare_cad_fonts import prepare_font_bundle
 from scripts.versioning import write_windows_version_info
 
 
 version_info = write_windows_version_info(
     ROOT / "build" / "version_info.generated.txt",
     __version__,
+)
+font_directory = prepare_font_bundle(
+    ROOT / "resources" / "fonts",
+    allow_download=os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD", "0") != "1",
+    strict=True,
 )
 hiddenimports = collect_submodules("ezdxf")
 hiddenimports += collect_submodules("pytesseract")
@@ -31,6 +38,7 @@ for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime"):
 datas += [
     ("README.md", "."),
     ("samples/test.jpg", "samples"),
+    (str(font_directory), "resources/fonts"),
 ]
 
 
