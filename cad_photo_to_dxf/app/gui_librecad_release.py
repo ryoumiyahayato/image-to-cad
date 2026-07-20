@@ -1,16 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import replace
-
-from PySide6.QtGui import QColor, QFont
-from PySide6.QtWidgets import (
-    QCheckBox,
-    QDialog,
-    QGroupBox,
-    QLabel,
-    QMessageBox,
-    QPushButton,
-)
+from PySide6.QtWidgets import QCheckBox, QDialog, QGroupBox, QLabel, QMessageBox, QPushButton
 
 from .gui_exact_release import MainWindow as _ExactMainWindow
 from .ocr_outline_export import accepted_ocr_texts
@@ -57,84 +47,6 @@ class MainWindow(_ExactMainWindow):
             )
         return scroll
 
-    @staticmethod
-    def _configure_live_preview(dialog: OcrReviewDialog) -> None:
-        panel = dialog.text_edit.parentWidget()
-        panel_layout = panel.layout() if panel is not None else None
-        approval = QCheckBox("确认作为可编辑文字导出", panel)
-        note = QLabel(
-            "右侧内容修改后会立即覆盖预览在原图框内。预览用于检查内容、位置和"
-            "是否超框；DXF 不写入本机绝对字体路径，最终字形由 CAD 软件选择"
-            "可用 Unicode 字体。",
-            panel,
-        )
-        note.setWordWrap(True)
-        if panel_layout is not None:
-            edit_index = panel_layout.indexOf(dialog.text_edit)
-            panel_layout.insertWidget(edit_index + 1, approval)
-            panel_layout.insertWidget(edit_index + 2, note)
-
-        preview = dialog.scene_object.addSimpleText("")
-        preview.setZValue(20.0)
-        preview.setBrush(QColor(210, 0, 210))
-        preview.setOpacity(0.86)
-
-        def current_candidate():
-            index = dialog._selected_index
-            if index is None or index >= len(dialog._candidates):
-                return None, None
-            return index, dialog._candidates[index]
-
-        def refresh() -> None:
-            index, candidate = current_candidate()
-            if index is None or candidate is None:
-                preview.setText("")
-                return
-            exported = bool(accepted_ocr_texts((candidate,)))
-            approval.blockSignals(True)
-            approval.setChecked(exported)
-            approval.blockSignals(False)
-            preview.setBrush(QColor(210, 0, 210) if exported else QColor(230, 105, 0))
-            preview.setText(dialog.text_edit.text())
-            x, y, width, height = candidate.bbox
-            font = QFont("Sans Serif")
-            font.setPixelSize(max(8, int(height * 0.82)))
-            preview.setFont(font)
-            preview.setScale(1.0)
-            bounds = preview.boundingRect()
-            if bounds.width() > 0 and bounds.height() > 0:
-                scale = max(
-                    0.02,
-                    min(float(width) / bounds.width(), float(height) / bounds.height()),
-                )
-                preview.setScale(scale)
-                preview.setPos(
-                    float(x) + (float(width) - bounds.width() * scale) * 0.5,
-                    float(y) + (float(height) - bounds.height() * scale) * 0.5,
-                )
-
-        def text_changed(text: str) -> None:
-            index, candidate = current_candidate()
-            if index is not None and candidate is not None:
-                dialog._candidates[index] = replace(candidate, text=text)
-            refresh()
-
-        def approval_changed(checked: bool) -> None:
-            index, candidate = current_candidate()
-            if index is not None and candidate is not None:
-                dialog._candidates[index] = replace(
-                    candidate,
-                    approved=bool(checked),
-                    reviewed=True,
-                )
-            refresh()
-
-        dialog.text_edit.textChanged.connect(text_changed)
-        approval.toggled.connect(approval_changed)
-        dialog.result_list.currentItemChanged.connect(lambda _current, _previous: refresh())
-        dialog.scene_object.selectionChanged.connect(refresh)
-        refresh()
-
     def review_ocr_texts(self) -> None:
         if not self._ocr_texts:
             QMessageBox.warning(self, "尚无 OCR 文字", "请先生成当前页 CAD 轮廓。")
@@ -143,8 +55,6 @@ class MainWindow(_ExactMainWindow):
         if source is None:
             return
         dialog = OcrReviewDialog(source, tuple(self._ocr_texts), self)
-        dialog.setWindowTitle("检查、预览并确认 OCR 文字")
-        self._configure_live_preview(dialog)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         self._ocr_texts = dialog.reviewed_texts()
@@ -153,7 +63,11 @@ class MainWindow(_ExactMainWindow):
         self._show_preprocess_stages(self.preprocess_stages)
         if self._native_pdf_mode:
             self._save_current_pdf_state()
-        approved = len(accepted_ocr_texts(self._ocr_texts))
+        exportable = accepted_ocr_texts(self._ocr_texts)
+        character_count = sum(
+            1 for item in exportable for character in item.text if not character.isspace()
+        )
         self.statusBar().showMessage(
-            f"已保存 OCR 修改：候选 {len(self._ocr_texts)} 个，确认导出 {approved} 个"
+            f"已保存 OCR 复核：候选 {len(self._ocr_texts)} 行，"
+            f"确认 {len(exportable)} 行 / {character_count} 个独立字符"
         )
