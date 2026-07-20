@@ -165,7 +165,6 @@ def add_ocr_outline_blocks(
                         "rotation": float(rotation),
                         "width": 1.0,
                         "oblique": 0.0,
-                        "generation_flags": 0,
                     },
                 )
                 entity.set_placement(insert, align=TextEntityAlignment.LEFT)
