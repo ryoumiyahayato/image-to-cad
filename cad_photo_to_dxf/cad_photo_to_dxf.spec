@@ -13,6 +13,7 @@ if str(ROOT) not in sys.path:
 
 from app.version import __version__
 from scripts.prepare_cad_fonts import prepare_font_bundle
+from scripts.prepare_librecad_font import prepare_librecad_font
 from scripts.versioning import write_windows_version_info
 
 
@@ -30,9 +31,15 @@ if not font_license_path.exists():
         "Full license: https://openfontlicense.org/open-font-license-official-text/\n",
         encoding="utf-8",
     )
+allow_font_download = os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD", "0") != "1"
 font_directory = prepare_font_bundle(
     font_resource_directory,
-    allow_download=os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD", "0") != "1",
+    allow_download=allow_font_download,
+    strict=True,
+)
+prepare_librecad_font(
+    font_resource_directory,
+    allow_download=allow_font_download,
     strict=True,
 )
 hiddenimports = collect_submodules("ezdxf")
