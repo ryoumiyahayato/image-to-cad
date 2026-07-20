@@ -42,9 +42,22 @@ def test_selected_cjk_font_is_used_for_each_editable_character() -> None:
     assert all(entity.dxftype() == "TEXT" for entity in entities)
     assert all(entity.dxf.style == "OCR_SIMHEI" for entity in entities)
     assert all(float(entity.dxf.width) == 1.0 for entity in entities)
-    assert document.styles.get("OCR_SIMHEI").dxf.font == "simhei.ttf"
+    assert all(float(entity.dxf.oblique) == 0.0 for entity in entities)
+    style = document.styles.get("OCR_SIMHEI")
+    assert style.dxf.font == "simhei.ttf"
+    family, italic, bold = style.get_extended_font_data()
+    assert family == "SimHei"
+    assert not italic
+    assert not bold
     assert document.header["$DWGCODEPAGE"] == "ANSI_936"
     assert len(modelspace.query("INSERT")) == 0
+    assert len(modelspace.query("LWPOLYLINE")) == 0
+    for entity in entities:
+        xdata = entity.get_xdata("OCR_CHARACTER")
+        text_values = [tag.value for tag in xdata if tag.code == 1000]
+        assert "火灾" in text_values
+        assert "SimHei" in text_values
+        assert "simhei.ttf" in text_values
     assert not document.audit().errors
 
 
