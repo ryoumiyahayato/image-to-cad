@@ -40,7 +40,9 @@ class MainWindow(_ExactMainWindow):
         scroll = super()._build_controls()
         for group in scroll.findChildren(QGroupBox):
             if group.title() == "文字 OCR 与可编辑文字":
-                group.setTitle("文字 OCR、LibreCAD LFF 字体与单字可编辑文字")
+                group.setTitle(
+                    "文字 OCR、内置字体匹配（LibreCAD LFF）与单字可编辑文字"
+                )
         for checkbox in scroll.findChildren(QCheckBox):
             if checkbox.text().startswith("先识别完整文字行"):
                 checkbox.setText("先识别横排文字，再用 LibreCAD 字体逐字确认（推荐）")
