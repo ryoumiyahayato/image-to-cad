@@ -28,9 +28,10 @@
     "vertex_reduction_percent": 85.457,
     "vertex_reduction_factor": 6.876
   },
-  "all_pages_cad_export_benchmark": {
+  "historical_combined_modelspace_benchmark": {
+    "status": "Historical contour-performance measurement only; this is not the active GUI multi-page export layout.",
     "environment": "Linux container, Python 3, OpenCV 4.13, ezdxf 1.4.4",
-    "output": "one DXF containing all seven pages in model space plus lightweight PAGE viewports",
+    "output_at_time_of_measurement": "one DXF containing all seven pages in model space plus lightweight PAGE viewports",
     "total_vertices": 878779,
     "total_contours": 38288,
     "build_s": 43.11834169299982,
@@ -38,7 +39,17 @@
     "total_s": 56.0464380909998,
     "size_mb": 83.26476764678955,
     "rss_mb": 2021.890625,
-    "note": "This is a local engineering benchmark, not a guarantee for every Windows computer. The GUI export is executed in a worker thread so the window remains responsive while writing."
+    "note": "These measurements are retained as historical engineering evidence and are not a performance guarantee for Windows computers."
+  },
+  "active_export_strategy": {
+    "multi_page_pdf": "one independent DXF or DWG file per PDF page",
+    "combined_modelspace_file": false,
+    "reason": "Prevents page coordinate, viewport, and layer overlap in LibreCAD and AutoCAD.",
+    "ocr_text": "one native editable DXF TEXT entity per approved non-space Unicode character",
+    "ocr_insert_blocks": false,
+    "non_uniform_text_scaling": false,
+    "absolute_system_font_path_embedded": false,
+    "font_note": "Unicode content and editability are portable; exact glyph appearance depends on fonts available in the receiving CAD environment."
   },
   "verification": {
     "method": "Rebuild the foreground image from the retained contour hierarchy with cv2.drawContours(..., FILLED) and compare every pixel.",
