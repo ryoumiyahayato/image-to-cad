@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 from hashlib import sha256
 import json
-import os
 from pathlib import Path
 import shutil
 import tempfile
