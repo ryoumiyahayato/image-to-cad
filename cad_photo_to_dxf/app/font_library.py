@@ -22,9 +22,9 @@ class CadFontFace:
     priority: int
 
 
-# Only reference commonly installed Windows fonts. The application does not
-# redistribute font binaries; it detects what is available on the machine and
-# writes the selected font filename into the DXF TEXT style.
+# This is a runtime font catalog, not redistributed font binaries. The selected
+# font filename is written into the DXF text style so CAD and the review preview
+# can use the same installed face.
 _CURATED_FONTS: tuple[CadFontFace, ...] = (
     CadFontFace("SimHei", "simhei.ttf", "黑体 / SimHei", True, "sans", 10),
     CadFontFace("DengXian", "Deng.ttf", "等线 / DengXian", True, "sans", 20),
@@ -71,9 +71,7 @@ def available_font_faces() -> tuple[CadFontFace, ...]:
     ]
     if available:
         return tuple(sorted(available, key=lambda item: item.priority))
-    # Non-Windows test environments may expose generic families but no matching
-    # filename. Keep one deterministic fallback so exported files remain valid.
-    return (CadFontFace("Sans Serif", "", "系统无衬线字体", True, "sans", 999),)
+    return (CadFontFace("Sans Serif", "txt", "系统无衬线字体", True, "sans", 999),)
 
 
 def default_font_face(text: str) -> CadFontFace:
@@ -86,13 +84,24 @@ def default_font_face(text: str) -> CadFontFace:
 
 
 def find_font_face(family: str, filename: str, text: str = "") -> CadFontFace:
-    family_key = str(family or "").casefold()
-    filename_key = Path(str(filename or "")).name.casefold()
+    family_value = str(family or "").strip()
+    filename_value = Path(str(filename or "")).name
+    family_key = family_value.casefold()
+    filename_key = filename_value.casefold()
     for face in available_font_faces():
         if filename_key and face.filename.casefold() == filename_key:
             return face
         if family_key and face.family.casefold() == family_key:
             return face
+    if family_value or filename_value:
+        return CadFontFace(
+            family=family_value or default_font_face(text).family,
+            filename=filename_value or "txt",
+            label=family_value or filename_value,
+            cjk=contains_cjk(text),
+            category="selected",
+            priority=0,
+        )
     return default_font_face(text)
 
 
@@ -105,10 +114,7 @@ def safe_style_name(face: CadFontFace) -> str:
 def ensure_dxf_font_style(doc, face: CadFontFace) -> str:
     style_name = safe_style_name(face)
     if style_name not in doc.styles:
-        if face.filename:
-            doc.styles.add(style_name, font=face.filename)
-        else:
-            doc.styles.add(style_name)
+        doc.styles.add(style_name, font=face.filename or "txt")
     return style_name
 
 
@@ -161,8 +167,6 @@ def _source_text_mask(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.
         255,
         cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU,
     )
-    # Remove long table borders before font comparison. This keeps the matcher
-    # focused on glyph strokes rather than the surrounding engineering grid.
     h, w = binary.shape
     horizontal = cv2.morphologyEx(
         binary,
@@ -218,12 +222,14 @@ def _mask_similarity(source: np.ndarray, rendered: np.ndarray) -> float:
             (source.shape[1], source.shape[0]),
             interpolation=cv2.INTER_NEAREST,
         )
-    source_count = max(cv2.countNonZero(source), 1)
-    rendered_count = max(cv2.countNonZero(rendered), 1)
+    source_count = int(cv2.countNonZero(source))
+    rendered_count = int(cv2.countNonZero(rendered))
+    if source_count == 0 or rendered_count == 0:
+        return 0.0
     source_distance = cv2.distanceTransform(255 - source, cv2.DIST_L2, 3)
     rendered_distance = cv2.distanceTransform(255 - rendered, cv2.DIST_L2, 3)
-    forward = float(source_distance[rendered > 0].mean()) if rendered_count else 999.0
-    backward = float(rendered_distance[source > 0].mean()) if source_count else 999.0
+    forward = float(source_distance[rendered > 0].mean())
+    backward = float(rendered_distance[source > 0].mean())
     diagonal = max(float(np.hypot(*source.shape)), 1.0)
     chamfer = (forward + backward) / (2.0 * diagonal)
     density_penalty = abs(source_count - rendered_count) / max(source_count, rendered_count)
