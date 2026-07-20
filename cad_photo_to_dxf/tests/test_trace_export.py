@@ -109,11 +109,11 @@ def test_unreviewed_uncertain_ocr_does_not_replace_scan_contours(tmp_path: Path)
     assert len(document.modelspace().query("TEXT")) == 0
 
 
-def test_manually_reviewed_short_text_is_exported(tmp_path: Path) -> None:
+def test_manually_reviewed_text_overrides_low_original_confidence(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (219.0, 0.0), 220.0)
-    reviewed = _ocr_text(text="1", confidence=0.80, approved=True, reviewed=True)
+    reviewed = _ocr_text(text="1", confidence=0.20, approved=True, reviewed=True)
 
     result = export_exact_trace_dxf(
         paths,
