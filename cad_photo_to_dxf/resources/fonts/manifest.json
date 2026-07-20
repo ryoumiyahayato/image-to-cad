@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "bundle_name": "CADPhotoToDXF Portable CJK Fonts",
+  "license": "SIL Open Font License 1.1",
+  "source_repository": "notofonts/noto-cjk",
+  "fonts": [
+    {
+      "family": "Noto Sans CJK SC",
+      "filename": "NotoSansCJKsc-Regular.otf",
+      "label": "内置黑体：Noto Sans CJK SC",
+      "category": "sans",
+      "weight": 400,
+      "priority": 10,
+      "cjk": true,
+      "registry_name": "Noto Sans CJK SC Regular (OpenType)",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Regular.otf"
+    },
+    {
+      "family": "Noto Sans CJK SC",
+      "filename": "NotoSansCJKsc-Medium.otf",
+      "label": "内置中黑：Noto Sans CJK SC Medium",
+      "category": "sans-medium",
+      "weight": 500,
+      "priority": 11,
+      "cjk": true,
+      "registry_name": "Noto Sans CJK SC Medium (OpenType)",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTF/SimplifiedChinese/NotoSansCJKsc-Medium.otf"
+    },
+    {
+      "family": "Noto Sans Mono CJK SC",
+      "filename": "NotoSansMonoCJKsc-Regular.otf",
+      "label": "内置工程等宽：Noto Sans Mono CJK SC",
+      "category": "mono",
+      "weight": 400,
+      "priority": 12,
+      "cjk": true,
+      "registry_name": "Noto Sans Mono CJK SC Regular (OpenType)",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/Mono/NotoSansMonoCJKsc-Regular.otf"
+    },
+    {
+      "family": "Noto Serif CJK SC",
+      "filename": "NotoSerifCJKsc-Regular.otf",
+      "label": "内置宋体：Noto Serif CJK SC",
+      "category": "serif",
+      "weight": 400,
+      "priority": 20,
+      "cjk": true,
+      "registry_name": "Noto Serif CJK SC Regular (OpenType)",
+      "url": "https://raw.githubusercontent.com/notofonts/noto-cjk/Serif2.003/Serif/OTF/SimplifiedChinese/NotoSerifCJKsc-Regular.otf"
+    }
+  ]
+}
