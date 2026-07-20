@@ -28,17 +28,25 @@ def accepted_ocr_texts(
     *,
     minimum_confidence: float = 0.58,
 ) -> tuple[TextCandidate, ...]:
-    """Return OCR candidates approved manually or safe for automatic export."""
+    """Return OCR candidates approved manually or safe for automatic export.
+
+    A reviewed decision is authoritative: an approved candidate is exported even
+    when its original OCR confidence was low, while a reviewed rejection is never
+    exported. Unreviewed candidates must pass both the pipeline minimum and the
+    stricter automatic threshold for short or ambiguous text.
+    """
 
     accepted: list[TextCandidate] = []
     for item in texts:
         content = item.text.strip()
         if not content or not item.approved:
             continue
-        confidence = float(item.confidence)
-        if confidence < minimum_confidence:
+        if item.reviewed:
+            accepted.append(item)
             continue
-        if item.reviewed or confidence >= _automatic_threshold(content):
+        confidence = float(item.confidence)
+        required = max(float(minimum_confidence), _automatic_threshold(content))
+        if confidence >= required:
             accepted.append(item)
     return tuple(accepted)
 
@@ -169,6 +177,8 @@ def add_ocr_outline_blocks(
                         (1070, int(line_index)),
                         (1070, int(character_index)),
                         (1000, content),
+                        (1040, float(candidate.confidence)),
+                        (1070, int(candidate.reviewed)),
                     ],
                 )
                 entities.append(entity)
