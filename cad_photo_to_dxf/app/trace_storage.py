@@ -35,6 +35,9 @@ def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
                 "source": item.source,
                 "approved": item.approved,
                 "reviewed": item.reviewed,
+                "font_family": item.font_family,
+                "font_file": item.font_file,
+                "font_match_score": item.font_match_score,
             }
             for item in texts
         ],
@@ -72,6 +75,9 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
                 source=str(item.get("source", "cache")),
                 approved=bool(item.get("approved", True)),
                 reviewed=bool(item.get("reviewed", False)),
+                font_family=str(item.get("font_family", "")),
+                font_file=str(item.get("font_file", "")),
+                font_match_score=float(item.get("font_match_score", 0.0)),
             )
         )
     return tuple(results)
