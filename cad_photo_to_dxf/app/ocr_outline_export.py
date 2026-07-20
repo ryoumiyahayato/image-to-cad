@@ -15,8 +15,6 @@ from .font_library import (
     install_bundled_fonts_for_cad,
 )
 from .librecad_lff import (
-    LIBRECAD_FONT_FAMILY,
-    LIBRECAD_FONT_FILENAME,
     ensure_librecad_dxf_style,
     librecad_character_advance_units,
     librecad_metric_ratios,
@@ -80,21 +78,20 @@ def _normalised_content(value: str) -> str:
 def _font_strategy(doc, candidate: TextCandidate, content: str):
     """Resolve the renderer that the target CAD can actually use.
 
-    LibreCAD does not render Windows TTF/OTF faces for DXF TEXT. Any line that
-    contains CJK characters is therefore forced to the native wqy-unicode LFF
-    style. Latin-only text may retain the explicitly selected system font.
+    Newly recognised CJK text has no selected font and therefore defaults to
+    LibreCAD's native wqy-unicode LFF. The LibreCAD review window also writes
+    that explicit LFF filename. Explicit legacy TTF/OTF selections are retained
+    only for backwards-compatible tests and non-LibreCAD workflows.
     """
 
-    use_librecad_lff = contains_cjk(content) or candidate.font_file.casefold().endswith(
-        ".lff"
+    use_librecad_lff = candidate.font_file.casefold().endswith(".lff") or (
+        contains_cjk(content) and not candidate.font_file.strip()
     )
     if use_librecad_lff:
         return (
             ensure_librecad_dxf_style(doc),
             [librecad_character_advance_units(character) for character in content],
             librecad_metric_ratios(),
-            LIBRECAD_FONT_FAMILY,
-            LIBRECAD_FONT_FILENAME,
         )
 
     face = find_font_face(candidate.font_family, candidate.font_file, content)
@@ -102,8 +99,6 @@ def _font_strategy(doc, candidate: TextCandidate, content: str):
         ensure_dxf_font_style(doc, face),
         [character_advance_units(face, character) for character in content],
         font_metric_ratios(face),
-        face.family,
-        face.filename,
     )
 
 
@@ -119,11 +114,10 @@ def add_ocr_outline_blocks(
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
     """Write one native, editable DXF TEXT entity per approved character.
 
-    Chinese and mixed CJK lines use LibreCAD's native ``wqy-unicode.lff``
-    renderer. This is deliberately different from installing a Windows OTF
-    font: LibreCAD's own text engine resolves LFF files and otherwise displays
-    missing-glyph diamonds. No character is converted into an INSERT block or
-    outline polyline.
+    Chinese text reviewed by the LibreCAD workflow uses ``wqy-unicode.lff``.
+    This is different from installing a Windows OTF font: LibreCAD's own text
+    engine resolves LFF files and otherwise displays missing-glyph diamonds.
+    No character is converted into an INSERT block or outline polyline.
     """
 
     del block_prefix
@@ -140,13 +134,11 @@ def add_ocr_outline_blocks(
         content = _normalised_content(candidate.text)
         if not content:
             continue
-        (
-            style_name,
-            advance_units,
-            metric_ratios,
-            resolved_family,
-            resolved_filename,
-        ) = _font_strategy(doc, candidate, content)
+        style_name, advance_units, metric_ratios = _font_strategy(
+            doc,
+            candidate,
+            content,
+        )
 
         transformed = [
             transform(float(x), float(y)) for x, y in _candidate_quad(candidate)
@@ -213,8 +205,6 @@ def add_ocr_outline_blocks(
                         (1070, int(line_index)),
                         (1070, int(character_index)),
                         (1000, content),
-                        (1000, resolved_family),
-                        (1000, resolved_filename),
                         (1040, float(candidate.confidence)),
                         (1070, int(candidate.reviewed)),
                         (1040, float(candidate.font_match_score)),
