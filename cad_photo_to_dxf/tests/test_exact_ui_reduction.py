@@ -78,7 +78,7 @@ def test_pending_ocr_is_not_approved_by_unchanged_save() -> None:
         dialog.close()
 
 
-def test_editing_ocr_updates_preview_and_confirms_export() -> None:
+def test_editing_ocr_updates_final_cad_font_preview_and_confirms_export() -> None:
     _application()
     image = np.full((80, 120, 3), 255, dtype=np.uint8)
     dialog = LibreCadOcrReviewDialog(image, (_pending_candidate(),))
@@ -88,7 +88,23 @@ def test_editing_ocr_updates_preview_and_confirms_export() -> None:
         assert reviewed.text == "B"
         assert reviewed.reviewed
         assert reviewed.approved
-        assert dialog.preview_item.text() == "B"
+        assert reviewed.font_family
+        assert reviewed.font_file
         assert accepted_ocr_texts((reviewed,)) == (reviewed,)
+
+        preview = dialog._cad_preview_text_items[0]
+        mask = dialog._cad_preview_mask_items[0]
+        assert preview.text() == "B"
+        assert preview.isVisible()
+        assert mask.isVisible()
+        assert dialog.preview_checkbox is not None
+        assert dialog.preview_checkbox.isChecked()
+
+        dialog.preview_checkbox.setChecked(False)
+        assert not preview.isVisible()
+        assert not mask.isVisible()
+        dialog.preview_checkbox.setChecked(True)
+        assert preview.isVisible()
+        assert mask.isVisible()
     finally:
         dialog.close()
