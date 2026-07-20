@@ -1,11 +1,28 @@
 from __future__ import annotations
 
-from PySide6.QtWidgets import QCheckBox, QDialog, QGroupBox, QLabel, QMessageBox, QPushButton
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QDialog,
+    QGroupBox,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+)
 
 from .gui_exact_release import MainWindow as _ExactMainWindow
 from .ocr_outline_export import accepted_ocr_texts
 from .ocr_recognition import render_ocr_overlay
-from .ocr_review import OcrReviewDialog
+from .ocr_review import OcrReviewDialog as _BaseOcrReviewDialog
+
+
+class LibreCadOcrReviewDialog(_BaseOcrReviewDialog):
+    """Preserve pending OCR decisions when the dialog is saved unchanged."""
+
+    def accept(self) -> None:  # type: ignore[override]
+        # Editing and the approval checkbox already persist decisions immediately.
+        # Calling the base override here would approve the currently selected
+        # candidate merely because the user pressed Save without changing it.
+        QDialog.accept(self)
 
 
 class MainWindow(_ExactMainWindow):
@@ -51,21 +68,31 @@ class MainWindow(_ExactMainWindow):
         if not self._ocr_texts:
             QMessageBox.warning(self, "尚无 OCR 文字", "请先生成当前页 CAD 轮廓。")
             return
-        source = self.corrected_image if self.corrected_image is not None else self.original_image
+        source = (
+            self.corrected_image
+            if self.corrected_image is not None
+            else self.original_image
+        )
         if source is None:
             return
-        dialog = OcrReviewDialog(source, tuple(self._ocr_texts), self)
+        dialog = LibreCadOcrReviewDialog(source, tuple(self._ocr_texts), self)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
         self._ocr_texts = dialog.reviewed_texts()
         self._dirty_trace_keys.add(self._current_trace_key())
-        self.preprocess_stages["OCR 文字识别结果"] = render_ocr_overlay(source, self._ocr_texts)
+        self.preprocess_stages["OCR 文字识别结果"] = render_ocr_overlay(
+            source,
+            self._ocr_texts,
+        )
         self._show_preprocess_stages(self.preprocess_stages)
         if self._native_pdf_mode:
             self._save_current_pdf_state()
         exportable = accepted_ocr_texts(self._ocr_texts)
         character_count = sum(
-            1 for item in exportable for character in item.text if not character.isspace()
+            1
+            for item in exportable
+            for character in item.text
+            if not character.isspace()
         )
         self.statusBar().showMessage(
             f"已保存 OCR 复核：候选 {len(self._ocr_texts)} 行，"
