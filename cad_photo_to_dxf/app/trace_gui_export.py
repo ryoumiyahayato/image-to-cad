@@ -100,6 +100,19 @@ def _multi_page_output_directory(requested_path: Path) -> Path:
     return requested_path.parent / f"{requested_path.stem}-pages"
 
 
+def _editable_text_strategy() -> dict[str, object]:
+    return {
+        "ocr_per_character_text_entities": True,
+        "one_text_entity_per_non_space_character": True,
+        "ocr_line_as_single_vector_block": False,
+        "ocr_insert_blocks": False,
+        "native_unicode_text_entities": True,
+        "absolute_font_path_embedded": False,
+        "non_uniform_text_scaling": False,
+        "ocr_unicode_preserved_as_character_xdata": True,
+    }
+
+
 def _start_document_export(window: Any) -> None:
     if not bool(getattr(window, "_native_pdf_mode", False)):
         return
@@ -154,7 +167,7 @@ def _start_document_export(window: Any) -> None:
         conversion_errors: list[str] = []
         total_trace_paths = 0
         total_trace_vertices = 0
-        total_text_lines = 0
+        total_text_characters = 0
         processed_pages = 0
 
         for page_index, page in enumerate(pages, start=1):
@@ -182,7 +195,7 @@ def _start_document_export(window: Any) -> None:
             dxf_paths.append(result.path)
             total_trace_paths += result.trace_path_count
             total_trace_vertices += result.trace_vertex_count
-            total_text_lines += result.text_count
+            total_text_characters += result.text_count
 
             page_dwg: Path | None = None
             page_error: str | None = None
@@ -212,7 +225,7 @@ def _start_document_export(window: Any) -> None:
                     "dwg": str(page_dwg) if page_dwg is not None else None,
                     "trace_path_count": result.trace_path_count,
                     "trace_vertex_count": result.trace_vertex_count,
-                    "ocr_line_block_count": result.text_count,
+                    "ocr_text_character_count": result.text_count,
                     "scan_underlays": [str(path) for path in result.underlay_paths],
                     "dwg_error": page_error,
                 }
@@ -223,7 +236,7 @@ def _start_document_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "librecad_stable_one_file_per_pdf_page",
+            "mode": "editable_character_text_one_file_per_pdf_page",
             "input": str(source_path),
             "output_directory": str(output_directory),
             "page_count": processed_pages,
@@ -234,16 +247,14 @@ def _start_document_export(window: Any) -> None:
                 "combined_modelspace_file": False,
                 "paper_space_layouts": False,
                 "page_block_wrappers": False,
-                "ocr_line_as_single_vector_block": True,
-                "font_dependent_text_entities": False,
-                "ocr_unicode_preserved_as_insert_xdata": True,
+                **_editable_text_strategy(),
                 "max_vertices_per_non_text_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "warnings": [
                 "为彻底消除第一页固定在第二页左上角的问题，多页 PDF 不再合并到同一个 DXF 模型空间。",
                 "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
-                "LibreCAD 对 TTF/SHX 中文文字兼容不稳定，因此每个 OCR 文字行改为一个字体无关的矢量块。",
-                "文字内容可在导出前通过软件的 OCR 复核界面修改；DXF 中以 XDATA 保存原 Unicode 内容。",
+                "每个已确认 OCR 非空字符均导出为独立原生 TEXT，可在 CAD 中单独选择、删除和修改。",
+                "DXF 不嵌入导出电脑的绝对字体路径；Unicode 内容可保留，但不同 CAD 环境的具体字形可能随可用字体变化。",
                 *([converter_error] if requested_dwg and converter_error else []),
                 *conversion_errors,
             ],
@@ -263,7 +274,7 @@ def _start_document_export(window: Any) -> None:
             page_count=processed_pages,
             trace_path_count=total_trace_paths,
             trace_vertex_count=total_trace_vertices,
-            text_count=total_text_lines,
+            text_count=total_text_characters,
         )
 
     def completed(value: object) -> None:
@@ -274,10 +285,10 @@ def _start_document_export(window: Any) -> None:
             f"DXF 文件：{len(completion.dxf_paths)}",
             f"DWG 文件：{len(completion.dwg_paths)}",
             f"非文字 CAD 轮廓：{completion.trace_path_count}",
-            f"OCR 整行矢量块：{completion.text_count}",
+            f"OCR 独立可编辑字符：{completion.text_count}",
             f"输出比例：{completion.scale_description}",
             "页面方式：每页一个文件，不再生成 drawing-all-pages.dxf",
-            "文字方式：每行一个矢量块，不依赖 LibreCAD 字体解析",
+            "文字方式：每个非空字符一个原生 TEXT，不生成整行矢量块",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
@@ -366,14 +377,14 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "librecad_stable_single_page",
+            "mode": "editable_character_text_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "threshold": threshold,
                 "foreground_pixels": foreground_pixels,
-                "ocr_line_block_count": result.text_count,
+                "ocr_text_character_count": result.text_count,
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
@@ -382,9 +393,7 @@ def _start_single_export(window: Any) -> None:
                 "page_block_wrappers": False,
                 "groups": False,
                 "hatches": False,
-                "ocr_line_as_single_vector_block": True,
-                "font_dependent_text_entities": False,
-                "ocr_unicode_preserved_as_insert_xdata": True,
+                **_editable_text_strategy(),
                 "max_vertices_per_non_text_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
             "export": {
@@ -394,8 +403,8 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "每个 OCR 文字行以一个字体无关的矢量块显示，避免 LibreCAD 中文字体替换和菱形乱码。",
-                "原 Unicode 内容保存在块参照 XDATA 中；请在导出前通过 OCR 复核界面修改文字。",
+                "每个已确认 OCR 非空字符均导出为独立原生 TEXT，可单独选择、删除和修改。",
+                "DXF 不写入导出电脑的绝对字体路径；不同 CAD 环境可能使用不同 Unicode 字体显示同一内容。",
                 f"超长非文字轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
@@ -418,10 +427,10 @@ def _start_single_export(window: Any) -> None:
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
             f"非文字 CAD 轮廓：{result.trace_path_count}",
-            f"OCR 整行矢量块：{result.text_count}",
+            f"OCR 独立可编辑字符：{result.text_count}",
             f"轮廓顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "文字方式：每行一个矢量块，不依赖 LibreCAD 字体解析",
+            "文字方式：每个非空字符一个原生 TEXT，不生成整行矢量块",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
