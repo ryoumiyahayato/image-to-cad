@@ -4,8 +4,14 @@ from dataclasses import replace
 
 import numpy as np
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QBrush, QPen
-from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QLabel, QPushButton
+from PySide6.QtGui import QColor, QBrush, QPainterPath, QPen
+from PySide6.QtWidgets import (
+    QCheckBox,
+    QGraphicsPathItem,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+)
 
 from .librecad_lff import (
     LIBRECAD_FONT_FAMILY,
@@ -17,13 +23,31 @@ from .ocr_outline_export import accepted_ocr_texts
 from .ocr_review import OcrReviewDialog
 
 
+class _TextPathPreviewItem(QGraphicsPathItem):
+    """QGraphicsPathItem with the old text-item inspection interface."""
+
+    def __init__(self) -> None:
+        super().__init__(QPainterPath())
+        self._content = ""
+
+    def setText(self, text: str) -> None:
+        self._content = str(text)
+        self.setPath(preview_text_path(self._content))
+
+    def text(self) -> str:
+        return self._content
+
+
 class LibreCadLffOcrReviewDialog(OcrReviewDialog):
     """Show the same native LFF strokes that LibreCAD uses after DXF export."""
 
     def __init__(self, image: np.ndarray, candidates, parent=None) -> None:
         self._source_image = np.ascontiguousarray(image.copy())
-        self._preview_paths: dict[int, object] = {}
+        self._preview_paths: dict[int, _TextPathPreviewItem] = {}
         self._preview_masks: dict[int, object] = {}
+        # Compatibility names retained for UI regression tests and extensions.
+        self._cad_preview_text_items = self._preview_paths
+        self._cad_preview_mask_items = self._preview_masks
         self._show_all_previews = True
         self._install_report = install_librecad_font(request_elevation=False)
         self.preview_checkbox: QCheckBox | None = None
@@ -110,7 +134,8 @@ class LibreCadLffOcrReviewDialog(OcrReviewDialog):
             mask.setZValue(14.0)
             self._preview_masks[index] = mask
         if path_item is None:
-            path_item = self.scene_object.addPath(preview_text_path(""))
+            path_item = _TextPathPreviewItem()
+            self.scene_object.addItem(path_item)
             path_item.setPen(QPen(QColor(210, 0, 190), 0.8))
             path_item.setBrush(QBrush(Qt.BrushStyle.NoBrush))
             path_item.setOpacity(0.96)
@@ -149,7 +174,7 @@ class LibreCadLffOcrReviewDialog(OcrReviewDialog):
         content = " ".join(
             candidate.text.replace("\r", " ").replace("\n", " ").split()
         )
-        path_item.setPath(preview_text_path(content))
+        path_item.setText(content)
         path_item.setScale(1.0)
         path_item.setRotation(float(candidate.rotation_deg))
         bounds = path_item.boundingRect()
