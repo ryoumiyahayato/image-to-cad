@@ -2,9 +2,14 @@ from __future__ import annotations
 
 from collections.abc import Callable, Sequence
 from math import atan2, degrees, hypot
-from unicodedata import east_asian_width
 
 from .auxiliary_recognition import TextCandidate
+from .font_library import (
+    character_advance_units,
+    ensure_dxf_font_style,
+    find_font_face,
+    font_metric_ratios,
+)
 
 
 PointTransform = Callable[[float, float], tuple[float, float]]
@@ -28,13 +33,7 @@ def accepted_ocr_texts(
     *,
     minimum_confidence: float = 0.58,
 ) -> tuple[TextCandidate, ...]:
-    """Return OCR candidates approved manually or safe for automatic export.
-
-    A reviewed decision is authoritative: an approved candidate is exported even
-    when its original OCR confidence was low, while a reviewed rejection is never
-    exported. Unreviewed candidates must pass both the pipeline minimum and the
-    stricter automatic threshold for short or ambiguous text.
-    """
+    """Return OCR candidates approved manually or safe for automatic export."""
 
     accepted: list[TextCandidate] = []
     for item in texts:
@@ -63,18 +62,6 @@ def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
     )
 
 
-def _character_advance_units(character: str) -> float:
-    if character.isspace():
-        return 0.35
-    if east_asian_width(character) in {"W", "F", "A"}:
-        return 1.0
-    if character in "ilI1.,:;|!'`":
-        return 0.38
-    if character in "MW@#%&":
-        return 0.90
-    return 0.62
-
-
 def _normalised_content(value: str) -> str:
     return " ".join(value.replace("\r", " ").replace("\n", " ").split())
 
@@ -89,22 +76,21 @@ def add_ocr_outline_blocks(
     block_prefix: str = "OCR_LINE",
     minimum_confidence: float = 0.58,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
-    """Write one native DXF TEXT entity for every approved OCR character.
+    """Write one editable DXF TEXT per approved OCR character.
 
-    The historical function name is retained for call-site compatibility. It no
-    longer creates outline blocks. Every Chinese character, Latin letter and digit
-    becomes an independent editable TEXT entity. Glyphs are never converted to
-    polylines and are never stretched with a DXF width factor. A line is fitted
-    into its OCR box only by reducing one uniform text height.
-
-    ``block_prefix`` is intentionally ignored because no INSERT blocks are made.
-    The DXF stores no absolute font path from the exporting computer; the receiving
-    CAD application chooses its available Unicode font or fallback.
+    The function keeps its historical name for call-site compatibility. Each
+    candidate uses the font selected in the OCR review window. The same font
+    family is used for the in-app preview, while the DXF style stores the font
+    filename so LibreCAD/AutoCAD can form Chinese glyphs instead of displaying
+    replacement diamonds. No font binaries or absolute machine paths are stored.
     """
 
     del block_prefix
     if _XDATA_APP not in doc.appids:
         doc.appids.add(_XDATA_APP)
+    # R2010 stores Unicode strings, while this codepage hint improves older CAD
+    # readers that still inspect $DWGCODEPAGE before resolving CJK glyphs.
+    doc.header["$DWGCODEPAGE"] = "ANSI_936"
 
     entities: list[object] = []
     bounds: list[tuple[float, float]] = []
@@ -114,6 +100,12 @@ def add_ocr_outline_blocks(
         content = _normalised_content(candidate.text)
         if not content:
             continue
+        face = find_font_face(
+            candidate.font_family,
+            candidate.font_file,
+            content,
+        )
+        style_name = ensure_dxf_font_style(doc, face)
 
         transformed = [
             transform(float(x), float(y)) for x, y in _candidate_quad(candidate)
@@ -132,9 +124,9 @@ def add_ocr_outline_blocks(
         if target_width <= 0.0 or target_height <= 0.0:
             continue
 
-        advance_units = [_character_advance_units(character) for character in content]
+        advance_units = [character_advance_units(face, character) for character in content]
         total_units = max(sum(advance_units), 0.01)
-        height_from_box = target_height * 0.82
+        height_from_box = target_height * 0.88
         height_from_width = target_width * 0.96 / total_units
         character_height = max(0.01, min(height_from_box, height_from_width))
         rendered_width = character_height * total_units
@@ -147,7 +139,9 @@ def add_ocr_outline_blocks(
         upward_length = max(hypot(upward_dx, upward_dy), 1e-9)
         up_x = upward_dx / upward_length
         up_y = upward_dy / upward_length
-        baseline_lift = max(0.0, (target_height - character_height) * 0.12)
+        _ascent_ratio, descent_ratio = font_metric_ratios(face)
+        free_height = max(0.0, target_height - character_height)
+        baseline_lift = free_height * 0.5 + character_height * descent_ratio
         rotation = degrees(atan2(baseline_dy, baseline_dx))
 
         cursor = horizontal_offset
@@ -166,7 +160,7 @@ def add_ocr_outline_blocks(
                     dxfattribs={
                         "layer": layer_name,
                         "color": 6,
-                        "style": "Standard",
+                        "style": style_name,
                         "rotation": float(rotation),
                     },
                 )
@@ -179,6 +173,9 @@ def add_ocr_outline_blocks(
                         (1000, content),
                         (1040, float(candidate.confidence)),
                         (1070, int(candidate.reviewed)),
+                        (1000, face.family),
+                        (1000, face.filename),
+                        (1040, float(candidate.font_match_score)),
                     ],
                 )
                 entities.append(entity)
