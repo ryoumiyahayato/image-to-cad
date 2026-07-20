@@ -30,6 +30,9 @@ class TextCandidate:
     source: str = "unknown"
     approved: bool = True
     reviewed: bool = False
+    font_family: str = ""
+    font_file: str = ""
+    font_match_score: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -53,6 +56,7 @@ def confirmable_circles(
     minimum_confidence: float = MIN_CIRCLE_EXPORT_CONFIDENCE,
 ) -> list[CircleCandidate]:
     """Return circle candidates eligible for explicit human confirmation."""
+
     if not 0.0 <= minimum_confidence <= 1.0:
         raise ValueError("Circle confidence threshold must be between 0 and 1")
     return [circle for circle in circles if circle.confidence >= minimum_confidence]
@@ -192,6 +196,7 @@ def recognize_auxiliary(
     and symbols remain report-only candidates in the legacy semantic workflow.
     The exact-contour workflow uses ``ocr_recognition`` to create editable text.
     """
+
     if binary_image.ndim == 3:
         binary_image = cv2.cvtColor(binary_image, cv2.COLOR_BGR2GRAY)
     checkpoint(cancellation_token)
