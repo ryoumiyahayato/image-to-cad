@@ -20,10 +20,20 @@ class LibreCadOcrReviewDialog(_BaseOcrReviewDialog):
     """Preserve pending OCR decisions when the dialog is saved unchanged."""
 
     def accept(self) -> None:  # type: ignore[override]
-        # Editing and the approval checkbox already persist decisions immediately.
-        # Calling the base override here would approve the currently selected
-        # candidate merely because the user pressed Save without changing it.
         QDialog.accept(self)
+
+    def _refresh_selected_state(self) -> None:
+        super()._refresh_selected_state()
+        index = self._selected_index
+        if index is None or not 0 <= index < len(self._candidates):
+            return
+        candidate = self._candidates[index]
+        if candidate is None or not candidate.review_note:
+            return
+        note = f"原笔画检查：{candidate.review_note}"
+        current = self.confidence_label.text()
+        if note not in current:
+            self.confidence_label.setText(f"{current}\n{note}")
 
 
 class MainWindow(_ExactMainWindow):
@@ -45,18 +55,19 @@ class MainWindow(_ExactMainWindow):
                 )
         for checkbox in scroll.findChildren(QCheckBox):
             if checkbox.text().startswith("先识别完整文字行"):
-                checkbox.setText("先识别横排文字，再用 LibreCAD 字体逐字确认（推荐）")
+                checkbox.setText("分块识别小字，再逐字确认（签名默认保留原轮廓）")
                 checkbox.setToolTip(
-                    "不确定候选不会自动替换原轮廓；确认后每个汉字、字母和数字"
-                    "分别导出为独立 CAD TEXT，并引用 wqy-unicode.lff。"
+                    "大图会按原分辨率分块识别小字。普通印刷文字按原笔画间隔"
+                    "生成逐字定位框；签名、手写体和跨字符连笔默认不替换原轮廓，"
+                    "只有人工确认后才导出为独立 CAD TEXT。"
                 )
         for label in scroll.findChildren(QLabel):
             text = label.text()
             if text.startswith("OCR 结果按完整文字行导出为一个可编辑 TEXT"):
                 label.setText(
-                    "OCR 候选在原图上使用 LibreCAD 原生 wqy-unicode.lff 直接预览。"
-                    "导出后每个汉字、字母和数字分别成为独立 TEXT；"
-                    "不再使用 LibreCAD 无法形成中文字形的 Windows TTF/OTF。"
+                    "大幅工程图会使用重叠分块恢复小字，并根据原图笔画间隔为每个字"
+                    "建立独立位置框。橙色候选表示签名、手写体、图形或覆盖不足，"
+                    "默认保留完整原轮廓；紫色和绿色候选才替换为可编辑 TEXT。"
                 )
             elif text.startswith("多页 PDF 默认合并到一个 DXF/DWG"):
                 label.setText(
@@ -67,10 +78,10 @@ class MainWindow(_ExactMainWindow):
             if button.text().startswith("6. 导出同一 CAD"):
                 button.setText("6. 导出 CAD（PDF 每页独立文件）")
             elif button.text() == "检查并修改 OCR 文字":
-                button.setText("检查最终 LibreCAD 字形并逐字确认 OCR")
+                button.setText("检查逐字位置、签名保留与 LibreCAD 字形")
         if hasattr(self, "page_summary_label"):
             self.page_summary_label.setText(
-                "可处理当前页或全部页面；导出时多页会分别生成独立 CAD 文件。"
+                "可处理当前页或全部页面；大页 OCR 会增加分块识别时间。"
             )
         return scroll
 
@@ -104,7 +115,12 @@ class MainWindow(_ExactMainWindow):
             for character in item.text
             if not character.isspace()
         )
+        pending_layout = sum(
+            1
+            for item in self._ocr_texts
+            if not item.reviewed and not item.replacement_safe
+        )
         self.statusBar().showMessage(
-            f"已保存 LibreCAD LFF 复核：候选 {len(self._ocr_texts)} 行，"
-            f"确认 {len(exportable)} 行 / {character_count} 个独立字符"
+            f"已保存 OCR 复核：确认 {len(exportable)} 行 / {character_count} 个独立字符；"
+            f"保留原轮廓待确认 {pending_layout} 行"
         )
