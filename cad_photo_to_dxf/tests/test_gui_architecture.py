@@ -118,6 +118,7 @@ class GuiArchitectureTests(unittest.TestCase):
         outline_source = (APP_ROOT / "ocr_outline_export.py").read_text(
             encoding="utf-8"
         )
+        layout_source = (APP_ROOT / "ocr_layout.py").read_text(encoding="utf-8")
         ocr_review_source = (APP_ROOT / "ocr_review.py").read_text(encoding="utf-8")
         font_review_source = (APP_ROOT / "font_ocr_review.py").read_text(
             encoding="utf-8"
@@ -146,7 +147,9 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn('"ocr_line_as_single_vector_block": False', export_source)
         self.assertIn("one_text_entity_per_non_space_character", export_source)
         self.assertIn("add_ocr_outline_blocks", outline_source)
-        self.assertIn("one native, editable DXF TEXT entity", outline_source)
+        self.assertIn("one native editable TEXT per character", outline_source)
+        self.assertIn("character_boxes", layout_source)
+        self.assertIn("replacement_safe", layout_source)
         self.assertIn("install_bundled_fonts_for_cad", outline_source)
         self.assertIn("检查、预览并确认 OCR 文字", ocr_review_source)
         self.assertIn("self.text_edit.textChanged.connect", ocr_review_source)
