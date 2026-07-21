@@ -108,22 +108,7 @@ def _gray(image: np.ndarray) -> np.ndarray:
     raise ValueError("Unsupported OCR layout image")
 
 
-def _text_mask(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
-    x, y, width, height = bbox
-    image_height, image_width = image.shape[:2]
-    left = max(0, int(x))
-    top = max(0, int(y))
-    right = min(image_width, int(x + width))
-    bottom = min(image_height, int(y + height))
-    if right <= left or bottom <= top:
-        return np.zeros((1, 1), dtype=np.uint8)
-    crop = _gray(image[top:bottom, left:right])
-    _threshold, mask = cv2.threshold(
-        crop,
-        0,
-        255,
-        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU,
-    )
+def _remove_long_rules(mask: np.ndarray) -> np.ndarray:
     h, w = mask.shape
     horizontal = cv2.morphologyEx(
         mask,
@@ -137,6 +122,91 @@ def _text_mask(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray
     )
     cleaned = cv2.subtract(mask, cv2.max(horizontal, vertical))
     return cleaned if cv2.countNonZero(cleaned) else mask
+
+
+def _binary_crop(image: np.ndarray, bounds: tuple[int, int, int, int]) -> np.ndarray:
+    left, top, right, bottom = bounds
+    crop = _gray(image[top:bottom, left:right])
+    _threshold, mask = cv2.threshold(
+        crop,
+        0,
+        255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU,
+    )
+    return _remove_long_rules(mask)
+
+
+def _text_mask(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    x, y, width, height = bbox
+    image_height, image_width = image.shape[:2]
+    left = max(0, int(x))
+    top = max(0, int(y))
+    right = min(image_width, int(x + width))
+    bottom = min(image_height, int(y + height))
+    if right <= left or bottom <= top:
+        return np.zeros((1, 1), dtype=np.uint8)
+    return _binary_crop(image, (left, top, right, bottom))
+
+
+def _crosses_candidate_boundary(
+    image: np.ndarray,
+    bbox: tuple[int, int, int, int],
+) -> bool:
+    """Detect a text box that captures only part of a larger connected stroke."""
+
+    x, y, width, height = bbox
+    image_height, image_width = image.shape[:2]
+    margin_x = max(6, int(round(max(width * 0.08, height * 0.40))))
+    margin_y = max(6, int(round(height * 0.45)))
+    left = max(0, int(x) - margin_x)
+    top = max(0, int(y) - margin_y)
+    right = min(image_width, int(x + width) + margin_x)
+    bottom = min(image_height, int(y + height) + margin_y)
+    if right <= left or bottom <= top:
+        return False
+
+    expanded = _binary_crop(image, (left, top, right, bottom))
+    inner_left = max(0, int(x) - left)
+    inner_top = max(0, int(y) - top)
+    inner_right = min(expanded.shape[1], int(x + width) - left)
+    inner_bottom = min(expanded.shape[0], int(y + height) - top)
+    if inner_right <= inner_left or inner_bottom <= inner_top:
+        return False
+
+    foreground = np.where(expanded > 0, 255, 0).astype(np.uint8)
+    component_count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+        foreground,
+        connectivity=8,
+    )
+    if component_count <= 1:
+        return False
+
+    inner_labels = labels[inner_top:inner_bottom, inner_left:inner_right]
+    minimum_extension_x = max(3, int(round(height * 0.16)))
+    minimum_extension_y = max(3, int(round(height * 0.14)))
+    for label_value in np.unique(inner_labels):
+        if label_value <= 0:
+            continue
+        inside_count = int(np.count_nonzero(inner_labels == label_value))
+        if inside_count < max(5, int(height * 0.12)):
+            continue
+        component_left = int(stats[label_value, cv2.CC_STAT_LEFT])
+        component_top = int(stats[label_value, cv2.CC_STAT_TOP])
+        component_right = component_left + int(stats[label_value, cv2.CC_STAT_WIDTH])
+        component_bottom = component_top + int(stats[label_value, cv2.CC_STAT_HEIGHT])
+        extends = bool(
+            component_left < inner_left - minimum_extension_x
+            or component_right > inner_right + minimum_extension_x
+            or component_top < inner_top - minimum_extension_y
+            or component_bottom > inner_bottom + minimum_extension_y
+        )
+        if not extends:
+            continue
+        total_count = int(stats[label_value, cv2.CC_STAT_AREA])
+        outside_count = max(0, total_count - inside_count)
+        if outside_count >= max(5, int(round(inside_count * 0.12))):
+            return True
+    return False
 
 
 def _character_units(character: str) -> float:
@@ -231,7 +301,7 @@ def _horizontal_character_boxes(
     if component_count > 1:
         maximum_component_width = int(stats[1:, cv2.CC_STAT_WIDTH].max())
         suspicious_wide_component = bool(
-            non_space_count >= 3 and maximum_component_width > average_cell * 2.25
+            non_space_count >= 2 and maximum_component_width > average_cell * 2.25
         )
 
     for index, character in enumerate(characters):
@@ -289,6 +359,9 @@ def prepare_candidate_layout(image: np.ndarray, candidate: TextCandidate) -> Tex
     try:
         mask = _text_mask(image, candidate.bbox)
         character_boxes, safe, note = _horizontal_character_boxes(mask, candidate)
+        if _crosses_candidate_boundary(image, candidate.bbox):
+            safe = False
+            note = "识别框只覆盖了更大连笔或签名的一部分，保留完整原轮廓等待人工确认"
     except (ValueError, cv2.error):
         character_boxes, safe, note = (), False, "无法验证原始笔画覆盖，等待人工确认"
     return replace(
