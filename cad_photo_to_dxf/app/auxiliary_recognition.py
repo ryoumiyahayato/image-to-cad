@@ -33,6 +33,9 @@ class TextCandidate:
     font_family: str = ""
     font_file: str = ""
     font_match_score: float = 0.0
+    character_boxes: tuple[tuple[int, int, int, int], ...] = ()
+    replacement_safe: bool = True
+    review_note: str = ""
 
 
 @dataclass(frozen=True)
@@ -178,6 +181,8 @@ def _run_optional_ocr(
                 kind,
                 source="pytesseract",
                 approved=False,
+                replacement_safe=False,
+                review_note="旧结构 OCR 结果仅供人工复核",
             )
         )
     return results, None
