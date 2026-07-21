@@ -9,6 +9,12 @@ import numpy as np
 
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .ocr_layout import (
+    candidate_touches_internal_tile_edge,
+    offset_candidate,
+    prepare_candidate_layout,
+    tile_regions,
+)
 
 
 MIN_OCR_CONFIDENCE = 0.58
@@ -265,6 +271,44 @@ def _recognize_rapidocr_pass(
     )
 
 
+def _recognize_tiled_horizontal(
+    image: np.ndarray,
+    *,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
+) -> list[TextCandidate]:
+    page_shape = tuple(int(value) for value in image.shape[:2])
+    regions = tile_regions(page_shape)
+    if not regions:
+        return []
+    candidates: list[TextCandidate] = []
+    for index, region in enumerate(regions):
+        checkpoint(cancellation_token)
+        left, top, right, bottom = region
+        tile = np.ascontiguousarray(image[top:bottom, left:right])
+        for candidate in _recognize_rapidocr_pass(tile, rotation=0):
+            if candidate_touches_internal_tile_edge(
+                candidate,
+                tile_region=region,
+                page_shape=page_shape,
+            ):
+                continue
+            candidates.append(
+                offset_candidate(
+                    candidate,
+                    offset_x=left,
+                    offset_y=top,
+                    source="rapidocr-tile",
+                )
+            )
+        report_progress(
+            progress_callback,
+            "ocr-native-tiles",
+            (index + 1) / max(len(regions), 1),
+        )
+    return candidates
+
+
 def _intersection_over_union(
     first: tuple[int, int, int, int],
     second: tuple[int, int, int, int],
@@ -309,12 +353,14 @@ def recognize_text_candidates(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[tuple[TextCandidate, ...], tuple[str, ...]]:
-    """Recognize conservative horizontal text lines before contour export.
+    """Recognize small horizontal text without partially replacing signatures.
 
-    The previous unconditional 90-degree pass treated long drawing structures as
-    vertical paragraphs and created the tall magenta towers seen in LibreCAD.
-    Vertical OCR is disabled in the normal path until it can be reviewed as a
-    separate, explicitly requested operation.
+    A full-page pass retains large headings. Large 300-DPI pages are also scanned
+    in overlapping native-resolution tiles so table notes and small labels are
+    not lost by the OCR engine's 4096-pixel internal resize. Every candidate is
+    then checked against the original ink. Candidates whose strokes cross several
+    character cells, as commonly happens with signatures and handwriting, remain
+    review-only and do not suppress the original contour automatically.
     """
 
     if image is None or image.size == 0:
@@ -332,15 +378,31 @@ def recognize_text_candidates(
     candidates: list[TextCandidate] = []
     try:
         checkpoint(cancellation_token)
-        report_progress(progress_callback, "ocr-horizontal", 0.10)
+        report_progress(progress_callback, "ocr-horizontal", 0.05)
         candidates.extend(_recognize_rapidocr_pass(source, rotation=0))
+        checkpoint(cancellation_token)
+        candidates.extend(
+            _recognize_tiled_horizontal(
+                source,
+                cancellation_token=cancellation_token,
+                progress_callback=(
+                    None
+                    if progress_callback is None
+                    else lambda stage, fraction: progress_callback(
+                        stage,
+                        0.12 + 0.70 * fraction,
+                    )
+                ),
+            )
+        )
         checkpoint(cancellation_token)
     except ImportError:
         warnings.append("未找到内置 RapidOCR 组件；已继续生成非文字 CAD 轮廓。")
     except Exception as exc:
         warnings.append(f"RapidOCR 文字识别失败：{exc}；已继续生成非文字 CAD 轮廓。")
 
-    resolved = _deduplicate(candidates)
+    deduplicated = _deduplicate(candidates)
+    resolved = tuple(prepare_candidate_layout(source, item) for item in deduplicated)
     if not resolved and not warnings:
         warnings.append("OCR 未找到达到置信度阈值的完整横排文字行。")
     report_progress(progress_callback, "ocr-complete", 1.0)
@@ -358,11 +420,20 @@ def render_ocr_overlay(
     else:
         overlay = image.copy()
     for candidate in candidates:
+        color = (0, 180, 0) if candidate.replacement_safe else (0, 120, 230)
         quad = candidate.quad
         if quad:
             polygon = np.asarray(quad, dtype=np.int32).reshape(-1, 1, 2)
-            cv2.polylines(overlay, [polygon], True, (0, 180, 0), 2, cv2.LINE_AA)
+            cv2.polylines(overlay, [polygon], True, color, 2, cv2.LINE_AA)
         else:
             x, y, width, height = candidate.bbox
-            cv2.rectangle(overlay, (x, y), (x + width, y + height), (0, 180, 0), 2)
+            cv2.rectangle(overlay, (x, y), (x + width, y + height), color, 2)
+        for x, y, width, height in candidate.character_boxes:
+            cv2.rectangle(
+                overlay,
+                (int(x), int(y)),
+                (int(x + width), int(y + height)),
+                (180, 0, 180),
+                1,
+            )
     return overlay
