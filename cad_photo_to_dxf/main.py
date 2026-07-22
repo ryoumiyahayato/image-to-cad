@@ -140,18 +140,18 @@ def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
 
-        from app.gui_librecad_release import MainWindow as ExactMainWindow
+        from app.gui_public_release import MainWindow as ProductMainWindow
         from app.gui_state_guard import MainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
         ) from exc
 
-    if not issubclass(ExactMainWindow, MainWindow):
-        raise RuntimeError("Exact CAD GUI must preserve the guarded document window chain")
+    if not issubclass(ProductMainWindow, MainWindow):
+        raise RuntimeError("CAD GUI must preserve the guarded document window chain")
     app = QApplication(sys.argv)
     app.setApplicationName(f"CAD Photo to DXF {__version__}")
-    window = ExactMainWindow()
+    window = ProductMainWindow()
     window.show()
     return app.exec()
 
