@@ -31,9 +31,9 @@ def pdf_page_count(path: str | Path) -> int:
     return count
 
 
-
 def pdf_page_size_mm(path: str | Path, page_index: int) -> tuple[float, float]:
     """Return one PDF page size in millimetres without rendering the page."""
+
     file_path = Path(path)
     if not file_path.exists():
         raise FileNotFoundError(file_path)
@@ -57,10 +57,13 @@ def pdf_page_size_mm(path: str | Path, page_index: int) -> tuple[float, float]:
     factor = 25.4 / 72.0
     return float(width_points) * factor, float(height_points) * factor
 
+
 def _load_pdf_page(
     file_path: Path,
     page_index: int,
     pdf_dpi: int,
+    *,
+    grayscale: bool = False,
 ) -> np.ndarray:
     if pdf_dpi < 72 or pdf_dpi > 1200:
         raise ValueError("PDF 渲染 DPI 必须在 72 到 1200 之间")
@@ -83,10 +86,10 @@ def _load_pdf_page(
             estimated_pixels = width_points * height_points * scale * scale
             if estimated_pixels > MAX_PDF_RENDER_PIXELS:
                 scale *= math.sqrt(MAX_PDF_RENDER_PIXELS / estimated_pixels)
-            bitmap = page.render(scale=scale)
+            bitmap = page.render(scale=scale, grayscale=grayscale)
             try:
-                pil_image = bitmap.to_pil().convert("RGB")
-                rgb = np.asarray(pil_image, dtype=np.uint8)
+                pil_image = bitmap.to_pil().convert("L" if grayscale else "RGB")
+                rendered = np.asarray(pil_image, dtype=np.uint8)
             finally:
                 bitmap.close()
         finally:
@@ -94,9 +97,11 @@ def _load_pdf_page(
     finally:
         document.close()
 
-    if rgb.size == 0:
+    if rendered.size == 0:
         raise ValueError(f"无法渲染 PDF 页面：{file_path}")
-    return cv2.cvtColor(np.ascontiguousarray(rgb), cv2.COLOR_RGB2BGR)
+    if grayscale:
+        return np.ascontiguousarray(rendered)
+    return cv2.cvtColor(np.ascontiguousarray(rendered), cv2.COLOR_RGB2BGR)
 
 
 def load_image(
@@ -104,8 +109,14 @@ def load_image(
     *,
     page_index: int = 0,
     pdf_dpi: int = DEFAULT_PDF_DPI,
+    grayscale: bool = False,
 ) -> np.ndarray:
-    """Load a raster image or render one page of a scanned PDF."""
+    """Load a raster image or render one page of a scanned PDF.
+
+    ``grayscale=True`` avoids allocating a three-channel 300-DPI page for OCR and
+    exact tracing. The normal preview path remains colour by default.
+    """
+
     file_path = Path(path)
     extension = file_path.suffix.lower()
     if extension not in SUPPORTED_EXTENSIONS:
@@ -113,17 +124,26 @@ def load_image(
     if not file_path.exists():
         raise FileNotFoundError(file_path)
     if extension == ".pdf":
-        return _load_pdf_page(file_path, page_index, pdf_dpi)
+        return _load_pdf_page(
+            file_path,
+            page_index,
+            pdf_dpi,
+            grayscale=grayscale,
+        )
 
     data = np.fromfile(str(file_path), dtype=np.uint8)
-    image = cv2.imdecode(data, cv2.IMREAD_COLOR)
+    image = cv2.imdecode(
+        data,
+        cv2.IMREAD_GRAYSCALE if grayscale else cv2.IMREAD_COLOR,
+    )
     if image is None:
         raise ValueError(f"Unable to decode image: {file_path}")
-    return image
+    return np.ascontiguousarray(image)
 
 
 def save_image(path: str | Path, image: np.ndarray) -> None:
     """Save an image to a path, including paths containing non-ASCII text."""
+
     file_path = Path(path)
     file_path.parent.mkdir(parents=True, exist_ok=True)
     extension = file_path.suffix.lower() or ".png"
