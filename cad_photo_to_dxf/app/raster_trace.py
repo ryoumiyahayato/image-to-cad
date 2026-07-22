@@ -8,6 +8,7 @@ import numpy as np
 
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .scan_cleanup import prepare_scan_page
 
 
 @dataclass(frozen=True)
@@ -52,46 +53,32 @@ def _to_gray(image: np.ndarray) -> np.ndarray:
     return np.ascontiguousarray(gray)
 
 
+def _trace_stages(prepared) -> dict[str, np.ndarray]:
+    stages = {"灰度原图": prepared.gray}
+    if not prepared.clean_digital:
+        stages["纸张背景校正"] = prepared.normalized
+    stages["CAD 轮廓来源"] = prepared.binary
+    return stages
+
+
 def make_black_white(
     image: np.ndarray,
     *,
     foreground_threshold: int | None = None,
 ) -> tuple[np.ndarray, int, dict[str, np.ndarray]]:
-    """Create the literal foreground mask used to construct CAD boundaries.
+    """Create the foreground mask used to construct CAD boundaries.
 
-    PDF renderings generally have a perfectly white background. When at least
-    90% of the page is exactly white, every non-white anti-aliased pixel is
-    treated as printed content by using threshold 254. Photographs and noisy
-    scans instead use a conservative Otsu threshold. No opening, closing,
-    skeletonization, Hough transform, snapping, merging, or semantic text
-    suppression is performed.
+    Clean digital pages retain every non-white pixel. Scanned pages instead use
+    local paper-background normalization plus connected weak/strong ink recovery,
+    which suppresses stains, folds, tape shadows and damaged-corner texture while
+    retaining printed strokes, handwriting and signatures.
     """
 
-    gray = _to_gray(image)
-    if foreground_threshold is None:
-        exact_white_ratio = float(np.count_nonzero(gray == 255)) / float(gray.size)
-        if exact_white_ratio >= 0.90:
-            threshold = 254
-        else:
-            otsu_value, _ = cv2.threshold(
-                gray,
-                0,
-                255,
-                cv2.THRESH_BINARY | cv2.THRESH_OTSU,
-            )
-            threshold = int(min(245, max(200, round(float(otsu_value)))))
-    else:
-        threshold = int(max(1, min(254, foreground_threshold)))
-    _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-
-    if int(np.count_nonzero(binary == 0)) > binary.size // 2:
-        binary = 255 - binary
-
-    stages = {
-        "灰度原图": gray,
-        "CAD 轮廓来源": binary,
-    }
-    return np.ascontiguousarray(binary), threshold, stages
+    prepared = prepare_scan_page(
+        image,
+        foreground_threshold=foreground_threshold,
+    )
+    return prepared.binary, prepared.threshold, _trace_stages(prepared)
 
 
 def _deduplicate_points(
@@ -227,14 +214,19 @@ def trace_image(
     checkpoint(cancellation_token)
     texts: tuple[TextCandidate, ...] = ()
     warnings: list[str] = []
-    stages: dict[str, np.ndarray] = {}
+    prepared = prepare_scan_page(
+        image,
+        foreground_threshold=foreground_threshold,
+    )
+    stages = _trace_stages(prepared)
 
     if enable_ocr:
         from .ocr_recognition import recognize_text_candidates, render_ocr_overlay
 
         report_progress(progress_callback, "ocr-before-trace", 0.01)
+        ocr_source = image if prepared.clean_digital else prepared.normalized
         texts, ocr_warnings = recognize_text_candidates(
-            image,
+            ocr_source,
             cancellation_token=cancellation_token,
             progress_callback=(
                 None
@@ -250,13 +242,8 @@ def trace_image(
             stages["OCR 文字识别结果"] = render_ocr_overlay(image, texts)
 
     report_progress(progress_callback, "foreground-mask", 0.32 if enable_ocr else 0.02)
-    binary, threshold, trace_stages = make_black_white(
-        image,
-        foreground_threshold=foreground_threshold,
-    )
-    stages = {**trace_stages, **stages}
     paths = trace_binary(
-        binary,
+        prepared.binary,
         cancellation_token=cancellation_token,
         progress_callback=(
             progress_callback
@@ -267,7 +254,7 @@ def trace_image(
             )
         ),
     )
-    foreground_pixels = int(np.count_nonzero(binary == 0))
+    foreground_pixels = int(np.count_nonzero(prepared.binary == 0))
     vertex_count = sum(len(path.points) for path in paths)
     if not paths and foreground_pixels:
         warnings.append("前景内容存在，但未形成可导出的闭合 CAD 边界。")
@@ -275,16 +262,18 @@ def trace_image(
         warnings.append(
             "CAD 边界超过 100 万个顶点；内容保持不变，但 DXF/DWG 文件会较大。"
         )
+    if not prepared.clean_digital:
+        warnings.append("已自动校正扫描纸张底色并抑制破损、阴影和污渍纹理。")
     if texts:
         warnings.append(
             f"已在轮廓生成前识别 {len(texts)} 个可编辑文字对象；"
             "原文字轮廓将保留在默认关闭的回退图层。"
         )
     return RasterTraceResult(
-        binary=binary,
+        binary=prepared.binary,
         stages=stages,
         paths=paths,
-        threshold=threshold,
+        threshold=prepared.threshold,
         foreground_pixels=foreground_pixels,
         vertex_count=vertex_count,
         warnings=tuple(warnings),
