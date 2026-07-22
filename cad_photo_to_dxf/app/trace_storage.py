@@ -38,6 +38,9 @@ def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
                 "font_family": item.font_family,
                 "font_file": item.font_file,
                 "font_match_score": item.font_match_score,
+                "character_boxes": [list(box) for box in item.character_boxes],
+                "replacement_safe": item.replacement_safe,
+                "review_note": item.review_note,
             }
             for item in texts
         ],
@@ -55,7 +58,7 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
         raise ValueError("Trace cache OCR text metadata is invalid JSON") from exc
     results: list[TextCandidate] = []
     for item in payload:
-        bbox = tuple(int(value) for value in item.get("bbox", ()))
+        bbox = tuple(int(number) for number in item.get("bbox", ()))
         if len(bbox) != 4:
             continue
         raw_quad = item.get("quad")
@@ -64,6 +67,11 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
             points = tuple((float(point[0]), float(point[1])) for point in raw_quad)
             if len(points) == 4:
                 quad = points
+        character_boxes = tuple(
+            (int(box[0]), int(box[1]), int(box[2]), int(box[3]))
+            for box in item.get("character_boxes", ())
+            if len(box) == 4
+        )
         results.append(
             TextCandidate(
                 text=str(item.get("text", "")),
@@ -78,13 +86,43 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
                 font_family=str(item.get("font_family", "")),
                 font_file=str(item.get("font_file", "")),
                 font_match_score=float(item.get("font_match_score", 0.0)),
+                character_boxes=character_boxes,
+                replacement_safe=bool(item.get("replacement_safe", True)),
+                review_note=str(item.get("review_note", "")),
             )
         )
     return tuple(results)
 
 
+def _packed_binary(binary: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    normalized = np.ascontiguousarray(binary, dtype=np.uint8)
+    foreground = np.ravel(normalized < 128)
+    return (
+        np.packbits(foreground, bitorder="little"),
+        np.asarray(normalized.shape[:2], dtype=np.int64),
+    )
+
+
+def _unpack_binary(packed: np.ndarray, shape: np.ndarray) -> np.ndarray:
+    values = tuple(int(value) for value in np.asarray(shape).reshape(-1))
+    if len(values) != 2 or values[0] <= 0 or values[1] <= 0:
+        raise ValueError("Trace cache binary shape is invalid")
+    pixel_count = values[0] * values[1]
+    foreground = np.unpackbits(
+        np.asarray(packed, dtype=np.uint8),
+        bitorder="little",
+        count=pixel_count,
+    ).reshape(values)
+    return np.where(foreground > 0, 0, 255).astype(np.uint8)
+
+
 def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
-    """Atomically store one full-resolution trace page in compressed arrays."""
+    """Atomically store a page using packed pixels and uncompressed arrays.
+
+    The old cache used zlib on an 80-megapixel byte image, which spent substantial
+    CPU time after every page. A one-bit foreground mask is already compact, so
+    writing it with ``np.savez`` is much faster while remaining lossless.
+    """
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -110,6 +148,7 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
     )
     warnings = np.asarray(result.warnings, dtype=np.str_)
     texts_json = np.asarray([_serialize_texts(tuple(result.texts))], dtype=np.str_)
+    binary_packed, binary_shape = _packed_binary(result.binary)
 
     temporary_path: Path | None = None
     try:
@@ -120,9 +159,11 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
             delete=False,
         ) as handle:
             temporary_path = Path(handle.name)
-            np.savez_compressed(
+            np.savez(
                 handle,
-                binary=np.ascontiguousarray(result.binary, dtype=np.uint8),
+                cache_version=np.asarray([2], dtype=np.int32),
+                binary_packed=binary_packed,
+                binary_shape=binary_shape,
                 points=all_points,
                 offsets=offsets,
                 parent=parent,
@@ -149,7 +190,6 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         raise FileNotFoundError(source)
     with np.load(source, allow_pickle=False) as archive:
         required = {
-            "binary",
             "points",
             "offsets",
             "parent",
@@ -163,7 +203,15 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         missing = required.difference(archive.files)
         if missing:
             raise ValueError(f"Trace cache is missing fields: {sorted(missing)}")
-        binary = np.ascontiguousarray(archive["binary"], dtype=np.uint8)
+        if "binary_packed" in archive.files and "binary_shape" in archive.files:
+            binary = _unpack_binary(
+                archive["binary_packed"],
+                archive["binary_shape"],
+            )
+        elif "binary" in archive.files:
+            binary = np.ascontiguousarray(archive["binary"], dtype=np.uint8)
+        else:
+            raise ValueError("Trace cache is missing binary image data")
         points = np.asarray(archive["points"], dtype=np.float32)
         offsets = np.asarray(archive["offsets"], dtype=np.int64)
         parent = np.asarray(archive["parent"], dtype=np.int32)
