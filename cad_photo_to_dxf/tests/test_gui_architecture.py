@@ -64,6 +64,7 @@ class GuiArchitectureTests(unittest.TestCase):
     ) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
         public_source = (APP_ROOT / "gui_public_release.py").read_text(encoding="utf-8")
+        final_source = (APP_ROOT / "gui_final_release.py").read_text(encoding="utf-8")
         librecad_source = (APP_ROOT / "gui_librecad_release.py").read_text(
             encoding="utf-8"
         )
@@ -80,7 +81,9 @@ class GuiArchitectureTests(unittest.TestCase):
 
         self.assertIn("from app.gui_public_release import MainWindow", main_source)
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
-        self.assertIn("MainWindow", imported_names(public_source, "gui_librecad_release"))
+        self.assertIn("MainWindow", imported_names(public_source, "gui_final_release"))
+        self.assertIn("from . import gui_librecad_release as _release", final_source)
+        self.assertIn("class MainWindow(_release.MainWindow)", final_source)
         self.assertIn("MainWindow", imported_names(librecad_source, "gui_exact_release"))
         self.assertIn("MainWindow", imported_names(exact_source, "gui_trace_release"))
         self.assertIn("MainWindow", imported_names(release_source, "gui_trace_mode"))
@@ -106,6 +109,7 @@ class GuiArchitectureTests(unittest.TestCase):
             self.assertNotIn(fragment, source)
 
     def test_normal_gui_uses_portable_editable_character_workflow(self) -> None:
+        final_source = (APP_ROOT / "gui_final_release.py").read_text(encoding="utf-8")
         librecad_source = (APP_ROOT / "gui_librecad_release.py").read_text(
             encoding="utf-8"
         )
@@ -132,6 +136,9 @@ class GuiArchitectureTests(unittest.TestCase):
         )
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
+        self.assertIn("PROCESS_PDF_DPI = 240", final_source)
+        self.assertIn("SIDEBAR_WIDTH = 440", final_source)
+        self.assertIn("_release.TRACE_PDF_DPI = PROCESS_PDF_DPI", final_source)
         self.assertIn("CAD 轮廓生成", exact_source)
         self.assertIn("生成当前页 CAD 轮廓", exact_source)
         self.assertIn("生成当前 PDF 全部页 CAD 轮廓", exact_source)
@@ -144,7 +151,6 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("CAD 轮廓预览", exact_source)
         self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("导出 CAD（每页独立文件）", librecad_source)
-        self.assertIn("SIDEBAR_WIDTH = 390", librecad_source)
         self.assertIn("trace_image_optimized", librecad_source)
         self.assertNotIn("内置字体匹配", librecad_source)
         self.assertIn("正在应用修改并重新生成 CAD", public_source)
