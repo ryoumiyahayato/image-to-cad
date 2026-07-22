@@ -59,10 +59,11 @@ class GuiArchitectureTests(unittest.TestCase):
         }
         self.assertTrue(forbidden_modules.isdisjoint(imported))
 
-    def test_active_entrypoint_preserves_guard_chain_and_uses_librecad_release(
+    def test_active_entrypoint_preserves_guard_chain_and_uses_public_release(
         self,
     ) -> None:
         main_source = (PROJECT_ROOT / "main.py").read_text(encoding="utf-8")
+        public_source = (APP_ROOT / "gui_public_release.py").read_text(encoding="utf-8")
         librecad_source = (APP_ROOT / "gui_librecad_release.py").read_text(
             encoding="utf-8"
         )
@@ -77,8 +78,9 @@ class GuiArchitectureTests(unittest.TestCase):
         guard_source = (APP_ROOT / "gui_guard.py").read_text(encoding="utf-8")
         compatibility_source = (APP_ROOT / "gui.py").read_text(encoding="utf-8")
 
-        self.assertIn("from app.gui_librecad_release import MainWindow", main_source)
+        self.assertIn("from app.gui_public_release import MainWindow", main_source)
         self.assertIn("from app.gui_state_guard import MainWindow", main_source)
+        self.assertIn("MainWindow", imported_names(public_source, "gui_librecad_release"))
         self.assertIn("MainWindow", imported_names(librecad_source, "gui_exact_release"))
         self.assertIn("MainWindow", imported_names(exact_source, "gui_trace_release"))
         self.assertIn("MainWindow", imported_names(release_source, "gui_trace_mode"))
@@ -107,6 +109,7 @@ class GuiArchitectureTests(unittest.TestCase):
         librecad_source = (APP_ROOT / "gui_librecad_release.py").read_text(
             encoding="utf-8"
         )
+        public_source = (APP_ROOT / "gui_public_release.py").read_text(encoding="utf-8")
         exact_source = (APP_ROOT / "gui_exact_release.py").read_text(encoding="utf-8")
         release_source = (APP_ROOT / "gui_trace_release.py").read_text(encoding="utf-8")
         engine_source = (APP_ROOT / "raster_trace.py").read_text(encoding="utf-8")
@@ -144,6 +147,8 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("SIDEBAR_WIDTH = 390", librecad_source)
         self.assertIn("trace_image_optimized", librecad_source)
         self.assertNotIn("内置字体匹配", librecad_source)
+        self.assertIn("正在应用修改并重新生成 CAD", public_source)
+        self.assertNotIn("正在按修改内容重新生成 CAD 轮廓", public_source)
         self.assertIn("one_dxf_per_pdf_page", export_source)
         self.assertIn("ocr_per_character_text_entities", export_source)
         self.assertIn('"ocr_line_as_single_vector_block": False', export_source)
