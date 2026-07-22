@@ -8,6 +8,8 @@ import numpy as np
 
 _DIGITAL_WHITE_RATIO = 0.90
 _BACKGROUND_MAX_SIDE = 1200
+_COMPONENT_TILE_SIZE = 2048
+_COMPONENT_OVERLAP = 64
 
 
 @dataclass(frozen=True)
@@ -67,13 +69,54 @@ def _background_estimate(gray: np.ndarray) -> np.ndarray:
     return np.maximum(background, 32).astype(np.uint8, copy=False)
 
 
+def _retain_connected_ink(strong: np.ndarray, weak: np.ndarray) -> np.ndarray:
+    """Retain weak edge pixels connected to dark ink using bounded-memory tiles."""
+
+    height, width = weak.shape
+    retained = np.zeros((height, width), dtype=bool)
+    tile_size = _COMPONENT_TILE_SIZE
+    overlap = _COMPONENT_OVERLAP
+
+    for core_top in range(0, height, tile_size):
+        core_bottom = min(height, core_top + tile_size)
+        top = max(0, core_top - overlap)
+        bottom = min(height, core_bottom + overlap)
+        for core_left in range(0, width, tile_size):
+            core_right = min(width, core_left + tile_size)
+            left = max(0, core_left - overlap)
+            right = min(width, core_right + overlap)
+
+            weak_tile = np.ascontiguousarray(weak[top:bottom, left:right], dtype=np.uint8)
+            if not np.any(weak_tile):
+                continue
+            strong_tile = strong[top:bottom, left:right]
+            count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+                weak_tile,
+                connectivity=8,
+            )
+            keep_label = np.zeros(count, dtype=bool)
+            if np.any(strong_tile):
+                keep_label[np.unique(labels[strong_tile])] = True
+            keep_label[0] = False
+            keep_label &= stats[:, cv2.CC_STAT_AREA] >= 2
+
+            local_core = keep_label[
+                labels[
+                    core_top - top : core_bottom - top,
+                    core_left - left : core_right - left,
+                ]
+            ]
+            retained[core_top:core_bottom, core_left:core_right] = local_core
+    return retained
+
+
 def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Recover ink from stained, folded, taped, or unevenly exposed paper.
 
     Broad paper shading is divided out first. A two-level connected-component gate
     then retains weak antialiasing only when it belongs to a component containing
-    genuinely dark ink. This removes most paper texture and damaged-corner clouds
-    without opening/closing strokes or deleting handwriting and signatures.
+    genuinely dark ink. The component pass is tiled so large architectural sheets
+    do not allocate a page-sized 32-bit labels array.
     """
 
     background = _background_estimate(gray)
@@ -82,19 +125,7 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 
     strong = (normalized < 160) | (gray < 70)
     weak = ((normalized < 222) & (local_delta > 7)) | (gray < 105)
-
-    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
-        weak.astype(np.uint8),
-        connectivity=8,
-    )
-    keep_label = np.zeros(count, dtype=bool)
-    if np.any(strong):
-        keep_label[np.unique(labels[strong])] = True
-    keep_label[0] = False
-
-    areas = stats[:, cv2.CC_STAT_AREA]
-    keep_label &= areas >= 2
-    retained = keep_label[labels]
+    retained = _retain_connected_ink(strong, weak)
     retained |= strong & (gray < 65)
     binary = np.where(retained, 0, 255).astype(np.uint8)
     return np.ascontiguousarray(normalized), np.ascontiguousarray(binary)
