@@ -9,9 +9,9 @@ from app.ocr_fast import (
     TILE_SIZE,
     deduplicate_candidates,
     prepare_safe_candidate,
-    tile_has_probable_text,
 )
 from app.ocr_layout import tile_regions
+from app.ocr_tile_filter import tile_has_probable_text
 
 
 def _candidate(text: str, bbox, confidence: float, source: str) -> TextCandidate:
