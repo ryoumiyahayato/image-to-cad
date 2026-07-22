@@ -1,0 +1,66 @@
+{
+  "source_pdf": "图纸-综合仓库-电专业+815.pdf",
+  "validation_date": "2026-07-19",
+  "goal": "Verify that collinear contour compression reduces CAD export load without changing the foreground pixel result.",
+  "rendering": {
+    "requested_dpi": 300,
+    "max_render_pixels": 80000000,
+    "foreground_threshold_for_white_pdf": 254,
+    "contour_tree": "cv2.RETR_TREE",
+    "contour_encoding": "cv2.CHAIN_APPROX_SIMPLE",
+    "semantic_geometry_simplification": false,
+    "removed_points": "Only intermediate points on unchanged horizontal, vertical, or diagonal runs."
+  },
+  "pages": [
+    {"page": 1, "shape": [3780, 2717], "contours": 1464, "vertices": 41756, "diff": 0},
+    {"page": 2, "shape": [7442, 10513], "contours": 5764, "vertices": 200576, "diff": 0},
+    {"page": 3, "shape": [6770, 11818], "contours": 7058, "vertices": 158152, "diff": 0},
+    {"page": 4, "shape": [6770, 11818], "contours": 5875, "vertices": 117024, "diff": 0},
+    {"page": 5, "shape": [6770, 11818], "contours": 5903, "vertices": 118887, "diff": 0},
+    {"page": 6, "shape": [6770, 11818], "contours": 5816, "vertices": 113912, "diff": 0},
+    {"page": 7, "shape": [6770, 11818], "contours": 6408, "vertices": 128472, "diff": 0}
+  ],
+  "comparison": {
+    "previous_chain_approx_none_vertices": 6042701,
+    "current_chain_approx_simple_vertices": 878779,
+    "contour_count": 38288,
+    "pixel_difference_total": 0,
+    "vertex_reduction_percent": 85.457,
+    "vertex_reduction_factor": 6.876
+  },
+  "historical_combined_modelspace_benchmark": {
+    "status": "Historical contour-performance measurement only; this is not the active GUI multi-page export layout.",
+    "environment": "Linux container, Python 3, OpenCV 4.13, ezdxf 1.4.4",
+    "output_at_time_of_measurement": "one DXF containing all seven pages in model space plus lightweight PAGE viewports",
+    "total_vertices": 878779,
+    "total_contours": 38288,
+    "build_s": 43.11834169299982,
+    "save_s": 12.927861022999878,
+    "total_s": 56.0464380909998,
+    "size_mb": 83.26476764678955,
+    "rss_mb": 2021.890625,
+    "note": "These measurements are retained as historical engineering evidence and are not a performance guarantee for Windows computers."
+  },
+  "active_export_strategy": {
+    "multi_page_pdf": "one independent DXF or DWG file per PDF page",
+    "combined_modelspace_file": false,
+    "reason": "Prevents page coordinate, viewport, and layer overlap in LibreCAD and AutoCAD.",
+    "ocr_text": "one native editable DXF TEXT entity per approved non-space Unicode character",
+    "ocr_insert_blocks": false,
+    "non_uniform_text_scaling": false,
+    "absolute_system_font_path_embedded": false,
+    "font_note": "Unicode content and editability are portable; exact glyph appearance depends on fonts available in the receiving CAD environment."
+  },
+  "verification": {
+    "method": "Rebuild the foreground image from the retained contour hierarchy with cv2.drawContours(..., FILLED) and compare every pixel.",
+    "result": "All seven pages reconstructed with 0 differing pixels."
+  },
+  "latest_validated_application_build": {
+    "commit": "7e3495ea9798ff50202922cae00ef030ca8410e7",
+    "ci": "success",
+    "freecad_import": "success",
+    "windows_portable_smoke": "success",
+    "windows_installer_install_launch_uninstall": "success",
+    "artifact": "CADPhotoToDXF-Windows-1.3.0"
+  }
+}

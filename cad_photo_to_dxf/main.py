@@ -140,47 +140,25 @@ def run_gui() -> int:
     try:
         from PySide6.QtWidgets import QApplication
 
-        # Keep the guarded document chain explicit for architecture checks.
+        from app.gui_public_release import MainWindow as ProductMainWindow
         from app.gui_state_guard import MainWindow
-        from app.gui_consolidated import MainWindow as ConsolidatedMainWindow
     except ImportError as exc:
         raise SystemExit(
             "PySide6 is required for GUI mode. Run: pip install -r requirements.txt"
         ) from exc
 
-    if not issubclass(ConsolidatedMainWindow, MainWindow):
-        raise RuntimeError("Consolidated GUI must preserve the guarded PR20 chain")
+    if not issubclass(ProductMainWindow, MainWindow):
+        raise RuntimeError("CAD GUI must preserve the guarded document window chain")
     app = QApplication(sys.argv)
     app.setApplicationName(f"CAD Photo to DXF {__version__}")
-    window = ConsolidatedMainWindow()
+    window = ProductMainWindow()
     window.show()
     return app.exec()
 
 
 def main() -> int:
     args = build_parser().parse_args()
-    if not args.headless:
-        return run_gui()
-    try:
-        return run_headless(args)
-    except ValueError as exc:
-        print(f"Invalid arguments: {exc}", file=sys.stderr)
-        return 2
-    except FileNotFoundError as exc:
-        print(f"Input not found: {exc}", file=sys.stderr)
-        return 3
-    except Exception as exc:
-        from app.cancellation import ProcessingCancelled
-        from app.pipeline import PipelineError
-
-        if isinstance(exc, ProcessingCancelled):
-            print("Processing cancelled", file=sys.stderr)
-            return 130
-        if isinstance(exc, PipelineError):
-            print(str(exc), file=sys.stderr)
-            return exc.exit_code
-        print(f"Processing failed: {exc}", file=sys.stderr)
-        return 1
+    return run_headless(args) if args.headless else run_gui()
 
 
 if __name__ == "__main__":

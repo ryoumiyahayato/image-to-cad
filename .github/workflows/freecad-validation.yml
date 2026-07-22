@@ -59,7 +59,7 @@ jobs:
             dpkg-query -W -f='installed_version=${Version}\n' freecad
           } | tee cad_photo_to_dxf/output/freecad/freecad-package.txt
 
-      - name: Generate smoke DXF
+      - name: Generate legacy and full-trace smoke DXFs
         working-directory: cad_photo_to_dxf
         run: |
           mkdir -p output/freecad/debug
@@ -73,8 +73,11 @@ jobs:
             --paper-size A4 \
             --paper-orientation landscape \
             --auxiliary
+          python scripts/generate_trace_smoke.py \
+            --output output/freecad/trace-sample.dxf \
+            --binary output/freecad/trace-binary.png
 
-      - name: Validate DXF with pinned FreeCAD environment
+      - name: Validate both DXFs with pinned FreeCAD environment
         working-directory: cad_photo_to_dxf
         shell: bash
         run: |
@@ -92,6 +95,10 @@ jobs:
             output/freecad/sample.dxf \
             --output output/freecad/freecad-validation.json \
             --freecad-command "$freecad_cmd"
+          python scripts/validate_dxf.py \
+            output/freecad/trace-sample.dxf \
+            --output output/freecad/trace-freecad-validation.json \
+            --freecad-command "$freecad_cmd"
           python - <<'PY'
           import hashlib
           import json
@@ -103,10 +110,16 @@ jobs:
           evidence = json.loads(
               (output_dir / "freecad-validation.json").read_text(encoding="utf-8")
           )
-          assert evidence["dxf"]["passed"], evidence
-          assert evidence["freecad"]["passed"], evidence
-          assert evidence["freecad"]["object_count"] > 0, evidence
-          assert evidence["freecad"]["nonempty_shape_count"] > 0, evidence
+          trace_evidence = json.loads(
+              (output_dir / "trace-freecad-validation.json").read_text(
+                  encoding="utf-8"
+              )
+          )
+          for name, item in (("legacy", evidence), ("trace", trace_evidence)):
+              assert item["dxf"]["passed"], (name, item)
+              assert item["freecad"]["passed"], (name, item)
+              assert item["freecad"]["object_count"] > 0, (name, item)
+              assert item["freecad"]["nonempty_shape_count"] > 0, (name, item)
 
           def sha256(path: Path) -> str:
               digest = hashlib.sha256()
@@ -118,11 +131,15 @@ jobs:
           paths = {
               "input_image": Path("samples/test.jpg"),
               "output_dxf": output_dir / "sample.dxf",
+              "trace_output_dxf": output_dir / "trace-sample.dxf",
+              "trace_binary": output_dir / "trace-binary.png",
               "processing_report": output_dir / "report.json",
               "freecad_validation": output_dir / "freecad-validation.json",
+              "trace_freecad_validation": output_dir
+              / "trace-freecad-validation.json",
           }
           provenance = {
-              "schema_version": 1,
+              "schema_version": 2,
               "repository": os.environ.get("GITHUB_REPOSITORY"),
               "workflow": os.environ.get("GITHUB_WORKFLOW"),
               "workflow_run_id": os.environ.get("GITHUB_RUN_ID"),
@@ -132,8 +149,11 @@ jobs:
               "audited_head_commit": os.environ.get("AUDITED_HEAD_SHA"),
               "freecad_apt_version": os.environ["FREECAD_APT_VERSION"],
               "freecad_version": evidence["freecad"]["freecad_version"],
-              "freecad_object_count": evidence["freecad"]["object_count"],
-              "freecad_nonempty_shape_count": evidence["freecad"][
+              "legacy_freecad_object_count": evidence["freecad"]["object_count"],
+              "trace_freecad_object_count": trace_evidence["freecad"][
+                  "object_count"
+              ],
+              "trace_freecad_nonempty_shape_count": trace_evidence["freecad"][
                   "nonempty_shape_count"
               ],
               "files": {
