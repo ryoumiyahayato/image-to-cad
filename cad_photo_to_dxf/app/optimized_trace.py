@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from . import ocr_fast
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
-from .ocr_tile_filter import tile_has_probable_text
+from .ocr_pipeline import recognize_text_candidates_optimized
 from .raster_trace import RasterTraceResult, make_black_white, trace_binary
 
 
@@ -22,10 +21,7 @@ def trace_image_optimized(
     texts = ()
     warnings: list[str] = []
     if enable_ocr:
-        # Keep the heavier OCR module stable while replacing its cheap tile gate
-        # with the rule-aware implementation used by the optimized GUI path.
-        ocr_fast.tile_has_probable_text = tile_has_probable_text
-        texts, ocr_warnings = ocr_fast.recognize_text_candidates_fast(
+        texts, ocr_warnings = recognize_text_candidates_optimized(
             image,
             cancellation_token=cancellation_token,
             progress_callback=(
