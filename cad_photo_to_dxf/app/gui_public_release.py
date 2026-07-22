@@ -5,7 +5,7 @@ import time
 
 from PySide6.QtWidgets import QDialog, QMessageBox
 
-from .gui_librecad_release import MainWindow as _OptimizedMainWindow
+from .gui_final_release import MainWindow as _OptimizedMainWindow
 from .raster_trace import RasterTraceResult, trace_binary
 from .trace_paint import TracePaintDialog
 from .trace_verification import TraceVerificationResult, verify_trace_paths
