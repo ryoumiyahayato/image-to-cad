@@ -17,7 +17,9 @@ from .ocr_layout import (
 )
 
 
-MIN_OCR_CONFIDENCE = 0.58
+# Keep lower-confidence detections available for manual correction. Automatic
+# export still requires the stricter thresholds in ``accepted_ocr_texts``.
+MIN_OCR_CONFIDENCE = 0.50
 MAX_OCR_CANDIDATES = 3000
 _RAPID_OCR_ENGINE: Any | None = None
 

@@ -119,6 +119,35 @@ def test_low_confidence_ocr_is_not_exported(monkeypatch) -> None:
     assert warnings
 
 
+def test_reviewable_confidence_candidate_is_kept_for_manual_correction(
+    monkeypatch,
+) -> None:
+    class ReviewableConfidence:
+        def __call__(self, _image, **_kwargs):
+            return SimpleNamespace(
+                word_results=[
+                    [
+                        "待校对",
+                        0.52,
+                        [[20.0, 30.0], [100.0, 30.0], [100.0, 55.0], [20.0, 55.0]],
+                    ]
+                ],
+                boxes=None,
+                txts=(),
+                scores=(),
+            )
+
+    monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", ReviewableConfidence())
+    candidates, warnings = ocr_recognition.recognize_text_candidates(
+        np.full((200, 300, 3), 255, dtype=np.uint8)
+    )
+
+    assert len(candidates) == 1
+    assert candidates[0].text == "待校对"
+    assert candidates[0].confidence == 0.52
+    assert not warnings
+
+
 def test_installed_rapidocr_runtime_accepts_line_level_call(monkeypatch) -> None:
     monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", None)
     image = np.full((120, 260, 3), 255, dtype=np.uint8)

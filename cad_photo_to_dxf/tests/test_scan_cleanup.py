@@ -72,3 +72,28 @@ def test_clean_digital_page_still_keeps_every_non_white_pixel() -> None:
     assert prepared.threshold == 254
     assert prepared.binary[40, 50] == 0
     assert prepared.binary[60, 80] == 0
+
+
+def test_dense_scanner_speckle_is_removed_without_erasing_real_ink() -> None:
+    gray = np.full((700, 1000), 238, dtype=np.uint8)
+    for y_value in range(180, 421, 12):
+        for x_value in range(140, 381, 12):
+            gray[y_value, x_value] = 20
+    cv2.line(gray, (520, 240), (900, 240), 35, 3, cv2.LINE_AA)
+    cv2.putText(
+        gray,
+        "A1",
+        (600, 390),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.2,
+        30,
+        3,
+        cv2.LINE_AA,
+    )
+
+    prepared = prepare_scan_page(gray)
+
+    speckle_region = prepared.binary[150:450, 110:410]
+    assert np.count_nonzero(speckle_region == 0) < 80
+    assert prepared.binary[240, 700] == 0
+    assert np.count_nonzero(prepared.binary[330:410, 580:700] == 0) > 50

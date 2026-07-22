@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import os
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
 import numpy as np
-from PySide6.QtWidgets import QApplication, QGroupBox, QPushButton
+from PySide6.QtWidgets import QApplication, QGroupBox, QLabel, QPushButton, QSplitter
 
 from app.auxiliary_recognition import TextCandidate
 from app.gui_exact_release import MainWindow
 from app.gui_librecad_release import LibreCadOcrReviewDialog
+from app.gui_public_release import MainWindow as PublicMainWindow
 from app.ocr_outline_export import accepted_ocr_texts
 
 
@@ -76,6 +81,34 @@ def test_pending_ocr_is_not_approved_by_unchanged_save() -> None:
         assert accepted_ocr_texts((saved,)) == ()
     finally:
         dialog.close()
+
+
+def test_public_sidebar_opens_fully_without_deprecated_feature_copy() -> None:
+    application = _application()
+    window = PublicMainWindow()
+    try:
+        window.resize(1920, 1080)
+        window.show()
+        application.processEvents()
+        splitter = window.centralWidget()
+        assert isinstance(splitter, QSplitter)
+        scroll = splitter.widget(0)
+        assert scroll.width() >= 500
+        assert scroll.horizontalScrollBar().maximum() == 0
+
+        visible_text = []
+        for widget_type in (QGroupBox, QPushButton, QLabel):
+            for widget in window.findChildren(widget_type):
+                if not widget.isVisible():
+                    continue
+                visible_text.append(
+                    widget.title() if isinstance(widget, QGroupBox) else widget.text()
+                )
+        joined = "\n".join(visible_text)
+        for deprecated in ("CAD 轮廓", "LibreCAD", "LFF", "逐字"):
+            assert deprecated not in joined
+    finally:
+        window.close()
 
 
 def test_editing_ocr_updates_final_cad_font_preview_and_confirms_export() -> None:

@@ -124,9 +124,9 @@ def _start_document_export(window: Any) -> None:
             page_text += "……"
         QMessageBox.warning(
             window,
-            "部分页面尚未生成 CAD 轮廓",
+            "部分页面尚未处理",
             f"尚未处理的页码：{page_text}\n\n"
-            "请先点击“生成当前 PDF 全部页 CAD 轮廓”，再导出。",
+            "请先点击“处理全部页面”，再导出。",
         )
         return
 
@@ -284,8 +284,8 @@ def _start_document_export(window: Any) -> None:
             f"独立页面：{completion.page_count}",
             f"DXF 文件：{len(completion.dxf_paths)}",
             f"DWG 文件：{len(completion.dwg_paths)}",
-            f"非文字 CAD 轮廓：{completion.trace_path_count}",
-            f"OCR 独立可编辑字符：{completion.text_count}",
+            f"非文字图形：{completion.trace_path_count}",
+            f"可编辑文字：{completion.text_count}",
             f"输出比例：{completion.scale_description}",
             "页面方式：每页一个文件，不再生成 drawing-all-pages.dxf",
             "文字方式：每个非空字符一个原生 TEXT，不生成整行矢量块",
@@ -306,7 +306,7 @@ def _start_document_export(window: Any) -> None:
 def _start_single_export(window: Any) -> None:
     trace_paths = tuple(getattr(window, "_trace_paths", ()))
     if not trace_paths or window.binary_image is None or window.corrected_image is None:
-        QMessageBox.warning(window, "尚无 CAD 轮廓", "请先生成当前页 CAD 轮廓。")
+        QMessageBox.warning(window, "尚无处理结果", "请先处理当前页。")
         return
     selection = _select_output_path(window, default_name="drawing-page.dwg")
     if selection is None:
@@ -403,9 +403,9 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "每个已确认 OCR 非空字符均导出为独立原生 TEXT，可单独选择、删除和修改。",
+                "已确认的文字会作为可编辑 TEXT 导出。",
                 "DXF 不写入导出电脑的绝对字体路径；不同 CAD 环境可能使用不同 Unicode 字体显示同一内容。",
-                f"超长非文字轮廓按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
+                f"超长非文字图形按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
             ],
         }
@@ -426,11 +426,11 @@ def _start_single_export(window: Any) -> None:
         summary = [
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
-            f"非文字 CAD 轮廓：{result.trace_path_count}",
-            f"OCR 独立可编辑字符：{result.text_count}",
-            f"轮廓顶点：{result.trace_vertex_count}",
+            f"非文字图形：{result.trace_path_count}",
+            f"可编辑文字：{result.text_count}",
+            f"图形顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "文字方式：每个非空字符一个原生 TEXT，不生成整行矢量块",
+            "文字方式：可编辑 TEXT",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:

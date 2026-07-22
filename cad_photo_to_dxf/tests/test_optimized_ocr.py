@@ -12,6 +12,7 @@ from app.ocr_fast import (
 )
 from app.ocr_layout import tile_regions
 from app.ocr_tile_filter import tile_has_probable_text
+from app.ocr_pipeline import _recognize_tiles
 
 
 def _candidate(text: str, bbox, confidence: float, source: str) -> TextCandidate:
@@ -98,3 +99,13 @@ def test_partial_connected_signature_is_not_automatically_replaced() -> None:
 
     assert not resolved.replacement_safe
     assert "签名" in resolved.review_note or "连笔" in resolved.review_note
+
+
+def test_bounded_pdf_page_skips_expensive_native_tiles(monkeypatch) -> None:
+    image = np.full((600, 4800), 255, dtype=np.uint8)
+
+    def fail_if_called(*_args, **_kwargs):
+        raise AssertionError("bounded pages must not invoke native OCR tiles")
+
+    monkeypatch.setattr("app.ocr_pipeline._recognize_rapidocr_pass", fail_if_called)
+    assert _recognize_tiles(image) == []

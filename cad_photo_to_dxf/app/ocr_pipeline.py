@@ -19,6 +19,9 @@ from .ocr_recognition import _recognize_rapidocr_pass
 from .ocr_tile_filter import tile_has_probable_text
 
 
+NATIVE_TILE_MIN_SIDE = 6144
+
+
 def _gray(image: np.ndarray) -> np.ndarray:
     if image.ndim == 2:
         return np.ascontiguousarray(image, dtype=np.uint8)
@@ -72,6 +75,8 @@ def _recognize_tiles(
 ) -> list[TextCandidate]:
     gray = _gray(image)
     page_shape = tuple(int(value) for value in gray.shape[:2])
+    if max(page_shape) < NATIVE_TILE_MIN_SIDE:
+        return []
     regions = tile_regions(
         page_shape,
         tile_size=TILE_SIZE,

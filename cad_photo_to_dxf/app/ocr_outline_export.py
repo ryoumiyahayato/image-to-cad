@@ -19,6 +19,7 @@ from .librecad_lff import (
     librecad_character_advance_units,
     librecad_metric_ratios,
 )
+from .ocr_overlap import collapse_overlapping_candidates
 
 
 PointTransform = Callable[[float, float], tuple[float, float]]
@@ -58,7 +59,10 @@ def accepted_ocr_texts(
         required = max(float(minimum_confidence), _automatic_threshold(content))
         if confidence >= required:
             accepted.append(item)
-    return tuple(accepted)
+    # Apply a final export-time guard as well as the recognition-time guard.
+    # This also repairs old caches and reviewed results created before OCR
+    # overlap suppression was introduced.
+    return collapse_overlapping_candidates(accepted)
 
 
 def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:

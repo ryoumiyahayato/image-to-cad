@@ -137,7 +137,7 @@ class GuiArchitectureTests(unittest.TestCase):
 
         self.assertIn("TRACE_PDF_DPI = 300", release_source)
         self.assertIn("PROCESS_PDF_DPI = 240", final_source)
-        self.assertIn("SIDEBAR_WIDTH = 440", final_source)
+        self.assertIn("SIDEBAR_WIDTH = 540", final_source)
         self.assertIn("_release.TRACE_PDF_DPI = PROCESS_PDF_DPI", final_source)
         self.assertIn("CAD 轮廓生成", exact_source)
         self.assertIn("生成当前页 CAD 轮廓", exact_source)

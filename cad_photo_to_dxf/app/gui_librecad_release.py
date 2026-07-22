@@ -21,7 +21,7 @@ from PySide6.QtWidgets import (
 
 from .gui_exact_release import MainWindow as _ExactMainWindow
 from .gui_trace_release import TRACE_PDF_DPI
-from .image_loader import load_image
+from .image_loader import bounded_pdf_dpi, load_image
 from .librecad_ocr_review import LibreCadLffOcrReviewDialog as _BaseOcrReviewDialog
 from .ocr_outline_export import accepted_ocr_texts
 from .optimized_trace import trace_image_optimized
@@ -32,6 +32,7 @@ from .trace_storage import load_trace_cache, save_trace_cache
 
 PREVIEW_MAX_DIMENSION = 2400
 SIDEBAR_WIDTH = 390
+PROCESS_PDF_MAX_SIDE = 4800
 
 
 class LibreCadOcrReviewDialog(_BaseOcrReviewDialog):
@@ -121,7 +122,8 @@ class MainWindow(_ExactMainWindow):
             text = label.text()
             if text.startswith("OCR 结果按完整文字行"):
                 label.setText(
-                    "文字会逐字导出为可编辑内容；无法可靠识别的部分保留原图形。"
+                    "文字识别结果可在导出前检查和修改；"
+                    "无法可靠识别的部分保留原图形。"
                 )
             elif "直线：蓝色；曲线：绿色；文字/符号" in text:
                 label.setText("不同内容使用不同颜色，便于检查。")
@@ -169,6 +171,13 @@ class MainWindow(_ExactMainWindow):
             return None
         return tuple(int(value) for value in self.original_image.shape[:2])
 
+    def _processing_pdf_dpi(self, page_index: int) -> int:
+        return bounded_pdf_dpi(
+            self._pdf_page_sizes_mm[page_index],
+            preferred_dpi=TRACE_PDF_DPI,
+            max_dimension_px=PROCESS_PDF_MAX_SIDE,
+        )
+
     def _load_trace_source_for_current_page(self):
         if not self._native_pdf_mode or self.current_path is None:
             if self.corrected_image is None:
@@ -177,7 +186,7 @@ class MainWindow(_ExactMainWindow):
         image = load_image(
             self.current_path,
             page_index=self._current_pdf_page_index,
-            pdf_dpi=TRACE_PDF_DPI,
+            pdf_dpi=self._processing_pdf_dpi(self._current_pdf_page_index),
             grayscale=True,
         )
         width_mm, _height_mm = self._pdf_page_sizes_mm[self._current_pdf_page_index]
@@ -353,7 +362,7 @@ class MainWindow(_ExactMainWindow):
                 image = load_image(
                     source_path,
                     page_index=page_index,
-                    pdf_dpi=TRACE_PDF_DPI,
+                    pdf_dpi=self._processing_pdf_dpi(page_index),
                     grayscale=True,
                 )
 
@@ -388,6 +397,7 @@ class MainWindow(_ExactMainWindow):
                     "trace_foreground_pixels": result.foreground_pixels,
                     "trace_vertex_count": result.vertex_count,
                     "ocr_text_count": len(result.texts),
+                    "processing_dpi": self._processing_pdf_dpi(page_index),
                     "drawing_scale": drawing_scale,
                     "trace_color": 7,
                 }
@@ -427,7 +437,9 @@ class MainWindow(_ExactMainWindow):
                 source = load_image(
                     self.current_path,
                     page_index=self._current_pdf_page_index,
-                    pdf_dpi=TRACE_PDF_DPI,
+                    pdf_dpi=self._processing_pdf_dpi(
+                        self._current_pdf_page_index
+                    ),
                     grayscale=True,
                 )
             else:
@@ -454,12 +466,7 @@ class MainWindow(_ExactMainWindow):
             for item in self._ocr_texts
             if item.approved and not item.reviewed and not item.replacement_safe
         )
-        character_count = sum(
-            1
-            for item in exportable
-            for character in item.text
-            if not character.isspace()
-        )
         self.statusBar().showMessage(
-            f"文字检查已保存：{character_count} 个可编辑字符，{pending} 项保留原图形"
+            f"文字检查已保存：{len(exportable)} 项可编辑文字，"
+            f"{pending} 项保留原图形"
         )

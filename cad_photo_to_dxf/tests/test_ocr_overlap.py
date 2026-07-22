@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 from app.auxiliary_recognition import TextCandidate
 from app.ocr_overlap import collapse_overlapping_candidates
+from app.ocr_outline_export import accepted_ocr_texts
 
 
 def _candidate(
@@ -44,3 +47,12 @@ def test_adjacent_labels_on_same_row_remain_separate() -> None:
     result = collapse_overlapping_candidates((first, second))
 
     assert result == (first, second)
+
+
+def test_export_guard_collapses_duplicates_from_older_caches() -> None:
+    overview = _candidate("消防平面图", (100, 200, 240, 44), 0.94, "rapidocr-overview")
+    tiled = _candidate("消防平面图", (104, 202, 236, 42), 0.96, "rapidocr-tile")
+    overview = replace(overview, replacement_safe=True)
+    tiled = replace(tiled, replacement_safe=True)
+
+    assert accepted_ocr_texts((overview, tiled)) == (tiled,)

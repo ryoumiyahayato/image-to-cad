@@ -10,6 +10,8 @@ _DIGITAL_WHITE_RATIO = 0.90
 _BACKGROUND_MAX_SIDE = 1200
 _COMPONENT_TILE_SIZE = 2048
 _COMPONENT_OVERLAP = 64
+_SPECK_TILE_SIZE = 1024
+_SPECK_OVERLAP = 64
 
 
 @dataclass(frozen=True)
@@ -131,6 +133,72 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return np.ascontiguousarray(normalized), np.ascontiguousarray(binary)
 
 
+def _suppress_dense_speckle(binary: np.ndarray) -> np.ndarray:
+    """Remove clustered scanner dust while preserving isolated punctuation and ink."""
+
+    height, width = binary.shape
+    cleaned = binary.copy()
+    tile_size = _SPECK_TILE_SIZE
+    overlap = _SPECK_OVERLAP
+    for core_top in range(0, height, tile_size):
+        core_bottom = min(height, core_top + tile_size)
+        top = max(0, core_top - overlap)
+        bottom = min(height, core_bottom + overlap)
+        for core_left in range(0, width, tile_size):
+            core_right = min(width, core_left + tile_size)
+            left = max(0, core_left - overlap)
+            right = min(width, core_right + overlap)
+            foreground = np.ascontiguousarray(
+                binary[top:bottom, left:right] == 0,
+                dtype=np.uint8,
+            )
+            count, labels, stats, centroids = cv2.connectedComponentsWithStats(
+                foreground,
+                connectivity=8,
+            )
+            if count <= 1:
+                continue
+            tiny = (
+                (stats[:, cv2.CC_STAT_AREA] <= 8)
+                & (stats[:, cv2.CC_STAT_WIDTH] <= 5)
+                & (stats[:, cv2.CC_STAT_HEIGHT] <= 5)
+            )
+            tiny[0] = False
+            tiny_labels = np.flatnonzero(tiny)
+            if tiny_labels.size < 32:
+                continue
+
+            centers = np.zeros(foreground.shape, dtype=np.uint8)
+            for label_value in tiny_labels:
+                center_x, center_y = centroids[int(label_value)]
+                centers[
+                    max(0, min(centers.shape[0] - 1, int(round(center_y)))),
+                    max(0, min(centers.shape[1] - 1, int(round(center_x)))),
+                ] = 1
+            density = cv2.boxFilter(
+                centers,
+                cv2.CV_32F,
+                (128, 128),
+                normalize=False,
+                borderType=cv2.BORDER_CONSTANT,
+            )
+            remove_label = np.zeros(count, dtype=bool)
+            for label_value in tiny_labels:
+                center_x, center_y = centroids[int(label_value)]
+                cy = max(0, min(density.shape[0] - 1, int(round(center_y))))
+                cx = max(0, min(density.shape[1] - 1, int(round(center_x))))
+                if density[cy, cx] >= 24.0:
+                    remove_label[int(label_value)] = True
+
+            core_labels = labels[
+                core_top - top : core_bottom - top,
+                core_left - left : core_right - left,
+            ]
+            core = cleaned[core_top:core_bottom, core_left:core_right]
+            core[remove_label[core_labels]] = 255
+    return np.ascontiguousarray(cleaned)
+
+
 def prepare_scan_page(
     image: np.ndarray,
     *,
@@ -156,6 +224,8 @@ def prepare_scan_page(
 
     if int(np.count_nonzero(binary == 0)) > binary.size // 2:
         binary = 255 - binary
+    if not clean_digital and foreground_threshold is None:
+        binary = _suppress_dense_speckle(binary)
 
     return PreparedScanPage(
         gray=np.ascontiguousarray(gray),

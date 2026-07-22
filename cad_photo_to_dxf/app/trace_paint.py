@@ -157,13 +157,13 @@ class TracePaintDialog(QDialog):
         super().__init__(parent)
         if binary is None or binary.size == 0 or binary.ndim != 2:
             raise ValueError("CAD contour correction requires a non-empty source mask")
-        self.setWindowTitle("检查并修正 CAD 轮廓来源")
+        self.setWindowTitle("检查并修改 CAD 内容")
         self.resize(1400, 900)
         layout = QVBoxLayout(self)
         layout.addWidget(
             QLabel(
                 "黑色画笔补充缺失内容，白色画笔删除错误内容。"
-                "保存后会按修改结果重新生成最终 CAD 轮廓。"
+                "保存后会按修改结果重新生成 CAD 内容。"
             )
         )
 
@@ -206,7 +206,7 @@ class TracePaintDialog(QDialog):
             | QDialogButtonBox.StandardButton.Cancel
         )
         buttons.button(QDialogButtonBox.StandardButton.Save).setText(
-            "保存并重新生成 CAD 轮廓"
+            "保存并重新生成 CAD"
         )
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)

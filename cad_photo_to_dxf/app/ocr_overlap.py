@@ -5,10 +5,10 @@ from collections.abc import Iterable
 from .auxiliary_recognition import TextCandidate
 
 
-def _rank(candidate: TextCandidate) -> tuple[float, int, int]:
+def _rank(candidate: TextCandidate) -> tuple[int, float, int, int]:
     compact = "".join(candidate.text.split())
     source_bonus = 2 if candidate.source == "rapidocr-tile" else 1
-    return float(candidate.confidence), len(compact), source_bonus
+    return int(candidate.reviewed), float(candidate.confidence), len(compact), source_bonus
 
 
 def _same_printed_region(first: TextCandidate, second: TextCandidate) -> bool:

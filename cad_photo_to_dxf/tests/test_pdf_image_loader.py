@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PIL import Image, ImageDraw
 
-from app.image_loader import load_image, pdf_page_count, pdf_page_size_mm
+from app.image_loader import bounded_pdf_dpi, load_image, pdf_page_count, pdf_page_size_mm
 
 
 def test_load_image_renders_image_only_pdf(tmp_path) -> None:
@@ -30,3 +30,14 @@ def test_pdf_page_size_mm_reports_page_dimensions(tmp_path) -> None:
 
     assert 250.0 < width_mm < 260.0
     assert 125.0 < height_mm < 130.0
+
+
+def test_processing_dpi_is_bounded_for_large_sheets() -> None:
+    assert bounded_pdf_dpi(
+        (230.0, 320.0), preferred_dpi=240, max_dimension_px=4800
+    ) == 240
+    dpi = bounded_pdf_dpi(
+        (630.0, 1100.0), preferred_dpi=240, max_dimension_px=4800
+    )
+    assert 100 <= dpi <= 112
+    assert 1100.0 / 25.4 * dpi < 4800

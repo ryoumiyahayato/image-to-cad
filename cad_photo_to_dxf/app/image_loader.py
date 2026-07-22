@@ -11,6 +11,26 @@ DEFAULT_PDF_DPI = 300
 MAX_PDF_RENDER_PIXELS = 80_000_000
 
 
+def bounded_pdf_dpi(
+    page_size_mm: tuple[float, float],
+    *,
+    preferred_dpi: int,
+    max_dimension_px: int,
+    minimum_dpi: int = 90,
+) -> int:
+    """Choose a page DPI that avoids abrupt multi-tile processing workloads."""
+
+    width_mm, height_mm = (float(page_size_mm[0]), float(page_size_mm[1]))
+    longest_mm = max(width_mm, height_mm)
+    if not math.isfinite(longest_mm) or longest_mm <= 0:
+        raise ValueError("PDF page size must be positive and finite")
+    requested = max(72, int(preferred_dpi))
+    lower_bound = max(72, min(requested, int(minimum_dpi)))
+    pixel_limit = max(512, int(max_dimension_px))
+    bounded = math.floor((pixel_limit - 8) * 25.4 / longest_mm)
+    return max(lower_bound, min(requested, int(bounded)))
+
+
 def pdf_page_count(path: str | Path) -> int:
     file_path = Path(path)
     if not file_path.exists():
