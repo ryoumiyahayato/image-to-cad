@@ -12,10 +12,21 @@ from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
 from .image_loader import save_image
+from .line_detect import LineSegment
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
-from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
+from .signature_overlay import (
+    SignatureRegion,
+    add_signature_images,
+    set_foreground_draw_order,
+)
+from .trace_dxf_entities import (
+    TRACE_LAYER_STYLES,
+    TracePalette,
+    add_exact_trace_entities,
+    add_straight_line_entities,
+)
 
 
 def export_exact_trace_dxf(
@@ -28,7 +39,9 @@ def export_exact_trace_dxf(
     drawing_multiplier: float = 1.0,
     trace_color: int = 7,
     palette: TracePalette | None = None,
+    straight_lines: tuple[LineSegment, ...] = (),
     texts: tuple[TextCandidate, ...] = (),
+    signatures: tuple[SignatureRegion, ...] = (),
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
     cancellation_token: CancellationToken | None = None,
@@ -36,8 +49,8 @@ def export_exact_trace_dxf(
 ) -> ExportResult:
     if image_height <= 0:
         raise ValueError("Image height must be greater than zero")
-    if not trace_paths:
-        raise ValueError("At least one exact trace path is required")
+    if not trace_paths and not straight_lines and not texts and not signatures:
+        raise ValueError("At least one CAD entity is required")
     multiplier = float(drawing_multiplier)
     if not isfinite(multiplier) or multiplier <= 0:
         raise ValueError("Drawing multiplier must be positive and finite")
@@ -63,16 +76,29 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
     underlay_path: Path | None = None
     resolved_width = int(image_width or 0)
-    if resolved_width <= 0:
+    if resolved_width <= 0 and trace_paths:
         resolved_width = max(
             1,
             int(round(max(float(x) for trace in trace_paths for x, _y in trace.points))) + 1,
         )
+    if resolved_width <= 0 and straight_lines:
+        resolved_width = max(
+            1,
+            int(
+                round(
+                    max(
+                        max(float(line.x1), float(line.x2))
+                        for line in straight_lines
+                    )
+                )
+            )
+            + 1,
+        )
+    resolved_width = max(1, resolved_width)
 
     if raster_image is not None:
         if raster_image.size == 0 or raster_image.ndim not in (2, 3):
@@ -113,6 +139,21 @@ def export_exact_trace_dxf(
         return (x * scale, (image_height - y) * scale)
 
     exportable_texts = accepted_ocr_texts(texts)
+    selected_palette = palette or TracePalette()
+    if int(trace_color) != 7:
+        selected_palette = TracePalette(
+            int(trace_color),
+            int(trace_color),
+            int(trace_color),
+        )
+    line_count, _line_entities, line_bounds = add_straight_line_entities(
+        modelspace,
+        straight_lines,
+        transform=transform,
+        layer_name="TRACE_STRAIGHT",
+        color=selected_palette.straight,
+    )
+    coordinates.extend(line_bounds)
     trace_path_count, trace_vertex_count, _trace_entities, trace_bounds = add_exact_trace_entities(
         modelspace,
         trace_paths,
@@ -125,7 +166,7 @@ def export_exact_trace_dxf(
         progress_callback=entity_progress,
     )
     coordinates.extend(trace_bounds)
-    text_count, _text_entities, text_bounds = add_ocr_outline_blocks(
+    text_count, text_entities, text_bounds = add_ocr_outline_blocks(
         doc,
         modelspace,
         exportable_texts,
@@ -134,6 +175,25 @@ def export_exact_trace_dxf(
         block_prefix="OCR_LINE",
     )
     coordinates.extend(text_bounds)
+    signature_paths, signature_entities, signature_bounds = add_signature_images(
+        doc,
+        modelspace,
+        signatures,
+        transform=transform,
+        output_path=path,
+        layer_name="SIGNATURE_OVERLAY",
+    )
+    coordinates.extend(signature_bounds)
+    set_foreground_draw_order(
+        modelspace,
+        [*text_entities, *signature_entities],
+    )
+    if signature_entities:
+        doc.set_raster_variables(
+            frame=0,
+            quality=1,
+            units="mm" if calibration is not None else "none",
+        )
 
     if coordinates:
         xs = [point[0] for point in coordinates]
@@ -165,7 +225,7 @@ def export_exact_trace_dxf(
 
     return ExportResult(
         path=path,
-        line_count=0,
+        line_count=line_count,
         mm_per_pixel=scale,
         calibrated=calibration is not None,
         text_count=text_count,
@@ -173,4 +233,5 @@ def export_exact_trace_dxf(
         trace_vertex_count=trace_vertex_count,
         drawing_scale=multiplier,
         underlay_path=underlay_path,
+        signature_paths=signature_paths,
     )

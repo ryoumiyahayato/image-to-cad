@@ -52,7 +52,15 @@ def test_adjacent_labels_on_same_row_remain_separate() -> None:
 def test_export_guard_collapses_duplicates_from_older_caches() -> None:
     overview = _candidate("消防平面图", (100, 200, 240, 44), 0.94, "rapidocr-overview")
     tiled = _candidate("消防平面图", (104, 202, 236, 42), 0.96, "rapidocr-tile")
-    overview = replace(overview, replacement_safe=True)
-    tiled = replace(tiled, replacement_safe=True)
+    overview = replace(
+        overview,
+        replacement_safe=True,
+        source="rapidocr-consensus",
+    )
+    tiled = replace(
+        tiled,
+        replacement_safe=True,
+        source="rapidocr-consensus",
+    )
 
     assert accepted_ocr_texts((overview, tiled)) == (tiled,)

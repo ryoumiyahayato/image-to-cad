@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import replace
 from math import ceil
 from unicodedata import east_asian_width
@@ -25,7 +26,7 @@ def tile_regions(
     height, width = (int(image_shape[0]), int(image_shape[1]))
     size = max(512, int(tile_size))
     overlap_value = min(size // 3, max(0, int(overlap)))
-    if max(height, width) <= 4096:
+    if max(height, width) <= size:
         return ()
     step = max(256, size - overlap_value)
 
@@ -370,3 +371,138 @@ def prepare_candidate_layout(image: np.ndarray, candidate: TextCandidate) -> Tex
         replacement_safe=bool(safe),
         review_note=note,
     )
+
+
+def _projection_centers(values: np.ndarray) -> tuple[int, ...]:
+    positions = np.flatnonzero(values)
+    if not positions.size:
+        return ()
+    runs: list[list[int]] = [[int(positions[0])]]
+    for raw_value in positions[1:]:
+        value = int(raw_value)
+        if value <= runs[-1][-1] + 1:
+            runs[-1].append(value)
+        else:
+            runs.append([value])
+    return tuple(int(round(sum(run) / len(run))) for run in runs)
+
+
+def constrain_texts_to_table_cells(
+    binary: np.ndarray,
+    texts: Sequence[TextCandidate],
+) -> tuple[TextCandidate, ...]:
+    """Clip OCR placement boxes to enclosing ruled cells when all sides exist."""
+
+    if binary.ndim != 2 or binary.size == 0 or not texts:
+        return tuple(texts)
+    page_height, page_width = binary.shape
+    foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
+    horizontal = cv2.morphologyEx(
+        foreground,
+        cv2.MORPH_OPEN,
+        cv2.getStructuringElement(
+            cv2.MORPH_RECT,
+            (max(25, int(round(page_width * 0.012))), 1),
+        ),
+    )
+    vertical = cv2.morphologyEx(
+        foreground,
+        cv2.MORPH_OPEN,
+        cv2.getStructuringElement(
+            cv2.MORPH_RECT,
+            (1, max(25, int(round(page_height * 0.012)))),
+        ),
+    )
+
+    constrained: list[TextCandidate] = []
+    for item in texts:
+        if item.kind in {"signature_candidate", "graphic_candidate"}:
+            constrained.append(item)
+            continue
+        x, y, width, height = item.bbox
+        center_x = x + width * 0.5
+        center_y = y + height * 0.5
+        band_top = max(0, int(round(y - height * 0.30)))
+        band_bottom = min(page_height, int(round(y + height * 1.30)))
+        band_left = max(0, int(round(x - height * 0.40)))
+        band_right = min(page_width, int(round(x + width + height * 0.40)))
+        if band_bottom <= band_top or band_right <= band_left:
+            constrained.append(item)
+            continue
+
+        vertical_projection = np.count_nonzero(
+            vertical[band_top:band_bottom] > 0,
+            axis=0,
+        )
+        vertical_centers = _projection_centers(
+            vertical_projection >= max(4, int(round((band_bottom - band_top) * 0.45)))
+        )
+        horizontal_projection = np.count_nonzero(
+            horizontal[:, band_left:band_right] > 0,
+            axis=1,
+        )
+        horizontal_centers = _projection_centers(
+            horizontal_projection >= max(4, int(round((band_right - band_left) * 0.45)))
+        )
+        lefts = [value for value in vertical_centers if value < center_x]
+        rights = [value for value in vertical_centers if value > center_x]
+        tops = [value for value in horizontal_centers if value < center_y]
+        bottoms = [value for value in horizontal_centers if value > center_y]
+        if not lefts or not rights or not tops or not bottoms:
+            constrained.append(item)
+            continue
+
+        cell_left = max(lefts) + 2
+        cell_right = min(rights) - 1
+        cell_top = max(tops) + 2
+        cell_bottom = min(bottoms) - 1
+        new_left = max(x, cell_left)
+        new_top = max(y, cell_top)
+        new_right = min(x + width, cell_right)
+        new_bottom = min(y + height, cell_bottom)
+        new_width = new_right - new_left
+        new_height = new_bottom - new_top
+        if (
+            new_width <= 1
+            or new_height <= 1
+            or new_width < width * 0.55
+            or new_height < height * 0.55
+        ):
+            constrained.append(item)
+            continue
+        if (new_left, new_top, new_width, new_height) == item.bbox:
+            constrained.append(item)
+            continue
+        clipped_character_boxes: list[tuple[int, int, int, int]] = []
+        for box_x, box_y, box_width, box_height in item.character_boxes:
+            clipped_left = max(box_x, cell_left)
+            clipped_top = max(box_y, cell_top)
+            clipped_right = min(box_x + box_width, cell_right)
+            clipped_bottom = min(box_y + box_height, cell_bottom)
+            if clipped_right > clipped_left and clipped_bottom > clipped_top:
+                clipped_character_boxes.append(
+                    (
+                        clipped_left,
+                        clipped_top,
+                        clipped_right - clipped_left,
+                        clipped_bottom - clipped_top,
+                    )
+                )
+        constrained.append(
+            replace(
+                item,
+                bbox=(new_left, new_top, new_width, new_height),
+                quad=(
+                    (float(new_left), float(new_top)),
+                    (float(new_right), float(new_top)),
+                    (float(new_right), float(new_bottom)),
+                    (float(new_left), float(new_bottom)),
+                ),
+                character_boxes=tuple(clipped_character_boxes),
+                review_note=(
+                    f"{item.review_note}；" if item.review_note else ""
+                )
+                + "文字位置已限制在检测到的表格单元格内",
+            )
+        )
+    return tuple(constrained)

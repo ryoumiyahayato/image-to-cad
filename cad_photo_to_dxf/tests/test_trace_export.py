@@ -39,20 +39,20 @@ def _ocr_text(**changes) -> TextCandidate:
         "confidence": 0.96,
         "kind": "text_candidate",
         "quad": ((66.0, 34.0), (208.0, 34.0), (208.0, 70.0), (66.0, 70.0)),
-        "source": "test-line",
+        "source": "rapidocr-consensus",
     }
     values.update(changes)
     return TextCandidate(**values)
 
 
-def _character_xdata(entity) -> tuple[int, int, str]:
-    values = entity.get_xdata("OCR_CHARACTER")
+def _line_xdata(entity) -> tuple[int, str]:
+    values = entity.get_xdata("OCR_TEXT_LINE")
     integers = [value for code, value in values if code == 1070]
     source = "".join(value for code, value in values if code == 1000)
-    return int(integers[0]), int(integers[1]), source
+    return int(integers[0]), source
 
 
-def test_single_export_writes_one_native_text_per_character(tmp_path: Path) -> None:
+def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (219.0, 0.0), 220.0)
@@ -67,26 +67,27 @@ def test_single_export_writes_one_native_text_per_character(tmp_path: Path) -> N
         texts=(_ocr_text(),),
     )
 
-    assert result.trace_path_count < len(paths)
-    assert result.trace_vertex_count < sum(len(path.points) for path in paths)
-    assert result.text_count == 11
+    assert 0 < result.trace_path_count < len(paths)
+    assert result.text_count == 1
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
     outlines = list(modelspace.query("LWPOLYLINE"))
     texts = list(modelspace.query("TEXT"))
     assert outlines
-    assert len(texts) == 11
-    assert "".join(entity.dxf.text for entity in texts) == "FIREALARMA1"
+    assert len(texts) == 1
+    assert texts[0].dxf.text == "FIRE ALARM A1"
     assert all(entity.dxf.layer == "OCR_TEXT" for entity in texts)
-    assert all(float(entity.dxf.width) == 1.0 for entity in texts)
-    assert _character_xdata(texts[0]) == (1, 1, "FIRE ALARM A1")
+    assert not document.layers.get("OCR_TEXT").is_off()
+    assert texts[0].dxf.style == "wqy-unicode"
+    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in texts)
+    assert _line_xdata(texts[0]) == (1, "FIRE ALARM A1")
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert all(len(entity) <= MAX_EDITABLE_POLYLINE_VERTICES for entity in outlines)
     assert not document.audit().errors
 
 
-def test_unreviewed_uncertain_ocr_does_not_replace_scan_contours(tmp_path: Path) -> None:
+def test_unreviewed_recognizable_ocr_is_exported_as_text(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
     calibration = ScaleCalibration((0.0, 0.0), (219.0, 0.0), 220.0)
@@ -102,11 +103,9 @@ def test_unreviewed_uncertain_ocr_does_not_replace_scan_contours(tmp_path: Path)
     )
 
     document = ezdxf.readfile(result.path)
-    assert result.text_count == 0
-    assert result.trace_path_count == len([path for path in paths if path.depth % 2 == 0]) + len(
-        [path for path in paths if path.depth % 2 == 1 and path.parent is not None]
-    )
-    assert len(document.modelspace().query("TEXT")) == 0
+    assert result.text_count == 1
+    assert [entity.dxf.text for entity in document.modelspace().query("TEXT")] == ["t"]
+    assert len(document.modelspace().query("MTEXT")) == 0
 
 
 def test_manually_reviewed_text_overrides_low_original_confidence(tmp_path: Path) -> None:
@@ -130,7 +129,7 @@ def test_manually_reviewed_text_overrides_low_original_confidence(tmp_path: Path
     assert [entity.dxf.text for entity in texts] == ["1"]
 
 
-def test_long_connected_contour_is_split_without_losing_segments() -> None:
+def test_long_connected_contour_becomes_one_center_line() -> None:
     points = tuple((float(index), float(index % 2)) for index in range(150))
     path = TracePath(points=points, parent=None, depth=0, root=0)
     document = ezdxf.new("R2010", setup=True)
@@ -143,13 +142,30 @@ def test_long_connected_contour_is_split_without_losing_segments() -> None:
         source_size=(150, 2),
     )
 
-    polylines = list(modelspace.query("LWPOLYLINE"))
-    assert entities == polylines
-    assert len(polylines) > 1
-    assert all(len(entity) <= MAX_EDITABLE_POLYLINE_VERTICES for entity in polylines)
-    assert all(not entity.closed for entity in polylines)
-    exported_segment_count = sum(max(0, len(entity) - 1) for entity in polylines)
-    assert exported_segment_count == len(points)
+    lines = list(modelspace.query("LINE"))
+    assert entities == lines
+    assert len(lines) == 1
+    assert len(modelspace.query("LWPOLYLINE")) == 0
+    assert lines[0].dxf.layer == "TRACE_STRAIGHT"
+
+
+def test_graphic_hole_boundaries_are_exported() -> None:
+    binary = np.full((140, 140), 255, dtype=np.uint8)
+    cv2.circle(binary, (70, 70), 48, 0, -1)
+    cv2.circle(binary, (70, 70), 22, 255, -1)
+    paths = trace_binary(binary)
+    document = ezdxf.new("R2010", setup=True)
+    modelspace = document.modelspace()
+
+    path_count, _vertex_count, _entities, _bounds = add_exact_trace_entities(
+        modelspace,
+        paths,
+        transform=lambda x, y: (x, y),
+        source_size=(140, 140),
+    )
+
+    assert path_count >= 2
+    assert len(modelspace.query("LWPOLYLINE")) >= 2
 
 
 def _document_page(number: int, *, with_text: bool = False) -> DocumentPage:
@@ -169,7 +185,7 @@ def _document_page(number: int, *, with_text: bool = False) -> DocumentPage:
     )
 
 
-def test_document_export_uses_page_layer_and_character_text(tmp_path: Path) -> None:
+def test_document_export_uses_page_layer_and_line_text(tmp_path: Path) -> None:
     page = _document_page(1, with_text=True)
     result = export_trace_document_streaming(
         [page],
@@ -177,17 +193,19 @@ def test_document_export_uses_page_layer_and_character_text(tmp_path: Path) -> N
         total_pages=1,
     )
 
-    assert result.trace_path_count < len(page.trace_paths)
-    assert result.text_count == 11
+    assert 0 < result.trace_path_count < len(page.trace_paths)
+    assert result.text_count == 1
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
     outlines = list(modelspace.query("LWPOLYLINE"))
     texts = list(modelspace.query("TEXT"))
     assert outlines
-    assert len(texts) == 11
+    assert len(texts) == 1
     assert all(entity.dxf.layer.startswith("PAGE_001_") for entity in outlines)
     assert all(entity.dxf.layer == "PAGE_001_OCR_TEXT" for entity in texts)
-    assert "".join(entity.dxf.text for entity in texts) == "FIREALARMA1"
+    assert not document.layers.get("PAGE_001_OCR_TEXT").is_off()
+    assert texts[0].dxf.style == "wqy-unicode"
+    assert texts[0].dxf.text == "FIRE ALARM A1"
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
     assert not document.audit().errors

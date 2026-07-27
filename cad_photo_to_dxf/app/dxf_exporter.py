@@ -42,6 +42,7 @@ class ExportResult:
     underlay_path: Path | None = None
     dwg_path: Path | None = None
     output_format: str = "DXF"
+    signature_paths: tuple[Path, ...] = ()
 
 
 LAYER_STYLES = {

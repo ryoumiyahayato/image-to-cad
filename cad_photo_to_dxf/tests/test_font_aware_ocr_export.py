@@ -12,7 +12,7 @@ def _application() -> QApplication:
     return QApplication.instance() or QApplication([])
 
 
-def test_selected_cjk_font_is_used_for_each_editable_character() -> None:
+def test_selected_cjk_font_is_used_for_one_editable_line() -> None:
     _application()
     document = ezdxf.new("R2010", setup=True)
     modelspace = document.modelspace()
@@ -37,23 +37,19 @@ def test_selected_cjk_font_is_used_for_each_editable_character() -> None:
         transform=lambda x, y: (x, 100.0 - y),
     )
 
-    assert count == 2
-    assert [entity.dxf.text for entity in entities] == ["火", "灾"]
+    assert count == 1
+    assert [entity.dxf.text for entity in entities] == ["火灾"]
     assert all(entity.dxftype() == "TEXT" for entity in entities)
-    assert all(entity.dxf.style == "OCR_SIMHEI" for entity in entities)
-    assert all(float(entity.dxf.width) == 1.0 for entity in entities)
+    assert all(entity.dxf.style == "wqy-unicode" for entity in entities)
+    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in entities)
     assert all(float(entity.dxf.oblique) == 0.0 for entity in entities)
-    style = document.styles.get("OCR_SIMHEI")
-    assert style.dxf.font == "simhei.ttf"
-    family, italic, bold = style.get_extended_font_data()
-    assert family == "SimHei"
-    assert not italic
-    assert not bold
+    style = document.styles.get("wqy-unicode")
+    assert style.dxf.font == "wqy-unicode.lff"
     assert document.header["$DWGCODEPAGE"] == "ANSI_936"
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("LWPOLYLINE")) == 0
     for entity in entities:
-        xdata = entity.get_xdata("OCR_CHARACTER")
+        xdata = entity.get_xdata("OCR_TEXT_LINE")
         text_values = [tag.value for tag in xdata if tag.code == 1000]
         assert text_values == ["火灾"]
     assert not document.audit().errors

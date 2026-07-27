@@ -41,6 +41,7 @@ class MainWindow(_OptimizedMainWindow):
                 vertex_count=sum(len(path.points) for path in paths),
                 warnings=(),
                 texts=tuple(self._ocr_texts),
+                signatures=tuple(self._signature_regions),
             )
 
         def completed(value: object) -> None:

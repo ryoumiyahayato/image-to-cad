@@ -8,6 +8,7 @@ import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
 from app.raster_trace import trace_image
+from app.signature_overlay import SignatureRegion
 from app.trace_storage import load_trace_cache, save_trace_cache
 
 
@@ -25,7 +26,20 @@ def test_packed_cache_preserves_character_layout_and_signature_safety(tmp_path: 
         replacement_safe=False,
         review_note="疑似签名，保留原图形等待确认",
     )
-    result = replace(result, texts=(candidate,))
+    signature = SignatureRegion(
+        bbox=(55, 65, 20, 12),
+        mask=np.where(np.indices((12, 20)).sum(axis=0) % 3 == 0, 255, 0).astype(
+            np.uint8
+        ),
+    )
+    preview = np.ascontiguousarray(result.binary.copy())
+    preview[5:10, 5:10] = 0
+    result = replace(
+        result,
+        texts=(candidate,),
+        signatures=(signature,),
+        preview_binary=preview,
+    )
 
     path = save_trace_cache(tmp_path / "packed.npz", result)
     with np.load(path, allow_pickle=False) as archive:
@@ -38,3 +52,8 @@ def test_packed_cache_preserves_character_layout_and_signature_safety(tmp_path: 
     assert stored.texts == (candidate,)
     assert not stored.texts[0].replacement_safe
     assert stored.texts[0].character_boxes == candidate.character_boxes
+    assert len(stored.signatures) == 1
+    assert stored.signatures[0].bbox == signature.bbox
+    assert np.array_equal(stored.signatures[0].mask, signature.mask)
+    assert stored.preview_binary is not None
+    assert np.array_equal(stored.preview_binary, preview)

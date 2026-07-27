@@ -179,7 +179,12 @@ class MainWindow(_TraceMainWindow):
         return Path(self._trace_cache_tempdir.name) / f"trace-{digest}.npz"
 
     def _store_current_trace(self) -> Path | None:
-        if self.binary_image is None or not self._trace_paths:
+        if self.binary_image is None or (
+            not self._trace_paths
+            and not getattr(self, "lines", ())
+            and not getattr(self, "_ocr_texts", ())
+            and not getattr(self, "_signature_regions", ())
+        ):
             return None
         key = self._current_trace_key()
         target = self._trace_cache_by_key.get(key, self._cache_path_for_key(key))
@@ -191,6 +196,14 @@ class MainWindow(_TraceMainWindow):
             foreground_pixels=int(self._trace_foreground_pixels),
             vertex_count=int(self._trace_vertex_count),
             warnings=tuple(self._last_warnings),
+            texts=tuple(getattr(self, "_ocr_texts", ())),
+            signatures=tuple(getattr(self, "_signature_regions", ())),
+            straight_lines=tuple(getattr(self, "lines", ())),
+            preview_binary=(
+                self._cad_preview_binary.copy()
+                if getattr(self, "_cad_preview_binary", None) is not None
+                else None
+            ),
         )
         save_trace_cache(target, result)
         self._trace_cache_by_key[key] = target
@@ -251,6 +264,10 @@ class MainWindow(_TraceMainWindow):
         self._trace_foreground_pixels = stored.foreground_pixels
         self._trace_vertex_count = stored.vertex_count
         self._last_warnings = stored.warnings
+        self._ocr_texts = stored.texts
+        self._signature_regions = stored.signatures
+        self.lines = list(stored.straight_lines)
+        self._cad_preview_binary = stored.preview_binary
 
         source = load_image(
             self.current_path,
@@ -272,7 +289,11 @@ class MainWindow(_TraceMainWindow):
         self._show_preprocess_stages(self.preprocess_stages)
         self.original_canvas.set_image(source)
         self.corrected_canvas.set_image(stored.binary)
-        self.detected_canvas.set_image(stored.binary)
+        self.detected_canvas.set_image(
+            stored.preview_binary
+            if stored.preview_binary is not None
+            else stored.binary
+        )
         self.tabs.setCurrentWidget(self.detected_canvas)
         self._update_scale_label()
 
@@ -454,6 +475,9 @@ class MainWindow(_TraceMainWindow):
             page,
             trace_paths=stored.paths,
             vector_size_px=(width, height),
+            texts=stored.texts,
+            signatures=stored.signatures,
+            lines=stored.straight_lines,
         )
 
     def document_pages_for_export(self):

@@ -80,7 +80,7 @@ class OcrGraphicsView(QGraphicsView):
 
 
 class OcrReviewDialog(QDialog):
-    """Review OCR lines on the source image before per-character CAD export."""
+    """Review OCR lines on the source image before editable-line CAD export."""
 
     def __init__(
         self,
@@ -101,7 +101,7 @@ class OcrReviewDialog(QDialog):
         root = QVBoxLayout(self)
         explanation = QLabel(
             "每个框代表一个 OCR 文字候选行。右侧修改会立即覆盖预览在原图框内；"
-            "确认后导出时，每个汉字、字母和数字分别生成一个可编辑 CAD TEXT。"
+            "确认后，每个完整文字行生成一个可直接修改内容的 CAD TEXT。"
             "橙色表示尚未达到自动导出条件，绿色表示已人工确认，紫色表示高置信度自动接受。"
         )
         explanation.setWordWrap(True)
@@ -128,7 +128,7 @@ class OcrReviewDialog(QDialog):
         self.text_edit = QLineEdit(panel)
         panel_layout.addWidget(self.text_edit)
         self.approval_checkbox = QCheckBox(
-            "确认作为单字可编辑文字导出",
+            "确认作为整行可编辑文字导出",
             panel,
         )
         self.approval_checkbox.setToolTip(

@@ -12,7 +12,8 @@ from app.ocr_fast import (
 )
 from app.ocr_layout import tile_regions
 from app.ocr_tile_filter import tile_has_probable_text
-from app.ocr_pipeline import _recognize_tiles
+from app.ocr_pipeline import _recognize_tiles, recognize_text_candidates_optimized
+from app.optimized_trace import trace_image_optimized
 
 
 def _candidate(text: str, bbox, confidence: float, source: str) -> TextCandidate:
@@ -109,3 +110,66 @@ def test_bounded_pdf_page_skips_expensive_native_tiles(monkeypatch) -> None:
 
     monkeypatch.setattr("app.ocr_pipeline._recognize_rapidocr_pass", fail_if_called)
     assert _recognize_tiles(image) == []
+
+
+def test_large_page_uses_cleaned_native_tiles_without_repeating_overview(
+    monkeypatch,
+) -> None:
+    image = np.full((3200, 4800), 255, dtype=np.uint8)
+    calls = {"native": 0}
+
+    def native_page(*_args, **_kwargs):
+        calls["native"] += 1
+        return [_candidate("图纸目录", (100, 100, 240, 48), 0.98, "rapidocr-tile")]
+
+    def unexpected_overview(*_args, **_kwargs):
+        raise AssertionError("large page must not repeat a resized overview pass")
+
+    monkeypatch.setattr("app.ocr_pipeline._recognize_tiles", native_page)
+    monkeypatch.setattr("app.ocr_pipeline._recognize_overview", unexpected_overview)
+    monkeypatch.setattr(
+        "app.ocr_pipeline.prepare_safe_candidate",
+        lambda _image, candidate: candidate,
+    )
+
+    resolved, warnings = recognize_text_candidates_optimized(image)
+
+    assert not warnings
+    assert calls["native"] == 1
+    assert [item.text for item in resolved] == ["图纸目录"]
+
+
+def test_optimized_result_keeps_complete_preview_separate_from_residual(
+    monkeypatch,
+) -> None:
+    image = np.full((140, 240), 255, dtype=np.uint8)
+    cv2.putText(
+        image,
+        "A",
+        (50, 90),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.8,
+        0,
+        4,
+        cv2.LINE_8,
+    )
+    candidate = TextCandidate(
+        text="A",
+        bbox=(45, 45, 55, 55),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=True,
+    )
+    monkeypatch.setattr(
+        "app.optimized_trace.recognize_text_candidates_optimized",
+        lambda *_args, **_kwargs: ((candidate,), ()),
+    )
+
+    result = trace_image_optimized(image, enable_ocr=True)
+
+    assert result.preview_binary is not None
+    assert np.count_nonzero(result.preview_binary == 0) > 0
+    assert np.count_nonzero(result.preview_binary == 0) > np.count_nonzero(
+        result.binary == 0
+    )

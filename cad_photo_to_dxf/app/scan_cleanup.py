@@ -5,6 +5,8 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
+from .resolution import image_resolution_scale
+
 
 _DIGITAL_WHITE_RATIO = 0.90
 _BACKGROUND_MAX_SIDE = 1200
@@ -122,13 +124,26 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """
 
     background = _background_estimate(gray)
-    normalized = cv2.divide(gray, background, scale=255)
+    divided = cv2.divide(gray, background, scale=255)
+    normalized = cv2.addWeighted(gray, 0.62, divided, 0.38, 0.0)
     local_delta = background.astype(np.int16) - gray.astype(np.int16)
 
-    strong = (normalized < 160) | (gray < 70)
-    weak = ((normalized < 222) & (local_delta > 7)) | (gray < 105)
+    strong = (divided < 190) | (gray < 95)
+    weak = ((divided < 236) & (local_delta > 4)) | (gray < 155)
     retained = _retain_connected_ink(strong, weak)
-    retained |= strong & (gray < 65)
+    retained |= strong
+    foreground = np.where(retained, 255, 0).astype(np.uint8)
+    horizontal = cv2.morphologyEx(
+        foreground,
+        cv2.MORPH_CLOSE,
+        cv2.getStructuringElement(cv2.MORPH_RECT, (2, 1)),
+    )
+    vertical = cv2.morphologyEx(
+        foreground,
+        cv2.MORPH_CLOSE,
+        cv2.getStructuringElement(cv2.MORPH_RECT, (1, 2)),
+    )
+    retained = cv2.max(foreground, cv2.max(horizontal, vertical)) > 0
     binary = np.where(retained, 0, 255).astype(np.uint8)
     return np.ascontiguousarray(normalized), np.ascontiguousarray(binary)
 
@@ -159,9 +174,9 @@ def _suppress_dense_speckle(binary: np.ndarray) -> np.ndarray:
             if count <= 1:
                 continue
             tiny = (
-                (stats[:, cv2.CC_STAT_AREA] <= 8)
-                & (stats[:, cv2.CC_STAT_WIDTH] <= 5)
-                & (stats[:, cv2.CC_STAT_HEIGHT] <= 5)
+                (stats[:, cv2.CC_STAT_AREA] <= 3)
+                & (stats[:, cv2.CC_STAT_WIDTH] <= 2)
+                & (stats[:, cv2.CC_STAT_HEIGHT] <= 2)
             )
             tiny[0] = False
             tiny_labels = np.flatnonzero(tiny)
@@ -187,7 +202,7 @@ def _suppress_dense_speckle(binary: np.ndarray) -> np.ndarray:
                 center_x, center_y = centroids[int(label_value)]
                 cy = max(0, min(density.shape[0] - 1, int(round(center_y))))
                 cx = max(0, min(density.shape[1] - 1, int(round(center_x))))
-                if density[cy, cx] >= 24.0:
+                if density[cy, cx] >= 40.0:
                     remove_label[int(label_value)] = True
 
             core_labels = labels[
@@ -196,6 +211,65 @@ def _suppress_dense_speckle(binary: np.ndarray) -> np.ndarray:
             ]
             core = cleaned[core_top:core_bottom, core_left:core_right]
             core[remove_label[core_labels]] = 255
+    return np.ascontiguousarray(cleaned)
+
+
+def _suppress_long_low_contrast_artifacts(
+    gray: np.ndarray,
+    binary: np.ndarray,
+) -> np.ndarray:
+    """Remove broad fold/tape edges without erasing thin rules or punctuation."""
+
+    scale = image_resolution_scale(binary.shape)
+    low_contrast = np.where(
+        (binary == 0) & (gray >= 120),
+        255,
+        0,
+    ).astype(np.uint8)
+    if not cv2.countNonZero(low_contrast):
+        return np.ascontiguousarray(binary)
+
+    minimum_run = max(
+        int(round(48.0 * scale)),
+        int(round(min(binary.shape[:2]) * 0.04)),
+    )
+    distance = cv2.distanceTransform(low_contrast, cv2.DIST_L2, 3)
+    cleaned = np.ascontiguousarray(binary.copy(), dtype=np.uint8)
+    minimum_diameter = max(3.0, 3.5 * scale)
+
+    for kernel in (
+        cv2.getStructuringElement(cv2.MORPH_RECT, (minimum_run, 1)),
+        cv2.getStructuringElement(cv2.MORPH_RECT, (1, minimum_run)),
+    ):
+        seeds = cv2.morphologyEx(low_contrast, cv2.MORPH_OPEN, kernel)
+        count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+            np.where(seeds > 0, 255, 0).astype(np.uint8),
+            connectivity=8,
+        )
+        for label_value in range(1, count):
+            component = labels == label_value
+            component_width = int(stats[label_value, cv2.CC_STAT_WIDTH])
+            component_height = int(stats[label_value, cv2.CC_STAT_HEIGHT])
+            if max(component_width, component_height) < minimum_run:
+                continue
+            diameters = distance[component] * 2.0
+            if not diameters.size or float(np.median(diameters)) < minimum_diameter:
+                continue
+            tones = gray[component]
+            if not tones.size or float(np.median(tones)) < 132.0:
+                continue
+            radius = max(2, int(np.ceil(float(np.percentile(diameters, 75)) * 0.5)))
+            component_mask = np.where(component, 255, 0).astype(np.uint8)
+            expanded = cv2.dilate(
+                component_mask,
+                cv2.getStructuringElement(
+                    cv2.MORPH_ELLIPSE,
+                    (radius * 2 + 1, radius * 2 + 1),
+                ),
+                iterations=1,
+            )
+            removal = (expanded > 0) & (low_contrast > 0)
+            cleaned[removal] = 255
     return np.ascontiguousarray(cleaned)
 
 
@@ -226,6 +300,7 @@ def prepare_scan_page(
         binary = 255 - binary
     if not clean_digital and foreground_threshold is None:
         binary = _suppress_dense_speckle(binary)
+        binary = _suppress_long_low_contrast_artifacts(gray, binary)
 
     return PreparedScanPage(
         gray=np.ascontiguousarray(gray),

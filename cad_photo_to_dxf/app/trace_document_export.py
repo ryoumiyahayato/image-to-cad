@@ -12,7 +12,13 @@ from .document_export import DocumentExportResult, DocumentPage, _resolve_raster
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
-from .trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette, add_exact_trace_entities
+from .signature_overlay import add_signature_images, set_foreground_draw_order
+from .trace_dxf_entities import (
+    TRACE_LAYER_STYLES,
+    TracePalette,
+    add_exact_trace_entities,
+    add_straight_line_entities,
+)
 
 
 def _require_first_page(
@@ -34,6 +40,7 @@ def _page_layer_names(index: int) -> dict[str, str]:
         "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
         "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
         "OCR_TEXT": f"{prefix}_OCR_TEXT",
+        "SIGNATURE_OVERLAY": f"{prefix}_SIGNATURE_OVERLAY",
     }
 
 
@@ -78,7 +85,7 @@ def export_trace_document_streaming(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> DocumentExportResult:
-    """Export pages as direct model-space geometry and editable OCR characters."""
+    """Export pages as direct model-space geometry and editable OCR lines."""
 
     first_page, remaining_pages = _require_first_page(pages)
 
@@ -97,6 +104,8 @@ def export_trace_document_streaming(
 
     modelspace = doc.modelspace()
     underlays: list[Path] = []
+    signature_paths: list[Path] = []
+    line_count = 0
     trace_path_count = 0
     trace_vertex_count = 0
     text_count = 0
@@ -110,9 +119,9 @@ def export_trace_document_streaming(
         page_count = index
         if page.page_number <= 0:
             raise ValueError("Page numbers must be positive")
-        if not page.trace_paths:
+        if not page.trace_paths and not page.lines and not page.texts and not page.signatures:
             raise ValueError(
-                f"第 {page.page_number} 页尚未生成 CAD 轮廓。"
+                f"第 {page.page_number} 页尚未生成 CAD 内容。"
                 "请先执行当前 PDF 全部页处理后再导出。"
             )
         page_width_mm, page_height_mm = page.page_size_mm
@@ -179,6 +188,20 @@ def export_trace_document_streaming(
             )
 
         exportable_texts = accepted_ocr_texts(page.texts)
+        selected_palette = palette or TracePalette()
+        if int(page.trace_color) != 7:
+            selected_palette = TracePalette(
+                int(page.trace_color),
+                int(page.trace_color),
+                int(page.trace_color),
+            )
+        current_line_count, _line_entities, _line_bounds = add_straight_line_entities(
+            modelspace,
+            page.lines,
+            transform=transform,
+            layer_name=layer_names["TRACE_STRAIGHT"],
+            color=selected_palette.straight,
+        )
         current_path_count, current_vertex_count, _entities, _bounds = add_exact_trace_entities(
             modelspace,
             page.trace_paths,
@@ -191,7 +214,7 @@ def export_trace_document_streaming(
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
         )
-        current_text_count, _text_entities, _text_bounds = add_ocr_outline_blocks(
+        current_text_count, text_entities, _text_bounds = add_ocr_outline_blocks(
             doc,
             modelspace,
             exportable_texts,
@@ -199,6 +222,27 @@ def export_trace_document_streaming(
             layer_name=layer_names["OCR_TEXT"],
             block_prefix=f"PAGE_{index:03d}_OCR_LINE",
         )
+        current_signature_paths, signature_entities, _signature_bounds = (
+            add_signature_images(
+                doc,
+                modelspace,
+                page.signatures,
+                transform=transform,
+                output_path=(
+                    path
+                    if expected_pages == 1
+                    else path.with_name(f"{path.stem}.page-{index:03d}.dxf")
+                ),
+                layer_name=layer_names["SIGNATURE_OVERLAY"],
+                name_prefix=f"PAGE_{index:03d}_SIGNATURE",
+            )
+        )
+        signature_paths.extend(current_signature_paths)
+        set_foreground_draw_order(
+            modelspace,
+            [*text_entities, *signature_entities],
+        )
+        line_count += current_line_count
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
         text_count += current_text_count
@@ -236,7 +280,7 @@ def export_trace_document_streaming(
     return DocumentExportResult(
         path=path,
         page_count=page_count,
-        line_count=0,
+        line_count=line_count,
         circle_count=0,
         text_count=text_count,
         trace_path_count=trace_path_count,
@@ -244,4 +288,5 @@ def export_trace_document_streaming(
         underlay_paths=tuple(underlays),
         layout_names=(),
         group_names=(),
+        signature_paths=tuple(signature_paths),
     )

@@ -161,17 +161,44 @@ def register_bundled_fonts_for_application() -> tuple[CadFontFace, ...]:
 
 
 def _system_font_faces() -> tuple[CadFontFace, ...]:
-    families = {str(value).casefold() for value in QFontDatabase.families()}
     return tuple(
         face
         for face in _SYSTEM_FONTS
-        if face.family.casefold() in families and _font_file_exists(face.filename)
+        if _font_file_exists(face.filename)
     )
+
+
+def _bundled_font_faces_without_qt() -> tuple[CadFontFace, ...]:
+    """Read packaged font metadata without touching GUI-only Qt font APIs."""
+
+    directory = bundled_font_directory()
+    faces: list[CadFontFace] = []
+    for raw in _load_bundle_manifest():
+        filename = Path(str(raw.get("filename", ""))).name
+        family = str(raw.get("family", "")).strip()
+        path = directory / filename
+        if not filename or not family or not path.exists():
+            continue
+        faces.append(
+            CadFontFace(
+                family=family,
+                filename=filename,
+                label=str(raw.get("label", family)).strip() or family,
+                cjk=bool(raw.get("cjk", True)),
+                category=str(raw.get("category", "sans")),
+                priority=int(raw.get("priority", 100)),
+                weight=_weight_from_value(raw.get("weight", 400)),
+                source_path=str(path),
+                bundled=True,
+                registry_name=str(raw.get("registry_name", "")).strip(),
+            )
+        )
+    return tuple(sorted(faces, key=lambda item: item.priority))
 
 
 @lru_cache(maxsize=1)
 def available_font_faces() -> tuple[CadFontFace, ...]:
-    bundled = register_bundled_fonts_for_application()
+    bundled = _bundled_font_faces_without_qt()
     faces: list[CadFontFace] = list(bundled)
     seen = {(face.family.casefold(), face.filename.casefold()) for face in faces}
     for face in _system_font_faces():

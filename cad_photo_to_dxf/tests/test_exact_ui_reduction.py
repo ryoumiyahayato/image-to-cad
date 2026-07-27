@@ -25,7 +25,6 @@ def test_normal_exact_ui_hides_unused_panels_and_groups_generation() -> None:
         assert window.tabs.indexOf(window.preprocess_tabs) == -1
         assert [window.tabs.tabText(index) for index in range(window.tabs.count())] == [
             "原图",
-            "校正图",
             "CAD 轮廓预览",
         ]
 
@@ -34,7 +33,7 @@ def test_normal_exact_ui_hides_unused_panels_and_groups_generation() -> None:
         assert groups["纸张与坐标（照片可选）"].isHidden()
         assert groups["高级识别参数"].isHidden()
         assert not groups["CAD 轮廓生成"].isHidden()
-        assert not groups["检查与验证"].isHidden()
+        assert not groups["检查与修改"].isHidden()
 
         buttons = {
             button.text(): button for button in window.findChildren(QPushButton)
@@ -50,9 +49,14 @@ def test_normal_exact_ui_hides_unused_panels_and_groups_generation() -> None:
         )
         assert (
             buttons["检查并修正当前页 CAD 轮廓"].parentWidget().title()
-            == "检查与验证"
+            == "检查与修改"
         )
-        assert buttons["验证当前页"].parentWidget().title() == "检查与验证"
+        verify_buttons = [
+            button
+            for label, button in buttons.items()
+            if label.startswith("验证当前页")
+        ]
+        assert not verify_buttons or all(button.isHidden() for button in verify_buttons)
         assert window.show_advanced_checkbox.isHidden()
     finally:
         window.close()
@@ -69,16 +73,16 @@ def _pending_candidate() -> TextCandidate:
     )
 
 
-def test_pending_ocr_is_not_approved_by_unchanged_save() -> None:
+def test_recognizable_ocr_is_available_without_manual_save() -> None:
     _application()
     image = np.full((80, 120, 3), 255, dtype=np.uint8)
     dialog = LibreCadOcrReviewDialog(image, (_pending_candidate(),))
     try:
-        assert accepted_ocr_texts(dialog.reviewed_texts()) == ()
+        assert accepted_ocr_texts(dialog.reviewed_texts()) == dialog.reviewed_texts()
         dialog.accept()
         saved = dialog.reviewed_texts()[0]
         assert not saved.reviewed
-        assert accepted_ocr_texts((saved,)) == ()
+        assert accepted_ocr_texts((saved,)) == (saved,)
     finally:
         dialog.close()
 

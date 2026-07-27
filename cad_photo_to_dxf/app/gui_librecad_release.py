@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
@@ -22,6 +23,7 @@ from PySide6.QtWidgets import (
 from .gui_exact_release import MainWindow as _ExactMainWindow
 from .gui_trace_release import TRACE_PDF_DPI
 from .image_loader import bounded_pdf_dpi, load_image
+from .font_library import default_font_face
 from .librecad_ocr_review import LibreCadLffOcrReviewDialog as _BaseOcrReviewDialog
 from .ocr_outline_export import accepted_ocr_texts
 from .optimized_trace import trace_image_optimized
@@ -60,6 +62,22 @@ class LibreCadOcrReviewDialog(_BaseOcrReviewDialog):
         # Saving unchanged review must not approve the selected pending candidate.
         QDialog.accept(self)
 
+    def _force_lff(self, index: int) -> None:
+        """Keep or assign a normal Windows font; the bundled LFF is not required."""
+
+        if not 0 <= index < len(self._candidates):
+            return
+        candidate = self._candidates[index]
+        if candidate is None or (candidate.font_family and candidate.font_file):
+            return
+        face = default_font_face(candidate.text)
+        self._candidates[index] = replace(
+            candidate,
+            font_family=face.family,
+            font_file=face.filename,
+            font_match_score=max(float(candidate.font_match_score), 0.5),
+        )
+
 
 class MainWindow(_ExactMainWindow):
     """Optimized normal UI with exact content, OCR deduplication and safe caching."""
@@ -84,12 +102,18 @@ class MainWindow(_ExactMainWindow):
             scroll.setMinimumWidth(360)
 
         self.tabs.setTabText(self.tabs.indexOf(self.original_canvas), "原图")
-        self.tabs.setTabText(self.tabs.indexOf(self.corrected_canvas), "校正图")
+        corrected_index = self.tabs.indexOf(self.corrected_canvas)
+        if corrected_index >= 0:
+            self.tabs.setTabText(corrected_index, "校正图")
         self.tabs.setTabText(self.tabs.indexOf(self.detected_canvas), "CAD 预览")
+        if corrected_index >= 0:
+            self.tabs.removeTab(corrected_index)
+        self.corrected_canvas.setVisible(False)
 
         title_map = {
             "CAD 轮廓生成": "生成 CAD",
             "检查与验证": "检查与修改",
+            "检查与修改": "检查与修改",
             "文字 OCR 与可编辑文字": "文字识别",
             "CAD 输出设置": "输出设置",
         }
@@ -115,15 +139,16 @@ class MainWindow(_ExactMainWindow):
         if isinstance(checkbox, QCheckBox):
             checkbox.setText("识别文字并生成可编辑文字")
             checkbox.setToolTip(
-                "识别可靠的印刷文字；无法确认的签名、手写内容或局部文字保留原图形。"
+                "汉字、数字、英文和标点写入独立的单行可编辑 TEXT 图层；"
+                "签名仍作为细化后的透明图像保存。"
             )
 
         for label in scroll.findChildren(QLabel):
             text = label.text()
             if text.startswith("OCR 结果按完整文字行"):
                 label.setText(
-                    "文字识别结果可在导出前检查和修改；"
-                    "无法可靠识别的部分保留原图形。"
+                    "识别文字默认显示为单行可编辑 TEXT；"
+                    "已识别字形不再重复生成空心轮廓。"
                 )
             elif "直线：蓝色；曲线：绿色；文字/符号" in text:
                 label.setText("不同内容使用不同颜色，便于检查。")
@@ -207,6 +232,12 @@ class MainWindow(_ExactMainWindow):
         save_pdf_state: bool,
     ) -> None:
         self._ocr_texts = tuple(result.texts)
+        self._signature_regions = tuple(result.signatures)
+        self._cad_preview_binary = (
+            np.ascontiguousarray(result.preview_binary.copy())
+            if result.preview_binary is not None
+            else np.ascontiguousarray(result.binary.copy())
+        )
         self._dirty_trace_keys.add(self._current_trace_key())
         self.binary_image = result.binary
         self.preprocess_stages = {}
@@ -216,13 +247,13 @@ class MainWindow(_ExactMainWindow):
         self._trace_foreground_pixels = int(result.foreground_pixels)
         self._trace_vertex_count = int(result.vertex_count)
         self.raw_lines = []
-        self.lines = []
+        self.lines = list(result.straight_lines)
         self.geometry_report = None
         self.classification_report = None
         self.auxiliary_result = None
         self._reviewed_circles = []
         preview = self._scaled_for_preview(
-            result.binary,
+            self._cad_preview_binary,
             target_shape=self._preview_shape(),
         )
         self.corrected_canvas.set_image(preview)
@@ -234,10 +265,12 @@ class MainWindow(_ExactMainWindow):
         if save_pdf_state:
             self._save_current_pdf_state()
         self._update_scale_label()
-        safe = sum(1 for item in result.texts if item.replacement_safe)
-        pending = len(result.texts) - safe
+        safe = len(accepted_ocr_texts(result.texts))
+        retained = max(0, len(result.texts) - safe)
         self.statusBar().showMessage(
-            f"当前页处理完成：文字 {safe} 项，保留原图形待确认 {pending} 项"
+            f"当前页处理完成：可编辑文字 {safe} 项；"
+            f"中心直线 {len(result.straight_lines)} 条；"
+            f"签名 {len(result.signatures)} 项；保留图像 {retained} 项"
         )
 
     def _restore_cached_trace_for_page(self, page_index: int) -> None:
@@ -249,6 +282,7 @@ class MainWindow(_ExactMainWindow):
             self.preprocess_stages = {}
             self._clear_preprocess_tabs()
             self._ocr_texts = ()
+            self._signature_regions = ()
             return
         cache_path = Path(str(cache_value))
         stored = load_trace_cache(cache_path)
@@ -260,11 +294,18 @@ class MainWindow(_ExactMainWindow):
         self._trace_vertex_count = stored.vertex_count
         self._last_warnings = stored.warnings
         self._ocr_texts = stored.texts
+        self._signature_regions = stored.signatures
+        self.lines = list(stored.straight_lines)
+        self._cad_preview_binary = stored.preview_binary
         self._dirty_trace_keys.discard(self._current_trace_key())
         self.preprocess_stages = {}
         self._clear_preprocess_tabs()
         preview = self._scaled_for_preview(
-            stored.binary,
+            (
+                stored.preview_binary
+                if stored.preview_binary is not None
+                else stored.binary
+            ),
             target_shape=self._preview_shape(),
         )
         self.corrected_canvas.set_image(preview)
@@ -461,12 +502,8 @@ class MainWindow(_ExactMainWindow):
         if self._native_pdf_mode:
             self._save_current_pdf_state()
         exportable = accepted_ocr_texts(self._ocr_texts)
-        pending = sum(
-            1
-            for item in self._ocr_texts
-            if item.approved and not item.reviewed and not item.replacement_safe
-        )
+        retained = max(0, len(self._ocr_texts) - len(exportable))
         self.statusBar().showMessage(
             f"文字检查已保存：{len(exportable)} 项可编辑文字，"
-            f"{pending} 项保留原图形"
+            f"{retained} 项保留为图像"
         )

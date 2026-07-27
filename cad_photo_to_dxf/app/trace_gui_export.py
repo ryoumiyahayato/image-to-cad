@@ -36,6 +36,7 @@ class TraceExportCompletion:
     trace_path_count: int = 0
     trace_vertex_count: int = 0
     text_count: int = 0
+    signature_count: int = 0
 
 
 def _resolve_converter_on_ui(
@@ -102,14 +103,15 @@ def _multi_page_output_directory(requested_path: Path) -> Path:
 
 def _editable_text_strategy() -> dict[str, object]:
     return {
-        "ocr_per_character_text_entities": True,
-        "one_text_entity_per_non_space_character": True,
+        "ocr_per_character_text_entities": False,
+        "one_text_entity_per_non_space_character": False,
+        "one_text_entity_per_recognized_line": True,
         "ocr_line_as_single_vector_block": False,
         "ocr_insert_blocks": False,
         "native_unicode_text_entities": True,
         "absolute_font_path_embedded": False,
         "non_uniform_text_scaling": False,
-        "ocr_unicode_preserved_as_character_xdata": True,
+        "ocr_unicode_preserved_as_line_xdata": True,
     }
 
 
@@ -167,7 +169,8 @@ def _start_document_export(window: Any) -> None:
         conversion_errors: list[str] = []
         total_trace_paths = 0
         total_trace_vertices = 0
-        total_text_characters = 0
+        total_text_lines = 0
+        total_signature_images = 0
         processed_pages = 0
 
         for page_index, page in enumerate(pages, start=1):
@@ -195,7 +198,8 @@ def _start_document_export(window: Any) -> None:
             dxf_paths.append(result.path)
             total_trace_paths += result.trace_path_count
             total_trace_vertices += result.trace_vertex_count
-            total_text_characters += result.text_count
+            total_text_lines += result.text_count
+            total_signature_images += len(result.signature_paths)
 
             page_dwg: Path | None = None
             page_error: str | None = None
@@ -225,7 +229,11 @@ def _start_document_export(window: Any) -> None:
                     "dwg": str(page_dwg) if page_dwg is not None else None,
                     "trace_path_count": result.trace_path_count,
                     "trace_vertex_count": result.trace_vertex_count,
-                    "ocr_text_character_count": result.text_count,
+                    "ocr_text_line_count": result.text_count,
+                    "signature_overlays": [
+                        str(signature_path)
+                        for signature_path in result.signature_paths
+                    ],
                     "scan_underlays": [str(path) for path in result.underlay_paths],
                     "dwg_error": page_error,
                 }
@@ -236,7 +244,7 @@ def _start_document_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "editable_character_text_one_file_per_pdf_page",
+            "mode": "editable_line_text_one_file_per_pdf_page",
             "input": str(source_path),
             "output_directory": str(output_directory),
             "page_count": processed_pages,
@@ -253,7 +261,8 @@ def _start_document_export(window: Any) -> None:
             "warnings": [
                 "为彻底消除第一页固定在第二页左上角的问题，多页 PDF 不再合并到同一个 DXF 模型空间。",
                 "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
-                "每个已确认 OCR 非空字符均导出为独立原生 TEXT，可在 CAD 中单独选择、删除和修改。",
+                "每个已确认 OCR 文字行导出为一个原生 TEXT，可像普通文字一样直接选择、删除和修改。",
+                "跨越标题栏边框的签名保留为透明顶层图像，并与边框图层分离。",
                 "DXF 不嵌入导出电脑的绝对字体路径；Unicode 内容可保留，但不同 CAD 环境的具体字形可能随可用字体变化。",
                 *([converter_error] if requested_dwg and converter_error else []),
                 *conversion_errors,
@@ -274,7 +283,8 @@ def _start_document_export(window: Any) -> None:
             page_count=processed_pages,
             trace_path_count=total_trace_paths,
             trace_vertex_count=total_trace_vertices,
-            text_count=total_text_characters,
+            text_count=total_text_lines,
+            signature_count=total_signature_images,
         )
 
     def completed(value: object) -> None:
@@ -285,10 +295,11 @@ def _start_document_export(window: Any) -> None:
             f"DXF 文件：{len(completion.dxf_paths)}",
             f"DWG 文件：{len(completion.dwg_paths)}",
             f"非文字图形：{completion.trace_path_count}",
-            f"可编辑文字：{completion.text_count}",
+            f"可编辑文字行：{completion.text_count}",
+            f"签名图像：{completion.signature_count}",
             f"输出比例：{completion.scale_description}",
             "页面方式：每页一个文件，不再生成 drawing-all-pages.dxf",
-            "文字方式：每个非空字符一个原生 TEXT，不生成整行矢量块",
+            "文字方式：每个识别文字行一个原生 TEXT，可整体直接编辑",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:
@@ -305,7 +316,15 @@ def _start_document_export(window: Any) -> None:
 
 def _start_single_export(window: Any) -> None:
     trace_paths = tuple(getattr(window, "_trace_paths", ()))
-    if not trace_paths or window.binary_image is None or window.corrected_image is None:
+    straight_lines = tuple(getattr(window, "lines", ()))
+    texts = tuple(getattr(window, "_ocr_texts", ()))
+    signatures = tuple(getattr(window, "_signature_regions", ()))
+    if (
+        not trace_paths
+        and not straight_lines
+        and not texts
+        and not signatures
+    ) or window.binary_image is None or window.corrected_image is None:
         QMessageBox.warning(window, "尚无处理结果", "请先处理当前页。")
         return
     selection = _select_output_path(window, default_name="drawing-page.dwg")
@@ -339,8 +358,6 @@ def _start_single_export(window: Any) -> None:
     source_path = Path(window.current_path) if window.current_path is not None else None
     threshold = getattr(window, "_trace_threshold", None)
     foreground_pixels = int(getattr(window, "_trace_foreground_pixels", 0))
-    texts = tuple(getattr(window, "_ocr_texts", ()))
-
     def operation(token: CancellationToken, progress: ProgressCallback) -> object:
         result = export_exact_trace_dxf(
             trace_paths,
@@ -351,7 +368,9 @@ def _start_single_export(window: Any) -> None:
             drawing_multiplier=drawing_multiplier,
             trace_color=7,
             palette=DEFAULT_PALETTE,
+            straight_lines=straight_lines,
             texts=texts,
+            signatures=signatures,
             raster_image=raster_image,
             raster_output_path=scan_path if include_underlay else None,
             cancellation_token=token,
@@ -377,14 +396,15 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "mode": "editable_character_text_single_page",
+            "mode": "editable_line_text_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "threshold": threshold,
                 "foreground_pixels": foreground_pixels,
-                "ocr_text_character_count": result.text_count,
+                "ocr_text_line_count": result.text_count,
+                "signature_image_count": len(result.signature_paths),
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
@@ -404,6 +424,7 @@ def _start_single_export(window: Any) -> None:
             },
             "warnings": [
                 "已确认的文字会作为可编辑 TEXT 导出。",
+                "标题栏签名作为透明顶层图像导出，并与边框分层。",
                 "DXF 不写入导出电脑的绝对字体路径；不同 CAD 环境可能使用不同 Unicode 字体显示同一内容。",
                 f"超长非文字图形按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
                 *([f"DWG 转换未完成：{dwg_error}"] if dwg_error else []),
@@ -418,6 +439,8 @@ def _start_single_export(window: Any) -> None:
             dwg_error=dwg_error,
             document_mode=False,
             scale_description=scale_description,
+            text_count=result.text_count,
+            signature_count=len(result.signature_paths),
         )
 
     def completed(value: object) -> None:
@@ -427,10 +450,11 @@ def _start_single_export(window: Any) -> None:
             *([f"DWG：{completion.dwg_path}"] if completion.dwg_path else []),
             f"DXF：{result.path}",
             f"非文字图形：{result.trace_path_count}",
-            f"可编辑文字：{result.text_count}",
+            f"可编辑文字行：{result.text_count}",
+            f"签名图像：{len(result.signature_paths)}",
             f"图形顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
-            "文字方式：可编辑 TEXT",
+            "文字方式：每个识别文字行一个可编辑 TEXT",
             f"处理报告：{completion.report_path}",
         ]
         if completion.dwg_error:

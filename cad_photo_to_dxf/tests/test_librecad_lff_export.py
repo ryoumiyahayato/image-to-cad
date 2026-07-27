@@ -8,7 +8,6 @@ from app.gui_librecad_release import LibreCadOcrReviewDialog
 from app.librecad_lff import (
     LIBRECAD_FONT_FAMILY,
     LIBRECAD_FONT_FILENAME,
-    LIBRECAD_STYLE_NAME,
 )
 from app.ocr_outline_export import add_ocr_outline_blocks
 
@@ -32,7 +31,7 @@ def _candidate(**changes) -> TextCandidate:
     return TextCandidate(**values)
 
 
-def test_librecad_review_forces_native_lff_font() -> None:
+def test_normal_review_keeps_windows_font() -> None:
     _application()
     import numpy as np
 
@@ -40,13 +39,13 @@ def test_librecad_review_forces_native_lff_font() -> None:
     dialog = LibreCadOcrReviewDialog(image, (_candidate(font_family="SimHei", font_file="simhei.ttf"),))
     try:
         reviewed = dialog.reviewed_texts()[0]
-        assert reviewed.font_family == LIBRECAD_FONT_FAMILY
-        assert reviewed.font_file == LIBRECAD_FONT_FILENAME
+        assert reviewed.font_family == "SimHei"
+        assert reviewed.font_file == "simhei.ttf"
     finally:
         dialog.close()
 
 
-def test_lff_candidate_exports_one_native_text_per_character() -> None:
+def test_bundled_lff_candidate_uses_one_single_stroke_text_line() -> None:
     document = ezdxf.new("R2010", setup=True)
     modelspace = document.modelspace()
     candidate = _candidate(
@@ -61,11 +60,11 @@ def test_lff_candidate_exports_one_native_text_per_character() -> None:
         transform=lambda x, y: (x, 100.0 - y),
     )
 
-    assert count == 2
-    assert [entity.dxf.text for entity in entities] == ["火", "灾"]
+    assert count == 1
+    assert [entity.dxf.text for entity in entities] == ["火灾"]
     assert all(entity.dxftype() == "TEXT" for entity in entities)
-    assert all(entity.dxf.style == LIBRECAD_STYLE_NAME for entity in entities)
-    assert document.styles.get(LIBRECAD_STYLE_NAME).dxf.font == LIBRECAD_FONT_FILENAME
+    assert all(entity.dxf.style == "wqy-unicode" for entity in entities)
+    assert document.styles.get("wqy-unicode").dxf.font == "wqy-unicode.lff"
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("LWPOLYLINE")) == 0
     assert not document.audit().errors

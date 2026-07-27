@@ -6,8 +6,11 @@ from dataclasses import dataclass
 from math import atan2, degrees, hypot
 from unicodedata import east_asian_width
 
+import numpy as np
+
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .line_detect import LineSegment
 from .raster_trace import TracePath
 
 
@@ -29,6 +32,7 @@ TRACE_LAYER_STYLES = {
     "TRACE_CURVE": {"color": 3, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
+    "SIGNATURE_OVERLAY": {"color": 6, "lineweight": 0},
 }
 
 
@@ -205,6 +209,75 @@ def _layer_name(
     return str(layer_names.get(base_name, base_name)) if layer_names else base_name
 
 
+def _elongated_contour_centerline(
+    path: TracePath,
+    *,
+    source_size: tuple[int, int] | None,
+) -> tuple[tuple[float, float], tuple[float, float]] | None:
+    """Reduce a long closed stroke boundary to one editable centre line."""
+
+    if len(path.points) < 4:
+        return None
+    points = np.asarray(path.points, dtype=np.float64)
+    center = np.mean(points, axis=0)
+    centered = points - center
+    covariance = np.cov(centered, rowvar=False)
+    if covariance.shape != (2, 2) or not np.all(np.isfinite(covariance)):
+        return None
+    values, vectors = np.linalg.eigh(covariance)
+    direction = vectors[:, int(np.argmax(values))]
+    normal = np.array([-direction[1], direction[0]], dtype=np.float64)
+    along = centered @ direction
+    across = centered @ normal
+    length = float(np.ptp(along))
+    thickness = max(1.0, float(np.ptp(across)))
+    minimum_length = 28.0
+    if source_size is not None:
+        minimum_length = max(
+            minimum_length,
+            min(float(source_size[0]), float(source_size[1])) * 0.008,
+        )
+    if length < minimum_length or length / thickness < 6.5:
+        return None
+    start = center + direction * float(np.min(along))
+    end = center + direction * float(np.max(along))
+    return (
+        (float(start[0]), float(start[1])),
+        (float(end[0]), float(end[1])),
+    )
+
+
+def add_straight_line_entities(
+    layout,
+    lines: Sequence[LineSegment],
+    *,
+    transform: PointTransform,
+    layer_name: str = "TRACE_STRAIGHT",
+    color: int = 5,
+) -> tuple[int, list[object], list[tuple[float, float]]]:
+    """Write reconstructed structural strokes as native DXF LINE entities."""
+
+    entities: list[object] = []
+    bounds: list[tuple[float, float]] = []
+    resolved_color = _resolved_color(color, 5)
+    for line in lines:
+        if line.length <= 1e-6:
+            continue
+        start = transform(float(line.x1), float(line.y1))
+        end = transform(float(line.x2), float(line.y2))
+        if hypot(end[0] - start[0], end[1] - start[1]) <= 1e-9:
+            continue
+        entities.append(
+            layout.add_line(
+                start,
+                end,
+                dxfattribs={"layer": layer_name, "color": resolved_color},
+            )
+        )
+        bounds.extend((start, end))
+    return len(entities), entities, bounds
+
+
 def add_exact_trace_entities(
     layout,
     trace_paths: Sequence[TracePath],
@@ -218,12 +291,7 @@ def add_exact_trace_entities(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
-    """Write editable non-text contours without blocks, HATCH, or OCR outlines.
-
-    When OCR has recognized a text line, matching raster contours are omitted
-    from the DXF. The recognized content is exported once as a complete CAD TEXT
-    entity, so LibreCAD does not show the same words again as fragmented lines.
-    """
+    """Write residual editable geometry without OCR glyph or hollow child outlines."""
 
     if not trace_paths:
         return 0, 0, [], []
@@ -255,10 +323,6 @@ def add_exact_trace_entities(
         if _path_matches_ocr(trace_path, ocr_texts):
             continue
 
-        root_points = [transform(float(x), float(y)) for x, y in trace_path.points]
-        if len(root_points) < 3:
-            continue
-
         hole_indices = [
             child_index
             for child_index in children.get(index, [])
@@ -277,6 +341,31 @@ def add_exact_trace_entities(
             entity_color = _resolved_color(selected_palette.curve, 3)
         resolved_layer_name = _layer_name(base_layer_name, layer_names)
 
+        centerline = _elongated_contour_centerline(
+            trace_path,
+            source_size=source_size,
+        )
+        if centerline is not None:
+            start = transform(*centerline[0])
+            end = transform(*centerline[1])
+            entities.append(
+                layout.add_line(
+                    start,
+                    end,
+                    dxfattribs={
+                        "layer": _layer_name("TRACE_STRAIGHT", layer_names),
+                        "color": _resolved_color(selected_palette.straight, 5),
+                    },
+                )
+            )
+            _expand_bounds((start, end), bounds)
+            exported_path_count += 1
+            exported_vertex_count += 2
+            continue
+
+        root_points = [transform(float(x), float(y)) for x, y in trace_path.points]
+        if len(root_points) < 3:
+            continue
         entities.extend(
             _add_editable_contour(
                 layout,

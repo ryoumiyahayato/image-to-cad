@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "name": "LibreCAD WenQuanYi Unicode",
+  "family": "wqy-unicode",
+  "filename": "wqy-unicode.lff",
+  "ready": true,
+  "size_bytes": 43436980,
+  "sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+  "source": "https://downloads.sourceforge.net/project/librecad/Resources/fonts/wqy-unicode.zip",
+  "license": "Apache-2.0 OR GPL-3.0-or-later"
+}

@@ -8,7 +8,9 @@ import numpy as np
 
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .line_detect import LineSegment
 from .scan_cleanup import prepare_scan_page
+from .signature_overlay import SignatureRegion
 
 
 @dataclass(frozen=True)
@@ -36,6 +38,9 @@ class RasterTraceResult:
     vertex_count: int
     warnings: tuple[str, ...] = ()
     texts: tuple[TextCandidate, ...] = ()
+    signatures: tuple[SignatureRegion, ...] = ()
+    straight_lines: tuple[LineSegment, ...] = ()
+    preview_binary: np.ndarray | None = None
 
 
 def _to_gray(image: np.ndarray) -> np.ndarray:

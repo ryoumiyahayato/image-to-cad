@@ -97,3 +97,31 @@ def test_dense_scanner_speckle_is_removed_without_erasing_real_ink() -> None:
     assert np.count_nonzero(speckle_region == 0) < 80
     assert prepared.binary[240, 700] == 0
     assert np.count_nonzero(prepared.binary[330:410, 580:700] == 0) > 50
+
+
+def test_broad_low_contrast_tape_edges_are_not_exported_as_lines() -> None:
+    height, width = 900, 1200
+    gray = np.full((height, width), 235, dtype=np.float32)
+    _yy, xx = np.mgrid[:height, :width]
+    gray -= 26.0 * np.exp(-((xx - 760.0) / 45.0) ** 2)
+    cv2.line(gray, (710, 80), (710, 820), 150, 3, cv2.LINE_AA)
+    cv2.line(gray, (810, 80), (810, 820), 150, 3, cv2.LINE_AA)
+    cv2.rectangle(gray, (360, 170), (1050, 700), 55, 3)
+    cv2.line(gray, (400, 430), (1000, 430), 75, 2, cv2.LINE_AA)
+    cv2.putText(
+        gray,
+        "A1 . : ,",
+        (450, 360),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.2,
+        65,
+        2,
+        cv2.LINE_AA,
+    )
+
+    prepared = prepare_scan_page(np.clip(gray, 0, 255).astype(np.uint8))
+
+    assert np.count_nonzero(prepared.binary[100:800, 707:714] == 0) < 120
+    assert np.count_nonzero(prepared.binary[100:800, 807:814] == 0) < 120
+    assert prepared.binary[430, 600] == 0
+    assert np.count_nonzero(prepared.binary[320:375, 440:610] == 0) > 20

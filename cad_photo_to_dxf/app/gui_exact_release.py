@@ -35,6 +35,8 @@ class MainWindow(_TraceReleaseMainWindow):
     def __init__(self) -> None:
         self._dirty_trace_keys: set[tuple[str, int | None]] = set()
         self._ocr_texts = ()
+        self._signature_regions = ()
+        self._cad_preview_binary = None
         super().__init__()
 
     @staticmethod
@@ -52,6 +54,10 @@ class MainWindow(_TraceReleaseMainWindow):
         self.tabs.setTabText(self.tabs.indexOf(self.original_canvas), "原图")
         self.tabs.setTabText(self.tabs.indexOf(self.corrected_canvas), "校正图")
         self.tabs.setTabText(self.tabs.indexOf(self.detected_canvas), "CAD 轮廓预览")
+        corrected_index = self.tabs.indexOf(self.corrected_canvas)
+        if corrected_index >= 0:
+            self.tabs.removeTab(corrected_index)
+        self.corrected_canvas.setVisible(False)
         preprocess_index = self.tabs.indexOf(self.preprocess_tabs)
         if preprocess_index >= 0:
             self.tabs.removeTab(preprocess_index)
@@ -104,7 +110,7 @@ class MainWindow(_TraceReleaseMainWindow):
         self.batch_pdf_button.setParent(generation_group)
         generation_layout.addWidget(self.batch_pdf_button)
 
-        validation_group = QGroupBox("检查与验证", container)
+        validation_group = QGroupBox("检查与修改", container)
         validation_layout = QVBoxLayout(validation_group)
         if review_button is not None:
             self._remove_from_layout(review_button)
@@ -112,9 +118,7 @@ class MainWindow(_TraceReleaseMainWindow):
             validation_layout.addWidget(review_button)
         if verify_button is not None:
             self._remove_from_layout(verify_button)
-            verify_button.setText("验证当前页")
-            verify_button.setParent(validation_group)
-            validation_layout.addWidget(verify_button)
+            verify_button.setVisible(False)
 
         page_group = next(
             (
@@ -137,13 +141,13 @@ class MainWindow(_TraceReleaseMainWindow):
         )
         self.ocr_before_trace_checkbox.setChecked(True)
         self.ocr_before_trace_checkbox.setToolTip(
-            "中文、英文和数字会按完整文字行导出为可直接修改内容的 CAD TEXT；"
-            "已识别文字的扫描轮廓不会在 DXF 中重复生成。"
+            "原始字形始终保留；原图与分块识别结果一致的文字会另外生成"
+            "可编辑 CAD TEXT，避免误识别导致缺字。"
         )
         ocr_layout.addWidget(self.ocr_before_trace_checkbox)
         note = QLabel(
-            "OCR 结果按完整文字行导出为一个可编辑 TEXT。"
-            "识别错误可在导出前直接修改；DXF 不再同时保留碎片化文字轮廓。",
+            "CAD 默认显示原始字形；双通道一致的识别结果另存为可编辑 OCR_TEXT 图层。"
+            "该图层默认关闭，编辑文字时可在 CAD 图层面板中开启。",
             ocr_group,
         )
         note.setWordWrap(True)
@@ -176,11 +180,15 @@ class MainWindow(_TraceReleaseMainWindow):
     def _clear_trace_state(self) -> None:
         super()._clear_trace_state()
         self._ocr_texts = ()
+        self._signature_regions = ()
+        self._cad_preview_binary = None
 
     def _set_single_image_state(self, image, *, corrected: bool) -> None:
         super()._set_single_image_state(image, corrected=corrected)
         self._dirty_trace_keys.clear()
         self._ocr_texts = ()
+        self._signature_regions = ()
+        self._cad_preview_binary = None
 
     def _apply_trace_result(
         self,
@@ -191,6 +199,12 @@ class MainWindow(_TraceReleaseMainWindow):
         save_pdf_state: bool,
     ) -> None:
         self._ocr_texts = tuple(result.texts)
+        self._signature_regions = tuple(result.signatures)
+        self._cad_preview_binary = (
+            result.preview_binary.copy()
+            if result.preview_binary is not None
+            else result.binary.copy()
+        )
         self._dirty_trace_keys.add(self._current_trace_key())
         super()._apply_trace_result(
             result,
@@ -198,6 +212,7 @@ class MainWindow(_TraceReleaseMainWindow):
             duration=duration,
             save_pdf_state=save_pdf_state,
         )
+        self.detected_canvas.set_image(self._cad_preview_binary)
         if result.texts:
             self.statusBar().showMessage(
                 f"当前页 CAD 轮廓已生成；OCR 完整文字行 {len(result.texts)} 个"
@@ -208,9 +223,19 @@ class MainWindow(_TraceReleaseMainWindow):
         state = self._pdf_page_states.get(page_index, {})
         cache_value = state.get("trace_cache_path")
         if cache_value and Path(str(cache_value)).exists():
-            self._ocr_texts = load_trace_cache(Path(str(cache_value))).texts
+            stored = load_trace_cache(Path(str(cache_value)))
+            self._ocr_texts = stored.texts
+            self._signature_regions = stored.signatures
+            self._cad_preview_binary = stored.preview_binary
+            self.detected_canvas.set_image(
+                stored.preview_binary
+                if stored.preview_binary is not None
+                else stored.binary
+            )
         else:
             self._ocr_texts = ()
+            self._signature_regions = ()
+            self._cad_preview_binary = None
         self._dirty_trace_keys.discard(self._current_trace_key())
 
     def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
@@ -224,7 +249,12 @@ class MainWindow(_TraceReleaseMainWindow):
     def _store_current_trace(self) -> Path | None:
         """Reuse an unchanged page cache instead of recompressing it at export."""
 
-        if self.binary_image is None or not self._trace_paths:
+        if self.binary_image is None or (
+            not self._trace_paths
+            and not getattr(self, "lines", ())
+            and not self._ocr_texts
+            and not self._signature_regions
+        ):
             return None
         key = self._current_trace_key()
         state = (
@@ -253,6 +283,13 @@ class MainWindow(_TraceReleaseMainWindow):
             vertex_count=int(self._trace_vertex_count),
             warnings=tuple(self._last_warnings),
             texts=tuple(self._ocr_texts),
+            signatures=tuple(self._signature_regions),
+            straight_lines=tuple(getattr(self, "lines", ())),
+            preview_binary=(
+                self._cad_preview_binary.copy()
+                if self._cad_preview_binary is not None
+                else None
+            ),
         )
         save_trace_cache(target, result)
         self._trace_cache_by_key[key] = target
@@ -453,6 +490,8 @@ class MainWindow(_TraceReleaseMainWindow):
                 vertex_count=sum(len(path.points) for path in paths),
                 warnings=(),
                 texts=tuple(self._ocr_texts),
+                signatures=tuple(self._signature_regions),
+                preview_binary=edited.copy(),
             )
 
         def completed(value: object) -> None:
@@ -481,4 +520,6 @@ class MainWindow(_TraceReleaseMainWindow):
             trace_paths=stored.paths,
             vector_size_px=(width, height),
             texts=stored.texts,
+            signatures=stored.signatures,
+            lines=stored.straight_lines,
         )

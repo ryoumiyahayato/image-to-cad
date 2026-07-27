@@ -8,7 +8,9 @@ from tempfile import NamedTemporaryFile
 import numpy as np
 
 from .auxiliary_recognition import TextCandidate
+from .line_detect import LineSegment
 from .raster_trace import RasterTraceResult, TracePath
+from .signature_overlay import SignatureRegion
 
 
 @dataclass(frozen=True)
@@ -20,6 +22,67 @@ class StoredTrace:
     vertex_count: int
     warnings: tuple[str, ...]
     texts: tuple[TextCandidate, ...] = ()
+    signatures: tuple[SignatureRegion, ...] = ()
+    straight_lines: tuple[LineSegment, ...] = ()
+    preview_binary: np.ndarray | None = None
+
+
+def _serialize_lines(lines: tuple[LineSegment, ...]) -> str:
+    return json.dumps(
+        [
+            {
+                "x1": line.x1,
+                "y1": line.y1,
+                "x2": line.x2,
+                "y2": line.y2,
+                "width": line.width,
+                "confidence": line.confidence,
+                "layer": line.layer,
+                "source_ids": list(line.source_ids),
+                "history": list(line.history),
+                "classification_confidence": line.classification_confidence,
+                "classification_reasons": list(line.classification_reasons),
+            }
+            for line in lines
+        ],
+        ensure_ascii=False,
+        separators=(",", ":"),
+    )
+
+
+def _deserialize_lines(value: str) -> tuple[LineSegment, ...]:
+    if not value:
+        return ()
+    try:
+        payload = json.loads(value)
+    except json.JSONDecodeError as exc:
+        raise ValueError("Trace cache straight-line metadata is invalid JSON") from exc
+    results: list[LineSegment] = []
+    for item in payload:
+        try:
+            results.append(
+                LineSegment(
+                    x1=float(item["x1"]),
+                    y1=float(item["y1"]),
+                    x2=float(item["x2"]),
+                    y2=float(item["y2"]),
+                    width=float(item.get("width", 1.0)),
+                    confidence=float(item.get("confidence", 1.0)),
+                    layer=str(item.get("layer", "DETAIL")),
+                    source_ids=tuple(str(value) for value in item.get("source_ids", ())),
+                    history=tuple(str(value) for value in item.get("history", ())),
+                    classification_confidence=float(
+                        item.get("classification_confidence", 1.0)
+                    ),
+                    classification_reasons=tuple(
+                        str(value)
+                        for value in item.get("classification_reasons", ())
+                    ),
+                )
+            )
+        except (KeyError, TypeError, ValueError):
+            continue
+    return tuple(results)
 
 
 def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
@@ -116,6 +179,64 @@ def _unpack_binary(packed: np.ndarray, shape: np.ndarray) -> np.ndarray:
     return np.where(foreground > 0, 0, 255).astype(np.uint8)
 
 
+def _packed_signatures(
+    signatures: tuple[SignatureRegion, ...],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    bboxes = np.asarray([item.bbox for item in signatures], dtype=np.int32).reshape(-1, 4)
+    shapes = np.asarray([item.mask.shape for item in signatures], dtype=np.int32).reshape(-1, 2)
+    offsets = np.zeros(len(signatures) + 1, dtype=np.int64)
+    chunks: list[np.ndarray] = []
+    cursor = 0
+    for index, item in enumerate(signatures):
+        packed = np.packbits(
+            np.ravel(np.ascontiguousarray(item.mask) > 0),
+            bitorder="little",
+        )
+        chunks.append(packed)
+        cursor += len(packed)
+        offsets[index + 1] = cursor
+    payload = (
+        np.concatenate(chunks)
+        if chunks
+        else np.empty((0,), dtype=np.uint8)
+    )
+    return bboxes, shapes, offsets, payload
+
+
+def _unpack_signatures(
+    bboxes: np.ndarray,
+    shapes: np.ndarray,
+    offsets: np.ndarray,
+    payload: np.ndarray,
+) -> tuple[SignatureRegion, ...]:
+    boxes = np.asarray(bboxes, dtype=np.int32).reshape(-1, 4)
+    mask_shapes = np.asarray(shapes, dtype=np.int32).reshape(-1, 2)
+    starts = np.asarray(offsets, dtype=np.int64).reshape(-1)
+    raw = np.asarray(payload, dtype=np.uint8).reshape(-1)
+    if len(mask_shapes) != len(boxes) or len(starts) != len(boxes) + 1:
+        raise ValueError("Trace cache signature metadata lengths do not match")
+    if not len(starts) or starts[0] != 0 or starts[-1] != len(raw):
+        raise ValueError("Trace cache signature offsets are invalid")
+    results: list[SignatureRegion] = []
+    for index, box in enumerate(boxes):
+        height, width = (int(value) for value in mask_shapes[index])
+        if height <= 0 or width <= 0:
+            raise ValueError("Trace cache signature shape is invalid")
+        packed = raw[int(starts[index]) : int(starts[index + 1])]
+        mask = np.unpackbits(
+            packed,
+            bitorder="little",
+            count=height * width,
+        ).reshape((height, width))
+        results.append(
+            SignatureRegion(
+                bbox=tuple(int(value) for value in box),
+                mask=np.where(mask > 0, 255, 0).astype(np.uint8),
+            )
+        )
+    return tuple(results)
+
+
 def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
     """Atomically store a page using packed pixels and uncompressed arrays.
 
@@ -148,7 +269,21 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
     )
     warnings = np.asarray(result.warnings, dtype=np.str_)
     texts_json = np.asarray([_serialize_texts(tuple(result.texts))], dtype=np.str_)
+    lines_json = np.asarray(
+        [_serialize_lines(tuple(result.straight_lines))],
+        dtype=np.str_,
+    )
     binary_packed, binary_shape = _packed_binary(result.binary)
+    preview_source = (
+        result.preview_binary
+        if result.preview_binary is not None
+        and result.preview_binary.shape == result.binary.shape
+        else result.binary
+    )
+    preview_packed, preview_shape = _packed_binary(preview_source)
+    signature_bboxes, signature_shapes, signature_offsets, signature_packed = (
+        _packed_signatures(tuple(result.signatures))
+    )
 
     temporary_path: Path | None = None
     try:
@@ -161,9 +296,11 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
             temporary_path = Path(handle.name)
             np.savez(
                 handle,
-                cache_version=np.asarray([2], dtype=np.int32),
+                cache_version=np.asarray([5], dtype=np.int32),
                 binary_packed=binary_packed,
                 binary_shape=binary_shape,
+                preview_packed=preview_packed,
+                preview_shape=preview_shape,
                 points=all_points,
                 offsets=offsets,
                 parent=parent,
@@ -176,6 +313,11 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
                 vertex_count=np.asarray([result.vertex_count], dtype=np.int64),
                 warnings=warnings,
                 texts_json=texts_json,
+                lines_json=lines_json,
+                signature_bboxes=signature_bboxes,
+                signature_shapes=signature_shapes,
+                signature_offsets=signature_offsets,
+                signature_packed=signature_packed,
             )
         temporary_path.replace(target)
     finally:
@@ -212,6 +354,14 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
             binary = np.ascontiguousarray(archive["binary"], dtype=np.uint8)
         else:
             raise ValueError("Trace cache is missing binary image data")
+        preview_binary = (
+            _unpack_binary(
+                archive["preview_packed"],
+                archive["preview_shape"],
+            )
+            if {"preview_packed", "preview_shape"}.issubset(archive.files)
+            else np.ascontiguousarray(binary.copy())
+        )
         points = np.asarray(archive["points"], dtype=np.float32)
         offsets = np.asarray(archive["offsets"], dtype=np.int64)
         parent = np.asarray(archive["parent"], dtype=np.int32)
@@ -226,6 +376,26 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         texts = (
             _deserialize_texts(str(np.asarray(archive["texts_json"]).reshape(-1)[0]))
             if "texts_json" in archive.files
+            else ()
+        )
+        straight_lines = (
+            _deserialize_lines(str(np.asarray(archive["lines_json"]).reshape(-1)[0]))
+            if "lines_json" in archive.files
+            else ()
+        )
+        signatures = (
+            _unpack_signatures(
+                archive["signature_bboxes"],
+                archive["signature_shapes"],
+                archive["signature_offsets"],
+                archive["signature_packed"],
+            )
+            if {
+                "signature_bboxes",
+                "signature_shapes",
+                "signature_offsets",
+                "signature_packed",
+            }.issubset(archive.files)
             else ()
         )
 
@@ -267,4 +437,7 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         vertex_count=vertex_count,
         warnings=warnings,
         texts=texts,
+        signatures=signatures,
+        straight_lines=straight_lines,
+        preview_binary=preview_binary,
     )

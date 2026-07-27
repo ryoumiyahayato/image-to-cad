@@ -20,6 +20,7 @@ from .dxf_exporter import LAYER_STYLES, MIN_TEXT_EXPORT_CONFIDENCE
 from .image_loader import load_image, save_image
 from .line_detect import LineSegment
 from .raster_trace import TracePath
+from .signature_overlay import SignatureRegion
 
 
 @dataclass(frozen=True)
@@ -46,6 +47,7 @@ class DocumentPage:
     trace_paths: tuple[TracePath, ...] = field(default_factory=tuple)
     drawing_scale: float = 1.0
     trace_color: int = 7
+    signatures: tuple[SignatureRegion, ...] = field(default_factory=tuple)
 
 
 @dataclass(frozen=True)
@@ -60,6 +62,7 @@ class DocumentExportResult:
     trace_path_count: int = 0
     trace_vertex_count: int = 0
     group_names: tuple[str, ...] = field(default_factory=tuple)
+    signature_paths: tuple[Path, ...] = field(default_factory=tuple)
 
 
 def _safe_layout_name(sequence_number: int) -> str:
