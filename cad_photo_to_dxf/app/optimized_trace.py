@@ -6,6 +6,7 @@ import numpy as np
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .content_ownership import (
     binary_from_foreground,
+    editable_text_source_mask,
     graphic_source_mask,
     partition_content,
     protected_object_regions,
@@ -18,6 +19,13 @@ from .ocr_outline_export import accepted_ocr_texts
 from .ocr_layout import constrain_texts_to_table_cells
 from .ocr_overlap import collapse_overlapping_candidates
 from .ocr_pipeline import recognize_text_candidates_optimized
+from .observability import (
+    ObservationSink,
+    observe,
+    rasterize_lines,
+    rasterize_text_boxes,
+    texts_payload,
+)
 from .raster_trace import RasterTraceResult, trace_binary
 from .scan_artifact_filter import suppress_scan_artifact_traces
 from .scan_cleanup import prepare_scan_page
@@ -34,6 +42,7 @@ def trace_image_optimized(
     enable_ocr: bool = False,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
+    observation_sink: ObservationSink | None = None,
 ) -> RasterTraceResult:
     """Run OCR and tracing without constructing full-resolution UI overlays.
 
@@ -43,11 +52,60 @@ def trace_image_optimized(
     """
 
     checkpoint(cancellation_token)
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "original_page",
+            image=image,
+            payload={
+                "shape": [int(value) for value in image.shape],
+                "dtype": str(image.dtype),
+            },
+        )
     report_progress(progress_callback, "prepare-image", 0.02)
     prepared = prepare_scan_page(
         image,
         foreground_threshold=foreground_threshold,
     )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "original_gray",
+            image=prepared.gray,
+            payload={"clean_digital": bool(prepared.clean_digital)},
+        )
+        observe(
+            observation_sink,
+            "normalized_background",
+            image=prepared.normalized,
+            payload={"clean_digital": bool(prepared.clean_digital)},
+        )
+        observe(
+            observation_sink,
+            "binary_foreground",
+            image=prepared.binary,
+            payload={
+                "threshold": int(prepared.threshold),
+                "foreground_pixels": int(
+                    np.count_nonzero(prepared.binary == 0)
+                ),
+            },
+        )
+        observe(
+            observation_sink,
+            "legacy_closing",
+            payload={
+                "executed": False,
+                "reason": (
+                    "Whole-page 2x1/1x2 morphological closing is removed from "
+                    "the production path; this stage records its absence."
+                ),
+                "historical_introduction_commit": (
+                    "d9fbda763e95c6dd7154934b801b59dbf034e711"
+                ),
+            },
+            status="not_executed",
+        )
 
     texts = ()
     warnings: list[str] = []
@@ -63,20 +121,64 @@ def trace_image_optimized(
                     0.04 + 0.41 * fraction,
                 )
             ),
+            observation_sink=observation_sink,
         )
         warnings.extend(ocr_warnings)
+    elif observation_sink is not None:
+        for stage_key in (
+            "ocr_raw_tiles",
+            "ocr_rule_removed_tiles",
+            "ocr_text_boxes",
+        ):
+            observe(
+                observation_sink,
+                stage_key,
+                payload={"reason": "OCR is disabled for this trace."},
+                status="not_executed",
+            )
 
     signatures = detect_signature_regions(prepared.binary)
     logos = detect_logo_regions(prepared.binary)
     if texts:
         texts = constrain_texts_to_table_cells(prepared.binary, texts)
         texts = collapse_overlapping_candidates(texts)
+    if enable_ocr and observation_sink is not None:
+        observe(
+            observation_sink,
+            "ocr_text_boxes",
+            image=rasterize_text_boxes(texts, prepared.binary.shape),
+            payload={"texts": texts_payload(texts), "count": len(texts)},
+        )
 
     # Classification happens once. Signatures and explicit logos exclude only
     # their actual source ink from structural detection. No OCR rectangle may
     # cut a title-block rule, wall, leader or symbol.
     signature_mask = signature_source_mask(prepared.binary, signatures)
     graphic_mask = graphic_source_mask(prepared.binary, logos)
+    if observation_sink is not None:
+        text_candidate_mask = editable_text_source_mask(
+            prepared.binary,
+            texts,
+            excluded=np.zeros_like(prepared.binary),
+        )
+        observe(
+            observation_sink,
+            "text_candidate_mask",
+            image=text_candidate_mask,
+            payload={"role": "candidate", "count": len(texts)},
+        )
+        observe(
+            observation_sink,
+            "logo_candidate_mask",
+            image=graphic_mask,
+            payload={"role": "candidate", "count": len(logos)},
+        )
+        observe(
+            observation_sink,
+            "signature_candidate_mask",
+            image=signature_mask,
+            payload={"role": "candidate", "count": len(signatures)},
+        )
     protected_mask = protected_object_regions(
         prepared.binary,
         texts=texts,
@@ -107,6 +209,7 @@ def trace_image_optimized(
                 (0.48 if enable_ocr else 0.09) + 0.22 * fraction,
             )
         ),
+        observation_sink=observation_sink,
     )
 
     ownership = partition_content(
@@ -118,6 +221,75 @@ def trace_image_optimized(
         graphic_mask=graphic_mask,
         signature_mask=signature_mask,
     )
+    if observation_sink is not None:
+        owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
+        for owner_code, mask in (
+            (1, ownership.line),
+            (2, ownership.text),
+            (3, ownership.graphic),
+            (4, ownership.signature),
+            (5, ownership.residual),
+        ):
+            owner_map[mask > 0] = owner_code
+        observe(
+            observation_sink,
+            "text_candidate_mask",
+            image=ownership.text,
+            payload={"role": "final-owned"},
+        )
+        observe(
+            observation_sink,
+            "logo_candidate_mask",
+            image=ownership.graphic,
+            payload={"role": "final-owned"},
+        )
+        observe(
+            observation_sink,
+            "signature_candidate_mask",
+            image=ownership.signature,
+            payload={"role": "final-owned"},
+        )
+        observe(
+            observation_sink,
+            "structural_line_candidate_mask",
+            image=ownership.line,
+            payload={"role": "final-owned"},
+        )
+        observe(
+            observation_sink,
+            "conflict_mask",
+            image=ownership.ambiguous,
+            payload={
+                "ambiguous_pixels": int(
+                    cv2.countNonZero(ownership.ambiguous)
+                )
+            },
+        )
+        observe(
+            observation_sink,
+            "residual_mask",
+            image=ownership.residual,
+            payload={
+                "role": "residual",
+                "residual_pixels": int(cv2.countNonZero(ownership.residual)),
+            },
+        )
+        observe(
+            observation_sink,
+            "residual_mask",
+            image=owner_map,
+            payload={
+                "role": "pixel-lineage",
+                "codebook": {
+                    "0": "background",
+                    "1": "structural_line",
+                    "2": "text",
+                    "3": "logo_or_graphic",
+                    "4": "signature",
+                    "5": "residual",
+                },
+            },
+        )
     residual_binary = binary_from_foreground(ownership.residual)
     artifact_removed = 0
     if not prepared.clean_digital and np.any(ownership.residual):
@@ -138,6 +310,35 @@ def trace_image_optimized(
     contour_binary = binary_from_foreground(
         cv2.max(residual_foreground, ownership.graphic)
     )
+    if observation_sink is not None:
+        final_line_mask = rasterize_lines(
+            straight_lines,
+            prepared.binary.shape,
+        )
+        observe(
+            observation_sink,
+            "final_structural_layer",
+            image=final_line_mask,
+            payload={
+                "lines": len(straight_lines),
+                "role": "exported-structural-lines",
+            },
+        )
+        observe(
+            observation_sink,
+            "final_text_layer",
+            image=ownership.text,
+            payload={
+                "texts": texts_payload(texts),
+                "count": len(texts),
+            },
+        )
+        observe(
+            observation_sink,
+            "final_outline_layer",
+            image=contour_binary,
+            payload={"role": "exported-contour-source"},
+        )
 
     report_progress(progress_callback, "prepare-image", 0.71 if enable_ocr else 0.32)
     paths = trace_binary(

@@ -1,0 +1,11 @@
+{
+  "observations": [
+    {
+      "foreground_pixels": 771992,
+      "threshold": 128
+    }
+  ],
+  "stage_id": "stage-04-binary-foreground",
+  "stage_key": "binary_foreground",
+  "stage_name": "二值前景图"
+}

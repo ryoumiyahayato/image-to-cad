@@ -1,0 +1,1070 @@
+{
+  "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+  "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+  "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+  "configuration_summary": {
+    "dpi": 300,
+    "enable_ocr": true,
+    "final_structure_schema_version": 2,
+    "foreground_threshold": null,
+    "legacy_whole_page_closing": false,
+    "page_index": 0
+  },
+  "data_source_contract": {
+    "dxf_export": "FinalStructure",
+    "gui_preview": "FinalStructure",
+    "same_structure_id_required": true
+  },
+  "dxf": {
+    "audit_error_count": 0,
+    "entity_count": 317,
+    "path": "final/final-structure.dxf",
+    "sha256": "de2cfa88ead4d8d6aa5a97f8229b7f527aea9542e1cc2ae7010db25ec620f737",
+    "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26"
+  },
+  "final_structure_schema_version": 2,
+  "generated_at": "2026-07-28T14:26:14.665131+00:00",
+  "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+  "git_worktree_dirty": true,
+  "input": {
+    "dpi": 300,
+    "page_index": 0,
+    "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\test.jpg",
+    "sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+    "source_size_px": [
+      1850,
+      1250
+    ]
+  },
+  "passed": true,
+  "pixel_lineage": {
+    "codebook": {
+      "0": "background",
+      "1": "structural_line",
+      "2": "text",
+      "3": "logo_or_graphic",
+      "4": "signature",
+      "5": "residual"
+    },
+    "path": "artifacts/22-residual-mask/artifact-002.png"
+  },
+  "schema_version": 1,
+  "stage_count": 26,
+  "stages": [
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/01-original-page/artifact-001.png.metadata.json",
+          "path": "artifacts/01-original-page/artifact-001.png",
+          "role": "",
+          "sha256": "f7e044163852635404c50c68b6fee8ca909ff37b4de4ec343d180e9c8ef77aed"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/01-original-page/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:04.902827+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/01-original-page/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-01-original-page",
+      "stage_key": "original_page",
+      "stage_name": "原始页面",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": []
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/02-original-gray/artifact-001.png.metadata.json",
+          "path": "artifacts/02-original-gray/artifact-001.png",
+          "role": "",
+          "sha256": "33ffcc0370974747c324f1dd1440f06631f4921086b5635dd14eb82e77835031"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/02-original-gray/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.128982+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/02-original-gray/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-02-original-gray",
+      "stage_key": "original_gray",
+      "stage_name": "原始灰度图",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-01-original-page"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/03-normalized-background/artifact-001.png.metadata.json",
+          "path": "artifacts/03-normalized-background/artifact-001.png",
+          "role": "",
+          "sha256": "88ce198e11ad69e4f6dcaebc7a1cee658ff2a83323b0dbee2c09388c3aa8b36e"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/03-normalized-background/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.167949+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/03-normalized-background/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-03-normalized-background",
+      "stage_key": "normalized_background",
+      "stage_name": "归一化背景图",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-02-original-gray"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/04-binary-foreground/artifact-001.png.metadata.json",
+          "path": "artifacts/04-binary-foreground/artifact-001.png",
+          "role": "",
+          "sha256": "05f92d84e0f590f180461bce84248442815e4fed3b166a502a48acc945e6bd19"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/04-binary-foreground/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.209337+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/04-binary-foreground/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-04-binary-foreground",
+      "stage_key": "binary_foreground",
+      "stage_name": "二值前景图",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-03-normalized-background"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/05-legacy-closing/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.217885+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/05-legacy-closing/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-05-legacy-closing",
+      "stage_key": "legacy_closing",
+      "stage_name": "旧闭运算结果",
+      "status": "not_executed",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-04-binary-foreground"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/06-structural-roi/artifact-001.png.metadata.json",
+          "path": "artifacts/06-structural-roi/artifact-001.png",
+          "role": "",
+          "sha256": "e9c054225d4ead22442a1662f4f2c577cb60e1f57714775a9861a72031fe4546"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/06-structural-roi/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:12.998338+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/06-structural-roi/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-06-structural-roi",
+      "stage_key": "structural_roi",
+      "stage_name": "新结构 ROI",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-08-line-candidates-text-filtered"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/07-raw-line-candidates/artifact-001.png.metadata.json",
+          "path": "artifacts/07-raw-line-candidates/artifact-001.png",
+          "role": "",
+          "sha256": "7f8b551378bed3254ab9e2fa5ba3005e4c7372d1735aec9efeb1ed3ce76a2f6a"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/07-raw-line-candidates/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:12.043707+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/07-raw-line-candidates/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-07-raw-line-candidates",
+      "stage_key": "raw_line_candidates",
+      "stage_name": "原始直线候选",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-04-binary-foreground"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/08-line-candidates-text-filtered/artifact-001.png.metadata.json",
+          "path": "artifacts/08-line-candidates-text-filtered/artifact-001.png",
+          "role": "",
+          "sha256": "7930961ae3888b827fa082050993521ec0f56f9288d280fb399bf0c101a3cca9"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/08-line-candidates-text-filtered/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:12.196517+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/08-line-candidates-text-filtered/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-08-line-candidates-text-filtered",
+      "stage_key": "line_candidates_text_filtered",
+      "stage_name": "文字过滤后的直线候选",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-07-raw-line-candidates",
+        "stage-17-text-candidate-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/09-candidate-endpoints/artifact-001.png.metadata.json",
+          "path": "artifacts/09-candidate-endpoints/artifact-001.png",
+          "role": "",
+          "sha256": "b3fe9f06ebdb0b7b294eed51a09b2fa109d0c18b73deebeddace40107a298f03"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/09-candidate-endpoints/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:12.213889+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/09-candidate-endpoints/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-09-candidate-endpoints",
+      "stage_key": "candidate_endpoints",
+      "stage_name": "候选端点",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-08-line-candidates-text-filtered"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/10-approved-connections/artifact-001.png.metadata.json",
+          "path": "artifacts/10-approved-connections/artifact-001.png",
+          "role": "",
+          "sha256": "25ee61a25fbe9ce08cbfbb4a0c3d862d508f593b9d1562c6ffcf8a8544e9bdc9"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/10-approved-connections/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.058556+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/10-approved-connections/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-10-approved-connections",
+      "stage_key": "approved_connections",
+      "stage_name": "被批准的连接",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-06-structural-roi",
+        "stage-09-candidate-endpoints",
+        "stage-21-conflict-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/11-rejected-connections/artifact-001.png.metadata.json",
+          "path": "artifacts/11-rejected-connections/artifact-001.png",
+          "role": "",
+          "sha256": "e9562e6d12dfb2e42253297dd4b532389ba406e7470a4f40c628f9c779961431"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/11-rejected-connections/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.065603+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/11-rejected-connections/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-11-rejected-connections",
+      "stage_key": "rejected_connections",
+      "stage_name": "被拒绝的连接",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-06-structural-roi",
+        "stage-09-candidate-endpoints",
+        "stage-21-conflict-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/12-endpoint-snap/artifact-001.png.metadata.json",
+          "path": "artifacts/12-endpoint-snap/artifact-001.png",
+          "role": "before",
+          "sha256": "7930961ae3888b827fa082050993521ec0f56f9288d280fb399bf0c101a3cca9"
+        },
+        {
+          "metadata_path": "artifacts/12-endpoint-snap/artifact-002.png.metadata.json",
+          "path": "artifacts/12-endpoint-snap/artifact-002.png",
+          "role": "after",
+          "sha256": "7930961ae3888b827fa082050993521ec0f56f9288d280fb399bf0c101a3cca9"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/12-endpoint-snap/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:12.248702+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/12-endpoint-snap/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-12-endpoint-snap",
+      "stage_key": "endpoint_snap",
+      "stage_name": "端点吸附前后结果",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-08-line-candidates-text-filtered"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/13-intersection-extension/artifact-001.png.metadata.json",
+          "path": "artifacts/13-intersection-extension/artifact-001.png",
+          "role": "before",
+          "sha256": "d318ea6b74a667b685f73cd87d93e6d4890062b54b2c88e678a33e50cdde1ef8"
+        },
+        {
+          "metadata_path": "artifacts/13-intersection-extension/artifact-002.png.metadata.json",
+          "path": "artifacts/13-intersection-extension/artifact-002.png",
+          "role": "after",
+          "sha256": "d318ea6b74a667b685f73cd87d93e6d4890062b54b2c88e678a33e50cdde1ef8"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/13-intersection-extension/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.087350+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/13-intersection-extension/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-13-intersection-extension",
+      "stage_key": "intersection_extension",
+      "stage_name": "交点延伸前后结果",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-06-structural-roi",
+        "stage-10-approved-connections",
+        "stage-12-endpoint-snap"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/14-ocr-raw-tiles/artifact-001.png.metadata.json",
+          "path": "artifacts/14-ocr-raw-tiles/artifact-001.png",
+          "role": "",
+          "sha256": "33ffcc0370974747c324f1dd1440f06631f4921086b5635dd14eb82e77835031"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/14-ocr-raw-tiles/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.217943+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/14-ocr-raw-tiles/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-14-ocr-raw-tiles",
+      "stage_key": "ocr_raw_tiles",
+      "stage_name": "OCR 原始 tile",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-02-original-gray"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/15-ocr-rule-removed-tiles/artifact-001.png.metadata.json",
+          "path": "artifacts/15-ocr-rule-removed-tiles/artifact-001.png",
+          "role": "",
+          "sha256": "6aaf13e6a17bde8ec9c7120a61230cb574a74d7b649297434b64b4b3d648a050"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/15-ocr-rule-removed-tiles/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:05.320261+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/15-ocr-rule-removed-tiles/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-15-ocr-rule-removed-tiles",
+      "stage_key": "ocr_rule_removed_tiles",
+      "stage_name": "OCR 去表格线 tile",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-14-ocr-raw-tiles"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/16-ocr-text-boxes/artifact-001.png.metadata.json",
+          "path": "artifacts/16-ocr-text-boxes/artifact-001.png",
+          "role": "",
+          "sha256": "33208e0ba5a1142fdffd8f09305964ffe6725255c69c7fda94d5619cbc0ddd49"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/16-ocr-text-boxes/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:10.348164+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/16-ocr-text-boxes/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-16-ocr-text-boxes",
+      "stage_key": "ocr_text_boxes",
+      "stage_name": "OCR 文本框",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-14-ocr-raw-tiles",
+        "stage-15-ocr-rule-removed-tiles"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/17-text-candidate-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/17-text-candidate-mask/artifact-001.png",
+          "role": "candidate",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        },
+        {
+          "metadata_path": "artifacts/17-text-candidate-mask/artifact-002.png.metadata.json",
+          "path": "artifacts/17-text-candidate-mask/artifact-002.png",
+          "role": "final-owned",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/17-text-candidate-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.291690+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/17-text-candidate-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-17-text-candidate-mask",
+      "stage_key": "text_candidate_mask",
+      "stage_name": "文字候选 mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-04-binary-foreground",
+        "stage-16-ocr-text-boxes"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/18-logo-candidate-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/18-logo-candidate-mask/artifact-001.png",
+          "role": "candidate",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        },
+        {
+          "metadata_path": "artifacts/18-logo-candidate-mask/artifact-002.png.metadata.json",
+          "path": "artifacts/18-logo-candidate-mask/artifact-002.png",
+          "role": "final-owned",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/18-logo-candidate-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.299618+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/18-logo-candidate-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-18-logo-candidate-mask",
+      "stage_key": "logo_candidate_mask",
+      "stage_name": "Logo 候选 mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-04-binary-foreground"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/19-signature-candidate-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/19-signature-candidate-mask/artifact-001.png",
+          "role": "candidate",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        },
+        {
+          "metadata_path": "artifacts/19-signature-candidate-mask/artifact-002.png.metadata.json",
+          "path": "artifacts/19-signature-candidate-mask/artifact-002.png",
+          "role": "final-owned",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/19-signature-candidate-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.310556+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/19-signature-candidate-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-19-signature-candidate-mask",
+      "stage_key": "signature_candidate_mask",
+      "stage_name": "签名候选 mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-04-binary-foreground"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/20-structural-line-candidate-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/20-structural-line-candidate-mask/artifact-001.png",
+          "role": "post-filter-candidates",
+          "sha256": "d318ea6b74a667b685f73cd87d93e6d4890062b54b2c88e678a33e50cdde1ef8"
+        },
+        {
+          "metadata_path": "artifacts/20-structural-line-candidate-mask/artifact-002.png.metadata.json",
+          "path": "artifacts/20-structural-line-candidate-mask/artifact-002.png",
+          "role": "final-owned",
+          "sha256": "b005c91963c5ae9cb1b832dd7cbf501bc716ac0929ae8091df73990175058b60"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/20-structural-line-candidate-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.319012+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/20-structural-line-candidate-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-20-structural-line-candidate-mask",
+      "stage_key": "structural_line_candidate_mask",
+      "stage_name": "结构线候选 mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-08-line-candidates-text-filtered",
+        "stage-13-intersection-extension"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/21-conflict-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/21-conflict-mask/artifact-001.png",
+          "role": "",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/21-conflict-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.325626+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/21-conflict-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-21-conflict-mask",
+      "stage_key": "conflict_mask",
+      "stage_name": "冲突 mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-17-text-candidate-mask",
+        "stage-18-logo-candidate-mask",
+        "stage-19-signature-candidate-mask",
+        "stage-20-structural-line-candidate-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/22-residual-mask/artifact-001.png.metadata.json",
+          "path": "artifacts/22-residual-mask/artifact-001.png",
+          "role": "residual",
+          "sha256": "38d5db552e3f2f04db55005da82335708150fae721164175463a5ccb311be0cf"
+        },
+        {
+          "metadata_path": "artifacts/22-residual-mask/artifact-002.png.metadata.json",
+          "path": "artifacts/22-residual-mask/artifact-002.png",
+          "role": "pixel-lineage",
+          "sha256": "d0f5b470e3fee2a8d50fc9d5a9fbb084b7b2123462b58b9f19fc75e0794a73b3"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/22-residual-mask/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.341465+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/22-residual-mask/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-22-residual-mask",
+      "stage_key": "residual_mask",
+      "stage_name": "residual mask",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-21-conflict-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/23-final-structural-layer/artifact-001.png.metadata.json",
+          "path": "artifacts/23-final-structural-layer/artifact-001.png",
+          "role": "exported-structural-lines",
+          "sha256": "d318ea6b74a667b685f73cd87d93e6d4890062b54b2c88e678a33e50cdde1ef8"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/23-final-structural-layer/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.648350+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/23-final-structural-layer/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-23-final-structural-layer",
+      "stage_key": "final_structural_layer",
+      "stage_name": "最终结构线层",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-13-intersection-extension",
+        "stage-20-structural-line-candidate-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/24-final-text-layer/artifact-001.png.metadata.json",
+          "path": "artifacts/24-final-text-layer/artifact-001.png",
+          "role": "",
+          "sha256": "3fd63eabf605b3a0064a16d804ef87ed6230b523c2716d15cabe05c5af06f850"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/24-final-text-layer/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.658623+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/24-final-text-layer/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-24-final-text-layer",
+      "stage_key": "final_text_layer",
+      "stage_name": "最终文字层",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-16-ocr-text-boxes",
+        "stage-17-text-candidate-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/25-final-outline-layer/artifact-001.png.metadata.json",
+          "path": "artifacts/25-final-outline-layer/artifact-001.png",
+          "role": "exported-contour-source",
+          "sha256": "775692416c246464b13c67a453d217e359cbe23d4d9a7c6904cddd78acc65cb5"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/25-final-outline-layer/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:13.668042+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/25-final-outline-layer/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-25-final-outline-layer",
+      "stage_key": "final_outline_layer",
+      "stage_name": "最终轮廓层",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-18-logo-candidate-mask",
+        "stage-19-signature-candidate-mask",
+        "stage-22-residual-mask"
+      ]
+    },
+    {
+      "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+      "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+      "artifacts": [
+        {
+          "metadata_path": "artifacts/26-actual-dxf-render/artifact-001.svg.metadata.json",
+          "path": "artifacts/26-actual-dxf-render/artifact-001.svg",
+          "role": "actual-dxf-render",
+          "sha256": "c36dac43877a2ae914599423b2c6d0c259a225d2b34deac355b8993e7213fa5f"
+        }
+      ],
+      "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+      "configuration_summary": {
+        "dpi": 300,
+        "enable_ocr": true,
+        "final_structure_schema_version": 2,
+        "foreground_threshold": null,
+        "legacy_whole_page_closing": false,
+        "page_index": 0
+      },
+      "data_path": "artifacts/26-actual-dxf-render/data.json",
+      "dpi": 300,
+      "generated_at": "2026-07-28T14:26:14.301879+00:00",
+      "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+      "git_worktree_dirty": true,
+      "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "metadata_path": "artifacts/26-actual-dxf-render/metadata.json",
+      "page_index": 0,
+      "stage_id": "stage-26-actual-dxf-render",
+      "stage_key": "actual_dxf_render",
+      "stage_name": "实际 DXF 渲染结果",
+      "status": "captured",
+      "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+      "upstream_stage_ids": [
+        "stage-23-final-structural-layer",
+        "stage-24-final-text-layer",
+        "stage-25-final-outline-layer"
+      ]
+    }
+  ],
+  "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26"
+}

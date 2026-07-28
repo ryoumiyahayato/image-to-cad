@@ -1,0 +1,4196 @@
+{
+  "observations": [
+    {
+      "lines": [
+        {
+          "confidence": 1.0,
+          "end": [
+            1628.0013965138378,
+            16.399197053636556
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000010",
+            "LSD-000002"
+          ],
+          "start": [
+            169.18598208512688,
+            91.37645764323617
+          ],
+          "width": 84.0400390625
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1577.1193579599587,
+            104.20484710065358
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000005",
+            "HOUGH-000013",
+            "HOUGH-000033",
+            "HOUGH-000043",
+            "HOUGH-000044",
+            "HOUGH-000081",
+            "HOUGH-000101",
+            "HOUGH-000105",
+            "HOUGH-000207",
+            "LSD-000004",
+            "LSD-000005"
+          ],
+          "start": [
+            218.84590149436377,
+            172.91902843024454
+          ],
+          "width": 7.639999866485596
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1332.0648980586382,
+            290.82486686974005
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000011",
+            "HOUGH-000021",
+            "HOUGH-000087",
+            "LSD-000014",
+            "LSD-000018",
+            "LSD-000021",
+            "LSD-000023",
+            "LSD-000025"
+          ],
+          "start": [
+            365.8597733063521,
+            337.0740195633978
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            224.0135514221115,
+            168.79404131837737
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000016",
+            "HOUGH-000017",
+            "HOUGH-000068",
+            "LSD-000009",
+            "LSD-000010"
+          ],
+          "start": [
+            162.72540832163384,
+            1050.9414125023015
+          ],
+          "width": 7.639999866485596
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            332.08844341927517,
+            268.004638640871
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000024",
+            "LSD-000296",
+            "LSD-000302",
+            "LSD-000320",
+            "LSD-000733",
+            "LSD-000738",
+            "LSD-000818"
+          ],
+          "start": [
+            302.0884434192752,
+            840.0046386408713
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            369.33621769114256,
+            336.9938544676786
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000023",
+            "HOUGH-000063",
+            "LSD-000038",
+            "LSD-000041"
+          ],
+          "start": [
+            348.8057611481738,
+            762.0890082762725
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1170.0880791587613,
+            1018.2231883770013
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000088",
+            "LSD-000114",
+            "LSD-000115"
+          ],
+          "start": [
+            880.3867647241055,
+            1018.2231883770013
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1002.0662507760762,
+            597.1555307147619
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000091",
+            "HOUGH-000127",
+            "HOUGH-000169",
+            "LSD-000044",
+            "LSD-000046"
+          ],
+          "start": [
+            1002.0662507760762,
+            310.67315163815056
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1344.872002781144,
+            703.8297026444147
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000048",
+            "HOUGH-000160",
+            "HOUGH-000210",
+            "LSD-000081",
+            "LSD-000082"
+          ],
+          "start": [
+            1099.872002781144,
+            703.8297026444147
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            664.6049185702971,
+            722.0138247379997
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000075",
+            "HOUGH-000128",
+            "HOUGH-000186",
+            "LSD-000143",
+            "LSD-000593",
+            "LSD-000642",
+            "LSD-000677"
+          ],
+          "start": [
+            664.6049185702971,
+            463.0
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            685.8803255359608,
+            721.8751647947493
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000058",
+            "HOUGH-000106",
+            "HOUGH-000155",
+            "LSD-000047",
+            "LSD-000173",
+            "LSD-000205",
+            "LSD-000663"
+          ],
+          "start": [
+            685.8803255359608,
+            463.0708101142928
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1270.8172977477136,
+            583.07850722798
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000090",
+            "HOUGH-000102",
+            "HOUGH-000343",
+            "LSD-000036",
+            "LSD-000042"
+          ],
+          "start": [
+            1253.7990166034367,
+            332.8096668709664
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            625.162029066571,
+            753.9146137129459
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000093",
+            "HOUGH-000222",
+            "LSD-000093",
+            "LSD-000098"
+          ],
+          "start": [
+            368.8821870213112,
+            753.9146137129459
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            587.7873143884312,
+            700.1648804719873
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000080"
+          ],
+          "start": [
+            414.21517638239425,
+            700.1648804719873
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            348.3443075747939,
+            1047.35790056171
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000118"
+          ],
+          "start": [
+            168.2688223453017,
+            1047.35790056171
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1021.4462579923379,
+            478.73273489100256
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000040"
+          ],
+          "start": [
+            1021.4462579923379,
+            309.4224442257262
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            612.870272227823,
+            694.3278556695343
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000153",
+            "HOUGH-000194",
+            "HOUGH-000329"
+          ],
+          "start": [
+            437.93989120241844,
+            703.5347178287662
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1222.1467840148116,
+            587.6480528309618
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000100",
+            "HOUGH-000154",
+            "LSD-000061",
+            "LSD-000193",
+            "LSD-000195"
+          ],
+          "start": [
+            1058.935517411978,
+            587.6480528309618
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1243.8219997249903,
+            1004.3317184039804
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000112",
+            "HOUGH-000116",
+            "LSD-000107",
+            "LSD-000108",
+            "LSD-000227"
+          ],
+          "start": [
+            1234.0484160880612,
+            846.8935245403447
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1373.086549075193,
+            844.8396594276932
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000105"
+          ],
+          "start": [
+            1236.851441653318,
+            844.8396594276932
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1007.0412560179064,
+            623.9072608381847
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000096",
+            "LSD-000057"
+          ],
+          "start": [
+            1007.0412560179064,
+            490.67761211247927
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            821.8724558501256,
+            603.7281004719376
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000126",
+            "LSD-000072"
+          ],
+          "start": [
+            689.2234006370946,
+            603.7281004719376
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1350.0,
+            475.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000055",
+            "HOUGH-000136"
+          ],
+          "start": [
+            1223.0,
+            475.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1673.2939444474614,
+            996.4048645131519
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000111"
+          ],
+          "start": [
+            1544.529662220899,
+            996.4048645131519
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1655.6300426909802,
+            833.3002454472902
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000103"
+          ],
+          "start": [
+            1530.5831676909802,
+            833.3002454472902
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            416.3683192783536,
+            705.9273207637857
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:lsd",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000232",
+            "HOUGH-000245",
+            "LSD-000070",
+            "LSD-000074"
+          ],
+          "start": [
+            416.3683192783536,
+            597.9273207637857
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            612.2500743522065,
+            694.0
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000199",
+            "HOUGH-000260"
+          ],
+          "start": [
+            612.2500743522065,
+            587.975611569566
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1058.656563797919,
+            590.538175421747
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000049",
+            "LSD-000189"
+          ],
+          "start": [
+            1058.656563797919,
+            486.8554971990908
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            456.8961486816406,
+            273.59136962890625
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000290"
+          ],
+          "start": [
+            355.62774658203125,
+            278.1855163574219
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1638.1231689453125,
+            926.1251525878906
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000150",
+            "LSD-000505"
+          ],
+          "start": [
+            1539.4005126953125,
+            926.1251525878906
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1340.0937042571331,
+            721.4985362282613
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000204"
+          ],
+          "start": [
+            1244.0937042571331,
+            721.4985362282613
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1148.0417696816762,
+            707.890726319647
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000084"
+          ],
+          "start": [
+            1055.4398409707387,
+            707.890726319647
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            643.0,
+            656.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000156"
+          ],
+          "start": [
+            643.0,
+            569.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            506.81460824221983,
+            595.9614362145644
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000068"
+          ],
+          "start": [
+            421.80658211917296,
+            595.9614362145644
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            455.11103498152966,
+            759.1283629197375
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000094",
+            "LSD-000097",
+            "LSD-000225"
+          ],
+          "start": [
+            370.46537848785607,
+            759.1283629197375
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1003.0309297040724,
+            573.9086100955141
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000190"
+          ],
+          "start": [
+            920.4673921064161,
+            573.9086100955141
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1081.87548828125,
+            245.63621520996094
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000429"
+          ],
+          "start": [
+            1003.0592651367188,
+            249.1520538330078
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1270.5691265260973,
+            583.1093936298194
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000095",
+            "LSD-000062",
+            "LSD-000191"
+          ],
+          "start": [
+            1191.9012530953928,
+            583.1093936298194
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            642.6540832519531,
+            826.841552734375
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:lsd",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000030",
+            "HOUGH-000203",
+            "LSD-000929"
+          ],
+          "start": [
+            642.6540832519531,
+            752.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1254.9452260325363,
+            336.00075018757326
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000274"
+          ],
+          "start": [
+            1181.9452260325363,
+            336.00075018757326
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            988.0,
+            747.138916015625
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000072",
+            "LSD-000741"
+          ],
+          "start": [
+            915.588134765625,
+            747.138916015625
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            982.9155264656947,
+            714.0011895321642
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000130"
+          ],
+          "start": [
+            911.9155264656947,
+            714.0011895321642
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            372.0012237406179,
+            741.9143206783034
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000122"
+          ],
+          "start": [
+            372.0012237406179,
+            671.9143206783034
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            646.0,
+            383.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000170"
+          ],
+          "start": [
+            646.0,
+            314.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            332.0,
+            282.34342193603516
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000097",
+            "LSD-000794"
+          ],
+          "start": [
+            274.0,
+            282.34342193603516
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            648.114990234375,
+            264.15765380859375
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000413"
+          ],
+          "start": [
+            580.5857543945312,
+            267.27423095703125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1051.472706127834,
+            413.2375790908342
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000043"
+          ],
+          "start": [
+            1051.472706127834,
+            346.89367650294355
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            897.863777017244,
+            716.0030943793691
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000313"
+          ],
+          "start": [
+            831.863777017244,
+            719.0030943793691
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            304.3765869140625,
+            775.4505920410156
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000363",
+            "LSD-000499"
+          ],
+          "start": [
+            239.36595153808594,
+            775.4505920410156
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            646.0,
+            505.9464645385742
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000168",
+            "LSD-000812"
+          ],
+          "start": [
+            585.5975952148438,
+            505.9464645385742
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            839.396484375,
+            497.3271942138672
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000723",
+            "LSD-000809"
+          ],
+          "start": [
+            779.3416748046875,
+            497.3271942138672
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            448.10338682751933,
+            545.9982179980608
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000227"
+          ],
+          "start": [
+            390.10338682751933,
+            545.9982179980608
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            641.8389587402344,
+            740.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000319",
+            "LSD-000769"
+          ],
+          "start": [
+            641.8389587402344,
+            683.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            318.2037658691406,
+            581.8186645507812
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000477"
+          ],
+          "start": [
+            315.4947814941406,
+            638.1187133789062
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            326.31683349609375,
+            430.5946044921875
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000304"
+          ],
+          "start": [
+            323.32025146484375,
+            485.6356201171875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            648.1549224853516,
+            381.8746643066406
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000262",
+            "LSD-000797"
+          ],
+          "start": [
+            648.1549224853516,
+            328.1180114746094
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1665.0,
+            922.7368011474609
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000304",
+            "HOUGH-000398",
+            "LSD-000504"
+          ],
+          "start": [
+            1615.0,
+            922.7368011474609
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            647.7805404663086,
+            312.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000162",
+            "LSD-000960",
+            "LSD-000963"
+          ],
+          "start": [
+            647.7805404663086,
+            263.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            529.3928833007812,
+            765.6904754638672
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000359",
+            "LSD-000748"
+          ],
+          "start": [
+            483.1138000488281,
+            765.6904754638672
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            643.9467926025391,
+            568.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "merge_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000066",
+            "HOUGH-000077",
+            "LSD-000962"
+          ],
+          "start": [
+            643.9467926025391,
+            523.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            374.3976745605469,
+            773.2643127441406
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000831"
+          ],
+          "start": [
+            331.8615417480469,
+            773.2643127441406
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            593.1392211914062,
+            509.3275604248047
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000319"
+          ],
+          "start": [
+            550.6069946289062,
+            509.3275604248047
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            293.1385803222656,
+            520.5097045898438
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000814"
+          ],
+          "start": [
+            250.64739990234375,
+            520.5097045898438
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            883.1268310546875,
+            496.3927459716797
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000457"
+          ],
+          "start": [
+            841.8397827148438,
+            496.3927459716797
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            644.1329650878906,
+            721.8876953125
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000147"
+          ],
+          "start": [
+            644.1329650878906,
+            681.8817138671875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            288.1474304199219,
+            523.1989135742188
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000815"
+          ],
+          "start": [
+            249.35804748535156,
+            523.1989135742188
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            328.30345916748047,
+            390.6379089355469
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000297",
+            "LSD-000445"
+          ],
+          "start": [
+            328.30345916748047,
+            341.6077994552313
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            966.0,
+            305.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000334"
+          ],
+          "start": [
+            966.0,
+            268.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1347.0,
+            732.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000123"
+          ],
+          "start": [
+            1311.0,
+            732.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1278.171630859375,
+            940.0148620605469
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000152"
+          ],
+          "start": [
+            1243.127197265625,
+            940.0148620605469
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            311.4069366455078,
+            730.6257934570312
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000481"
+          ],
+          "start": [
+            311.4069366455078,
+            695.5834350585938
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            982.5,
+            773.0
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000179"
+          ],
+          "start": [
+            982.5,
+            738.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            356.86016845703125,
+            516.5545043945312
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000464"
+          ],
+          "start": [
+            323.1245422363281,
+            518.1150512695312
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            366.8773193359375,
+            281.2821044921875
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000443"
+          ],
+          "start": [
+            333.12493896484375,
+            281.2821044921875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            307.1742858886719,
+            807.1675989487592
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000752"
+          ],
+          "start": [
+            307.1742858886719,
+            774.4152221679688
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            333.9200744628906,
+            283.104736328125
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000795"
+          ],
+          "start": [
+            332.4714050292969,
+            315.65155029296875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            625.6302490234375,
+            506.97760009765625
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000872"
+          ],
+          "start": [
+            594.3343505859375,
+            508.58099365234375
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            645.0,
+            496.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000333"
+          ],
+          "start": [
+            645.0,
+            465.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            621.8843383789062,
+            762.079833984375
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000924"
+          ],
+          "start": [
+            591.8898315429688,
+            763.4502563476562
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1089.0,
+            486.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000181"
+          ],
+          "start": [
+            1059.0,
+            486.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            969.0,
+            320.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000185"
+          ],
+          "start": [
+            969.0,
+            292.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1378.9637451171875,
+            871.982666015625
+          ],
+          "history": [
+            "detected:lsd",
+            "merge_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000835",
+            "LSD-000836"
+          ],
+          "start": [
+            1377.25390625,
+            845.6004638671875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            674.3773193359375,
+            266.11163330078125
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000438"
+          ],
+          "start": [
+            648.1139526367188,
+            266.11163330078125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1150.6295166015625,
+            483.6387481689453
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000180"
+          ],
+          "start": [
+            1126.8677978515625,
+            483.6387481689453
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1053.157470703125,
+            488.1527862548828
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000841"
+          ],
+          "start": [
+            1029.396484375,
+            488.1527862548828
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1536.875244140625,
+            970.8958740234375
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000514"
+          ],
+          "start": [
+            1513.1241455078125,
+            970.8958740234375
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1012.0,
+            746.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000284"
+          ],
+          "start": [
+            989.0,
+            746.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1383.0218505859375,
+            959.3806762695312
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000509"
+          ],
+          "start": [
+            1381.7857666015625,
+            936.8798828125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            806.8779907226562,
+            754.7759704589844
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000356"
+          ],
+          "start": [
+            784.3672485351562,
+            754.7759704589844
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1626.0,
+            964.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000147"
+          ],
+          "start": [
+            1604.0,
+            965.0
+          ],
+          "width": 1.909999966621399
+        }
+      ],
+      "maximum_extension": 2.3125,
+      "role": "before"
+    },
+    {
+      "lines": [
+        {
+          "confidence": 1.0,
+          "end": [
+            1628.0013965138378,
+            16.399197053636556
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000010",
+            "LSD-000002"
+          ],
+          "start": [
+            169.18598208512688,
+            91.37645764323617
+          ],
+          "width": 84.0400390625
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1577.1193579599587,
+            104.20484710065358
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000005",
+            "HOUGH-000013",
+            "HOUGH-000033",
+            "HOUGH-000043",
+            "HOUGH-000044",
+            "HOUGH-000081",
+            "HOUGH-000101",
+            "HOUGH-000105",
+            "HOUGH-000207",
+            "LSD-000004",
+            "LSD-000005"
+          ],
+          "start": [
+            218.84590149436377,
+            172.91902843024454
+          ],
+          "width": 7.639999866485596
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1332.0648980586382,
+            290.82486686974005
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000011",
+            "HOUGH-000021",
+            "HOUGH-000087",
+            "LSD-000014",
+            "LSD-000018",
+            "LSD-000021",
+            "LSD-000023",
+            "LSD-000025"
+          ],
+          "start": [
+            365.8597733063521,
+            337.0740195633978
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            224.0135514221115,
+            168.79404131837737
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000016",
+            "HOUGH-000017",
+            "HOUGH-000068",
+            "LSD-000009",
+            "LSD-000010"
+          ],
+          "start": [
+            162.72540832163384,
+            1050.9414125023015
+          ],
+          "width": 7.639999866485596
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            332.08844341927517,
+            268.004638640871
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000024",
+            "LSD-000296",
+            "LSD-000302",
+            "LSD-000320",
+            "LSD-000733",
+            "LSD-000738",
+            "LSD-000818"
+          ],
+          "start": [
+            302.0884434192752,
+            840.0046386408713
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            369.33621769114256,
+            336.9938544676786
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000023",
+            "HOUGH-000063",
+            "LSD-000038",
+            "LSD-000041"
+          ],
+          "start": [
+            348.8057611481738,
+            762.0890082762725
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1170.0880791587613,
+            1018.2231883770013
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000088",
+            "LSD-000114",
+            "LSD-000115"
+          ],
+          "start": [
+            880.3867647241055,
+            1018.2231883770013
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1002.0662507760762,
+            597.1555307147619
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000091",
+            "HOUGH-000127",
+            "HOUGH-000169",
+            "LSD-000044",
+            "LSD-000046"
+          ],
+          "start": [
+            1002.0662507760762,
+            310.67315163815056
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1344.872002781144,
+            703.8297026444147
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000048",
+            "HOUGH-000160",
+            "HOUGH-000210",
+            "LSD-000081",
+            "LSD-000082"
+          ],
+          "start": [
+            1099.872002781144,
+            703.8297026444147
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            664.6049185702971,
+            722.0138247379997
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000075",
+            "HOUGH-000128",
+            "HOUGH-000186",
+            "LSD-000143",
+            "LSD-000593",
+            "LSD-000642",
+            "LSD-000677"
+          ],
+          "start": [
+            664.6049185702971,
+            463.0
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            685.8803255359608,
+            721.8751647947493
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000058",
+            "HOUGH-000106",
+            "HOUGH-000155",
+            "LSD-000047",
+            "LSD-000173",
+            "LSD-000205",
+            "LSD-000663"
+          ],
+          "start": [
+            685.8803255359608,
+            463.0708101142928
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1270.8172977477136,
+            583.07850722798
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000090",
+            "HOUGH-000102",
+            "HOUGH-000343",
+            "LSD-000036",
+            "LSD-000042"
+          ],
+          "start": [
+            1253.7990166034367,
+            332.8096668709664
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            625.162029066571,
+            753.9146137129459
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000093",
+            "HOUGH-000222",
+            "LSD-000093",
+            "LSD-000098"
+          ],
+          "start": [
+            368.8821870213112,
+            753.9146137129459
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            587.7873143884312,
+            700.1648804719873
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000080"
+          ],
+          "start": [
+            414.21517638239425,
+            700.1648804719873
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            348.3443075747939,
+            1047.35790056171
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000118"
+          ],
+          "start": [
+            168.2688223453017,
+            1047.35790056171
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1021.4462579923379,
+            478.73273489100256
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000040"
+          ],
+          "start": [
+            1021.4462579923379,
+            309.4224442257262
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            612.870272227823,
+            694.3278556695343
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000153",
+            "HOUGH-000194",
+            "HOUGH-000329"
+          ],
+          "start": [
+            437.93989120241844,
+            703.5347178287662
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1222.1467840148116,
+            587.6480528309618
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000100",
+            "HOUGH-000154",
+            "LSD-000061",
+            "LSD-000193",
+            "LSD-000195"
+          ],
+          "start": [
+            1058.935517411978,
+            587.6480528309618
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1243.8219997249903,
+            1004.3317184039804
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000112",
+            "HOUGH-000116",
+            "LSD-000107",
+            "LSD-000108",
+            "LSD-000227"
+          ],
+          "start": [
+            1234.0484160880612,
+            846.8935245403447
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1373.086549075193,
+            844.8396594276932
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000105"
+          ],
+          "start": [
+            1236.851441653318,
+            844.8396594276932
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1007.0412560179064,
+            623.9072608381847
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000096",
+            "LSD-000057"
+          ],
+          "start": [
+            1007.0412560179064,
+            490.67761211247927
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            821.8724558501256,
+            603.7281004719376
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000126",
+            "LSD-000072"
+          ],
+          "start": [
+            689.2234006370946,
+            603.7281004719376
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1350.0,
+            475.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000055",
+            "HOUGH-000136"
+          ],
+          "start": [
+            1223.0,
+            475.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1673.2939444474614,
+            996.4048645131519
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000111"
+          ],
+          "start": [
+            1544.529662220899,
+            996.4048645131519
+          ],
+          "width": 9.550000190734863
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1655.6300426909802,
+            833.3002454472902
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000103"
+          ],
+          "start": [
+            1530.5831676909802,
+            833.3002454472902
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            416.3683192783536,
+            705.9273207637857
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:lsd",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000232",
+            "HOUGH-000245",
+            "LSD-000070",
+            "LSD-000074"
+          ],
+          "start": [
+            416.3683192783536,
+            597.9273207637857
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            612.2500743522065,
+            694.0
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000199",
+            "HOUGH-000260"
+          ],
+          "start": [
+            612.2500743522065,
+            587.975611569566
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1058.656563797919,
+            590.538175421747
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000049",
+            "LSD-000189"
+          ],
+          "start": [
+            1058.656563797919,
+            486.8554971990908
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            456.8961486816406,
+            273.59136962890625
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000290"
+          ],
+          "start": [
+            355.62774658203125,
+            278.1855163574219
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1638.1231689453125,
+            926.1251525878906
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000150",
+            "LSD-000505"
+          ],
+          "start": [
+            1539.4005126953125,
+            926.1251525878906
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1340.0937042571331,
+            721.4985362282613
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000204"
+          ],
+          "start": [
+            1244.0937042571331,
+            721.4985362282613
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1148.0417696816762,
+            707.890726319647
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000084"
+          ],
+          "start": [
+            1055.4398409707387,
+            707.890726319647
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            643.0,
+            656.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000156"
+          ],
+          "start": [
+            643.0,
+            569.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            506.81460824221983,
+            595.9614362145644
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000068"
+          ],
+          "start": [
+            421.80658211917296,
+            595.9614362145644
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            455.11103498152966,
+            759.1283629197375
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000094",
+            "LSD-000097",
+            "LSD-000225"
+          ],
+          "start": [
+            370.46537848785607,
+            759.1283629197375
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1003.0309297040724,
+            573.9086100955141
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000190"
+          ],
+          "start": [
+            920.4673921064161,
+            573.9086100955141
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1081.87548828125,
+            245.63621520996094
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000429"
+          ],
+          "start": [
+            1003.0592651367188,
+            249.1520538330078
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1270.5691265260973,
+            583.1093936298194
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000095",
+            "LSD-000062",
+            "LSD-000191"
+          ],
+          "start": [
+            1191.9012530953928,
+            583.1093936298194
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            642.6540832519531,
+            826.841552734375
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "merge_collinear",
+            "detected:lsd",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000030",
+            "HOUGH-000203",
+            "LSD-000929"
+          ],
+          "start": [
+            642.6540832519531,
+            752.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1254.9452260325363,
+            336.00075018757326
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000274"
+          ],
+          "start": [
+            1181.9452260325363,
+            336.00075018757326
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            988.0,
+            747.138916015625
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "detected:lsd",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000072",
+            "LSD-000741"
+          ],
+          "start": [
+            915.588134765625,
+            747.138916015625
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            982.9155264656947,
+            714.0011895321642
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000130"
+          ],
+          "start": [
+            911.9155264656947,
+            714.0011895321642
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            372.0012237406179,
+            741.9143206783034
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000122"
+          ],
+          "start": [
+            372.0012237406179,
+            671.9143206783034
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            646.0,
+            383.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000170"
+          ],
+          "start": [
+            646.0,
+            314.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            332.0,
+            282.34342193603516
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000097",
+            "LSD-000794"
+          ],
+          "start": [
+            274.0,
+            282.34342193603516
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            648.114990234375,
+            264.15765380859375
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000413"
+          ],
+          "start": [
+            580.5857543945312,
+            267.27423095703125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1051.472706127834,
+            413.2375790908342
+          ],
+          "history": [
+            "detected:lsd",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000043"
+          ],
+          "start": [
+            1051.472706127834,
+            346.89367650294355
+          ],
+          "width": 3.819999933242798
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            897.863777017244,
+            716.0030943793691
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000313"
+          ],
+          "start": [
+            831.863777017244,
+            719.0030943793691
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            304.3765869140625,
+            775.4505920410156
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000363",
+            "LSD-000499"
+          ],
+          "start": [
+            239.36595153808594,
+            775.4505920410156
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            646.0,
+            505.9464645385742
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000168",
+            "LSD-000812"
+          ],
+          "start": [
+            585.5975952148438,
+            505.9464645385742
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            839.396484375,
+            497.3271942138672
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000723",
+            "LSD-000809"
+          ],
+          "start": [
+            779.3416748046875,
+            497.3271942138672
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            448.10338682751933,
+            545.9982179980608
+          ],
+          "history": [
+            "detected:hough",
+            "recenter_thick_stroke",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000227"
+          ],
+          "start": [
+            390.10338682751933,
+            545.9982179980608
+          ],
+          "width": 5.730000019073486
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            641.8389587402344,
+            740.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000319",
+            "LSD-000769"
+          ],
+          "start": [
+            641.8389587402344,
+            683.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            318.2037658691406,
+            581.8186645507812
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000477"
+          ],
+          "start": [
+            315.4947814941406,
+            638.1187133789062
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            326.31683349609375,
+            430.5946044921875
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000304"
+          ],
+          "start": [
+            323.32025146484375,
+            485.6356201171875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            648.1549224853516,
+            381.8746643066406
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000262",
+            "LSD-000797"
+          ],
+          "start": [
+            648.1549224853516,
+            328.1180114746094
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1665.0,
+            922.7368011474609
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "detected:hough",
+            "merge_collinear",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000304",
+            "HOUGH-000398",
+            "LSD-000504"
+          ],
+          "start": [
+            1615.0,
+            922.7368011474609
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            647.7805404663086,
+            312.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "canonicalize_endpoints",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000162",
+            "LSD-000960",
+            "LSD-000963"
+          ],
+          "start": [
+            647.7805404663086,
+            263.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            529.3928833007812,
+            765.6904754638672
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000359",
+            "LSD-000748"
+          ],
+          "start": [
+            483.1138000488281,
+            765.6904754638672
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            643.9467926025391,
+            568.0
+          ],
+          "history": [
+            "detected:hough",
+            "detected:lsd",
+            "orthogonalize",
+            "merge_collinear",
+            "merge_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000066",
+            "HOUGH-000077",
+            "LSD-000962"
+          ],
+          "start": [
+            643.9467926025391,
+            523.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            374.3976745605469,
+            773.2643127441406
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000831"
+          ],
+          "start": [
+            331.8615417480469,
+            773.2643127441406
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            593.1392211914062,
+            509.3275604248047
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000319"
+          ],
+          "start": [
+            550.6069946289062,
+            509.3275604248047
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            293.1385803222656,
+            520.5097045898438
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000814"
+          ],
+          "start": [
+            250.64739990234375,
+            520.5097045898438
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            883.1268310546875,
+            496.3927459716797
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000457"
+          ],
+          "start": [
+            841.8397827148438,
+            496.3927459716797
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            644.1329650878906,
+            721.8876953125
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000147"
+          ],
+          "start": [
+            644.1329650878906,
+            681.8817138671875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            288.1474304199219,
+            523.1989135742188
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000815"
+          ],
+          "start": [
+            249.35804748535156,
+            523.1989135742188
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            328.30345916748047,
+            390.6379089355469
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "collapse_scan_parallel_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000297",
+            "LSD-000445"
+          ],
+          "start": [
+            328.30345916748047,
+            341.6077994552313
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            966.0,
+            305.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000334"
+          ],
+          "start": [
+            966.0,
+            268.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1347.0,
+            732.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000123"
+          ],
+          "start": [
+            1311.0,
+            732.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1278.171630859375,
+            940.0148620605469
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000152"
+          ],
+          "start": [
+            1243.127197265625,
+            940.0148620605469
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            311.4069366455078,
+            730.6257934570312
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000481"
+          ],
+          "start": [
+            311.4069366455078,
+            695.5834350585938
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            982.5,
+            773.0
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000179"
+          ],
+          "start": [
+            982.5,
+            738.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            356.86016845703125,
+            516.5545043945312
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000464"
+          ],
+          "start": [
+            323.1245422363281,
+            518.1150512695312
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            366.8773193359375,
+            281.2821044921875
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000443"
+          ],
+          "start": [
+            333.12493896484375,
+            281.2821044921875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            307.1742858886719,
+            807.1675989487592
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "canonicalize_endpoints",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000752"
+          ],
+          "start": [
+            307.1742858886719,
+            774.4152221679688
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            333.9200744628906,
+            283.104736328125
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000795"
+          ],
+          "start": [
+            332.4714050292969,
+            315.65155029296875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            625.6302490234375,
+            506.97760009765625
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000872"
+          ],
+          "start": [
+            594.3343505859375,
+            508.58099365234375
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            645.0,
+            496.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000333"
+          ],
+          "start": [
+            645.0,
+            465.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            621.8843383789062,
+            762.079833984375
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000924"
+          ],
+          "start": [
+            591.8898315429688,
+            763.4502563476562
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1089.0,
+            486.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000181"
+          ],
+          "start": [
+            1059.0,
+            486.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            969.0,
+            320.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000185"
+          ],
+          "start": [
+            969.0,
+            292.0
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1378.9637451171875,
+            871.982666015625
+          ],
+          "history": [
+            "detected:lsd",
+            "merge_duplicate",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000835",
+            "LSD-000836"
+          ],
+          "start": [
+            1377.25390625,
+            845.6004638671875
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            674.3773193359375,
+            266.11163330078125
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support",
+            "extend_to_first_intersection"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000438"
+          ],
+          "start": [
+            647.7805404663086,
+            266.11163330078125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1150.6295166015625,
+            483.6387481689453
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000180"
+          ],
+          "start": [
+            1126.8677978515625,
+            483.6387481689453
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1053.157470703125,
+            488.1527862548828
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000841"
+          ],
+          "start": [
+            1029.396484375,
+            488.1527862548828
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1536.875244140625,
+            970.8958740234375
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000514"
+          ],
+          "start": [
+            1513.1241455078125,
+            970.8958740234375
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1012.0,
+            746.5
+          ],
+          "history": [
+            "detected:hough",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000284"
+          ],
+          "start": [
+            989.0,
+            746.5
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            1383.0218505859375,
+            959.3806762695312
+          ],
+          "history": [
+            "detected:lsd",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000509"
+          ],
+          "start": [
+            1381.7857666015625,
+            936.8798828125
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 0.8,
+          "end": [
+            806.8779907226562,
+            754.7759704589844
+          ],
+          "history": [
+            "detected:lsd",
+            "orthogonalize",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "LSD-000356"
+          ],
+          "start": [
+            784.3672485351562,
+            754.7759704589844
+          ],
+          "width": 1.909999966621399
+        },
+        {
+          "confidence": 1.0,
+          "end": [
+            1626.0,
+            964.0
+          ],
+          "history": [
+            "detected:hough",
+            "trim_to_source_support"
+          ],
+          "layer": "DETAIL",
+          "source_ids": [
+            "HOUGH-000147"
+          ],
+          "start": [
+            1604.0,
+            965.0
+          ],
+          "width": 1.909999966621399
+        }
+      ],
+      "maximum_extension": 2.3125,
+      "role": "after"
+    }
+  ],
+  "stage_id": "stage-13-intersection-extension",
+  "stage_key": "intersection_extension",
+  "stage_name": "交点延伸前后结果"
+}

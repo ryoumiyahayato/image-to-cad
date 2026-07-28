@@ -1,0 +1,22 @@
+{
+  "observations": [
+    {
+      "residual_pixels": 699294,
+      "role": "residual"
+    },
+    {
+      "codebook": {
+        "0": "background",
+        "1": "structural_line",
+        "2": "text",
+        "3": "logo_or_graphic",
+        "4": "signature",
+        "5": "residual"
+      },
+      "role": "pixel-lineage"
+    }
+  ],
+  "stage_id": "stage-22-residual-mask",
+  "stage_key": "residual_mask",
+  "stage_name": "residual mask"
+}

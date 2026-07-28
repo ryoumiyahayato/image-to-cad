@@ -1,0 +1,14 @@
+{
+  "observations": [
+    {
+      "count": 0,
+      "role": "candidate"
+    },
+    {
+      "role": "final-owned"
+    }
+  ],
+  "stage_id": "stage-19-signature-candidate-mask",
+  "stage_key": "signature_candidate_mask",
+  "stage_name": "签名候选 mask"
+}

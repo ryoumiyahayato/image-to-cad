@@ -1,0 +1,11 @@
+{
+  "observations": [
+    {
+      "lines": 90,
+      "role": "exported-structural-lines"
+    }
+  ],
+  "stage_id": "stage-23-final-structural-layer",
+  "stage_key": "final_structural_layer",
+  "stage_name": "最终结构线层"
+}

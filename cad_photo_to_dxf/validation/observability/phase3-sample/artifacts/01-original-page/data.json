@@ -1,0 +1,15 @@
+{
+  "observations": [
+    {
+      "dtype": "uint8",
+      "shape": [
+        1250,
+        1850,
+        3
+      ]
+    }
+  ],
+  "stage_id": "stage-01-original-page",
+  "stage_key": "original_page",
+  "stage_name": "原始页面"
+}

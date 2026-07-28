@@ -1,0 +1,10 @@
+{
+  "observations": [
+    {
+      "clean_digital": false
+    }
+  ],
+  "stage_id": "stage-03-normalized-background",
+  "stage_key": "normalized_background",
+  "stage_name": "归一化背景图"
+}

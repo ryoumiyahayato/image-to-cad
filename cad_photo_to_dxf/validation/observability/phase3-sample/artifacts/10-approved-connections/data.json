@@ -1,0 +1,33 @@
+{
+  "observations": [
+    {
+      "connections": [
+        {
+          "allowed": true,
+          "attempt_id": 12,
+          "bridge_pixels": 5,
+          "component_count_after": 1,
+          "component_count_before": 1,
+          "distance": 0.33341217041015625,
+          "end": [
+            647.7805404663086,
+            266.11163330078125
+          ],
+          "endpoint_index": 0,
+          "line_index": 82,
+          "other_line_index": 57,
+          "reason_code": "structural_bridge_allowed",
+          "roi_id": "table-001",
+          "start": [
+            648.1139526367188,
+            266.11163330078125
+          ]
+        }
+      ],
+      "count": 1
+    }
+  ],
+  "stage_id": "stage-10-approved-connections",
+  "stage_key": "approved_connections",
+  "stage_name": "被批准的连接"
+}

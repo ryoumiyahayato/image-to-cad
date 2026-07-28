@@ -1,0 +1,22 @@
+{
+  "observations": [
+    {
+      "ocr_mode": "overview",
+      "page_shape": [
+        1250,
+        1850
+      ],
+      "region": [
+        0,
+        0,
+        1850,
+        1250
+      ],
+      "tile_index": 0,
+      "used_by_ocr": true
+    }
+  ],
+  "stage_id": "stage-14-ocr-raw-tiles",
+  "stage_key": "ocr_raw_tiles",
+  "stage_name": "OCR 原始 tile"
+}

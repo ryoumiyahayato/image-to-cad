@@ -1,0 +1,23 @@
+{
+  "observations": [
+    {
+      "diagnostic_only": true,
+      "ocr_mode": "overview",
+      "page_shape": [
+        1250,
+        1850
+      ],
+      "region": [
+        0,
+        0,
+        1850,
+        1250
+      ],
+      "tile_index": 0,
+      "used_by_ocr": false
+    }
+  ],
+  "stage_id": "stage-15-ocr-rule-removed-tiles",
+  "stage_key": "ocr_rule_removed_tiles",
+  "stage_name": "OCR 去表格线 tile"
+}

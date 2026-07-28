@@ -1,0 +1,10 @@
+{
+  "observations": [
+    {
+      "ambiguous_pixels": 0
+    }
+  ],
+  "stage_id": "stage-21-conflict-mask",
+  "stage_key": "conflict_mask",
+  "stage_name": "冲突 mask"
+}

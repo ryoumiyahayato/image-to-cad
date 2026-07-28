@@ -1,0 +1,44 @@
+{
+  "observations": [
+    {
+      "count": 2,
+      "texts": [
+        {
+          "approved": true,
+          "bbox": [
+            764,
+            258,
+            78,
+            32
+          ],
+          "confidence": 0.99997,
+          "kind": "dimension_text_candidate",
+          "replacement_safe": false,
+          "reviewed": false,
+          "rotation_deg": -2.231174608031251,
+          "source": "rapidocr-overview",
+          "text": "12000"
+        },
+        {
+          "approved": true,
+          "bbox": [
+            161,
+            1051,
+            320,
+            70
+          ],
+          "confidence": 0.99645,
+          "kind": "text_candidate",
+          "replacement_safe": false,
+          "reviewed": false,
+          "rotation_deg": -1.801160515722367,
+          "source": "rapidocr-overview",
+          "text": "SAMPLE PLAN"
+        }
+      ]
+    }
+  ],
+  "stage_id": "stage-16-ocr-text-boxes",
+  "stage_key": "ocr_text_boxes",
+  "stage_name": "OCR 文本框"
+}

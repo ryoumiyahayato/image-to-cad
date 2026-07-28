@@ -1,0 +1,19 @@
+{
+  "observations": [
+    {
+      "dxf_audit_error_count": 0,
+      "dxf_entity_count": 317,
+      "dxf_sha256": "de2cfa88ead4d8d6aa5a97f8229b7f527aea9542e1cc2ae7010db25ec620f737",
+      "render_format": "svg",
+      "render_size_px": [
+        1600,
+        1081
+      ],
+      "role": "actual-dxf-render",
+      "source_dxf": "final-structure.dxf"
+    }
+  ],
+  "stage_id": "stage-26-actual-dxf-render",
+  "stage_key": "actual_dxf_render",
+  "stage_name": "实际 DXF 渲染结果"
+}

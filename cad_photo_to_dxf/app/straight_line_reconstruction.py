@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
+from typing import Any
 
 import cv2
 import numpy as np
@@ -15,6 +16,16 @@ from .cancellation import (
 from .connectivity_safety import evaluate_structural_bridge
 from .geometry_cleaner import GeometryCleanParams, clean_geometry
 from .line_detect import LineDetectionParams, LineSegment, detect_lines
+from .observability import (
+    ObservationSink,
+    lines_payload,
+    observe,
+    rasterize_connections,
+    rasterize_endpoints,
+    rasterize_lines,
+    rasterize_rois,
+    rois_payload,
+)
 from .resolution import image_resolution_scale
 from .structural_roi import StructuralRoiSet, detect_structural_rois
 from .text_protection import detect_text_region_mask, filter_text_like_lines
@@ -564,6 +575,7 @@ def extend_lines_to_first_intersection(
     minimum_angle_degrees: float = 7.5,
     max_pair_checks: int = 750_000,
     cancellation_token: CancellationToken | None = None,
+    observation_sink: ObservationSink | None = None,
 ) -> list[LineSegment]:
     """Extend each open endpoint to its nearest valid theoretical intersection.
 
@@ -580,9 +592,47 @@ def extend_lines_to_first_intersection(
         or structural_rois is None
         or source_foreground is None
     ):
+        if observation_sink is not None and source_foreground is not None:
+            blank = np.zeros_like(source_foreground)
+            observe(
+                observation_sink,
+                "approved_connections",
+                image=blank,
+                payload={"connections": [], "count": 0},
+            )
+            observe(
+                observation_sink,
+                "rejected_connections",
+                image=blank,
+                payload={"connections": [], "count": 0},
+            )
+            observe(
+                observation_sink,
+                "intersection_extension",
+                image=rasterize_lines(resolved, source_foreground.shape),
+                payload={
+                    "role": "before",
+                    "lines": lines_payload(resolved),
+                    "maximum_extension": float(maximum_extension),
+                },
+            )
+            observe(
+                observation_sink,
+                "intersection_extension",
+                image=rasterize_lines(resolved, source_foreground.shape),
+                payload={
+                    "role": "after",
+                    "lines": lines_payload(resolved),
+                    "maximum_extension": float(maximum_extension),
+                },
+            )
         return resolved
 
     choices: dict[tuple[int, int], tuple[float, np.ndarray]] = {}
+    choice_records: dict[tuple[int, int], dict[str, Any]] = {}
+    allowed_attempts: list[dict[str, Any]] = []
+    rejected_connections: list[dict[str, Any]] = []
+    attempt_id = 0
     pair_checks = 0
     for left_index, right_index in _candidate_pairs(resolved, maximum_extension):
         pair_checks += 1
@@ -625,6 +675,42 @@ def extend_lines_to_first_intersection(
             (float(point[0]), float(point[1])),
         )
         if roi is None:
+            if observation_sink is not None:
+                for line_index, endpoint in (
+                    (left_index, left_endpoint),
+                    (right_index, right_endpoint),
+                ):
+                    if endpoint is None:
+                        continue
+                    endpoint_index, distance = endpoint
+                    source_line = resolved[line_index]
+                    source_point = (
+                        (float(source_line.x1), float(source_line.y1))
+                        if endpoint_index == 0
+                        else (float(source_line.x2), float(source_line.y2))
+                    )
+                    attempt_id += 1
+                    rejected_connections.append(
+                        {
+                            "attempt_id": attempt_id,
+                            "line_index": line_index,
+                            "other_line_index": (
+                                right_index
+                                if line_index == left_index
+                                else left_index
+                            ),
+                            "endpoint_index": endpoint_index,
+                            "start": list(source_point),
+                            "end": [float(point[0]), float(point[1])],
+                            "distance": float(distance),
+                            "allowed": False,
+                            "reason_code": "outside_structural_roi",
+                            "roi_id": "",
+                            "bridge_pixels": 0,
+                            "component_count_before": 0,
+                            "component_count_after": 0,
+                        }
+                    )
             continue
         for line_index, endpoint in (
             (left_index, left_endpoint),
@@ -635,13 +721,37 @@ def extend_lines_to_first_intersection(
             endpoint_index, distance = endpoint
             source_line = resolved[line_index]
             relative_limit = max(2.0, source_line.length * 0.20)
-            if distance > relative_limit:
-                continue
             source_point = (
                 (float(source_line.x1), float(source_line.y1))
                 if endpoint_index == 0
                 else (float(source_line.x2), float(source_line.y2))
             )
+            if observation_sink is not None:
+                attempt_id += 1
+            if distance > relative_limit:
+                if observation_sink is not None:
+                    rejected_connections.append(
+                        {
+                            "attempt_id": attempt_id,
+                            "line_index": line_index,
+                            "other_line_index": (
+                                right_index
+                                if line_index == left_index
+                                else left_index
+                            ),
+                            "endpoint_index": endpoint_index,
+                            "start": list(source_point),
+                            "end": [float(point[0]), float(point[1])],
+                            "distance": float(distance),
+                            "allowed": False,
+                            "reason_code": "relative_extension_limit",
+                            "roi_id": roi.roi_id,
+                            "bridge_pixels": 0,
+                            "component_count_before": 0,
+                            "component_count_after": 0,
+                        }
+                    )
+                continue
             decision = evaluate_structural_bridge(
                 roi=roi,
                 lines=resolved,
@@ -650,12 +760,43 @@ def extend_lines_to_first_intersection(
                 source_foreground=source_foreground,
                 protected_mask=protected_mask,
             )
+            record = None
+            if observation_sink is not None:
+                record = {
+                    "attempt_id": attempt_id,
+                    "line_index": line_index,
+                    "other_line_index": (
+                        right_index
+                        if line_index == left_index
+                        else left_index
+                    ),
+                    "endpoint_index": endpoint_index,
+                    "start": list(source_point),
+                    "end": [float(point[0]), float(point[1])],
+                    "distance": float(distance),
+                    "allowed": bool(decision.allowed),
+                    "reason_code": decision.reason_code,
+                    "roi_id": decision.roi_id,
+                    "bridge_pixels": int(decision.bridge_pixels),
+                    "component_count_before": int(
+                        decision.component_count_before
+                    ),
+                    "component_count_after": int(
+                        decision.component_count_after
+                    ),
+                }
             if not decision.allowed:
+                if observation_sink is not None and record is not None:
+                    rejected_connections.append(record)
                 continue
+            if observation_sink is not None and record is not None:
+                allowed_attempts.append(record)
             key = (line_index, endpoint_index)
             current = choices.get(key)
             if current is None or distance < current[0]:
                 choices[key] = (distance, point.copy())
+                if observation_sink is not None and record is not None:
+                    choice_records[key] = record
 
     output: list[LineSegment] = []
     for index, line in enumerate(resolved):
@@ -675,6 +816,64 @@ def extend_lines_to_first_intersection(
             output.append(line.copy(**changes))
         else:
             output.append(line)
+    if observation_sink is not None:
+        approved_connections = list(choice_records.values())
+        applied_attempt_ids = {
+            int(record["attempt_id"]) for record in approved_connections
+        }
+        rejected_connections.extend(
+            {
+                **record,
+                "allowed": False,
+                "reason_code": "superseded_by_nearer_connection",
+            }
+            for record in allowed_attempts
+            if int(record["attempt_id"]) not in applied_attempt_ids
+        )
+        observe(
+            observation_sink,
+            "approved_connections",
+            image=rasterize_connections(
+                approved_connections,
+                source_foreground.shape,
+            ),
+            payload={
+                "connections": approved_connections,
+                "count": len(approved_connections),
+            },
+        )
+        observe(
+            observation_sink,
+            "rejected_connections",
+            image=rasterize_connections(
+                rejected_connections,
+                source_foreground.shape,
+            ),
+            payload={
+                "connections": rejected_connections,
+                "count": len(rejected_connections),
+            },
+        )
+        observe(
+            observation_sink,
+            "intersection_extension",
+            image=rasterize_lines(resolved, source_foreground.shape),
+            payload={
+                "role": "before",
+                "lines": lines_payload(resolved),
+                "maximum_extension": float(maximum_extension),
+            },
+        )
+        observe(
+            observation_sink,
+            "intersection_extension",
+            image=rasterize_lines(output, source_foreground.shape),
+            payload={
+                "role": "after",
+                "lines": lines_payload(output),
+                "maximum_extension": float(maximum_extension),
+            },
+        )
     return output
 
 
@@ -685,6 +884,7 @@ def reconstruct_straight_lines(
     protected_mask: np.ndarray | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
+    observation_sink: ObservationSink | None = None,
 ) -> tuple[LineSegment, ...]:
     """Detect table/frame rules without turning text or logos into blue lines.
 
@@ -726,6 +926,13 @@ def reconstruct_straight_lines(
             )
         ),
     )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "raw_line_candidates",
+            image=rasterize_lines(raw, binary.shape),
+            payload={"lines": lines_payload(raw), "count": len(raw)},
+        )
     checkpoint(cancellation_token)
     candidates = [
         line
@@ -751,8 +958,86 @@ def reconstruct_straight_lines(
             image_shape=binary.shape,
             scale=scale,
         )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "line_candidates_text_filtered",
+            image=rasterize_lines(candidates, binary.shape),
+            payload={
+                "lines": lines_payload(candidates),
+                "count": len(candidates),
+            },
+        )
+        observe(
+            observation_sink,
+            "candidate_endpoints",
+            image=rasterize_endpoints(candidates, binary.shape),
+            payload={
+                "endpoints": [
+                    [float(x), float(y)]
+                    for line in candidates
+                    for x, y in ((line.x1, line.y1), (line.x2, line.y2))
+                ],
+                "count": len(candidates) * 2,
+            },
+        )
+        snap_payload = {
+            "enabled": False,
+            "snap_distance": 0.0,
+            "lines": lines_payload(candidates),
+            "reason": "Production structural reconstruction disables endpoint snapping.",
+        }
+        observe(
+            observation_sink,
+            "endpoint_snap",
+            image=rasterize_lines(candidates, binary.shape),
+            payload={"role": "before", **snap_payload},
+        )
+        observe(
+            observation_sink,
+            "endpoint_snap",
+            image=rasterize_lines(candidates, binary.shape),
+            payload={"role": "after", **snap_payload},
+        )
     report_progress(progress_callback, "line-filtering", 0.58)
     if not candidates:
+        if observation_sink is not None:
+            blank = np.zeros_like(binary)
+            observe(
+                observation_sink,
+                "structural_roi",
+                image=blank,
+                payload={"rois": [], "count": 0},
+            )
+            observe(
+                observation_sink,
+                "approved_connections",
+                image=blank,
+                payload={"connections": [], "count": 0},
+            )
+            observe(
+                observation_sink,
+                "rejected_connections",
+                image=blank,
+                payload={"connections": [], "count": 0},
+            )
+            for role in ("before", "after"):
+                observe(
+                    observation_sink,
+                    "intersection_extension",
+                    image=blank,
+                    payload={
+                        "role": role,
+                        "lines": [],
+                        "maximum_extension": 0.0,
+                    },
+                )
+            observe(
+                observation_sink,
+                "structural_line_candidate_mask",
+                image=blank,
+                payload={"lines": [], "count": 0},
+            )
         return ()
 
     cleaned = clean_geometry(
@@ -801,6 +1086,17 @@ def reconstruct_straight_lines(
         image_shape=binary.shape,
         extension_budget=extension_budget,
     )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "structural_roi",
+            image=rasterize_rois(structural_rois.rois, binary.shape),
+            payload={
+                "rois": rois_payload(structural_rois.rois),
+                "count": len(structural_rois.rois),
+                "extension_budget": float(extension_budget),
+            },
+        )
     extended = extend_lines_to_first_intersection(
         cleaned,
         maximum_extension=extension_budget,
@@ -808,6 +1104,7 @@ def reconstruct_straight_lines(
         source_foreground=np.where(binary < 128, 255, 0).astype(np.uint8),
         protected_mask=protected_mask,
         cancellation_token=cancellation_token,
+        observation_sink=observation_sink,
     )
     if support_mask is not None:
         extended = collapse_scan_parallel_duplicates(
@@ -829,6 +1126,17 @@ def reconstruct_straight_lines(
         extended,
         support_mask=source_support,
     )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "structural_line_candidate_mask",
+            image=rasterize_lines(extended, binary.shape),
+            payload={
+                "role": "post-filter-candidates",
+                "lines": lines_payload(extended),
+                "count": len(extended),
+            },
+        )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-reconstruction", 1.0)
     return tuple(

@@ -1,0 +1,75 @@
+{
+  "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+  "application_tree_before": "5ada4371eccc058fe2897f466c1aefd774aa2905",
+  "behavior_regression": {
+    "algorithm_metrics_changed": false,
+    "documents": [
+      {
+        "dxf_entity_count": 317,
+        "errors": [],
+        "id": "perspective-sample-plan",
+        "passed": true,
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26"
+      },
+      {
+        "dxf_entity_count": 2968,
+        "errors": [],
+        "id": "environment-plan-page-003",
+        "passed": true,
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943"
+      },
+      {
+        "dxf_entity_count": 981,
+        "errors": [],
+        "id": "warehouse-index-page-001",
+        "passed": true,
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c"
+      }
+    ],
+    "errors": [],
+    "passed": true
+  },
+  "debug_bundle": {
+    "artifact_file_count": 118,
+    "dxf_audit_error_count": 0,
+    "dxf_entity_count": 317,
+    "dxf_render_count": 1,
+    "input_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+    "manifest": "validation/observability/phase3-sample/manifest.json",
+    "passed": true,
+    "png_count": 31,
+    "stage_count": 26,
+    "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26"
+  },
+  "phase": 3,
+  "scope": {
+    "algorithm_thresholds_changed": false,
+    "classification_rules_changed": false,
+    "connection_rules_changed": false,
+    "new_capabilities": [
+      "optional observation sink",
+      "26-stage debug bundle",
+      "per-pixel lineage query",
+      "actual DXF SVG rendering"
+    ],
+    "production_default_observation_enabled": false
+  },
+  "static_checks": {
+    "compileall_passed": true,
+    "incremental_mypy_passed": true,
+    "ruff_passed": true
+  },
+  "tested_parent_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+  "unit_tests": {
+    "errors": 0,
+    "failures": 0,
+    "passed": true,
+    "skipped": 0,
+    "tests": 208,
+    "time_seconds": 16.19,
+    "warnings": 123
+  }
+}

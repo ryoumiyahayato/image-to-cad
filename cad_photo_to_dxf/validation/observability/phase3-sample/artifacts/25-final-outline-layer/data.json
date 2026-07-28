@@ -1,0 +1,10 @@
+{
+  "observations": [
+    {
+      "role": "exported-contour-source"
+    }
+  ],
+  "stage_id": "stage-25-final-outline-layer",
+  "stage_key": "final_outline_layer",
+  "stage_name": "最终轮廓层"
+}

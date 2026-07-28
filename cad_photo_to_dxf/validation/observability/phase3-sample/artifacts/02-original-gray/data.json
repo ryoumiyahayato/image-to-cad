@@ -1,0 +1,10 @@
+{
+  "observations": [
+    {
+      "clean_digital": false
+    }
+  ],
+  "stage_id": "stage-02-original-gray",
+  "stage_key": "original_gray",
+  "stage_name": "原始灰度图"
+}

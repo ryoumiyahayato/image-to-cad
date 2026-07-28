@@ -1,0 +1,12 @@
+{
+  "observations": [
+    {
+      "executed": false,
+      "historical_introduction_commit": "d9fbda763e95c6dd7154934b801b59dbf034e711",
+      "reason": "Whole-page 2x1/1x2 morphological closing is removed from the production path; this stage records its absence."
+    }
+  ],
+  "stage_id": "stage-05-legacy-closing",
+  "stage_key": "legacy_closing",
+  "stage_name": "旧闭运算结果"
+}

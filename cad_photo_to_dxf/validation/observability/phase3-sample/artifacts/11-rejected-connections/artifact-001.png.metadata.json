@@ -1,0 +1,289 @@
+{
+  "algorithm_version": "1.3.0/optimized-trace/final-structure-schema-2/source-00cfc9edb3c8",
+  "application_source_digest": "00cfc9edb3c8a955ebe975bfda41574d0c9b4fea11de3de9f691013f38c1a444",
+  "artifact_path": "artifacts/11-rejected-connections/artifact-001.png",
+  "artifact_role": "",
+  "artifact_sha256": "e9562e6d12dfb2e42253297dd4b532389ba406e7470a4f40c628f9c779961431",
+  "configuration_digest": "3b9b25302b6240d0947d5fa9ed37a0f251be54275dc03e7580af0f6a5499273c",
+  "configuration_summary": {
+    "dpi": 300,
+    "enable_ocr": true,
+    "final_structure_schema_version": 2,
+    "foreground_threshold": null,
+    "legacy_whole_page_closing": false,
+    "page_index": 0
+  },
+  "dpi": 300,
+  "generated_at": "2026-07-28T14:26:13.074658+00:00",
+  "git_commit": "e1e3b1e191a8b49d0b0f35fc0d575f7bb2502e26",
+  "git_worktree_dirty": true,
+  "input_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+  "input_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\test.jpg",
+  "observation": {
+    "connections": [
+      {
+        "allowed": false,
+        "attempt_id": 1,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.08654177786312514,
+        "end": [
+          369.34039245923975,
+          336.90741344369667
+        ],
+        "endpoint_index": 1,
+        "line_index": 5,
+        "other_line_index": 2,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          369.33621769114256,
+          336.9938544676786
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 2,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 1.0975582499604002,
+        "end": [
+          305.4741451640229,
+          775.4505920410156
+        ],
+        "endpoint_index": 1,
+        "line_index": 48,
+        "other_line_index": 4,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          304.3765869140625,
+          775.4505920410156
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 3,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 1.7328661321760706,
+        "end": [
+          331.3920728326677,
+          281.2821044921875
+        ],
+        "endpoint_index": 0,
+        "line_index": 73,
+        "other_line_index": 4,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          333.12493896484375,
+          281.2821044921875
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 4,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.030957728841463358,
+        "end": [
+          1270.8193980230387,
+          583.1093936298194
+        ],
+        "endpoint_index": 1,
+        "line_index": 11,
+        "other_line_index": 37,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          1270.8172977477136,
+          583.07850722798
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 5,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.2502714969414228,
+        "end": [
+          1270.8193980230387,
+          583.1093936298194
+        ],
+        "endpoint_index": 1,
+        "line_index": 37,
+        "other_line_index": 11,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          1270.5691265260973,
+          583.1093936298194
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 6,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.3604976629877683,
+        "end": [
+          612.2500743522065,
+          694.3604976629878
+        ],
+        "endpoint_index": 1,
+        "line_index": 26,
+        "other_line_index": 16,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          612.2500743522065,
+          694.0
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 7,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.27895361405899166,
+        "end": [
+          1058.656563797919,
+          587.6480528309618
+        ],
+        "endpoint_index": 0,
+        "line_index": 17,
+        "other_line_index": 27,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          1058.935517411978,
+          587.6480528309618
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 8,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.3554971990907916,
+        "end": [
+          1058.656563797919,
+          486.5
+        ],
+        "endpoint_index": 0,
+        "line_index": 27,
+        "other_line_index": 79,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          1058.656563797919,
+          486.8554971990908
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 9,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.3434362020809658,
+        "end": [
+          1058.656563797919,
+          486.5
+        ],
+        "endpoint_index": 0,
+        "line_index": 79,
+        "other_line_index": 27,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          1059.0,
+          486.5
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 10,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 1.953960817799782,
+        "end": [
+          333.9539608177998,
+          282.34342193603516
+        ],
+        "endpoint_index": 1,
+        "line_index": 44,
+        "other_line_index": 75,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          332.0,
+          282.34342193603516
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 11,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 0.7620681653580326,
+        "end": [
+          333.9539608177998,
+          282.34342193603516
+        ],
+        "endpoint_index": 1,
+        "line_index": 75,
+        "other_line_index": 44,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          333.9200744628906,
+          283.104736328125
+        ]
+      },
+      {
+        "allowed": false,
+        "attempt_id": 13,
+        "bridge_pixels": 0,
+        "component_count_after": 0,
+        "component_count_before": 0,
+        "distance": 1.8244364138752813,
+        "end": [
+          334.0012004075766,
+          281.2821044921875
+        ],
+        "endpoint_index": 1,
+        "line_index": 75,
+        "other_line_index": 73,
+        "reason_code": "outside_structural_roi",
+        "roi_id": "",
+        "start": [
+          333.9200744628906,
+          283.104736328125
+        ]
+      }
+    ],
+    "count": 12
+  },
+  "page_index": 0,
+  "stage_id": "stage-11-rejected-connections",
+  "stage_key": "rejected_connections",
+  "stage_name": "被拒绝的连接",
+  "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+  "upstream_stage_ids": [
+    "stage-06-structural-roi",
+    "stage-09-candidate-endpoints",
+    "stage-21-conflict-mask"
+  ]
+}

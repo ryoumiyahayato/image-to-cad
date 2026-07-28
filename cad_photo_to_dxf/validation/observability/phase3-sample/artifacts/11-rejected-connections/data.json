@@ -1,0 +1,264 @@
+{
+  "observations": [
+    {
+      "connections": [
+        {
+          "allowed": false,
+          "attempt_id": 1,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.08654177786312514,
+          "end": [
+            369.34039245923975,
+            336.90741344369667
+          ],
+          "endpoint_index": 1,
+          "line_index": 5,
+          "other_line_index": 2,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            369.33621769114256,
+            336.9938544676786
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 2,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 1.0975582499604002,
+          "end": [
+            305.4741451640229,
+            775.4505920410156
+          ],
+          "endpoint_index": 1,
+          "line_index": 48,
+          "other_line_index": 4,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            304.3765869140625,
+            775.4505920410156
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 3,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 1.7328661321760706,
+          "end": [
+            331.3920728326677,
+            281.2821044921875
+          ],
+          "endpoint_index": 0,
+          "line_index": 73,
+          "other_line_index": 4,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            333.12493896484375,
+            281.2821044921875
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 4,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.030957728841463358,
+          "end": [
+            1270.8193980230387,
+            583.1093936298194
+          ],
+          "endpoint_index": 1,
+          "line_index": 11,
+          "other_line_index": 37,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            1270.8172977477136,
+            583.07850722798
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 5,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.2502714969414228,
+          "end": [
+            1270.8193980230387,
+            583.1093936298194
+          ],
+          "endpoint_index": 1,
+          "line_index": 37,
+          "other_line_index": 11,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            1270.5691265260973,
+            583.1093936298194
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 6,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.3604976629877683,
+          "end": [
+            612.2500743522065,
+            694.3604976629878
+          ],
+          "endpoint_index": 1,
+          "line_index": 26,
+          "other_line_index": 16,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            612.2500743522065,
+            694.0
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 7,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.27895361405899166,
+          "end": [
+            1058.656563797919,
+            587.6480528309618
+          ],
+          "endpoint_index": 0,
+          "line_index": 17,
+          "other_line_index": 27,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            1058.935517411978,
+            587.6480528309618
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 8,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.3554971990907916,
+          "end": [
+            1058.656563797919,
+            486.5
+          ],
+          "endpoint_index": 0,
+          "line_index": 27,
+          "other_line_index": 79,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            1058.656563797919,
+            486.8554971990908
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 9,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.3434362020809658,
+          "end": [
+            1058.656563797919,
+            486.5
+          ],
+          "endpoint_index": 0,
+          "line_index": 79,
+          "other_line_index": 27,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            1059.0,
+            486.5
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 10,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 1.953960817799782,
+          "end": [
+            333.9539608177998,
+            282.34342193603516
+          ],
+          "endpoint_index": 1,
+          "line_index": 44,
+          "other_line_index": 75,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            332.0,
+            282.34342193603516
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 11,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 0.7620681653580326,
+          "end": [
+            333.9539608177998,
+            282.34342193603516
+          ],
+          "endpoint_index": 1,
+          "line_index": 75,
+          "other_line_index": 44,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            333.9200744628906,
+            283.104736328125
+          ]
+        },
+        {
+          "allowed": false,
+          "attempt_id": 13,
+          "bridge_pixels": 0,
+          "component_count_after": 0,
+          "component_count_before": 0,
+          "distance": 1.8244364138752813,
+          "end": [
+            334.0012004075766,
+            281.2821044921875
+          ],
+          "endpoint_index": 1,
+          "line_index": 75,
+          "other_line_index": 73,
+          "reason_code": "outside_structural_roi",
+          "roi_id": "",
+          "start": [
+            333.9200744628906,
+            283.104736328125
+          ]
+        }
+      ],
+      "count": 12
+    }
+  ],
+  "stage_id": "stage-11-rejected-connections",
+  "stage_key": "rejected_connections",
+  "stage_name": "被拒绝的连接"
+}

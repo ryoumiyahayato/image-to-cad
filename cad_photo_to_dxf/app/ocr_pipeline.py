@@ -23,6 +23,7 @@ from .ocr_layout import candidate_touches_internal_tile_edge, tile_regions
 from .ocr_overlap import collapse_overlapping_candidates
 from .ocr_recognition import _recognize_rapidocr_pass
 from .ocr_tile_filter import tile_has_probable_text
+from .observability import ObservationSink, observe
 
 
 NATIVE_TILE_MIN_SIDE = 3000
@@ -99,6 +100,7 @@ def _recognize_tiles(
     *,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
+    observation_sink: ObservationSink | None = None,
 ) -> list[TextCandidate]:
     gray = _gray(image)
     page_shape = tuple(int(value) for value in gray.shape[:2])
@@ -117,8 +119,30 @@ def _recognize_tiles(
         checkpoint(cancellation_token)
         left, top, right, bottom = region
         tile = np.ascontiguousarray(gray[top:bottom, left:right])
-        if tile_has_probable_text(tile):
+        has_probable_text = tile_has_probable_text(tile)
+        tile_payload = None
+        if observation_sink is not None:
+            tile_payload = {
+                "tile_index": index,
+                "region": [left, top, right, bottom],
+                "page_shape": list(page_shape),
+                "used_by_ocr": bool(has_probable_text),
+            }
+            observe(
+                observation_sink,
+                "ocr_raw_tiles",
+                image=tile,
+                payload=tile_payload,
+            )
+        if has_probable_text:
             cleaned = _prepare_native_ocr_tile(tile)
+            if observation_sink is not None:
+                observe(
+                    observation_sink,
+                    "ocr_rule_removed_tiles",
+                    image=cleaned,
+                    payload=tile_payload,
+                )
             working = cv2.cvtColor(cleaned, cv2.COLOR_GRAY2BGR)
             for candidate in _recognize_rapidocr_pass(working, rotation=0):
                 if candidate_touches_internal_tile_edge(
@@ -189,6 +213,7 @@ def recognize_text_candidates_optimized(
     *,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
+    observation_sink: ObservationSink | None = None,
 ) -> tuple[tuple[TextCandidate, ...], tuple[str, ...]]:
     """Recognize large headings and table text once, then remove duplicates."""
 
@@ -219,10 +244,36 @@ def recognize_text_candidates_optimized(
                             0.05 + 0.79 * fraction,
                         )
                     ),
+                    observation_sink=observation_sink,
                 )
             )
         else:
             report_progress(progress_callback, "ocr-overview", 0.03)
+            if observation_sink is not None:
+                gray = _gray(image)
+                tile_payload = {
+                    "tile_index": 0,
+                    "region": [0, 0, int(gray.shape[1]), int(gray.shape[0])],
+                    "page_shape": [int(gray.shape[0]), int(gray.shape[1])],
+                    "used_by_ocr": True,
+                    "ocr_mode": "overview",
+                }
+                observe(
+                    observation_sink,
+                    "ocr_raw_tiles",
+                    image=gray,
+                    payload=tile_payload,
+                )
+                observe(
+                    observation_sink,
+                    "ocr_rule_removed_tiles",
+                    image=remove_table_rules_for_ocr(gray),
+                    payload={
+                        **tile_payload,
+                        "used_by_ocr": False,
+                        "diagnostic_only": True,
+                    },
+                )
             candidates.extend(_recognize_overview(image))
         checkpoint(cancellation_token)
     except ImportError:
