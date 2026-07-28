@@ -1,0 +1,75 @@
+{
+  "application_tree_after": "5ada4371eccc058fe2897f466c1aefd774aa2905",
+  "application_tree_before": "5ada4371eccc058fe2897f466c1aefd774aa2905",
+  "audit_range": {
+    "commit_count": 3,
+    "from_inclusive": "d9fbda763e95c6dd7154934b801b59dbf034e711",
+    "to_inclusive": "d898400b69f86b625ce71e9689b5d5f8e877d66a"
+  },
+  "baseline_evidence": {
+    "current_commit": "5a1b06585b6f068bb5f61e16fd32b96e4f54275b",
+    "current_tests": 205,
+    "current_tests_passed": true,
+    "old_commit": "6a2aa545a534ea6fd50db8a5ba942a0a5db9e353",
+    "old_tests": 156,
+    "old_tests_passed": true,
+    "record_commit": "d898400b69f86b625ce71e9689b5d5f8e877d66a"
+  },
+  "phase": 2,
+  "real_document_regression": {
+    "document_count": 3,
+    "documents": [
+      {
+        "dxf_entity_count": 317,
+        "errors": [],
+        "id": "perspective-sample-plan",
+        "passed": true,
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26"
+      },
+      {
+        "dxf_entity_count": 2968,
+        "errors": [],
+        "id": "environment-plan-page-003",
+        "passed": true,
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943"
+      },
+      {
+        "dxf_entity_count": 981,
+        "errors": [],
+        "id": "warehouse-index-page-001",
+        "passed": true,
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c"
+      }
+    ],
+    "errors": [],
+    "manifest": "tests/real_regression/manifest.json",
+    "passed": true
+  },
+  "scope_assertion": {
+    "algorithm_changed": false,
+    "cache_changed": false,
+    "data_structure_changed": false,
+    "gui_changed": false,
+    "new_files": [
+      "docs/IMPLEMENTATION_SEQUENCE_MATRIX.md",
+      "cad_photo_to_dxf/validation/implementation-sequence-audit/phase2-verification.json"
+    ]
+  },
+  "static_checks": {
+    "compileall_passed": true,
+    "mypy_passed": true,
+    "ruff_passed": true
+  },
+  "unit_tests": {
+    "errors": 0,
+    "failures": 0,
+    "passed": true,
+    "skipped": 0,
+    "tests": 205,
+    "time_seconds": 21.82,
+    "warnings": 108
+  }
+}
