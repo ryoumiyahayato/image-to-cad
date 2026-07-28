@@ -1,0 +1,96 @@
+{
+  "git_commit": "6a2aa545a534ea6fd50db8a5ba942a0a5db9e353",
+  "label": "old-algorithm-default-pre-d9fbda7",
+  "outputs": [
+    {
+      "contour_count": 135,
+      "contour_vertex_count": 9256,
+      "dxf_audit_error_count": 0,
+      "dxf_entity_count": 228,
+      "dxf_line_count": 0,
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\system-refactor-baselines\\old\\outputs\\test.dxf",
+      "dxf_sha256": "c2fe30b7c659f1f9d1881716a77ee6f914f32ba08c02521981b4f758cc62b0a7",
+      "dxf_text_count": 0,
+      "dxf_trace_path_count": 135,
+      "dxf_trace_vertex_count": 9256,
+      "export_seconds": 0.172,
+      "foreground_pixels": 767909,
+      "input_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\test.jpg",
+      "input_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "logo_count": 0,
+      "signature_count": 0,
+      "source_size_px": [
+        1850,
+        1250
+      ],
+      "straight_line_count": 0,
+      "structure_id": null,
+      "text_count": 0,
+      "threshold": 128,
+      "trace_seconds": 0.095
+    },
+    {
+      "contour_count": 3172,
+      "contour_vertex_count": 68378,
+      "dxf_audit_error_count": 0,
+      "dxf_entity_count": 3536,
+      "dxf_line_count": 0,
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\system-refactor-baselines\\old\\outputs\\environment-page-003.dxf",
+      "dxf_sha256": "315f4d830c650fbf2ac0fcc46b1fd6ea4323216fe44d5b3f0a4a87a91df62aaa",
+      "dxf_text_count": 0,
+      "dxf_trace_path_count": 3172,
+      "dxf_trace_vertex_count": 68378,
+      "export_seconds": 1.442,
+      "foreground_pixels": 385728,
+      "input_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\environment-page-003.png",
+      "input_sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+      "logo_count": 0,
+      "signature_count": 0,
+      "source_size_px": [
+        2478,
+        1752
+      ],
+      "straight_line_count": 0,
+      "structure_id": null,
+      "text_count": 0,
+      "threshold": 128,
+      "trace_seconds": 0.271
+    },
+    {
+      "contour_count": 1574,
+      "contour_vertex_count": 24965,
+      "dxf_audit_error_count": 0,
+      "dxf_entity_count": 1638,
+      "dxf_line_count": 0,
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\system-refactor-baselines\\old\\outputs\\warehouse-page-001.dxf",
+      "dxf_sha256": "b48f3eed70b50f0aacdadc840a2f88a8086812436c90ea0d19d49080dd3074d9",
+      "dxf_text_count": 0,
+      "dxf_trace_path_count": 1574,
+      "dxf_trace_vertex_count": 24965,
+      "export_seconds": 0.579,
+      "foreground_pixels": 133387,
+      "input_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\warehouse-page-001.png",
+      "input_sha256": "ee4937113bf9615ae2ab056c71850d279fea515258b7c87ed0b100439bf6011d",
+      "logo_count": 0,
+      "signature_count": 0,
+      "source_size_px": [
+        1359,
+        1890
+      ],
+      "straight_line_count": 0,
+      "structure_id": null,
+      "text_count": 0,
+      "threshold": 254,
+      "trace_seconds": 0.056
+    }
+  ],
+  "passed": true,
+  "test_result": {
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "8ec08012f043486ee5d460d6efa6da5b898bff285d5d559acb1a8ca0c6010ffe",
+    "skipped": 0,
+    "tests": 156,
+    "time_seconds": 7.011
+  }
+}

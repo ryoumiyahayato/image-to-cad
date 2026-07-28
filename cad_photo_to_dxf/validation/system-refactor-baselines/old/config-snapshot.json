@@ -1,0 +1,80 @@
+{
+  "application_version": "1.3.0",
+  "core_source_sha256": {
+    "app/ocr_pipeline.py": "47923dad3f8d1c853f41dfdf11a41f33cbccdc3c1b889c8762b47eb2c7ec5770",
+    "app/ocr_recognition.py": "31da03fb8815e7c6c40f15b0434241d11bd346305c636637cc829c309746ef97",
+    "app/optimized_trace.py": "a916486f0e53f2594f52d91205216c510edcd6488bc20471109be2145e396614",
+    "app/raster_trace.py": "b5931f122a61086ace5df56173a6cd1bbc0c01dedc8bc7808c64fb8b7f011c02",
+    "app/scan_cleanup.py": "bbb59427e10c6e47e2ce30c6ac5be27831401c158c90e5429c949c592c291b0b",
+    "app/straight_line_reconstruction.py": null,
+    "app/trace_single_export.py": "04b5e509d249302dedadbe62997495f57ad00c19d8843ac06ba80d2b93273e68"
+  },
+  "default_configuration": {
+    "geometry_cleaning": {
+      "angle_tolerance": 3.0,
+      "collinear_distance": 3.0,
+      "duplicate_distance": 3.0,
+      "max_bridge_gap": 12.0,
+      "max_pair_checks": 2000000,
+      "min_line_length": 12.0,
+      "snap_distance": 6.0
+    },
+    "line_detection": {
+      "center_thick_strokes": true,
+      "hough_threshold": 35,
+      "max_line_gap": 10,
+      "max_segments": 6000,
+      "min_center_width": 4.0,
+      "min_line_length": 35,
+      "use_lsd": true
+    },
+    "trace_image_optimized": {
+      "cancellation_token": "None",
+      "enable_ocr": "False",
+      "foreground_threshold": "None",
+      "progress_callback": "None"
+    }
+  },
+  "dependencies": {
+    "Pillow": "12.3.0",
+    "PySide6": "6.11.1",
+    "ezdxf": "1.4.4",
+    "mypy": "1.20.2",
+    "numpy": "2.5.1",
+    "onnxruntime": "1.27.0",
+    "opencv-python": "4.13.0.92",
+    "pypdfium2": "5.12.1",
+    "pytest": "8.4.2",
+    "rapidocr": "3.9.2",
+    "ruff": "0.15.22",
+    "scipy": "1.18.0"
+  },
+  "final_structure_schema_version": null,
+  "git_commit": "6a2aa545a534ea6fd50db8a5ba942a0a5db9e353",
+  "label": "old-algorithm-default-pre-d9fbda7",
+  "ocr_configuration": {
+    "enabled_for_baseline": false,
+    "maximum_candidates": 3000,
+    "minimum_confidence": 0.5,
+    "production_default_enabled": false,
+    "rapidocr_parameters": {
+      "Global.log_level": "warning",
+      "Global.max_side_len": 4096,
+      "Global.text_score": 0.5
+    }
+  },
+  "python": {
+    "executable": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\.venv\\Scripts\\python.exe",
+    "implementation": "CPython",
+    "platform": "Windows-11-10.0.26100-SP0",
+    "version": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "test_result": {
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "8ec08012f043486ee5d460d6efa6da5b898bff285d5d559acb1a8ca0c6010ffe",
+    "skipped": 0,
+    "tests": 156,
+    "time_seconds": 7.011
+  }
+}

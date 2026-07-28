@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Frozen DXF evidence contains fixed-width linetype records; preserve bytes.
+cad_photo_to_dxf/validation/system-refactor-baselines/**/outputs/*.dxf binary
