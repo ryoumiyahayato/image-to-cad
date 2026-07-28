@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from math import atan2, degrees, hypot
 from pathlib import Path
 from typing import Sequence
@@ -11,581 +11,269 @@ import numpy as np
 
 from .auxiliary_recognition import TextCandidate
 from .image_loader import save_image
+from .structural_roi import verified_structural_rule_masks
 
 
 @dataclass(frozen=True)
 class SignatureRegion:
-    """One handwritten signature retained as a transparent raster overlay."""
+    """One structurally detected handwriting footprint.
+
+    The mask contains source pixels only. It is never expanded by OCR boxes or
+    morphology, so a signature cannot claim table rules or nearby text.
+    """
 
     bbox: tuple[int, int, int, int]
     mask: np.ndarray
 
 
+@dataclass(frozen=True)
+class _InkComponent:
+    label: int
+    bbox: tuple[int, int, int, int]
+    area: int
+
+
 def _foreground(binary: np.ndarray) -> np.ndarray:
     if binary is None or binary.size == 0 or binary.ndim != 2:
         raise ValueError("Signature source must be a non-empty binary page")
+    if binary.dtype != np.uint8:
+        raise ValueError("Signature source must be an 8-bit binary page")
     return np.where(binary < 128, 255, 0).astype(np.uint8)
 
 
-def _rule_masks(foreground: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    height, width = foreground.shape
-    horizontal = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_OPEN,
-        cv2.getStructuringElement(
-            cv2.MORPH_RECT,
-            (max(25, int(round(width * 0.015))), 1),
-        ),
+def _component_boxes(
+    mask: np.ndarray,
+) -> tuple[np.ndarray, tuple[_InkComponent, ...]]:
+    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+        np.where(mask > 0, 255, 0).astype(np.uint8),
+        connectivity=8,
     )
-    vertical = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_OPEN,
-        cv2.getStructuringElement(
-            cv2.MORPH_RECT,
-            (1, max(25, int(round(height * 0.015)))),
-        ),
-    )
-    return horizontal, vertical
+    components: list[_InkComponent] = []
+    for label in range(1, count):
+        x, y, width, height, area = (
+            int(value) for value in stats[label]
+        )
+        if area < 3 or width <= 0 or height <= 0:
+            continue
+        components.append(
+            _InkComponent(
+                label=label,
+                bbox=(x, y, width, height),
+                area=area,
+            )
+        )
+    return labels, tuple(components)
 
 
-def _run_centers(values: np.ndarray) -> list[int]:
-    positions = np.flatnonzero(values)
-    if not positions.size:
-        return []
-    runs: list[list[int]] = [[int(positions[0])]]
-    for position in positions[1:]:
-        value = int(position)
-        if value <= runs[-1][-1] + 1:
-            runs[-1].append(value)
-        else:
-            runs.append([value])
-    return [int(round(sum(run) / len(run))) for run in runs]
-
-
-def _signature_header(text: str) -> bool:
-    compact = "".join(str(text or "").split()).casefold()
-    if not compact or len(compact) > 28 or compact.startswith("手写"):
-        return False
-    return bool(
-        compact == "signature"
-        or any(term in compact for term in ("签字", "签名", "签署", "盖章"))
-    )
-
-
-_FALLBACK_LABELS = {
-    "建筑",
-    "结构",
-    "给排水",
-    "暖通",
-    "电气",
-    "设计",
-    "绘图",
-    "审核",
-    "审定",
-    "校对",
-    "日期",
-    "图号",
-    "阶段",
-    "专业",
-    "姓名",
-    "职责",
-    "建设单位",
-    "工程名称",
-    "项目名称",
-    "专业负责人",
-    "设计负责人",
-}
-
-
-def _fallback_signature_candidate(
-    item: TextCandidate,
-    *,
-    page_width: int,
-    page_height: int,
+def _components_belong_to_same_stroke_group(
+    left: _InkComponent,
+    right: _InkComponent,
 ) -> bool:
-    compact = "".join(str(item.text or "").split())
-    x, y, width, height = item.bbox
-    cjk_count = sum("\u4e00" <= character <= "\u9fff" for character in compact)
-    warning = str(item.review_note or "")
+    lx, ly, lw, lh = left.bbox
+    rx, ry, rw, rh = right.bbox
+    horizontal_gap = max(0, max(lx, rx) - min(lx + lw, rx + rw))
+    vertical_overlap = max(0, min(ly + lh, ry + rh) - max(ly, ry))
+    center_distance = abs((ly + lh * 0.5) - (ry + rh * 0.5))
+    local_height = max(1, lh, rh)
     return bool(
-        item.kind != "dimension_text_candidate"
-        and x + width * 0.5 >= page_width * 0.52
-        and y + height * 0.5 >= page_height * 0.72
-        and width >= max(page_width * 0.045, height * 1.8)
-        and height >= page_height * 0.018
-        and 1 <= len(compact) <= 20
-        and cjk_count >= 1
-        and compact not in _FALLBACK_LABELS
-        and float(item.confidence) <= 0.96
-        and any(term in warning for term in ("签名", "手写", "连笔", "只覆盖", "图形"))
-    )
-
-
-def _region_from_handwriting_candidate(
-    foreground: np.ndarray,
-    rules: np.ndarray,
-    item: TextCandidate,
-) -> SignatureRegion | None:
-    page_height, page_width = foreground.shape
-    x, y, width, height = item.bbox
-    margin_x = max(8, int(round(height * 0.45)))
-    margin_y = max(5, int(round(height * 0.20)))
-    left = max(0, x - margin_x)
-    top = max(0, y - margin_y)
-    right = min(page_width, x + width + margin_x)
-    bottom = min(page_height, y + height + margin_y)
-    if right <= left or bottom <= top:
-        return None
-    crop = foreground[top:bottom, left:right]
-    non_rules = cv2.subtract(crop, rules[top:bottom, left:right])
-    connected = cv2.morphologyEx(
-        non_rules,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (5, 3)),
-    )
-    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
-        np.where(connected > 0, 255, 0).astype(np.uint8),
-        connectivity=8,
-    )
-    seed = np.zeros_like(connected)
-    seed_top = max(0, y - top)
-    seed_left = max(0, x - left)
-    seed_bottom = min(seed.shape[0], y + height - top)
-    seed_right = min(seed.shape[1], x + width - left)
-    seed[seed_top:seed_bottom, seed_left:seed_right] = 255
-    selected = np.zeros_like(connected)
-    for label_value in range(1, count):
-        if int(stats[label_value, cv2.CC_STAT_AREA]) < 3:
-            continue
-        component = labels == label_value
-        if np.any(component & (seed > 0)):
-            selected[component] = 255
-    if not cv2.countNonZero(selected):
-        return None
-    support = cv2.dilate(
-        selected,
-        cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 9)),
-        iterations=1,
-    )
-    recovered = cv2.bitwise_and(non_rules, support)
-    recovered = cv2.max(recovered, selected)
-    points = cv2.findNonZero(recovered)
-    if points is None or len(points) < 20:
-        return None
-    local_x, local_y, resolved_width, resolved_height = cv2.boundingRect(points)
-    pad = 2
-    local_left = max(0, local_x - pad)
-    local_top = max(0, local_y - pad)
-    local_right = min(recovered.shape[1], local_x + resolved_width + pad)
-    local_bottom = min(recovered.shape[0], local_y + resolved_height + pad)
-    mask = np.ascontiguousarray(
-        recovered[local_top:local_bottom, local_left:local_right],
-        dtype=np.uint8,
-    )
-    return SignatureRegion(
-        bbox=(
-            left + local_left,
-            top + local_top,
-            mask.shape[1],
-            mask.shape[0],
-        ),
-        mask=mask,
-    )
-
-
-def _fallback_signature_regions(
-    foreground: np.ndarray,
-    rules: np.ndarray,
-    texts: Sequence[TextCandidate],
-) -> tuple[SignatureRegion, ...]:
-    page_height, page_width = foreground.shape
-    results: list[SignatureRegion] = []
-    for item in texts:
-        if not _fallback_signature_candidate(
-            item,
-            page_width=page_width,
-            page_height=page_height,
-        ):
-            continue
-        region = _region_from_handwriting_candidate(
-            foreground,
-            rules,
-            item,
+        horizontal_gap <= local_height * 0.45
+        and (
+            vertical_overlap >= min(lh, rh) * 0.20
+            or center_distance <= local_height * 0.55
         )
-        if region is None:
-            continue
-        rx, ry, rw, rh = region.bbox
-        overlaps_existing = any(
-            max(0, min(rx + rw, ex + ew) - max(rx, ex))
-            * max(0, min(ry + rh, ey + eh) - max(ry, ey))
-            >= 0.35 * min(rw * rh, ew * eh)
-            for ex, ey, ew, eh in (existing.bbox for existing in results)
-        )
-        if not overlaps_existing:
-            results.append(region)
-    return tuple(results)
+    )
 
 
-def _nearest_column(
-    vertical: np.ndarray,
-    header: TextCandidate,
-) -> tuple[int, int, list[int]] | None:
-    page_height, _page_width = vertical.shape
-    x, y, width, height = header.bbox
-    center_x = x + width * 0.5
-    top = max(0, int(y - height * 4))
-    bottom = min(page_height, int(y + height * 22))
-    span = vertical[top:bottom]
-    minimum = max(8, int(round(max(1, bottom - top) * 0.10)))
-    projection = np.count_nonzero(span > 0, axis=0)
-    centers = _run_centers(projection >= minimum)
-    lefts = [value for value in centers if value < center_x - 2]
-    rights = [value for value in centers if value > center_x + 2]
-    if not lefts or not rights:
-        return None
-    left = max(lefts)
-    right = min(rights)
-    if right - left < max(12, int(round(width * 0.75))):
-        return None
-    return left, right, centers
+def _component_groups(
+    components: tuple[_InkComponent, ...],
+) -> tuple[tuple[_InkComponent, ...], ...]:
+    parents = list(range(len(components)))
+
+    def find(index: int) -> int:
+        while parents[index] != index:
+            parents[index] = parents[parents[index]]
+            index = parents[index]
+        return index
+
+    def union(left: int, right: int) -> None:
+        left_root = find(left)
+        right_root = find(right)
+        if left_root != right_root:
+            parents[right_root] = left_root
+
+    ordered = sorted(
+        range(len(components)),
+        key=lambda index: components[index].bbox[0],
+    )
+    observed_heights = np.asarray(
+        [item.bbox[3] for item in components],
+        dtype=np.float64,
+    )
+    search_height = max(
+        1.0,
+        float(np.quantile(observed_heights, 0.95)),
+    )
+    for order_index, left_index in enumerate(ordered):
+        left = components[left_index]
+        left_right = left.bbox[0] + left.bbox[2]
+        for right_index in ordered[order_index + 1 :]:
+            right = components[right_index]
+            if right.bbox[0] - left_right > search_height * 0.45:
+                break
+            if _components_belong_to_same_stroke_group(
+                left,
+                right,
+            ):
+                union(left_index, right_index)
+
+    grouped: dict[int, list[_InkComponent]] = {}
+    for index, component in enumerate(components):
+        grouped.setdefault(find(index), []).append(component)
+    return tuple(tuple(group) for group in grouped.values())
 
 
-def _horizontal_centers(
-    horizontal: np.ndarray,
+def _group_bounds(
+    group: tuple[_InkComponent, ...],
+) -> tuple[int, int, int, int]:
+    left = min(item.bbox[0] for item in group)
+    top = min(item.bbox[1] for item in group)
+    right = max(item.bbox[0] + item.bbox[2] for item in group)
+    bottom = max(item.bbox[1] + item.bbox[3] for item in group)
+    return left, top, right, bottom
+
+
+def _directional_complexity(mask: np.ndarray) -> int:
+    contours, _hierarchy = cv2.findContours(
+        mask,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE,
+    )
+    return sum(
+        len(cv2.approxPolyDP(contour, 0.025 * cv2.arcLength(contour, True), True))
+        for contour in contours
+        if len(contour) >= 3
+    )
+
+
+def _signature_like(
+    group: tuple[_InkComponent, ...],
+    labels: np.ndarray,
     *,
-    left: int,
-    right: int,
-) -> list[int]:
-    if right <= left:
-        return []
-    span = horizontal[:, left : right + 1]
-    minimum = max(5, int(round((right - left + 1) * 0.35)))
-    projection = np.count_nonzero(span > 0, axis=1)
-    return _run_centers(projection >= minimum)
-
-
-def _expanded_row_mask(
-    foreground: np.ndarray,
-    rules: np.ndarray,
-    *,
-    row_top: int,
-    row_bottom: int,
-    column_left: int,
-    column_right: int,
-    vertical_centers: Sequence[int],
+    minimum_height: float,
 ) -> SignatureRegion | None:
-    left_index = max(
-        (index for index, value in enumerate(vertical_centers) if value == column_left),
-        default=-1,
-    )
-    right_index = max(
-        (index for index, value in enumerate(vertical_centers) if value == column_right),
-        default=-1,
-    )
-    expanded_left = (
-        vertical_centers[left_index - 1]
-        if left_index > 0
-        else max(0, column_left - (column_right - column_left))
-    )
-    expanded_right = (
-        vertical_centers[right_index + 1]
-        if 0 <= right_index < len(vertical_centers) - 1
-        else min(foreground.shape[1] - 1, column_right + (column_right - column_left))
-    )
-    top = max(0, row_top + 1)
-    bottom = min(foreground.shape[0], row_bottom)
-    left = max(0, expanded_left + 1)
-    right = min(foreground.shape[1], expanded_right)
-    if bottom <= top or right <= left:
-        return None
-
-    crop = foreground[top:bottom, left:right]
-    non_rules = cv2.subtract(crop, rules[top:bottom, left:right])
-    if not cv2.countNonZero(non_rules):
-        return None
-    connected = cv2.morphologyEx(
-        non_rules,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3)),
-    )
-    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
-        np.where(connected > 0, 255, 0).astype(np.uint8),
-        connectivity=8,
-    )
-    seed_left = max(0, column_left - left + 2)
-    seed_right = min(connected.shape[1], column_right - left - 1)
-    if seed_right <= seed_left:
-        return None
-    seed = np.zeros_like(connected)
-    seed[:, seed_left:seed_right] = 255
-
-    selected = np.zeros_like(connected)
-    for label_value in range(1, count):
-        area = int(stats[label_value, cv2.CC_STAT_AREA])
-        if area < 3:
-            continue
-        component = labels == label_value
-        if np.any(component & (seed > 0)):
-            selected[component] = 255
-    if not cv2.countNonZero(selected):
-        return None
-
-    for _iteration in range(2):
-        support = cv2.dilate(
-            selected,
-            cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 7)),
-            iterations=1,
-        )
-        for label_value in range(1, count):
-            component = labels == label_value
-            if np.any(component & (support > 0)):
-                selected[component] = 255
-
-    support = cv2.dilate(
-        selected,
-        cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 9)),
-        iterations=1,
-    )
-    recovered = cv2.bitwise_and(crop, support)
-    recovered = cv2.max(recovered, selected)
-    points = cv2.findNonZero(recovered)
-    if points is None or len(points) < 12:
-        return None
-    local_x, local_y, width, height = cv2.boundingRect(points)
-    pad = 2
-    local_left = max(0, local_x - pad)
-    local_top = max(0, local_y - pad)
-    local_right = min(recovered.shape[1], local_x + width + pad)
-    local_bottom = min(recovered.shape[0], local_y + height + pad)
-    mask = np.ascontiguousarray(
-        recovered[local_top:local_bottom, local_left:local_right],
-        dtype=np.uint8,
-    )
-    return SignatureRegion(
-        bbox=(
-            left + local_left,
-            top + local_top,
-            mask.shape[1],
-            mask.shape[0],
-        ),
-        mask=mask,
-    )
-
-
-def _freeform_signature_region(
-    foreground: np.ndarray,
-    rules: np.ndarray,
-    header: TextCandidate,
-) -> SignatureRegion | None:
-    """Recover a signature beside a free-form label without inventing strokes.
-
-    OCR commonly returns ``委托人签名或盖章：`` and the adjacent handwriting as
-    one wide box.  Table-column logic cannot resolve that layout, and erasing the
-    complete OCR box removes the signature.  This path keeps only source pixels
-    to the right of the estimated printed label and never skeletonizes or
-    extrapolates them.
-    """
-
-    compact = "".join(str(header.text or "").split())
-    x, y, width, height = header.bbox
+    left, top, right, bottom = _group_bounds(group)
+    width = right - left
+    height = bottom - top
     if (
-        len(compact) < 3
-        or width < max(24, int(round(height * 2.8)))
-        or not _signature_header(compact)
+        len(group) > 4
+        or width < 20
+        or height < max(5.0, minimum_height)
+        or width < height * 2.8
     ):
         return None
 
-    page_height, page_width = foreground.shape
-    estimated_label_width = min(
-        width * 0.62,
-        max(height * 1.5, len(compact) * height * 0.20),
+    selected_labels = np.asarray([item.label for item in group], dtype=np.int32)
+    local_labels = labels[top:bottom, left:right]
+    mask = np.where(np.isin(local_labels, selected_labels), 255, 0).astype(np.uint8)
+    area = int(cv2.countNonZero(mask))
+    density = area / max(1.0, float(width * height))
+    largest_component_width = max(item.bbox[2] for item in group)
+    continuity = largest_component_width / max(1.0, float(width))
+    complexity = _directional_complexity(mask)
+    contours, _hierarchy = cv2.findContours(
+        mask,
+        cv2.RETR_EXTERNAL,
+        cv2.CHAIN_APPROX_SIMPLE,
     )
-    left = max(0, int(round(x + estimated_label_width)))
-    top = max(0, int(round(y - height * 0.12)))
-    right = min(
-        page_width,
-        int(round(x + width + max(height * 0.35, width * 0.08))),
-    )
-    bottom = min(
-        page_height,
-        int(round(y + height + max(8.0, height * 0.25))),
-    )
-    if right <= left or bottom <= top:
+    perimeter = sum(cv2.arcLength(contour, True) for contour in contours)
+    foreground_points = cv2.findNonZero(mask)
+    if foreground_points is None:
+        return None
+    convex_area = cv2.contourArea(cv2.convexHull(foreground_points))
+    convex_solidity = area / max(1.0, float(convex_area))
+    if (
+        area < max(24, int(round(width * 0.45)))
+        or density >= 0.38
+        or continuity < 0.55
+        or complexity < 8
+        or perimeter / max(1.0, float(area)) > 1.15
+        or convex_solidity > 0.58
+    ):
         return None
 
-    crop = foreground[top:bottom, left:right]
-    non_rules = cv2.subtract(crop, rules[top:bottom, left:right])
-    connected = cv2.morphologyEx(
-        non_rules,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (5, 3)),
+    local_x, local_y, resolved_width, resolved_height = cv2.boundingRect(
+        foreground_points
     )
-    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
-        np.where(connected > 0, 255, 0).astype(np.uint8),
-        connectivity=8,
-    )
-    selected = np.zeros_like(connected)
-    for label_value in range(1, count):
-        area = int(stats[label_value, cv2.CC_STAT_AREA])
-        component_width = int(stats[label_value, cv2.CC_STAT_WIDTH])
-        component_height = int(stats[label_value, cv2.CC_STAT_HEIGHT])
-        if area < 4 or max(component_width, component_height) < 3:
-            continue
-        selected[labels == label_value] = 255
-    if cv2.countNonZero(selected) < 16:
-        return None
-
-    support = cv2.dilate(
-        selected,
-        cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 5)),
-        iterations=1,
-    )
-    recovered = cv2.bitwise_and(non_rules, support)
-    points = cv2.findNonZero(recovered)
-    if points is None or len(points) < 16:
-        return None
-    local_x, local_y, resolved_width, resolved_height = cv2.boundingRect(points)
-    if resolved_width < max(8, int(round(resolved_height * 1.15))):
-        return None
-    pad = 2
-    local_left = max(0, local_x - pad)
-    local_top = max(0, local_y - pad)
-    local_right = min(recovered.shape[1], local_x + resolved_width + pad)
-    local_bottom = min(recovered.shape[0], local_y + resolved_height + pad)
-    mask = np.ascontiguousarray(
-        recovered[local_top:local_bottom, local_left:local_right],
+    resolved = np.ascontiguousarray(
+        mask[
+            local_y : local_y + resolved_height,
+            local_x : local_x + resolved_width,
+        ],
         dtype=np.uint8,
     )
     return SignatureRegion(
         bbox=(
-            left + local_left,
-            top + local_top,
-            mask.shape[1],
-            mask.shape[0],
+            left + local_x,
+            top + local_y,
+            resolved_width,
+            resolved_height,
         ),
-        mask=mask,
+        mask=resolved,
     )
 
 
 def detect_signature_regions(
     binary: np.ndarray,
-    texts: Sequence[TextCandidate],
+    texts: Sequence[TextCandidate] = (),
 ) -> tuple[SignatureRegion, ...]:
-    """Find handwritten rows below a detected title-block signature header."""
+    """Detect signature-shaped source strokes without reading OCR content.
 
-    headers = [item for item in texts if _signature_header(item.text)]
+    ``texts`` is retained only for API compatibility. It is deliberately ignored:
+    text recognition, logo detection and signature detection are independent.
+    """
+
+    del texts
     foreground = _foreground(binary)
-    horizontal, vertical = _rule_masks(foreground)
-    rules = cv2.max(horizontal, vertical)
-    results: list[SignatureRegion] = []
-    visited_columns: set[tuple[int, int]] = set()
-
-    for header in sorted(headers, key=lambda item: (item.bbox[1], item.bbox[0])):
-        result_count_before_header = len(results)
-        column = _nearest_column(vertical, header)
-        if column is not None:
-            left, right, vertical_centers = column
-            key = (left, right)
-            if key not in visited_columns:
-                visited_columns.add(key)
-                horizontal_centers = _horizontal_centers(
-                    horizontal,
-                    left=left,
-                    right=right,
-                )
-                _x, y, _width, height = header.bbox
-                header_bottom = y + height
-                later_lines = [
-                    value
-                    for value in horizontal_centers
-                    if value > header_bottom - 2
-                ]
-                if len(later_lines) >= 2:
-                    first_boundary = later_lines[0]
-                    typical_gap = max(12.0, float(height) * 1.7)
-                    previous_gap: float | None = None
-                    for row_index in range(min(12, len(later_lines) - 1)):
-                        row_top = later_lines[row_index]
-                        row_bottom = later_lines[row_index + 1]
-                        gap = float(row_bottom - row_top)
-                        if row_top < first_boundary or gap <= 4:
-                            continue
-                        if previous_gap is not None and gap > max(
-                            typical_gap * 2.4,
-                            previous_gap * 2.4,
-                        ):
-                            break
-                        previous_gap = (
-                            gap if previous_gap is None else min(previous_gap, gap)
-                        )
-                        interior = cv2.subtract(
-                            foreground[row_top + 1 : row_bottom, left + 1 : right],
-                            rules[row_top + 1 : row_bottom, left + 1 : right],
-                        )
-                        minimum_ink = max(12, int(round(interior.size * 0.002)))
-                        if int(cv2.countNonZero(interior)) < minimum_ink:
-                            continue
-                        region = _expanded_row_mask(
-                            foreground,
-                            rules,
-                            row_top=row_top,
-                            row_bottom=row_bottom,
-                            column_left=left,
-                            column_right=right,
-                            vertical_centers=vertical_centers,
-                        )
-                        if region is not None:
-                            results.append(region)
-
-        if len(results) == result_count_before_header:
-            freeform = _freeform_signature_region(
-                foreground,
-                rules,
-                header,
-            )
-            if freeform is not None:
-                results.append(freeform)
-
-    if results:
-        return tuple(results)
-    return _fallback_signature_regions(
-        foreground,
-        rules,
-        texts,
+    horizontal, vertical = verified_structural_rule_masks(foreground)
+    non_rules = cv2.subtract(foreground, cv2.max(horizontal, vertical))
+    labels, components = _component_boxes(non_rules)
+    component_heights = np.asarray(
+        [
+            item.bbox[3]
+            for item in components
+            if item.bbox[2] > 1 and item.bbox[3] > 1
+        ],
+        dtype=np.float64,
     )
+    minimum_height = (
+        float(np.quantile(component_heights, 0.95))
+        if len(component_heights) >= 8
+        else 5.0
+    )
+    regions = [
+        region
+        for group in _component_groups(components)
+        if (
+            region := _signature_like(
+                group,
+                labels,
+                minimum_height=minimum_height,
+            )
+        )
+        is not None
+    ]
+    regions.sort(key=lambda item: (item.bbox[1], item.bbox[0]))
+    return tuple(regions)
 
 
 def mark_signature_texts(
     texts: Sequence[TextCandidate],
     regions: Sequence[SignatureRegion],
 ) -> tuple[TextCandidate, ...]:
-    if not regions:
-        return tuple(texts)
-    marked: list[TextCandidate] = []
-    for item in texts:
-        x, y, width, height = item.bbox
-        item_area = max(1, width * height)
-        overlaps_signature = False
-        for region in regions:
-            rx, ry, rw, rh = region.bbox
-            overlap_width = max(0, min(x + width, rx + rw) - max(x, rx))
-            overlap_height = max(0, min(y + height, ry + rh) - max(y, ry))
-            if overlap_width * overlap_height / item_area >= 0.20:
-                overlaps_signature = True
-                break
-        if overlaps_signature:
-            marked.append(
-                replace(
-                    item,
-                    kind="signature_candidate",
-                    approved=False,
-                    replacement_safe=False,
-                    review_note="已作为完整签名图像保留，不转换为文字",
-                )
-            )
-        else:
-            marked.append(item)
-    return tuple(marked)
+    """Compatibility shim that never changes a text object's type."""
+
+    del regions
+    return tuple(texts)
 
 
 def mark_graphic_texts(
@@ -593,62 +281,24 @@ def mark_graphic_texts(
     *,
     page_shape: tuple[int, int],
 ) -> tuple[TextCandidate, ...]:
-    """Keep compact connected logo-like OCR boxes as source graphics."""
+    """Compatibility shim: OCR strings never classify Logo objects."""
 
-    page_height, page_width = (int(page_shape[0]), int(page_shape[1]))
-    page_area = max(1, page_height * page_width)
-    marked: list[TextCandidate] = []
-    for item in texts:
-        if item.kind == "signature_candidate" or item.replacement_safe:
-            marked.append(item)
-            continue
-        x, y, width, height = item.bbox
-        compact = "".join(str(item.text or "").split())
-        aspect = width / max(float(height), 1.0)
-        sentence_like = any(
-            character in compact
-            for character in "。！？；，,.!?;"
-        )
-        suspicious_graphic = bool(
-            "图形" in str(item.review_note or "")
-            and 1 <= len(compact) <= 24
-            and not sentence_like
-            and 0.55 <= aspect <= 6.5
-            and width * height >= max(36, int(round(page_area * 0.00008)))
-            and 0 <= x < page_width
-            and 0 <= y < page_height
-        )
-        if suspicious_graphic:
-            marked.append(
-                replace(
-                    item,
-                    kind="graphic_candidate",
-                    approved=False,
-                    replacement_safe=False,
-                    review_note="疑似 Logo、手写或连接图形，保留原始图形轮廓",
-                )
-            )
-        else:
-            marked.append(item)
-    return tuple(marked)
+    del page_shape
+    return tuple(texts)
 
 
 def suppress_signature_strokes(
     binary: np.ndarray,
     regions: Sequence[SignatureRegion],
 ) -> np.ndarray:
+    """Remove only the exact source pixels assigned to signature regions."""
+
     result = np.ascontiguousarray(binary.copy(), dtype=np.uint8)
     for region in regions:
         x, y, width, height = region.bbox
         crop = result[y : y + height, x : x + width]
-        if crop.shape != region.mask.shape:
-            continue
-        removal = cv2.dilate(
-            np.where(region.mask > 0, 255, 0).astype(np.uint8),
-            cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3)),
-            iterations=1,
-        )
-        crop[removal > 0] = 255
+        if crop.shape == region.mask.shape:
+            crop[region.mask > 0] = 255
     return result
 
 
@@ -656,31 +306,24 @@ def suppress_text_strokes(
     binary: np.ndarray,
     texts: Sequence[TextCandidate],
 ) -> np.ndarray:
-    """Remove accepted glyph pixels while restoring table and frame rules."""
+    """Remove accepted OCR footprints while restoring source-supported rules."""
 
     if not texts:
         return np.ascontiguousarray(binary.copy(), dtype=np.uint8)
     result = np.ascontiguousarray(binary.copy(), dtype=np.uint8)
     foreground = _foreground(binary)
-    horizontal, vertical = _rule_masks(foreground)
+    horizontal, vertical = verified_structural_rule_masks(foreground)
     rules = cv2.max(horizontal, vertical)
     page_height, page_width = result.shape
     for item in texts:
-        if item.kind in {"signature_candidate", "graphic_candidate"}:
+        if item.kind not in {"text_candidate", "dimension_text_candidate"}:
             continue
-        x, y, width, height = item.bbox
-        source_boxes = (
-            item.character_boxes
-            if item.character_boxes and not item.replacement_safe
-            else ((x, y, width, height),)
-        )
-        for box_x, box_y, box_width, box_height in source_boxes:
-            margin_x = max(2, int(round(box_height * 0.08)))
-            margin_y = max(2, int(round(box_height * 0.10)))
-            left = max(0, box_x - margin_x)
-            top = max(0, box_y - margin_y)
-            right = min(page_width, box_x + box_width + margin_x)
-            bottom = min(page_height, box_y + box_height + margin_y)
+        boxes = item.character_boxes or (item.bbox,)
+        for x, y, width, height in boxes:
+            left = max(0, int(x))
+            top = max(0, int(y))
+            right = min(page_width, int(x + width))
+            bottom = min(page_height, int(y + height))
             if right <= left or bottom <= top:
                 continue
             crop = result[top:bottom, left:right]
@@ -690,7 +333,7 @@ def suppress_text_strokes(
 
 
 def signature_rgba(region: SignatureRegion) -> np.ndarray:
-    """Keep the thresholded source footprint instead of reducing it to roots."""
+    """Render the exact thresholded source footprint as transparent magenta."""
 
     alpha = np.where(region.mask > 0, 255, 0).astype(np.uint8)
     image = np.zeros((alpha.shape[0], alpha.shape[1], 4), dtype=np.uint8)
@@ -710,12 +353,10 @@ def add_signature_images(
     layer_name: str = "SIGNATURE_OVERLAY",
     name_prefix: str = "SIGNATURE",
 ) -> tuple[tuple[Path, ...], list[object], list[tuple[float, float]]]:
-    """Write signatures beside the DXF and place each as a transparent top image."""
+    """Write signature overlays beside the DXF and place them on the top layer."""
 
     dxf_path = Path(output_path).resolve()
-    for stale_path in dxf_path.parent.glob(
-        f"{dxf_path.stem}.signature-*.png"
-    ):
+    for stale_path in dxf_path.parent.glob(f"{dxf_path.stem}.signature-*.png"):
         stale_path.unlink(missing_ok=True)
     image_paths: list[Path] = []
     entities: list[object] = []

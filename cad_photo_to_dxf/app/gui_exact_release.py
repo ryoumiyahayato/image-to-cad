@@ -7,6 +7,7 @@ from pathlib import Path
 import time
 from typing import Any
 
+import numpy as np
 from PySide6.QtWidgets import (
     QCheckBox,
     QDialog,
@@ -19,11 +20,13 @@ from PySide6.QtWidgets import (
 )
 
 from .document_export import DocumentPage
+from .final_structure import FinalStructure, final_structure_from_trace_result
 from .gui_trace_release import TRACE_PDF_DPI
 from .gui_trace_release import MainWindow as _TraceReleaseMainWindow
 from .image_loader import load_image
 from .ocr_recognition import render_ocr_overlay
 from .ocr_review import OcrReviewDialog
+from .preview_renderer import render_final_structure_preview
 from .raster_trace import RasterTraceResult, trace_binary, trace_image
 from .trace_paint import TracePaintDialog
 from .trace_storage import load_trace_cache, save_trace_cache
@@ -37,6 +40,8 @@ class MainWindow(_TraceReleaseMainWindow):
         self._ocr_texts = ()
         self._signature_regions = ()
         self._cad_preview_binary = None
+        self._final_structure: FinalStructure | None = None
+        self._preview_structure_id: str | None = None
         super().__init__()
 
     @staticmethod
@@ -182,6 +187,8 @@ class MainWindow(_TraceReleaseMainWindow):
         self._ocr_texts = ()
         self._signature_regions = ()
         self._cad_preview_binary = None
+        self._final_structure = None
+        self._preview_structure_id = None
 
     def _set_single_image_state(self, image, *, corrected: bool) -> None:
         super()._set_single_image_state(image, corrected=corrected)
@@ -189,6 +196,8 @@ class MainWindow(_TraceReleaseMainWindow):
         self._ocr_texts = ()
         self._signature_regions = ()
         self._cad_preview_binary = None
+        self._final_structure = None
+        self._preview_structure_id = None
 
     def _apply_trace_result(
         self,
@@ -198,13 +207,12 @@ class MainWindow(_TraceReleaseMainWindow):
         duration: float,
         save_pdf_state: bool,
     ) -> None:
-        self._ocr_texts = tuple(result.texts)
-        self._signature_regions = tuple(result.signatures)
-        self._cad_preview_binary = (
-            result.preview_binary.copy()
-            if result.preview_binary is not None
-            else result.binary.copy()
-        )
+        structure = final_structure_from_trace_result(result)
+        self._final_structure = structure
+        self._preview_structure_id = structure.structure_id
+        self._ocr_texts = structure.texts
+        self._signature_regions = structure.signatures
+        self._cad_preview_binary = render_final_structure_preview(structure)
         self._dirty_trace_keys.add(self._current_trace_key())
         super()._apply_trace_result(
             result,
@@ -224,18 +232,21 @@ class MainWindow(_TraceReleaseMainWindow):
         cache_value = state.get("trace_cache_path")
         if cache_value and Path(str(cache_value)).exists():
             stored = load_trace_cache(Path(str(cache_value)))
-            self._ocr_texts = stored.texts
-            self._signature_regions = stored.signatures
-            self._cad_preview_binary = stored.preview_binary
-            self.detected_canvas.set_image(
-                stored.preview_binary
-                if stored.preview_binary is not None
-                else stored.binary
-            )
+            structure = stored.final_structure
+            if structure is None:
+                raise ValueError("Trace cache has no final structure")
+            self._final_structure = structure
+            self._preview_structure_id = structure.structure_id
+            self._ocr_texts = structure.texts
+            self._signature_regions = structure.signatures
+            self._cad_preview_binary = render_final_structure_preview(structure)
+            self.detected_canvas.set_image(self._cad_preview_binary)
         else:
             self._ocr_texts = ()
             self._signature_regions = ()
             self._cad_preview_binary = None
+            self._final_structure = None
+            self._preview_structure_id = None
         self._dirty_trace_keys.discard(self._current_trace_key())
 
     def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
@@ -249,12 +260,8 @@ class MainWindow(_TraceReleaseMainWindow):
     def _store_current_trace(self) -> Path | None:
         """Reuse an unchanged page cache instead of recompressing it at export."""
 
-        if self.binary_image is None or (
-            not self._trace_paths
-            and not getattr(self, "lines", ())
-            and not self._ocr_texts
-            and not self._signature_regions
-        ):
+        structure = self._final_structure
+        if structure is None:
             return None
         key = self._current_trace_key()
         state = (
@@ -275,21 +282,19 @@ class MainWindow(_TraceReleaseMainWindow):
 
         target = existing or self._cache_path_for_key(key)
         result = RasterTraceResult(
-            binary=self.binary_image,
+            binary=structure.contour_binary,
             stages=dict(self.preprocess_stages),
-            paths=tuple(self._trace_paths),
-            threshold=int(self._trace_threshold or 128),
-            foreground_pixels=int(self._trace_foreground_pixels),
-            vertex_count=int(self._trace_vertex_count),
-            warnings=tuple(self._last_warnings),
-            texts=tuple(self._ocr_texts),
-            signatures=tuple(self._signature_regions),
-            straight_lines=tuple(getattr(self, "lines", ())),
-            preview_binary=(
-                self._cad_preview_binary.copy()
-                if self._cad_preview_binary is not None
-                else None
-            ),
+            paths=structure.contours,
+            threshold=structure.threshold,
+            foreground_pixels=int(np.count_nonzero(structure.contour_binary == 0)),
+            vertex_count=sum(len(path.points) for path in structure.contours),
+            warnings=structure.warnings,
+            texts=structure.texts,
+            signatures=structure.signatures,
+            straight_lines=structure.straight_lines,
+            preview_binary=structure.preview_binary,
+            logos=structure.logos,
+            final_structure=structure,
         )
         save_trace_cache(target, result)
         self._trace_cache_by_key[key] = target
@@ -514,12 +519,16 @@ class MainWindow(_TraceReleaseMainWindow):
     @staticmethod
     def _page_with_stored_trace(page: DocumentPage, cache_path: Path) -> DocumentPage:
         stored = load_trace_cache(cache_path)
-        height, width = stored.binary.shape[:2]
+        structure = stored.final_structure
+        if structure is None:
+            raise ValueError("Trace cache has no final structure")
+        width, height = structure.source_size_px
         return replace(
             page,
-            trace_paths=stored.paths,
+            trace_paths=structure.contours,
             vector_size_px=(width, height),
-            texts=stored.texts,
-            signatures=stored.signatures,
-            lines=stored.straight_lines,
+            texts=structure.texts,
+            signatures=structure.signatures,
+            lines=structure.straight_lines,
+            final_structure=structure,
         )

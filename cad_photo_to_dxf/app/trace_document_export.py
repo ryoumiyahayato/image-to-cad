@@ -110,6 +110,7 @@ def export_trace_document_streaming(
     trace_vertex_count = 0
     text_count = 0
     page_count = 0
+    structure_ids: list[str] = []
     expected_pages = max(int(total_pages or 0), 1)
     origin_y = 0.0
     first_page_view: tuple[float, float] | None = None
@@ -119,7 +120,22 @@ def export_trace_document_streaming(
         page_count = index
         if page.page_number <= 0:
             raise ValueError("Page numbers must be positive")
-        if not page.trace_paths and not page.lines and not page.texts and not page.signatures:
+        structure = page.final_structure
+        if structure is not None:
+            structure.assert_valid()
+            trace_paths = structure.contours
+            lines = structure.straight_lines
+            texts = structure.texts
+            signatures = structure.signatures
+            vector_size = structure.source_size_px
+            structure_ids.append(structure.structure_id)
+        else:
+            trace_paths = page.trace_paths
+            lines = page.lines
+            texts = page.texts
+            signatures = page.signatures
+            vector_size = page.vector_size_px
+        if not trace_paths and not lines and not texts and not signatures:
             raise ValueError(
                 f"第 {page.page_number} 页尚未生成 CAD 内容。"
                 "请先执行当前 PDF 全部页处理后再导出。"
@@ -131,7 +147,6 @@ def export_trace_document_streaming(
             raise ValueError(f"Page {page.page_number} drawing scale must be positive")
 
         raster = None
-        vector_size = page.vector_size_px
         if vector_size is None or include_underlay:
             raster = _resolve_raster(page)
             raster_height, raster_width = raster.shape[:2]
@@ -187,7 +202,7 @@ def export_trace_document_streaming(
                 page_origin + (vector_height - y) * scale_y,
             )
 
-        exportable_texts = accepted_ocr_texts(page.texts)
+        exportable_texts = accepted_ocr_texts(texts)
         selected_palette = palette or TracePalette()
         if int(page.trace_color) != 7:
             selected_palette = TracePalette(
@@ -197,14 +212,14 @@ def export_trace_document_streaming(
             )
         current_line_count, _line_entities, _line_bounds = add_straight_line_entities(
             modelspace,
-            page.lines,
+            lines,
             transform=transform,
             layer_name=layer_names["TRACE_STRAIGHT"],
             color=selected_palette.straight,
         )
         current_path_count, current_vertex_count, _entities, _bounds = add_exact_trace_entities(
             modelspace,
-            page.trace_paths,
+            trace_paths,
             transform=transform,
             color=page.trace_color,
             source_size=(vector_width, vector_height),
@@ -226,7 +241,7 @@ def export_trace_document_streaming(
             add_signature_images(
                 doc,
                 modelspace,
-                page.signatures,
+                signatures,
                 transform=transform,
                 output_path=(
                     path
@@ -289,4 +304,5 @@ def export_trace_document_streaming(
         layout_names=(),
         group_names=(),
         signature_paths=tuple(signature_paths),
+        structure_ids=tuple(structure_ids),
     )

@@ -6,8 +6,6 @@ from dataclasses import dataclass
 from math import atan2, degrees, hypot
 from unicodedata import east_asian_width
 
-import numpy as np
-
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .line_detect import LineSegment
@@ -23,13 +21,13 @@ class TracePalette:
     """Colors used to distinguish geometry without changing its shape."""
 
     straight: int = 5
-    curve: int = 3
+    curve: int = 6
     text_symbol: int = 6
 
 
 TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
-    "TRACE_CURVE": {"color": 3, "lineweight": 0},
+    "TRACE_CURVE": {"color": 6, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
     "SIGNATURE_OVERLAY": {"color": 6, "lineweight": 0},
@@ -57,33 +55,23 @@ def _classify_region(
 
     points = path.points
     if len(points) < 3:
-        return "TRACE_STRAIGHT"
+        return "TRACE_CURVE"
     min_x, min_y, max_x, max_y = _path_box(path)
     box_width = max_x - min_x + 1.0
     box_height = max_y - min_y + 1.0
-    short_side = max(1.0, min(box_width, box_height))
-    long_side = max(box_width, box_height)
-    aspect = long_side / short_side
-
     directions: list[tuple[int, int]] = []
-    axis_steps = 0
-    total_steps = 0
     for index, (x1, y1) in enumerate(points):
         x2, y2 = points[(index + 1) % len(points)]
         dx = float(x2) - float(x1)
         dy = float(y2) - float(y1)
         if abs(dx) < 1e-9 and abs(dy) < 1e-9:
             continue
-        total_steps += 1
-        if abs(dx) < 1e-9 or abs(dy) < 1e-9:
-            axis_steps += 1
         norm = hypot(dx, dy)
         directions.append((int(round(dx / norm)), int(round(dy / norm))))
 
     turns = sum(
         1 for index, direction in enumerate(directions) if direction != directions[index - 1]
     )
-    axis_fraction = axis_steps / max(total_steps, 1)
     turn_density = turns / max(len(directions), 1)
 
     if source_size is not None:
@@ -105,10 +93,9 @@ def _classify_region(
     )
     if small_text_region or tiny_symbol_region:
         return "TRACE_TEXT_SYMBOL"
-    if aspect >= 4.0 and turns <= 16:
-        return "TRACE_STRAIGHT"
-    if axis_fraction >= 0.90 and turn_density <= 0.06:
-        return "TRACE_STRAIGHT"
+    # Structural rules have already been reconstructed and removed before this
+    # residual contour stage.  Never promote a remaining elongated glyph,
+    # punctuation stroke or logo segment into the blue straight-line layer.
     return "TRACE_CURVE"
 
 
@@ -209,44 +196,6 @@ def _layer_name(
     return str(layer_names.get(base_name, base_name)) if layer_names else base_name
 
 
-def _elongated_contour_centerline(
-    path: TracePath,
-    *,
-    source_size: tuple[int, int] | None,
-) -> tuple[tuple[float, float], tuple[float, float]] | None:
-    """Reduce a long closed stroke boundary to one editable centre line."""
-
-    if len(path.points) < 4:
-        return None
-    points = np.asarray(path.points, dtype=np.float64)
-    center = np.mean(points, axis=0)
-    centered = points - center
-    covariance = np.cov(centered, rowvar=False)
-    if covariance.shape != (2, 2) or not np.all(np.isfinite(covariance)):
-        return None
-    values, vectors = np.linalg.eigh(covariance)
-    direction = vectors[:, int(np.argmax(values))]
-    normal = np.array([-direction[1], direction[0]], dtype=np.float64)
-    along = centered @ direction
-    across = centered @ normal
-    length = float(np.ptp(along))
-    thickness = max(1.0, float(np.ptp(across)))
-    minimum_length = 28.0
-    if source_size is not None:
-        minimum_length = max(
-            minimum_length,
-            min(float(source_size[0]), float(source_size[1])) * 0.008,
-        )
-    if length < minimum_length or length / thickness < 6.5:
-        return None
-    start = center + direction * float(np.min(along))
-    end = center + direction * float(np.max(along))
-    return (
-        (float(start[0]), float(start[1])),
-        (float(end[0]), float(end[1])),
-    )
-
-
 def add_straight_line_entities(
     layout,
     lines: Sequence[LineSegment],
@@ -340,28 +289,6 @@ def add_exact_trace_entities(
         else:
             entity_color = _resolved_color(selected_palette.curve, 3)
         resolved_layer_name = _layer_name(base_layer_name, layer_names)
-
-        centerline = _elongated_contour_centerline(
-            trace_path,
-            source_size=source_size,
-        )
-        if centerline is not None:
-            start = transform(*centerline[0])
-            end = transform(*centerline[1])
-            entities.append(
-                layout.add_line(
-                    start,
-                    end,
-                    dxfattribs={
-                        "layer": _layer_name("TRACE_STRAIGHT", layer_names),
-                        "color": _resolved_color(selected_palette.straight, 5),
-                    },
-                )
-            )
-            _expand_bounds((start, end), bounds)
-            exported_path_count += 1
-            exported_vertex_count += 2
-            continue
 
         root_points = [transform(float(x), float(y)) for x, y in trace_path.points]
         if len(root_points) < 3:

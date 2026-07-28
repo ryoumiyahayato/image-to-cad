@@ -72,10 +72,6 @@ def tile_has_probable_text(tile: np.ndarray) -> bool:
             continue
         if width <= 4 and height <= 4 and area <= 16:
             continue
-        if height > max(160, int(mask.shape[0] * 0.25)):
-            continue
-        if width > max(900, int(mask.shape[1] * 0.92)) and height <= 4:
-            continue
         likely += 1
         if likely >= 2:
             return True

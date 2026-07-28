@@ -131,21 +131,8 @@ def _candidate_is_reasonable(
         return False
     if len(text) > 180:
         return False
-    image_area = max(float(image_width * image_height), 1.0)
-    if width * height > image_area * 0.06:
+    if rotation != 0 and len(text) > 24:
         return False
-    if rotation == 0:
-        if height > max(48, int(image_height * 0.10)):
-            return False
-        if width > int(image_width * 0.95):
-            return False
-    else:
-        if width > max(48, int(image_width * 0.10)):
-            return False
-        if height > int(image_height * 0.32):
-            return False
-        if len(text) > 24:
-            return False
     return True
 
 
@@ -349,6 +336,29 @@ def _deduplicate(candidates: Iterable[TextCandidate]) -> tuple[TextCandidate, ..
     return tuple(kept)
 
 
+def _candidate_has_source_ink(
+    image: np.ndarray,
+    candidate: TextCandidate,
+) -> bool:
+    x, y, width, height = candidate.bbox
+    crop = image[y : y + height, x : x + width]
+    if crop.size == 0:
+        return False
+    gray = (
+        crop
+        if crop.ndim == 2
+        else cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+    )
+    _threshold, foreground = cv2.threshold(
+        gray,
+        0,
+        255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU,
+    )
+    non_space_count = sum(not character.isspace() for character in candidate.text)
+    return cv2.countNonZero(foreground) >= max(3, non_space_count * 2)
+
+
 def recognize_text_candidates(
     image: np.ndarray,
     *,
@@ -404,7 +414,11 @@ def recognize_text_candidates(
         warnings.append(f"RapidOCR 文字识别失败：{exc}；已继续生成非文字 CAD 轮廓。")
 
     deduplicated = _deduplicate(candidates)
-    resolved = tuple(prepare_candidate_layout(source, item) for item in deduplicated)
+    resolved = tuple(
+        prepare_candidate_layout(source, item)
+        for item in deduplicated
+        if _candidate_has_source_ink(source, item)
+    )
     if not resolved and not warnings:
         warnings.append("OCR 未找到达到置信度阈值的完整横排文字行。")
     report_progress(progress_callback, "ocr-complete", 1.0)

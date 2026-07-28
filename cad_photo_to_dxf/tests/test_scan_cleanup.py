@@ -74,6 +74,19 @@ def test_clean_digital_page_still_keeps_every_non_white_pixel() -> None:
     assert prepared.binary[60, 80] == 0
 
 
+def test_scanned_objects_separated_by_one_pixel_are_not_welded_together() -> None:
+    gray = np.full((120, 180), 235, dtype=np.uint8)
+    gray[50:70, 50:60] = 35
+    gray[50:70, 61:71] = 35
+
+    prepared = prepare_scan_page(gray)
+
+    assert not prepared.clean_digital
+    assert prepared.binary[60, 59] == 0
+    assert prepared.binary[60, 60] == 255
+    assert prepared.binary[60, 61] == 0
+
+
 def test_dense_scanner_speckle_is_removed_without_erasing_real_ink() -> None:
     gray = np.full((700, 1000), 238, dtype=np.uint8)
     for y_value in range(180, 421, 12):
@@ -103,7 +116,7 @@ def test_broad_low_contrast_tape_edges_are_not_exported_as_lines() -> None:
     height, width = 900, 1200
     gray = np.full((height, width), 235, dtype=np.float32)
     _yy, xx = np.mgrid[:height, :width]
-    gray -= 26.0 * np.exp(-((xx - 760.0) / 45.0) ** 2)
+    gray -= 26.0 * np.exp(-(((xx - 760.0) / 45.0) ** 2))
     cv2.line(gray, (710, 80), (710, 820), 150, 3, cv2.LINE_AA)
     cv2.line(gray, (810, 80), (810, 820), 150, 3, cv2.LINE_AA)
     cv2.rectangle(gray, (360, 170), (1050, 700), 55, 3)

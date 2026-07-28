@@ -3,6 +3,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
+import app.ocr_pipeline as ocr_pipeline
 from app.auxiliary_recognition import TextCandidate
 from app.ocr_fast import (
     TILE_OVERLAP,
@@ -12,7 +13,10 @@ from app.ocr_fast import (
 )
 from app.ocr_layout import tile_regions
 from app.ocr_tile_filter import tile_has_probable_text
-from app.ocr_pipeline import _recognize_tiles, recognize_text_candidates_optimized
+from app.ocr_pipeline import (
+    _recognize_tiles,
+    recognize_text_candidates_optimized,
+)
 from app.optimized_trace import trace_image_optimized
 
 
@@ -87,7 +91,7 @@ def test_blank_rule_only_tile_is_skipped_but_text_tile_is_kept() -> None:
     assert tile_has_probable_text(text)
 
 
-def test_partial_connected_signature_is_not_automatically_replaced() -> None:
+def test_partial_connected_stroke_is_not_automatically_replaced() -> None:
     image = np.full((220, 420), 255, dtype=np.uint8)
     points = np.asarray(
         [[40, 115], [100, 70], [155, 145], [215, 65], [285, 150], [370, 95]],
@@ -99,7 +103,7 @@ def test_partial_connected_signature_is_not_automatically_replaced() -> None:
     resolved = prepare_safe_candidate(image, candidate)
 
     assert not resolved.replacement_safe
-    assert "签名" in resolved.review_note or "连笔" in resolved.review_note
+    assert "连通笔画" in resolved.review_note
 
 
 def test_bounded_pdf_page_skips_expensive_native_tiles(monkeypatch) -> None:
@@ -137,6 +141,13 @@ def test_large_page_uses_cleaned_native_tiles_without_repeating_overview(
     assert not warnings
     assert calls["native"] == 1
     assert [item.text for item in resolved] == ["图纸目录"]
+
+
+def test_ocr_pipeline_has_no_position_or_fixed_field_template_pass() -> None:
+    source = ocr_pipeline.__file__
+    assert source is not None
+    assert not hasattr(ocr_pipeline, "_recognize_right_title_block")
+    assert not hasattr(ocr_pipeline, "_infer_ruled_title_block_labels")
 
 
 def test_optimized_result_keeps_complete_preview_separate_from_residual(

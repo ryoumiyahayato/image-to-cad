@@ -15,10 +15,10 @@ from .gui_export import _choose_oda_converter, _select_output_path
 from .reporting import REPORT_SCHEMA_VERSION, write_json_report
 from .trace_document_export import export_trace_document_streaming
 from .trace_dxf_entities import MAX_EDITABLE_POLYLINE_VERTICES, TracePalette
-from .trace_single_export import export_exact_trace_dxf
+from .trace_single_export import export_final_structure_dxf
 
 
-DEFAULT_PALETTE = TracePalette(straight=5, curve=3, text_symbol=6)
+DEFAULT_PALETTE = TracePalette(straight=5, curve=6, text_symbol=6)
 
 
 @dataclass(frozen=True)
@@ -225,6 +225,11 @@ def _start_document_export(window: Any) -> None:
             page_records.append(
                 {
                     "page": page_index,
+                    "structure_id": (
+                        result.structure_ids[0]
+                        if result.structure_ids
+                        else None
+                    ),
                     "dxf": str(result.path),
                     "dwg": str(page_dwg) if page_dwg is not None else None,
                     "trace_path_count": result.trace_path_count,
@@ -315,17 +320,17 @@ def _start_document_export(window: Any) -> None:
 
 
 def _start_single_export(window: Any) -> None:
-    trace_paths = tuple(getattr(window, "_trace_paths", ()))
-    straight_lines = tuple(getattr(window, "lines", ()))
-    texts = tuple(getattr(window, "_ocr_texts", ()))
-    signatures = tuple(getattr(window, "_signature_regions", ()))
-    if (
-        not trace_paths
-        and not straight_lines
-        and not texts
-        and not signatures
-    ) or window.binary_image is None or window.corrected_image is None:
+    structure = getattr(window, "_final_structure", None)
+    if structure is None or window.corrected_image is None:
         QMessageBox.warning(window, "尚无处理结果", "请先处理当前页。")
+        return
+    structure.assert_valid()
+    if getattr(window, "_preview_structure_id", None) != structure.structure_id:
+        QMessageBox.critical(
+            window,
+            "预览状态已失效",
+            "当前预览与最终结构数据不一致，请重新处理当前页后再导出。",
+        )
         return
     selection = _select_output_path(window, default_name="drawing-page.dwg")
     if selection is None:
@@ -352,25 +357,19 @@ def _start_single_export(window: Any) -> None:
     explicit_model_calibration = bool(
         getattr(window, "_has_explicit_model_calibration", lambda: False)()
     )
-    binary_shape = tuple(window.binary_image.shape[:2])
     calibration = window.calibration
     raster_image = window.corrected_image.copy() if include_underlay else None
     source_path = Path(window.current_path) if window.current_path is not None else None
     threshold = getattr(window, "_trace_threshold", None)
     foreground_pixels = int(getattr(window, "_trace_foreground_pixels", 0))
     def operation(token: CancellationToken, progress: ProgressCallback) -> object:
-        result = export_exact_trace_dxf(
-            trace_paths,
+        result = export_final_structure_dxf(
+            structure,
             dxf_path,
-            binary_shape[0],
             calibration,
-            image_width=binary_shape[1],
             drawing_multiplier=drawing_multiplier,
             trace_color=7,
             palette=DEFAULT_PALETTE,
-            straight_lines=straight_lines,
-            texts=texts,
-            signatures=signatures,
             raster_image=raster_image,
             raster_output_path=scan_path if include_underlay else None,
             cancellation_token=token,
@@ -399,6 +398,7 @@ def _start_single_export(window: Any) -> None:
             "mode": "editable_line_text_single_page",
             "input": str(source_path) if source_path is not None else None,
             "trace": {
+                "structure_id": result.structure_id,
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "threshold": threshold,

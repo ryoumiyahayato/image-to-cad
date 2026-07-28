@@ -10,6 +10,7 @@ import numpy as np
 from PySide6.QtWidgets import QApplication
 
 import app.gui_exact_release as exact_release
+from app.final_structure import build_final_structure
 from app.gui_exact_release import MainWindow
 from app.raster_trace import trace_binary
 
@@ -30,6 +31,15 @@ def _prepared_window(tmp_path: Path) -> tuple[MainWindow, tuple[str, int | None]
     window._trace_threshold = 200
     window._trace_foreground_pixels = int(np.count_nonzero(binary == 0))
     window._trace_vertex_count = sum(len(path.points) for path in paths)
+    structure = build_final_structure(
+        source_size_px=(binary.shape[1], binary.shape[0]),
+        contour_binary=binary,
+        contours=paths,
+        preview_binary=binary,
+        threshold=200,
+    )
+    window._final_structure = structure
+    window._preview_structure_id = structure.structure_id
     cache_path = tmp_path / "page.npz"
     cache_path.write_bytes(b"existing-cache")
     key = window._current_trace_key()

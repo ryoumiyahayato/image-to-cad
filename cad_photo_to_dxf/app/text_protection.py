@@ -128,18 +128,6 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
         cv2.rectangle(mask, (x1, y1), (x2, y2), 255, thickness=-1)
         accepted_regions += 1
 
-    if accepted_regions:
-        mask = cv2.morphologyEx(
-            mask,
-            cv2.MORPH_CLOSE,
-            cv2.getStructuringElement(
-                cv2.MORPH_RECT,
-                (
-                    scaled_int(3, scale, minimum=1),
-                    scaled_int(3, scale, minimum=1),
-                ),
-            ),
-        )
     return TextProtectionResult(
         mask,
         len(candidate_boxes),
@@ -156,6 +144,49 @@ def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
     return float(np.mean(mask[yi, xi] > 0))
 
 
+def _axis_orientation(line: LineSegment) -> str | None:
+    if abs(line.y2 - line.y1) <= abs(line.x2 - line.x1) * 0.08:
+        return "horizontal"
+    if abs(line.x2 - line.x1) <= abs(line.y2 - line.y1) * 0.08:
+        return "vertical"
+    return None
+
+
+def _structural_connection_counts(
+    lines: list[LineSegment],
+    *,
+    tolerance: float,
+) -> list[int]:
+    """Count supported horizontal/vertical crossings in a rule network."""
+
+    counts = [0] * len(lines)
+    horizontal = [
+        index
+        for index, line in enumerate(lines)
+        if _axis_orientation(line) == "horizontal"
+    ]
+    vertical = [
+        index
+        for index, line in enumerate(lines)
+        if _axis_orientation(line) == "vertical"
+    ]
+    for horizontal_index in horizontal:
+        h_line = lines[horizontal_index]
+        h_left, h_right = sorted((h_line.x1, h_line.x2))
+        h_y = (h_line.y1 + h_line.y2) * 0.5
+        for vertical_index in vertical:
+            v_line = lines[vertical_index]
+            v_top, v_bottom = sorted((v_line.y1, v_line.y2))
+            v_x = (v_line.x1 + v_line.x2) * 0.5
+            if (
+                h_left - tolerance <= v_x <= h_right + tolerance
+                and v_top - tolerance <= h_y <= v_bottom + tolerance
+            ):
+                counts[horizontal_index] += 1
+                counts[vertical_index] += 1
+    return counts
+
+
 def filter_text_like_lines(
     lines: list[LineSegment],
     protection: TextProtectionResult,
@@ -168,14 +199,23 @@ def filter_text_like_lines(
     scale = image_resolution_scale(image_shape)
     diagonal = math.hypot(float(image_shape[0]), float(image_shape[1]))
     local_line_limit = max(72.0 * scale, diagonal * 0.08)
+    connection_counts = _structural_connection_counts(
+        lines,
+        tolerance=max(3.0, 3.0 * scale),
+    )
+    network_minimum = max(42.0 * scale, diagonal * 0.012)
     kept: list[LineSegment] = []
     rejected = 0
-    for line in lines:
+    for index, line in enumerate(lines):
         coverage = _line_mask_coverage(line, protection.mask)
+        structural_network = bool(
+            line.length >= network_minimum
+            and connection_counts[index] >= 2
+        )
         reject = (
             coverage >= 0.28 and line.length <= local_line_limit
         ) or coverage >= 0.72
-        if reject:
+        if reject and not structural_network:
             rejected += 1
             continue
         kept.append(line)

@@ -190,10 +190,6 @@ def tile_has_probable_text(tile: np.ndarray) -> bool:
         height = int(stats[index, cv2.CC_STAT_HEIGHT])
         if area < 3 or width < 1 or height < 2:
             continue
-        if height > max(160, int(mask.shape[0] * 0.25)):
-            continue
-        if width > max(900, int(mask.shape[1] * 0.92)) and height <= 3:
-            continue
         likely += 1
         if likely >= 2:
             return True
@@ -374,12 +370,7 @@ def _connected_handwriting_like(image: np.ndarray, candidate: TextCandidate) -> 
     mask = _binary_crop(image, (x, y, x + width, y + height))
     if mask.size == 0:
         return False
-    kernel_width = max(1, int(round(height * 0.025)))
-    connected = cv2.morphologyEx(
-        mask,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_width, 1)),
-    )
+    connected = np.ascontiguousarray(mask)
     count, _labels, stats, _centroids = cv2.connectedComponentsWithStats(
         np.where(connected > 0, 255, 0).astype(np.uint8),
         connectivity=8,
@@ -402,13 +393,13 @@ def prepare_safe_candidate(image: np.ndarray, candidate: TextCandidate) -> TextC
         return replace(
             prepared,
             replacement_safe=False,
-            review_note="识别框附近仍有未覆盖笔画，疑似局部文字或签名，保留原图形等待确认",
+            review_note="识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认",
         )
     if _connected_handwriting_like(image, prepared):
         return replace(
             prepared,
             replacement_safe=False,
-            review_note="笔画跨越多个字符位置，疑似签名或连笔文字，保留原图形等待确认",
+            review_note="笔画跨越多个字符位置，保留完整源轮廓等待确认",
         )
     return prepared
 

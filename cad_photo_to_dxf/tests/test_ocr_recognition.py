@@ -45,6 +45,15 @@ def test_word_boxes_remain_a_fallback_and_normal_flow_runs_once(monkeypatch) -> 
     engine = _FallbackWordRapidOcr()
     monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", engine)
     image = np.full((400, 1000, 3), 255, dtype=np.uint8)
+    cv2.putText(
+        image,
+        "A",
+        (12, 36),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (0, 0, 0),
+        2,
+    )
 
     candidates, warnings = ocr_recognition.recognize_text_candidates(image)
 
@@ -138,8 +147,18 @@ def test_reviewable_confidence_candidate_is_kept_for_manual_correction(
             )
 
     monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", ReviewableConfidence())
+    image = np.full((200, 300, 3), 255, dtype=np.uint8)
+    cv2.putText(
+        image,
+        "ABC",
+        (22, 52),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.6,
+        (0, 0, 0),
+        2,
+    )
     candidates, warnings = ocr_recognition.recognize_text_candidates(
-        np.full((200, 300, 3), 255, dtype=np.uint8)
+        image
     )
 
     assert len(candidates) == 1

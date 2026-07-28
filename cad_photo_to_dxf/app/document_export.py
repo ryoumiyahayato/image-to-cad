@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from math import isfinite
 from pathlib import Path
 from tempfile import NamedTemporaryFile
+from typing import TYPE_CHECKING
 
 import ezdxf
 from ezdxf import units, zoom
@@ -21,6 +22,9 @@ from .image_loader import load_image, save_image
 from .line_detect import LineSegment
 from .raster_trace import TracePath
 from .signature_overlay import SignatureRegion
+
+if TYPE_CHECKING:
+    from .final_structure import FinalStructure
 
 
 @dataclass(frozen=True)
@@ -48,6 +52,7 @@ class DocumentPage:
     drawing_scale: float = 1.0
     trace_color: int = 7
     signatures: tuple[SignatureRegion, ...] = field(default_factory=tuple)
+    final_structure: FinalStructure | None = None
 
 
 @dataclass(frozen=True)
@@ -63,6 +68,7 @@ class DocumentExportResult:
     trace_vertex_count: int = 0
     group_names: tuple[str, ...] = field(default_factory=tuple)
     signature_paths: tuple[Path, ...] = field(default_factory=tuple)
+    structure_ids: tuple[str, ...] = field(default_factory=tuple)
 
 
 def _safe_layout_name(sequence_number: int) -> str:

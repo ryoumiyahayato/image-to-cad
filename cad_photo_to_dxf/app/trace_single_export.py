@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from math import isfinite
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -11,6 +12,7 @@ import numpy as np
 from .auxiliary_recognition import TextCandidate
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .dxf_exporter import ExportResult, LAYER_STYLES
+from .final_structure import FinalStructure
 from .image_loader import save_image
 from .line_detect import LineSegment
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
@@ -235,3 +237,40 @@ def export_exact_trace_dxf(
         underlay_path=underlay_path,
         signature_paths=signature_paths,
     )
+
+
+def export_final_structure_dxf(
+    structure: FinalStructure,
+    output_path: str | Path,
+    calibration: ScaleCalibration | None = None,
+    *,
+    drawing_multiplier: float = 1.0,
+    trace_color: int = 7,
+    palette: TracePalette | None = None,
+    raster_image: np.ndarray | None = None,
+    raster_output_path: str | Path | None = None,
+    cancellation_token: CancellationToken | None = None,
+    progress_callback: ProgressCallback | None = None,
+) -> ExportResult:
+    """Export the same immutable structure instance used by the GUI preview."""
+
+    structure.assert_valid()
+    width, height = structure.source_size_px
+    result = export_exact_trace_dxf(
+        structure.contours,
+        output_path,
+        height,
+        calibration,
+        image_width=width,
+        drawing_multiplier=drawing_multiplier,
+        trace_color=trace_color,
+        palette=palette,
+        straight_lines=structure.straight_lines,
+        texts=structure.texts,
+        signatures=structure.signatures,
+        raster_image=raster_image,
+        raster_output_path=raster_output_path,
+        cancellation_token=cancellation_token,
+        progress_callback=progress_callback,
+    )
+    return replace(result, structure_id=structure.structure_id)

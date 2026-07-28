@@ -6,7 +6,12 @@ import cv2
 import numpy as np
 
 from .auxiliary_recognition import TextCandidate
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from .ocr_fast import (
     OVERVIEW_MAX_SIDE,
     _offset_candidate,

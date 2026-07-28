@@ -90,7 +90,9 @@ def _retain_connected_ink(strong: np.ndarray, weak: np.ndarray) -> np.ndarray:
             left = max(0, core_left - overlap)
             right = min(width, core_right + overlap)
 
-            weak_tile = np.ascontiguousarray(weak[top:bottom, left:right], dtype=np.uint8)
+            weak_tile = np.ascontiguousarray(
+                weak[top:bottom, left:right], dtype=np.uint8
+            )
             if not np.any(weak_tile):
                 continue
             strong_tile = strong[top:bottom, left:right]
@@ -132,18 +134,14 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     weak = ((divided < 236) & (local_delta > 4)) | (gray < 155)
     retained = _retain_connected_ink(strong, weak)
     retained |= strong
-    foreground = np.where(retained, 255, 0).astype(np.uint8)
-    horizontal = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (2, 1)),
-    )
-    vertical = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (1, 2)),
-    )
-    retained = cv2.max(foreground, cv2.max(horizontal, vertical)) > 0
+    # Do not close one-pixel horizontal or vertical gaps globally.  On a
+    # low-resolution plan those gaps are also the only separation between a
+    # glyph and a leader, between adjacent symbols, or between a symbol and a
+    # cell rule.  A generic 2x1/1x2 close welded those independent objects
+    # together and produced the dense "stuck image" clusters seen in CAD.
+    # Connected weak ink recovery above already retains antialiased members of
+    # each real source component; any further repair must be semantic and
+    # local, not a page-wide morphological bridge.
     binary = np.where(retained, 0, 255).astype(np.uint8)
     return np.ascontiguousarray(normalized), np.ascontiguousarray(binary)
 

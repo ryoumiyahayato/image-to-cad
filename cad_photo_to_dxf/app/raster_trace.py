@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
 import cv2
 import numpy as np
@@ -11,6 +11,10 @@ from .cancellation import CancellationToken, ProgressCallback, checkpoint, repor
 from .line_detect import LineSegment
 from .scan_cleanup import prepare_scan_page
 from .signature_overlay import SignatureRegion
+
+if TYPE_CHECKING:
+    from .final_structure import FinalStructure
+    from .logo_detection import LogoRegion
 
 
 @dataclass(frozen=True)
@@ -41,6 +45,8 @@ class RasterTraceResult:
     signatures: tuple[SignatureRegion, ...] = ()
     straight_lines: tuple[LineSegment, ...] = ()
     preview_binary: np.ndarray | None = None
+    logos: tuple[LogoRegion, ...] = ()
+    final_structure: FinalStructure | None = None
 
 
 def _to_gray(image: np.ndarray) -> np.ndarray:

@@ -8,7 +8,9 @@ from tempfile import NamedTemporaryFile
 import numpy as np
 
 from .auxiliary_recognition import TextCandidate
+from .final_structure import FinalStructure, build_final_structure, final_structure_from_trace_result
 from .line_detect import LineSegment
+from .logo_detection import LogoRegion
 from .raster_trace import RasterTraceResult, TracePath
 from .signature_overlay import SignatureRegion
 
@@ -25,6 +27,8 @@ class StoredTrace:
     signatures: tuple[SignatureRegion, ...] = ()
     straight_lines: tuple[LineSegment, ...] = ()
     preview_binary: np.ndarray | None = None
+    logos: tuple[LogoRegion, ...] = ()
+    final_structure: FinalStructure | None = None
 
 
 def _serialize_lines(lines: tuple[LineSegment, ...]) -> str:
@@ -237,6 +241,51 @@ def _unpack_signatures(
     return tuple(results)
 
 
+def _packed_logos(
+    logos: tuple[LogoRegion, ...],
+) -> tuple[
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+    np.ndarray,
+]:
+    bboxes, shapes, offsets, payload = _packed_signatures(
+        tuple(SignatureRegion(item.bbox, item.mask) for item in logos)
+    )
+    metadata = np.asarray(
+        [
+            (item.structural_score, item.hole_count, item.contour_count)
+            for item in logos
+        ],
+        dtype=np.float64,
+    ).reshape(-1, 3)
+    return bboxes, shapes, offsets, payload, metadata
+
+
+def _unpack_logos(
+    bboxes: np.ndarray,
+    shapes: np.ndarray,
+    offsets: np.ndarray,
+    payload: np.ndarray,
+    metadata: np.ndarray,
+) -> tuple[LogoRegion, ...]:
+    regions = _unpack_signatures(bboxes, shapes, offsets, payload)
+    values = np.asarray(metadata, dtype=np.float64).reshape(-1, 3)
+    if len(values) != len(regions):
+        raise ValueError("Trace cache logo metadata lengths do not match")
+    return tuple(
+        LogoRegion(
+            bbox=region.bbox,
+            mask=region.mask,
+            structural_score=float(values[index, 0]),
+            hole_count=int(round(values[index, 1])),
+            contour_count=int(round(values[index, 2])),
+        )
+        for index, region in enumerate(regions)
+    )
+
+
 def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
     """Atomically store a page using packed pixels and uncompressed arrays.
 
@@ -247,14 +296,15 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
 
     target = Path(path)
     target.parent.mkdir(parents=True, exist_ok=True)
-    path_count = len(result.paths)
+    structure = final_structure_from_trace_result(result)
+    path_count = len(structure.contours)
     offsets = np.zeros(path_count + 1, dtype=np.int64)
     parent = np.full(path_count, -1, dtype=np.int32)
     depth = np.zeros(path_count, dtype=np.int32)
     root = np.zeros(path_count, dtype=np.int32)
     point_arrays: list[np.ndarray] = []
     cursor = 0
-    for index, trace_path in enumerate(result.paths):
+    for index, trace_path in enumerate(structure.contours):
         points = np.asarray(trace_path.points, dtype=np.float32).reshape(-1, 2)
         point_arrays.append(points)
         cursor += len(points)
@@ -267,22 +317,40 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
         if point_arrays
         else np.empty((0, 2), dtype=np.float32)
     )
-    warnings = np.asarray(result.warnings, dtype=np.str_)
-    texts_json = np.asarray([_serialize_texts(tuple(result.texts))], dtype=np.str_)
+    warnings = np.asarray(structure.warnings, dtype=np.str_)
+    texts_json = np.asarray([_serialize_texts(structure.texts)], dtype=np.str_)
     lines_json = np.asarray(
-        [_serialize_lines(tuple(result.straight_lines))],
+        [_serialize_lines(structure.straight_lines)],
         dtype=np.str_,
     )
-    binary_packed, binary_shape = _packed_binary(result.binary)
+    binary_packed, binary_shape = _packed_binary(structure.contour_binary)
     preview_source = (
-        result.preview_binary
-        if result.preview_binary is not None
-        and result.preview_binary.shape == result.binary.shape
-        else result.binary
+        structure.preview_binary
+        if structure.preview_binary is not None
+        else structure.contour_binary
     )
     preview_packed, preview_shape = _packed_binary(preview_source)
     signature_bboxes, signature_shapes, signature_offsets, signature_packed = (
-        _packed_signatures(tuple(result.signatures))
+        _packed_signatures(structure.signatures)
+    )
+    (
+        logo_bboxes,
+        logo_shapes,
+        logo_offsets,
+        logo_packed,
+        logo_metadata,
+    ) = _packed_logos(structure.logos)
+    structure_id = np.asarray([structure.structure_id], dtype=np.str_)
+    provenance_json = np.asarray(
+        [
+            json.dumps(
+                dict(structure.provenance),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        ],
+        dtype=np.str_,
     )
 
     temporary_path: Path | None = None
@@ -296,9 +364,13 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
             temporary_path = Path(handle.name)
             np.savez(
                 handle,
-                cache_version=np.asarray([5], dtype=np.int32),
+                cache_version=np.asarray([7], dtype=np.int32),
                 binary_packed=binary_packed,
                 binary_shape=binary_shape,
+                preview_present=np.asarray(
+                    [structure.preview_binary is not None],
+                    dtype=np.uint8,
+                ),
                 preview_packed=preview_packed,
                 preview_shape=preview_shape,
                 points=all_points,
@@ -306,18 +378,29 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
                 parent=parent,
                 depth=depth,
                 root=root,
-                threshold=np.asarray([result.threshold], dtype=np.int32),
+                threshold=np.asarray([structure.threshold], dtype=np.int32),
                 foreground_pixels=np.asarray(
-                    [result.foreground_pixels], dtype=np.int64
+                    [np.count_nonzero(structure.contour_binary == 0)],
+                    dtype=np.int64,
                 ),
-                vertex_count=np.asarray([result.vertex_count], dtype=np.int64),
+                vertex_count=np.asarray(
+                    [sum(len(path.points) for path in structure.contours)],
+                    dtype=np.int64,
+                ),
                 warnings=warnings,
+                structure_id=structure_id,
+                provenance_json=provenance_json,
                 texts_json=texts_json,
                 lines_json=lines_json,
                 signature_bboxes=signature_bboxes,
                 signature_shapes=signature_shapes,
                 signature_offsets=signature_offsets,
                 signature_packed=signature_packed,
+                logo_bboxes=logo_bboxes,
+                logo_shapes=logo_shapes,
+                logo_offsets=logo_offsets,
+                logo_packed=logo_packed,
+                logo_metadata=logo_metadata,
             )
         temporary_path.replace(target)
     finally:
@@ -354,13 +437,21 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
             binary = np.ascontiguousarray(archive["binary"], dtype=np.uint8)
         else:
             raise ValueError("Trace cache is missing binary image data")
+        preview_present = (
+            bool(np.asarray(archive["preview_present"]).reshape(-1)[0])
+            if "preview_present" in archive.files
+            else {"preview_packed", "preview_shape"}.issubset(archive.files)
+        )
         preview_binary = (
             _unpack_binary(
                 archive["preview_packed"],
                 archive["preview_shape"],
             )
-            if {"preview_packed", "preview_shape"}.issubset(archive.files)
-            else np.ascontiguousarray(binary.copy())
+            if (
+                preview_present
+                and {"preview_packed", "preview_shape"}.issubset(archive.files)
+            )
+            else None
         )
         points = np.asarray(archive["points"], dtype=np.float32)
         offsets = np.asarray(archive["offsets"], dtype=np.int64)
@@ -398,6 +489,40 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
             }.issubset(archive.files)
             else ()
         )
+        logos = (
+            _unpack_logos(
+                archive["logo_bboxes"],
+                archive["logo_shapes"],
+                archive["logo_offsets"],
+                archive["logo_packed"],
+                archive["logo_metadata"],
+            )
+            if {
+                "logo_bboxes",
+                "logo_shapes",
+                "logo_offsets",
+                "logo_packed",
+                "logo_metadata",
+            }.issubset(archive.files)
+            else ()
+        )
+        stored_structure_id = (
+            str(np.asarray(archive["structure_id"]).reshape(-1)[0])
+            if "structure_id" in archive.files
+            else None
+        )
+        provenance = {}
+        if "provenance_json" in archive.files:
+            try:
+                value = json.loads(
+                    str(np.asarray(archive["provenance_json"]).reshape(-1)[0])
+                )
+                if isinstance(value, dict):
+                    provenance = value
+            except json.JSONDecodeError as exc:
+                raise ValueError(
+                    "Trace cache provenance metadata is invalid JSON"
+                ) from exc
 
     path_count = len(parent)
     if offsets.shape != (path_count + 1,):
@@ -429,6 +554,24 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         )
     if int(sum(len(path.points) for path in paths)) != vertex_count:
         raise ValueError("Trace cache vertex count does not match stored paths")
+    final_structure = build_final_structure(
+        source_size_px=(binary.shape[1], binary.shape[0]),
+        contour_binary=binary,
+        contours=tuple(paths),
+        straight_lines=straight_lines,
+        texts=texts,
+        logos=logos,
+        signatures=signatures,
+        preview_binary=preview_binary,
+        threshold=threshold,
+        warnings=warnings,
+        provenance=provenance,
+    )
+    if (
+        stored_structure_id is not None
+        and stored_structure_id != final_structure.structure_id
+    ):
+        raise ValueError("Trace cache final structure fingerprint does not match")
     return StoredTrace(
         binary=binary,
         paths=tuple(paths),
@@ -440,4 +583,6 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         signatures=signatures,
         straight_lines=straight_lines,
         preview_binary=preview_binary,
+        logos=logos,
+        final_structure=final_structure,
     )

@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 
 from .auxiliary_recognition import TextCandidate
+from .structural_roi import verified_structural_rule_masks
 
 
 _TILE_SIZE = 3072
@@ -290,11 +291,7 @@ def _horizontal_character_boxes(
     suspicious_wide_component = False
     x0, y0, _bbox_width, _bbox_height = candidate.bbox
 
-    component_kernel = cv2.getStructuringElement(
-        cv2.MORPH_RECT,
-        (max(1, int(round(mask.shape[0] * 0.035))), 1),
-    )
-    connected = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, component_kernel)
+    connected = np.ascontiguousarray(mask)
     component_count, _labels, stats, _centroids = cv2.connectedComponentsWithStats(
         np.where(connected > 0, 255, 0).astype(np.uint8),
         connectivity=8,
@@ -346,7 +343,7 @@ def _horizontal_character_boxes(
         and not suspicious_wide_component
     )
     if suspicious_wide_component:
-        note = "笔画跨越多个字符格，疑似签名、手写体或图形，保留原轮廓等待人工确认"
+        note = "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认"
     elif visible_ratio < 0.72:
         note = "逐字分割覆盖不足，保留原轮廓等待人工确认"
     else:
@@ -354,7 +351,9 @@ def _horizontal_character_boxes(
     return tuple(boxes), safe, note
 
 
-def prepare_candidate_layout(image: np.ndarray, candidate: TextCandidate) -> TextCandidate:
+def prepare_candidate_layout(
+    image: np.ndarray, candidate: TextCandidate
+) -> TextCandidate:
     """Attach per-character positions and prevent unsafe partial OCR replacement."""
 
     try:
@@ -362,7 +361,7 @@ def prepare_candidate_layout(image: np.ndarray, candidate: TextCandidate) -> Tex
         character_boxes, safe, note = _horizontal_character_boxes(mask, candidate)
         if _crosses_candidate_boundary(image, candidate.bbox):
             safe = False
-            note = "识别框只覆盖了更大连笔或签名的一部分，保留完整原轮廓等待人工确认"
+            note = "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认"
     except (ValueError, cv2.error):
         character_boxes, safe, note = (), False, "无法验证原始笔画覆盖，等待人工确认"
     return replace(
@@ -387,6 +386,58 @@ def _projection_centers(values: np.ndarray) -> tuple[int, ...]:
     return tuple(int(round(sum(run) / len(run))) for run in runs)
 
 
+def _supporting_rule_centers(
+    mask: np.ndarray,
+    centers: Sequence[int],
+    *,
+    orientation: str,
+    candidate_bbox: tuple[int, int, int, int],
+) -> tuple[int, ...]:
+    """Reject glyph strokes that survived morphology as apparent cell rules."""
+
+    x, y, width, height = candidate_bbox
+    anchor = y + height * 0.5 if orientation == "vertical" else x + width * 0.5
+    candidate_start = y if orientation == "vertical" else x
+    candidate_end = y + height if orientation == "vertical" else x + width
+    ratio = 1.55 if orientation == "vertical" else 1.25
+    minimum_span = max(
+        25,
+        int(round((height if orientation == "vertical" else width) * ratio)),
+    )
+    supported: list[int] = []
+    for center in centers:
+        if orientation == "vertical":
+            left = max(0, int(center) - 2)
+            right = min(mask.shape[1], int(center) + 3)
+            values = np.flatnonzero(np.any(mask[:, left:right] > 0, axis=1))
+        else:
+            top = max(0, int(center) - 2)
+            bottom = min(mask.shape[0], int(center) + 3)
+            values = np.flatnonzero(np.any(mask[top:bottom, :] > 0, axis=0))
+        if not values.size:
+            continue
+        runs: list[list[int]] = [[int(values[0])]]
+        for raw_value in values[1:]:
+            value = int(raw_value)
+            if value <= runs[-1][-1] + 3:
+                runs[-1].append(value)
+            else:
+                runs.append([value])
+        relevant = [
+            run
+            for run in runs
+            if run[-1] >= candidate_start and run[0] <= candidate_end
+        ]
+        if not relevant:
+            relevant = [
+                min(runs, key=lambda run: abs((run[0] + run[-1]) * 0.5 - anchor))
+            ]
+        span = max(run[-1] - run[0] + 1 for run in relevant)
+        if span >= minimum_span:
+            supported.append(int(center))
+    return tuple(supported)
+
+
 def constrain_texts_to_table_cells(
     binary: np.ndarray,
     texts: Sequence[TextCandidate],
@@ -397,26 +448,11 @@ def constrain_texts_to_table_cells(
         return tuple(texts)
     page_height, page_width = binary.shape
     foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
-    horizontal = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_OPEN,
-        cv2.getStructuringElement(
-            cv2.MORPH_RECT,
-            (max(25, int(round(page_width * 0.012))), 1),
-        ),
-    )
-    vertical = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_OPEN,
-        cv2.getStructuringElement(
-            cv2.MORPH_RECT,
-            (1, max(25, int(round(page_height * 0.012)))),
-        ),
-    )
+    horizontal, vertical = verified_structural_rule_masks(foreground)
 
     constrained: list[TextCandidate] = []
     for item in texts:
-        if item.kind in {"signature_candidate", "graphic_candidate"}:
+        if item.kind not in {"text_candidate", "dimension_text_candidate"}:
             constrained.append(item)
             continue
         x, y, width, height = item.bbox
@@ -424,8 +460,8 @@ def constrain_texts_to_table_cells(
         center_y = y + height * 0.5
         band_top = max(0, int(round(y - height * 0.30)))
         band_bottom = min(page_height, int(round(y + height * 1.30)))
-        band_left = max(0, int(round(x - height * 0.40)))
-        band_right = min(page_width, int(round(x + width + height * 0.40)))
+        band_left = max(0, int(round(x - height * 0.80)))
+        band_right = min(page_width, int(round(x + width + height * 0.80)))
         if band_bottom <= band_top or band_right <= band_left:
             constrained.append(item)
             continue
@@ -437,12 +473,24 @@ def constrain_texts_to_table_cells(
         vertical_centers = _projection_centers(
             vertical_projection >= max(4, int(round((band_bottom - band_top) * 0.45)))
         )
+        vertical_centers = _supporting_rule_centers(
+            vertical,
+            vertical_centers,
+            orientation="vertical",
+            candidate_bbox=item.bbox,
+        )
         horizontal_projection = np.count_nonzero(
             horizontal[:, band_left:band_right] > 0,
             axis=1,
         )
         horizontal_centers = _projection_centers(
             horizontal_projection >= max(4, int(round((band_right - band_left) * 0.45)))
+        )
+        horizontal_centers = _supporting_rule_centers(
+            horizontal,
+            horizontal_centers,
+            orientation="horizontal",
+            candidate_bbox=item.bbox,
         )
         lefts = [value for value in vertical_centers if value < center_x]
         rights = [value for value in vertical_centers if value > center_x]
@@ -462,12 +510,7 @@ def constrain_texts_to_table_cells(
         new_bottom = min(y + height, cell_bottom)
         new_width = new_right - new_left
         new_height = new_bottom - new_top
-        if (
-            new_width <= 1
-            or new_height <= 1
-            or new_width < width * 0.55
-            or new_height < height * 0.55
-        ):
+        if new_width <= 1 or new_height <= 1:
             constrained.append(item)
             continue
         if (new_left, new_top, new_width, new_height) == item.bbox:
@@ -499,9 +542,7 @@ def constrain_texts_to_table_cells(
                     (float(new_left), float(new_bottom)),
                 ),
                 character_boxes=tuple(clipped_character_boxes),
-                review_note=(
-                    f"{item.review_note}；" if item.review_note else ""
-                )
+                review_note=(f"{item.review_note}；" if item.review_note else "")
                 + "文字位置已限制在检测到的表格单元格内",
             )
         )

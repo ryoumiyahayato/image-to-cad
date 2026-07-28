@@ -41,23 +41,26 @@ def accepted_ocr_texts(
     *,
     minimum_confidence: float = 0.48,
 ) -> tuple[TextCandidate, ...]:
-    """Return recognized printed text while keeping detected signatures as images.
+    """Return only text that can safely replace its source pixels.
 
-    ``replacement_safe`` remains useful diagnostic information for the optional
-    review UI, but it must not suppress ordinary OCR simply because the text
-    touches a table rule or other drawing ink.  Signature detection has already
-    marked real signature overlaps explicitly as ``signature_candidate``.
+    Low-quality scans commonly join a glyph to a leader, symbol or neighbouring
+    cell. Replacing such a partial connected region with OCR text leaves the
+    surrounding contour in place and visually glues the two objects together.
+    Unreviewed unsafe candidates therefore stay as their exact source contours;
+    an explicit review can still approve a replacement.
     """
 
     accepted: list[TextCandidate] = []
     for item in texts:
         content = item.text.strip()
-        if item.kind in {"signature_candidate", "graphic_candidate"}:
+        if item.kind not in {"text_candidate", "dimension_text_candidate"}:
             continue
         if not content or not item.approved:
             continue
         if item.reviewed:
             accepted.append(item)
+            continue
+        if not item.replacement_safe:
             continue
         confidence = float(item.confidence)
         required = max(float(minimum_confidence), _automatic_threshold(content))
@@ -218,7 +221,9 @@ def add_ocr_outline_blocks(
         content = _normalised_content(candidate.text)
         if not content:
             continue
-        style_name, advance_units, metric_ratios = _font_strategy(doc, candidate, content)
+        style_name, advance_units, metric_ratios = _font_strategy(
+            doc, candidate, content
+        )
         total_units = max(sum(advance_units), 0.01)
         placement = _line_placement_from_quad(
             _candidate_quad(candidate),

@@ -54,8 +54,10 @@ def _to_grayscale(image: np.ndarray) -> np.ndarray:
 def remove_shadow(gray: np.ndarray, kernel_size: int = 35) -> np.ndarray:
     """Estimate the paper background and divide it out to reduce shadows and folds."""
     size = _odd(kernel_size, 9)
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (size, size))
-    background = cv2.morphologyEx(gray, cv2.MORPH_CLOSE, kernel)
+    # A low-frequency blur estimates illumination without reconnecting foreground
+    # strokes. Whole-page morphological closing is forbidden because it can bridge
+    #正文和结构线 before object ownership is known.
+    background = cv2.GaussianBlur(gray, (size, size), 0)
     normalized = cv2.divide(gray, background, scale=255)
     return cv2.normalize(normalized, None, 0, 255, cv2.NORM_MINMAX)
 

@@ -129,7 +129,7 @@ def test_manually_reviewed_text_overrides_low_original_confidence(tmp_path: Path
     assert [entity.dxf.text for entity in texts] == ["1"]
 
 
-def test_long_connected_contour_becomes_one_center_line() -> None:
+def test_long_residual_contour_is_not_promoted_to_blue_center_line() -> None:
     points = tuple((float(index), float(index % 2)) for index in range(150))
     path = TracePath(points=points, parent=None, depth=0, root=0)
     document = ezdxf.new("R2010", setup=True)
@@ -143,10 +143,11 @@ def test_long_connected_contour_becomes_one_center_line() -> None:
     )
 
     lines = list(modelspace.query("LINE"))
-    assert entities == lines
-    assert len(lines) == 1
-    assert len(modelspace.query("LWPOLYLINE")) == 0
-    assert lines[0].dxf.layer == "TRACE_STRAIGHT"
+    outlines = list(modelspace.query("LWPOLYLINE"))
+    assert not lines
+    assert entities == outlines
+    assert outlines
+    assert all(entity.dxf.layer != "TRACE_STRAIGHT" for entity in outlines)
 
 
 def test_graphic_hole_boundaries_are_exported() -> None:

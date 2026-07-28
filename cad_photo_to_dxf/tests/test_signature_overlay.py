@@ -7,6 +7,7 @@ import ezdxf
 import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
+from app.logo_detection import detect_logo_regions
 from app.raster_trace import trace_binary
 from app.signature_overlay import (
     SignatureRegion,
@@ -51,7 +52,7 @@ def _title_block() -> tuple[np.ndarray, tuple[TextCandidate, ...]]:
     return binary, texts
 
 
-def test_signature_crossing_border_is_one_region_and_not_text() -> None:
+def test_signature_detection_is_structural_and_does_not_reclassify_text() -> None:
     binary, texts = _title_block()
     regions = detect_signature_regions(binary, texts)
 
@@ -59,8 +60,7 @@ def test_signature_crossing_border_is_one_region_and_not_text() -> None:
     assert regions[0].bbox[0] < 260
     assert regions[0].bbox[0] + regions[0].bbox[2] > 320
     marked = mark_signature_texts(texts, regions)
-    assert marked[1].kind == "signature_candidate"
-    assert not marked[1].approved
+    assert marked == texts
 
     vector_binary = suppress_signature_strokes(binary, regions)
     assert vector_binary[82, 245] == 255
@@ -68,7 +68,7 @@ def test_signature_crossing_border_is_one_region_and_not_text() -> None:
     assert vector_binary[100, 280] == 0
 
 
-def test_blurred_lower_right_large_handwriting_uses_restricted_fallback() -> None:
+def test_handwriting_detection_does_not_depend_on_ocr_content_or_page_position() -> None:
     binary = np.full((300, 400), 255, dtype=np.uint8)
     for x in (320, 360, 390):
         cv2.line(binary, (x, 190), (x, 280), 0, 2)
@@ -109,12 +109,24 @@ def test_blurred_lower_right_large_handwriting_uses_restricted_fallback() -> Non
 
     regions = detect_signature_regions(binary, candidates)
 
+    renamed = tuple(
+        TextCandidate(
+            text=f"unrelated-{index}",
+            bbox=item.bbox,
+            confidence=item.confidence,
+            kind=item.kind,
+            source=item.source,
+        )
+        for index, item in enumerate(candidates)
+    )
+    renamed_regions = detect_signature_regions(binary, renamed)
+
     assert len(regions) == 1
+    assert [item.bbox for item in regions] == [item.bbox for item in renamed_regions]
     assert regions[0].bbox[0] < 240
     assert regions[0].bbox[0] + regions[0].bbox[2] > 350
     marked = mark_signature_texts(candidates, regions)
-    assert marked[0].kind != "signature_candidate"
-    assert marked[1].kind == "signature_candidate"
+    assert marked == candidates
 
 
 def test_text_suppression_keeps_table_rules() -> None:
@@ -208,7 +220,7 @@ def test_freeform_signature_beside_long_label_is_preserved() -> None:
     assert regions[0].bbox[0] < 285
     assert regions[0].bbox[0] + regions[0].bbox[2] > 420
     assert cv2.countNonZero(regions[0].mask) > 300
-    assert mark_signature_texts((candidate,), regions)[0].kind == "signature_candidate"
+    assert mark_signature_texts((candidate,), regions) == (candidate,)
 
 
 def test_signature_rgba_keeps_original_stroke_footprint() -> None:
@@ -222,7 +234,7 @@ def test_signature_rgba_keeps_original_stroke_footprint() -> None:
     assert np.count_nonzero(rgba[:, :, 3]) == np.count_nonzero(mask)
 
 
-def test_unsafe_text_suppression_does_not_erase_graphic_between_characters() -> None:
+def test_accepted_text_suppression_removes_the_complete_line_box() -> None:
     binary = np.full((120, 240), 255, dtype=np.uint8)
     cv2.circle(binary, (32, 55), 9, 0, -1)
     cv2.circle(binary, (120, 55), 22, 0, 4)
@@ -243,7 +255,7 @@ def test_unsafe_text_suppression_does_not_erase_graphic_between_characters() -> 
     assert cleaned[55, 98] == 0
 
 
-def test_compact_connected_ocr_candidate_is_kept_as_graphic() -> None:
+def test_compact_connected_ocr_candidate_is_not_reclassified_as_graphic() -> None:
     candidate = TextCandidate(
         text="SDD",
         bbox=(50, 40, 150, 45),
@@ -256,5 +268,104 @@ def test_compact_connected_ocr_candidate_is_kept_as_graphic() -> None:
 
     resolved = mark_graphic_texts((candidate,), page_shape=(600, 800))
 
-    assert resolved[0].kind == "graphic_candidate"
-    assert not resolved[0].approved
+    assert resolved[0].kind == "text_candidate"
+    assert resolved[0].approved
+
+
+def test_split_table_text_is_not_misclassified_as_a_logo() -> None:
+    candidate = TextCandidate(
+        text="项目名称",
+        bbox=(50, 40, 150, 45),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=False,
+        character_boxes=(
+            (55, 45, 25, 30),
+            (85, 45, 25, 30),
+            (115, 45, 25, 30),
+            (145, 45, 25, 30),
+        ),
+        review_note="识别框附近仍有未覆盖笔画，保留原图形等待确认",
+    )
+
+    resolved = mark_graphic_texts((candidate,), page_shape=(600, 800))
+
+    assert resolved[0].kind == "text_candidate"
+    assert resolved[0].approved
+
+
+def test_logo_words_do_not_reclassify_text_candidates() -> None:
+    chinese = TextCandidate(
+        text="申都设计",
+        bbox=(80, 90, 180, 44),
+        confidence=0.98,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=True,
+        character_boxes=((80, 90, 40, 44),),
+    )
+    english = TextCandidate(
+        text="SHENDU DESIGN GROUP",
+        bbox=(90, 138, 230, 32),
+        confidence=0.98,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=True,
+        character_boxes=((90, 138, 20, 32),),
+    )
+
+    resolved = mark_graphic_texts((chinese, english), page_shape=(600, 800))
+
+    assert resolved == (chinese, english)
+
+
+def test_logo_semantics_do_not_capture_adjacent_text() -> None:
+    logo = TextCandidate(
+        text="SHENDU DESIGN GROUP",
+        bbox=(80, 180, 360, 55),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=True,
+        character_boxes=((80, 180, 20, 55),),
+    )
+    project_name = TextCandidate(
+        text="Project Name",
+        bbox=(500, 125, 150, 38),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=False,
+        character_boxes=((500, 125, 12, 38),),
+    )
+    sheet_title = TextCandidate(
+        text="Sheet Title",
+        bbox=(500, 205, 140, 38),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        replacement_safe=False,
+        character_boxes=((500, 205, 12, 38),),
+    )
+
+    resolved = mark_graphic_texts(
+        (logo, project_name, sheet_title),
+        page_shape=(800, 1000),
+    )
+
+    assert resolved == (logo, project_name, sheet_title)
+
+
+def test_logo_detector_uses_closed_geometry_instead_of_ocr_words() -> None:
+    binary = np.full((220, 320), 255, dtype=np.uint8)
+    cv2.circle(binary, (120, 110), 54, 0, 5)
+    cv2.circle(binary, (120, 110), 28, 0, 5)
+    cv2.circle(binary, (120, 110), 10, 0, 4)
+    cv2.line(binary, (120, 56), (120, 164), 0, 4)
+
+    regions = detect_logo_regions(binary)
+
+    assert len(regions) == 1
+    assert regions[0].hole_count >= 2
+    assert regions[0].structural_score > 0.5

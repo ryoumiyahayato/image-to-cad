@@ -7,10 +7,10 @@ import cv2
 import numpy as np
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
-from .resolution import image_resolution_scale, scaled_int, scaled_odd
+from .resolution import image_resolution_scale, scaled_int
 
 
-@dataclass
+@dataclass(frozen=True)
 class LineSegment:
     x1: float
     y1: float
@@ -214,14 +214,6 @@ def detect_lines(
     )
 
     foreground = 255 - binary_image
-    # A slight close repairs tiny breaks before line detection. Its physical
-    # footprint scales with the photographed sheet resolution.
-    morphology_size = scaled_odd(3, resolution_scale, minimum=1)
-    foreground = cv2.morphologyEx(
-        foreground,
-        cv2.MORPH_CLOSE,
-        cv2.getStructuringElement(cv2.MORPH_RECT, (morphology_size, morphology_size)),
-    )
     edges = cv2.Canny(foreground, 40, 140, apertureSize=3)
     distance_map = cv2.distanceTransform(foreground, cv2.DIST_L2, 3)
     report_progress(progress_callback, "line-preparation", 0.15)

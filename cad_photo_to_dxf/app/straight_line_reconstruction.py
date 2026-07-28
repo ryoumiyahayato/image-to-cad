@@ -6,10 +6,18 @@ from collections.abc import Sequence
 import cv2
 import numpy as np
 
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
+from .connectivity_safety import evaluate_structural_bridge
 from .geometry_cleaner import GeometryCleanParams, clean_geometry
 from .line_detect import LineDetectionParams, LineSegment, detect_lines
 from .resolution import image_resolution_scale
+from .structural_roi import StructuralRoiSet, detect_structural_rois
+from .text_protection import detect_text_region_mask, filter_text_like_lines
 
 
 def _cross(left: np.ndarray, right: np.ndarray) -> float:
@@ -118,6 +126,416 @@ def _axis_distance(angle: float) -> float:
     return min(normalized, 90.0 - normalized)
 
 
+def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
+    sample_count = max(12, min(512, int(math.ceil(line.length))))
+    xs = np.linspace(line.x1, line.x2, sample_count)
+    ys = np.linspace(line.y1, line.y2, sample_count)
+    xi = np.clip(np.rint(xs).astype(np.int32), 0, mask.shape[1] - 1)
+    yi = np.clip(np.rint(ys).astype(np.int32), 0, mask.shape[0] - 1)
+    return float(np.mean(mask[yi, xi] > 0))
+
+
+def _scan_support_mask(
+    gray: np.ndarray,
+    binary: np.ndarray,
+    *,
+    scale: float,
+) -> np.ndarray:
+    """Return nearby deep ink, excluding weak fold and tape-edge shading."""
+
+    if gray.shape != binary.shape:
+        raise ValueError("Scan support image must match the binary page shape")
+    if gray.dtype != np.uint8:
+        raise ValueError("Scan support image must be an 8-bit grayscale image")
+    foreground_tones = gray[binary < 128]
+    if foreground_tones.size:
+        dark_threshold = int(
+            round(
+                float(
+                    np.clip(
+                        np.percentile(foreground_tones, 50.0),
+                        110.0,
+                        135.0,
+                    )
+                )
+            )
+        )
+    else:
+        dark_threshold = 125
+    deep_ink = np.where(gray <= dark_threshold, 255, 0).astype(np.uint8)
+    radius = max(2, int(round(3.0 * scale)))
+    return cv2.dilate(
+        deep_ink,
+        cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (radius * 2 + 1, radius * 2 + 1),
+        ),
+        iterations=1,
+    )
+
+
+def _binary_support_mask(binary: np.ndarray, *, scale: float) -> np.ndarray:
+    """Return a narrow corridor around source ink for all page types."""
+
+    foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
+    radius = max(1, int(round(1.5 * scale)))
+    return cv2.dilate(
+        foreground,
+        cv2.getStructuringElement(
+            cv2.MORPH_ELLIPSE,
+            (radius * 2 + 1, radius * 2 + 1),
+        ),
+        iterations=1,
+    )
+
+
+def _filter_source_supported_lines(
+    lines: Sequence[LineSegment],
+    *,
+    support_mask: np.ndarray,
+) -> list[LineSegment]:
+    """Reject any centerline that mostly spans pixels absent from the source."""
+
+    kept: list[LineSegment] = []
+    for line in lines:
+        support_fraction, longest_gap_fraction = _line_support_quality(
+            line,
+            support_mask,
+        )
+        if support_fraction < 0.68 or longest_gap_fraction > 0.22:
+            continue
+        kept.append(line)
+    return kept
+
+
+def _trim_endpoints_to_source_support(
+    lines: Sequence[LineSegment],
+    *,
+    support_mask: np.ndarray,
+) -> list[LineSegment]:
+    """Prevent cleaning or snapping from moving endpoints across blank paper."""
+
+    trimmed: list[LineSegment] = []
+    for line in lines:
+        sample_count = max(2, min(4096, int(math.ceil(line.length)) + 1))
+        parameters = np.linspace(0.0, 1.0, sample_count)
+        xs = line.x1 + (line.x2 - line.x1) * parameters
+        ys = line.y1 + (line.y2 - line.y1) * parameters
+        xi = np.clip(np.rint(xs).astype(np.int32), 0, support_mask.shape[1] - 1)
+        yi = np.clip(np.rint(ys).astype(np.int32), 0, support_mask.shape[0] - 1)
+        supported = np.flatnonzero(support_mask[yi, xi] > 0)
+        if not supported.size:
+            continue
+        first = int(supported[0])
+        last = int(supported[-1])
+        if last <= first:
+            continue
+        start = float(parameters[first])
+        end = float(parameters[last])
+        trimmed.append(
+            line.copy(
+                x1=float(line.x1 + (line.x2 - line.x1) * start),
+                y1=float(line.y1 + (line.y2 - line.y1) * start),
+                x2=float(line.x1 + (line.x2 - line.x1) * end),
+                y2=float(line.y1 + (line.y2 - line.y1) * end),
+                history=tuple(
+                    dict.fromkeys(line.history + ("trim_to_source_support",))
+                ),
+            )
+        )
+    return trimmed
+
+
+def _line_support_quality(
+    line: LineSegment,
+    support_mask: np.ndarray,
+) -> tuple[float, float]:
+    """Return total ink support and the longest unsupported fraction."""
+
+    sample_count = max(12, min(2048, int(math.ceil(line.length))))
+    xs = np.linspace(line.x1, line.x2, sample_count)
+    ys = np.linspace(line.y1, line.y2, sample_count)
+    xi = np.clip(np.rint(xs).astype(np.int32), 0, support_mask.shape[1] - 1)
+    yi = np.clip(np.rint(ys).astype(np.int32), 0, support_mask.shape[0] - 1)
+    supported = support_mask[yi, xi] > 0
+    longest_gap = 0
+    current_gap = 0
+    for value in supported:
+        if value:
+            current_gap = 0
+        else:
+            current_gap += 1
+            longest_gap = max(longest_gap, current_gap)
+    return (
+        float(np.mean(supported)),
+        float(longest_gap) / float(sample_count),
+    )
+
+
+def _line_lies_on_crop_edge(
+    line: LineSegment,
+    image_shape: tuple[int, ...],
+    *,
+    margin: float,
+) -> bool:
+    height, width = int(image_shape[0]), int(image_shape[1])
+    return bool(
+        max(line.x1, line.x2) <= margin
+        or min(line.x1, line.x2) >= width - 1 - margin
+        or max(line.y1, line.y2) <= margin
+        or min(line.y1, line.y2) >= height - 1 - margin
+    )
+
+
+def _filter_scan_artifact_lines(
+    lines: Sequence[LineSegment],
+    *,
+    support_mask: np.ndarray,
+    image_shape: tuple[int, ...],
+    scale: float,
+) -> list[LineSegment]:
+    """Reject unsupported crop, fold and tape edges from the blue line layer."""
+
+    if not lines:
+        return []
+    border_margin = max(6.0 * scale, min(image_shape[:2]) * 0.006)
+    kept: list[LineSegment] = []
+    for line in lines:
+        if _line_lies_on_crop_edge(
+            line,
+            image_shape,
+            margin=border_margin,
+        ):
+            continue
+        support_fraction, longest_gap_fraction = _line_support_quality(
+            line,
+            support_mask,
+        )
+        weak_and_broken = support_fraction < 0.55 and longest_gap_fraction > 0.35
+        if support_fraction < 0.40 or longest_gap_fraction > 0.55 or weak_and_broken:
+            continue
+        kept.append(line)
+    return kept
+
+
+def _axis_orientation(line: LineSegment) -> str | None:
+    if abs(line.y2 - line.y1) <= abs(line.x2 - line.x1) * 0.05:
+        return "horizontal"
+    if abs(line.x2 - line.x1) <= abs(line.y2 - line.y1) * 0.05:
+        return "vertical"
+    return None
+
+
+def _axis_coordinate(line: LineSegment, orientation: str) -> float:
+    if orientation == "horizontal":
+        return float((line.y1 + line.y2) * 0.5)
+    return float((line.x1 + line.x2) * 0.5)
+
+
+def _axis_interval(line: LineSegment, orientation: str) -> tuple[float, float]:
+    if orientation == "horizontal":
+        return tuple(sorted((float(line.x1), float(line.x2))))
+    return tuple(sorted((float(line.y1), float(line.y2))))
+
+
+def _parallel_band_ink_support(
+    left: LineSegment,
+    right: LineSegment,
+    *,
+    orientation: str,
+    gray: np.ndarray,
+    scale: float,
+) -> float:
+    """Measure whether two nearby detections lie on one continuous ink stroke.
+
+    A thick scanned rule often produces detections on both stroke edges.  Real
+    double rules instead have a light gap between them.  Sampling the complete
+    cross-band distinguishes those cases without relying on line count alone.
+    """
+
+    left_start, left_end = _axis_interval(left, orientation)
+    right_start, right_end = _axis_interval(right, orientation)
+    overlap_start = max(left_start, right_start)
+    overlap_end = min(left_end, right_end)
+    if overlap_end <= overlap_start:
+        return 0.0
+
+    first = _axis_coordinate(left, orientation)
+    second = _axis_coordinate(right, orientation)
+    low, high = sorted((first, second))
+    # Sample only between the two detections. Padding with surrounding paper
+    # made the decision unstable for anti-aliased coordinates (for example,
+    # 2191.0 versus 2191.03 could add a complete white row).
+    cross_start = int(math.ceil(low))
+    cross_end = int(math.floor(high))
+    along_samples = max(
+        12,
+        min(384, int(math.ceil((overlap_end - overlap_start) / max(1.0, scale)))),
+    )
+    along = np.linspace(overlap_start, overlap_end, along_samples)
+    cross = np.arange(cross_start, cross_end + 1, dtype=np.int32)
+    if cross.size == 0:
+        return 0.0
+
+    if orientation == "horizontal":
+        xs = np.clip(np.rint(along).astype(np.int32), 0, gray.shape[1] - 1)
+        ys = np.clip(cross, 0, gray.shape[0] - 1)
+        samples = gray[ys[:, None], xs[None, :]]
+    else:
+        ys = np.clip(np.rint(along).astype(np.int32), 0, gray.shape[0] - 1)
+        xs = np.clip(cross, 0, gray.shape[1] - 1)
+        samples = gray[ys[:, None], xs[None, :]].T
+
+    dark = samples <= 150
+    cross_occupancy = np.mean(dark, axis=0)
+    return float(np.mean(cross_occupancy >= 0.40))
+
+
+def _parallel_scan_duplicates(
+    left: LineSegment,
+    right: LineSegment,
+    *,
+    orientation: str,
+    gray: np.ndarray,
+    scale: float,
+    maximum_separation: float,
+) -> bool:
+    separation = abs(
+        _axis_coordinate(left, orientation) - _axis_coordinate(right, orientation)
+    )
+    if separation > maximum_separation:
+        return False
+
+    left_start, left_end = _axis_interval(left, orientation)
+    right_start, right_end = _axis_interval(right, orientation)
+    overlap = min(left_end, right_end) - max(left_start, right_start)
+    shorter = min(left_end - left_start, right_end - right_start)
+    if overlap < max(8.0 * scale, shorter * 0.55):
+        return False
+
+    # The ordinary geometry cleaner already handles almost coincident lines.
+    # Wider scan drift is only collapsed when the complete band is genuinely
+    # ink-filled, which preserves adjacent walls and intentional double rules.
+    if separation <= 2.5 * scale:
+        return True
+    return (
+        _parallel_band_ink_support(
+            left,
+            right,
+            orientation=orientation,
+            gray=gray,
+            scale=scale,
+        )
+        >= 0.58
+    )
+
+
+def _merge_parallel_scan_group(
+    group: Sequence[LineSegment],
+    *,
+    orientation: str,
+) -> LineSegment:
+    longest = max(group, key=lambda line: line.length)
+    coordinate = float(
+        np.median([_axis_coordinate(line, orientation) for line in group])
+    )
+    intervals = [_axis_interval(line, orientation) for line in group]
+    start = min(interval[0] for interval in intervals)
+    end = max(interval[1] for interval in intervals)
+    source_ids = tuple(sorted({source for line in group for source in line.source_ids}))
+    history = tuple(dict.fromkeys(item for line in group for item in line.history)) + (
+        "collapse_scan_parallel_duplicate",
+    )
+    reasons = tuple(
+        dict.fromkeys(
+            reason for line in group for reason in line.classification_reasons
+        )
+    )
+    changes: dict[str, object] = {
+        "width": max(line.width for line in group),
+        "confidence": max(line.confidence for line in group),
+        "source_ids": source_ids,
+        "history": history,
+        "classification_confidence": max(
+            line.classification_confidence for line in group
+        ),
+        "classification_reasons": reasons,
+    }
+    if orientation == "horizontal":
+        changes.update(x1=start, y1=coordinate, x2=end, y2=coordinate)
+    else:
+        changes.update(x1=coordinate, y1=start, x2=coordinate, y2=end)
+    return longest.copy(**changes)
+
+
+def collapse_scan_parallel_duplicates(
+    lines: Sequence[LineSegment],
+    *,
+    gray: np.ndarray,
+    scale: float,
+) -> list[LineSegment]:
+    """Collapse duplicate edges of one scanned rule to one centerline.
+
+    Groups use complete-linkage compatibility, so a 0/7/14-pixel chain cannot
+    transitively erase two legitimate neighboring rules.
+    """
+
+    if not lines:
+        return []
+    maximum_separation = max(4.5, 4.5 * scale)
+    remaining = set(range(len(lines)))
+    output: list[LineSegment] = []
+    ordered = sorted(
+        range(len(lines)), key=lambda index: lines[index].length, reverse=True
+    )
+    for index in ordered:
+        if index not in remaining:
+            continue
+        base = lines[index]
+        orientation = _axis_orientation(base)
+        remaining.remove(index)
+        if orientation is None:
+            output.append(base)
+            continue
+        group = [base]
+        candidates = sorted(
+            (
+                candidate
+                for candidate in remaining
+                if _axis_orientation(lines[candidate]) == orientation
+                and abs(
+                    _axis_coordinate(base, orientation)
+                    - _axis_coordinate(lines[candidate], orientation)
+                )
+                <= maximum_separation
+            ),
+            key=lambda candidate: abs(
+                _axis_coordinate(base, orientation)
+                - _axis_coordinate(lines[candidate], orientation)
+            ),
+        )
+        for candidate in candidates:
+            candidate_line = lines[candidate]
+            if all(
+                _parallel_scan_duplicates(
+                    member,
+                    candidate_line,
+                    orientation=orientation,
+                    gray=gray,
+                    scale=scale,
+                    maximum_separation=maximum_separation,
+                )
+                for member in group
+            ):
+                group.append(candidate_line)
+                remaining.remove(candidate)
+        if len(group) == 1:
+            output.append(base)
+        else:
+            output.append(_merge_parallel_scan_group(group, orientation=orientation))
+    return output
+
+
 def _structural_intersection_pair(
     left: LineSegment,
     right: LineSegment,
@@ -129,9 +547,9 @@ def _structural_intersection_pair(
     difference = _angle_difference(left, right)
     if difference < minimum_angle_degrees:
         return False
-    both_axis_aligned = _axis_distance(left.angle) <= 4.0 and _axis_distance(
-        right.angle
-    ) <= 4.0
+    both_axis_aligned = (
+        _axis_distance(left.angle) <= 4.0 and _axis_distance(right.angle) <= 4.0
+    )
     near_perpendicular = 72.0 <= difference <= 108.0
     return bool(both_axis_aligned or near_perpendicular)
 
@@ -140,6 +558,9 @@ def extend_lines_to_first_intersection(
     lines: Sequence[LineSegment],
     *,
     maximum_extension: float,
+    structural_rois: StructuralRoiSet | None = None,
+    source_foreground: np.ndarray | None = None,
+    protected_mask: np.ndarray | None = None,
     minimum_angle_degrees: float = 7.5,
     max_pair_checks: int = 750_000,
     cancellation_token: CancellationToken | None = None,
@@ -153,7 +574,12 @@ def extend_lines_to_first_intersection(
     """
 
     resolved = [line.copy() for line in lines if line.length > 1e-9]
-    if not resolved or maximum_extension <= 0.0:
+    if (
+        not resolved
+        or maximum_extension <= 0.0
+        or structural_rois is None
+        or source_foreground is None
+    ):
         return resolved
 
     choices: dict[tuple[int, int], tuple[float, np.ndarray]] = {}
@@ -193,6 +619,13 @@ def extend_lines_to_first_intersection(
         )
         if left_endpoint is None and right_endpoint is None:
             continue
+        roi = structural_rois.common_roi(
+            left_index,
+            right_index,
+            (float(point[0]), float(point[1])),
+        )
+        if roi is None:
+            continue
         for line_index, endpoint in (
             (left_index, left_endpoint),
             (right_index, right_endpoint),
@@ -203,6 +636,21 @@ def extend_lines_to_first_intersection(
             source_line = resolved[line_index]
             relative_limit = max(2.0, source_line.length * 0.20)
             if distance > relative_limit:
+                continue
+            source_point = (
+                (float(source_line.x1), float(source_line.y1))
+                if endpoint_index == 0
+                else (float(source_line.x2), float(source_line.y2))
+            )
+            decision = evaluate_structural_bridge(
+                roi=roi,
+                lines=resolved,
+                start=source_point,
+                end=(float(point[0]), float(point[1])),
+                source_foreground=source_foreground,
+                protected_mask=protected_mask,
+            )
+            if not decision.allowed:
                 continue
             key = (line_index, endpoint_index)
             current = choices.get(key)
@@ -233,15 +681,32 @@ def extend_lines_to_first_intersection(
 def reconstruct_straight_lines(
     binary: np.ndarray,
     *,
+    scan_support_gray: np.ndarray | None = None,
+    protected_mask: np.ndarray | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
 ) -> tuple[LineSegment, ...]:
-    """Detect long printed strokes and rebuild them as editable center lines."""
+    """Detect table/frame rules without turning text or logos into blue lines.
+
+    Residual curves, glyph strokes and diagonal drawing content stay in the
+    contour channel.  Only near-horizontal or near-vertical structural rules
+    are eligible for native LINE reconstruction.
+    """
 
     if binary.ndim != 2 or binary.size == 0:
         return ()
     scale = image_resolution_scale(binary.shape)
-    minimum_length = max(24.0 * scale, min(binary.shape[:2]) * 0.008)
+    source_support = _binary_support_mask(binary, scale=scale)
+    support_mask = (
+        None
+        if scan_support_gray is None
+        else _scan_support_mask(
+            scan_support_gray,
+            binary,
+            scale=scale,
+        )
+    )
+    minimum_length = max(28.0 * scale, min(binary.shape[:2]) * 0.012)
     raw = detect_lines(
         binary,
         LineDetectionParams(
@@ -267,12 +732,25 @@ def reconstruct_straight_lines(
         for line in raw
         if line.length >= minimum_length
         and line.length >= max(10.0 * line.width, minimum_length)
-        and (
-            _axis_distance(line.angle) <= 4.0
-            or line.length
-            >= max(min(binary.shape[:2]) * 0.04, minimum_length * 3.0)
-        )
+        and _axis_distance(line.angle) <= 4.0
     ]
+    candidates = _filter_source_supported_lines(
+        candidates,
+        support_mask=source_support,
+    )
+    text_protection = detect_text_region_mask(binary)
+    candidates, _text_protection = filter_text_like_lines(
+        candidates,
+        text_protection,
+        binary.shape,
+    )
+    if support_mask is not None:
+        candidates = _filter_scan_artifact_lines(
+            candidates,
+            support_mask=support_mask,
+            image_shape=binary.shape,
+            scale=scale,
+        )
     report_progress(progress_callback, "line-filtering", 0.58)
     if not candidates:
         return ()
@@ -280,8 +758,8 @@ def reconstruct_straight_lines(
     cleaned = clean_geometry(
         candidates,
         GeometryCleanParams(
-            snap_distance=4.0 * scale,
-            max_bridge_gap=12.0 * scale,
+            snap_distance=0.0,
+            max_bridge_gap=0.0,
             angle_tolerance=2.5,
             collinear_distance=2.5 * scale,
             duplicate_distance=2.5 * scale,
@@ -290,11 +768,66 @@ def reconstruct_straight_lines(
         ),
         cancellation_token,
     )
+    if support_mask is not None:
+        cleaned = _filter_scan_artifact_lines(
+            cleaned,
+            support_mask=support_mask,
+            image_shape=binary.shape,
+            scale=scale,
+        )
+        cleaned = collapse_scan_parallel_duplicates(
+            cleaned,
+            gray=scan_support_gray,
+            scale=scale,
+        )
+        cleaned = _filter_scan_artifact_lines(
+            cleaned,
+            support_mask=support_mask,
+            image_shape=binary.shape,
+            scale=scale,
+        )
+    cleaned = _filter_source_supported_lines(
+        cleaned,
+        support_mask=source_support,
+    )
+    cleaned = _trim_endpoints_to_source_support(
+        cleaned,
+        support_mask=source_support,
+    )
     report_progress(progress_callback, "line-cleaning", 0.86)
+    extension_budget = max(2.0, 3.0 * scale)
+    structural_rois = detect_structural_rois(
+        cleaned,
+        image_shape=binary.shape,
+        extension_budget=extension_budget,
+    )
     extended = extend_lines_to_first_intersection(
         cleaned,
-        maximum_extension=max(6.0, 12.0 * scale),
+        maximum_extension=extension_budget,
+        structural_rois=structural_rois,
+        source_foreground=np.where(binary < 128, 255, 0).astype(np.uint8),
+        protected_mask=protected_mask,
         cancellation_token=cancellation_token,
+    )
+    if support_mask is not None:
+        extended = collapse_scan_parallel_duplicates(
+            extended,
+            gray=scan_support_gray,
+            scale=scale,
+        )
+        extended = _filter_scan_artifact_lines(
+            extended,
+            support_mask=support_mask,
+            image_shape=binary.shape,
+            scale=scale,
+        )
+    extended = _filter_source_supported_lines(
+        extended,
+        support_mask=source_support,
+    )
+    extended = _trim_endpoints_to_source_support(
+        extended,
+        support_mask=source_support,
     )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-reconstruction", 1.0)

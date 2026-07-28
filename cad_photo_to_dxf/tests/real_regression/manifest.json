@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "final_structure_schema_version": 2,
+  "minimum_documents": 3,
+  "minimum_source_documents": 3,
+  "documents": [
+    {
+      "id": "perspective-sample-plan",
+      "source_document": "sample-plan-photo",
+      "source_path": "tests/real_regression/assets/test.jpg",
+      "sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "provenance": {
+        "source": "existing workspace sample supplied with the repository",
+        "usage": "project-internal full-page regression fixture",
+        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
+        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      },
+      "expected": {
+        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+        "source_size_px": [1850, 1250],
+        "contour_count": 146,
+        "straight_line_count": 90,
+        "text_count": 2,
+        "logo_count": 0,
+        "signature_count": 0,
+        "foreground_pixels": 643818,
+        "contour_vertex_count": 7593,
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "dxf_entity_count": 317,
+        "dxf_line_count": 90,
+        "dxf_text_count": 0,
+        "dxf_trace_path_count": 146,
+        "dxf_trace_vertex_count": 7593
+      }
+    },
+    {
+      "id": "environment-plan-page-003",
+      "source_document": "environment-plan-pdf",
+      "source_path": "tests/real_regression/assets/environment-page-003.png",
+      "sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "provenance": {
+        "source": "existing workspace PDF baseline page supplied with the repository",
+        "usage": "project-internal full-page regression fixture",
+        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
+        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      },
+      "expected": {
+        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943",
+        "source_size_px": [2478, 1752],
+        "contour_count": 2245,
+        "straight_line_count": 634,
+        "text_count": 154,
+        "logo_count": 0,
+        "signature_count": 0,
+        "foreground_pixels": 122832,
+        "contour_vertex_count": 35353,
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "dxf_entity_count": 2968,
+        "dxf_line_count": 634,
+        "dxf_text_count": 23,
+        "dxf_trace_path_count": 2220,
+        "dxf_trace_vertex_count": 34958
+      }
+    },
+    {
+      "id": "warehouse-index-page-001",
+      "source_document": "warehouse-index-pdf",
+      "source_path": "tests/real_regression/assets/warehouse-page-001.png",
+      "sha256": "ee4937113bf9615ae2ab056c71850d279fea515258b7c87ed0b100439bf6011d",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "provenance": {
+        "source": "existing workspace PDF baseline page supplied with the repository",
+        "usage": "project-internal full-page regression fixture",
+        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
+        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      },
+      "expected": {
+        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c",
+        "source_size_px": [1359, 1890],
+        "contour_count": 889,
+        "straight_line_count": 121,
+        "text_count": 91,
+        "logo_count": 0,
+        "signature_count": 0,
+        "foreground_pixels": 31260,
+        "contour_vertex_count": 12775,
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "dxf_entity_count": 981,
+        "dxf_line_count": 121,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 798,
+        "dxf_trace_vertex_count": 11753
+      }
+    }
+  ]
+}

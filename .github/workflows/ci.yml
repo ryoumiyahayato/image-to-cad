@@ -57,6 +57,17 @@ jobs:
           python -m pytest -q --junitxml=output/ci/pytest-junit.xml \
             2>&1 | tee output/ci/pytest.log
 
+      - name: Run mandatory full-page real-document regression
+        shell: bash
+        run: |
+          mkdir -p output/ci
+          set -o pipefail
+          python scripts/run_real_document_regression.py \
+            --manifest tests/real_regression/manifest.json \
+            --output output/ci/real-document-regression.json \
+            --artifacts output/ci/real-document-regression \
+            2>&1 | tee output/ci/real-document-regression.log
+
       - name: Validate existing real-photo fixture manifests
         run: |
           mkdir -p output/ci

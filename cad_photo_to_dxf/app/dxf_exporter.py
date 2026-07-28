@@ -43,6 +43,7 @@ class ExportResult:
     dwg_path: Path | None = None
     output_format: str = "DXF"
     signature_paths: tuple[Path, ...] = ()
+    structure_id: str | None = None
 
 
 LAYER_STYLES = {
