@@ -9,6 +9,7 @@ from app.straight_line_reconstruction import (
     collapse_scan_parallel_duplicates,
     extend_lines_to_first_intersection,
     reconstruct_straight_lines,
+    suppress_parallel_duplicate_detections,
     suppress_reconstructed_lines,
 )
 
@@ -149,7 +150,7 @@ def test_extension_distance_is_bounded_by_source_line_length() -> None:
     assert resolved[0].p2.tolist() == short.p2.tolist()
 
 
-def test_ocr_boxes_do_not_cut_a_structural_rule_network() -> None:
+def test_crossing_rule_segments_are_not_globally_rejoined() -> None:
     binary = np.full((260, 360), 255, dtype=np.uint8)
     cv2.rectangle(binary, (15, 15), (345, 245), 0, 3)
     cv2.line(binary, (95, 95), (265, 95), 0, 4)
@@ -158,11 +159,45 @@ def test_ocr_boxes_do_not_cut_a_structural_rule_network() -> None:
     lines = reconstruct_straight_lines(binary)
 
     assert lines
-    assert any(
-        abs((line.y1 + line.y2) * 0.5 - 95.0) <= 4.0
-        and line.length >= 150.0
+    horizontal = [
+        line
         for line in lines
+        if abs((line.y1 + line.y2) * 0.5 - 95.0) <= 4.0
+    ]
+    assert any(max(line.x1, line.x2) < 180.0 for line in horizontal)
+    assert any(min(line.x1, line.x2) > 180.0 for line in horizontal)
+    assert not any(
+        min(line.x1, line.x2) < 170.0
+        and max(line.x1, line.x2) > 190.0
+        for line in horizontal
     )
+
+
+def test_duplicate_suppression_keeps_one_original_segment() -> None:
+    gray = np.full((100, 120), 255, dtype=np.uint8)
+    cv2.line(gray, (10, 50), (90, 50), 0, 5, cv2.LINE_8)
+    longest = LineSegment(10.0, 49.0, 90.0, 49.0)
+    duplicate = LineSegment(20.0, 51.0, 80.0, 51.0)
+
+    resolved = suppress_parallel_duplicate_detections(
+        [duplicate, longest],
+        gray=gray,
+        scale=1.0,
+    )
+
+    assert len(resolved) == 1
+    assert (
+        resolved[0].x1,
+        resolved[0].y1,
+        resolved[0].x2,
+        resolved[0].y2,
+    ) == (
+        longest.x1,
+        longest.y1,
+        longest.x2,
+        longest.y2,
+    )
+    assert "suppress_parallel_duplicate_detection" in resolved[0].history
 
 
 def test_low_contrast_crop_and_fold_edges_do_not_become_blue_lines() -> None:

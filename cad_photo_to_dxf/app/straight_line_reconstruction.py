@@ -13,8 +13,11 @@ from .cancellation import (
     checkpoint,
     report_progress,
 )
-from .connectivity_safety import evaluate_structural_bridge
-from .geometry_cleaner import GeometryCleanParams, clean_geometry
+from .connectivity_safety import (
+    StructuralConnectivityContext,
+    build_structural_connectivity_context,
+    evaluate_structural_bridge,
+)
 from .line_detect import LineDetectionParams, LineSegment, detect_lines
 from .observability import (
     ObservationSink,
@@ -547,6 +550,78 @@ def collapse_scan_parallel_duplicates(
     return output
 
 
+def suppress_parallel_duplicate_detections(
+    lines: Sequence[LineSegment],
+    *,
+    gray: np.ndarray,
+    scale: float,
+) -> list[LineSegment]:
+    """Drop duplicate detections without moving or joining source endpoints."""
+
+    if not lines:
+        return []
+    maximum_separation = max(4.5, 4.5 * scale)
+    remaining = set(range(len(lines)))
+    output: list[LineSegment] = []
+    ordered = sorted(
+        range(len(lines)),
+        key=lambda index: lines[index].length,
+        reverse=True,
+    )
+    for index in ordered:
+        if index not in remaining:
+            continue
+        base = lines[index]
+        orientation = _axis_orientation(base)
+        remaining.remove(index)
+        if orientation is None:
+            output.append(base)
+            continue
+        group = [base]
+        candidates = sorted(
+            (
+                candidate
+                for candidate in remaining
+                if _axis_orientation(lines[candidate]) == orientation
+                and abs(
+                    _axis_coordinate(base, orientation)
+                    - _axis_coordinate(lines[candidate], orientation)
+                )
+                <= maximum_separation
+            ),
+            key=lambda candidate: abs(
+                _axis_coordinate(base, orientation)
+                - _axis_coordinate(lines[candidate], orientation)
+            ),
+        )
+        for candidate in candidates:
+            candidate_line = lines[candidate]
+            if all(
+                _parallel_scan_duplicates(
+                    member,
+                    candidate_line,
+                    orientation=orientation,
+                    gray=gray,
+                    scale=scale,
+                    maximum_separation=maximum_separation,
+                )
+                for member in group
+            ):
+                group.append(candidate_line)
+                remaining.remove(candidate)
+        if len(group) > 1:
+            base = base.copy(
+                history=tuple(
+                    dict.fromkeys(
+                        base.history
+                        + ("suppress_parallel_duplicate_detection",)
+                    )
+                )
+            )
+        output.append(base)
+    return output
+
+
 def _structural_intersection_pair(
     left: LineSegment,
     right: LineSegment,
@@ -630,6 +705,7 @@ def extend_lines_to_first_intersection(
 
     choices: dict[tuple[int, int], tuple[float, np.ndarray]] = {}
     choice_records: dict[tuple[int, int], dict[str, Any]] = {}
+    connectivity_contexts: dict[str, StructuralConnectivityContext] = {}
     allowed_attempts: list[dict[str, Any]] = []
     rejected_connections: list[dict[str, Any]] = []
     attempt_id = 0
@@ -752,6 +828,15 @@ def extend_lines_to_first_intersection(
                         }
                     )
                 continue
+            context = connectivity_contexts.get(roi.roi_id)
+            if context is None:
+                context = build_structural_connectivity_context(
+                    roi=roi,
+                    lines=resolved,
+                    source_foreground=source_foreground,
+                    protected_mask=protected_mask,
+                )
+                connectivity_contexts[roi.roi_id] = context
             decision = evaluate_structural_bridge(
                 roi=roi,
                 lines=resolved,
@@ -759,6 +844,7 @@ def extend_lines_to_first_intersection(
                 end=(float(point[0]), float(point[1])),
                 source_foreground=source_foreground,
                 protected_mask=protected_mask,
+                context=context,
             )
             record = None
             if observation_sink is not None:
@@ -911,7 +997,10 @@ def reconstruct_straight_lines(
         binary,
         LineDetectionParams(
             min_line_length=24,
-            max_line_gap=12,
+            # A page-wide Hough gap joins unrelated glyph, symbol and rule
+            # fragments before ownership is known. Any repair must instead be
+            # proposed later inside a verified StructuralRoi.
+            max_line_gap=0,
             hough_threshold=28,
             use_lsd=True,
             max_segments=5000,
@@ -1040,31 +1129,15 @@ def reconstruct_straight_lines(
             )
         return ()
 
-    cleaned = clean_geometry(
+    # Do not run the generic whole-page geometry cleaner here. Even with a
+    # zero bridge distance it still performs page-wide orthogonalization,
+    # collinear grouping and endpoint passes. Candidate coordinates remain
+    # source-derived until the ROI-constrained extension decision below.
+    cleaned = _trim_endpoints_to_source_support(
         candidates,
-        GeometryCleanParams(
-            snap_distance=0.0,
-            max_bridge_gap=0.0,
-            angle_tolerance=2.5,
-            collinear_distance=2.5 * scale,
-            duplicate_distance=2.5 * scale,
-            min_line_length=minimum_length,
-            max_pair_checks=750_000,
-        ),
-        cancellation_token,
+        support_mask=source_support,
     )
     if support_mask is not None:
-        cleaned = _filter_scan_artifact_lines(
-            cleaned,
-            support_mask=support_mask,
-            image_shape=binary.shape,
-            scale=scale,
-        )
-        cleaned = collapse_scan_parallel_duplicates(
-            cleaned,
-            gray=scan_support_gray,
-            scale=scale,
-        )
         cleaned = _filter_scan_artifact_lines(
             cleaned,
             support_mask=support_mask,
@@ -1078,6 +1151,11 @@ def reconstruct_straight_lines(
     cleaned = _trim_endpoints_to_source_support(
         cleaned,
         support_mask=source_support,
+    )
+    cleaned = suppress_parallel_duplicate_detections(
+        cleaned,
+        gray=(binary if scan_support_gray is None else scan_support_gray),
+        scale=scale,
     )
     report_progress(progress_callback, "line-cleaning", 0.86)
     extension_budget = max(2.0, 3.0 * scale)
@@ -1107,11 +1185,6 @@ def reconstruct_straight_lines(
         observation_sink=observation_sink,
     )
     if support_mask is not None:
-        extended = collapse_scan_parallel_duplicates(
-            extended,
-            gray=scan_support_gray,
-            scale=scale,
-        )
         extended = _filter_scan_artifact_lines(
             extended,
             support_mask=support_mask,

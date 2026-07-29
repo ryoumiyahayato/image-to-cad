@@ -1,0 +1,2108 @@
+{
+  "coverage_categories": [
+    "broken_frame",
+    "broken_table_lines",
+    "complex_table",
+    "dashed_and_dashdot_lines",
+    "dense_text",
+    "digital_generated_pdf",
+    "dimensions",
+    "dpi_150",
+    "dpi_300",
+    "dpi_600",
+    "graphic_logo",
+    "high_resolution_large_page",
+    "landscape_drawing",
+    "leaders_and_arrows",
+    "low_quality_scan",
+    "mixed_chinese_english_numbers",
+    "mobile_perspective_photo",
+    "no_title_block",
+    "portrait_drawing",
+    "short_and_double_lines",
+    "signature_adjacent_text",
+    "wordmark_logo"
+  ],
+  "document_count": 12,
+  "documents": [
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 146,
+          "signature": 0,
+          "structural_line": 172,
+          "text": 2
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 0,
+              "bbox": [
+                720,
+                850,
+                300,
+                130
+              ],
+              "final_foreground_pixels": 0,
+              "id": "lower-center-open-space",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 0,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 0
+              },
+              "source_foreground_pixels": 0
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 9846,
+              "bbox": [
+                240,
+                130,
+                1320,
+                720
+              ],
+              "final_foreground_pixels": 79091,
+              "id": "perspective-plan-structure",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 23222,
+                "preserved_foreground": 79091,
+                "signature": 0,
+                "structural_line": 74504,
+                "text": 2496
+              },
+              "source_foreground_pixels": 69245
+            }
+          ],
+          "logo_regions": [],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 338,
+              "bbox": [
+                100,
+                1010,
+                520,
+                150
+              ],
+              "final_foreground_pixels": 9122,
+              "id": "sample-plan-title",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 4782,
+                "preserved_foreground": 9122,
+                "signature": 0,
+                "structural_line": 5619,
+                "text": 22400
+              },
+              "source_foreground_pixels": 8784
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "164a0b5d05c69587725242d8194d7b3aa16c2fb2334c38cd40d7c5c525c40569"
+      },
+      "coverage_categories": [
+        "mobile_perspective_photo",
+        "landscape_drawing",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "no_title_block"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\perspective-sample-plan.dxf",
+      "elapsed_seconds": 6.089,
+      "errors": [],
+      "id": "perspective-sample-plan",
+      "metrics": {
+        "content_audit_sha256": "164a0b5d05c69587725242d8194d7b3aa16c2fb2334c38cd40d7c5c525c40569",
+        "contour_count": 146,
+        "contour_vertex_count": 6579,
+        "dxf_entity_count": 382,
+        "dxf_line_count": 172,
+        "dxf_text_count": 0,
+        "dxf_trace_path_count": 146,
+        "dxf_trace_vertex_count": 6579,
+        "foreground_pixels": 613939,
+        "logo_count": 0,
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "signature_count": 0,
+        "source_size_px": [
+          1850,
+          1250
+        ],
+        "straight_line_count": 172,
+        "structure_id": "9c2be74e17ad6215faa117565187ff2fef5288a14e3526ac780220794dce925c",
+        "text_count": 2
+      },
+      "original_path": "tests/real_regression/assets/test.jpg",
+      "original_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/test.jpg",
+      "source_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 2983,
+          "signature": 0,
+          "structural_line": 590,
+          "text": 154
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 1851,
+              "bbox": [
+                80,
+                80,
+                280,
+                150
+              ],
+              "final_foreground_pixels": 1873,
+              "id": "upper-left-paper-space",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 1873,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 0
+              },
+              "source_foreground_pixels": 22
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 25585,
+              "bbox": [
+                260,
+                300,
+                1680,
+                920
+              ],
+              "final_foreground_pixels": 202693,
+              "id": "main-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 112989,
+                "preserved_foreground": 202693,
+                "signature": 0,
+                "structural_line": 123401,
+                "text": 31139
+              },
+              "source_foreground_pixels": 177117
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 1128,
+              "bbox": [
+                2220,
+                20,
+                220,
+                220
+              ],
+              "final_foreground_pixels": 11023,
+              "id": "top-right-graphic-mark",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 6959,
+                "preserved_foreground": 11023,
+                "signature": 0,
+                "structural_line": 5940,
+                "text": 12952
+              },
+              "source_foreground_pixels": 9895
+            }
+          ],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 3621,
+              "bbox": [
+                1360,
+                1360,
+                650,
+                260
+              ],
+              "final_foreground_pixels": 20481,
+              "id": "lower-handwritten-approval",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 16047,
+                "preserved_foreground": 20481,
+                "signature": 0,
+                "structural_line": 3802,
+                "text": 74437
+              },
+              "source_foreground_pixels": 16860
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 4947,
+              "bbox": [
+                650,
+                1370,
+                1200,
+                280
+              ],
+              "final_foreground_pixels": 27269,
+              "id": "page-title-and-notes",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 17099,
+                "preserved_foreground": 27269,
+                "signature": 0,
+                "structural_line": 7605,
+                "text": 71121
+              },
+              "source_foreground_pixels": 22322
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "6ef29a88a669311ca4124c956424d8545d32895191c292c8593a80c2ef706f15"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "dpi_150",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-plan-page-003-150dpi.dxf",
+      "elapsed_seconds": 16.541,
+      "errors": [],
+      "id": "environment-plan-page-003-150dpi",
+      "metrics": {
+        "content_audit_sha256": "6ef29a88a669311ca4124c956424d8545d32895191c292c8593a80c2ef706f15",
+        "contour_count": 2983,
+        "contour_vertex_count": 55684,
+        "dxf_entity_count": 3845,
+        "dxf_line_count": 590,
+        "dxf_text_count": 23,
+        "dxf_trace_path_count": 2978,
+        "dxf_trace_vertex_count": 55491,
+        "foreground_pixels": 224008,
+        "logo_count": 0,
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "signature_count": 0,
+        "source_size_px": [
+          2478,
+          1752
+        ],
+        "straight_line_count": 590,
+        "structure_id": "36d71eea4b1135d8016ed07a823d9bf00d7565c0ae0defdce89f40f489f40c17",
+        "text_count": 154
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-page-003.png",
+      "source_sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 834,
+          "signature": 0,
+          "structural_line": 503,
+          "text": 91
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 0,
+              "bbox": [
+                280,
+                920,
+                600,
+                230
+              ],
+              "final_foreground_pixels": 3450,
+              "id": "blank-index-cells",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 3450,
+                "signature": 0,
+                "structural_line": 16955,
+                "text": 0
+              },
+              "source_foreground_pixels": 3450
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 32978,
+              "bbox": [
+                130,
+                70,
+                1110,
+                1680
+              ],
+              "final_foreground_pixels": 118774,
+              "id": "full-index-network",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 32053,
+                "preserved_foreground": 118774,
+                "signature": 0,
+                "structural_line": 195424,
+                "text": 296383
+              },
+              "source_foreground_pixels": 85796
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 2832,
+              "bbox": [
+                170,
+                80,
+                620,
+                230
+              ],
+              "final_foreground_pixels": 9628,
+              "id": "wordmark-and-graphic-logo",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 5148,
+                "preserved_foreground": 9628,
+                "signature": 0,
+                "structural_line": 7884,
+                "text": 47253
+              },
+              "source_foreground_pixels": 6796
+            }
+          ],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 20601,
+              "bbox": [
+                180,
+                300,
+                920,
+                1050
+              ],
+              "final_foreground_pixels": 67315,
+              "id": "drawing-index-table",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 13289,
+                "preserved_foreground": 67315,
+                "signature": 0,
+                "structural_line": 116292,
+                "text": 179317
+              },
+              "source_foreground_pixels": 46714
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "40711c4cc07df2267211ff66bb32e432b5f5c6662adf776287324bea3f025f09"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "dpi_150",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\warehouse-index-page-001-150dpi.dxf",
+      "elapsed_seconds": 7.227,
+      "errors": [],
+      "id": "warehouse-index-page-001-150dpi",
+      "metrics": {
+        "content_audit_sha256": "40711c4cc07df2267211ff66bb32e432b5f5c6662adf776287324bea3f025f09",
+        "contour_count": 834,
+        "contour_vertex_count": 12471,
+        "dxf_entity_count": 1396,
+        "dxf_line_count": 503,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 829,
+        "dxf_trace_vertex_count": 12451,
+        "foreground_pixels": 32107,
+        "logo_count": 0,
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "signature_count": 0,
+        "source_size_px": [
+          1359,
+          1890
+        ],
+        "straight_line_count": 503,
+        "structure_id": "4de8044dfee6344b4101aa209c9649eb2c5e24cf0cfbcad6e345eeeb84ada788",
+        "text_count": 91
+      },
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/warehouse-page-001.png",
+      "source_sha256": "ee4937113bf9615ae2ab056c71850d279fea515258b7c87ed0b100439bf6011d"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 3007,
+          "signature": 0,
+          "structural_line": 518,
+          "text": 140
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 2550,
+              "bbox": [
+                1280,
+                980,
+                600,
+                260
+              ],
+              "final_foreground_pixels": 15660,
+              "id": "handwriting-near-room-labels",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 12888,
+                "preserved_foreground": 15660,
+                "signature": 0,
+                "structural_line": 3462,
+                "text": 41390
+              },
+              "source_foreground_pixels": 13111
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 22473,
+              "bbox": [
+                220,
+                190,
+                1500,
+                900
+              ],
+              "final_foreground_pixels": 170927,
+              "id": "first-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 111530,
+                "preserved_foreground": 170927,
+                "signature": 0,
+                "structural_line": 90435,
+                "text": 99277
+              },
+              "source_foreground_pixels": 148470
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 1212,
+              "bbox": [
+                1780,
+                0,
+                190,
+                180
+              ],
+              "final_foreground_pixels": 7155,
+              "id": "top-right-graphic-logo",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 7155,
+                "signature": 0,
+                "structural_line": 1848,
+                "text": 9766
+              },
+              "source_foreground_pixels": 5944
+            }
+          ],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 2106,
+              "bbox": [
+                1370,
+                1090,
+                520,
+                210
+              ],
+              "final_foreground_pixels": 14273,
+              "id": "lower-right-approval-signature",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 11933,
+                "preserved_foreground": 14273,
+                "signature": 0,
+                "structural_line": 2274,
+                "text": 40210
+              },
+              "source_foreground_pixels": 12168
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 9935,
+              "bbox": [
+                20,
+                520,
+                820,
+                700
+              ],
+              "final_foreground_pixels": 73473,
+              "id": "left-note-and-bottom-title",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 49066,
+                "preserved_foreground": 73473,
+                "signature": 0,
+                "structural_line": 33619,
+                "text": 54726
+              },
+              "source_foreground_pixels": 63543
+            }
+          ],
+          "true_breaks_to_repair": [
+            {
+              "added_foreground_pixels": 373,
+              "bbox": [
+                300,
+                0,
+                180,
+                80
+              ],
+              "final_foreground_pixels": 679,
+              "id": "damaged-top-frame",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 679,
+                "signature": 0,
+                "structural_line": 654,
+                "text": 0
+              },
+              "source_foreground_pixels": 309
+            }
+          ]
+        },
+        "sha256": "13cbdfab7963860af3276029851c2d99ce368afd390692db7914ccc840eac12c"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-scan-page-001-120dpi.dxf",
+      "elapsed_seconds": 11.681,
+      "errors": [],
+      "id": "environment-scan-page-001-120dpi",
+      "metrics": {
+        "content_audit_sha256": "13cbdfab7963860af3276029851c2d99ce368afd390692db7914ccc840eac12c",
+        "contour_count": 3007,
+        "contour_vertex_count": 48473,
+        "dxf_entity_count": 3723,
+        "dxf_line_count": 518,
+        "dxf_text_count": 11,
+        "dxf_trace_path_count": 2993,
+        "dxf_trace_vertex_count": 48401,
+        "foreground_pixels": 159287,
+        "logo_count": 0,
+        "preview_sha256": "407135bc7c313816168c514a27b483668236d26a64dcd290bd597eda17f37210",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 518,
+        "structure_id": "fb07be3f447c072c1a5a278bea5025e1cd6cba112afa57d3027587788ac7248d",
+        "text_count": 140
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-scan-page-01-120dpi.png",
+      "source_sha256": "f410cb2751e688b8f6e823ae9b60e6c59aed3312934de264e0c75f717482957b"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 2661,
+          "signature": 1,
+          "structural_line": 367,
+          "text": 99
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 725,
+              "bbox": [
+                1660,
+                720,
+                270,
+                220
+              ],
+              "final_foreground_pixels": 2962,
+              "id": "right-handwritten-margin",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 1552,
+                "preserved_foreground": 2962,
+                "signature": 0,
+                "structural_line": 2263,
+                "text": 2202
+              },
+              "source_foreground_pixels": 2237
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 17887,
+              "bbox": [
+                300,
+                220,
+                1330,
+                760
+              ],
+              "final_foreground_pixels": 125851,
+              "id": "second-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 87728,
+                "preserved_foreground": 125851,
+                "signature": 720,
+                "structural_line": 57533,
+                "text": 22175
+              },
+              "source_foreground_pixels": 107976
+            }
+          ],
+          "logo_regions": [],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 782,
+              "bbox": [
+                1590,
+                920,
+                330,
+                220
+              ],
+              "final_foreground_pixels": 2227,
+              "id": "right-lower-handwriting",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 1835,
+                "preserved_foreground": 2227,
+                "signature": 0,
+                "structural_line": 626,
+                "text": 6118
+              },
+              "source_foreground_pixels": 1445
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 2977,
+              "bbox": [
+                1300,
+                870,
+                620,
+                360
+              ],
+              "final_foreground_pixels": 13816,
+              "id": "right-side-title-and-notes",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 9172,
+                "preserved_foreground": 13816,
+                "signature": 0,
+                "structural_line": 7620,
+                "text": 24106
+              },
+              "source_foreground_pixels": 10839
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "b33673830cc6250b1fd65a84e2730105ebcd9fcf8e1fcd1e55e1fee8e57ef218"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "broken_frame",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-scan-page-002-120dpi.dxf",
+      "elapsed_seconds": 9.09,
+      "errors": [],
+      "id": "environment-scan-page-002-120dpi",
+      "metrics": {
+        "content_audit_sha256": "b33673830cc6250b1fd65a84e2730105ebcd9fcf8e1fcd1e55e1fee8e57ef218",
+        "contour_count": 2661,
+        "contour_vertex_count": 41528,
+        "dxf_entity_count": 3209,
+        "dxf_line_count": 367,
+        "dxf_text_count": 6,
+        "dxf_trace_path_count": 2655,
+        "dxf_trace_vertex_count": 41504,
+        "foreground_pixels": 125579,
+        "logo_count": 0,
+        "preview_sha256": "51caa91c7fb006c28b158f855921779af103e4c4b82b0ff872a48fa032c3bc14",
+        "signature_count": 1,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 367,
+        "structure_id": "6971dd23fe57bfd5560d707a9b911ed6f80726f1f87e40de869cb25607177fd1",
+        "text_count": 99
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-scan-page-02-120dpi.png",
+      "source_sha256": "9855247ce2c5c284416dda5acbadf405d9ada82136c9beac4018dc0d23a4d8c8"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 3009,
+          "signature": 1,
+          "structural_line": 585,
+          "text": 157
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 1228,
+              "bbox": [
+                1300,
+                1070,
+                430,
+                190
+              ],
+              "final_foreground_pixels": 5391,
+              "id": "lower-handwriting-gap",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 4192,
+                "preserved_foreground": 5391,
+                "signature": 0,
+                "structural_line": 1393,
+                "text": 23494
+              },
+              "source_foreground_pixels": 4163
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 19131,
+              "bbox": [
+                300,
+                250,
+                1420,
+                760
+              ],
+              "final_foreground_pixels": 144470,
+              "id": "fourth-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 87329,
+                "preserved_foreground": 144470,
+                "signature": 0,
+                "structural_line": 85045,
+                "text": 33827
+              },
+              "source_foreground_pixels": 125349
+            }
+          ],
+          "logo_regions": [],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 1687,
+              "bbox": [
+                1300,
+                1040,
+                500,
+                230
+              ],
+              "final_foreground_pixels": 9503,
+              "id": "lower-approval-marks",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 7597,
+                "preserved_foreground": 9503,
+                "signature": 0,
+                "structural_line": 2575,
+                "text": 29427
+              },
+              "source_foreground_pixels": 7816
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 4488,
+              "bbox": [
+                1080,
+                1020,
+                790,
+                280
+              ],
+              "final_foreground_pixels": 23202,
+              "id": "lower-title-and-room-list",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 15458,
+                "preserved_foreground": 23202,
+                "signature": 0,
+                "structural_line": 5814,
+                "text": 54049
+              },
+              "source_foreground_pixels": 18715
+            }
+          ],
+          "true_breaks_to_repair": [
+            {
+              "added_foreground_pixels": 2,
+              "bbox": [
+                820,
+                1260,
+                260,
+                100
+              ],
+              "final_foreground_pixels": 4,
+              "id": "stain-interrupted-lower-frame",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 4,
+                "signature": 0,
+                "structural_line": 85,
+                "text": 0
+              },
+              "source_foreground_pixels": 2
+            }
+          ]
+        },
+        "sha256": "01657692ba6235a02d8e3e05468bed0b880a1b82e2912b5577939a7866f25ba3"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-scan-page-004-120dpi.dxf",
+      "elapsed_seconds": 11.765,
+      "errors": [],
+      "id": "environment-scan-page-004-120dpi",
+      "metrics": {
+        "content_audit_sha256": "01657692ba6235a02d8e3e05468bed0b880a1b82e2912b5577939a7866f25ba3",
+        "contour_count": 3009,
+        "contour_vertex_count": 46727,
+        "dxf_entity_count": 3781,
+        "dxf_line_count": 585,
+        "dxf_text_count": 26,
+        "dxf_trace_path_count": 2953,
+        "dxf_trace_vertex_count": 46407,
+        "foreground_pixels": 153833,
+        "logo_count": 0,
+        "preview_sha256": "0b90f336ddbfc71e48fa8d9849ca2cdef2b779892bf69dc72f2e54eb2cbd193d",
+        "signature_count": 1,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 585,
+        "structure_id": "789ad8e80f807ee5ef7b5adfc22b79565767d9fdb9a145cdfa9046029aac6e39",
+        "text_count": 157
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-scan-page-04-120dpi.png",
+      "source_sha256": "db3f24b1bcd8ff84ea5f1c00f8ee99ab2d0cb3d28d79bafa635e4eaa7eb19611"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 2190,
+          "signature": 0,
+          "structural_line": 314,
+          "text": 83
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 28,
+              "bbox": [
+                1550,
+                390,
+                320,
+                350
+              ],
+              "final_foreground_pixels": 64,
+              "id": "wide-right-paper-margin",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 64,
+                "preserved_foreground": 64,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 0
+              },
+              "source_foreground_pixels": 36
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 13519,
+              "bbox": [
+                740,
+                110,
+                750,
+                1080
+              ],
+              "final_foreground_pixels": 111893,
+              "id": "rotated-plan-core",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 79470,
+                "preserved_foreground": 111893,
+                "signature": 0,
+                "structural_line": 50035,
+                "text": 52010
+              },
+              "source_foreground_pixels": 98378
+            }
+          ],
+          "logo_regions": [],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 583,
+              "bbox": [
+                1510,
+                30,
+                360,
+                390
+              ],
+              "final_foreground_pixels": 4561,
+              "id": "rotated-handwritten-notes",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 4561,
+                "preserved_foreground": 4561,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 0
+              },
+              "source_foreground_pixels": 3978
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 3432,
+              "bbox": [
+                1240,
+                70,
+                650,
+                500
+              ],
+              "final_foreground_pixels": 19409,
+              "id": "rotated-title-and-handwriting",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 17160,
+                "preserved_foreground": 19409,
+                "signature": 0,
+                "structural_line": 3816,
+                "text": 20852
+              },
+              "source_foreground_pixels": 15977
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "a1bb0465430665ae4925ebc903243e02d0c68a1a3b7a274a22c3475cb2dac247"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "broken_frame",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-scan-page-008-120dpi.dxf",
+      "elapsed_seconds": 8.782,
+      "errors": [],
+      "id": "environment-scan-page-008-120dpi",
+      "metrics": {
+        "content_audit_sha256": "a1bb0465430665ae4925ebc903243e02d0c68a1a3b7a274a22c3475cb2dac247",
+        "contour_count": 2190,
+        "contour_vertex_count": 34325,
+        "dxf_entity_count": 2694,
+        "dxf_line_count": 314,
+        "dxf_text_count": 13,
+        "dxf_trace_path_count": 2181,
+        "dxf_trace_vertex_count": 34263,
+        "foreground_pixels": 114982,
+        "logo_count": 0,
+        "preview_sha256": "af5c442f248233fa2ccc92fdf2d823127583809e87577c8063d58a19919c042c",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 314,
+        "structure_id": "0b4e0d0e5a77bc328dea3c0d8209f131bc87a20aafd14f3e99227c3d0f76ea56",
+        "text_count": 83
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-scan-page-08-120dpi.png",
+      "source_sha256": "059227a4f4f88fee6b8e0d1a64e090a1bf80d539e896e3a0cde094b183e8e97f"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 3175,
+          "signature": 0,
+          "structural_line": 515,
+          "text": 150
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 1810,
+              "bbox": [
+                1260,
+                1090,
+                470,
+                210
+              ],
+              "final_foreground_pixels": 6493,
+              "id": "signature-next-to-device-list",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 6127,
+                "preserved_foreground": 6493,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 28797
+              },
+              "source_foreground_pixels": 4683
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 16587,
+              "bbox": [
+                300,
+                300,
+                1460,
+                650
+              ],
+              "final_foreground_pixels": 144176,
+              "id": "fourteenth-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 97366,
+                "preserved_foreground": 144176,
+                "signature": 0,
+                "structural_line": 68764,
+                "text": 66113
+              },
+              "source_foreground_pixels": 127598
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 474,
+              "bbox": [
+                1770,
+                25,
+                180,
+                160
+              ],
+              "final_foreground_pixels": 7159,
+              "id": "top-right-logo-and-wordmark",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 7159,
+                "signature": 0,
+                "structural_line": 3653,
+                "text": 9826
+              },
+              "source_foreground_pixels": 6700
+            }
+          ],
+          "signature_regions": [
+            {
+              "added_foreground_pixels": 2093,
+              "bbox": [
+                1280,
+                1080,
+                520,
+                230
+              ],
+              "final_foreground_pixels": 9386,
+              "id": "bottom-approval-signatures",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 8805,
+                "preserved_foreground": 9386,
+                "signature": 0,
+                "structural_line": 998,
+                "text": 28538
+              },
+              "source_foreground_pixels": 7293
+            }
+          ],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 5591,
+              "bbox": [
+                760,
+                1070,
+                900,
+                270
+              ],
+              "final_foreground_pixels": 20350,
+              "id": "bottom-title-and-device-list",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 17079,
+                "preserved_foreground": 20350,
+                "signature": 0,
+                "structural_line": 3398,
+                "text": 92596
+              },
+              "source_foreground_pixels": 14759
+            }
+          ],
+          "true_breaks_to_repair": [
+            {
+              "added_foreground_pixels": 321,
+              "bbox": [
+                920,
+                1320,
+                170,
+                82
+              ],
+              "final_foreground_pixels": 932,
+              "id": "torn-bottom-frame",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 270,
+                "preserved_foreground": 932,
+                "signature": 0,
+                "structural_line": 994,
+                "text": 858
+              },
+              "source_foreground_pixels": 611
+            }
+          ]
+        },
+        "sha256": "262ef5db254739d2b11ffedac27a9a5f7c739a7292943370fa12b462ede41485"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\environment-scan-page-014-120dpi.dxf",
+      "elapsed_seconds": 12.026,
+      "errors": [],
+      "id": "environment-scan-page-014-120dpi",
+      "metrics": {
+        "content_audit_sha256": "262ef5db254739d2b11ffedac27a9a5f7c739a7292943370fa12b462ede41485",
+        "contour_count": 3175,
+        "contour_vertex_count": 50216,
+        "dxf_entity_count": 3882,
+        "dxf_line_count": 515,
+        "dxf_text_count": 15,
+        "dxf_trace_path_count": 3155,
+        "dxf_trace_vertex_count": 50109,
+        "foreground_pixels": 157130,
+        "logo_count": 0,
+        "preview_sha256": "42c6388a6caf0c29045e058ca3506f68f5797d5b8075ca049dc873d2482b2fad",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 515,
+        "structure_id": "cc2ac68170d0b6134db0271b624fcebd56f41691c7d0bb98c848b727b24287bf",
+        "text_count": 150
+      },
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/environment-scan-page-14-120dpi.png",
+      "source_sha256": "910123c379be96e8e74882e594f90ee8b4f6dad2ebc8312f62a1570de8cefd92"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 1473,
+          "signature": 0,
+          "structural_line": 117,
+          "text": 145
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 3614,
+              "bbox": [
+                1150,
+                950,
+                420,
+                280
+              ],
+              "final_foreground_pixels": 9599,
+              "id": "open-center-paper",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 1349,
+                "preserved_foreground": 9599,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 23354
+              },
+              "source_foreground_pixels": 5985
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 8948,
+              "bbox": [
+                450,
+                250,
+                850,
+                800
+              ],
+              "final_foreground_pixels": 22383,
+              "id": "fire-system-schematic",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 19711,
+                "preserved_foreground": 22383,
+                "signature": 0,
+                "structural_line": 3743,
+                "text": 20239
+              },
+              "source_foreground_pixels": 13435
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 1370,
+              "bbox": [
+                2300,
+                500,
+                170,
+                250
+              ],
+              "final_foreground_pixels": 4697,
+              "id": "right-titleblock-logo",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 806,
+                "preserved_foreground": 4697,
+                "signature": 0,
+                "structural_line": 4854,
+                "text": 2991
+              },
+              "source_foreground_pixels": 3327
+            }
+          ],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 16480,
+              "bbox": [
+                1280,
+                380,
+                850,
+                500
+              ],
+              "final_foreground_pixels": 43431,
+              "id": "system-notes",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 13033,
+                "preserved_foreground": 43431,
+                "signature": 0,
+                "structural_line": 0,
+                "text": 110310
+              },
+              "source_foreground_pixels": 26951
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "4d7a9bbc70960643239f59529d486501cb55dbe11e23fdceff9b6c5a1bca9112"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\warehouse-system-page-002-72dpi.dxf",
+      "elapsed_seconds": 11.769,
+      "errors": [],
+      "id": "warehouse-system-page-002-72dpi",
+      "metrics": {
+        "content_audit_sha256": "4d7a9bbc70960643239f59529d486501cb55dbe11e23fdceff9b6c5a1bca9112",
+        "contour_count": 1473,
+        "contour_vertex_count": 20546,
+        "dxf_entity_count": 1703,
+        "dxf_line_count": 117,
+        "dxf_text_count": 42,
+        "dxf_trace_path_count": 1457,
+        "dxf_trace_vertex_count": 20449,
+        "foreground_pixels": 92330,
+        "logo_count": 0,
+        "preview_sha256": "6bf23522bda3f317c9a42003fc98c9640689712c3f28f575f9af8c50dd6d9364",
+        "signature_count": 0,
+        "source_size_px": [
+          2523,
+          1786
+        ],
+        "straight_line_count": 117,
+        "structure_id": "aa24d567805130aa6cd5ff91f9496e204ebb5c01f4fd08b261cb8603f11690a4",
+        "text_count": 145
+      },
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 1681,
+          "signature": 0,
+          "structural_line": 421,
+          "text": 167
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 2546,
+              "bbox": [
+                1200,
+                700,
+                480,
+                300
+              ],
+              "final_foreground_pixels": 4570,
+              "id": "central-open-floor",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 2806,
+                "preserved_foreground": 4570,
+                "signature": 0,
+                "structural_line": 2108,
+                "text": 648
+              },
+              "source_foreground_pixels": 2024
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 76952,
+              "bbox": [
+                300,
+                180,
+                2520,
+                1300
+              ],
+              "final_foreground_pixels": 197006,
+              "id": "warehouse-floor-plan",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 102835,
+                "preserved_foreground": 197006,
+                "signature": 0,
+                "structural_line": 127792,
+                "text": 76594
+              },
+              "source_foreground_pixels": 120054
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 1986,
+              "bbox": [
+                2840,
+                520,
+                190,
+                280
+              ],
+              "final_foreground_pixels": 6679,
+              "id": "right-titleblock-brand",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 2320,
+                "preserved_foreground": 6679,
+                "signature": 0,
+                "structural_line": 5047,
+                "text": 8670
+              },
+              "source_foreground_pixels": 4693
+            }
+          ],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 10332,
+              "bbox": [
+                700,
+                1380,
+                1450,
+                230
+              ],
+              "final_foreground_pixels": 40214,
+              "id": "floor-title-and-dimensions",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 24677,
+                "preserved_foreground": 40214,
+                "signature": 0,
+                "structural_line": 23622,
+                "text": 16719
+              },
+              "source_foreground_pixels": 29882
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "47eebff5b69864a0c7024de36cc78a7accc6763bba28cf32d64f910fe73aaf4e"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\warehouse-plan-page-003-72dpi.dxf",
+      "elapsed_seconds": 14.461,
+      "errors": [],
+      "id": "warehouse-plan-page-003-72dpi",
+      "metrics": {
+        "content_audit_sha256": "47eebff5b69864a0c7024de36cc78a7accc6763bba28cf32d64f910fe73aaf4e",
+        "contour_count": 1681,
+        "contour_vertex_count": 30061,
+        "dxf_entity_count": 2258,
+        "dxf_line_count": 421,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 1660,
+        "dxf_trace_vertex_count": 29972,
+        "foreground_pixels": 156055,
+        "logo_count": 0,
+        "preview_sha256": "0a4067a4add751467eb6d007993c0bfb087e4de939666d6d32f1b14f834a1fb1",
+        "signature_count": 0,
+        "source_size_px": [
+          3118,
+          1786
+        ],
+        "straight_line_count": 421,
+        "structure_id": "9966d13ae9a17b4e043a0d75e2beb773f8efbaa696563ad2ac19973ba299d075",
+        "text_count": 167
+      },
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 795,
+          "signature": 0,
+          "structural_line": 468,
+          "text": 83
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 6884,
+              "bbox": [
+                560,
+                1840,
+                1200,
+                460
+              ],
+              "final_foreground_pixels": 13800,
+              "id": "blank-index-cells-300",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 36,
+                "preserved_foreground": 13800,
+                "signature": 0,
+                "structural_line": 22134,
+                "text": 0
+              },
+              "source_foreground_pixels": 6916
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 123614,
+              "bbox": [
+                260,
+                140,
+                2220,
+                3360
+              ],
+              "final_foreground_pixels": 408148,
+              "id": "full-index-network-300",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 108234,
+                "preserved_foreground": 408148,
+                "signature": 0,
+                "structural_line": 323144,
+                "text": 917054
+              },
+              "source_foreground_pixels": 284534
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 6567,
+              "bbox": [
+                340,
+                160,
+                1240,
+                460
+              ],
+              "final_foreground_pixels": 32346,
+              "id": "wordmark-and-graphic-logo-300",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 16546,
+                "preserved_foreground": 32346,
+                "signature": 0,
+                "structural_line": 20488,
+                "text": 14828
+              },
+              "source_foreground_pixels": 25779
+            }
+          ],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 75248,
+              "bbox": [
+                360,
+                600,
+                1840,
+                2100
+              ],
+              "final_foreground_pixels": 225703,
+              "id": "drawing-index-table-300",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 55765,
+                "preserved_foreground": 225703,
+                "signature": 0,
+                "structural_line": 167442,
+                "text": 623939
+              },
+              "source_foreground_pixels": 150455
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "e8599809269ae1154d7585dccdb9e0c4bbc235b3ffdb847b55ad4c41343928dd"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "dpi_300",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\warehouse-index-page-001-300dpi.dxf",
+      "elapsed_seconds": 21.564,
+      "errors": [],
+      "id": "warehouse-index-page-001-300dpi",
+      "metrics": {
+        "content_audit_sha256": "e8599809269ae1154d7585dccdb9e0c4bbc235b3ffdb847b55ad4c41343928dd",
+        "contour_count": 795,
+        "contour_vertex_count": 18683,
+        "dxf_entity_count": 1378,
+        "dxf_line_count": 468,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 779,
+        "dxf_trace_vertex_count": 18614,
+        "foreground_pixels": 108483,
+        "logo_count": 0,
+        "preview_sha256": "42a057d905e558e4ad5fc0d0a0232f484e4e2717f01492e5ebdcd207cc873746",
+        "signature_count": 0,
+        "source_size_px": [
+          2717,
+          3780
+        ],
+        "straight_line_count": 468,
+        "structure_id": "f331842a8b5d26ef329296079fbfbc99e294dfaa9a3edf04f8425cbd18e66a69",
+        "text_count": 83
+      },
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "page": {
+        "dpi": 300,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017"
+    },
+    {
+      "content_audit": {
+        "object_counts": {
+          "logo": 0,
+          "outline": 733,
+          "signature": 0,
+          "structural_line": 568,
+          "text": 89
+        },
+        "regions": {
+          "forbidden_connection_regions": [
+            {
+              "added_foreground_pixels": 13788,
+              "bbox": [
+                1120,
+                3680,
+                2400,
+                920
+              ],
+              "final_foreground_pixels": 41430,
+              "id": "blank-index-cells-600",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 0,
+                "preserved_foreground": 41430,
+                "signature": 0,
+                "structural_line": 74939,
+                "text": 0
+              },
+              "source_foreground_pixels": 27642
+            }
+          ],
+          "key_rois": [
+            {
+              "added_foreground_pixels": 253664,
+              "bbox": [
+                520,
+                280,
+                4440,
+                6720
+              ],
+              "final_foreground_pixels": 1294261,
+              "id": "full-index-network-600",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 354045,
+                "preserved_foreground": 1294261,
+                "signature": 0,
+                "structural_line": 1161699,
+                "text": 3644410
+              },
+              "source_foreground_pixels": 1040597
+            }
+          ],
+          "logo_regions": [
+            {
+              "added_foreground_pixels": 13650,
+              "bbox": [
+                680,
+                320,
+                2480,
+                920
+              ],
+              "final_foreground_pixels": 112394,
+              "id": "wordmark-and-graphic-logo-600",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 55424,
+                "preserved_foreground": 112394,
+                "signature": 0,
+                "structural_line": 69189,
+                "text": 56727
+              },
+              "source_foreground_pixels": 98744
+            }
+          ],
+          "signature_regions": [],
+          "text_regions_to_preserve": [
+            {
+              "added_foreground_pixels": 150701,
+              "bbox": [
+                720,
+                1200,
+                3680,
+                4200
+              ],
+              "final_foreground_pixels": 703853,
+              "id": "drawing-index-table-600",
+              "missing_expected_object_types": [],
+              "object_type_pixels": {
+                "logo": 0,
+                "outline": 137594,
+                "preserved_foreground": 703853,
+                "signature": 0,
+                "structural_line": 628580,
+                "text": 2439224
+              },
+              "source_foreground_pixels": 553152
+            }
+          ],
+          "true_breaks_to_repair": []
+        },
+        "sha256": "27a74d30eb2ff755079ea5d9a3dea591e2ffaaaa536be42c484fb70406c1e34d"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "high_resolution_large_page",
+        "dpi_600",
+        "mixed_chinese_english_numbers"
+      ],
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-artifacts-v3\\warehouse-index-page-001-600dpi.dxf",
+      "elapsed_seconds": 82.805,
+      "errors": [],
+      "id": "warehouse-index-page-001-600dpi",
+      "metrics": {
+        "content_audit_sha256": "27a74d30eb2ff755079ea5d9a3dea591e2ffaaaa536be42c484fb70406c1e34d",
+        "contour_count": 733,
+        "contour_vertex_count": 39204,
+        "dxf_entity_count": 1644,
+        "dxf_line_count": 568,
+        "dxf_text_count": 33,
+        "dxf_trace_path_count": 730,
+        "dxf_trace_vertex_count": 39187,
+        "foreground_pixels": 354687,
+        "logo_count": 0,
+        "preview_sha256": "bce41a74d1810608a5dc3d828d791c640df07b084e9daa8fb697e96f8cf00f84",
+        "signature_count": 0,
+        "source_size_px": [
+          5434,
+          7559
+        ],
+        "straight_line_count": 568,
+        "structure_id": "38efac4c1bb94843fd52da320503ebbe7590db19f2bd97e5cd04efb391254a98",
+        "text_count": 89
+      },
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "page": {
+        "dpi": 600,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "pipeline_stages": {
+        "content_audit": true,
+        "dxf_export": true,
+        "ocr": true,
+        "preview": true,
+        "structure_analysis": true
+      },
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017"
+    }
+  ],
+  "errors": [],
+  "manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\manifest.json",
+  "passed": true,
+  "recorded_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-proposed-manifest-v3.json",
+  "unique_page_count": 10
+}

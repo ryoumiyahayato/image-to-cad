@@ -1,0 +1,190 @@
+{
+  "phase": 5,
+  "evidence_kind": "after",
+  "tested_at": "2026-07-29T18:17:36+08:00",
+  "base_commit": "df7b2d3129c86f6f1d47dd67a6c814b4e805f611",
+  "scope": {
+    "production_algorithm_files_changed": [
+      "app/connectivity_safety.py",
+      "app/pipeline.py",
+      "app/pipeline_service.py",
+      "app/straight_line_reconstruction.py"
+    ],
+    "recognition_thresholds_changed": false,
+    "fixed_coordinate_rules_added": false,
+    "page_percentage_rules_added": false,
+    "ocr_field_keyword_rules_added": false,
+    "new_product_features": false,
+    "whole_page_topology_removed": true
+  },
+  "production_paths": {
+    "desktop_gui": "main.run_gui -> gui_public_release.MainWindow -> gui_final_release -> gui_librecad_release -> optimized_trace.trace_image_optimized -> scan_cleanup -> straight_line_reconstruction -> ContentOwnership -> FinalStructure -> preview/export",
+    "headless": "main.run_headless -> pipeline.run_pipeline -> PipelineService.vectorize -> preprocess -> detect_lines -> source-coordinate retention -> topology validation only -> classification/export",
+    "whole_page_topology_allowed": false,
+    "roi_repair_boundary": "StructuralRoiSet",
+    "connectivity_decision_changes_object_type": false
+  },
+  "unsafe_operation_audit": {
+    "morph_close": "absent from application code and rejected by static/runtime guards",
+    "dilate_then_erode_connection": "not used to add final foreground",
+    "large_convolution_threshold_connection": "no final-foreground connection path",
+    "whole_page_hough_gap": "maxLineGap/max_line_gap forced to zero at both production service boundaries",
+    "whole_page_endpoint_bridge": "disabled; max_bridge_gap forced to zero",
+    "whole_page_collinear_merge": "generic geometry cleaner and scan duplicate interval-union merge removed from production calls",
+    "whole_page_endpoint_snap": "disabled; snap_distance forced to zero",
+    "whole_page_intersection_extension": "disabled; extension requires a common StructuralRoi and rejects outside-ROI candidates",
+    "large_foreground_addition": "source support filtering retained; only short ROI bridge proposals may add structural pixels",
+    "compatibility_apis_retained_but_unreachable": [
+      "app/geometry_cleaner.py",
+      "app/geometry_normalized.py",
+      "app/topology.py::build_topology",
+      "app/straight_line_reconstruction.py::collapse_scan_parallel_duplicates"
+    ]
+  },
+  "four_variant_comparison": {
+    "evidence": "validation/whole-page-topology/phase5-comparison.json",
+    "sha256": "57bdb2952a859808c635f9220a7d953e136ca1ea564ef5b8dd545d2ed6df003a",
+    "schema_version": 4,
+    "unique_pages": 10,
+    "variants": {
+      "old_algorithm": "6a2aa545a534ea6fd50db8a5ba942a0a5db9e353",
+      "historical_unsafe": "d9fbda763e95c6dd7154934b801b59dbf034e711",
+      "whole_page_disabled": "current source with ROI extension explicitly bypassed",
+      "current_structural_roi": "current production source"
+    },
+    "acceptance_checks_passed": 13,
+    "acceptance_checks_total": 13,
+    "acceptance_all_true": true,
+    "historical_unsafe": {
+      "added_pixel_count": 2377295,
+      "merged_source_component_count": 8155,
+      "structural_merged_component_count": 1326,
+      "text_region_added_pixels": 292423,
+      "text_adhesion_count": 622,
+      "forbidden_region_added_pixels": 48108,
+      "incorrect_bridge_count": 411,
+      "incorrect_bridge_region_count": 7,
+      "correct_repair_region_count": 3
+    },
+    "current_structural_roi": {
+      "source_component_count": 11519,
+      "final_component_count": 5352,
+      "added_pixel_count": 1448727,
+      "merged_source_component_count": 6132,
+      "structural_merged_component_count": 247,
+      "text_region_added_pixels": 211937,
+      "structural_text_region_added_pixels": 132816,
+      "text_adhesion_count": 126,
+      "text_adhesion_region_count": 8,
+      "forbidden_region_added_pixels": 32786,
+      "structural_forbidden_region_added_pixels": 18434,
+      "incorrect_bridge_count": 70,
+      "incorrect_bridge_region_count": 5,
+      "correct_repair_count": 15,
+      "correct_repair_region_count": 3,
+      "true_break_added_pixels": 1606,
+      "structural_true_break_added_pixels": 910,
+      "ocr_changed_pages_vs_old": 10,
+      "object_type_changed_pages_vs_old": 10
+    },
+    "reduction_percent_historical_to_current": {
+      "added_pixel_count": 39.06,
+      "merged_source_component_count": 24.81,
+      "structural_merged_component_count": 81.37,
+      "text_region_added_pixels": 27.52,
+      "text_adhesion_count": 79.74,
+      "forbidden_region_added_pixels": 31.85,
+      "incorrect_bridge_count": 82.97,
+      "incorrect_bridge_region_count": 28.57
+    },
+    "whole_page_disabled_vs_current_roi": {
+      "additional_pixels_from_roi": 119,
+      "incorrect_bridge_count_change": 0,
+      "text_adhesion_count_change": 0,
+      "merged_source_component_count_change": 0,
+      "correct_repair_region_count_change": 0
+    }
+  },
+  "performance": {
+    "initial_incident": {
+      "timed_out_after_seconds": 1800,
+      "stage": "post-line-cleaning intersection extension",
+      "cause": "each candidate bridge rerasterized and relabeled a page-sized or large-ROI mask",
+      "remediation": [
+        "build source structure, protection crop, and connected-component labels once per StructuralRoi",
+        "rasterize each candidate bridge only in its own padded bounding box",
+        "delete duplicate detections while retaining one original segment instead of unioning intervals"
+      ]
+    },
+    "isolated_no_ocr_seconds": {
+      "warehouse_index_300dpi": 7.7,
+      "warehouse_index_600dpi": 35.1
+    },
+    "phase4_full_regression": {
+      "document_elapsed_total_seconds": 631.728,
+      "maximum_document_seconds": 192.913
+    },
+    "phase5_strict_full_regression": {
+      "document_elapsed_total_seconds": 236.666,
+      "maximum_document_seconds": 92.307,
+      "wall_seconds": 242.1
+    }
+  },
+  "before_after_regression": {
+    "before": {
+      "phase": 4,
+      "report": "output/ci/phase4-real-document-regression.json",
+      "report_sha256": "de6bec91f21d4251d7dc4f63dace6129d7cff4e2c25646b4b653717b63bb80e3",
+      "manifest_sha256": "856a541efa802bfabe0b1016c7312b790c84493f2bd040b13e5aeb2ffff3ddf7"
+    },
+    "after": {
+      "recording_report": "validation/whole-page-topology/phase5-recording-regression.json",
+      "recording_report_sha256": "23b223f768795919cc59cb188eba3d38543ce8fb16295c0814f670c91ca1087e",
+      "strict_report": "validation/whole-page-topology/phase5-strict-regression.json",
+      "strict_report_sha256": "d586b0a180860e65f25b2030b43a2b8edc1b90e46aa8d0c42925fc93ce6f2d21",
+      "manifest": "tests/real_regression/manifest.json",
+      "manifest_sha256": "04789c091f1340f1a4f9f1b20ec9be837667a554a441077342b2c51c0668d5d6",
+      "passed": true,
+      "document_runs": 12,
+      "unique_source_pages": 10,
+      "coverage_category_count": 22,
+      "errors": [],
+      "all_pipeline_stages_complete": true
+    },
+    "preview_sha256_unchanged": {
+      "compared_runs": 12,
+      "unchanged_runs": 12
+    },
+    "ocr_text_count_unchanged": {
+      "compared_runs": 12,
+      "unchanged_runs": 12
+    },
+    "representation_change": "globally merged long LINE entities were replaced by shorter source-derived LINE entities plus residual contours; all preview hashes and OCR text counts remained unchanged"
+  },
+  "unit_tests": {
+    "passed": 216,
+    "warnings": 129,
+    "elapsed_seconds": 17.91,
+    "junit": "output/ci/phase5-pytest-junit.xml",
+    "junit_sha256": "527e882d3dd40499c123fa57aad2b6d753d7497adac29983f54ed1438c60f9ac"
+  },
+  "static_checks": {
+    "ruff": "passed: app tests validation scripts main.py",
+    "mypy": "passed: 4 production source files",
+    "compileall": "passed"
+  },
+  "remaining_risks": [
+    "source-derived LINE representation is more fragmented than phase 4 even though rendered previews and OCR counts are unchanged",
+    "ROI extension adds 119 pixels but produces no additional connectivity repair region on the current 10-page sample",
+    "five forbidden regions still contain structural additions and the aggregate detector records 70 incorrect bridges; these are reduced versus the unsafe version but not eliminated",
+    "phase 6 must audit ROI membership and boundary leakage before any ROI type, distance budget, or candidate range can expand"
+  ],
+  "phase_acceptance": {
+    "production_has_no_whole_page_topology": true,
+    "text_adhesion_substantially_reduced": true,
+    "cross_line_incorrect_bridges_substantially_reduced": true,
+    "current_roi_does_not_recreate_historical_problem": true,
+    "full_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

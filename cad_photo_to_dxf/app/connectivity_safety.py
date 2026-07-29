@@ -9,7 +9,6 @@ import numpy as np
 from .line_detect import LineSegment
 from .structural_roi import (
     StructuralRoi,
-    rasterize_structural_lines,
     segment_length,
 )
 
@@ -24,12 +23,111 @@ class ConnectivityDecision:
     component_count_after: int
 
 
-def _component_count(mask: np.ndarray) -> int:
-    count, _labels = cv2.connectedComponents(
-        np.where(mask > 0, 255, 0).astype(np.uint8),
+@dataclass(frozen=True)
+class StructuralConnectivityContext:
+    roi_id: str
+    roi_bbox: tuple[int, int, int, int]
+    page_shape: tuple[int, int]
+    left: int
+    top: int
+    structural: np.ndarray
+    structural_labels: np.ndarray
+    source_foreground: np.ndarray
+    protected_mask: np.ndarray | None
+    thickness: int
+    component_count_before: int
+
+
+def _roi_crop(
+    roi: StructuralRoi,
+    page_shape: tuple[int, int],
+) -> tuple[int, int, int, int]:
+    page_height, page_width = page_shape
+    x, y, width, height = roi.bbox
+    left = max(0, int(x))
+    top = max(0, int(y))
+    right = min(page_width, int(x + width))
+    bottom = min(page_height, int(y + height))
+    if right <= left or bottom <= top:
+        raise ValueError("Structural ROI does not overlap the connectivity source")
+    return left, top, right, bottom
+
+
+def _rasterize_roi_lines(
+    lines: Sequence[LineSegment],
+    line_indices: Sequence[int],
+    *,
+    left: int,
+    top: int,
+    shape: tuple[int, int],
+) -> np.ndarray:
+    mask = np.zeros(shape, dtype=np.uint8)
+    for index in line_indices:
+        line = lines[int(index)]
+        cv2.line(
+            mask,
+            (
+                int(round(line.x1)) - left,
+                int(round(line.y1)) - top,
+            ),
+            (
+                int(round(line.x2)) - left,
+                int(round(line.y2)) - top,
+            ),
+            255,
+            max(1, int(round(float(line.width)))),
+            cv2.LINE_8,
+        )
+    return mask
+
+
+def build_structural_connectivity_context(
+    *,
+    roi: StructuralRoi,
+    lines: Sequence[LineSegment],
+    source_foreground: np.ndarray,
+    protected_mask: np.ndarray | None,
+) -> StructuralConnectivityContext:
+    """Freeze the source-only ROI state reused by every candidate bridge."""
+
+    if source_foreground.ndim != 2 or source_foreground.dtype != np.uint8:
+        raise ValueError("Connectivity source must be an 8-bit 2D mask")
+    if protected_mask is not None and protected_mask.shape != source_foreground.shape:
+        raise ValueError("Protected mask must match the connectivity source")
+    left, top, right, bottom = _roi_crop(roi, source_foreground.shape)
+    local_shape = (bottom - top, right - left)
+    structural = _rasterize_roi_lines(
+        lines,
+        roi.line_indices,
+        left=left,
+        top=top,
+        shape=local_shape,
+    )
+    component_count, structural_labels = cv2.connectedComponents(
+        np.ascontiguousarray(structural, dtype=np.uint8),
         connectivity=8,
     )
-    return max(0, int(count) - 1)
+    line_widths = [
+        max(1.0, float(lines[index].width))
+        for index in roi.line_indices
+    ]
+    return StructuralConnectivityContext(
+        roi_id=roi.roi_id,
+        roi_bbox=roi.bbox,
+        page_shape=source_foreground.shape,
+        left=left,
+        top=top,
+        structural=structural,
+        structural_labels=structural_labels,
+        source_foreground=source_foreground[top:bottom, left:right],
+        protected_mask=(
+            None
+            if protected_mask is None
+            else protected_mask[top:bottom, left:right]
+        ),
+        thickness=max(1, int(round(float(np.median(line_widths))))),
+        component_count_before=max(0, int(component_count) - 1),
+    )
 
 
 def evaluate_structural_bridge(
@@ -40,6 +138,7 @@ def evaluate_structural_bridge(
     end: tuple[float, float],
     source_foreground: np.ndarray,
     protected_mask: np.ndarray | None,
+    context: StructuralConnectivityContext | None = None,
 ) -> ConnectivityDecision:
     """Judge a bridge by connected components without changing object ownership."""
 
@@ -61,43 +160,89 @@ def evaluate_structural_bridge(
             0,
             0,
         )
-    if source_foreground.ndim != 2 or source_foreground.dtype != np.uint8:
-        raise ValueError("Connectivity source must be an 8-bit 2D mask")
-    if protected_mask is not None and protected_mask.shape != source_foreground.shape:
-        raise ValueError("Protected mask must match the connectivity source")
+    if context is None:
+        context = build_structural_connectivity_context(
+            roi=roi,
+            lines=lines,
+            source_foreground=source_foreground,
+            protected_mask=protected_mask,
+        )
+    elif (
+        context.roi_id != roi.roi_id
+        or context.roi_bbox != roi.bbox
+        or context.page_shape != source_foreground.shape
+    ):
+        raise ValueError("Connectivity context does not match the structural ROI")
 
-    structural = rasterize_structural_lines(
-        lines,
-        roi.line_indices,
-        image_shape=source_foreground.shape,
+    start_x = int(round(start[0])) - context.left
+    start_y = int(round(start[1])) - context.top
+    end_x = int(round(end[0])) - context.left
+    end_y = int(round(end[1])) - context.top
+    padding = max(1, (context.thickness + 1) // 2 + 1)
+    local_height, local_width = context.structural.shape
+    crop_left = max(0, min(start_x, end_x) - padding)
+    crop_top = max(0, min(start_y, end_y) - padding)
+    crop_right = min(local_width, max(start_x, end_x) + padding + 1)
+    crop_bottom = min(local_height, max(start_y, end_y) + padding + 1)
+    if crop_right <= crop_left or crop_bottom <= crop_top:
+        return ConnectivityDecision(
+            False,
+            "outside_structural_roi",
+            roi.roi_id,
+            0,
+            context.component_count_before,
+            context.component_count_before,
+        )
+    bridge = np.zeros(
+        (crop_bottom - crop_top, crop_right - crop_left),
+        dtype=np.uint8,
     )
-    bridge = np.zeros_like(source_foreground)
-    line_widths = [max(1.0, float(lines[index].width)) for index in roi.line_indices]
-    thickness = max(1, int(round(float(np.median(line_widths)))))
     cv2.line(
         bridge,
-        (int(round(start[0])), int(round(start[1]))),
-        (int(round(end[0])), int(round(end[1]))),
+        (
+            start_x - crop_left,
+            start_y - crop_top,
+        ),
+        (
+            end_x - crop_left,
+            end_y - crop_top,
+        ),
         255,
-        thickness,
+        context.thickness,
         cv2.LINE_8,
     )
     bridge_pixels = int(cv2.countNonZero(bridge))
-    if protected_mask is not None and np.any(
-        (bridge > 0) & (protected_mask > 0)
+    protected_crop = (
+        None
+        if context.protected_mask is None
+        else context.protected_mask[
+            crop_top:crop_bottom,
+            crop_left:crop_right,
+        ]
+    )
+    if protected_crop is not None and np.any(
+        (bridge > 0) & (protected_crop > 0)
     ):
         return ConnectivityDecision(
             False,
             "protected_object_crossing",
             roi.roi_id,
             bridge_pixels,
-            _component_count(structural),
-            _component_count(structural),
+            context.component_count_before,
+            context.component_count_before,
         )
 
+    structural_crop = context.structural[
+        crop_top:crop_bottom,
+        crop_left:crop_right,
+    ]
+    source_crop = context.source_foreground[
+        crop_top:crop_bottom,
+        crop_left:crop_right,
+    ]
     non_structural_ink = (
-        (source_foreground > 0)
-        & (structural == 0)
+        (source_crop > 0)
+        & (structural_crop == 0)
         & (bridge > 0)
     )
     if np.any(non_structural_ink):
@@ -106,12 +251,22 @@ def evaluate_structural_bridge(
             "non_structural_component_merge",
             roi.roi_id,
             bridge_pixels,
-            _component_count(structural),
-            _component_count(structural),
+            context.component_count_before,
+            context.component_count_before,
         )
 
-    before = _component_count(structural)
-    after = _component_count(cv2.max(structural, bridge))
+    before = context.component_count_before
+    label_crop = context.structural_labels[
+        crop_top:crop_bottom,
+        crop_left:crop_right,
+    ]
+    touched = np.unique(label_crop[bridge > 0])
+    touched_components = int(np.count_nonzero(touched > 0))
+    after = (
+        before + 1
+        if touched_components == 0 and bridge_pixels > 0
+        else before - max(0, touched_components - 1)
+    )
     if before > 0 and after < before - 1:
         return ConnectivityDecision(
             False,

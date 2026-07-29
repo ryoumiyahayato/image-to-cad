@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
 from .auxiliary_recognition import AuxiliaryRecognitionResult, recognize_auxiliary
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
-from .geometry_cleaner import GeometryCleanParams, GeometryCleanReport
-from .geometry_normalized import clean_geometry_with_report
+from .geometry_cleaner import (
+    GeometryCleanParams,
+    GeometryCleanReport,
+    GeometryCleanResult,
+)
 from .layer_classifier import ClassificationReport, classify_layers_with_report
 from .line_detect import LineDetectionParams, LineSegment, detect_lines, render_line_preview
 from .preprocess import (
@@ -20,8 +23,9 @@ from .resolution import image_resolution_scale
 from .text_protection import detect_text_region_mask, filter_text_like_lines
 from .topology import (
     IntersectionSplitReport,
+    TopologyResult,
     TopologyValidationReport,
-    build_topology,
+    validate_topology,
 )
 
 
@@ -56,6 +60,58 @@ def _subprogress(
         callback(f"{prefix}:{stage}", start + (end - start) * float(fraction))
 
     return emit
+
+
+def _retain_source_geometry(
+    lines: list[LineSegment],
+    *,
+    minimum_length: float,
+) -> GeometryCleanResult:
+    """Reject invalid detections without moving, snapping, or merging endpoints."""
+
+    retained = [
+        line
+        for line in lines
+        if np.isfinite(
+            np.asarray(
+                [line.x1, line.y1, line.x2, line.y2],
+                dtype=float,
+            )
+        ).all()
+        and line.length >= minimum_length
+    ]
+    report = GeometryCleanReport(
+        input_lines=len(lines),
+        initial_short_removed=len(lines) - len(retained),
+        output_lines=len(retained),
+    )
+    return GeometryCleanResult(retained, report)
+
+
+def _audit_topology_without_modification(
+    lines: list[LineSegment],
+    *,
+    intersection_tolerance: float,
+    endpoint_tolerance: float,
+    gap_tolerance: float,
+    max_pair_checks: int,
+    cancellation_token: CancellationToken | None,
+) -> TopologyResult:
+    """Report connectivity without splitting, extending, snapping, or merging."""
+
+    del max_pair_checks
+    split_report = IntersectionSplitReport(
+        input_lines=len(lines),
+        output_lines=len(lines),
+    )
+    validation_report = validate_topology(
+        lines,
+        endpoint_tolerance=endpoint_tolerance,
+        gap_tolerance=gap_tolerance,
+        intersection_tolerance=intersection_tolerance,
+        cancellation_token=cancellation_token,
+    )
+    return TopologyResult(list(lines), split_report, validation_report)
 
 
 class PipelineService:
@@ -96,8 +152,15 @@ class PipelineService:
         if corrected_image.ndim not in (2, 3):
             raise ValueError("Corrected image must be a grayscale or color image")
         preprocess_params = preprocess_params or PreprocessParams()
-        detection_params = detection_params or LineDetectionParams()
-        clean_params = clean_params or GeometryCleanParams()
+        detection_params = replace(
+            detection_params or LineDetectionParams(),
+            max_line_gap=0,
+        )
+        clean_params = replace(
+            clean_params or GeometryCleanParams(),
+            snap_distance=0.0,
+            max_bridge_gap=0.0,
+        )
         warnings: list[str] = []
 
         checkpoint(cancellation_token)
@@ -171,19 +234,17 @@ class PipelineService:
                 )
 
         report_progress(progress_callback, "geometry", 0.62)
-        geometry = clean_geometry_with_report(
+        geometry = _retain_source_geometry(
             raw_lines,
-            clean_params,
-            cancellation_token,
-            resolution_scale=detection_scale,
+            minimum_length=clean_params.min_line_length,
         )
-        geometry_scale = float(getattr(geometry.report, "resolution_scale", 1.0))
+        geometry_scale = detection_scale
         if geometry.report.merge_pair_limit_reached:
             warnings.append("共线合并达到最大比较次数，部分候选保持未合并状态。")
 
         checkpoint(cancellation_token)
         report_progress(progress_callback, "topology", 0.72)
-        topology = build_topology(
+        topology = _audit_topology_without_modification(
             geometry.lines,
             intersection_tolerance=max(0.5, 0.75 * geometry_scale),
             endpoint_tolerance=max(0.25, 0.5 * geometry_scale),

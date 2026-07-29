@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 import time
@@ -113,8 +113,15 @@ def run_pipeline(
     started_clock = time.perf_counter()
     warnings: list[str] = []
     preprocess_params = preprocess_params or PreprocessParams()
-    detection_params = detection_params or LineDetectionParams()
-    clean_params = clean_params or GeometryCleanParams()
+    detection_params = replace(
+        detection_params or LineDetectionParams(),
+        max_line_gap=0,
+    )
+    clean_params = replace(
+        clean_params or GeometryCleanParams(),
+        snap_distance=0.0,
+        max_bridge_gap=0.0,
+    )
 
     checkpoint(cancellation_token)
     report_progress(progress_callback, "load", 0.01)

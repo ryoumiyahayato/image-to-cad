@@ -1,0 +1,3419 @@
+{
+  "acceptance": {
+    "correct_repairs_preserved_vs_unsafe": true,
+    "disabled_and_current_roi_share_source": true,
+    "forbidden_region_additions_reduced_vs_unsafe": true,
+    "incorrect_bridge_regions_reduced_vs_unsafe": true,
+    "incorrect_bridges_reduced_vs_unsafe": true,
+    "merged_components_reduced_vs_unsafe": true,
+    "minimum_ten_pages": true,
+    "roi_does_not_increase_incorrect_bridges": true,
+    "roi_does_not_increase_text_adhesions": true,
+    "roi_preserves_correct_repair_regions": true,
+    "text_adhesions_reduced_vs_unsafe": true,
+    "text_region_additions_reduced_vs_unsafe": true,
+    "unsafe_reference_available": true
+  },
+  "aggregate": {
+    "current_structural_roi": {
+      "added_pixel_count": 1448727,
+      "correct_repair_count": 15,
+      "correct_repair_region_count": 3,
+      "final_component_count": 5352,
+      "forbidden_region_added_pixels": 32786,
+      "forbidden_region_with_added_pixels_count": 9,
+      "forbidden_region_with_structural_pixels_count": 5,
+      "incorrect_bridge_count": 70,
+      "incorrect_bridge_region_count": 5,
+      "merged_source_component_count": 6132,
+      "object_type_changed_pages_vs_old": 10,
+      "ocr_changed_pages_vs_old": 10,
+      "prepared_added_pixel_count": 546605,
+      "source_component_count": 11519,
+      "structural_added_pixel_count": 902123,
+      "structural_forbidden_region_added_pixels": 18434,
+      "structural_merged_component_count": 247,
+      "structural_text_region_added_pixels": 132816,
+      "structural_true_break_added_pixels": 910,
+      "text_adhesion_count": 126,
+      "text_adhesion_region_count": 8,
+      "text_region_added_pixels": 211937,
+      "true_break_added_pixels": 1606
+    },
+    "historical_d9": {
+      "added_pixel_count": 2377295,
+      "correct_repair_count": 70,
+      "correct_repair_region_count": 3,
+      "final_component_count": 2851,
+      "forbidden_region_added_pixels": 48108,
+      "forbidden_region_with_added_pixels_count": 9,
+      "forbidden_region_with_structural_pixels_count": 7,
+      "incorrect_bridge_count": 411,
+      "incorrect_bridge_region_count": 7,
+      "merged_source_component_count": 8155,
+      "object_type_changed_pages_vs_old": 10,
+      "ocr_changed_pages_vs_old": 10,
+      "prepared_added_pixel_count": 1133150,
+      "source_component_count": 11519,
+      "structural_added_pixel_count": 1244258,
+      "structural_forbidden_region_added_pixels": 19832,
+      "structural_merged_component_count": 1326,
+      "structural_text_region_added_pixels": 141331,
+      "structural_true_break_added_pixels": 1951,
+      "text_adhesion_count": 622,
+      "text_adhesion_region_count": 9,
+      "text_region_added_pixels": 292423,
+      "true_break_added_pixels": 3326
+    },
+    "old_algorithm": {
+      "added_pixel_count": 403503,
+      "correct_repair_count": 0,
+      "correct_repair_region_count": 0,
+      "final_component_count": 5690,
+      "forbidden_region_added_pixels": 11054,
+      "forbidden_region_with_added_pixels_count": 8,
+      "forbidden_region_with_structural_pixels_count": 0,
+      "incorrect_bridge_count": 0,
+      "incorrect_bridge_region_count": 0,
+      "merged_source_component_count": 5090,
+      "object_type_changed_pages_vs_old": 0,
+      "ocr_changed_pages_vs_old": 0,
+      "prepared_added_pixel_count": 403503,
+      "source_component_count": 11519,
+      "structural_added_pixel_count": 0,
+      "structural_forbidden_region_added_pixels": 0,
+      "structural_merged_component_count": 0,
+      "structural_text_region_added_pixels": 0,
+      "structural_true_break_added_pixels": 0,
+      "text_adhesion_count": 0,
+      "text_adhesion_region_count": 0,
+      "text_region_added_pixels": 67497,
+      "true_break_added_pixels": 344
+    },
+    "whole_page_disabled": {
+      "added_pixel_count": 1448608,
+      "correct_repair_count": 15,
+      "correct_repair_region_count": 3,
+      "final_component_count": 5352,
+      "forbidden_region_added_pixels": 32786,
+      "forbidden_region_with_added_pixels_count": 9,
+      "forbidden_region_with_structural_pixels_count": 5,
+      "incorrect_bridge_count": 70,
+      "incorrect_bridge_region_count": 5,
+      "merged_source_component_count": 6132,
+      "object_type_changed_pages_vs_old": 10,
+      "ocr_changed_pages_vs_old": 10,
+      "prepared_added_pixel_count": 546605,
+      "source_component_count": 11519,
+      "structural_added_pixel_count": 902004,
+      "structural_forbidden_region_added_pixels": 18434,
+      "structural_merged_component_count": 247,
+      "structural_text_region_added_pixels": 132810,
+      "structural_true_break_added_pixels": 910,
+      "text_adhesion_count": 126,
+      "text_adhesion_region_count": 8,
+      "text_region_added_pixels": 211931,
+      "true_break_added_pixels": 1606
+    }
+  },
+  "document_count": 10,
+  "documents": [
+    {
+      "id": "perspective-sample-plan",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 66283,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 6.348,
+          "final_component_count": 25,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 0,
+          "forbidden_region_with_added_pixels_count": 0,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "id": "perspective-sample-plan",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 174,
+          "object_counts": {
+            "contours": 146,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 172,
+            "texts": 2
+          },
+          "object_type_sha256": "b413a05b18b5a4b7947f35881d32a75ddde4b1314a2f6a7eb48133032f9c0ea0",
+          "ocr_count": 2,
+          "ocr_sha256": "cfea78a8bc5e3541b8dc6d762c52976139ffc49ebcb427ffff166039fede51c0",
+          "prepared_added_pixel_count": 12742,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 199,
+          "structural_added_pixel_count": 53541,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 1279,
+          "structural_text_regions": [
+            {
+              "added_pixels": 1279,
+              "id": "sample-plan-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "9c2be74e17ad6215faa117565187ff2fef5288a14e3526ac780220794dce925c",
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "sample-plan-title"
+            }
+          ],
+          "text_region_added_pixels": 1617,
+          "text_regions": [
+            {
+              "added_pixels": 1617,
+              "id": "sample-plan-title"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 200405,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 8.852,
+          "final_component_count": 23,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 0,
+          "forbidden_region_with_added_pixels_count": 0,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "id": "perspective-sample-plan",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 176,
+          "object_counts": {
+            "contours": 71,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 194,
+            "texts": 2
+          },
+          "object_type_sha256": "5f23088e2d968e52d67075365ad7f417dae23e4868d269ada786dc229d6b7a6b",
+          "ocr_count": 2,
+          "ocr_sha256": "c7ef1ad889824c2e5fcb6ce2381fb5f3f9cffd91f908d2ffff66154c473af859",
+          "prepared_added_pixel_count": 43752,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 199,
+          "structural_added_pixel_count": 156653,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "structural_merged_component_count": 1,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 7193,
+          "structural_text_regions": [
+            {
+              "added_pixels": 7193,
+              "id": "sample-plan-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "sample-plan-title"
+            }
+          ],
+          "text_region_added_pixels": 8909,
+          "text_regions": [
+            {
+              "added_pixels": 8909,
+              "id": "sample-plan-title"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 9220,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 4.284,
+          "final_component_count": 26,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 0,
+          "forbidden_region_with_added_pixels_count": 0,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "id": "perspective-sample-plan",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 172,
+          "object_counts": {
+            "contours": 135,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 4
+          },
+          "object_type_sha256": "fb981daba3f26898ee16cc93a316c1857409bd8f6bb2d39d95c37f2b48a6f49c",
+          "ocr_count": 4,
+          "ocr_sha256": "0f24a34a535c61091177b26a2ad7dbfe780f86fee0356886ce84eab155715c42",
+          "prepared_added_pixel_count": 9220,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 199,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "sample-plan-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "sample-plan-title"
+            }
+          ],
+          "text_region_added_pixels": 167,
+          "text_regions": [
+            {
+              "added_pixels": 167,
+              "id": "sample-plan-title"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 66283,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 5.675,
+          "final_component_count": 25,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 0,
+          "forbidden_region_with_added_pixels_count": 0,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "id": "perspective-sample-plan",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 174,
+          "object_counts": {
+            "contours": 146,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 172,
+            "texts": 2
+          },
+          "object_type_sha256": "8fd2a1408dd77464a8e488a96982ed9425f75a849ed9dfd68f7c7bb12164fbe9",
+          "ocr_count": 2,
+          "ocr_sha256": "cfea78a8bc5e3541b8dc6d762c52976139ffc49ebcb427ffff166039fede51c0",
+          "prepared_added_pixel_count": 12742,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 199,
+          "structural_added_pixel_count": 53541,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-center-open-space"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 1279,
+          "structural_text_regions": [
+            {
+              "added_pixels": 1279,
+              "id": "sample-plan-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "sample-plan-title"
+            }
+          ],
+          "text_region_added_pixels": 1617,
+          "text_regions": [
+            {
+              "added_pixels": 1617,
+              "id": "sample-plan-title"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "environment-plan-page-003-150dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 212740,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 17.287,
+          "final_component_count": 641,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 1851,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1851,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "id": "environment-plan-page-003-150dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 592,
+          "object_counts": {
+            "contours": 2983,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 590,
+            "texts": 154
+          },
+          "object_type_sha256": "ef25283679ceb4761eef988f507effb76876ef4388b648cd17bfc0a36f4e5177",
+          "ocr_count": 154,
+          "ocr_sha256": "2a298abe2d7ef609d8d74b29f02ee4b7407c65f125ab249cccddf1411753fd26",
+          "prepared_added_pixel_count": 77762,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1225,
+          "structural_added_pixel_count": 134978,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "structural_merged_component_count": 39,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 4436,
+          "structural_text_regions": [
+            {
+              "added_pixels": 4436,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "36d71eea4b1135d8016ed07a823d9bf00d7565c0ae0defdce89f40f489f40c17",
+          "text_adhesion_count": 30,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 30,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 9383,
+          "text_regions": [
+            {
+              "added_pixels": 9383,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 411142,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 26.359,
+          "final_component_count": 323,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 30,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 2473,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2473,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "id": "environment-plan-page-003-150dpi",
+          "incorrect_bridge_count": 30,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 700,
+          "object_counts": {
+            "contours": 1722,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 619,
+            "texts": 154
+          },
+          "object_type_sha256": "45071aee55e00ebb333ae6a3282af79b09dfcf91bfebc46fcc2290ba6dc16d2f",
+          "ocr_count": 154,
+          "ocr_sha256": "4f4aa12cc34d058b35cb3b12e79c4cb7962956a84007d26871650a10b4271181",
+          "prepared_added_pixel_count": 196465,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1225,
+          "structural_added_pixel_count": 214722,
+          "structural_forbidden_region_added_pixels": 141,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 141,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "structural_merged_component_count": 172,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 8644,
+          "structural_text_regions": [
+            {
+              "added_pixels": 8644,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 73,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 73,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 21894,
+          "text_regions": [
+            {
+              "added_pixels": 21894,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 44871,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 17.293,
+          "final_component_count": 696,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 630,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 630,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "id": "environment-plan-page-003-150dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 442,
+          "object_counts": {
+            "contours": 3172,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 160
+          },
+          "object_type_sha256": "6836f4d5f0d1eb6d57f617b8f50e22f96c2850819ff8aea2fd80af722d71106b",
+          "ocr_count": 160,
+          "ocr_sha256": "520af540b43132712355ac5408ec63af0b913f758835afdd1ccebc91e5182b90",
+          "prepared_added_pixel_count": 44871,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1225,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 3472,
+          "text_regions": [
+            {
+              "added_pixels": 3472,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 212736,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 14.645,
+          "final_component_count": 641,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "forbidden_region_added_pixels": 1851,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1851,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "id": "environment-plan-page-003-150dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 592,
+          "object_counts": {
+            "contours": 2983,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 590,
+            "texts": 154
+          },
+          "object_type_sha256": "6558f486ee6e54708f34473084042e7ca7634cb1755fcdfb6dd9913f27f21c50",
+          "ocr_count": 154,
+          "ocr_sha256": "2a298abe2d7ef609d8d74b29f02ee4b7407c65f125ab249cccddf1411753fd26",
+          "prepared_added_pixel_count": 77762,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1225,
+          "structural_added_pixel_count": 134974,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "upper-left-paper-space"
+            }
+          ],
+          "structural_merged_component_count": 39,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 4436,
+          "structural_text_regions": [
+            {
+              "added_pixels": 4436,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+          "text_adhesion_count": 30,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 30,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 9383,
+          "text_regions": [
+            {
+              "added_pixels": 9383,
+              "id": "page-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "warehouse-index-page-001-150dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 196056,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 10.351,
+          "final_component_count": 423,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "blank-index-cells"
+            }
+          ],
+          "forbidden_region_added_pixels": 13505,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 13505,
+              "id": "blank-index-cells"
+            }
+          ],
+          "id": "warehouse-index-page-001-150dpi",
+          "incorrect_bridge_count": 7,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 1422,
+          "object_counts": {
+            "contours": 834,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 503,
+            "texts": 91
+          },
+          "object_type_sha256": "fab4bb66317a81b6ecf5a5a518343d4c91375e6bcc29aa689b2af0ce3abc4d65",
+          "ocr_count": 91,
+          "ocr_sha256": "466790e0e821123799d6fc3484b93dcac462d58b012ed3683ff98b92be35930e",
+          "prepared_added_pixel_count": 36036,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1844,
+          "structural_added_pixel_count": 160020,
+          "structural_forbidden_region_added_pixels": 13505,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 13505,
+              "id": "blank-index-cells"
+            }
+          ],
+          "structural_merged_component_count": 8,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 82492,
+          "structural_text_regions": [
+            {
+              "added_pixels": 82492,
+              "id": "drawing-index-table"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "4de8044dfee6344b4101aa209c9649eb2c5e24cf0cfbcad6e345eeeb84ada788",
+          "text_adhesion_count": 8,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 8,
+              "id": "drawing-index-table"
+            }
+          ],
+          "text_region_added_pixels": 103093,
+          "text_regions": [
+            {
+              "added_pixels": 103093,
+              "id": "drawing-index-table"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 133811,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 7.823,
+          "final_component_count": 368,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 6,
+              "id": "blank-index-cells"
+            }
+          ],
+          "forbidden_region_added_pixels": 6886,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 6886,
+              "id": "blank-index-cells"
+            }
+          ],
+          "id": "warehouse-index-page-001-150dpi",
+          "incorrect_bridge_count": 6,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 1477,
+          "object_counts": {
+            "contours": 563,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 199,
+            "texts": 91
+          },
+          "object_type_sha256": "bd30ea2c13f3921d429cb8cc882b6f83f91026a7cff695e24a598dcc9af2364f",
+          "ocr_count": 91,
+          "ocr_sha256": "93bf836b424303ae772bdcc6bbae59e4579c08316e9a05cf79f3257a2377518c",
+          "prepared_added_pixel_count": 36036,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1844,
+          "structural_added_pixel_count": 97775,
+          "structural_forbidden_region_added_pixels": 6886,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 6886,
+              "id": "blank-index-cells"
+            }
+          ],
+          "structural_merged_component_count": 63,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 50579,
+          "structural_text_regions": [
+            {
+              "added_pixels": 50579,
+              "id": "drawing-index-table"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 28,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 28,
+              "id": "drawing-index-table"
+            }
+          ],
+          "text_region_added_pixels": 71180,
+          "text_regions": [
+            {
+              "added_pixels": 71180,
+              "id": "drawing-index-table"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 36036,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 16.676,
+          "final_component_count": 431,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "blank-index-cells"
+            }
+          ],
+          "forbidden_region_added_pixels": 0,
+          "forbidden_region_with_added_pixels_count": 0,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "blank-index-cells"
+            }
+          ],
+          "id": "warehouse-index-page-001-150dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 1414,
+          "object_counts": {
+            "contours": 1574,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 91
+          },
+          "object_type_sha256": "24a3e983fb0187c70c880994f07d909ddab494e6b44bd6b0568708cfbb9993ed",
+          "ocr_count": 91,
+          "ocr_sha256": "0ed0215f60871e7b410323cbd429026bb709e4c541d1cc0fe7ec3db8ce8b6e71",
+          "prepared_added_pixel_count": 36036,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1844,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "blank-index-cells"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "drawing-index-table"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "drawing-index-table"
+            }
+          ],
+          "text_region_added_pixels": 20601,
+          "text_regions": [
+            {
+              "added_pixels": 20601,
+              "id": "drawing-index-table"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 196039,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 7.247,
+          "final_component_count": 423,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "blank-index-cells"
+            }
+          ],
+          "forbidden_region_added_pixels": 13505,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 13505,
+              "id": "blank-index-cells"
+            }
+          ],
+          "id": "warehouse-index-page-001-150dpi",
+          "incorrect_bridge_count": 7,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 1422,
+          "object_counts": {
+            "contours": 834,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 503,
+            "texts": 91
+          },
+          "object_type_sha256": "a452fa24755d39c0ea83408a22162581d29eb36a42486ae9f3506c5801313973",
+          "ocr_count": 91,
+          "ocr_sha256": "466790e0e821123799d6fc3484b93dcac462d58b012ed3683ff98b92be35930e",
+          "prepared_added_pixel_count": 36036,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1844,
+          "structural_added_pixel_count": 160003,
+          "structural_forbidden_region_added_pixels": 13505,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 13505,
+              "id": "blank-index-cells"
+            }
+          ],
+          "structural_merged_component_count": 8,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 82486,
+          "structural_text_regions": [
+            {
+              "added_pixels": 82486,
+              "id": "drawing-index-table"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615",
+          "text_adhesion_count": 8,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 8,
+              "id": "drawing-index-table"
+            }
+          ],
+          "text_region_added_pixels": 103087,
+          "text_regions": [
+            {
+              "added_pixels": 103087,
+              "id": "drawing-index-table"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "environment-scan-page-001-120dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 141241,
+          "correct_repair_count": 7,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 16.107,
+          "final_component_count": 707,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 25,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "forbidden_region_added_pixels": 4733,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 4733,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "id": "environment-scan-page-001-120dpi",
+          "incorrect_bridge_count": 25,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 640,
+          "object_counts": {
+            "contours": 3007,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 518,
+            "texts": 140
+          },
+          "object_type_sha256": "6ca52a49881f62b8e947ed51679492776ebdfcbdcc97c0efd3602b28f36a5bb5",
+          "ocr_count": 140,
+          "ocr_sha256": "0de0e2229416eff6b59cf1b1885e8d0cfe5909b3de2340db2792aec86ce1f00b",
+          "prepared_added_pixel_count": 55377,
+          "repair_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 761,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "source_component_count": 1337,
+          "structural_added_pixel_count": 85864,
+          "structural_forbidden_region_added_pixels": 2183,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 2183,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "structural_merged_component_count": 29,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 388,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 18250,
+          "structural_text_regions": [
+            {
+              "added_pixels": 18250,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 388,
+          "structure_id": "fb07be3f447c072c1a5a278bea5025e1cd6cba112afa57d3027587788ac7248d",
+          "text_adhesion_count": 20,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 20,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "text_region_added_pixels": 28185,
+          "text_regions": [
+            {
+              "added_pixels": 28185,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "true_break_added_pixels": 761
+        },
+        "historical_d9": {
+          "added_pixel_count": 285217,
+          "correct_repair_count": 26,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 19.552,
+          "final_component_count": 238,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 99,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "forbidden_region_added_pixels": 16873,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 16873,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "id": "environment-scan-page-001-120dpi",
+          "incorrect_bridge_count": 99,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 1099,
+          "object_counts": {
+            "contours": 1780,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 506,
+            "texts": 140
+          },
+          "object_type_sha256": "f7797dedc9ee71865ce67eaffb86a8ebca53f92021690b58526489831673e359",
+          "ocr_count": 140,
+          "ocr_sha256": "7f3f7278685d6f3fcca968a7b903fb4b9af4665081c7a589955e09edd2ce09c6",
+          "prepared_added_pixel_count": 162153,
+          "repair_connection_regions": [
+            {
+              "connection_count": 26,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 954,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "source_component_count": 1337,
+          "structural_added_pixel_count": 123070,
+          "structural_forbidden_region_added_pixels": 7701,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 7701,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "structural_merged_component_count": 132,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 275,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 30824,
+          "structural_text_regions": [
+            {
+              "added_pixels": 30824,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 275,
+          "structure_id": null,
+          "text_adhesion_count": 93,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 93,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "text_region_added_pixels": 70248,
+          "text_regions": [
+            {
+              "added_pixels": 70248,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "true_break_added_pixels": 954
+        },
+        "old_algorithm": {
+          "added_pixel_count": 29103,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 23.398,
+          "final_component_count": 741,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "forbidden_region_added_pixels": 1603,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1603,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "id": "environment-scan-page-001-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 452,
+          "object_counts": {
+            "contours": 3187,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 142
+          },
+          "object_type_sha256": "3f263e764835f629d30dd4de8dbc0c17e8ed004a3be4c6fab69484a99313809d",
+          "ocr_count": 142,
+          "ocr_sha256": "48630295dc8ea8610d703798c4c5d8b336315e9f64bc10bbef1d97d6e9ab1e11",
+          "prepared_added_pixel_count": 29103,
+          "repair_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 153,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "source_component_count": 1337,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 0,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "text_region_added_pixels": 5688,
+          "text_regions": [
+            {
+              "added_pixels": 5688,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "true_break_added_pixels": 153
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 141241,
+          "correct_repair_count": 7,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 11.112,
+          "final_component_count": 707,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 25,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "forbidden_region_added_pixels": 4733,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 4733,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "id": "environment-scan-page-001-120dpi",
+          "incorrect_bridge_count": 25,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 640,
+          "object_counts": {
+            "contours": 3007,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 518,
+            "texts": 140
+          },
+          "object_type_sha256": "926395efc8161229e7adb24ff7ba4a3ee70c79aa448d8fcf6c257ec3418a6342",
+          "ocr_count": 140,
+          "ocr_sha256": "0de0e2229416eff6b59cf1b1885e8d0cfe5909b3de2340db2792aec86ce1f00b",
+          "prepared_added_pixel_count": 55377,
+          "repair_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 761,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "source_component_count": 1337,
+          "structural_added_pixel_count": 85864,
+          "structural_forbidden_region_added_pixels": 2183,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 2183,
+              "id": "handwriting-near-room-labels"
+            }
+          ],
+          "structural_merged_component_count": 29,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 388,
+              "id": "damaged-top-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 18250,
+          "structural_text_regions": [
+            {
+              "added_pixels": 18250,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "structural_true_break_added_pixels": 388,
+          "structure_id": "62eca04c75057d54b9b0e13490ca609965a94c9a9346adc7990e72500b34c6e3",
+          "text_adhesion_count": 20,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 20,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "text_region_added_pixels": 28185,
+          "text_regions": [
+            {
+              "added_pixels": 28185,
+              "id": "left-note-and-bottom-title"
+            }
+          ],
+          "true_break_added_pixels": 761
+        }
+      }
+    },
+    {
+      "id": "environment-scan-page-002-120dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 91581,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 11.147,
+          "final_component_count": 380,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 18,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 2072,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2072,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "id": "environment-scan-page-002-120dpi",
+          "incorrect_bridge_count": 18,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 416,
+          "object_counts": {
+            "contours": 2661,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 367,
+            "texts": 99
+          },
+          "object_type_sha256": "98d68b3c88ffbdf9f510e113c0ebcd99507c37cf472af44646dcb6d910c2620f",
+          "ocr_count": 99,
+          "ocr_sha256": "30f25d8c885cf851a457afa22f5d99d20c5fac2cb238ae1a5af7e31ac9aee3cc",
+          "prepared_added_pixel_count": 41985,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 813,
+          "structural_added_pixel_count": 49597,
+          "structural_forbidden_region_added_pixels": 1347,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 1347,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "structural_merged_component_count": 24,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 3996,
+          "structural_text_regions": [
+            {
+              "added_pixels": 3996,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "6971dd23fe57bfd5560d707a9b911ed6f80726f1f87e40de869cb25607177fd1",
+          "text_adhesion_count": 23,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 23,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 6973,
+          "text_regions": [
+            {
+              "added_pixels": 6973,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 185310,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 11.176,
+          "final_component_count": 216,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 30,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 3218,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3218,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "id": "environment-scan-page-002-120dpi",
+          "incorrect_bridge_count": 30,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 532,
+          "object_counts": {
+            "contours": 1875,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 319,
+            "texts": 99
+          },
+          "object_type_sha256": "3eed3c69d4a257e49cd32d90ff66b740cd67dbde9b2c4aa4dbe4b743238a721d",
+          "ocr_count": 99,
+          "ocr_sha256": "9674e687883403bc9b739265193e2da39e6e1ef39c0046bd5fc7fe40eec29fe4",
+          "prepared_added_pixel_count": 112156,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 813,
+          "structural_added_pixel_count": 73162,
+          "structural_forbidden_region_added_pixels": 1294,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 1294,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "structural_merged_component_count": 80,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 5512,
+          "structural_text_regions": [
+            {
+              "added_pixels": 5512,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 59,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 59,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 14204,
+          "text_regions": [
+            {
+              "added_pixels": 14204,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 22100,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 19.988,
+          "final_component_count": 407,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 525,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 525,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "id": "environment-scan-page-002-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 309,
+          "object_counts": {
+            "contours": 2634,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 111
+          },
+          "object_type_sha256": "48d673e3fe37a3d5be5a1a4071b94731153ab16cd0ea97af9cc6839d97b40e25",
+          "ocr_count": 111,
+          "ocr_sha256": "b564c51a36a49a90f3d7244ef7b3c9a92b31a3ad84e4cfc052bffdce7fba0e71",
+          "prepared_added_pixel_count": 22100,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 813,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 2029,
+          "text_regions": [
+            {
+              "added_pixels": 2029,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 91581,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 7.655,
+          "final_component_count": 380,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 18,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 2072,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2072,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "id": "environment-scan-page-002-120dpi",
+          "incorrect_bridge_count": 18,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 416,
+          "object_counts": {
+            "contours": 2661,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 367,
+            "texts": 99
+          },
+          "object_type_sha256": "af7912c09dd4d62e0da75a18a1adf672da066224f426dc742bbee300f443e51b",
+          "ocr_count": 99,
+          "ocr_sha256": "30f25d8c885cf851a457afa22f5d99d20c5fac2cb238ae1a5af7e31ac9aee3cc",
+          "prepared_added_pixel_count": 41985,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 813,
+          "structural_added_pixel_count": 49597,
+          "structural_forbidden_region_added_pixels": 1347,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 1347,
+              "id": "right-handwritten-margin"
+            }
+          ],
+          "structural_merged_component_count": 24,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 3996,
+          "structural_text_regions": [
+            {
+              "added_pixels": 3996,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "e2ee5cdf4cf452fba05c811ccbb9a18e430c418e000adae16c0f9b4246df381e",
+          "text_adhesion_count": 23,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 23,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "text_region_added_pixels": 6973,
+          "text_regions": [
+            {
+              "added_pixels": 6973,
+              "id": "right-side-title-and-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "environment-scan-page-004-120dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 139837,
+          "correct_repair_count": 6,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 16.207,
+          "final_component_count": 629,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "forbidden_region_added_pixels": 2049,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2049,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "id": "environment-scan-page-004-120dpi",
+          "incorrect_bridge_count": 7,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 475,
+          "object_counts": {
+            "contours": 3009,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 585,
+            "texts": 157
+          },
+          "object_type_sha256": "f60c16e841b20fd771fd72b3e3b05b1ed908d323ffc262a9bb918179cb436bf2",
+          "ocr_count": 157,
+          "ocr_sha256": "4db4ddac94cdb009ff3addc20e3e1b04a2c32b1082c505e9797e84115602bfea",
+          "prepared_added_pixel_count": 51323,
+          "repair_connection_regions": [
+            {
+              "connection_count": 6,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 87,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "source_component_count": 1127,
+          "structural_added_pixel_count": 88514,
+          "structural_forbidden_region_added_pixels": 821,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 821,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "structural_merged_component_count": 30,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 85,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 3576,
+          "structural_text_regions": [
+            {
+              "added_pixels": 3576,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 85,
+          "structure_id": "789ad8e80f807ee5ef7b5adfc22b79565767d9fdb9a145cdfa9046029aac6e39",
+          "text_adhesion_count": 13,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "text_region_added_pixels": 8064,
+          "text_regions": [
+            {
+              "added_pixels": 8064,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "true_break_added_pixels": 87
+        },
+        "historical_d9": {
+          "added_pixel_count": 275593,
+          "correct_repair_count": 42,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 16.692,
+          "final_component_count": 238,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 59,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "forbidden_region_added_pixels": 5136,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 5136,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "id": "environment-scan-page-004-120dpi",
+          "incorrect_bridge_count": 59,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 820,
+          "object_counts": {
+            "contours": 1556,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 455,
+            "texts": 157
+          },
+          "object_type_sha256": "bda2b7cf00e60987ad43b368df8750a3e36472845f78d69c87cf393ec3b86906",
+          "ocr_count": 157,
+          "ocr_sha256": "6951f7a0ad1b93dde545fa2df881b7f6867fe6961d8c49c982890a5dd8f33b84",
+          "prepared_added_pixel_count": 153183,
+          "repair_connection_regions": [
+            {
+              "connection_count": 42,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 1038,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "source_component_count": 1127,
+          "structural_added_pixel_count": 122412,
+          "structural_forbidden_region_added_pixels": 1390,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 1390,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "structural_merged_component_count": 123,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 1034,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 8319,
+          "structural_text_regions": [
+            {
+              "added_pixels": 8319,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 1034,
+          "structure_id": null,
+          "text_adhesion_count": 113,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 113,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "text_region_added_pixels": 22605,
+          "text_regions": [
+            {
+              "added_pixels": 22605,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "true_break_added_pixels": 1038
+        },
+        "old_algorithm": {
+          "added_pixel_count": 27770,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 23.582,
+          "final_component_count": 681,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "forbidden_region_added_pixels": 838,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 838,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "id": "environment-scan-page-004-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 306,
+          "object_counts": {
+            "contours": 3171,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 168
+          },
+          "object_type_sha256": "2ce1aa9db6e14b6c3b29a6f2662013b11b314d32e4283592623c069a958790fd",
+          "ocr_count": 168,
+          "ocr_sha256": "6e1a270c3a4236feadaffe6d05eb86880584b8560469a60d74e4fc5fd400c1b6",
+          "prepared_added_pixel_count": 27770,
+          "repair_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 1,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "source_component_count": 1127,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 0,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "text_region_added_pixels": 2869,
+          "text_regions": [
+            {
+              "added_pixels": 2869,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "true_break_added_pixels": 1
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 139833,
+          "correct_repair_count": 6,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 10.746,
+          "final_component_count": 629,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "forbidden_region_added_pixels": 2049,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2049,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "id": "environment-scan-page-004-120dpi",
+          "incorrect_bridge_count": 7,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 475,
+          "object_counts": {
+            "contours": 3009,
+            "logos": 0,
+            "signatures": 1,
+            "straight_lines": 585,
+            "texts": 157
+          },
+          "object_type_sha256": "3b043934f4ac91778ceb8b06f431a680f98ba82b8b3d9f6c905bd636cdf2d287",
+          "ocr_count": 157,
+          "ocr_sha256": "4db4ddac94cdb009ff3addc20e3e1b04a2c32b1082c505e9797e84115602bfea",
+          "prepared_added_pixel_count": 51323,
+          "repair_connection_regions": [
+            {
+              "connection_count": 6,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 87,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "source_component_count": 1127,
+          "structural_added_pixel_count": 88510,
+          "structural_forbidden_region_added_pixels": 821,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 821,
+              "id": "lower-handwriting-gap"
+            }
+          ],
+          "structural_merged_component_count": 30,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 85,
+              "id": "stain-interrupted-lower-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 3576,
+          "structural_text_regions": [
+            {
+              "added_pixels": 3576,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 85,
+          "structure_id": "e8eb8c59ad8f0b198982c8d59889a9f9dab55d37dfdef15b5ce02c1af49a5368",
+          "text_adhesion_count": 13,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "text_region_added_pixels": 8064,
+          "text_regions": [
+            {
+              "added_pixels": 8064,
+              "id": "lower-title-and-room-list"
+            }
+          ],
+          "true_break_added_pixels": 87
+        }
+      }
+    },
+    {
+      "id": "environment-scan-page-008-120dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 71016,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 10.489,
+          "final_component_count": 366,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 28,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 28,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "id": "environment-scan-page-008-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 559,
+          "object_counts": {
+            "contours": 2190,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 314,
+            "texts": 83
+          },
+          "object_type_sha256": "269abd602c39e318ead9d9321db5750af1e2b6021ae7ab842646832d2f82da20",
+          "ocr_count": 83,
+          "ocr_sha256": "377760595643dfefa76bcccea257cb284ab7431b6fc743c3b3ccd89bde7cc575",
+          "prepared_added_pixel_count": 30095,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 929,
+          "structural_added_pixel_count": 40921,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "structural_merged_component_count": 14,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 2525,
+          "structural_text_regions": [
+            {
+              "added_pixels": 2525,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "0b4e0d0e5a77bc328dea3c0d8209f131bc87a20aafd14f3e99227c3d0f76ea56",
+          "text_adhesion_count": 7,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "text_region_added_pixels": 5957,
+          "text_regions": [
+            {
+              "added_pixels": 5957,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 155128,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 10.474,
+          "final_component_count": 186,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 59,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 59,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "id": "environment-scan-page-008-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 657,
+          "object_counts": {
+            "contours": 1169,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 296,
+            "texts": 79
+          },
+          "object_type_sha256": "230a9c4f4b92c101290a2a6b351cd8cf963ff29a31455fa8632ed3afb84de941",
+          "ocr_count": 79,
+          "ocr_sha256": "409b3636e23d78906dcbc711604a31212ab80d5221b9f9f2093ee3b74a79312c",
+          "prepared_added_pixel_count": 89075,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 929,
+          "structural_added_pixel_count": 66054,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "structural_merged_component_count": 59,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 6954,
+          "structural_text_regions": [
+            {
+              "added_pixels": 6954,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 51,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 51,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "text_region_added_pixels": 18601,
+          "text_regions": [
+            {
+              "added_pixels": 18601,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 14437,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 22.472,
+          "final_component_count": 410,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 21,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 21,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "id": "environment-scan-page-008-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 350,
+          "object_counts": {
+            "contours": 2340,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 91
+          },
+          "object_type_sha256": "bf25af63f0cbd7bd8d898eed3db46e07121ae3cc428e71715eb1b5b1925c1b3c",
+          "ocr_count": 91,
+          "ocr_sha256": "bf5e0a9a1d575de5632cc65f6e8b518940e3969438c6e726b30548d303b0916a",
+          "prepared_added_pixel_count": 14437,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 929,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "text_region_added_pixels": 1962,
+          "text_regions": [
+            {
+              "added_pixels": 1962,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 71016,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 7.598,
+          "final_component_count": 366,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "forbidden_region_added_pixels": 28,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 28,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "id": "environment-scan-page-008-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 559,
+          "object_counts": {
+            "contours": 2190,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 314,
+            "texts": 83
+          },
+          "object_type_sha256": "269abd602c39e318ead9d9321db5750af1e2b6021ae7ab842646832d2f82da20",
+          "ocr_count": 83,
+          "ocr_sha256": "377760595643dfefa76bcccea257cb284ab7431b6fc743c3b3ccd89bde7cc575",
+          "prepared_added_pixel_count": 30095,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 929,
+          "structural_added_pixel_count": 40921,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "wide-right-paper-margin"
+            }
+          ],
+          "structural_merged_component_count": 14,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 2525,
+          "structural_text_regions": [
+            {
+              "added_pixels": 2525,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "0b4e0d0e5a77bc328dea3c0d8209f131bc87a20aafd14f3e99227c3d0f76ea56",
+          "text_adhesion_count": 7,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 7,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "text_region_added_pixels": 5957,
+          "text_regions": [
+            {
+              "added_pixels": 5957,
+              "id": "rotated-title-and-handwriting"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "environment-scan-page-014-120dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 130236,
+          "correct_repair_count": 2,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 10.279,
+          "final_component_count": 646,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "forbidden_region_added_pixels": 1810,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1810,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "id": "environment-scan-page-014-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 573,
+          "object_counts": {
+            "contours": 3175,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 515,
+            "texts": 150
+          },
+          "object_type_sha256": "57c8fdf0df64ffb419024d3fc3dfee7b0e7b167d70605767f0f62cf04864c127",
+          "ocr_count": 150,
+          "ocr_sha256": "8dadd086db3b603fc8c8261187dfc76e0611ceb8326a652b510af2d031347cb6",
+          "prepared_added_pixel_count": 49342,
+          "repair_connection_regions": [
+            {
+              "connection_count": 2,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 758,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "source_component_count": 1229,
+          "structural_added_pixel_count": 80894,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "structural_merged_component_count": 44,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 437,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 2229,
+          "structural_text_regions": [
+            {
+              "added_pixels": 2229,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 437,
+          "structure_id": "cc2ac68170d0b6134db0271b624fcebd56f41691c7d0bb98c848b727b24287bf",
+          "text_adhesion_count": 13,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "text_region_added_pixels": 7820,
+          "text_regions": [
+            {
+              "added_pixels": 7820,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "true_break_added_pixels": 758
+        },
+        "historical_d9": {
+          "added_pixel_count": 263976,
+          "correct_repair_count": 2,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 16.715,
+          "final_component_count": 233,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 28,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "forbidden_region_added_pixels": 6517,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 6517,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "id": "environment-scan-page-014-120dpi",
+          "incorrect_bridge_count": 28,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 904,
+          "object_counts": {
+            "contours": 1625,
+            "logos": 0,
+            "signatures": 2,
+            "straight_lines": 441,
+            "texts": 150
+          },
+          "object_type_sha256": "81c8ff4c1c2045a184d93bb3897c6f73746aab9895ac74545f64964d9e0fa312",
+          "ocr_count": 150,
+          "ocr_sha256": "c0aa391a16e9010fbb3269e566675f3636c797e3cef7aeb565e363aa7e9c29d0",
+          "prepared_added_pixel_count": 148387,
+          "repair_connection_regions": [
+            {
+              "connection_count": 2,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 1334,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "source_component_count": 1229,
+          "structural_added_pixel_count": 115640,
+          "structural_forbidden_region_added_pixels": 1634,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 1634,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "structural_merged_component_count": 128,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 642,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 6261,
+          "structural_text_regions": [
+            {
+              "added_pixels": 6261,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 642,
+          "structure_id": null,
+          "text_adhesion_count": 46,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 46,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "text_region_added_pixels": 20925,
+          "text_regions": [
+            {
+              "added_pixels": 20925,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "true_break_added_pixels": 1334
+        },
+        "old_algorithm": {
+          "added_pixel_count": 28023,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 23.78,
+          "final_component_count": 704,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "forbidden_region_added_pixels": 1277,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1277,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "id": "environment-scan-page-014-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 423,
+          "object_counts": {
+            "contours": 3260,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 156
+          },
+          "object_type_sha256": "920506a743c7760f83758768bd695dc80f6eb0b9c9c1a5772094f3de4e3a69f9",
+          "ocr_count": 156,
+          "ocr_sha256": "fc6e52a9027854c9a53e653202e617fdb88ce6e5db4772e6ac7ebd3680f52691",
+          "prepared_added_pixel_count": 28023,
+          "repair_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 190,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "source_component_count": 1229,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 0,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "text_region_added_pixels": 3897,
+          "text_regions": [
+            {
+              "added_pixels": 3897,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "true_break_added_pixels": 190
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 130231,
+          "correct_repair_count": 2,
+          "correct_repair_region_count": 1,
+          "elapsed_seconds": 10.323,
+          "final_component_count": 646,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "forbidden_region_added_pixels": 1810,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 1810,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "id": "environment-scan-page-014-120dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 573,
+          "object_counts": {
+            "contours": 3175,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 515,
+            "texts": 150
+          },
+          "object_type_sha256": "46a4103f79f7e175a8b6b33137825e4b2a29e6d89127dfc27d0fed7bb6a22610",
+          "ocr_count": 150,
+          "ocr_sha256": "8dadd086db3b603fc8c8261187dfc76e0611ceb8326a652b510af2d031347cb6",
+          "prepared_added_pixel_count": 49342,
+          "repair_connection_regions": [
+            {
+              "connection_count": 2,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "repair_regions": [
+            {
+              "added_pixels": 758,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "source_component_count": 1229,
+          "structural_added_pixel_count": 80889,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "signature-next-to-device-list"
+            }
+          ],
+          "structural_merged_component_count": 44,
+          "structural_repair_regions": [
+            {
+              "added_pixels": 437,
+              "id": "torn-bottom-frame"
+            }
+          ],
+          "structural_text_region_added_pixels": 2229,
+          "structural_text_regions": [
+            {
+              "added_pixels": 2229,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "structural_true_break_added_pixels": 437,
+          "structure_id": "d459b12226fab86b10fd8a5731e65f62738329081843bcb9514c230e876907ee",
+          "text_adhesion_count": 13,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "text_region_added_pixels": 7820,
+          "text_regions": [
+            {
+              "added_pixels": 7820,
+              "id": "bottom-title-and-device-list"
+            }
+          ],
+          "true_break_added_pixels": 758
+        }
+      }
+    },
+    {
+      "id": "warehouse-system-page-002-72dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 143872,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 10.888,
+          "final_component_count": 1052,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "forbidden_region_added_pixels": 3614,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3614,
+              "id": "open-center-paper"
+            }
+          ],
+          "id": "warehouse-system-page-002-72dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 726,
+          "object_counts": {
+            "contours": 1473,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 117,
+            "texts": 145
+          },
+          "object_type_sha256": "5b7e6d9d02f1a148539c2f0b30577a722818e97af4af270d850a6d41783d85c5",
+          "ocr_count": 145,
+          "ocr_sha256": "727316ef9449dcf8abbcd7008dbf2f3def639c026a8c4a1654f85945f11e7f28",
+          "prepared_added_pixel_count": 75887,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1778,
+          "structural_added_pixel_count": 67985,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "structural_merged_component_count": 35,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "system-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "aa24d567805130aa6cd5ff91f9496e204ebb5c01f4fd08b261cb8603f11690a4",
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "system-notes"
+            }
+          ],
+          "text_region_added_pixels": 16480,
+          "text_regions": [
+            {
+              "added_pixels": 16480,
+              "id": "system-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 167114,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 9.571,
+          "final_component_count": 691,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "forbidden_region_added_pixels": 3614,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3614,
+              "id": "open-center-paper"
+            }
+          ],
+          "id": "warehouse-system-page-002-72dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 1087,
+          "object_counts": {
+            "contours": 453,
+            "logos": 0,
+            "signatures": 10,
+            "straight_lines": 201,
+            "texts": 145
+          },
+          "object_type_sha256": "aca715612a7e0c1fa9c0e2d0f8762201d80d50f7b9038850dc996c08c2f0eb01",
+          "ocr_count": 145,
+          "ocr_sha256": "b4c8dbbb644383ea2c6e09b2ef2c96cd5ebd4712525903f8f1bfa1b0ce2b6c9c",
+          "prepared_added_pixel_count": 75887,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1778,
+          "structural_added_pixel_count": 91227,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "structural_merged_component_count": 396,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 769,
+          "structural_text_regions": [
+            {
+              "added_pixels": 769,
+              "id": "system-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 6,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 6,
+              "id": "system-notes"
+            }
+          ],
+          "text_region_added_pixels": 17249,
+          "text_regions": [
+            {
+              "added_pixels": 17249,
+              "id": "system-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 75887,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 29.654,
+          "final_component_count": 1087,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "forbidden_region_added_pixels": 3614,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3614,
+              "id": "open-center-paper"
+            }
+          ],
+          "id": "warehouse-system-page-002-72dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 691,
+          "object_counts": {
+            "contours": 2803,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 145
+          },
+          "object_type_sha256": "878d3ca940ea0eb1482b3f7ecd4a30861114c87c96032b64566d2213fc41fa57",
+          "ocr_count": 145,
+          "ocr_sha256": "ccc046a078a8527b27358bf035e72e690836500989d7f77f9b4aedb5dab635cf",
+          "prepared_added_pixel_count": 75887,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1778,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "system-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "system-notes"
+            }
+          ],
+          "text_region_added_pixels": 16480,
+          "text_regions": [
+            {
+              "added_pixels": 16480,
+              "id": "system-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 143834,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 12.23,
+          "final_component_count": 1052,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "forbidden_region_added_pixels": 3614,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3614,
+              "id": "open-center-paper"
+            }
+          ],
+          "id": "warehouse-system-page-002-72dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 726,
+          "object_counts": {
+            "contours": 1473,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 117,
+            "texts": 145
+          },
+          "object_type_sha256": "3beb12ec024525b7bd30af1fb50e0460acfe053ab3766496c21469c6e7660957",
+          "ocr_count": 145,
+          "ocr_sha256": "727316ef9449dcf8abbcd7008dbf2f3def639c026a8c4a1654f85945f11e7f28",
+          "prepared_added_pixel_count": 75887,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1778,
+          "structural_added_pixel_count": 67947,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "open-center-paper"
+            }
+          ],
+          "structural_merged_component_count": 35,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "system-notes"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "222c7a0cd9c5709f8c359bd035265ab8badf403134715ac7140c5ed779da0c81",
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "system-notes"
+            }
+          ],
+          "text_region_added_pixels": 16480,
+          "text_regions": [
+            {
+              "added_pixels": 16480,
+              "id": "system-notes"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    },
+    {
+      "id": "warehouse-plan-page-003-72dpi",
+      "variants": {
+        "current_structural_roi": {
+          "added_pixel_count": 255865,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 12.622,
+          "final_component_count": 483,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "central-open-floor"
+            }
+          ],
+          "forbidden_region_added_pixels": 3124,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3124,
+              "id": "central-open-floor"
+            }
+          ],
+          "id": "warehouse-plan-page-003-72dpi",
+          "incorrect_bridge_count": 13,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 555,
+          "object_counts": {
+            "contours": 1681,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 421,
+            "texts": 167
+          },
+          "object_type_sha256": "8a03025412b65e6edda8c5fe7bf1c4cebc8efc794828eaf9ea3a447d4b45398a",
+          "ocr_count": 167,
+          "ocr_sha256": "ad2e4425784006c7e6c6d8a47dce079eb3af3cc814b383443482a3ce622cbd19",
+          "prepared_added_pixel_count": 116056,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1038,
+          "structural_added_pixel_count": 139809,
+          "structural_forbidden_region_added_pixels": 578,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 578,
+              "id": "central-open-floor"
+            }
+          ],
+          "structural_merged_component_count": 24,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 14033,
+          "structural_text_regions": [
+            {
+              "added_pixels": 14033,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "9966d13ae9a17b4e043a0d75e2beb773f8efbaa696563ad2ac19973ba299d075",
+          "text_adhesion_count": 12,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 12,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "text_region_added_pixels": 24365,
+          "text_regions": [
+            {
+              "added_pixels": 24365,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "historical_d9": {
+          "added_pixel_count": 299599,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 16.653,
+          "final_component_count": 335,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 159,
+              "id": "central-open-floor"
+            }
+          ],
+          "forbidden_region_added_pixels": 3332,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3332,
+              "id": "central-open-floor"
+            }
+          ],
+          "id": "warehouse-plan-page-003-72dpi",
+          "incorrect_bridge_count": 159,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 703,
+          "object_counts": {
+            "contours": 945,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 392,
+            "texts": 167
+          },
+          "object_type_sha256": "86d19669fc6b6ce3e00db545890c6dd54618151b152f2461ff58192db650ed7f",
+          "ocr_count": 167,
+          "ocr_sha256": "fbe6019800f20a2d50147faec20584ac43d821197e3c9992bce723e36eaaed11",
+          "prepared_added_pixel_count": 116056,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1038,
+          "structural_added_pixel_count": 183543,
+          "structural_forbidden_region_added_pixels": 786,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 786,
+              "id": "central-open-floor"
+            }
+          ],
+          "structural_merged_component_count": 172,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 16276,
+          "structural_text_regions": [
+            {
+              "added_pixels": 16276,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 153,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 153,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "text_region_added_pixels": 26608,
+          "text_regions": [
+            {
+              "added_pixels": 26608,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "old_algorithm": {
+          "added_pixel_count": 116056,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 32.025,
+          "final_component_count": 507,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "central-open-floor"
+            }
+          ],
+          "forbidden_region_added_pixels": 2546,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 0,
+          "forbidden_regions": [
+            {
+              "added_pixels": 2546,
+              "id": "central-open-floor"
+            }
+          ],
+          "id": "warehouse-plan-page-003-72dpi",
+          "incorrect_bridge_count": 0,
+          "incorrect_bridge_region_count": 0,
+          "merged_source_component_count": 531,
+          "object_counts": {
+            "contours": 2227,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 0,
+            "texts": 180
+          },
+          "object_type_sha256": "45e6950d130e7b000a081f744e8e93e51bb0667cd86990e8c707e3263dddf9e2",
+          "ocr_count": 180,
+          "ocr_sha256": "ace3e06f8f8e332967e086dd5e36a3ec2cacf19c5cbbc9e6bc2cb64bcb987af0",
+          "prepared_added_pixel_count": 116056,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1038,
+          "structural_added_pixel_count": 0,
+          "structural_forbidden_region_added_pixels": 0,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 0,
+              "id": "central-open-floor"
+            }
+          ],
+          "structural_merged_component_count": 0,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 0,
+          "structural_text_regions": [
+            {
+              "added_pixels": 0,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": null,
+          "text_adhesion_count": 0,
+          "text_adhesion_region_count": 0,
+          "text_connection_regions": [
+            {
+              "connection_count": 0,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "text_region_added_pixels": 10332,
+          "text_regions": [
+            {
+              "added_pixels": 10332,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "true_break_added_pixels": 0
+        },
+        "whole_page_disabled": {
+          "added_pixel_count": 255814,
+          "correct_repair_count": 0,
+          "correct_repair_region_count": 0,
+          "elapsed_seconds": 14.124,
+          "final_component_count": 483,
+          "forbidden_connection_regions": [
+            {
+              "connection_count": 13,
+              "id": "central-open-floor"
+            }
+          ],
+          "forbidden_region_added_pixels": 3124,
+          "forbidden_region_with_added_pixels_count": 1,
+          "forbidden_region_with_structural_pixels_count": 1,
+          "forbidden_regions": [
+            {
+              "added_pixels": 3124,
+              "id": "central-open-floor"
+            }
+          ],
+          "id": "warehouse-plan-page-003-72dpi",
+          "incorrect_bridge_count": 13,
+          "incorrect_bridge_region_count": 1,
+          "merged_source_component_count": 555,
+          "object_counts": {
+            "contours": 1681,
+            "logos": 0,
+            "signatures": 0,
+            "straight_lines": 421,
+            "texts": 167
+          },
+          "object_type_sha256": "0cd2f7bde9d6023b37791a5c1addc7a1fad687ddb35c15652b303c744c898bd7",
+          "ocr_count": 167,
+          "ocr_sha256": "ad2e4425784006c7e6c6d8a47dce079eb3af3cc814b383443482a3ce622cbd19",
+          "prepared_added_pixel_count": 116056,
+          "repair_connection_regions": [],
+          "repair_regions": [],
+          "source_component_count": 1038,
+          "structural_added_pixel_count": 139758,
+          "structural_forbidden_region_added_pixels": 578,
+          "structural_forbidden_regions": [
+            {
+              "added_pixels": 578,
+              "id": "central-open-floor"
+            }
+          ],
+          "structural_merged_component_count": 24,
+          "structural_repair_regions": [],
+          "structural_text_region_added_pixels": 14033,
+          "structural_text_regions": [
+            {
+              "added_pixels": 14033,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "structural_true_break_added_pixels": 0,
+          "structure_id": "ee593e049c974e4f10ed4d70123be80cba9a08f45bc9ee3ca1192e2e28b5f13a",
+          "text_adhesion_count": 12,
+          "text_adhesion_region_count": 1,
+          "text_connection_regions": [
+            {
+              "connection_count": 12,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "text_region_added_pixels": 24365,
+          "text_regions": [
+            {
+              "added_pixels": 24365,
+              "id": "floor-title-and-dimensions"
+            }
+          ],
+          "true_break_added_pixels": 0
+        }
+      }
+    }
+  ],
+  "schema_version": 4,
+  "variants": {
+    "current_structural_roi": {
+      "core_source_sha256": {
+        "app/connectivity_safety.py": "e75ba9d6bc9c842e322cd2102a65d13cd5b2f0aa1ee7e5ed4b4df3eda92b7604",
+        "app/line_detect.py": "19f5a7cb38c26febc1a211341f4db7b98323afb5911b68a629c44636d096f06d",
+        "app/optimized_trace.py": "09ca3f96b232d59e134489ba57634e31cf259a2103e89a7b4b4af0803c03acbf",
+        "app/pipeline_service.py": "790d1033ad88b7287e3fcd39266e1727cdbde76714b58caadf530ac1da8e935f",
+        "app/scan_cleanup.py": "8e659c861126ea706f8f0b4cac6488d9de6acc04a4059c88721bd8c19cb47747",
+        "app/straight_line_reconstruction.py": "e3ead655c0f685b9ee5c70799ab646ce9319455fc4d0df0f8a7631a7fa0953b9",
+        "app/structural_roi.py": "da3b6ab31e6d44b04277ffbb4b1beda329ae0e0608f47221cb7a64ad198d949a"
+      },
+      "git_commit": "df7b2d3129c86f6f1d47dd67a6c814b4e805f611",
+      "measurement_options": {
+        "disable_roi_repair": false,
+        "enable_ocr": true
+      },
+      "result_sha256": "2bf7d8e5f868742ec762b186b68e7a0ebbc72bb9115bae87c302d3610319bb02"
+    },
+    "historical_d9": {
+      "core_source_sha256": {
+        "app/line_detect.py": "32627042900230a5bce57940a126bc4f55dd590e92630a017f7439ee7c379a9d",
+        "app/optimized_trace.py": "6b77f03aa2e5c4e8046dd3fbcacd61888addb507ad9be87eb1b94dc5cdae43c3",
+        "app/pipeline_service.py": "67589002fee9ade0d16f5627df17497a4bc069529363da182060627e5a7ad530",
+        "app/scan_cleanup.py": "0a4258e9f70c3ff64c073236bbc16411c7ac848af62dc54e3084af33e4699e9c",
+        "app/straight_line_reconstruction.py": "e34e717825992cdac7c914991584b5a075947d536481be519fa4fbfb328b386e"
+      },
+      "git_commit": "d9fbda763e95c6dd7154934b801b59dbf034e711",
+      "measurement_options": {
+        "disable_roi_repair": false,
+        "enable_ocr": true
+      },
+      "result_sha256": "380550b7883663fc03f89977fc958f8557218e435aea85b81da3d57e879ac4c8"
+    },
+    "old_algorithm": {
+      "core_source_sha256": {
+        "app/line_detect.py": "32627042900230a5bce57940a126bc4f55dd590e92630a017f7439ee7c379a9d",
+        "app/optimized_trace.py": "a916486f0e53f2594f52d91205216c510edcd6488bc20471109be2145e396614",
+        "app/pipeline_service.py": "67589002fee9ade0d16f5627df17497a4bc069529363da182060627e5a7ad530",
+        "app/scan_cleanup.py": "bbb59427e10c6e47e2ce30c6ac5be27831401c158c90e5429c949c592c291b0b",
+        "app/straight_line_reconstruction.py": null
+      },
+      "git_commit": "6a2aa545a534ea6fd50db8a5ba942a0a5db9e353",
+      "measurement_options": {
+        "disable_roi_repair": false,
+        "enable_ocr": true
+      },
+      "result_sha256": "96f31a2882dc84f6b0232155fcc3cfd754a0e662ef00cc8e04985b56935f9312"
+    },
+    "whole_page_disabled": {
+      "core_source_sha256": {
+        "app/connectivity_safety.py": "e75ba9d6bc9c842e322cd2102a65d13cd5b2f0aa1ee7e5ed4b4df3eda92b7604",
+        "app/line_detect.py": "19f5a7cb38c26febc1a211341f4db7b98323afb5911b68a629c44636d096f06d",
+        "app/optimized_trace.py": "09ca3f96b232d59e134489ba57634e31cf259a2103e89a7b4b4af0803c03acbf",
+        "app/pipeline_service.py": "790d1033ad88b7287e3fcd39266e1727cdbde76714b58caadf530ac1da8e935f",
+        "app/scan_cleanup.py": "8e659c861126ea706f8f0b4cac6488d9de6acc04a4059c88721bd8c19cb47747",
+        "app/straight_line_reconstruction.py": "e3ead655c0f685b9ee5c70799ab646ce9319455fc4d0df0f8a7631a7fa0953b9",
+        "app/structural_roi.py": "da3b6ab31e6d44b04277ffbb4b1beda329ae0e0608f47221cb7a64ad198d949a"
+      },
+      "git_commit": "df7b2d3129c86f6f1d47dd67a6c814b4e805f611",
+      "measurement_options": {
+        "disable_roi_repair": true,
+        "enable_ocr": true
+      },
+      "result_sha256": "40db16639b28f01a755ba86eafd271d13b995f0e4eac72dd2849e9955ab18a04"
+    }
+  }
+}
