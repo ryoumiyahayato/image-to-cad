@@ -135,6 +135,8 @@ def test_connectivity_judgment_runs_on_the_roi_crop(monkeypatch) -> None:
         line_indices=(0, 1),
         evidence_intersections=(),
         confidence=1.0,
+        expansion_distance=20.0,
+        source_types=("local_endpoint_corridor",),
     )
     observed_shapes: list[tuple[int, int]] = []
     original = cv2.connectedComponents

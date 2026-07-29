@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from typing import Any, Mapping, Protocol, Sequence
 
 import cv2
@@ -265,7 +266,65 @@ def texts_payload(texts: Sequence[Any]) -> list[dict[str, Any]]:
     return [text_payload(text) for text in texts]
 
 
-def roi_payload(roi: Any) -> dict[str, Any]:
+def roi_payload(
+    roi: Any,
+    lines: Sequence[Any] = (),
+) -> dict[str, Any]:
+    roi_lines = [
+        lines[int(index)]
+        for index in roi.line_indices
+        if 0 <= int(index) < len(lines)
+    ]
+    widths = [max(1.0, float(line.width)) for line in roi_lines]
+    median_width = float(np.median(widths)) if widths else 0.0
+    median_deviation = (
+        float(np.median(np.abs(np.asarray(widths) - median_width)))
+        if widths
+        else 0.0
+    )
+    orientation_counts = {
+        "horizontal": 0,
+        "vertical": 0,
+        "other": 0,
+    }
+    maximum_axis_deviation = 0.0
+    endpoint_corridors: list[dict[str, Any]] = []
+    expansion_distance = float(
+        getattr(roi, "expansion_distance", 0.0)
+    )
+    for index, line in zip(roi.line_indices, roi_lines, strict=False):
+        angle = abs(
+            math.degrees(
+                math.atan2(
+                    float(line.y2) - float(line.y1),
+                    float(line.x2) - float(line.x1),
+                )
+            )
+        ) % 180.0
+        horizontal_deviation = min(angle, 180.0 - angle)
+        vertical_deviation = abs(90.0 - angle)
+        axis_deviation = min(horizontal_deviation, vertical_deviation)
+        maximum_axis_deviation = max(
+            maximum_axis_deviation,
+            axis_deviation,
+        )
+        if horizontal_deviation <= vertical_deviation:
+            orientation_counts["horizontal"] += 1
+        elif vertical_deviation < horizontal_deviation:
+            orientation_counts["vertical"] += 1
+        else:
+            orientation_counts["other"] += 1
+        for endpoint_index, point in enumerate(
+            ((line.x1, line.y1), (line.x2, line.y2))
+        ):
+            endpoint_corridors.append(
+                {
+                    "line_index": int(index),
+                    "endpoint_index": int(endpoint_index),
+                    "point": [float(point[0]), float(point[1])],
+                    "maximum_extension": expansion_distance,
+                }
+            )
     return {
         "roi_id": str(roi.roi_id),
         "purpose": str(roi.purpose),
@@ -276,11 +335,31 @@ def roi_payload(roi: Any) -> dict[str, Any]:
             for point in roi.evidence_intersections
         ],
         "confidence": float(roi.confidence),
+        "source_types": [
+            str(value)
+            for value in getattr(roi, "source_types", ())
+        ],
+        "expansion_distance": expansion_distance,
+        "line_width_evidence": {
+            "count": len(widths),
+            "minimum": min(widths) if widths else 0.0,
+            "median": median_width,
+            "maximum": max(widths) if widths else 0.0,
+            "median_absolute_deviation": median_deviation,
+        },
+        "orientation_evidence": {
+            **orientation_counts,
+            "maximum_axis_deviation_degrees": maximum_axis_deviation,
+        },
+        "endpoint_corridors": endpoint_corridors,
     }
 
 
-def rois_payload(rois: Sequence[Any]) -> list[dict[str, Any]]:
-    return [roi_payload(roi) for roi in rois]
+def rois_payload(
+    rois: Sequence[Any],
+    lines: Sequence[Any] = (),
+) -> list[dict[str, Any]]:
+    return [roi_payload(roi, lines) for roi in rois]
 
 
 def rasterize_lines(
@@ -327,6 +406,20 @@ def rasterize_rois(
         x, y, width, height = (int(value) for value in roi.bbox)
         mask[y : y + height, x : x + width] = 255
     return mask
+
+
+def rasterize_roi_corridors(
+    rois: Sequence[Any],
+    lines: Sequence[Any],
+    image_shape: tuple[int, int],
+) -> np.ndarray:
+    from .structural_roi import rasterize_structural_roi_corridors
+
+    return rasterize_structural_roi_corridors(
+        rois,
+        lines,
+        image_shape=image_shape,
+    )
 
 
 def rasterize_connections(

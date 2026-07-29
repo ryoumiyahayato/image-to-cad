@@ -1,0 +1,51 @@
+{
+  "phase": 6,
+  "evidence_kind": "before",
+  "captured_at": "2026-07-29T18:33:00+08:00",
+  "baseline_commit": "1a87d04c0022d223cc1d688732579652542bf860",
+  "input_manifest": "output/ci/phase5-comparison-inputs/input-manifest.json",
+  "document_count": 10,
+  "full_report": {
+    "path": "output/ci/phase6-before-roi-validation.json",
+    "sha256": "22fa4410d3f7899220759924f9174069d659faf98740edb494727661b399acab"
+  },
+  "aggregate": {
+    "roi_count": 50,
+    "roi_mask_pixels": 12290035,
+    "candidate_endpoint_count": 15082,
+    "roi_inside_endpoint_count": 0,
+    "approved_connection_count": 852,
+    "approved_outside_roi_mask_count": 0,
+    "approved_outside_roi_bbox_count": 0,
+    "rejected_connection_count": 1144,
+    "outside_roi_rejection_count": 678,
+    "missing_roi_metadata_count": 50,
+    "document_elapsed_total_seconds": 379.236
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "roi_mask_observed_on_every_page": true,
+    "roi_metadata_complete": false,
+    "roi_inside_endpoints_observable": false,
+    "outside_roi_rejections_observable": true,
+    "all_approved_connections_inside_roi_mask": true,
+    "all_approved_connection_endpoints_inside_roi_bbox": true,
+    "connection_protection_mask_observed_on_every_page": false,
+    "required_protection_categories_declared": false,
+    "no_approved_connection_crosses_protection_mask": false
+  },
+  "identified_gaps": [
+    "the observed ROI mask is the full network bounding rectangle rather than local source-derived repair corridors",
+    "ROI payloads omit source types, expansion distance, line-width evidence, orientation evidence, and endpoint corridors",
+    "candidate endpoints are emitted globally but are not mapped to their StructuralRoi",
+    "the connection-time protection mask and its category coverage are not emitted as an auditable artifact",
+    "engineering symbols, arrows, dimension numbers, and leader annotations are guarded indirectly as non-structural source ink but that guard is not explicit in the evidence"
+  ],
+  "scope_decision": {
+    "expand_roi_sources": false,
+    "increase_connection_budget": false,
+    "change_recognition_thresholds": false,
+    "add_semantic_recognition_types": false,
+    "planned_change": "replace bbox observation and membership with source-line endpoint corridors, expose existing structural evidence, and make the existing non-structural source-ink guard explicit"
+  }
+}

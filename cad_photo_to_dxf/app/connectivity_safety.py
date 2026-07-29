@@ -9,6 +9,7 @@ import numpy as np
 from .line_detect import LineSegment
 from .structural_roi import (
     StructuralRoi,
+    rasterize_structural_roi_corridor_crop,
     segment_length,
 )
 
@@ -32,8 +33,10 @@ class StructuralConnectivityContext:
     top: int
     structural: np.ndarray
     structural_labels: np.ndarray
+    repair_corridor: np.ndarray
     source_foreground: np.ndarray
     protected_mask: np.ndarray | None
+    non_structural_protection: np.ndarray
     thickness: int
     component_count_before: int
 
@@ -103,6 +106,19 @@ def build_structural_connectivity_context(
         top=top,
         shape=local_shape,
     )
+    corridor_left, corridor_top, repair_corridor = (
+        rasterize_structural_roi_corridor_crop(
+            roi,
+            lines,
+            image_shape=source_foreground.shape,
+        )
+    )
+    if (
+        corridor_left != left
+        or corridor_top != top
+        or repair_corridor.shape != local_shape
+    ):
+        raise AssertionError("Structural ROI corridor crop is inconsistent")
     component_count, structural_labels = cv2.connectedComponents(
         np.ascontiguousarray(structural, dtype=np.uint8),
         connectivity=8,
@@ -111,6 +127,12 @@ def build_structural_connectivity_context(
         max(1.0, float(lines[index].width))
         for index in roi.line_indices
     ]
+    source_crop = source_foreground[top:bottom, left:right]
+    non_structural_protection = np.where(
+        (source_crop > 0) & (structural == 0),
+        255,
+        0,
+    ).astype(np.uint8)
     return StructuralConnectivityContext(
         roi_id=roi.roi_id,
         roi_bbox=roi.bbox,
@@ -119,12 +141,14 @@ def build_structural_connectivity_context(
         top=top,
         structural=structural,
         structural_labels=structural_labels,
-        source_foreground=source_foreground[top:bottom, left:right],
+        repair_corridor=repair_corridor,
+        source_foreground=source_crop,
         protected_mask=(
             None
             if protected_mask is None
             else protected_mask[top:bottom, left:right]
         ),
+        non_structural_protection=non_structural_protection,
         thickness=max(1, int(round(float(np.median(line_widths))))),
         component_count_before=max(0, int(component_count) - 1),
     )
@@ -212,6 +236,19 @@ def evaluate_structural_bridge(
         cv2.LINE_8,
     )
     bridge_pixels = int(cv2.countNonZero(bridge))
+    corridor_crop = context.repair_corridor[
+        crop_top:crop_bottom,
+        crop_left:crop_right,
+    ]
+    if np.any((bridge > 0) & (corridor_crop == 0)):
+        return ConnectivityDecision(
+            False,
+            "outside_structural_corridor",
+            roi.roi_id,
+            bridge_pixels,
+            context.component_count_before,
+            context.component_count_before,
+        )
     protected_crop = (
         None
         if context.protected_mask is None
@@ -232,20 +269,11 @@ def evaluate_structural_bridge(
             context.component_count_before,
         )
 
-    structural_crop = context.structural[
+    non_structural_crop = context.non_structural_protection[
         crop_top:crop_bottom,
         crop_left:crop_right,
     ]
-    source_crop = context.source_foreground[
-        crop_top:crop_bottom,
-        crop_left:crop_right,
-    ]
-    non_structural_ink = (
-        (source_crop > 0)
-        & (structural_crop == 0)
-        & (bridge > 0)
-    )
-    if np.any(non_structural_ink):
+    if np.any((bridge > 0) & (non_structural_crop > 0)):
         return ConnectivityDecision(
             False,
             "non_structural_component_merge",

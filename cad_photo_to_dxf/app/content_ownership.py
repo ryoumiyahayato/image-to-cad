@@ -152,6 +152,109 @@ def graphic_source_mask(
     ).astype(np.uint8)
 
 
+@dataclass(frozen=True)
+class ConnectionProtection:
+    """Classification-neutral masks and guards used only for bridge safety."""
+
+    mask: np.ndarray
+    category_pixels: tuple[tuple[str, int], ...]
+    guards: tuple[tuple[str, str], ...]
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "protected_categories": [
+                category for category, _mechanism in self.guards
+            ],
+            "protection_guards": {
+                category: mechanism
+                for category, mechanism in self.guards
+            },
+            "category_pixels": {
+                category: int(pixel_count)
+                for category, pixel_count in self.category_pixels
+            },
+            "protected_pixels": int(cv2.countNonZero(self.mask)),
+        }
+
+
+def build_connection_protection(
+    binary: np.ndarray,
+    *,
+    texts: Sequence[TextCandidate],
+    logos: Sequence[LogoRegion],
+    signatures: Sequence[SignatureRegion],
+) -> ConnectionProtection:
+    """Build explicit semantic guards without assigning source ownership."""
+
+    protected = _mask_like(binary)
+    text_mask = _mask_like(binary)
+    high_confidence_text_mask = _mask_like(binary)
+    dimension_number_mask = _mask_like(binary)
+    accepted_text_ids = {
+        id(item) for item in accepted_ocr_texts(texts)
+    }
+    for item in texts:
+        candidate_mask = _candidate_region_mask(item, binary.shape)
+        text_mask[candidate_mask > 0] = 255
+        if id(item) in accepted_text_ids:
+            high_confidence_text_mask[candidate_mask > 0] = 255
+        if item.kind == "dimension_text_candidate":
+            dimension_number_mask[candidate_mask > 0] = 255
+
+    logo_mask = _mask_like(binary)
+    for item in logos:
+        clipped = _clip_box(item.bbox, binary.shape)
+        if clipped is None:
+            continue
+        left, top, right, bottom = clipped
+        logo_mask[top:bottom, left:right] = 255
+    signature_mask = _mask_like(binary)
+    for item in signatures:
+        clipped = _clip_box(item.bbox, binary.shape)
+        if clipped is None:
+            continue
+        left, top, right, bottom = clipped
+        signature_mask[top:bottom, left:right] = 255
+
+    for mask in (text_mask, logo_mask, signature_mask):
+        protected[mask > 0] = 255
+    category_pixels = (
+        (
+            "high_confidence_text",
+            int(cv2.countNonZero(high_confidence_text_mask)),
+        ),
+        ("logo", int(cv2.countNonZero(logo_mask))),
+        ("signature", int(cv2.countNonZero(signature_mask))),
+        (
+            "dimension_number",
+            int(cv2.countNonZero(dimension_number_mask)),
+        ),
+    )
+    guards = (
+        ("high_confidence_text", "accepted_ocr_source_footprint"),
+        ("logo", "independent_logo_bbox"),
+        ("signature", "independent_signature_bbox"),
+        (
+            "engineering_symbol",
+            "non_structural_source_ink_inside_structural_roi",
+        ),
+        ("arrow", "non_structural_source_ink_inside_structural_roi"),
+        (
+            "dimension_number",
+            "ocr_footprint_or_non_structural_source_ink",
+        ),
+        (
+            "leader_annotation",
+            "ocr_footprint_or_non_structural_source_ink",
+        ),
+    )
+    return ConnectionProtection(
+        mask=protected,
+        category_pixels=category_pixels,
+        guards=guards,
+    )
+
+
 def protected_object_regions(
     binary: np.ndarray,
     *,
@@ -159,18 +262,14 @@ def protected_object_regions(
     logos: Sequence[LogoRegion],
     signatures: Sequence[SignatureRegion],
 ) -> np.ndarray:
-    """Return classification-neutral regions that structural bridges cannot cross."""
+    """Return semantic regions that structural bridges cannot cross."""
 
-    protected = _mask_like(binary)
-    for item in texts:
-        protected[_candidate_region_mask(item, binary.shape) > 0] = 255
-    for item in (*logos, *signatures):
-        clipped = _clip_box(item.bbox, binary.shape)
-        if clipped is None:
-            continue
-        left, top, right, bottom = clipped
-        protected[top:bottom, left:right] = 255
-    return protected
+    return build_connection_protection(
+        binary,
+        texts=texts,
+        logos=logos,
+        signatures=signatures,
+    ).mask
 
 
 def line_source_mask(

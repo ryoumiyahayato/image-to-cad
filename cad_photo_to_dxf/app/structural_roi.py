@@ -20,12 +20,14 @@ class StructuralRoi:
     line_indices: tuple[int, ...]
     evidence_intersections: tuple[tuple[float, float], ...]
     confidence: float
+    expansion_distance: float = 0.0
+    source_types: tuple[str, ...] = ()
 
     def contains(self, point: tuple[float, float]) -> bool:
         x, y, width, height = self.bbox
         return bool(
-            x <= point[0] <= x + width
-            and y <= point[1] <= y + height
+            x <= point[0] < x + width
+            and y <= point[1] < y + height
         )
 
 
@@ -221,7 +223,15 @@ def detect_structural_rois(
             for index in component
             for value in (float(lines[index].y1), float(lines[index].y2))
         ]
-        pad = max(2, int(round(median_width + extension_budget)))
+        component_widths = [
+            max(1.0, float(lines[index].width))
+            for index in component
+        ]
+        component_median_width = float(np.median(component_widths))
+        pad = max(
+            2,
+            int(round(component_median_width + extension_budget)),
+        )
         left = max(0, int(np.floor(min(xs))) - pad)
         top = max(0, int(np.floor(min(ys))) - pad)
         right = min(page_width - 1, int(np.ceil(max(xs))) + pad)
@@ -238,6 +248,17 @@ def detect_structural_rois(
             if len(component_horizontal) == 2 and len(component_vertical) == 2
             else "table"
         )
+        source_types = (
+            "source_supported_axis_lines",
+            (
+                "closed_frame_network"
+                if purpose == "frame"
+                else "table_line_network"
+            ),
+            "orthogonal_intersection_network",
+            "measured_line_width_and_direction",
+            "local_endpoint_corridor",
+        )
         rois.append(
             StructuralRoi(
                 roi_id=f"{purpose}-{len(rois) + 1:03d}",
@@ -246,9 +267,119 @@ def detect_structural_rois(
                 line_indices=tuple(sorted(component)),
                 evidence_intersections=component_intersections,
                 confidence=confidence,
+                expansion_distance=float(extension_budget),
+                source_types=source_types,
             )
         )
     return StructuralRoiSet(tuple(rois))
+
+
+def _structural_roi_bounds(
+    roi: StructuralRoi,
+    *,
+    image_shape: tuple[int, int],
+) -> tuple[int, int, int, int]:
+    page_height, page_width = image_shape
+    x, y, width, height = roi.bbox
+    left = max(0, int(x))
+    top = max(0, int(y))
+    right = min(page_width, int(x + width))
+    bottom = min(page_height, int(y + height))
+    if right <= left or bottom <= top:
+        raise ValueError(f"Structural ROI {roi.roi_id} is outside the page")
+    return left, top, right, bottom
+
+
+def rasterize_structural_roi_corridor_crop(
+    roi: StructuralRoi,
+    lines: Sequence[LineSegment],
+    *,
+    image_shape: tuple[int, int],
+) -> tuple[int, int, np.ndarray]:
+    """Return one bounded corridor in ROI-local coordinates."""
+
+    left, top, right, bottom = _structural_roi_bounds(
+        roi,
+        image_shape=image_shape,
+    )
+    local = np.zeros((bottom - top, right - left), dtype=np.uint8)
+    extension = max(0.0, float(roi.expansion_distance))
+    for raw_index in roi.line_indices:
+        index = int(raw_index)
+        if index < 0 or index >= len(lines):
+            raise IndexError(
+                f"Structural ROI {roi.roi_id} references missing line {index}"
+            )
+        line = lines[index]
+        dx = float(line.x2) - float(line.x1)
+        dy = float(line.y2) - float(line.y1)
+        length = hypot(dx, dy)
+        if length <= 1e-9:
+            continue
+        unit_x = dx / length
+        unit_y = dy / length
+        start = (
+            int(round(float(line.x1) - unit_x * extension)) - left,
+            int(round(float(line.y1) - unit_y * extension)) - top,
+        )
+        end = (
+            int(round(float(line.x2) + unit_x * extension)) - left,
+            int(round(float(line.y2) + unit_y * extension)) - top,
+        )
+        corridor_thickness = max(
+            3,
+            int(np.ceil(max(1.0, float(line.width)))) + 2,
+        )
+        cv2.line(
+            local,
+            start,
+            end,
+            255,
+            corridor_thickness,
+            cv2.LINE_8,
+        )
+    return left, top, local
+
+
+def rasterize_structural_roi_corridor(
+    roi: StructuralRoi,
+    lines: Sequence[LineSegment],
+    *,
+    image_shape: tuple[int, int],
+) -> np.ndarray:
+    """Rasterize only source-line bands and their bounded endpoint extensions."""
+
+    left, top, local = rasterize_structural_roi_corridor_crop(
+        roi,
+        lines,
+        image_shape=image_shape,
+    )
+    mask = np.zeros(image_shape, dtype=np.uint8)
+    bottom = top + local.shape[0]
+    right = left + local.shape[1]
+    mask[top:bottom, left:right] = local
+    return mask
+
+
+def rasterize_structural_roi_corridors(
+    rois: Sequence[StructuralRoi],
+    lines: Sequence[LineSegment],
+    *,
+    image_shape: tuple[int, int],
+) -> np.ndarray:
+    """Return the union of bounded local repair corridors."""
+
+    mask = np.zeros(image_shape, dtype=np.uint8)
+    for roi in rois:
+        mask = cv2.max(
+            mask,
+            rasterize_structural_roi_corridor(
+                roi,
+                lines,
+                image_shape=image_shape,
+            ),
+        )
+    return mask
 
 
 def rasterize_structural_lines(

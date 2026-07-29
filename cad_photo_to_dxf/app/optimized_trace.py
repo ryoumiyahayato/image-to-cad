@@ -6,10 +6,10 @@ import numpy as np
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .content_ownership import (
     binary_from_foreground,
+    build_connection_protection,
     editable_text_source_mask,
     graphic_source_mask,
     partition_content,
-    protected_object_regions,
     signature_source_mask,
     without_owned_pixels,
 )
@@ -179,12 +179,13 @@ def trace_image_optimized(
             image=signature_mask,
             payload={"role": "candidate", "count": len(signatures)},
         )
-    protected_mask = protected_object_regions(
+    connection_protection = build_connection_protection(
         prepared.binary,
         texts=texts,
         logos=logos,
         signatures=signatures,
     )
+    protected_mask = connection_protection.mask
     line_binary = without_owned_pixels(
         prepared.binary,
         signature_mask,
@@ -200,6 +201,7 @@ def trace_image_optimized(
             else prepared.gray
         ),
         protected_mask=protected_mask,
+        protection_guards=dict(connection_protection.guards),
         cancellation_token=cancellation_token,
         progress_callback=(
             None

@@ -1,0 +1,108 @@
+{
+  "phase": 6,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-29T21:31:00+08:00",
+  "base_commit": "1a87d04c0022d223cc1d688732579652542bf860",
+  "fixed_tag": "baseline/phase6-structural-roi-2026-07-29",
+  "scope": {
+    "recognition_thresholds_changed": false,
+    "new_recognition_types_added": false,
+    "fixed_coordinate_rules_added": false,
+    "page_percentage_rules_added": false,
+    "ocr_semantic_rules_added": false,
+    "roi_boundary_and_evidence_changed": true,
+    "connection_protection_observability_changed": true
+  },
+  "before_after": {
+    "document_count": 10,
+    "roi_count": 50,
+    "before_roi_mask_pixels": 12290035,
+    "after_roi_mask_pixels": 733561,
+    "roi_mask_reduction_percent": 94.031,
+    "before_roi_inside_endpoint_count": 0,
+    "after_roi_inside_endpoint_count": 1532,
+    "before_missing_roi_metadata_count": 50,
+    "after_missing_roi_metadata_count": 0,
+    "approved_connection_count": 852,
+    "outside_roi_rejection_count": 678,
+    "approved_outside_roi_mask_count": 0,
+    "approved_outside_roi_bbox_count": 0,
+    "approved_through_protection_count": 0,
+    "approved_without_roi_protection_count": 0,
+    "observed_bridge_thickness_pixels": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "structure_ids_match_phase5_baseline": true
+  },
+  "roi_sources": {
+    "source_supported_axis_lines": 50,
+    "orthogonal_intersection_network": 50,
+    "measured_line_width_and_direction": 50,
+    "local_endpoint_corridor": 50,
+    "table_line_network": 38,
+    "closed_frame_network": 12
+  },
+  "protection_categories": [
+    "high_confidence_text",
+    "logo",
+    "signature",
+    "engineering_symbol",
+    "arrow",
+    "dimension_number",
+    "leader_annotation"
+  ],
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q",
+    "tests": 222,
+    "failures": 0,
+    "errors": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_ci_scope_passed": true,
+    "compileall_ci_scope_passed": true,
+    "incremental_mypy_ci_scope_passed": true,
+    "repository_hygiene_passed": false,
+    "repository_hygiene_note": "Pre-existing tracked DXF baseline evidence and the existing 43 MB bundled font remain intentionally tracked; phase 6 adds neither condition."
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "elapsed_total_seconds": 245.723
+  },
+  "evidence_files": {
+    "phase6-before.json": {
+      "sha256": "33393385a6540652185b80d383cb95f7494080f4d3613044d88d8d52c350225d"
+    },
+    "phase6-after.json": {
+      "sha256": "a5ac9d29ddaab29a04652bbaa8cc9a7a2144207111132eddeb2ac3c772ae660c"
+    },
+    "phase6-real-regression.json": {
+      "sha256": "a5e294dfb4ff7c0732a7dcd2c9ba5c113deecd8a9bf022a7f6c6698b9218c9ae"
+    },
+    "phase6-pytest.xml": {
+      "sha256": "de7cccf6a60cee53b77dffeaccc0c888348fc5334883e8215d1e05b88fc11c6c"
+    }
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "roi_mask_observed_on_every_page": true,
+    "roi_metadata_complete": true,
+    "roi_inside_endpoints_observable": true,
+    "outside_roi_rejections_observable": true,
+    "all_approved_connections_inside_roi_mask": true,
+    "all_approved_connection_endpoints_inside_roi_bbox": true,
+    "connection_protection_mask_observed_on_every_page": true,
+    "required_protection_categories_declared": true,
+    "no_approved_connection_crosses_protection_mask": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Sequence
-from typing import Any
+from typing import Any, Mapping
 
 import cv2
 import numpy as np
@@ -26,7 +26,7 @@ from .observability import (
     rasterize_connections,
     rasterize_endpoints,
     rasterize_lines,
-    rasterize_rois,
+    rasterize_roi_corridors,
     rois_payload,
 )
 from .resolution import image_resolution_scale
@@ -647,6 +647,7 @@ def extend_lines_to_first_intersection(
     structural_rois: StructuralRoiSet | None = None,
     source_foreground: np.ndarray | None = None,
     protected_mask: np.ndarray | None = None,
+    protection_guards: Mapping[str, str] | None = None,
     minimum_angle_degrees: float = 7.5,
     max_pair_checks: int = 750_000,
     cancellation_token: CancellationToken | None = None,
@@ -661,6 +662,10 @@ def extend_lines_to_first_intersection(
     """
 
     resolved = [line.copy() for line in lines if line.length > 1e-9]
+    guard_payload = {
+        str(category): str(mechanism)
+        for category, mechanism in dict(protection_guards or {}).items()
+    }
     if (
         not resolved
         or maximum_extension <= 0.0
@@ -669,6 +674,25 @@ def extend_lines_to_first_intersection(
     ):
         if observation_sink is not None and source_foreground is not None:
             blank = np.zeros_like(source_foreground)
+            observed_protection = (
+                blank
+                if protected_mask is None
+                else np.ascontiguousarray(protected_mask.copy())
+            )
+            observe(
+                observation_sink,
+                "conflict_mask",
+                image=observed_protection,
+                payload={
+                    "role": "connection-protection",
+                    "protected_categories": sorted(guard_payload),
+                    "protection_guards": guard_payload,
+                    "protected_pixels": int(
+                        cv2.countNonZero(observed_protection)
+                    ),
+                    "structural_roi_ids": [],
+                },
+            )
             observe(
                 observation_sink,
                 "approved_connections",
@@ -783,6 +807,7 @@ def extend_lines_to_first_intersection(
                             "reason_code": "outside_structural_roi",
                             "roi_id": "",
                             "bridge_pixels": 0,
+                            "bridge_thickness": 0,
                             "component_count_before": 0,
                             "component_count_after": 0,
                         }
@@ -823,6 +848,7 @@ def extend_lines_to_first_intersection(
                             "reason_code": "relative_extension_limit",
                             "roi_id": roi.roi_id,
                             "bridge_pixels": 0,
+                            "bridge_thickness": 0,
                             "component_count_before": 0,
                             "component_count_after": 0,
                         }
@@ -864,6 +890,7 @@ def extend_lines_to_first_intersection(
                     "reason_code": decision.reason_code,
                     "roi_id": decision.roi_id,
                     "bridge_pixels": int(decision.bridge_pixels),
+                    "bridge_thickness": int(context.thickness),
                     "component_count_before": int(
                         decision.component_count_before
                     ),
@@ -903,6 +930,52 @@ def extend_lines_to_first_intersection(
         else:
             output.append(line)
     if observation_sink is not None:
+        observed_protection = (
+            np.zeros_like(source_foreground)
+            if protected_mask is None
+            else np.ascontiguousarray(protected_mask.copy())
+        )
+        protected_roi_ids: list[str] = []
+        for context in connectivity_contexts.values():
+            local = context.non_structural_protection
+            if context.protected_mask is not None:
+                local = cv2.max(local, context.protected_mask)
+            observe(
+                observation_sink,
+                "conflict_mask",
+                image=local,
+                payload={
+                    "role": "connection-protection-roi",
+                    "roi_id": context.roi_id,
+                    "origin": [int(context.left), int(context.top)],
+                    "protected_categories": sorted(guard_payload),
+                    "protection_guards": guard_payload,
+                    "protected_pixels": int(cv2.countNonZero(local)),
+                },
+            )
+            top = context.top
+            left = context.left
+            bottom = top + local.shape[0]
+            right = left + local.shape[1]
+            observed_protection[top:bottom, left:right] = cv2.max(
+                observed_protection[top:bottom, left:right],
+                local,
+            )
+            protected_roi_ids.append(context.roi_id)
+        observe(
+            observation_sink,
+            "conflict_mask",
+            image=observed_protection,
+            payload={
+                "role": "connection-protection",
+                "protected_categories": sorted(guard_payload),
+                "protection_guards": guard_payload,
+                "protected_pixels": int(
+                    cv2.countNonZero(observed_protection)
+                ),
+                "structural_roi_ids": sorted(protected_roi_ids),
+            },
+        )
         approved_connections = list(choice_records.values())
         applied_attempt_ids = {
             int(record["attempt_id"]) for record in approved_connections
@@ -968,6 +1041,7 @@ def reconstruct_straight_lines(
     *,
     scan_support_gray: np.ndarray | None = None,
     protected_mask: np.ndarray | None = None,
+    protection_guards: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
@@ -1110,6 +1184,31 @@ def reconstruct_straight_lines(
                 image=blank,
                 payload={"connections": [], "count": 0},
             )
+            observed_protection = (
+                blank
+                if protected_mask is None
+                else np.ascontiguousarray(protected_mask.copy())
+            )
+            guard_payload = {
+                str(category): str(mechanism)
+                for category, mechanism in dict(
+                    protection_guards or {}
+                ).items()
+            }
+            observe(
+                observation_sink,
+                "conflict_mask",
+                image=observed_protection,
+                payload={
+                    "role": "connection-protection",
+                    "protected_categories": sorted(guard_payload),
+                    "protection_guards": guard_payload,
+                    "protected_pixels": int(
+                        cv2.countNonZero(observed_protection)
+                    ),
+                    "structural_roi_ids": [],
+                },
+            )
             for role in ("before", "after"):
                 observe(
                     observation_sink,
@@ -1168,9 +1267,14 @@ def reconstruct_straight_lines(
         observe(
             observation_sink,
             "structural_roi",
-            image=rasterize_rois(structural_rois.rois, binary.shape),
+            image=rasterize_roi_corridors(
+                structural_rois.rois,
+                cleaned,
+                binary.shape,
+            ),
             payload={
-                "rois": rois_payload(structural_rois.rois),
+                "role": "repair-corridors",
+                "rois": rois_payload(structural_rois.rois, cleaned),
                 "count": len(structural_rois.rois),
                 "extension_budget": float(extension_budget),
             },
@@ -1181,6 +1285,7 @@ def reconstruct_straight_lines(
         structural_rois=structural_rois,
         source_foreground=np.where(binary < 128, 255, 0).astype(np.uint8),
         protected_mask=protected_mask,
+        protection_guards=protection_guards,
         cancellation_token=cancellation_token,
         observation_sink=observation_sink,
     )
