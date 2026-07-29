@@ -1,0 +1,26 @@
+{
+  "phase": 4,
+  "evidence_kind": "before",
+  "captured_at": "2026-07-29T13:22:39+08:00",
+  "baseline_commit": "bea9cd8f318875f3a17d5caaff5979fc6d7f336b",
+  "baseline_manifest_blob": "aa821d2c5fc04e108ed172496d18b9c3ae4f7ab6",
+  "manifest_path": "tests/real_regression/manifest.json",
+  "document_runs": 3,
+  "unique_source_pages": 3,
+  "independent_source_documents": 3,
+  "required_category_gate": false,
+  "required_dpi_gate": false,
+  "region_content_audit": false,
+  "original_file_retention_contract": false,
+  "skip_and_exception_hard_failure_tests": false,
+  "unit_test_evidence": {
+    "source": "validation/observability/phase3-verification.json",
+    "passed": 208
+  },
+  "real_regression_evidence": {
+    "source": "validation/observability/phase3-verification.json",
+    "passed": 3,
+    "total": 3
+  },
+  "reproduce_previous_manifest": "git show bea9cd8f318875f3a17d5caaff5979fc6d7f336b:cad_photo_to_dxf/tests/real_regression/manifest.json"
+}

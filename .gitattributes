@@ -4,3 +4,6 @@
 # Frozen DXF evidence contains fixed-width linetype records; preserve bytes.
 cad_photo_to_dxf/validation/system-refactor-baselines/**/outputs/*.dxf binary
 cad_photo_to_dxf/validation/observability/**/final/*.dxf binary
+cad_photo_to_dxf/tests/real_regression/assets/**/*.pdf binary
+cad_photo_to_dxf/tests/real_regression/assets/**/*.png binary
+cad_photo_to_dxf/tests/real_regression/assets/**/*.jpg binary

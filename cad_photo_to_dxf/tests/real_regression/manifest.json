@@ -1,103 +1,1751 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "final_structure_schema_version": 2,
-  "minimum_documents": 3,
+  "minimum_documents": 10,
   "minimum_source_documents": 3,
+  "minimum_unique_pages": 10,
+  "required_dpis": [
+    150,
+    300,
+    600
+  ],
+  "required_categories": [
+    "digital_generated_pdf",
+    "low_quality_scan",
+    "mobile_perspective_photo",
+    "landscape_drawing",
+    "portrait_drawing",
+    "dense_text",
+    "complex_table",
+    "broken_frame",
+    "broken_table_lines",
+    "signature_adjacent_text",
+    "wordmark_logo",
+    "graphic_logo",
+    "leaders_and_arrows",
+    "dimensions",
+    "short_and_double_lines",
+    "dashed_and_dashdot_lines",
+    "no_title_block",
+    "high_resolution_large_page",
+    "dpi_150",
+    "dpi_300",
+    "dpi_600",
+    "mixed_chinese_english_numbers"
+  ],
   "documents": [
     {
       "id": "perspective-sample-plan",
       "source_document": "sample-plan-photo",
       "source_path": "tests/real_regression/assets/test.jpg",
       "sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+      "original_path": "tests/real_regression/assets/test.jpg",
+      "original_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
       "full_page": true,
       "cropped": false,
       "enable_ocr": true,
-      "provenance": {
-        "source": "existing workspace sample supplied with the repository",
-        "usage": "project-internal full-page regression fixture",
-        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
-        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      "page": {
+        "number": 1,
+        "dpi": 96,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
       },
+      "coverage_categories": [
+        "mobile_perspective_photo",
+        "landscape_drawing",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "no_title_block"
+      ],
+      "provenance": {
+        "source": "existing complete-page perspective sample supplied with the project repository",
+        "usage": "project-internal full-page regression fixture",
+        "rights_basis": "the user placed this asset in the project and directed its inclusion in the internal regression set; public redistribution is not authorized",
+        "review_status": "visually reviewed as a complete perspective page; camera EXIF is absent and capture hardware remains unverified"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "sample-plan-title",
+            "bbox": [
+              100,
+              1010,
+              520,
+              150
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "review_note": "Preserve the SAMPLE PLAN title and its source strokes."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "lower-center-open-space",
+            "bbox": [
+              720,
+              850,
+              300,
+              130
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 0,
+            "review_note": "Open paper below the plan must not acquire a bridge."
+          }
+        ],
+        "logo_regions": [],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "perspective-plan-structure",
+            "bbox": [
+              240,
+              130,
+              1320,
+              720
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Main wall, dimension and double-line structure."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The full tilted sheet remains visible; the empty lower grid is not treated as a semantic title block.",
+        "Capture-device provenance requires owner confirmation before this fixture can be described as a verified mobile-camera capture outside this internal test."
+      ],
       "expected": {
-        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
-        "source_size_px": [1850, 1250],
+        "content_audit_sha256": "4a5b45f9add3af55e5cd4514272e506db9ec0561b0bd9f20d373fb6f759c2b76",
         "contour_count": 146,
-        "straight_line_count": 90,
-        "text_count": 2,
-        "logo_count": 0,
-        "signature_count": 0,
-        "foreground_pixels": 643818,
         "contour_vertex_count": 7593,
-        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
         "dxf_entity_count": 317,
         "dxf_line_count": 90,
         "dxf_text_count": 0,
         "dxf_trace_path_count": 146,
-        "dxf_trace_vertex_count": 7593
+        "dxf_trace_vertex_count": 7593,
+        "foreground_pixels": 643818,
+        "logo_count": 0,
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "signature_count": 0,
+        "source_size_px": [
+          1850,
+          1250
+        ],
+        "straight_line_count": 90,
+        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+        "text_count": 2
       }
     },
     {
-      "id": "environment-plan-page-003",
-      "source_document": "environment-plan-pdf",
+      "id": "environment-plan-page-003-150dpi",
+      "source_document": "environment-building-scan-pdf",
       "source_path": "tests/real_regression/assets/environment-page-003.png",
       "sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
       "full_page": true,
       "cropped": false,
       "enable_ocr": true,
-      "provenance": {
-        "source": "existing workspace PDF baseline page supplied with the repository",
-        "usage": "project-internal full-page regression fixture",
-        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
-        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      "page": {
+        "number": 3,
+        "dpi": 150,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
       },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "dpi_150",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 3 raster from the project-provided 14-page environment-building scan PDF",
+        "usage": "project-internal full-page regression fixture with original PDF retained beside the fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "original PDF object audit confirms one full-page raster image and no PDF text objects"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "page-title-and-notes",
+            "bbox": [
+              650,
+              1370,
+              1200,
+              280
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the printed page title, scale and adjacent handwritten notes."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "upper-left-paper-space",
+            "bbox": [
+              80,
+              80,
+              280,
+              150
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 1851,
+            "review_note": "Paper damage and background tone must not become a structural bridge."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "top-right-graphic-mark",
+            "bbox": [
+              2220,
+              20,
+              220,
+              220
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "The graphic mark must at least remain as outline until semantic logo classification is validated."
+          }
+        ],
+        "signature_regions": [
+          {
+            "id": "lower-handwritten-approval",
+            "bbox": [
+              1360,
+              1360,
+              650,
+              260
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Handwriting beside printed notes must remain without absorbing the printed text."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "main-floor-plan",
+            "bbox": [
+              260,
+              300,
+              1680,
+              920
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Main floor plan, dimensions, leaders and line networks."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "Printed text and handwritten review marks are both visually significant and must remain independently inspectable.",
+        "Logo and signature semantic types are not accepted as correct merely because their source strokes survive; later ownership phases must improve them without losing pixels."
+      ],
       "expected": {
-        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943",
-        "source_size_px": [2478, 1752],
+        "content_audit_sha256": "da03150822aafdaaba273d1056c8772b6b17131050f718dc856a0ff2386cdf37",
         "contour_count": 2245,
-        "straight_line_count": 634,
-        "text_count": 154,
-        "logo_count": 0,
-        "signature_count": 0,
-        "foreground_pixels": 122832,
         "contour_vertex_count": 35353,
-        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
         "dxf_entity_count": 2968,
         "dxf_line_count": 634,
         "dxf_text_count": 23,
         "dxf_trace_path_count": 2220,
-        "dxf_trace_vertex_count": 34958
+        "dxf_trace_vertex_count": 34958,
+        "foreground_pixels": 122832,
+        "logo_count": 0,
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "signature_count": 0,
+        "source_size_px": [
+          2478,
+          1752
+        ],
+        "straight_line_count": 634,
+        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943",
+        "text_count": 154
       }
     },
     {
-      "id": "warehouse-index-page-001",
-      "source_document": "warehouse-index-pdf",
+      "id": "warehouse-index-page-001-150dpi",
+      "source_document": "warehouse-electrical-vector-pdf",
       "source_path": "tests/real_regression/assets/warehouse-page-001.png",
       "sha256": "ee4937113bf9615ae2ab056c71850d279fea515258b7c87ed0b100439bf6011d",
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
       "full_page": true,
       "cropped": false,
       "enable_ocr": true,
-      "provenance": {
-        "source": "existing workspace PDF baseline page supplied with the repository",
-        "usage": "project-internal full-page regression fixture",
-        "rights_basis": "provided in the project workspace for internal regression; redistribution rights must be confirmed before public release",
-        "review_status": "selected from an existing complete-page asset during the 2026-07-28 system refactor"
+      "page": {
+        "number": 1,
+        "dpi": 150,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
       },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "dpi_150",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 1 raster from the project-provided warehouse electrical vector PDF",
+        "usage": "project-internal full-page regression fixture with original PDF retained beside the fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "PDF object audit shows vector page objects rather than a single embedded scan image"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "drawing-index-table",
+            "bbox": [
+              180,
+              300,
+              920,
+              1050
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the drawing index and mixed Chinese, English and numeric table content."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "blank-index-cells",
+            "bbox": [
+              280,
+              920,
+              600,
+              230
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 0,
+            "review_note": "Empty table cells must not be filled by cross-cell bridges."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "wordmark-and-graphic-logo",
+            "bbox": [
+              170,
+              80,
+              620,
+              230
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve both the graphic symbol and adjacent company wordmark without absorbing nearby table text."
+          }
+        ],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "full-index-network",
+            "bbox": [
+              130,
+              70,
+              1110,
+              1680
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Portrait index sheet frame and complex table network."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The index table remains readable as source content and the logo area stays separate from the first table row.",
+        "Current outline preservation is a baseline fallback, not proof of correct Logo ownership."
+      ],
       "expected": {
-        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c",
-        "source_size_px": [1359, 1890],
+        "content_audit_sha256": "bc9178fb927d08ce83dd91621419f3bd2f4d3044fb15046991405e236ff6d1f8",
         "contour_count": 889,
-        "straight_line_count": 121,
-        "text_count": 91,
-        "logo_count": 0,
-        "signature_count": 0,
-        "foreground_pixels": 31260,
         "contour_vertex_count": 12775,
-        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
         "dxf_entity_count": 981,
         "dxf_line_count": 121,
         "dxf_text_count": 36,
         "dxf_trace_path_count": 798,
-        "dxf_trace_vertex_count": 11753
+        "dxf_trace_vertex_count": 11753,
+        "foreground_pixels": 31260,
+        "logo_count": 0,
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "signature_count": 0,
+        "source_size_px": [
+          1359,
+          1890
+        ],
+        "straight_line_count": 121,
+        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c",
+        "text_count": 91
+      }
+    },
+    {
+      "id": "environment-scan-page-001-120dpi",
+      "source_document": "environment-building-scan-pdf",
+      "source_path": "tests/real_regression/assets/environment-scan-page-01-120dpi.png",
+      "sha256": "f410cb2751e688b8f6e823ae9b60e6c59aed3312934de264e0c75f717482957b",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 1,
+        "dpi": 120,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "120 DPI full-page render of page 1 from the project-provided environment-building scan PDF",
+        "usage": "project-internal low-quality full-page regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "visually reviewed as a complete damaged scan with handwritten approval marks"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "left-note-and-bottom-title",
+            "bbox": [
+              20,
+              520,
+              820,
+              700
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the note table, title and mixed printed labels."
+          }
+        ],
+        "true_breaks_to_repair": [
+          {
+            "id": "damaged-top-frame",
+            "bbox": [
+              300,
+              0,
+              180,
+              80
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "desired_state": "repaired",
+            "review_note": "The visibly damaged original top frame is a labelled future repair target."
+          }
+        ],
+        "forbidden_connection_regions": [
+          {
+            "id": "handwriting-near-room-labels",
+            "bbox": [
+              1280,
+              980,
+              600,
+              260
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 2550,
+            "review_note": "Handwriting and nearby printed room labels must not be bridged into one block."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "top-right-graphic-logo",
+            "bbox": [
+              1780,
+              0,
+              190,
+              180
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "semantic_target": "logo",
+            "review_note": "Preserve the top-right graphic logo and adjacent wordmark; current type remains a recorded ownership finding."
+          }
+        ],
+        "signature_regions": [
+          {
+            "id": "lower-right-approval-signature",
+            "bbox": [
+              1370,
+              1090,
+              520,
+              210
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve the approval handwriting independently from printed labels."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "first-floor-plan",
+            "bbox": [
+              220,
+              190,
+              1500,
+              900
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Main plan, dimension network, leaders and table lines."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The page remains a full low-quality scan including tape, tears, stains and handwritten review marks.",
+        "The labelled damaged frame is retained as ground truth even if the current baseline does not repair it."
+      ],
+      "expected": {
+        "content_audit_sha256": "925dee9d8173369cafad0896fab5b34588cbbf4f6e1f09b405e4a4752186f2f3",
+        "contour_count": 2331,
+        "contour_vertex_count": 33496,
+        "dxf_entity_count": 2944,
+        "dxf_line_count": 544,
+        "dxf_text_count": 11,
+        "dxf_trace_path_count": 2301,
+        "dxf_trace_vertex_count": 33324,
+        "foreground_pixels": 95765,
+        "logo_count": 0,
+        "preview_sha256": "407135bc7c313816168c514a27b483668236d26a64dcd290bd597eda17f37210",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 544,
+        "structure_id": "f17899d1faf94d0fe9550e7e9ae456dc78ec88b40443c63b791cbe9984a7dbd7",
+        "text_count": 140
+      }
+    },
+    {
+      "id": "environment-scan-page-002-120dpi",
+      "source_document": "environment-building-scan-pdf",
+      "source_path": "tests/real_regression/assets/environment-scan-page-02-120dpi.png",
+      "sha256": "9855247ce2c5c284416dda5acbadf405d9ada82136c9beac4018dc0d23a4d8c8",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 2,
+        "dpi": 120,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "broken_frame",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "120 DPI full-page render of page 2 from the project-provided environment-building scan PDF",
+        "usage": "project-internal low-quality full-page regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "visually reviewed as a complete scan with extensive margins and handwritten notes"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "right-side-title-and-notes",
+            "bbox": [
+              1300,
+              870,
+              620,
+              360
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the printed title block content and neighboring handwriting."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "right-handwritten-margin",
+            "bbox": [
+              1660,
+              720,
+              270,
+              220
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 725,
+            "review_note": "Do not connect independent handwritten marks through the paper margin."
+          }
+        ],
+        "logo_regions": [],
+        "signature_regions": [
+          {
+            "id": "right-lower-handwriting",
+            "bbox": [
+              1590,
+              920,
+              330,
+              220
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Handwriting must remain separate from printed room lists."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "second-floor-plan",
+            "bbox": [
+              300,
+              220,
+              1330,
+              760
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Main plan with dimensions, doors, leaders and short linework."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "Large blank margins are intentional and provide forbidden-connection evidence.",
+        "Printed content and handwriting are both retained for later ownership validation."
+      ],
+      "expected": {
+        "content_audit_sha256": "bce8fd53ed477481366d6971411fb784532eb49d631888b11161f1e550919f91",
+        "contour_count": 2193,
+        "contour_vertex_count": 30859,
+        "dxf_entity_count": 2688,
+        "dxf_line_count": 403,
+        "dxf_text_count": 6,
+        "dxf_trace_path_count": 2189,
+        "dxf_trace_vertex_count": 30826,
+        "foreground_pixels": 84703,
+        "logo_count": 0,
+        "preview_sha256": "51caa91c7fb006c28b158f855921779af103e4c4b82b0ff872a48fa032c3bc14",
+        "signature_count": 1,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 403,
+        "structure_id": "c632b2387e15a562c6d6307329c7f1ad060df41467055268ffdaafc71fbc3920",
+        "text_count": 99
+      }
+    },
+    {
+      "id": "environment-scan-page-004-120dpi",
+      "source_document": "environment-building-scan-pdf",
+      "source_path": "tests/real_regression/assets/environment-scan-page-04-120dpi.png",
+      "sha256": "db3f24b1bcd8ff84ea5f1c00f8ee99ab2d0cb3d28d79bafa635e4eaa7eb19611",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 4,
+        "dpi": 120,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "120 DPI full-page render of page 4 from the project-provided environment-building scan PDF",
+        "usage": "project-internal low-quality full-page regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "visually reviewed as a complete stained scan with handwritten annotations"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "lower-title-and-room-list",
+            "bbox": [
+              1080,
+              1020,
+              790,
+              280
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the title, scale, room list and handwritten marks."
+          }
+        ],
+        "true_breaks_to_repair": [
+          {
+            "id": "stain-interrupted-lower-frame",
+            "bbox": [
+              820,
+              1260,
+              260,
+              100
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "desired_state": "repaired",
+            "review_note": "The stained lower frame interruption is a labelled future repair target."
+          }
+        ],
+        "forbidden_connection_regions": [
+          {
+            "id": "lower-handwriting-gap",
+            "bbox": [
+              1300,
+              1070,
+              430,
+              190
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 1228,
+            "review_note": "Do not bridge handwritten strokes into the printed room list."
+          }
+        ],
+        "logo_regions": [],
+        "signature_regions": [
+          {
+            "id": "lower-approval-marks",
+            "bbox": [
+              1300,
+              1040,
+              500,
+              230
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve handwritten approval marks beside printed labels."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "fourth-floor-plan",
+            "bbox": [
+              300,
+              250,
+              1420,
+              760
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Main plan and dense dimension network."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "Stains and creases remain part of the real input and must not be hidden by fixture preprocessing.",
+        "The repair annotation records desired truth separately from the current baseline result."
+      ],
+      "expected": {
+        "content_audit_sha256": "9de624b20cf062a5ae409fe36b466755eca21fca884b5df04742fe54b139e615",
+        "contour_count": 2317,
+        "contour_vertex_count": 30570,
+        "dxf_entity_count": 2893,
+        "dxf_line_count": 577,
+        "dxf_text_count": 26,
+        "dxf_trace_path_count": 2220,
+        "dxf_trace_vertex_count": 29728,
+        "foreground_pixels": 91425,
+        "logo_count": 0,
+        "preview_sha256": "0b90f336ddbfc71e48fa8d9849ca2cdef2b779892bf69dc72f2e54eb2cbd193d",
+        "signature_count": 1,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 577,
+        "structure_id": "5315b3529c7c8fad74a0feabc5aa6352d2ff496ab125cbdfb95d31cf3c94fe17",
+        "text_count": 157
+      }
+    },
+    {
+      "id": "environment-scan-page-008-120dpi",
+      "source_document": "environment-building-scan-pdf",
+      "source_path": "tests/real_regression/assets/environment-scan-page-08-120dpi.png",
+      "sha256": "059227a4f4f88fee6b8e0d1a64e090a1bf80d539e896e3a0cde094b183e8e97f",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 8,
+        "dpi": 120,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "broken_frame",
+        "signature_adjacent_text",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "120 DPI full-page render of page 8 from the project-provided environment-building scan PDF",
+        "usage": "project-internal low-quality full-page regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "visually reviewed as a complete page whose plan content is rotated within the landscape scan"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "rotated-title-and-handwriting",
+            "bbox": [
+              1240,
+              70,
+              650,
+              500
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve rotated printed content and adjacent handwriting."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "wide-right-paper-margin",
+            "bbox": [
+              1550,
+              390,
+              320,
+              350
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 28,
+            "review_note": "The large paper margin must not acquire inferred structural lines."
+          }
+        ],
+        "logo_regions": [],
+        "signature_regions": [
+          {
+            "id": "rotated-handwritten-notes",
+            "bbox": [
+              1510,
+              30,
+              360,
+              390
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve handwriting without merging it into rotated printed text."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "rotated-plan-core",
+            "bbox": [
+              740,
+              110,
+              750,
+              1080
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Rotated main plan and dimensions."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The fixture retains the original page orientation; the test must not silently crop or rotate away the margins.",
+        "Rotated text remains an explicit content-preservation target."
+      ],
+      "expected": {
+        "content_audit_sha256": "218797d6fc4f4545fd94949663aa8f15fc4f5cbc46a23ce872b0b84cee1fc33d",
+        "contour_count": 1641,
+        "contour_vertex_count": 22365,
+        "dxf_entity_count": 2097,
+        "dxf_line_count": 404,
+        "dxf_text_count": 13,
+        "dxf_trace_path_count": 1614,
+        "dxf_trace_vertex_count": 22110,
+        "foreground_pixels": 69531,
+        "logo_count": 0,
+        "preview_sha256": "af5c442f248233fa2ccc92fdf2d823127583809e87577c8063d58a19919c042c",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 404,
+        "structure_id": "6c194c1b4e6ce1eaad3abb52da84eddcf6c2d4f636d986b25d9128bf7f6ae775",
+        "text_count": 83
+      }
+    },
+    {
+      "id": "environment-scan-page-014-120dpi",
+      "source_document": "environment-building-scan-pdf",
+      "source_path": "tests/real_regression/assets/environment-scan-page-14-120dpi.png",
+      "sha256": "910123c379be96e8e74882e594f90ee8b4f6dad2ebc8312f62a1570de8cefd92",
+      "original_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "original_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 14,
+        "dpi": 120,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "low_quality_scan",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "broken_frame",
+        "broken_table_lines",
+        "signature_adjacent_text",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "120 DPI full-page render of page 14 from the project-provided environment-building scan PDF",
+        "usage": "project-internal low-quality full-page regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "visually reviewed as the most damaged and densely annotated scan page in the local source set"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "bottom-title-and-device-list",
+            "bbox": [
+              760,
+              1070,
+              900,
+              270
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the title, scale and dense Chinese-number device list."
+          }
+        ],
+        "true_breaks_to_repair": [
+          {
+            "id": "torn-bottom-frame",
+            "bbox": [
+              920,
+              1320,
+              170,
+              82
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "desired_state": "repaired",
+            "review_note": "The torn bottom frame is a labelled true-break repair target."
+          }
+        ],
+        "forbidden_connection_regions": [
+          {
+            "id": "signature-next-to-device-list",
+            "bbox": [
+              1260,
+              1090,
+              470,
+              210
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 1810,
+            "review_note": "Do not bridge signatures into the printed device list."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "top-right-logo-and-wordmark",
+            "bbox": [
+              1770,
+              25,
+              180,
+              160
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1
+            },
+            "semantic_target": "logo",
+            "review_note": "Preserve the graphic logo and Chinese wordmark independently from the title block; current type remains a recorded ownership finding."
+          }
+        ],
+        "signature_regions": [
+          {
+            "id": "bottom-approval-signatures",
+            "bbox": [
+              1280,
+              1080,
+              520,
+              230
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve multiple approval marks adjacent to printed text."
+          }
+        ],
+        "key_rois": [
+          {
+            "id": "fourteenth-floor-plan",
+            "bbox": [
+              300,
+              300,
+              1460,
+              650
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Dense plan, table-line fragments, dimensions, leaders and symbols."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "This page is the primary low-quality stress fixture: tears, tape, stains, signatures, printed text and structural lines all remain present.",
+        "Known semantic ownership gaps must be reported, not hidden by deleting the affected regions."
+      ],
+      "expected": {
+        "content_audit_sha256": "1a7422109d67c0dfded9ee2d830b473053f3d93a2f688bf19cacb8e0a8a13683",
+        "contour_count": 2494,
+        "contour_vertex_count": 35135,
+        "dxf_entity_count": 3088,
+        "dxf_line_count": 522,
+        "dxf_text_count": 15,
+        "dxf_trace_path_count": 2457,
+        "dxf_trace_vertex_count": 34898,
+        "foreground_pixels": 97520,
+        "logo_count": 0,
+        "preview_sha256": "42c6388a6caf0c29045e058ca3506f68f5797d5b8075ca049dc873d2482b2fad",
+        "signature_count": 0,
+        "source_size_px": [
+          1982,
+          1402
+        ],
+        "straight_line_count": 522,
+        "structure_id": "88bdaf9f93b0149cf7c4c1069b240001592e41861310961b91214a1d29489097",
+        "text_count": 150
+      }
+    },
+    {
+      "id": "warehouse-system-page-002-72dpi",
+      "source_document": "warehouse-electrical-vector-pdf",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 2,
+        "dpi": 72,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 2 rendered directly from the project-provided warehouse electrical vector PDF",
+        "usage": "project-internal full-page digital-PDF regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "PDF object audit shows vector objects and no single full-page scan image"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "system-notes",
+            "bbox": [
+              1280,
+              380,
+              850,
+              500
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the dense system notes and mixed labels."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "open-center-paper",
+            "bbox": [
+              1150,
+              950,
+              420,
+              280
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 3614,
+            "review_note": "Open paper between the schematic and notes must stay free of inferred bridges."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "right-titleblock-logo",
+            "bbox": [
+              2300,
+              500,
+              170,
+              250
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve the title-block graphic and wordmark without absorbing surrounding fields."
+          }
+        ],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "fire-system-schematic",
+            "bbox": [
+              450,
+              250,
+              850,
+              800
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "System schematic, leaders, arrows and dashed enclosures."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The complete digital sheet is rendered at its native 72 DPI page coordinate scale for bounded CI cost.",
+        "Fine dashed schematic boxes and leaders remain explicit preservation targets."
+      ],
+      "expected": {
+        "content_audit_sha256": "3809b4531d65bfbc0882bf1ac4bec84f4b31d91d01538a294262515a973cd072",
+        "contour_count": 1279,
+        "contour_vertex_count": 16452,
+        "dxf_entity_count": 1411,
+        "dxf_line_count": 244,
+        "dxf_text_count": 42,
+        "dxf_trace_path_count": 1079,
+        "dxf_trace_vertex_count": 13828,
+        "foreground_pixels": 54694,
+        "logo_count": 0,
+        "preview_sha256": "6bf23522bda3f317c9a42003fc98c9640689712c3f28f575f9af8c50dd6d9364",
+        "signature_count": 0,
+        "source_size_px": [
+          2523,
+          1786
+        ],
+        "straight_line_count": 244,
+        "structure_id": "a96e812eb4a3c88b9ddb4e7ea353855119665a4cc06db293645763c1a699a630",
+        "text_count": 145
+      }
+    },
+    {
+      "id": "warehouse-plan-page-003-72dpi",
+      "source_document": "warehouse-electrical-vector-pdf",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 3,
+        "dpi": 72,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "landscape_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "leaders_and_arrows",
+        "dimensions",
+        "short_and_double_lines",
+        "dashed_and_dashdot_lines",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 3 rendered directly from the project-provided warehouse electrical vector PDF",
+        "usage": "project-internal full-page digital-PDF regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "PDF object audit shows dense vector page objects and no single full-page scan image"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "floor-title-and-dimensions",
+            "bbox": [
+              700,
+              1380,
+              1450,
+              230
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the floor title, scale and lower dimension labels."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "central-open-floor",
+            "bbox": [
+              1200,
+              700,
+              480,
+              300
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 2546,
+            "review_note": "The open warehouse floor must not receive cross-room bridges."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "right-titleblock-brand",
+            "bbox": [
+              2840,
+              520,
+              190,
+              280
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve the title-block brand separately from neighboring project fields."
+          }
+        ],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "warehouse-floor-plan",
+            "bbox": [
+              300,
+              180,
+              2520,
+              1300
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Full warehouse plan, dimensions, axes, symbols and double lines."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "This is the tenth distinct source page; DPI variants of page 1 are not counted toward that total.",
+        "Large open floor areas remain explicit negative regions for later connection validation."
+      ],
+      "expected": {
+        "content_audit_sha256": "b2c1d2bcbc839226bb0abe76a2405702c5e1032f83668b6984ab0afe9400fa25",
+        "contour_count": 1472,
+        "contour_vertex_count": 20497,
+        "dxf_entity_count": 1885,
+        "dxf_line_count": 395,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 1401,
+        "dxf_trace_vertex_count": 19955,
+        "foreground_pixels": 94651,
+        "logo_count": 0,
+        "preview_sha256": "0a4067a4add751467eb6d007993c0bfb087e4de939666d6d32f1b14f834a1fb1",
+        "signature_count": 0,
+        "source_size_px": [
+          3118,
+          1786
+        ],
+        "straight_line_count": 395,
+        "structure_id": "0b97003e068dac87a0aa897be8253d87cdc5908377cdfa7b12cf71a7d2ca6dd8",
+        "text_count": 167
+      }
+    },
+    {
+      "id": "warehouse-index-page-001-300dpi",
+      "source_document": "warehouse-electrical-vector-pdf",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 1,
+        "dpi": 300,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "dpi_300",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 1 rendered at 300 DPI directly from the project-provided warehouse electrical vector PDF",
+        "usage": "project-internal DPI-invariance regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "300 DPI member of the explicitly required 150/300/600 DPI set"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "drawing-index-table-300",
+            "bbox": [
+              360,
+              600,
+              1840,
+              2100
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the same index content at 300 DPI."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "blank-index-cells-300",
+            "bbox": [
+              560,
+              1840,
+              1200,
+              460
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 6884,
+            "review_note": "Empty table cells must not acquire DPI-dependent bridges."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "wordmark-and-graphic-logo-300",
+            "bbox": [
+              340,
+              160,
+              1240,
+              460
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve the graphic logo and wordmark at 300 DPI."
+          }
+        ],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "full-index-network-300",
+            "bbox": [
+              260,
+              140,
+              2220,
+              3360
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Full index table network at 300 DPI."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "The same physical page is intentionally repeated only for DPI behavior and is excluded from the unique-page count.",
+        "Object preservation must not depend on the 300 DPI render being treated as a special filename."
+      ],
+      "expected": {
+        "content_audit_sha256": "1bc12243fc1625a036805dc599496a1023344016448662de69bc181e014f40cf",
+        "contour_count": 898,
+        "contour_vertex_count": 21076,
+        "dxf_entity_count": 895,
+        "dxf_line_count": 109,
+        "dxf_text_count": 36,
+        "dxf_trace_path_count": 655,
+        "dxf_trace_vertex_count": 17895,
+        "foreground_pixels": 98885,
+        "logo_count": 0,
+        "preview_sha256": "42a057d905e558e4ad5fc0d0a0232f484e4e2717f01492e5ebdcd207cc873746",
+        "signature_count": 0,
+        "source_size_px": [
+          2717,
+          3780
+        ],
+        "straight_line_count": 109,
+        "structure_id": "35baddacc646fd676978748c7bc40adf82a7620612917e57ef2fc6575da48428",
+        "text_count": 83
+      }
+    },
+    {
+      "id": "warehouse-index-page-001-600dpi",
+      "source_document": "warehouse-electrical-vector-pdf",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "original_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "original_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "full_page": true,
+      "cropped": false,
+      "enable_ocr": true,
+      "page": {
+        "number": 1,
+        "dpi": 600,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "coverage_categories": [
+        "digital_generated_pdf",
+        "portrait_drawing",
+        "dense_text",
+        "complex_table",
+        "wordmark_logo",
+        "graphic_logo",
+        "short_and_double_lines",
+        "high_resolution_large_page",
+        "dpi_600",
+        "mixed_chinese_english_numbers"
+      ],
+      "provenance": {
+        "source": "page 1 rendered at 600 DPI directly from the project-provided warehouse electrical vector PDF",
+        "usage": "project-internal high-resolution and DPI-invariance regression fixture",
+        "rights_basis": "the user supplied the source PDF for this project and directed internal regression use; public redistribution is not authorized",
+        "review_status": "600 DPI high-resolution member of the explicitly required 150/300/600 DPI set"
+      },
+      "usage_authorization": {
+        "scope": "internal regression in this repository only",
+        "authorization_basis": "user-directed fixture inclusion in the 2026-07-28 system refactor task",
+        "redistribution_allowed": false,
+        "public_release_status": "blocked pending rights-holder confirmation"
+      },
+      "annotations": {
+        "text_regions_to_preserve": [
+          {
+            "id": "drawing-index-table-600",
+            "bbox": [
+              720,
+              1200,
+              3680,
+              4200
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "text": 1
+            },
+            "review_note": "Preserve the same index content at 600 DPI."
+          }
+        ],
+        "true_breaks_to_repair": [],
+        "forbidden_connection_regions": [
+          {
+            "id": "blank-index-cells-600",
+            "bbox": [
+              1120,
+              3680,
+              2400,
+              920
+            ],
+            "expected_object_types": {},
+            "maximum_added_foreground_pixels": 13788,
+            "review_note": "Empty table cells must not acquire high-resolution bridges."
+          }
+        ],
+        "logo_regions": [
+          {
+            "id": "wordmark-and-graphic-logo-600",
+            "bbox": [
+              680,
+              320,
+              2480,
+              920
+            ],
+            "expected_object_types": {
+              "outline": 1
+            },
+            "review_note": "Preserve the graphic logo and wordmark at 600 DPI."
+          }
+        ],
+        "signature_regions": [],
+        "key_rois": [
+          {
+            "id": "full-index-network-600",
+            "bbox": [
+              520,
+              280,
+              4440,
+              6720
+            ],
+            "expected_object_types": {
+              "preserved_foreground": 1,
+              "structural_line": 1
+            },
+            "review_note": "Full high-resolution index table network."
+          }
+        ]
+      },
+      "expected_object_types": {
+        "outline": 1,
+        "structural_line": 1,
+        "text": 1
+      },
+      "human_acceptance_notes": [
+        "This 600 DPI fixture is deliberately large and must run the complete OCR, structure, preview, DXF and content-audit path.",
+        "It is a DPI variant, not an additional unique page."
+      ],
+      "expected": {
+        "content_audit_sha256": "6b4c050e16bd4580fd3857ca2ff2212ae54e09ae71dcb0fab658979d0e8c6e94",
+        "contour_count": 1166,
+        "contour_vertex_count": 41677,
+        "dxf_entity_count": 1307,
+        "dxf_line_count": 136,
+        "dxf_text_count": 33,
+        "dxf_trace_path_count": 859,
+        "dxf_trace_vertex_count": 37670,
+        "foreground_pixels": 328839,
+        "logo_count": 0,
+        "preview_sha256": "bce41a74d1810608a5dc3d828d791c640df07b084e9daa8fb697e96f8cf00f84",
+        "signature_count": 0,
+        "source_size_px": [
+          5434,
+          7559
+        ],
+        "straight_line_count": 136,
+        "structure_id": "a31a2487fa4d7c05eb0732b377c3eabe9029a2fe5d8b28725b952af86a670708",
+        "text_count": 89
       }
     }
   ]

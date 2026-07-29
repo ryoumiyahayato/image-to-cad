@@ -1,0 +1,375 @@
+{
+  "phase": 4,
+  "evidence_kind": "after",
+  "tested_at": "2026-07-29T13:37:38+08:00",
+  "base_commit": "bea9cd8f318875f3a17d5caaff5979fc6d7f336b",
+  "before_evidence": "validation/real-document-regression/phase4-before.json",
+  "manifest_path": "tests/real_regression/manifest.json",
+  "manifest_sha256": "856a541efa802bfabe0b1016c7312b790c84493f2bd040b13e5aeb2ffff3ddf7",
+  "scope": {
+    "production_algorithm_files_changed": [],
+    "recognition_thresholds_changed": false,
+    "new_product_features": false,
+    "test_infrastructure_only": true
+  },
+  "unit_tests": {
+    "passed": 211,
+    "warnings": 123,
+    "elapsed_seconds": 37.73,
+    "junit": "output/ci/phase4-pytest-junit.xml"
+  },
+  "static_checks": {
+    "ruff": "passed",
+    "mypy": "passed: 4 source files",
+    "compileall": "passed"
+  },
+  "bootstrap_observation": {
+    "document_runs_completed": 12,
+    "recording_rejected": true,
+    "reason": "two Logo regions required outline pixels although content survived in other foreground ownership; annotations were corrected without changing algorithms",
+    "algorithm_change": false
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "independent_source_documents": 3,
+    "coverage_category_count": 22,
+    "coverage_categories": [
+      "broken_frame",
+      "broken_table_lines",
+      "complex_table",
+      "dashed_and_dashdot_lines",
+      "dense_text",
+      "digital_generated_pdf",
+      "dimensions",
+      "dpi_150",
+      "dpi_300",
+      "dpi_600",
+      "graphic_logo",
+      "high_resolution_large_page",
+      "landscape_drawing",
+      "leaders_and_arrows",
+      "low_quality_scan",
+      "mixed_chinese_english_numbers",
+      "mobile_perspective_photo",
+      "no_title_block",
+      "portrait_drawing",
+      "short_and_double_lines",
+      "signature_adjacent_text",
+      "wordmark_logo"
+    ],
+    "required_dpis": [
+      150,
+      300,
+      600
+    ],
+    "errors": [],
+    "all_pipeline_stages_complete": true,
+    "documents": [
+      {
+        "id": "perspective-sample-plan",
+        "page": {
+          "dpi": 96,
+          "number": 1,
+          "orientation": "landscape",
+          "source_kind": "raster_photo"
+        },
+        "passed": true,
+        "elapsed_seconds": 10.262,
+        "structure_id": "2001fd68149510e152da9c0ee66e85c1e786a0a15f62c8ef9bfda65ad9c7ff26",
+        "preview_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+        "content_audit_sha256": "4a5b45f9add3af55e5cd4514272e506db9ec0561b0bd9f20d373fb6f759c2b76",
+        "dxf_entity_count": 317,
+        "dxf_sha256": "38cff068d6c57c343cfbb6e9f6ff7021b93952bb5103be91c0fabe255dacb41b",
+        "dxf_bytes": 278582,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-plan-page-003-150dpi",
+        "page": {
+          "dpi": 150,
+          "number": 3,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 69.452,
+        "structure_id": "bbc8ce632cd1e0c28c1268b76fb6545eb37d8e197fcbb7d6825c74353a1ef943",
+        "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+        "content_audit_sha256": "da03150822aafdaaba273d1056c8772b6b17131050f718dc856a0ff2386cdf37",
+        "dxf_entity_count": 2968,
+        "dxf_sha256": "a6865fcec16fcd78f5ccdcede6b331a8db6f3a4cce9b63b464e58ee4f5c012e6",
+        "dxf_bytes": 1318683,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "warehouse-index-page-001-150dpi",
+        "page": {
+          "dpi": 150,
+          "number": 1,
+          "orientation": "portrait",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 17.807,
+        "structure_id": "ee9dc42d607be2ea5c15287c29c131d9434b0ae261fb32997b4f21df57c05c9c",
+        "preview_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+        "content_audit_sha256": "bc9178fb927d08ce83dd91621419f3bd2f4d3044fb15046991405e236ff6d1f8",
+        "dxf_entity_count": 981,
+        "dxf_sha256": "eb8ba499e8c55327593fe134b41160ea6f5f53daf48a16ed4a2ddcddcbab2349",
+        "dxf_bytes": 472284,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-scan-page-001-120dpi",
+        "page": {
+          "dpi": 120,
+          "number": 1,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 44.748,
+        "structure_id": "f17899d1faf94d0fe9550e7e9ae456dc78ec88b40443c63b791cbe9984a7dbd7",
+        "preview_sha256": "407135bc7c313816168c514a27b483668236d26a64dcd290bd597eda17f37210",
+        "content_audit_sha256": "925dee9d8173369cafad0896fab5b34588cbbf4f6e1f09b405e4a4752186f2f3",
+        "dxf_entity_count": 2944,
+        "dxf_sha256": "73dc39da5dd3f81f12d3a57a6d45463f70e96cd7e12ae8f89d0a9503b5bc6e85",
+        "dxf_bytes": 1259053,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-scan-page-002-120dpi",
+        "page": {
+          "dpi": 120,
+          "number": 2,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 31.768,
+        "structure_id": "c632b2387e15a562c6d6307329c7f1ad060df41467055268ffdaafc71fbc3920",
+        "preview_sha256": "51caa91c7fb006c28b158f855921779af103e4c4b82b0ff872a48fa032c3bc14",
+        "content_audit_sha256": "bce8fd53ed477481366d6971411fb784532eb49d631888b11161f1e550919f91",
+        "dxf_entity_count": 2688,
+        "dxf_sha256": "a3b0770eb3984da19b8ef701539721fdaa776e3c2ae47b037d77d422668482e8",
+        "dxf_bytes": 1156359,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-scan-page-004-120dpi",
+        "page": {
+          "dpi": 120,
+          "number": 4,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 42.883,
+        "structure_id": "5315b3529c7c8fad74a0feabc5aa6352d2ff496ab125cbdfb95d31cf3c94fe17",
+        "preview_sha256": "0b90f336ddbfc71e48fa8d9849ca2cdef2b779892bf69dc72f2e54eb2cbd193d",
+        "content_audit_sha256": "9de624b20cf062a5ae409fe36b466755eca21fca884b5df04742fe54b139e615",
+        "dxf_entity_count": 2893,
+        "dxf_sha256": "62d077ba0e6ee68391f759e73ec712d0ae410b5dbaed343ea209f12c8b783eb2",
+        "dxf_bytes": 1167770,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-scan-page-008-120dpi",
+        "page": {
+          "dpi": 120,
+          "number": 8,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 32.506,
+        "structure_id": "6c194c1b4e6ce1eaad3abb52da84eddcf6c2d4f636d986b25d9128bf7f6ae775",
+        "preview_sha256": "af5c442f248233fa2ccc92fdf2d823127583809e87577c8063d58a19919c042c",
+        "content_audit_sha256": "218797d6fc4f4545fd94949663aa8f15fc4f5cbc46a23ce872b0b84cee1fc33d",
+        "dxf_entity_count": 2097,
+        "dxf_sha256": "1e7cafb28d8df5bb8f79e12eb5f8becf708985e1360a97533aea5c17213b76cf",
+        "dxf_bytes": 874523,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "environment-scan-page-014-120dpi",
+        "page": {
+          "dpi": 120,
+          "number": 14,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 45.74,
+        "structure_id": "88bdaf9f93b0149cf7c4c1069b240001592e41861310961b91214a1d29489097",
+        "preview_sha256": "42c6388a6caf0c29045e058ca3506f68f5797d5b8075ca049dc873d2482b2fad",
+        "content_audit_sha256": "1a7422109d67c0dfded9ee2d830b473053f3d93a2f688bf19cacb8e0a8a13683",
+        "dxf_entity_count": 3088,
+        "dxf_sha256": "fb004fde64add9b8552666048db3e00a006cc9431f0b9b8040c25da497505b61",
+        "dxf_bytes": 1312131,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "warehouse-system-page-002-72dpi",
+        "page": {
+          "dpi": 72,
+          "number": 2,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 46.986,
+        "structure_id": "a96e812eb4a3c88b9ddb4e7ea353855119665a4cc06db293645763c1a699a630",
+        "preview_sha256": "6bf23522bda3f317c9a42003fc98c9640689712c3f28f575f9af8c50dd6d9364",
+        "content_audit_sha256": "3809b4531d65bfbc0882bf1ac4bec84f4b31d91d01538a294262515a973cd072",
+        "dxf_entity_count": 1411,
+        "dxf_sha256": "e9a2519a805aa975517bea07dfd431ccca643dc39bcdccf1a17da9762d3f6f75",
+        "dxf_bytes": 591751,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "warehouse-plan-page-003-72dpi",
+        "page": {
+          "dpi": 72,
+          "number": 3,
+          "orientation": "landscape",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 54.401,
+        "structure_id": "0b97003e068dac87a0aa897be8253d87cdc5908377cdfa7b12cf71a7d2ca6dd8",
+        "preview_sha256": "0a4067a4add751467eb6d007993c0bfb087e4de939666d6d32f1b14f834a1fb1",
+        "content_audit_sha256": "b2c1d2bcbc839226bb0abe76a2405702c5e1032f83668b6984ab0afe9400fa25",
+        "dxf_entity_count": 1885,
+        "dxf_sha256": "d0b74c50a84f3e7e2e26f17631a9a4fba03b2558831ccce8cb9313a90d34981e",
+        "dxf_bytes": 808094,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "warehouse-index-page-001-300dpi",
+        "page": {
+          "dpi": 300,
+          "number": 1,
+          "orientation": "portrait",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 42.262,
+        "structure_id": "35baddacc646fd676978748c7bc40adf82a7620612917e57ef2fc6575da48428",
+        "preview_sha256": "42a057d905e558e4ad5fc0d0a0232f484e4e2717f01492e5ebdcd207cc873746",
+        "content_audit_sha256": "1bc12243fc1625a036805dc599496a1023344016448662de69bc181e014f40cf",
+        "dxf_entity_count": 895,
+        "dxf_sha256": "6790e5fd10d31ee73258820940ca816e5cfddc1f7f7b502a936a69fefd15c87c",
+        "dxf_bytes": 624787,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      },
+      {
+        "id": "warehouse-index-page-001-600dpi",
+        "page": {
+          "dpi": 600,
+          "number": 1,
+          "orientation": "portrait",
+          "source_kind": "pdf_render"
+        },
+        "passed": true,
+        "elapsed_seconds": 192.913,
+        "structure_id": "a31a2487fa4d7c05eb0732b377c3eabe9029a2fe5d8b28725b952af86a670708",
+        "preview_sha256": "bce41a74d1810608a5dc3d828d791c640df07b084e9daa8fb697e96f8cf00f84",
+        "content_audit_sha256": "6b4c050e16bd4580fd3857ca2ff2212ae54e09ae71dcb0fab658979d0e8c6e94",
+        "dxf_entity_count": 1307,
+        "dxf_sha256": "67fa7b9506e258a4f98fd455668a4097c40f4846fad9fc1911a6fabeb676506e",
+        "dxf_bytes": 1206199,
+        "pipeline_stages": {
+          "content_audit": true,
+          "dxf_export": true,
+          "ocr": true,
+          "preview": true,
+          "structure_analysis": true
+        }
+      }
+    ]
+  },
+  "ci_contract": {
+    "minimum_document_runs": 10,
+    "minimum_unique_pages": 10,
+    "empty_set_fails": true,
+    "missing_category_fails": true,
+    "fixture_load_failure_fails": true,
+    "caught_exception_fails": true,
+    "skip_and_xfail_forbidden": true,
+    "baseline_recording_disabled_in_ci": true
+  },
+  "authorization": {
+    "scope": "internal repository regression only",
+    "redistribution_allowed": false,
+    "public_release_blocked": true
+  }
+}
