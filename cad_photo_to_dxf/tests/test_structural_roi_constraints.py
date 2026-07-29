@@ -89,6 +89,32 @@ def test_roi_mask_is_local_corridors_not_the_network_bbox() -> None:
     assert mask[10, 10] == 255
 
 
+def test_roi_network_detection_is_decoupled_from_connection_distance() -> None:
+    lines = _frame_lines()
+
+    short_connection_budget = detect_structural_rois(
+        lines,
+        image_shape=(80, 110),
+        extension_budget=2.0,
+        intersection_tolerance=8.0,
+    )
+    long_connection_budget = detect_structural_rois(
+        lines,
+        image_shape=(80, 110),
+        extension_budget=8.0,
+        intersection_tolerance=8.0,
+    )
+
+    assert len(short_connection_budget.rois) == 1
+    assert len(long_connection_budget.rois) == 1
+    assert (
+        short_connection_budget.rois[0].line_indices
+        == long_connection_budget.rois[0].line_indices
+    )
+    assert short_connection_budget.rois[0].expansion_distance == 2.0
+    assert long_connection_budget.rois[0].expansion_distance == 8.0
+
+
 def test_bridge_inside_bbox_but_outside_corridor_is_rejected() -> None:
     lines = [
         LineSegment(10.0, 20.0, 40.0, 20.0),
@@ -109,8 +135,12 @@ def test_bridge_inside_bbox_but_outside_corridor_is_rejected() -> None:
     decision = evaluate_structural_bridge(
         roi=roi,
         lines=lines,
+        source_line_index=0,
+        target_line_index=1,
         start=(45.0, 45.0),
         end=(55.0, 45.0),
+        maximum_gap=10.0,
+        source_dpi=300.0,
         source_foreground=page,
         protected_mask=None,
     )

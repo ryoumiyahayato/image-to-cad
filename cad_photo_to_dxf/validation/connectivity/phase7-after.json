@@ -1,0 +1,846 @@
+{
+  "acceptance": {
+    "all_approved_connection_endpoints_inside_roi_bbox": true,
+    "all_approved_connections_inside_roi_mask": true,
+    "approved_connections_exceed_confidence_threshold": true,
+    "approved_connections_have_complete_evidence": true,
+    "connection_protection_mask_observed_on_every_page": true,
+    "minimum_ten_pages": true,
+    "no_approved_connection_crosses_protection_mask": true,
+    "no_connection_enters_annotated_forbidden_region": true,
+    "outside_roi_rejections_observable": true,
+    "required_protection_categories_declared": true,
+    "roi_inside_endpoints_observable": true,
+    "roi_mask_observed_on_every_page": true,
+    "roi_metadata_complete": true
+  },
+  "aggregate": {
+    "annotated_f1": 0.0,
+    "annotated_precision": 1.0,
+    "annotated_recall": 0.0,
+    "approved_below_confidence_count": 0,
+    "approved_connection_count": 0,
+    "approved_failed_evidence_check_count": 0,
+    "approved_missing_evidence_count": 0,
+    "approved_outside_roi_bbox_count": 0,
+    "approved_outside_roi_mask_count": 0,
+    "approved_through_protection_count": 0,
+    "approved_without_roi_protection_count": 0,
+    "candidate_endpoint_count": 15082,
+    "correct_connection_count": 0,
+    "document_elapsed_total_seconds": 180.046,
+    "incorrect_connection_count": 0,
+    "missing_roi_metadata_count": 0,
+    "outside_roi_rejection_count": 477,
+    "rejected_connection_count": 1533,
+    "rejection_reasons": {
+      "line_width_mismatch": 18,
+      "outside_structural_roi": 477,
+      "unresolved_structural_gap": 1038
+    },
+    "repaired_break_count": 0,
+    "roi_count": 50,
+    "roi_inside_endpoint_count": 1532,
+    "roi_mask_pixels": 730621,
+    "true_break_count": 3,
+    "unrepaired_break_count": 3,
+    "unreviewed_connection_count": 0
+  },
+  "core_source_sha256": {
+    "app/connectivity_safety.py": "a7ed78d630b4b8c84e086767e99740c708e2b5d9c31596d990f494c29512e131",
+    "app/content_ownership.py": "37430b75be4e61d97e15858d1193d2187d7992bcc5ecc9fb829b65ee43da7dcf",
+    "app/observability.py": "ddc9150b7880488ef2aad513267b69a6fb8deca0840a18e4c54be6924d014177",
+    "app/optimized_trace.py": "07d05eb7f7186062787c877067d0ef8071f5717b93f0140969f3c4571957dc88",
+    "app/straight_line_reconstruction.py": "1384f36a68c6e24e84a309d2e21e4d0b95eb73cd4b6b31a0d96e5715e5954a59",
+    "app/structural_roi.py": "e5e2483acaa78b17547aa4e1645eee64bb3a812070c65d42ce62baaf8c4c4783"
+  },
+  "document_count": 10,
+  "documents": [
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 464,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 8.058,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "perspective-sample-plan",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 5,
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "preview_binary_sha256": "b9d5bd315692c2af47d2cb4aeb437b42c81c415f9631e9c165ad83d962488afe",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 42244,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\perspective-sample-plan.png",
+      "raster_sha256": "f7e044163852635404c50c68b6fee8ca909ff37b4de4ec343d180e9c8ef77aed",
+      "rejected_connection_count": 7,
+      "rejection_reasons": {
+        "outside_structural_roi": 5,
+        "unresolved_structural_gap": 2
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.875,
+        0.8333333333333334
+      ],
+      "roi_count": 2,
+      "roi_inside_endpoint_count": 22,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 18095,
+      "roi_protection_mask_count": 2,
+      "roi_purposes": {
+        "table": 2
+      },
+      "roi_source_types": {
+        "local_endpoint_corridor": 2,
+        "measured_line_width_and_direction": 2,
+        "orthogonal_intersection_network": 2,
+        "source_supported_axis_lines": 2,
+        "table_line_network": 2
+      },
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 2356,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 51.766,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-plan-page-003-150dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 95,
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 248899,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-plan-page-003-150dpi.png",
+      "raster_sha256": "d517852f5bd754f6fe3a44491b678035df01be54093423a5d6f3bf79ec61a436",
+      "rejected_connection_count": 160,
+      "rejection_reasons": {
+        "outside_structural_roi": 95,
+        "unresolved_structural_gap": 65
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.5333333333333333,
+        0.6666666666666666,
+        0.13333333333333333,
+        0.5555555555555556,
+        0.6666666666666666,
+        0.5,
+        0.6666666666666666,
+        0.4
+      ],
+      "roi_count": 8,
+      "roi_inside_endpoint_count": 156,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 41819,
+      "roi_protection_mask_count": 7,
+      "roi_purposes": {
+        "table": 8
+      },
+      "roi_source_types": {
+        "local_endpoint_corridor": 8,
+        "measured_line_width_and_direction": 8,
+        "orthogonal_intersection_network": 8,
+        "source_supported_axis_lines": 8,
+        "table_line_network": 8
+      },
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1772,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 28.036,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "warehouse-index-page-001-150dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 15,
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "53d1cb04086421fe7dc5b813ad8e0823401863f626468c6f3b562ef056fa40b7",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 307392,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-index-page-001-150dpi.png",
+      "raster_sha256": "c020ad1139a82cbbf006216bce507a529d846f5f467db7aba1b300ab99a94bc4",
+      "rejected_connection_count": 921,
+      "rejection_reasons": {
+        "line_width_mismatch": 1,
+        "outside_structural_roi": 15,
+        "unresolved_structural_gap": 905
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.75,
+        0.015907491201608847,
+        1.0
+      ],
+      "roi_count": 3,
+      "roi_inside_endpoint_count": 916,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 320673,
+      "roi_protection_mask_count": 3,
+      "roi_purposes": {
+        "frame": 1,
+        "table": 2
+      },
+      "roi_source_types": {
+        "closed_frame_network": 1,
+        "local_endpoint_corridor": 3,
+        "measured_line_width_and_direction": 3,
+        "orthogonal_intersection_network": 3,
+        "source_supported_axis_lines": 3,
+        "table_line_network": 2
+      },
+      "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1884,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 12.998,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-scan-page-001-120dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 64,
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "407135bc7c313816168c514a27b483668236d26a64dcd290bd597eda17f37210",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 158627,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-001-120dpi.png",
+      "raster_sha256": "d3ac0725865ce3e2e9acffa0e8d07e914f61fe1efedc6b7e4f8b9799dfc93b6f",
+      "rejected_connection_count": 72,
+      "rejection_reasons": {
+        "line_width_mismatch": 2,
+        "outside_structural_roi": 64,
+        "unresolved_structural_gap": 6
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.6666666666666666,
+        0.6666666666666666
+      ],
+      "roi_count": 2,
+      "roi_inside_endpoint_count": 20,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 7464,
+      "roi_protection_mask_count": 2,
+      "roi_purposes": {
+        "table": 2
+      },
+      "roi_source_types": {
+        "local_endpoint_corridor": 2,
+        "measured_line_width_and_direction": 2,
+        "orthogonal_intersection_network": 2,
+        "source_supported_axis_lines": 2,
+        "table_line_network": 2
+      },
+      "structure_id": "62eca04c75057d54b9b0e13490ca609965a94c9a9346adc7990e72500b34c6e3",
+      "true_break_count": 1,
+      "unrepaired_break_count": 1,
+      "unrepaired_break_ids": [
+        "damaged-top-frame"
+      ],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1306,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 8.709,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-scan-page-002-120dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 42,
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "51caa91c7fb006c28b158f855921779af103e4c4b82b0ff872a48fa032c3bc14",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 92286,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-002-120dpi.png",
+      "raster_sha256": "134c7060f8240365e990cb7dafe4127fdcab2dbe3112866e30c8f33b0664e7ab",
+      "rejected_connection_count": 46,
+      "rejection_reasons": {
+        "outside_structural_roi": 42,
+        "unresolved_structural_gap": 4
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.6666666666666666,
+        1.0
+      ],
+      "roi_count": 2,
+      "roi_inside_endpoint_count": 24,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 3067,
+      "roi_protection_mask_count": 1,
+      "roi_purposes": {
+        "table": 2
+      },
+      "roi_source_types": {
+        "local_endpoint_corridor": 2,
+        "measured_line_width_and_direction": 2,
+        "orthogonal_intersection_network": 2,
+        "source_supported_axis_lines": 2,
+        "table_line_network": 2
+      },
+      "structure_id": "e2ee5cdf4cf452fba05c811ccbb9a18e430c418e000adae16c0f9b4246df381e",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 2090,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 12.659,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-scan-page-004-120dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 116,
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "0b90f336ddbfc71e48fa8d9849ca2cdef2b779892bf69dc72f2e54eb2cbd193d",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 163453,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-004-120dpi.png",
+      "raster_sha256": "b57945dc2d8bb99ac7020aa7c4d1fc53afab534986b151e877802d630a29658d",
+      "rejected_connection_count": 123,
+      "rejection_reasons": {
+        "line_width_mismatch": 1,
+        "outside_structural_roi": 116,
+        "unresolved_structural_gap": 6
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.625,
+        0.6666666666666666
+      ],
+      "roi_count": 2,
+      "roi_inside_endpoint_count": 22,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 5358,
+      "roi_protection_mask_count": 2,
+      "roi_purposes": {
+        "table": 2
+      },
+      "roi_source_types": {
+        "local_endpoint_corridor": 2,
+        "measured_line_width_and_direction": 2,
+        "orthogonal_intersection_network": 2,
+        "source_supported_axis_lines": 2,
+        "table_line_network": 2
+      },
+      "structure_id": "e8eb8c59ad8f0b198982c8d59889a9f9dab55d37dfdef15b5ce02c1af49a5368",
+      "true_break_count": 1,
+      "unrepaired_break_count": 1,
+      "unrepaired_break_ids": [
+        "stain-interrupted-lower-frame"
+      ],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1088,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 8.755,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-scan-page-008-120dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 34,
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "af5c442f248233fa2ccc92fdf2d823127583809e87577c8063d58a19919c042c",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 82966,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-008-120dpi.png",
+      "raster_sha256": "3d4f1d7e4dd9736fb0c75c1cac29f40c5ab4f6fbb90ee294ce579a7c68846fd8",
+      "rejected_connection_count": 34,
+      "rejection_reasons": {
+        "outside_structural_roi": 34
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [],
+      "roi_count": 0,
+      "roi_inside_endpoint_count": 0,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 0,
+      "roi_protection_mask_count": 0,
+      "roi_purposes": {},
+      "roi_source_types": {},
+      "structure_id": "0b4e0d0e5a77bc328dea3c0d8209f131bc87a20aafd14f3e99227c3d0f76ea56",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1776,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 12.03,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "environment-scan-page-014-120dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 77,
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "42c6388a6caf0c29045e058ca3506f68f5797d5b8075ca049dc873d2482b2fad",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 175657,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-014-120dpi.png",
+      "raster_sha256": "4d57d6efe0710d4b06bfde4709afe6d4547355be2613b743b56b592a4a5023e6",
+      "rejected_connection_count": 86,
+      "rejection_reasons": {
+        "line_width_mismatch": 2,
+        "outside_structural_roi": 77,
+        "unresolved_structural_gap": 7
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        0.6666666666666666,
+        0.6666666666666666,
+        1.0
+      ],
+      "roi_count": 3,
+      "roi_inside_endpoint_count": 28,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 15437,
+      "roi_protection_mask_count": 2,
+      "roi_purposes": {
+        "frame": 1,
+        "table": 2
+      },
+      "roi_source_types": {
+        "closed_frame_network": 1,
+        "local_endpoint_corridor": 3,
+        "measured_line_width_and_direction": 3,
+        "orthogonal_intersection_network": 3,
+        "source_supported_axis_lines": 3,
+        "table_line_network": 2
+      },
+      "structure_id": "d459b12226fab86b10fd8a5731e65f62738329081843bcb9514c230e876907ee",
+      "true_break_count": 1,
+      "unrepaired_break_count": 1,
+      "unrepaired_break_ids": [
+        "torn-bottom-frame"
+      ],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 476,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 13.759,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "warehouse-system-page-002-72dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 12,
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "6bf23522bda3f317c9a42003fc98c9640689712c3f28f575f9af8c50dd6d9364",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 320729,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-system-page-002-72dpi.png",
+      "raster_sha256": "488583a1c5253c098d773974ad8e40452e25b341129da8be8338eb7d28ca0053",
+      "rejected_connection_count": 30,
+      "rejection_reasons": {
+        "line_width_mismatch": 6,
+        "outside_structural_roi": 12,
+        "unresolved_structural_gap": 12
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        1.0,
+        0.5833333333333334,
+        0.75,
+        1.0,
+        0.6666666666666666,
+        1.0
+      ],
+      "roi_count": 6,
+      "roi_inside_endpoint_count": 66,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 120965,
+      "roi_protection_mask_count": 4,
+      "roi_purposes": {
+        "frame": 3,
+        "table": 3
+      },
+      "roi_source_types": {
+        "closed_frame_network": 3,
+        "local_endpoint_corridor": 6,
+        "measured_line_width_and_direction": 6,
+        "orthogonal_intersection_network": 6,
+        "source_supported_axis_lines": 6,
+        "table_line_network": 3
+      },
+      "structure_id": "222c7a0cd9c5709f8c359bd035265ab8badf403134715ac7140c5ed779da0c81",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    },
+    {
+      "approved_below_confidence_count": 0,
+      "approved_connection_count": 0,
+      "approved_connections": [],
+      "approved_failed_evidence_check_count": 0,
+      "approved_missing_evidence_count": 0,
+      "approved_outside_roi_bbox_count": 0,
+      "approved_outside_roi_mask_count": 0,
+      "approved_through_protection_count": 0,
+      "approved_without_roi_protection_count": 0,
+      "candidate_endpoint_count": 1870,
+      "correct_connection_count": 0,
+      "elapsed_seconds": 23.276,
+      "endpoint_error_pixels": {
+        "count": 0,
+        "maximum": 0.0,
+        "mean": 0.0
+      },
+      "id": "warehouse-plan-page-003-72dpi",
+      "incorrect_connection_count": 0,
+      "missing_protected_categories": [],
+      "missing_roi_metadata": [],
+      "outside_roi_rejection_count": 17,
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "preview_binary_sha256": "0a4067a4add751467eb6d007993c0bfb087e4de939666d6d32f1b14f834a1fb1",
+      "protected_categories": [
+        "arrow",
+        "dimension_number",
+        "engineering_symbol",
+        "high_confidence_text",
+        "leader_annotation",
+        "logo",
+        "signature"
+      ],
+      "protection_mask_observed": true,
+      "protection_mask_pixels": 390262,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-plan-page-003-72dpi.png",
+      "raster_sha256": "828aec9275ab23028ccc569f81532a1c3103e3fd5c1926269e40f4d9ec207ec9",
+      "rejected_connection_count": 54,
+      "rejection_reasons": {
+        "line_width_mismatch": 6,
+        "outside_structural_roi": 17,
+        "unresolved_structural_gap": 31
+      },
+      "repaired_break_count": 0,
+      "roi_confidences": [
+        1.0,
+        0.5333333333333333,
+        0.6666666666666666,
+        0.75,
+        0.5833333333333334,
+        0.6666666666666666,
+        0.43333333333333335,
+        1.0,
+        0.6666666666666666,
+        0.6666666666666666,
+        0.4583333333333333,
+        0.34375,
+        0.625,
+        1.0,
+        0.6666666666666666,
+        1.0,
+        1.0,
+        1.0,
+        0.8333333333333334,
+        1.0,
+        0.3333333333333333,
+        0.6666666666666666
+      ],
+      "roi_count": 22,
+      "roi_inside_endpoint_count": 278,
+      "roi_mask_observed": true,
+      "roi_mask_pixels": 197743,
+      "roi_protection_mask_count": 11,
+      "roi_purposes": {
+        "frame": 7,
+        "table": 15
+      },
+      "roi_source_types": {
+        "closed_frame_network": 7,
+        "local_endpoint_corridor": 22,
+        "measured_line_width_and_direction": 22,
+        "orthogonal_intersection_network": 22,
+        "source_supported_axis_lines": 22,
+        "table_line_network": 15
+      },
+      "structure_id": "ee593e049c974e4f10ed4d70123be80cba9a08f45bc9ee3ca1192e2e28b5f13a",
+      "true_break_count": 0,
+      "unrepaired_break_count": 0,
+      "unrepaired_break_ids": [],
+      "unreviewed_connection_count": 0
+    }
+  ],
+  "enable_ocr": true,
+  "git_commit": "d3b6c6ffdea3f4d0730d750b86b74b6b750ac10f",
+  "input_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\input-manifest.json",
+  "input_manifest_sha256": "5fab068497a87b672a93c3863db73ff9806d4183d561e736d2bbb63290a07f97",
+  "legacy_connection_contract": false,
+  "schema_version": 1
+}

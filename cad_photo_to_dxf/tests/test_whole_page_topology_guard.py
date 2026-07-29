@@ -128,6 +128,15 @@ def test_connectivity_judgment_runs_on_the_roi_crop(monkeypatch) -> None:
         LineSegment(110.0, 150.0, 150.0, 150.0),
         LineSegment(170.0, 150.0, 200.0, 150.0),
     ]
+    for line in lines:
+        cv2.line(
+            page,
+            (int(line.x1), int(line.y1)),
+            (int(line.x2), int(line.y2)),
+            255,
+            1,
+            cv2.LINE_8,
+        )
     roi = StructuralRoi(
         roi_id="table-001",
         purpose="table",
@@ -153,8 +162,12 @@ def test_connectivity_judgment_runs_on_the_roi_crop(monkeypatch) -> None:
     decision = evaluate_structural_bridge(
         roi=roi,
         lines=lines,
+        source_line_index=0,
+        target_line_index=1,
         start=(150.0, 150.0),
         end=(170.0, 150.0),
+        maximum_gap=20.0,
+        source_dpi=300.0,
         source_foreground=page,
         protected_mask=None,
     )

@@ -157,6 +157,7 @@ def detect_structural_rois(
     *,
     image_shape: tuple[int, int],
     extension_budget: float,
+    intersection_tolerance: float | None = None,
 ) -> StructuralRoiSet:
     """Build table/frame ROIs from orthogonal rule networks only."""
 
@@ -173,7 +174,15 @@ def detect_structural_rois(
     adjacency: dict[int, set[int]] = {index: set() for index in horizontal + vertical}
     intersections: dict[tuple[int, int], tuple[float, float]] = {}
     median_width = float(np.median([max(1.0, float(line.width)) for line in lines]))
-    tolerance = max(2.0, median_width * 1.5, float(extension_budget))
+    tolerance = max(
+        2.0,
+        median_width * 1.5,
+        float(
+            extension_budget
+            if intersection_tolerance is None
+            else intersection_tolerance
+        ),
+    )
     for horizontal_index in horizontal:
         for vertical_index in vertical:
             point = _intersection(

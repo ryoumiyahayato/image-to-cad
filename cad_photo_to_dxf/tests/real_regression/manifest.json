@@ -130,7 +130,7 @@
         "Capture-device provenance requires owner confirmation before this fixture can be described as a verified mobile-camera capture outside this internal test."
       ],
       "expected": {
-        "structure_id": "9c2be74e17ad6215faa117565187ff2fef5288a14e3526ac780220794dce925c",
+        "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
         "source_size_px": [
           1850,
           1250
@@ -284,7 +284,7 @@
         "Logo and signature semantic types are not accepted as correct merely because their source strokes survive; later ownership phases must improve them without losing pixels."
       ],
       "expected": {
-        "structure_id": "36d71eea4b1135d8016ed07a823d9bf00d7565c0ae0defdce89f40f489f40c17",
+        "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
         "source_size_px": [
           2478,
           1752
@@ -294,7 +294,7 @@
         "text_count": 154,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 224008,
+        "foreground_pixels": 224011,
         "contour_vertex_count": 55684,
         "preview_sha256": "0d45fca7af50dc16f43ee2aa620101ec8f99a40ac6b417feffd8e0346a995ce7",
         "dxf_entity_count": 3845,
@@ -302,7 +302,7 @@
         "dxf_text_count": 23,
         "dxf_trace_path_count": 2978,
         "dxf_trace_vertex_count": 55491,
-        "content_audit_sha256": "6ef29a88a669311ca4124c956424d8545d32895191c292c8593a80c2ef706f15"
+        "content_audit_sha256": "007b04424267cb0d946fa1e9de1001195f30e8f9153cb1d7d24e710f3ef7fcf2"
       }
     },
     {
@@ -419,7 +419,7 @@
         "Current outline preservation is a baseline fallback, not proof of correct Logo ownership."
       ],
       "expected": {
-        "structure_id": "4de8044dfee6344b4101aa209c9649eb2c5e24cf0cfbcad6e345eeeb84ada788",
+        "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615",
         "source_size_px": [
           1359,
           1890
@@ -437,7 +437,7 @@
         "dxf_text_count": 36,
         "dxf_trace_path_count": 829,
         "dxf_trace_vertex_count": 12451,
-        "content_audit_sha256": "40711c4cc07df2267211ff66bb32e432b5f5c6662adf776287324bea3f025f09"
+        "content_audit_sha256": "c2b88f3924205d0fa024cfa60c4dec4c08c288c5dd646e413134c0630540ef13"
       }
     },
     {
@@ -588,7 +588,7 @@
         "The labelled damaged frame is retained as ground truth even if the current baseline does not repair it."
       ],
       "expected": {
-        "structure_id": "fb07be3f447c072c1a5a278bea5025e1cd6cba112afa57d3027587788ac7248d",
+        "structure_id": "62eca04c75057d54b9b0e13490ca609965a94c9a9346adc7990e72500b34c6e3",
         "source_size_px": [
           1982,
           1402
@@ -724,7 +724,7 @@
         "Printed content and handwriting are both retained for later ownership validation."
       ],
       "expected": {
-        "structure_id": "6971dd23fe57bfd5560d707a9b911ed6f80726f1f87e40de869cb25607177fd1",
+        "structure_id": "e2ee5cdf4cf452fba05c811ccbb9a18e430c418e000adae16c0f9b4246df381e",
         "source_size_px": [
           1982,
           1402
@@ -877,7 +877,7 @@
         "The repair annotation records desired truth separately from the current baseline result."
       ],
       "expected": {
-        "structure_id": "789ad8e80f807ee5ef7b5adfc22b79565767d9fdb9a145cdfa9046029aac6e39",
+        "structure_id": "e8eb8c59ad8f0b198982c8d59889a9f9dab55d37dfdef15b5ce02c1af49a5368",
         "source_size_px": [
           1982,
           1402
@@ -1183,7 +1183,7 @@
         "Known semantic ownership gaps must be reported, not hidden by deleting the affected regions."
       ],
       "expected": {
-        "structure_id": "cc2ac68170d0b6134db0271b624fcebd56f41691c7d0bb98c848b727b24287bf",
+        "structure_id": "d459b12226fab86b10fd8a5731e65f62738329081843bcb9514c230e876907ee",
         "source_size_px": [
           1982,
           1402
@@ -1201,7 +1201,7 @@
         "dxf_text_count": 15,
         "dxf_trace_path_count": 3155,
         "dxf_trace_vertex_count": 50109,
-        "content_audit_sha256": "262ef5db254739d2b11ffedac27a9a5f7c739a7292943370fa12b462ede41485"
+        "content_audit_sha256": "0efec21275b79f30d5315b1e5a438bb37720844bcce0036a764bc2029a3fd701"
       }
     },
     {
@@ -1319,7 +1319,7 @@
         "Fine dashed schematic boxes and leaders remain explicit preservation targets."
       ],
       "expected": {
-        "structure_id": "aa24d567805130aa6cd5ff91f9496e204ebb5c01f4fd08b261cb8603f11690a4",
+        "structure_id": "222c7a0cd9c5709f8c359bd035265ab8badf403134715ac7140c5ed779da0c81",
         "source_size_px": [
           2523,
           1786
@@ -1456,7 +1456,7 @@
         "Large open floor areas remain explicit negative regions for later connection validation."
       ],
       "expected": {
-        "structure_id": "9966d13ae9a17b4e043a0d75e2beb773f8efbaa696563ad2ac19973ba299d075",
+        "structure_id": "ee593e049c974e4f10ed4d70123be80cba9a08f45bc9ee3ca1192e2e28b5f13a",
         "source_size_px": [
           3118,
           1786
@@ -1474,7 +1474,7 @@
         "dxf_text_count": 36,
         "dxf_trace_path_count": 1660,
         "dxf_trace_vertex_count": 29972,
-        "content_audit_sha256": "47eebff5b69864a0c7024de36cc78a7accc6763bba28cf32d64f910fe73aaf4e"
+        "content_audit_sha256": "5a76c66993c337ca1d9e7fc4fefa0e3973d03d6f29f9a03588520cd00cad8f48"
       }
     },
     {
@@ -1591,7 +1591,7 @@
         "Object preservation must not depend on the 300 DPI render being treated as a special filename."
       ],
       "expected": {
-        "structure_id": "f331842a8b5d26ef329296079fbfbc99e294dfaa9a3edf04f8425cbd18e66a69",
+        "structure_id": "912af2542a582479dbede839d8ab9c4d1fbed37bc6706ae11271bdd547d36f2f",
         "source_size_px": [
           2717,
           3780
@@ -1609,7 +1609,7 @@
         "dxf_text_count": 36,
         "dxf_trace_path_count": 779,
         "dxf_trace_vertex_count": 18614,
-        "content_audit_sha256": "e8599809269ae1154d7585dccdb9e0c4bbc235b3ffdb847b55ad4c41343928dd"
+        "content_audit_sha256": "950f41d9c569ba7c4318aa11f3429bf5ccc0ca502fb1e41d27add1721cc1b6dc"
       }
     },
     {
@@ -1727,7 +1727,7 @@
         "It is a DPI variant, not an additional unique page."
       ],
       "expected": {
-        "structure_id": "38efac4c1bb94843fd52da320503ebbe7590db19f2bd97e5cd04efb391254a98",
+        "structure_id": "1dad811ed7737a519e82040359ef7c0cb3a4ac1a25e13cdd47fc350a7b457a5c",
         "source_size_px": [
           5434,
           7559
@@ -1737,15 +1737,15 @@
         "text_count": 89,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 354687,
-        "contour_vertex_count": 39204,
+        "foreground_pixels": 354688,
+        "contour_vertex_count": 39205,
         "preview_sha256": "bce41a74d1810608a5dc3d828d791c640df07b084e9daa8fb697e96f8cf00f84",
         "dxf_entity_count": 1644,
         "dxf_line_count": 568,
         "dxf_text_count": 33,
         "dxf_trace_path_count": 730,
-        "dxf_trace_vertex_count": 39187,
-        "content_audit_sha256": "27a74d30eb2ff755079ea5d9a3dea591e2ffaaaa536be42c484fb70406c1e34d"
+        "dxf_trace_vertex_count": 39188,
+        "content_audit_sha256": "48811a019fc5a24f83913e187d86b4afd1807fc2d01db1e15ee415ae25cec91d"
       }
     }
   ]

@@ -500,6 +500,7 @@ def capture_debug_bundle(
         image,
         foreground_threshold=foreground_threshold,
         enable_ocr=enable_ocr,
+        source_dpi=float(dpi),
         observation_sink=collector,
     )
     structure = result.final_structure

@@ -339,7 +339,11 @@ def _measure_variant(args: argparse.Namespace) -> int:
             if image is None or image.size == 0:
                 raise ValueError(f"Could not load comparison page: {raster_path}")
             started = perf_counter()
-            result = trace_image_optimized(image, enable_ocr=True)
+            result = trace_image_optimized(
+                image,
+                enable_ocr=True,
+                source_dpi=float(document["page"]["dpi"]),
+            )
             source_binary = getattr(result, "preview_binary", None)
             if source_binary is None:
                 source_binary = result.binary

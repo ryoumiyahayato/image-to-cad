@@ -637,6 +637,7 @@ def _measure_document(
     trace_result = trace_image_optimized(
         image,
         enable_ocr=bool(document.get("enable_ocr", True)),
+        source_dpi=float(document["page"]["dpi"]),
     )
     structure = trace_result.final_structure
     if structure is None:

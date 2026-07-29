@@ -14,9 +14,11 @@ from .cancellation import (
     report_progress,
 )
 from .connectivity_safety import (
+    DEFAULT_CONNECTION_DPI,
     StructuralConnectivityContext,
     build_structural_connectivity_context,
     evaluate_structural_bridge,
+    millimetres_to_pixels,
 )
 from .line_detect import LineDetectionParams, LineSegment, detect_lines
 from .observability import (
@@ -32,6 +34,9 @@ from .observability import (
 from .resolution import image_resolution_scale
 from .structural_roi import StructuralRoiSet, detect_structural_rois
 from .text_protection import detect_text_region_mask, filter_text_like_lines
+
+MAX_CONNECTION_DISTANCE_MM = 0.4
+PROTECTION_EXPANSION_MM = 0.0
 
 
 def _cross(left: np.ndarray, right: np.ndarray) -> float:
@@ -644,6 +649,7 @@ def extend_lines_to_first_intersection(
     lines: Sequence[LineSegment],
     *,
     maximum_extension: float,
+    source_dpi: float = DEFAULT_CONNECTION_DPI,
     structural_rois: StructuralRoiSet | None = None,
     source_foreground: np.ndarray | None = None,
     protected_mask: np.ndarray | None = None,
@@ -813,9 +819,19 @@ def extend_lines_to_first_intersection(
                         }
                     )
             continue
-        for line_index, endpoint in (
-            (left_index, left_endpoint),
-            (right_index, right_endpoint),
+        for line_index, endpoint, other_index, peer_endpoint in (
+            (
+                left_index,
+                left_endpoint,
+                right_index,
+                right_endpoint,
+            ),
+            (
+                right_index,
+                right_endpoint,
+                left_index,
+                left_endpoint,
+            ),
         ):
             if endpoint is None:
                 continue
@@ -827,6 +843,25 @@ def extend_lines_to_first_intersection(
                 if endpoint_index == 0
                 else (float(source_line.x2), float(source_line.y2))
             )
+            peer_line = resolved[other_index]
+            if peer_endpoint is None:
+                peer_source_point = (
+                    float(point[0]),
+                    float(point[1]),
+                )
+            else:
+                peer_endpoint_index = int(peer_endpoint[0])
+                peer_source_point = (
+                    (
+                        float(peer_line.x1),
+                        float(peer_line.y1),
+                    )
+                    if peer_endpoint_index == 0
+                    else (
+                        float(peer_line.x2),
+                        float(peer_line.y2),
+                    )
+                )
             if observation_sink is not None:
                 attempt_id += 1
             if distance > relative_limit:
@@ -866,8 +901,13 @@ def extend_lines_to_first_intersection(
             decision = evaluate_structural_bridge(
                 roi=roi,
                 lines=resolved,
+                source_line_index=line_index,
+                target_line_index=other_index,
                 start=source_point,
                 end=(float(point[0]), float(point[1])),
+                peer_source_point=peer_source_point,
+                maximum_gap=maximum_extension,
+                source_dpi=source_dpi,
                 source_foreground=source_foreground,
                 protected_mask=protected_mask,
                 context=context,
@@ -891,6 +931,11 @@ def extend_lines_to_first_intersection(
                     "roi_id": decision.roi_id,
                     "bridge_pixels": int(decision.bridge_pixels),
                     "bridge_thickness": int(context.thickness),
+                    "confidence": float(decision.confidence),
+                    "confidence_threshold": float(
+                        decision.confidence_threshold
+                    ),
+                    "evidence": decision.evidence.payload(),
                     "component_count_before": int(
                         decision.component_count_before
                     ),
@@ -1040,6 +1085,7 @@ def reconstruct_straight_lines(
     binary: np.ndarray,
     *,
     scan_support_gray: np.ndarray | None = None,
+    source_dpi: float | None = None,
     protected_mask: np.ndarray | None = None,
     protection_guards: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
@@ -1257,11 +1303,25 @@ def reconstruct_straight_lines(
         scale=scale,
     )
     report_progress(progress_callback, "line-cleaning", 0.86)
-    extension_budget = max(2.0, 3.0 * scale)
+    normalized_source_dpi = (
+        None if source_dpi is None else float(source_dpi)
+    )
+    extension_budget = (
+        max(2.0, 3.0 * scale)
+        if normalized_source_dpi is None
+        else max(
+            1.0,
+            millimetres_to_pixels(
+                MAX_CONNECTION_DISTANCE_MM,
+                normalized_source_dpi,
+            ),
+        )
+    )
     structural_rois = detect_structural_rois(
         cleaned,
         image_shape=binary.shape,
         extension_budget=extension_budget,
+        intersection_tolerance=max(2.0, 3.0 * scale),
     )
     if observation_sink is not None:
         observe(
@@ -1277,11 +1337,26 @@ def reconstruct_straight_lines(
                 "rois": rois_payload(structural_rois.rois, cleaned),
                 "count": len(structural_rois.rois),
                 "extension_budget": float(extension_budget),
+                "maximum_connection_distance_mm": float(
+                    MAX_CONNECTION_DISTANCE_MM
+                ),
+                "source_dpi": normalized_source_dpi,
+                "roi_intersection_tolerance_pixels": float(
+                    max(2.0, 3.0 * scale)
+                ),
+                "protection_expansion_mm": float(
+                    PROTECTION_EXPANSION_MM
+                ),
             },
         )
     extended = extend_lines_to_first_intersection(
         cleaned,
         maximum_extension=extension_budget,
+        source_dpi=(
+            DEFAULT_CONNECTION_DPI
+            if normalized_source_dpi is None
+            else normalized_source_dpi
+        ),
         structural_rois=structural_rois,
         source_foreground=np.where(binary < 128, 255, 0).astype(np.uint8),
         protected_mask=protected_mask,

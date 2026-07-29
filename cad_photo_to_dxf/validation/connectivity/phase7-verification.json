@@ -1,0 +1,116 @@
+{
+  "phase": 7,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-29T23:53:28+08:00",
+  "base_commit": "d3b6c6ffdea3f4d0730d750b86b74b6b750ac10f",
+  "fixed_tag": "baseline/phase7-connectivity-decision-2026-07-29",
+  "scope": {
+    "recognition_thresholds_changed": false,
+    "new_recognition_types_added": false,
+    "fixed_coordinate_rules_added": false,
+    "page_percentage_rules_added": false,
+    "ocr_semantic_rules_added": false,
+    "connection_decision_contract_changed": true,
+    "physical_distance_normalization_changed": true,
+    "connection_metrics_changed": true
+  },
+  "physical_contract": {
+    "maximum_connection_distance_mm": 0.4,
+    "maximum_line_width_difference_mm": 0.35,
+    "maximum_direction_error_degrees": 1.0,
+    "minimum_resolvable_gap": "max(source_line_width_mm, target_line_width_mm) + one_source_pixel_mm",
+    "protection_expansion_mm": 0.0,
+    "confidence_threshold_exclusive": 0.95,
+    "dpi_consistency_tested": [
+      150,
+      300,
+      600
+    ]
+  },
+  "before_after": {
+    "document_count": 10,
+    "candidate_endpoint_count": 15082,
+    "before_roi_count": 50,
+    "after_roi_count": 50,
+    "after_roi_mask_pixels": 730621,
+    "before_approved_connection_count": 852,
+    "after_approved_connection_count": 0,
+    "before_incorrect_connection_count": 57,
+    "after_incorrect_connection_count": 0,
+    "correct_connection_count": 0,
+    "true_break_count": 3,
+    "unrepaired_break_count": 3,
+    "before_precision": 0.0,
+    "after_precision": 1.0,
+    "after_recall": 0.0,
+    "after_f1": 0.0,
+    "endpoint_error_pixels": {
+      "count": 0,
+      "mean": 0.0,
+      "maximum": 0.0
+    },
+    "approved_through_protection_count": 0,
+    "approved_outside_roi_mask_count": 0,
+    "approved_outside_roi_bbox_count": 0,
+    "approved_missing_evidence_count": 0,
+    "approved_below_confidence_count": 0,
+    "rejected_connection_count": 1533,
+    "rejection_reasons": {
+      "line_width_mismatch": 18,
+      "outside_structural_roi": 477,
+      "unresolved_structural_gap": 1038
+    },
+    "precision_zero_denominator_convention_applied": true,
+    "recall_improved": false,
+    "incorrect_connections_used_to_gain_recall": false
+  },
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q",
+    "tests": 232,
+    "failures": 0,
+    "errors": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_ci_scope_passed": true,
+    "compileall_ci_scope_passed": true,
+    "incremental_mypy_ci_scope_passed": true,
+    "git_diff_check_passed": true,
+    "repository_hygiene_passed": false,
+    "repository_hygiene_note": "Pre-existing tracked DXF baseline evidence and the existing bundled font remain intentionally tracked; phase 7 adds neither condition."
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "elapsed_total_seconds": 301.247
+  },
+  "evidence_files": {
+    "phase7-before.json": {
+      "sha256": "bb41bd9c968c34774f671fc5948b612416b85ee22f04e8d7364d02ae076d5845"
+    },
+    "phase7-after.json": {
+      "sha256": "20500a84106c3aac8f5ae6f272fd68adf3d7d6b6ec726681ded3b6e2d13e9825"
+    },
+    "phase7-real-regression.json": {
+      "sha256": "399ca7c19a47b26e8d3a9ad3e3fd5aa3adb46a7447f33a02106f902af0d08f35"
+    },
+    "phase7-pytest.xml": {
+      "sha256": "5057c79957da1345c4182d14847ca71bf2fc6c8c89a422a5fe394d27a80fc795"
+    }
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "roi_count_matches_phase6": true,
+    "approved_connections_have_complete_evidence": true,
+    "approved_connections_exceed_confidence_threshold": true,
+    "no_approved_connection_crosses_protection_mask": true,
+    "no_approved_connection_leaves_roi": true,
+    "no_connection_enters_annotated_forbidden_region": true,
+    "incorrect_connections_not_traded_for_recall": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

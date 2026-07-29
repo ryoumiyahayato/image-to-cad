@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .connectivity_safety import DEFAULT_CONNECTION_DPI
 from .content_ownership import (
     binary_from_foreground,
     build_connection_protection,
@@ -40,6 +41,7 @@ def trace_image_optimized(
     *,
     foreground_threshold: int | None = None,
     enable_ocr: bool = False,
+    source_dpi: float | None = DEFAULT_CONNECTION_DPI,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
@@ -195,6 +197,7 @@ def trace_image_optimized(
     report_progress(progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08)
     straight_lines = reconstruct_straight_lines(
         line_binary,
+        source_dpi=source_dpi,
         scan_support_gray=(
             None
             if prepared.clean_digital

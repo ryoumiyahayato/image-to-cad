@@ -4,6 +4,7 @@ import argparse
 from collections import Counter
 from hashlib import sha256
 import json
+from math import hypot
 from pathlib import Path
 import subprocess
 import sys
@@ -151,10 +152,37 @@ def _point_in_bbox(
     )
 
 
+def _mask_bbox_overlap_pixels(
+    mask: np.ndarray,
+    bbox: list[int],
+) -> int:
+    x, y, width, height = (int(value) for value in bbox)
+    left = max(0, x)
+    top = max(0, y)
+    right = min(mask.shape[1], x + width)
+    bottom = min(mask.shape[0], y + height)
+    if right <= left or bottom <= top:
+        return 0
+    return int(cv2.countNonZero(mask[top:bottom, left:right]))
+
+
+def _point_bbox_distance(
+    point: list[float],
+    bbox: list[int],
+) -> float:
+    x, y, width, height = (float(value) for value in bbox)
+    point_x = float(point[0])
+    point_y = float(point[1])
+    delta_x = max(x - point_x, 0.0, point_x - (x + width))
+    delta_y = max(y - point_y, 0.0, point_y - (y + height))
+    return hypot(delta_x, delta_y)
+
+
 def _document_record(
     document: Mapping[str, Any],
     *,
     enable_ocr: bool,
+    legacy_connection_contract: bool,
 ) -> dict[str, Any]:
     sys.path.insert(0, str(PROJECT_ROOT))
     from app.optimized_trace import trace_image_optimized
@@ -165,11 +193,13 @@ def _document_record(
         raise ValueError(f"Could not load ROI validation page: {raster_path}")
     collector = _ObservationCollector()
     started = perf_counter()
-    result = trace_image_optimized(
-        image,
-        enable_ocr=enable_ocr,
-        observation_sink=collector,
-    )
+    trace_kwargs = {
+        "enable_ocr": enable_ocr,
+        "observation_sink": collector,
+    }
+    if not legacy_connection_contract:
+        trace_kwargs["source_dpi"] = float(document["page"]["dpi"])
+    result = trace_image_optimized(image, **trace_kwargs)
     elapsed_seconds = round(perf_counter() - started, 3)
 
     roi_record = _record_with_payload_key(
@@ -236,15 +266,46 @@ def _document_record(
         if rejected_record is None
         else list(rejected_record["payload"]["connections"])
     )
+    binary_record = _record_with_payload_key(
+        collector,
+        "binary_foreground",
+        "foreground_pixels",
+    )
+    binary_image = (
+        None if binary_record is None else binary_record["image"]
+    )
+    source_foreground = (
+        np.zeros(image.shape[:2], dtype=np.uint8)
+        if binary_image is None
+        else np.where(binary_image < 128, 255, 0).astype(np.uint8)
+    )
     rois_by_id = {str(roi["roi_id"]): roi for roi in rois}
 
     approved_outside_roi_mask = 0
     approved_outside_roi_bbox = 0
     approved_through_protection = 0
     approved_without_roi_protection = 0
+    approved_missing_evidence = 0
+    approved_below_confidence = 0
+    approved_failed_evidence_check = 0
     approved_records: list[dict[str, Any]] = []
+    annotations = dict(document.get("annotations", {}))
+    true_breaks = list(annotations.get("true_breaks_to_repair", ()))
+    forbidden_regions = list(
+        annotations.get("forbidden_connection_regions", ())
+    )
+    matched_break_ids: set[str] = set()
+    correct_connection_count = 0
+    incorrect_connection_count = 0
+    unreviewed_connection_count = 0
+    endpoint_errors: list[float] = []
     for connection in approved:
         bridge = _connection_mask(connection, image.shape[:2])
+        added_bridge = np.where(
+            (bridge > 0) & (source_foreground == 0),
+            255,
+            0,
+        ).astype(np.uint8)
         outside_pixels = (
             int(cv2.countNonZero(bridge))
             if roi_mask is None
@@ -280,16 +341,77 @@ def _document_record(
         approved_outside_roi_bbox += int(not endpoints_inside_bbox)
         approved_through_protection += int(protected_pixels > 0)
         approved_without_roi_protection += int(protected_pixels < 0)
+        evidence = connection.get("evidence")
+        confidence = float(connection.get("confidence", 0.0))
+        confidence_threshold = float(
+            connection.get("confidence_threshold", 1.0)
+        )
+        evidence_checks = (
+            {}
+            if not isinstance(evidence, Mapping)
+            else dict(evidence.get("checks", {}))
+        )
+        approved_missing_evidence += int(not evidence_checks)
+        approved_below_confidence += int(
+            confidence <= confidence_threshold
+        )
+        approved_failed_evidence_check += int(
+            bool(evidence_checks)
+            and not all(bool(value) for value in evidence_checks.values())
+        )
+        matched_breaks = [
+            region
+            for region in true_breaks
+            if _mask_bbox_overlap_pixels(added_bridge, region["bbox"]) > 0
+        ]
+        matched_forbidden = [
+            region
+            for region in forbidden_regions
+            if _mask_bbox_overlap_pixels(added_bridge, region["bbox"]) > 0
+        ]
+        if matched_forbidden:
+            incorrect_connection_count += 1
+        elif matched_breaks:
+            correct_connection_count += 1
+        else:
+            unreviewed_connection_count += 1
+        for region in matched_breaks:
+            matched_break_ids.add(str(region["id"]))
+            endpoint_errors.append(
+                min(
+                    _point_bbox_distance(connection["start"], region["bbox"]),
+                    _point_bbox_distance(connection["end"], region["bbox"]),
+                )
+            )
         approved_records.append(
             {
                 "attempt_id": int(connection.get("attempt_id", 0)),
                 "roi_id": roi_id,
+                "start": [
+                    float(value) for value in connection["start"]
+                ],
+                "end": [float(value) for value in connection["end"]],
                 "bridge_thickness": int(
                     connection.get("bridge_thickness", 1)
                 ),
+                "added_bridge_pixels": int(cv2.countNonZero(added_bridge)),
                 "outside_roi_mask_pixels": outside_pixels,
                 "protected_mask_pixels": protected_pixels,
                 "endpoints_inside_roi_bbox": endpoints_inside_bbox,
+                "confidence": confidence,
+                "confidence_threshold": confidence_threshold,
+                "evidence": (
+                    {}
+                    if not isinstance(evidence, Mapping)
+                    else dict(evidence)
+                ),
+                "evidence_checks": evidence_checks,
+                "matched_true_break_ids": [
+                    str(region["id"]) for region in matched_breaks
+                ],
+                "matched_forbidden_region_ids": [
+                    str(region["id"]) for region in matched_forbidden
+                ],
             }
         )
 
@@ -311,6 +433,11 @@ def _document_record(
         for source_type in roi.get("source_types", ())
     )
     structure = result.final_structure
+    unrepaired_break_ids = sorted(
+        str(region["id"])
+        for region in true_breaks
+        if str(region["id"]) not in matched_break_ids
+    )
     return {
         "id": str(document["id"]),
         "page": dict(document["page"]),
@@ -343,7 +470,30 @@ def _document_record(
         "approved_without_roi_protection_count": (
             approved_without_roi_protection
         ),
+        "approved_missing_evidence_count": approved_missing_evidence,
+        "approved_below_confidence_count": approved_below_confidence,
+        "approved_failed_evidence_check_count": (
+            approved_failed_evidence_check
+        ),
         "approved_connections": approved_records,
+        "correct_connection_count": correct_connection_count,
+        "incorrect_connection_count": incorrect_connection_count,
+        "unreviewed_connection_count": unreviewed_connection_count,
+        "true_break_count": len(true_breaks),
+        "repaired_break_count": len(matched_break_ids),
+        "unrepaired_break_count": len(unrepaired_break_ids),
+        "unrepaired_break_ids": unrepaired_break_ids,
+        "endpoint_error_pixels": {
+            "count": len(endpoint_errors),
+            "mean": (
+                0.0
+                if not endpoint_errors
+                else float(np.mean(endpoint_errors))
+            ),
+            "maximum": (
+                0.0 if not endpoint_errors else max(endpoint_errors)
+            ),
+        },
         "rejected_connection_count": len(rejected),
         "rejection_reasons": dict(sorted(rejection_reasons.items())),
         "outside_roi_rejection_count": int(
@@ -367,7 +517,13 @@ def _run(args: argparse.Namespace) -> int:
     manifest_path = args.input_manifest.resolve()
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     documents = [
-        _document_record(document, enable_ocr=bool(args.enable_ocr))
+        _document_record(
+            document,
+            enable_ocr=bool(args.enable_ocr),
+            legacy_connection_contract=bool(
+                args.legacy_connection_contract
+            ),
+        )
         for document in manifest["documents"]
     ]
     missing_metadata_count = sum(
@@ -379,6 +535,16 @@ def _run(args: argparse.Namespace) -> int:
     total_rejected = sum(
         int(document["rejected_connection_count"]) for document in documents
     )
+    aggregate_rejection_reasons: Counter[str] = Counter()
+    for document in documents:
+        aggregate_rejection_reasons.update(
+            {
+                str(reason): int(count)
+                for reason, count in document[
+                    "rejection_reasons"
+                ].items()
+            }
+        )
     total_outside_rejections = sum(
         int(document["outside_roi_rejection_count"]) for document in documents
     )
@@ -397,6 +563,52 @@ def _run(args: argparse.Namespace) -> int:
     total_missing_roi_protection = sum(
         int(document["approved_without_roi_protection_count"])
         for document in documents
+    )
+    total_missing_evidence = sum(
+        int(document["approved_missing_evidence_count"])
+        for document in documents
+    )
+    total_below_confidence = sum(
+        int(document["approved_below_confidence_count"])
+        for document in documents
+    )
+    total_failed_evidence = sum(
+        int(document["approved_failed_evidence_check_count"])
+        for document in documents
+    )
+    total_correct = sum(
+        int(document["correct_connection_count"])
+        for document in documents
+    )
+    total_incorrect = sum(
+        int(document["incorrect_connection_count"])
+        for document in documents
+    )
+    total_unreviewed = sum(
+        int(document["unreviewed_connection_count"])
+        for document in documents
+    )
+    total_breaks = sum(
+        int(document["true_break_count"]) for document in documents
+    )
+    total_repaired_breaks = sum(
+        int(document["repaired_break_count"]) for document in documents
+    )
+    precision_denominator = total_correct + total_incorrect
+    precision = (
+        1.0
+        if precision_denominator == 0
+        else total_correct / precision_denominator
+    )
+    recall = (
+        1.0
+        if total_breaks == 0
+        else total_repaired_breaks / total_breaks
+    )
+    f1 = (
+        0.0
+        if precision + recall <= 0.0
+        else 2.0 * precision * recall / (precision + recall)
     )
     all_protection_observed = all(
         bool(document["protection_mask_observed"]) for document in documents
@@ -432,6 +644,16 @@ def _run(args: argparse.Namespace) -> int:
             and total_missing_roi_protection == 0
             and total_protected_crossings == 0
         ),
+        "approved_connections_have_complete_evidence": (
+            total_missing_evidence == 0
+            and total_failed_evidence == 0
+        ),
+        "approved_connections_exceed_confidence_threshold": (
+            total_below_confidence == 0
+        ),
+        "no_connection_enters_annotated_forbidden_region": (
+            total_incorrect == 0
+        ),
     }
     payload = {
         "schema_version": 1,
@@ -443,6 +665,9 @@ def _run(args: argparse.Namespace) -> int:
         "input_manifest": str(manifest_path),
         "input_manifest_sha256": _file_sha256(manifest_path),
         "enable_ocr": bool(args.enable_ocr),
+        "legacy_connection_contract": bool(
+            args.legacy_connection_contract
+        ),
         "document_count": len(documents),
         "aggregate": {
             "roi_count": sum(
@@ -468,7 +693,24 @@ def _run(args: argparse.Namespace) -> int:
             "approved_without_roi_protection_count": (
                 total_missing_roi_protection
             ),
+            "approved_missing_evidence_count": total_missing_evidence,
+            "approved_below_confidence_count": total_below_confidence,
+            "approved_failed_evidence_check_count": (
+                total_failed_evidence
+            ),
+            "correct_connection_count": total_correct,
+            "incorrect_connection_count": total_incorrect,
+            "unreviewed_connection_count": total_unreviewed,
+            "true_break_count": total_breaks,
+            "repaired_break_count": total_repaired_breaks,
+            "unrepaired_break_count": total_breaks - total_repaired_breaks,
+            "annotated_precision": precision,
+            "annotated_recall": recall,
+            "annotated_f1": f1,
             "rejected_connection_count": total_rejected,
+            "rejection_reasons": dict(
+                sorted(aggregate_rejection_reasons.items())
+            ),
             "outside_roi_rejection_count": total_outside_rejections,
             "missing_roi_metadata_count": missing_metadata_count,
             "document_elapsed_total_seconds": round(
@@ -500,6 +742,14 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--enable-ocr", action="store_true")
     parser.add_argument("--enforce", action="store_true")
+    parser.add_argument(
+        "--legacy-connection-contract",
+        action="store_true",
+        help=(
+            "Run against a pre-phase-7 app that has no source_dpi "
+            "parameter or per-connection evidence payload."
+        ),
+    )
     return parser
 
 

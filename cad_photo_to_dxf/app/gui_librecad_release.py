@@ -347,6 +347,13 @@ class MainWindow(_ExactMainWindow):
             return trace_image_optimized(
                 source,
                 enable_ocr=enable_ocr,
+                source_dpi=(
+                    self._processing_pdf_dpi(
+                        self._current_pdf_page_index
+                    )
+                    if self._native_pdf_mode
+                    else TRACE_PDF_DPI
+                ),
                 cancellation_token=token,
                 progress_callback=lambda stage, fraction: progress(
                     self._stage_text(stage), fraction
@@ -417,6 +424,7 @@ class MainWindow(_ExactMainWindow):
                 result = trace_image_optimized(
                     image,
                     enable_ocr=enable_ocr,
+                    source_dpi=self._processing_pdf_dpi(page_index),
                     cancellation_token=token,
                     progress_callback=page_progress,
                 )
