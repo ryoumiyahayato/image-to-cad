@@ -1,0 +1,47 @@
+{
+  "source": "C:\\Users\\agcrf\\Desktop\\环保局主大楼.pdf",
+  "pages": 14,
+  "render_dpi": 120,
+  "baseline": {
+    "blue_lines": 3131,
+    "unsupported_blue_lines": 125,
+    "excessive_blank_span_blue_lines": 96,
+    "crop_edge_blue_lines": 65
+  },
+  "fixed": {
+    "blue_lines": 3049,
+    "unsupported_blue_lines": 0,
+    "excessive_blank_span_blue_lines": 0,
+    "crop_edge_blue_lines": 0,
+    "blue_lines_by_page": [
+      214,
+      145,
+      245,
+      235,
+      237,
+      235,
+      230,
+      174,
+      232,
+      222,
+      222,
+      204,
+      215,
+      239
+    ]
+  },
+  "full_export_page_3": {
+    "render_dpi": 290,
+    "old_blue_lines": 423,
+    "fixed_blue_lines": 394,
+    "unsupported_blue_lines": 0,
+    "excessive_blank_span_blue_lines": 0,
+    "crop_edge_blue_lines": 0,
+    "audit_errors": 0,
+    "audit_fixes": 0
+  },
+  "notes": [
+    "Uncertain fold, tape, and scan-edge marks are no longer promoted to blue reconstructed straight lines.",
+    "Verified structural rules remain blue; rejected uncertain marks may remain on magenta trace layers for manual review."
+  ]
+}

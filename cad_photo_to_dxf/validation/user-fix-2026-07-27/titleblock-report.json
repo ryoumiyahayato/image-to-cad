@@ -1,0 +1,60 @@
+{
+  "seconds": 38.478,
+  "source_shape": [
+    2562,
+    1812
+  ],
+  "ocr_candidates": 79,
+  "editable_texts": 75,
+  "graphic_candidates": 4,
+  "signatures": 0,
+  "straight_lines": 51,
+  "trace_paths": 207,
+  "dxf_entities": 342,
+  "line_entities": 51,
+  "polyline_entities": 216,
+  "text_entities": 75,
+  "blue_lines_inside_editable_text_boxes": 0,
+  "blue_lines_inside_logo_region": 0,
+  "residual_entities_on_straight_layer": 0,
+  "audit_errors": 0,
+  "graphic_samples": [
+    {
+      "text": "申都设计",
+      "bbox": [
+        252,
+        383,
+        389,
+        74
+      ]
+    },
+    {
+      "text": "70",
+      "bbox": [
+        661,
+        420,
+        77,
+        35
+      ]
+    },
+    {
+      "text": "GROUP",
+      "bbox": [
+        655,
+        453,
+        136,
+        41
+      ]
+    },
+    {
+      "text": "SHENDUDESIGN",
+      "bbox": [
+        304,
+        454,
+        325,
+        40
+      ]
+    }
+  ],
+  "heading_bbox": null
+}
