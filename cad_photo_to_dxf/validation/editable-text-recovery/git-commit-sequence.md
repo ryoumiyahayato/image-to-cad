@@ -13,12 +13,13 @@
 3. `f26a7b8 fix: decouple editable text emission from outline suppression`
 4. `dd772f4 test: verify editable text emission decoupling`
 5. `185d44b refactor: preserve unsafe source glyphs as hidden text outlines`
+6. `892b150 test: verify hidden source glyph outlines`
+7. `66a17d7 fix: enforce candidate-level text semantic ownership`
 
 ## Planned commits
 
-1. `test: verify hidden source glyph outlines`
-2. `fix: enforce candidate-level text semantic ownership`
-3. `fix: fit native text geometry to OCR bounds`
-4. Final validation evidence commit, only after every page passes.
+1. `test: verify candidate-level text semantic ownership`
+2. `fix: fit native text geometry to OCR bounds`
+3. Final validation evidence commit, only after every page passes.
 
 No commit may update a real-regression expected baseline.

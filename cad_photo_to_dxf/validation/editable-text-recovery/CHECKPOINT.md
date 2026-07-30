@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`892b150 test: verify hidden source glyph outlines`
+`66a17d7 fix: enforce candidate-level text semantic ownership`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -47,6 +47,7 @@ Phase 12 baseline:
   DXF export.
 - Confirmed candidate primary-semantic uniqueness and exact source-pixel
   conservation on the 240 DPI fixed failure page.
+- Committed candidate-level semantic ownership as isolated commit `66a17d7`.
 
 ## Not completed
 
@@ -55,22 +56,8 @@ Phase 12 baseline:
 
 ## Modified files
 
-- `app/content_ownership.py`
-- `app/final_structure.py`
-- `app/gui_exact_release.py`
-- `app/optimized_trace.py`
-- `app/processing_contract.py`
-- `app/text_output_contract.py`
-- `app/trace_document_export.py`
-- `app/trace_dxf_entities.py`
-- `app/trace_single_export.py`
-- `app/trace_storage.py`
-- `tests/test_content_ownership.py`
-- `tests/test_text_output_contract.py`
-- `tests/test_trace_export.py`
-- `validation/editable-text-recovery/run_recovery_probe.py`
-- Candidate-level code and pre-commit evidence are ready for the required
-  `fix: enforce candidate-level text semantic ownership` commit.
+- Checkpoint evidence only. The production-code worktree is clean after
+  commit `66a17d7`.
 
 ## Tests
 
@@ -95,6 +82,8 @@ Phase 12 baseline:
   `TRACE_TEXT_SYMBOL` objects: 0/0.
 - Commit-3 page-001 primary semantic conflicts: 0.
 - Commit-3 page-001 source ownership violations: 0.
+- Commit-3 post-commit focused tests: 37 passed, 72 warnings.
+- Commit-3 post-commit Ruff checks: passed.
 
 ## Per-page status
 
@@ -169,7 +158,8 @@ symbol geometry.
 
 ## Next single safe action
 
-Create the required isolated commit:
-`fix: enforce candidate-level text semantic ownership`. Then run the same
-focused test set after the commit and stop if it does not pass. Do not alter
-native TEXT geometry before that checkpoint succeeds.
+Inspect the existing native TEXT placement and LFF metric code, then add
+focused geometry tests for quad center, measured height/width, rotation,
+Unicode/editability, and DXF read-modify-save-read before changing production
+geometry. Preserve the current page coordinate transform and do not alter OCR
+thresholds or any other product scope.
