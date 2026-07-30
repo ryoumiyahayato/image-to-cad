@@ -4,6 +4,7 @@ import argparse
 from collections import Counter
 from collections.abc import Mapping
 import json
+from math import isfinite
 from pathlib import Path
 import re
 import sys
@@ -80,6 +81,93 @@ def _semantic_observation(structure: object) -> dict[str, object]:
             value = observation.get("semantic_ownership", {})
             return dict(value) if isinstance(value, Mapping) else {}
     return {}
+
+
+def _angle_error(first: float, second: float) -> float:
+    return abs((float(first) - float(second) + 180.0) % 360.0 - 180.0)
+
+
+def _text_geometry_record(entity: object, index: int) -> dict[str, object]:
+    try:
+        xdata = entity.get_xdata("OCR_TEXT_GEOMETRY")  # type: ignore[attr-defined]
+    except ezdxf.DXFValueError:
+        return {
+            "entity_index": index,
+            "entity_type": entity.dxftype(),  # type: ignore[attr-defined]
+            "geometry_contract_present": False,
+        }
+    strings = [str(tag.value) for tag in xdata if tag.code == 1000]
+    values = [float(tag.value) for tag in xdata if tag.code == 1040]
+    integers = [int(tag.value) for tag in xdata if tag.code == 1070]
+    if len(values) != 10 or len(integers) != 2:
+        return {
+            "entity_index": index,
+            "entity_type": entity.dxftype(),  # type: ignore[attr-defined]
+            "geometry_contract_present": False,
+            "geometry_xdata_float_count": len(values),
+            "geometry_xdata_integer_count": len(integers),
+        }
+    (
+        target_center_x,
+        target_center_y,
+        target_width,
+        target_height,
+        rendered_width,
+        rendered_height,
+        center_error,
+        raw_width_factor,
+        width_factor,
+        target_rotation,
+    ) = values
+    entity_rotation = float(entity.dxf.rotation)  # type: ignore[attr-defined]
+    entity_height = float(entity.dxf.height)  # type: ignore[attr-defined]
+    return {
+        "entity_index": index,
+        "entity_type": entity.dxftype(),  # type: ignore[attr-defined]
+        "text": str(entity.dxf.text),  # type: ignore[attr-defined]
+        "geometry_contract_present": True,
+        "metric_source": (
+            strings[0].removeprefix("metric_source=")
+            if strings
+            else ""
+        ),
+        "metric_fallback": (
+            strings[1].removeprefix("metric_fallback=")
+            if len(strings) > 1
+            else ""
+        ),
+        "target_center": [target_center_x, target_center_y],
+        "target_width": target_width,
+        "target_height": target_height,
+        "rendered_width": rendered_width,
+        "rendered_height": rendered_height,
+        "rendered_to_target_width_ratio": (
+            rendered_width / target_width
+            if target_width > 0.0
+            else None
+        ),
+        "rendered_to_target_height_ratio": (
+            rendered_height / target_height
+            if target_height > 0.0
+            else None
+        ),
+        "entity_height_to_target_ratio": (
+            entity_height / target_height
+            if target_height > 0.0
+            else None
+        ),
+        "center_error": center_error,
+        "raw_width_factor": raw_width_factor,
+        "width_factor": width_factor,
+        "width_factor_clamped": bool(integers[1]),
+        "target_rotation": target_rotation,
+        "entity_rotation": entity_rotation,
+        "rotation_error": _angle_error(
+            entity_rotation,
+            target_rotation,
+        ),
+        "finite": all(isfinite(value) for value in values),
+    }
 
 
 def main() -> int:
@@ -178,6 +266,37 @@ def main() -> int:
     candidate_records = list(
         semantic_ownership.get("candidates", [])
     )
+    geometry_records = [
+        _text_geometry_record(entity, index)
+        for index, entity in enumerate(native_texts, start=1)
+    ]
+    valid_geometry_records = [
+        item
+        for item in geometry_records
+        if item.get("geometry_contract_present") is True
+    ]
+    height_ratios = [
+        float(item["rendered_to_target_height_ratio"])
+        for item in valid_geometry_records
+        if item.get("rendered_to_target_height_ratio") is not None
+    ]
+    width_ratios = [
+        float(item["rendered_to_target_width_ratio"])
+        for item in valid_geometry_records
+        if item.get("rendered_to_target_width_ratio") is not None
+    ]
+    center_errors = [
+        float(item["center_error"])
+        for item in valid_geometry_records
+    ]
+    rotation_errors = [
+        float(item["rotation_error"])
+        for item in valid_geometry_records
+    ]
+    width_factors = [
+        float(item["width_factor"])
+        for item in valid_geometry_records
+    ]
     payload = {
         "schema_version": 1,
         "input": str(args.input.resolve()),
@@ -241,6 +360,55 @@ def main() -> int:
             uncertain_owned_symbol_objects
         ),
         "semantic_ownership": semantic_ownership,
+        "text_geometry": {
+            "record_count": len(geometry_records),
+            "contract_present_count": len(valid_geometry_records),
+            "all_entity_types_TEXT": all(
+                item.get("entity_type") == "TEXT"
+                for item in geometry_records
+            ),
+            "metric_sources": dict(
+                Counter(
+                    str(item.get("metric_source", "missing"))
+                    for item in geometry_records
+                )
+            ),
+            "metric_fallbacks": dict(
+                Counter(
+                    str(item.get("metric_fallback", "missing"))
+                    for item in geometry_records
+                )
+            ),
+            "width_factor_clamped_count": sum(
+                bool(item.get("width_factor_clamped", False))
+                for item in valid_geometry_records
+            ),
+            "minimum_width_factor": (
+                min(width_factors) if width_factors else None
+            ),
+            "maximum_width_factor": (
+                max(width_factors) if width_factors else None
+            ),
+            "minimum_rendered_to_target_height_ratio": (
+                min(height_ratios) if height_ratios else None
+            ),
+            "maximum_rendered_to_target_height_ratio": (
+                max(height_ratios) if height_ratios else None
+            ),
+            "minimum_rendered_to_target_width_ratio": (
+                min(width_ratios) if width_ratios else None
+            ),
+            "maximum_rendered_to_target_width_ratio": (
+                max(width_ratios) if width_ratios else None
+            ),
+            "maximum_center_error": (
+                max(center_errors) if center_errors else None
+            ),
+            "maximum_rotation_error": (
+                max(rotation_errors) if rotation_errors else None
+            ),
+            "records": geometry_records,
+        },
         "hard_rejected_candidates": [
             {
                 "candidate_id": f"ocr-{index + 1:03d}",
@@ -276,6 +444,20 @@ def main() -> int:
         and payload["candidate_primary_semantic_conflict_count"] == 0
         and payload["candidate_source_ownership_violation_count"] == 0
         and payload["fallback_and_text_symbol_conflict_count"] == 0
+        and len(valid_geometry_records) == len(native_texts)
+        and all(
+            item.get("entity_type") == "TEXT"
+            and item.get("finite") is True
+            and float(item["width_factor"]) >= 0.72
+            and abs(
+                float(item["rendered_to_target_height_ratio"])
+                - 1.0
+            )
+            <= 1e-6
+            and float(item["center_error"]) <= 1e-6
+            and float(item["rotation_error"]) <= 1e-6
+            for item in valid_geometry_records
+        )
     ) else 1
 
 

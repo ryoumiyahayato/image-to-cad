@@ -1,0 +1,56 @@
+Ruff:
+All checks passed!
+
+Focused geometry, output-contract, trace-export and preview-invariant tests:
+................................                                         [100%]
+32 passed, 120 warnings in 2.32s
+
+Included:
+- tests/test_native_text_geometry.py
+- tests/test_font_aware_ocr_export.py
+- tests/test_text_output_contract.py
+- tests/test_trace_export.py
+- tests/test_system_refactor_invariants.py
+
+Fixed failure page, 240 DPI:
+- OCR candidates: 208
+- text_emit_eligible: 206
+- native DXF TEXT: 206
+- confidence hard rejects: 2
+- invalid geometry rejects: 0
+- source outline backup candidates: 169
+- eligible candidate-owned text-symbol objects/pixels: 0/0
+- candidate primary semantic conflicts: 0
+- candidate source ownership violations: 0
+- all native entity types TEXT: true
+- geometry XDATA records: 206/206
+- metric source: librecad-lff-visible-bounds (206)
+- metric fallback: none (206)
+- rendered height / target height: 1.0 within floating-point tolerance
+- maximum center error: 0.0
+- maximum rotation error: 0.0
+- width factor range: 0.72 to 3.1758620689655164
+- width-factor clamp count: 169
+- DXF audit errors: 0
+
+Before geometry change on the same page:
+- entity height / target height: fixed 0.78 for all 206 TEXT entities
+- width factor range: 0.25 to 2.5699
+- width factors below 0.60: 122
+
+After geometry change:
+- visible LFF glyph height / target height: 1.0
+- width factor range: 0.72 to 3.1758620689655164
+- width factors below 0.60: 0
+- metric-centered placement error: 0.0
+
+LibreCAD Windows validation:
+- project and installed wqy-unicode.lff SHA-256 values match:
+  3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201
+- native entity opened as a Text object on OCR_TEXT
+- font displayed as wqy-unicode
+- source backup layer was hidden by default
+- content changed to GUI EDITED 42 plus Chinese and punctuation
+- edited and read-save-read copies remained TEXT
+- Unicode content survived both saves
+- edited and round-trip DXF audit errors: 0/0

@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`66a17d7 fix: enforce candidate-level text semantic ownership`
+`cc4477f test: verify candidate-level text semantic ownership`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -48,16 +48,39 @@ Phase 12 baseline:
 - Confirmed candidate primary-semantic uniqueness and exact source-pixel
   conservation on the 240 DPI fixed failure page.
 - Committed candidate-level semantic ownership as isolated commit `66a17d7`.
+- Replaced the fixed 0.78 TEXT height and heuristic baseline offset with
+  measured LFF visible bounds, metric-centered placement, and exact OCR
+  quad-derived width, height, center and rotation.
+- Added an explicit, auditable Qt tight-bounds fallback for installations where
+  the bundled LibreCAD LFF is unavailable.
+- Added `OCR_TEXT_GEOMETRY` XDATA to every native TEXT with metric source,
+  target bounds, rendered bounds, center error, rotation and width factor.
+- Added focused Chinese, English, digit, punctuation, rotated-text,
+  read-modify-save-read and multi-page coordinate tests.
+- Confirmed the project and installed LibreCAD `wqy-unicode.lff` files are
+  byte-identical.
+- Opened the generated DXF in the target Windows LibreCAD, edited one native
+  TEXT directly, saved it, and confirmed with ezdxf that the entity and Unicode
+  content remained editable TEXT after another read-save-read cycle.
+- Strengthened `SOURCE_TEXT_OUTLINE` to both off and frozen because the target
+  LibreCAD rewrites the negative off color when saving but preserves freeze.
 
 ## Not completed
 
-- Native TEXT geometry fitting.
 - Full per-page and per-DXF acceptance.
 
 ## Modified files
 
-- Checkpoint evidence only. The production-code worktree is clean after
-  commit `66a17d7`.
+- `app/librecad_lff.py`
+- `app/ocr_outline_export.py`
+- `app/trace_document_export.py`
+- `app/trace_single_export.py`
+- `tests/test_native_text_geometry.py`
+- `tests/test_font_aware_ocr_export.py`
+- `tests/test_text_output_contract.py`
+- `tests/test_trace_export.py`
+- `validation/editable-text-recovery/run_recovery_probe.py`
+- This checkpoint and commit-4 evidence files.
 
 ## Tests
 
@@ -84,6 +107,14 @@ Phase 12 baseline:
 - Commit-3 page-001 source ownership violations: 0.
 - Commit-3 post-commit focused tests: 37 passed, 72 warnings.
 - Commit-3 post-commit Ruff checks: passed.
+- Commit-4 focused tests: 32 passed, 120 warnings.
+- Commit-4 Ruff checks: passed.
+- Commit-4 page-001 DXF audit: 0 errors.
+- Commit-4 page-001 geometry XDATA: 206/206 native TEXT entities.
+- Commit-4 page-001 LFF metric fallback count: 0.
+- Commit-4 page-001 rendered-height ratio: 1.0 within floating-point tolerance.
+- Commit-4 page-001 maximum center/rotation error: 0.0/0.0.
+- Commit-4 LibreCAD edit-save and ezdxf read-save-read audit: passed.
 
 ## Per-page status
 
@@ -156,10 +187,33 @@ but their candidate-owned source-pixel count is zero. This adjacency is
 recorded separately and is not removed because it may be unrelated table or
 symbol geometry.
 
+The local commit-4 probe now reports:
+
+- OCR candidates: 208
+- `text_emit_eligible`: 206
+- native DXF TEXT: 206
+- confidence hard rejects / invalid geometry rejects: 2/0
+- eligible candidate-owned `TRACE_TEXT_SYMBOL` objects/pixels: 0/0
+- primary semantic conflicts / ownership violations: 0/0
+- native entity types: 206 TEXT, no glyph polylines
+- LFF visible-bounds metric records: 206
+- LFF metric fallbacks: 0
+- rendered glyph height / OCR target height: 1.0
+- TEXT center error / rotation error: 0.0/0.0
+- width factor range: 0.72 to 3.1758620689655164
+- width factors below 0.60: 0
+- DXF audit errors: 0
+- `SOURCE_TEXT_OUTLINE`: off and frozen
+
+The anti-compression lower bound is intentionally applied when OCR content and
+its clipped geometry are inconsistent. Those cases remain native TEXT and may
+extend beyond the target box rather than being squeezed into an unreadable
+width. The per-entity raw and applied width factors are retained in geometry
+XDATA and will be listed in the full per-page reports.
+
 ## Next single safe action
 
-Inspect the existing native TEXT placement and LFF metric code, then add
-focused geometry tests for quad center, measured height/width, rotation,
-Unicode/editability, and DXF read-modify-save-read before changing production
-geometry. Preserve the current page coordinate transform and do not alter OCR
-thresholds or any other product scope.
+Commit the isolated native TEXT geometry change as
+`fix: fit native text geometry to OCR bounds`, then run the same focused tests
+and Ruff checks against the committed tree. Do not begin full per-page
+validation unless those post-commit checks pass.

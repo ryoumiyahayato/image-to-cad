@@ -53,6 +53,14 @@ def _line_xdata(entity) -> tuple[int, str]:
     return int(integers[0]), source
 
 
+def _geometry_xdata(entity) -> list[float]:
+    return [
+        float(value)
+        for code, value in entity.get_xdata("OCR_TEXT_GEOMETRY")
+        if code == 1040
+    ]
+
+
 def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
@@ -80,7 +88,7 @@ def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     assert all(entity.dxf.layer == "OCR_TEXT" for entity in texts)
     assert not document.layers.get("OCR_TEXT").is_off()
     assert texts[0].dxf.style == "wqy-unicode"
-    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in texts)
+    assert all(0.72 <= float(entity.dxf.width) <= 4.0 for entity in texts)
     assert _line_xdata(texts[0]) == (1, "FIRE ALARM A1")
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
@@ -290,11 +298,23 @@ def test_document_final_structures_keep_hidden_source_outlines_per_page(
     assert result.text_count == 2
     assert result.source_text_outline_count == 2
     assert result.fallback_text_count == 0
+    expected_centers = {
+        1: (55.0, 50.0),
+        2: (55.0, -75.0),
+    }
     for page in (1, 2):
         prefix = f"PAGE_{page:03d}"
-        assert len(
+        page_texts = list(
             modelspace.query(f'TEXT[layer=="{prefix}_OCR_TEXT"]')
-        ) == 1
+        )
+        assert len(page_texts) == 1
+        assert page_texts[0].dxftype() == "TEXT"
+        geometry = _geometry_xdata(page_texts[0])
+        assert geometry[0] == expected_centers[page][0]
+        assert geometry[1] == expected_centers[page][1]
+        assert geometry[3] == 30.0
+        assert geometry[5] == geometry[3]
+        assert geometry[6] <= 1e-9
         assert len(
             modelspace.query(
                 f'LWPOLYLINE[layer=="{prefix}_SOURCE_TEXT_OUTLINE"]'
@@ -303,6 +323,9 @@ def test_document_final_structures_keep_hidden_source_outlines_per_page(
         assert document.layers.get(
             f"{prefix}_SOURCE_TEXT_OUTLINE"
         ).is_off()
+        assert document.layers.get(
+            f"{prefix}_SOURCE_TEXT_OUTLINE"
+        ).is_frozen()
         assert len(
             modelspace.query(
                 f'LWPOLYLINE[layer=="{prefix}_TEXT_FALLBACK_OUTLINE"]'

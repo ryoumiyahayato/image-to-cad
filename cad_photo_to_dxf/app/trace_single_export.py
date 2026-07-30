@@ -87,7 +87,9 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-    doc.layers.get("SOURCE_TEXT_OUTLINE").off()
+    source_outline_layer = doc.layers.get("SOURCE_TEXT_OUTLINE")
+    source_outline_layer.off()
+    source_outline_layer.freeze()
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
     underlay_path: Path | None = None

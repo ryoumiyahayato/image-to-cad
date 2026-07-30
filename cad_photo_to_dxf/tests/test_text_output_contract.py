@@ -202,6 +202,7 @@ def test_dxf_emits_native_text_independently_from_outline_safety(
     assert "TEXT_FALLBACK_OUTLINE" in outline_layers
     assert "RESIDUAL_GRAPHIC" not in outline_layers
     assert document.layers.get("SOURCE_TEXT_OUTLINE").is_off()
+    assert document.layers.get("SOURCE_TEXT_OUTLINE").is_frozen()
     assert not document.layers.get("TEXT_FALLBACK_OUTLINE").is_off()
     assert result.ocr_candidate_count == 3
     assert result.text_count == 2
@@ -297,4 +298,5 @@ def test_final_structure_masks_prevent_editable_text_symbol_conflict(
         'LWPOLYLINE[layer=="TEXT_FALLBACK_OUTLINE"]'
     )
     assert document.layers.get("SOURCE_TEXT_OUTLINE").is_off()
+    assert document.layers.get("SOURCE_TEXT_OUTLINE").is_frozen()
     assert not document.audit().errors

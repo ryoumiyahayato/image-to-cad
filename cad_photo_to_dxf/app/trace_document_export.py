@@ -67,6 +67,8 @@ def _ensure_page_layers(doc, index: int) -> dict[str, str]:
             doc.layers.add(layer_name, **style)
         if index > 1 or base_name == "SOURCE_TEXT_OUTLINE":
             doc.layers.get(layer_name).off()
+        if base_name == "SOURCE_TEXT_OUTLINE":
+            doc.layers.get(layer_name).freeze()
     return names
 
 
