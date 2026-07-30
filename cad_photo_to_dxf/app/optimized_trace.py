@@ -6,13 +6,14 @@ import numpy as np
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .connectivity_safety import DEFAULT_CONNECTION_DPI
 from .content_ownership import (
+    arbitrate_content_candidates,
     binary_from_foreground,
     build_connection_protection,
-    editable_text_source_mask,
+    finalize_content_ownership,
     graphic_source_mask,
     partition_content,
     signature_source_mask,
-    without_owned_pixels,
+    text_candidate_source_mask,
 )
 from .final_structure import build_final_structure
 from .logo_detection import detect_logo_regions
@@ -158,10 +159,9 @@ def trace_image_optimized(
     signature_mask = signature_source_mask(prepared.binary, signatures)
     graphic_mask = graphic_source_mask(prepared.binary, logos)
     if observation_sink is not None:
-        text_candidate_mask = editable_text_source_mask(
+        text_candidate_mask = text_candidate_source_mask(
             prepared.binary,
             texts,
-            excluded=np.zeros_like(prepared.binary),
         )
         observe(
             observation_sink,
@@ -188,15 +188,9 @@ def trace_image_optimized(
         signatures=signatures,
     )
     protected_mask = connection_protection.mask
-    line_binary = without_owned_pixels(
-        prepared.binary,
-        signature_mask,
-        graphic_mask,
-    )
-
     report_progress(progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08)
-    straight_lines = reconstruct_straight_lines(
-        line_binary,
+    line_candidates = reconstruct_straight_lines(
+        prepared.binary,
         source_dpi=source_dpi,
         scan_support_gray=(
             None
@@ -217,23 +211,41 @@ def trace_image_optimized(
         observation_sink=observation_sink,
     )
 
-    ownership = partition_content(
+    candidate_ownership = partition_content(
         prepared.binary,
-        lines=straight_lines,
+        lines=line_candidates,
         texts=texts,
         signatures=signatures,
         logos=logos,
         graphic_mask=graphic_mask,
         signature_mask=signature_mask,
     )
+    arbitrated = arbitrate_content_candidates(
+        prepared.binary,
+        lines=line_candidates,
+        texts=texts,
+        logos=logos,
+        signatures=signatures,
+        ownership=candidate_ownership,
+    )
+    ownership = finalize_content_ownership(
+        prepared.binary,
+        candidates=candidate_ownership,
+        arbitrated=arbitrated,
+    )
+    straight_lines = arbitrated.lines
+    texts = arbitrated.texts
+    logos = arbitrated.logos
+    signatures = arbitrated.signatures
     if observation_sink is not None:
         owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
         for owner_code, mask in (
             (1, ownership.line),
             (2, ownership.text),
-            (3, ownership.graphic),
+            (3, ownership.logo),
             (4, ownership.signature),
-            (5, ownership.residual),
+            (5, ownership.graphic),
+            (6, ownership.residual),
         ):
             owner_map[mask > 0] = owner_code
         observe(
@@ -245,7 +257,7 @@ def trace_image_optimized(
         observe(
             observation_sink,
             "logo_candidate_mask",
-            image=ownership.graphic,
+            image=ownership.logo,
             payload={"role": "final-owned"},
         )
         observe(
@@ -264,11 +276,7 @@ def trace_image_optimized(
             observation_sink,
             "conflict_mask",
             image=ownership.ambiguous,
-            payload={
-                "ambiguous_pixels": int(
-                    cv2.countNonZero(ownership.ambiguous)
-                )
-            },
+            payload=ownership.payload(),
         )
         observe(
             observation_sink,
@@ -289,15 +297,17 @@ def trace_image_optimized(
                     "0": "background",
                     "1": "structural_line",
                     "2": "text",
-                    "3": "logo_or_graphic",
+                    "3": "logo",
                     "4": "signature",
-                    "5": "residual",
+                    "5": "graphic",
+                    "6": "residual",
                 },
             },
         )
-    residual_binary = binary_from_foreground(ownership.residual)
+    outline_source = cv2.max(ownership.graphic, ownership.residual)
+    residual_binary = binary_from_foreground(outline_source)
     artifact_removed = 0
-    if not prepared.clean_digital and np.any(ownership.residual):
+    if not prepared.clean_digital and np.any(outline_source):
         residual_paths = trace_binary(
             residual_binary,
             cancellation_token=cancellation_token,
@@ -313,7 +323,7 @@ def trace_image_optimized(
 
     residual_foreground = np.where(residual_binary < 128, 255, 0).astype(np.uint8)
     contour_binary = binary_from_foreground(
-        cv2.max(residual_foreground, ownership.graphic)
+        cv2.max(residual_foreground, ownership.logo)
     )
     if observation_sink is not None:
         final_line_mask = rasterize_lines(
@@ -393,6 +403,12 @@ def trace_image_optimized(
         {
             "event": "ownership_partitioned",
             "ambiguous_pixels": int(cv2.countNonZero(ownership.ambiguous)),
+            "residual_pixels": int(cv2.countNonZero(ownership.residual)),
+            "graphic_fallback_pixels": int(
+                cv2.countNonZero(ownership.graphic)
+            ),
+            "conflict_objects": len(ownership.conflicts),
+            "downgrades": len(ownership.downgrades),
             "source_pixels": int(cv2.countNonZero(ownership.source)),
         },
     )

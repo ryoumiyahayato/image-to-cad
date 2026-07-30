@@ -588,25 +588,25 @@
         "The labelled damaged frame is retained as ground truth even if the current baseline does not repair it."
       ],
       "expected": {
-        "structure_id": "62eca04c75057d54b9b0e13490ca609965a94c9a9346adc7990e72500b34c6e3",
+        "structure_id": "b4f4285271d21eeaca264bd4bd892270551a5e79692b9f9eba15868635c9e7fe",
         "source_size_px": [
           1982,
           1402
         ],
-        "contour_count": 3007,
-        "straight_line_count": 518,
+        "contour_count": 3003,
+        "straight_line_count": 513,
         "text_count": 140,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 159287,
-        "contour_vertex_count": 48473,
+        "foreground_pixels": 159981,
+        "contour_vertex_count": 48533,
         "preview_sha256": "407135bc7c313816168c514a27b483668236d26a64dcd290bd597eda17f37210",
-        "dxf_entity_count": 3723,
-        "dxf_line_count": 518,
-        "dxf_text_count": 11,
-        "dxf_trace_path_count": 2993,
-        "dxf_trace_vertex_count": 48401,
-        "content_audit_sha256": "13cbdfab7963860af3276029851c2d99ce368afd390692db7914ccc840eac12c"
+        "dxf_entity_count": 3724,
+        "dxf_line_count": 513,
+        "dxf_text_count": 10,
+        "dxf_trace_path_count": 2998,
+        "dxf_trace_vertex_count": 48511,
+        "content_audit_sha256": "9e6bb8685dbc25d0447686857f5dc89f22c2e4b2e24586b2c7335f0535a4d3a0"
       }
     },
     {
@@ -724,25 +724,25 @@
         "Printed content and handwriting are both retained for later ownership validation."
       ],
       "expected": {
-        "structure_id": "e2ee5cdf4cf452fba05c811ccbb9a18e430c418e000adae16c0f9b4246df381e",
+        "structure_id": "19607bae88d00437e0310e633a20f137cc09c52beca62f2b8f5ff8ab18a5c679",
         "source_size_px": [
           1982,
           1402
         ],
-        "contour_count": 2661,
-        "straight_line_count": 367,
+        "contour_count": 2655,
+        "straight_line_count": 358,
         "text_count": 99,
         "logo_count": 0,
         "signature_count": 1,
-        "foreground_pixels": 125579,
-        "contour_vertex_count": 41528,
+        "foreground_pixels": 125878,
+        "contour_vertex_count": 41608,
         "preview_sha256": "51caa91c7fb006c28b158f855921779af103e4c4b82b0ff872a48fa032c3bc14",
-        "dxf_entity_count": 3209,
-        "dxf_line_count": 367,
-        "dxf_text_count": 6,
-        "dxf_trace_path_count": 2655,
-        "dxf_trace_vertex_count": 41504,
-        "content_audit_sha256": "b33673830cc6250b1fd65a84e2730105ebcd9fcf8e1fcd1e55e1fee8e57ef218"
+        "dxf_entity_count": 3199,
+        "dxf_line_count": 358,
+        "dxf_text_count": 5,
+        "dxf_trace_path_count": 2653,
+        "dxf_trace_vertex_count": 41600,
+        "content_audit_sha256": "e6cb945888bb53ae99bdb568161dde5bd5aacf1a3052f7fb6ed2c546f9d69828"
       }
     },
     {
@@ -877,25 +877,25 @@
         "The repair annotation records desired truth separately from the current baseline result."
       ],
       "expected": {
-        "structure_id": "e8eb8c59ad8f0b198982c8d59889a9f9dab55d37dfdef15b5ce02c1af49a5368",
+        "structure_id": "003cb31bd3ca4367e5dc6c1298e6e2f9521740b082c4de966195b9d462a81ec3",
         "source_size_px": [
           1982,
           1402
         ],
-        "contour_count": 3009,
-        "straight_line_count": 585,
+        "contour_count": 3010,
+        "straight_line_count": 587,
         "text_count": 157,
         "logo_count": 0,
         "signature_count": 1,
-        "foreground_pixels": 153833,
-        "contour_vertex_count": 46727,
+        "foreground_pixels": 154455,
+        "contour_vertex_count": 46887,
         "preview_sha256": "0b90f336ddbfc71e48fa8d9849ca2cdef2b779892bf69dc72f2e54eb2cbd193d",
-        "dxf_entity_count": 3781,
-        "dxf_line_count": 585,
-        "dxf_text_count": 26,
-        "dxf_trace_path_count": 2953,
-        "dxf_trace_vertex_count": 46407,
-        "content_audit_sha256": "01657692ba6235a02d8e3e05468bed0b880a1b82e2912b5577939a7866f25ba3"
+        "dxf_entity_count": 3805,
+        "dxf_line_count": 587,
+        "dxf_text_count": 22,
+        "dxf_trace_path_count": 2982,
+        "dxf_trace_vertex_count": 46701,
+        "content_audit_sha256": "1c68568478cf06fd823a3d1859049e24c3d08f4d2a79a4f29d0d872d7bdea6df"
       }
     },
     {
@@ -1013,25 +1013,25 @@
         "Rotated text remains an explicit content-preservation target."
       ],
       "expected": {
-        "structure_id": "0b4e0d0e5a77bc328dea3c0d8209f131bc87a20aafd14f3e99227c3d0f76ea56",
+        "structure_id": "cb68a934a481376e6cd3795bfa0315b69f5cee5b1af71cc3cd46f3bf4caac63b",
         "source_size_px": [
           1982,
           1402
         ],
-        "contour_count": 2190,
-        "straight_line_count": 314,
+        "contour_count": 2184,
+        "straight_line_count": 309,
         "text_count": 83,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 114982,
-        "contour_vertex_count": 34325,
+        "foreground_pixels": 115573,
+        "contour_vertex_count": 34367,
         "preview_sha256": "af5c442f248233fa2ccc92fdf2d823127583809e87577c8063d58a19919c042c",
-        "dxf_entity_count": 2694,
-        "dxf_line_count": 314,
-        "dxf_text_count": 13,
-        "dxf_trace_path_count": 2181,
-        "dxf_trace_vertex_count": 34263,
-        "content_audit_sha256": "a1bb0465430665ae4925ebc903243e02d0c68a1a3b7a274a22c3475cb2dac247"
+        "dxf_entity_count": 2690,
+        "dxf_line_count": 309,
+        "dxf_text_count": 12,
+        "dxf_trace_path_count": 2182,
+        "dxf_trace_vertex_count": 34359,
+        "content_audit_sha256": "79aee0dd0ecf39fd781f997ff8d0635184b47fc8c58eb3f72d2dc81fe5d16ad6"
       }
     },
     {
@@ -1183,25 +1183,25 @@
         "Known semantic ownership gaps must be reported, not hidden by deleting the affected regions."
       ],
       "expected": {
-        "structure_id": "d459b12226fab86b10fd8a5731e65f62738329081843bcb9514c230e876907ee",
+        "structure_id": "e7bad321c864faf8003a82d767083780a82df4823cb9fc69eb2c3f4392253d9e",
         "source_size_px": [
           1982,
           1402
         ],
-        "contour_count": 3175,
-        "straight_line_count": 515,
+        "contour_count": 3179,
+        "straight_line_count": 511,
         "text_count": 150,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 157130,
-        "contour_vertex_count": 50216,
+        "foreground_pixels": 157725,
+        "contour_vertex_count": 50341,
         "preview_sha256": "42c6388a6caf0c29045e058ca3506f68f5797d5b8075ca049dc873d2482b2fad",
-        "dxf_entity_count": 3882,
-        "dxf_line_count": 515,
-        "dxf_text_count": 15,
-        "dxf_trace_path_count": 3155,
-        "dxf_trace_vertex_count": 50109,
-        "content_audit_sha256": "0efec21275b79f30d5315b1e5a438bb37720844bcce0036a764bc2029a3fd701"
+        "dxf_entity_count": 3888,
+        "dxf_line_count": 511,
+        "dxf_text_count": 12,
+        "dxf_trace_path_count": 3168,
+        "dxf_trace_vertex_count": 50297,
+        "content_audit_sha256": "ba0f25ff025d4c2eed9a9848a81e747d5b76183d9b1cc4a916ef0f367f85f238"
       }
     },
     {
@@ -1319,25 +1319,25 @@
         "Fine dashed schematic boxes and leaders remain explicit preservation targets."
       ],
       "expected": {
-        "structure_id": "222c7a0cd9c5709f8c359bd035265ab8badf403134715ac7140c5ed779da0c81",
+        "structure_id": "c5d322526332016f1b9845148cfb55d200e023e3743986847772aaa7eb9df79e",
         "source_size_px": [
           2523,
           1786
         ],
-        "contour_count": 1473,
+        "contour_count": 1472,
         "straight_line_count": 117,
         "text_count": 145,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 92330,
-        "contour_vertex_count": 20546,
+        "foreground_pixels": 92446,
+        "contour_vertex_count": 20551,
         "preview_sha256": "6bf23522bda3f317c9a42003fc98c9640689712c3f28f575f9af8c50dd6d9364",
         "dxf_entity_count": 1703,
         "dxf_line_count": 117,
-        "dxf_text_count": 42,
-        "dxf_trace_path_count": 1457,
-        "dxf_trace_vertex_count": 20449,
-        "content_audit_sha256": "4d7a9bbc70960643239f59529d486501cb55dbe11e23fdceff9b6c5a1bca9112"
+        "dxf_text_count": 41,
+        "dxf_trace_path_count": 1458,
+        "dxf_trace_vertex_count": 20462,
+        "content_audit_sha256": "ec6141fd96d2acbcdbf65c85e343d7d45591c536f0a392adf89e2f31083b03f6"
       }
     },
     {
@@ -1456,25 +1456,25 @@
         "Large open floor areas remain explicit negative regions for later connection validation."
       ],
       "expected": {
-        "structure_id": "ee593e049c974e4f10ed4d70123be80cba9a08f45bc9ee3ca1192e2e28b5f13a",
+        "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
         "source_size_px": [
           3118,
           1786
         ],
-        "contour_count": 1681,
-        "straight_line_count": 421,
+        "contour_count": 1669,
+        "straight_line_count": 416,
         "text_count": 167,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 156055,
-        "contour_vertex_count": 30061,
+        "foreground_pixels": 157415,
+        "contour_vertex_count": 30046,
         "preview_sha256": "0a4067a4add751467eb6d007993c0bfb087e4de939666d6d32f1b14f834a1fb1",
-        "dxf_entity_count": 2258,
-        "dxf_line_count": 421,
+        "dxf_entity_count": 2254,
+        "dxf_line_count": 416,
         "dxf_text_count": 36,
         "dxf_trace_path_count": 1660,
-        "dxf_trace_vertex_count": 29972,
-        "content_audit_sha256": "5a76c66993c337ca1d9e7fc4fefa0e3973d03d6f29f9a03588520cd00cad8f48"
+        "dxf_trace_vertex_count": 30007,
+        "content_audit_sha256": "541c0b1bb47808138cd04a379e052ac556a6f5c9c5b09b80966f4f14bd391e0c"
       }
     },
     {
@@ -1591,25 +1591,25 @@
         "Object preservation must not depend on the 300 DPI render being treated as a special filename."
       ],
       "expected": {
-        "structure_id": "912af2542a582479dbede839d8ab9c4d1fbed37bc6706ae11271bdd547d36f2f",
+        "structure_id": "9bfe85e83896961ecea164e5b0c23b0984609850ab23b73e0e3e53aaa73f411c",
         "source_size_px": [
           2717,
           3780
         ],
-        "contour_count": 795,
+        "contour_count": 819,
         "straight_line_count": 468,
         "text_count": 83,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 108483,
-        "contour_vertex_count": 18683,
+        "foreground_pixels": 111153,
+        "contour_vertex_count": 19245,
         "preview_sha256": "42a057d905e558e4ad5fc0d0a0232f484e4e2717f01492e5ebdcd207cc873746",
-        "dxf_entity_count": 1378,
+        "dxf_entity_count": 1406,
         "dxf_line_count": 468,
-        "dxf_text_count": 36,
-        "dxf_trace_path_count": 779,
-        "dxf_trace_vertex_count": 18614,
-        "content_audit_sha256": "950f41d9c569ba7c4318aa11f3429bf5ccc0ca502fb1e41d27add1721cc1b6dc"
+        "dxf_text_count": 35,
+        "dxf_trace_path_count": 805,
+        "dxf_trace_vertex_count": 19186,
+        "content_audit_sha256": "8f5bb5fc5506e94d43c0ea4b0681bb8a78289883c67f13e7b2dd4f0f247430da"
       }
     },
     {
@@ -1727,25 +1727,25 @@
         "It is a DPI variant, not an additional unique page."
       ],
       "expected": {
-        "structure_id": "1dad811ed7737a519e82040359ef7c0cb3a4ac1a25e13cdd47fc350a7b457a5c",
+        "structure_id": "c8f19c1b71ec3772cbf1278bb1d363355cdbc671a6c0e7c90e0879d77b47be36",
         "source_size_px": [
           5434,
           7559
         ],
-        "contour_count": 733,
+        "contour_count": 751,
         "straight_line_count": 568,
         "text_count": 89,
         "logo_count": 0,
         "signature_count": 0,
-        "foreground_pixels": 354688,
-        "contour_vertex_count": 39205,
+        "foreground_pixels": 362583,
+        "contour_vertex_count": 40074,
         "preview_sha256": "bce41a74d1810608a5dc3d828d791c640df07b084e9daa8fb697e96f8cf00f84",
-        "dxf_entity_count": 1644,
+        "dxf_entity_count": 1672,
         "dxf_line_count": 568,
-        "dxf_text_count": 33,
-        "dxf_trace_path_count": 730,
-        "dxf_trace_vertex_count": 39188,
-        "content_audit_sha256": "48811a019fc5a24f83913e187d86b4afd1807fc2d01db1e15ee415ae25cec91d"
+        "dxf_text_count": 32,
+        "dxf_trace_path_count": 751,
+        "dxf_trace_vertex_count": 40074,
+        "content_audit_sha256": "9f9b7a82080a9f736519cf578e6d3da12358f7de615f9024fe0ade7adbc9ff14"
       }
     }
   ]

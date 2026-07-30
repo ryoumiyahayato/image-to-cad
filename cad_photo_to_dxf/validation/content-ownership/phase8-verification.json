@@ -1,0 +1,118 @@
+{
+  "phase": 8,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-30T09:20:00+08:00",
+  "base_commit": "8995cd458d699fb42f0786f899ea5c4200ad2a98",
+  "fixed_tag": "baseline/phase8-content-ownership-2026-07-30",
+  "scope": {
+    "recognition_thresholds_changed": false,
+    "new_recognition_types_added": false,
+    "fixed_coordinate_rules_added": false,
+    "page_percentage_rules_added": false,
+    "ocr_semantic_rules_added": false,
+    "independent_candidate_evidence_added": true,
+    "unified_ownership_arbitration_added": true,
+    "exported_objects_follow_final_ownership": true
+  },
+  "before_after": {
+    "document_count": 10,
+    "source_pixels_before": 3104606,
+    "source_pixels_after": 3104606,
+    "owned_pixels_before": 3104606,
+    "owned_pixels_after": 3104606,
+    "background_owned_pixels_before": 0,
+    "background_owned_pixels_after": 0,
+    "conflict_pixels_before": 1169,
+    "conflict_pixels_after": 1056,
+    "explained_conflict_objects_before": 0,
+    "explained_conflict_objects_after": 75,
+    "residual_pixels_before": 1985913,
+    "residual_pixels_after": 39,
+    "graphic_fallback_pixels_after": 1990153,
+    "explained_downgrade_count_after": 42,
+    "conflict_final_categories_after": {
+      "residual": 4,
+      "structural_line": 34,
+      "text": 37
+    },
+    "downgrade_categories_after": {
+      "signature": 2,
+      "structural_line": 29,
+      "text": 11
+    }
+  },
+  "connectivity_guard": {
+    "document_count": 10,
+    "roi_count": 51,
+    "candidate_endpoint_count": 15118,
+    "approved_connection_count": 0,
+    "incorrect_connection_count": 0,
+    "approved_through_protection_count": 0,
+    "approved_outside_roi_mask_count": 0,
+    "approved_outside_roi_bbox_count": 0,
+    "true_break_count": 3,
+    "unrepaired_break_count": 3,
+    "rejection_reasons": {
+      "line_width_mismatch": 22,
+      "outside_structural_roi": 466,
+      "unresolved_structural_gap": 1042
+    }
+  },
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q",
+    "tests": 236,
+    "failures": 0,
+    "errors": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_passed": true,
+    "compileall_passed": true,
+    "incremental_mypy_passed": true,
+    "git_diff_check_passed": true
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "strict_rerun_against_recorded_candidate_passed": true
+  },
+  "evidence_files": {
+    "phase8-before.json": {
+      "sha256": "d83b20b9be2265f7f2834ac76af3936e519049ce3dc3cd81734697339cfb65b7"
+    },
+    "phase8-after.json": {
+      "sha256": "6e489db3deb1473fdd64c5bb202b0ab7e1c39646961b4bd2dcb7ee4da0086929"
+    },
+    "phase8-connectivity-guard.json": {
+      "sha256": "bdc49801fa4bc1552b8d837df85b14d2db661644c4a875007d29810acb1265df"
+    },
+    "phase8-real-regression.json": {
+      "sha256": "11f7e2b87dd348494a4e95562111443b6e306592e71f92f692a25d023e590bbc"
+    },
+    "phase8-pytest.xml": {
+      "sha256": "e68d6ca498604f3d3b22ce149faf838d8d2721f5b2e8ef6bf2fa0931083abeb7"
+    },
+    "real-regression-manifest.json": {
+      "sha256": "73ab3b1d5fbaa9812e3e3fe9331095f2aa44b688118b4085e75968061d6295fc"
+    }
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "independent_candidate_categories_and_confidences_saved": true,
+    "all_source_pixels_have_exactly_one_final_owner": true,
+    "no_background_pixels_are_owned": true,
+    "all_conflicts_have_complete_explanations": true,
+    "all_downgrades_have_complete_explanations": true,
+    "line_character_stroke_conflict_is_tested": true,
+    "text_structural_line_conflict_is_tested": true,
+    "logo_text_conflict_is_exact_mask_scoped": true,
+    "residual_is_only_unresolved_conflict": true,
+    "graphic_fallback_is_explicit_and_bounded": true,
+    "connectivity_and_roi_guards_still_pass": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

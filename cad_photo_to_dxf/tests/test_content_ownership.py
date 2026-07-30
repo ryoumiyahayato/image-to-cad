@@ -5,7 +5,9 @@ import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
 from app.content_ownership import (
+    arbitrate_content_candidates,
     binary_from_foreground,
+    finalize_content_ownership,
     graphic_source_mask,
     partition_content,
 )
@@ -61,6 +63,7 @@ def test_every_source_pixel_gets_exactly_one_owner() -> None:
         for mask in (
             ownership.line,
             ownership.text,
+            ownership.logo,
             ownership.graphic,
             ownership.signature,
             ownership.residual,
@@ -68,7 +71,7 @@ def test_every_source_pixel_gets_exactly_one_owner() -> None:
     )
 
 
-def test_unsafe_text_stays_residual_instead_of_becoming_an_image_class() -> None:
+def test_unsafe_text_stays_explicit_graphic_outline_not_default_residual() -> None:
     binary = np.full((120, 260), 255, dtype=np.uint8)
     cv2.putText(
         binary,
@@ -100,11 +103,15 @@ def test_unsafe_text_stays_residual_instead_of_becoming_an_image_class() -> None
     )
 
     assert marked[0].kind == "text_candidate"
-    assert cv2.countNonZero(ownership.graphic) == 0
+    assert cv2.countNonZero(ownership.logo) == 0
     assert cv2.countNonZero(ownership.text) == 0
-    assert cv2.countNonZero(ownership.residual) == cv2.countNonZero(
+    assert cv2.countNonZero(ownership.residual) == 0
+    assert cv2.countNonZero(ownership.graphic) == cv2.countNonZero(
         np.where(binary < 128, 255, 0).astype(np.uint8)
     )
+    assert set(
+        candidate.category for candidate in ownership.candidate_classes
+    ) == {"structural_line", "text", "logo", "signature", "graphic"}
 
 
 def test_logo_owns_source_strokes_but_not_surrounding_cell_rules() -> None:
@@ -142,3 +149,214 @@ def test_logo_owns_source_strokes_but_not_surrounding_cell_rules() -> None:
     assert graphic[190, 200] == 0
     contour_binary = binary_from_foreground(graphic)
     assert np.count_nonzero(contour_binary[120:160, 70:290] == 0) > 40
+
+
+def test_character_stroke_line_candidate_is_arbitrated_to_text() -> None:
+    binary = np.full((100, 140), 255, dtype=np.uint8)
+    cv2.line(binary, (40, 50), (90, 50), 0, 2, cv2.LINE_8)
+    text = TextCandidate(
+        text="一",
+        bbox=(35, 42, 62, 18),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        approved=True,
+        replacement_safe=True,
+    )
+    line = LineSegment(40.0, 50.0, 90.0, 50.0, width=2.0)
+
+    candidates = partition_content(
+        binary,
+        lines=(line,),
+        texts=(text,),
+        logos=(),
+        signatures=(),
+    )
+    arbitrated = arbitrate_content_candidates(
+        binary,
+        lines=(line,),
+        texts=(text,),
+        logos=(),
+        signatures=(),
+        ownership=candidates,
+    )
+    final = finalize_content_ownership(
+        binary,
+        candidates=candidates,
+        arbitrated=arbitrated,
+    )
+
+    assert not arbitrated.lines
+    assert arbitrated.texts[0].replacement_safe
+    assert cv2.countNonZero(final.line) == 0
+    assert cv2.countNonZero(final.text) > 0
+    assert any(
+        conflict.final_category == "text"
+        and conflict.conflict_reason
+        == "line_text_overlap_without_independent_line_endpoints"
+        for conflict in final.conflicts
+    )
+    payload = final.payload()
+    assert payload["conflict_pixels"] > 0
+    assert sum(payload["final_owner_pixels"].values()) == cv2.countNonZero(
+        final.source
+    )
+    assert payload["unresolved_conflict_pixels"] == 0
+
+
+def test_true_structure_line_downgrades_overlapping_editable_text() -> None:
+    binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.line(binary, (10, 50), (210, 50), 0, 3, cv2.LINE_8)
+    cv2.putText(
+        binary,
+        "A",
+        (92, 63),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        0,
+        2,
+        cv2.LINE_8,
+    )
+    text = TextCandidate(
+        text="A",
+        bbox=(88, 38, 32, 32),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        approved=True,
+        replacement_safe=True,
+    )
+    line = LineSegment(10.0, 50.0, 210.0, 50.0, width=3.0)
+
+    candidates = partition_content(
+        binary,
+        lines=(line,),
+        texts=(text,),
+        logos=(),
+        signatures=(),
+    )
+    arbitrated = arbitrate_content_candidates(
+        binary,
+        lines=(line,),
+        texts=(text,),
+        logos=(),
+        signatures=(),
+        ownership=candidates,
+    )
+    final = finalize_content_ownership(
+        binary,
+        candidates=candidates,
+        arbitrated=arbitrated,
+    )
+
+    assert arbitrated.lines == (line,)
+    assert not arbitrated.texts[0].replacement_safe
+    assert cv2.countNonZero(final.line) > 0
+    assert cv2.countNonZero(final.text) == 0
+    assert any(
+        conflict.final_category == "structural_line"
+        and conflict.conflict_reason
+        == "line_text_overlap_with_independent_line_endpoints"
+        for conflict in final.conflicts
+    )
+
+
+def test_logo_text_conflict_preserves_only_exact_overlap_as_residual() -> None:
+    binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.putText(
+        binary,
+        "AB",
+        (30, 65),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.0,
+        0,
+        2,
+        cv2.LINE_8,
+    )
+    text = TextCandidate(
+        text="AB",
+        bbox=(25, 35, 75, 38),
+        confidence=0.99,
+        kind="text_candidate",
+        source="test",
+        approved=True,
+        replacement_safe=True,
+    )
+    logo_bbox = (30, 35, 24, 38)
+    x, y, width, height = logo_bbox
+    logo_mask = np.where(
+        binary[y : y + height, x : x + width] < 128,
+        255,
+        0,
+    ).astype(np.uint8)
+    logo = LogoRegion(
+        bbox=logo_bbox,
+        mask=logo_mask,
+        structural_score=0.9,
+        hole_count=2,
+        contour_count=3,
+    )
+
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(text,),
+        logos=(logo,),
+        signatures=(),
+    )
+
+    assert cv2.countNonZero(ownership.residual) == cv2.countNonZero(
+        logo_mask
+    )
+    assert cv2.countNonZero(ownership.text) > 0
+    assert cv2.countNonZero(ownership.logo) == 0
+    assert cv2.countNonZero(ownership.graphic) == 0
+    assert all(
+        conflict.final_category == "residual"
+        and conflict.downgrade_reason == "semantic_evidence_conflict"
+        for conflict in ownership.conflicts
+    )
+
+
+def test_line_crossing_unresolved_logo_conflict_is_not_exported() -> None:
+    binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.line(binary, (10, 50), (210, 50), 0, 3, cv2.LINE_8)
+    cv2.circle(binary, (110, 50), 14, 0, 2, cv2.LINE_8)
+    logo_bbox = (94, 34, 33, 33)
+    x, y, width, height = logo_bbox
+    logo_mask = np.where(
+        binary[y : y + height, x : x + width] < 128,
+        255,
+        0,
+    ).astype(np.uint8)
+    logo = LogoRegion(
+        bbox=logo_bbox,
+        mask=logo_mask,
+        structural_score=0.9,
+        hole_count=2,
+        contour_count=3,
+    )
+    line = LineSegment(10.0, 50.0, 210.0, 50.0, width=3.0)
+    candidates = partition_content(
+        binary,
+        lines=(line,),
+        texts=(),
+        logos=(logo,),
+        signatures=(),
+    )
+
+    arbitrated = arbitrate_content_candidates(
+        binary,
+        lines=(line,),
+        texts=(),
+        logos=(logo,),
+        signatures=(),
+        ownership=candidates,
+    )
+
+    assert not arbitrated.lines
+    assert any(
+        item["candidate_category"] == "structural_line"
+        and item["conflict_reason"] == "line_source_not_exclusively_owned"
+        for item in arbitrated.downgrades
+    )

@@ -1,0 +1,2999 @@
+{
+  "acceptance": {
+    "candidate_categories_complete": true,
+    "candidate_confidences_complete": true,
+    "conflict_explanations_complete": true,
+    "downgrade_explanations_complete": true,
+    "graphic_fallback_is_explicit": true,
+    "minimum_ten_pages": true,
+    "pixel_lineage_observed_on_every_page": true,
+    "residual_is_only_unresolved_conflict": true,
+    "source_pixels_have_exactly_one_owner": true,
+    "unified_arbitration_observed_on_every_page": true
+  },
+  "aggregate": {
+    "background_owned_pixels": 0,
+    "conflict_final_categories": {
+      "residual": 4,
+      "structural_line": 34,
+      "text": 37
+    },
+    "conflict_object_count": 75,
+    "conflict_pixels": 1056,
+    "document_elapsed_total_seconds": 166.614,
+    "downgrade_categories": {
+      "signature": 2,
+      "structural_line": 29,
+      "text": 11
+    },
+    "downgrade_count": 42,
+    "graphic_fallback_pixels": 1990153,
+    "incomplete_conflict_count": 0,
+    "incomplete_downgrade_count": 0,
+    "invalid_candidate_confidence_count": 0,
+    "owned_pixels": 3104606,
+    "residual_pixels": 39,
+    "source_pixels": 3104606,
+    "unowned_source_pixels": 0,
+    "unresolved_conflict_pixels": 39
+  },
+  "document_count": 10,
+  "documents": [
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {},
+      "conflict_object_count": 0,
+      "conflict_pixels": 0,
+      "conflicts": [],
+      "downgrade_categories": {},
+      "downgrade_count": 0,
+      "downgrades": [],
+      "elapsed_seconds": 7.92,
+      "final_owner_pixels": {
+        "graphic": 669415,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 102577,
+        "text": 0
+      },
+      "final_owner_total": 771992,
+      "graphic_fallback_pixels": 669415,
+      "id": "perspective-sample-plan",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 771992,
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\perspective-sample-plan.png",
+      "raster_sha256": "f7e044163852635404c50c68b6fee8ca909ff37b4de4ec343d180e9c8ef77aed",
+      "residual_pixels": 0,
+      "source_pixels": 771992,
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {},
+      "conflict_object_count": 0,
+      "conflict_pixels": 0,
+      "conflicts": [],
+      "downgrade_categories": {},
+      "downgrade_count": 0,
+      "downgrades": [],
+      "elapsed_seconds": 25.182,
+      "final_owner_pixels": {
+        "graphic": 249802,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 157603,
+        "text": 12120
+      },
+      "final_owner_total": 419525,
+      "graphic_fallback_pixels": 249802,
+      "id": "environment-plan-page-003-150dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 419525,
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-plan-page-003-150dpi.png",
+      "raster_sha256": "d517852f5bd754f6fe3a44491b678035df01be54093423a5d6f3bf79ec61a436",
+      "residual_pixels": 0,
+      "source_pixels": 419525,
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {},
+      "conflict_object_count": 0,
+      "conflict_pixels": 0,
+      "conflicts": [],
+      "downgrade_categories": {},
+      "downgrade_count": 0,
+      "downgrades": [],
+      "elapsed_seconds": 11.731,
+      "final_owner_pixels": {
+        "graphic": 32107,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 76661,
+        "text": 24619
+      },
+      "final_owner_total": 133387,
+      "graphic_fallback_pixels": 32107,
+      "id": "warehouse-index-page-001-150dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 133387,
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-index-page-001-150dpi.png",
+      "raster_sha256": "c020ad1139a82cbbf006216bce507a529d846f5f467db7aba1b300ab99a94bc4",
+      "residual_pixels": 0,
+      "source_pixels": 133387,
+      "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "structural_line": 5,
+        "text": 4
+      },
+      "conflict_object_count": 9,
+      "conflict_pixels": 83,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            960,
+            1143,
+            1,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            964,
+            1143,
+            2,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            970,
+            1143,
+            1,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            973,
+            1143,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            978,
+            1143,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1784,
+            497,
+            43,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00006",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 47,
+            "text": 47
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1783,
+            511,
+            3,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00007",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            633,
+            725,
+            2,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00008",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            423,
+            1123,
+            7,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00009",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        }
+      ],
+      "downgrade_categories": {
+        "structural_line": 5,
+        "text": 1
+      },
+      "downgrade_count": 6,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 206,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 43
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 207,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 10
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 213,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 4
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 302,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 3
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 457,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 7
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            954,
+            1130,
+            33,
+            15
+          ],
+          "candidate_category": "text",
+          "candidate_index": 105,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 22
+        }
+      ],
+      "elapsed_seconds": 16.866,
+      "final_owner_pixels": {
+        "graphic": 184453,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 93492,
+        "text": 3943
+      },
+      "final_owner_total": 281888,
+      "graphic_fallback_pixels": 184453,
+      "id": "environment-scan-page-001-120dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 281888,
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-001-120dpi.png",
+      "raster_sha256": "d3ac0725865ce3e2e9acffa0e8d07e914f61fe1efedc6b7e4f8b9799dfc93b6f",
+      "residual_pixels": 0,
+      "source_pixels": 281888,
+      "structure_id": "b4f4285271d21eeaca264bd4bd892270551a5e79692b9f9eba15868635c9e7fe",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "residual": 2,
+        "structural_line": 4
+      },
+      "conflict_object_count": 6,
+      "conflict_pixels": 32,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1710,
+            797,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1710,
+            802,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1710,
+            808,
+            1,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1710,
+            811,
+            1,
+            5
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 5,
+            "text": 5
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "preserve_source_without_type_priority",
+          "bbox": [
+            1045,
+            602,
+            16,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "signature"
+          ],
+          "candidate_confidences": {
+            "signature": 1.0,
+            "structural_line": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "overlapping_semantic_source_claims",
+          "downgrade_reason": "semantic_evidence_conflict",
+          "final_category": "residual",
+          "overlap_pixels": {
+            "signature": 16,
+            "structural_line": 16
+          },
+          "residual_pixels": 16
+        },
+        {
+          "arbitration_rule": "preserve_source_without_type_priority",
+          "bbox": [
+            1161,
+            602,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "signature"
+          ],
+          "candidate_confidences": {
+            "signature": 1.0,
+            "structural_line": 1.0
+          },
+          "conflict_id": "conflict-00006",
+          "conflict_reason": "overlapping_semantic_source_claims",
+          "downgrade_reason": "semantic_evidence_conflict",
+          "final_category": "residual",
+          "overlap_pixels": {
+            "signature": 1,
+            "structural_line": 1
+          },
+          "residual_pixels": 1
+        }
+      ],
+      "downgrade_categories": {
+        "signature": 1,
+        "structural_line": 2,
+        "text": 1
+      },
+      "downgrade_count": 4,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 148,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 16
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 150,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 1
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1697,
+            792,
+            16,
+            28
+          ],
+          "candidate_category": "text",
+          "candidate_index": 50,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 15
+        },
+        {
+          "arbitration_rule": "retain_only_exact_exclusive_source_mask",
+          "bbox": [
+            997,
+            602,
+            282,
+            48
+          ],
+          "candidate_category": "signature",
+          "candidate_index": 0,
+          "conflict_reason": "masked_object_source_not_exclusively_owned",
+          "downgrade_reason": "conflicting_pixels_preserved_as_outline",
+          "final_category": "signature",
+          "overlap_pixels": 17
+        }
+      ],
+      "elapsed_seconds": 11.535,
+      "final_owner_pixels": {
+        "graphic": 134298,
+        "logo": 0,
+        "residual": 17,
+        "signature": 703,
+        "structural_line": 65694,
+        "text": 359
+      },
+      "final_owner_total": 201071,
+      "graphic_fallback_pixels": 134298,
+      "id": "environment-scan-page-002-120dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 201071,
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-002-120dpi.png",
+      "raster_sha256": "134c7060f8240365e990cb7dafe4127fdcab2dbe3112866e30c8f33b0664e7ab",
+      "residual_pixels": 17,
+      "source_pixels": 201071,
+      "structure_id": "19607bae88d00437e0310e633a20f137cc09c52beca62f2b8f5ff8ab18a5c679",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 17
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "residual": 2,
+        "structural_line": 16,
+        "text": 12
+      },
+      "conflict_object_count": 30,
+      "conflict_pixels": 520,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            908,
+            234,
+            2,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            911,
+            234,
+            5,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            918,
+            234,
+            2,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            921,
+            234,
+            5,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            927,
+            234,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            908,
+            237,
+            17,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00006",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 17,
+            "text": 17
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            926,
+            237,
+            8,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00007",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1606,
+            438,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00008",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1606,
+            443,
+            1,
+            5
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00009",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 5,
+            "text": 5
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1606,
+            449,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00010",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1606,
+            454,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00011",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1776,
+            751,
+            1,
+            8
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00012",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1604,
+            764,
+            1,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00013",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1604,
+            770,
+            1,
+            3
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00014",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1604,
+            775,
+            1,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00015",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1604,
+            778,
+            1,
+            6
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00016",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 6,
+            "text": 6
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1607,
+            713,
+            1,
+            3
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00017",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1545,
+            722,
+            63,
+            8
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00018",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 332,
+            "text": 332
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1777,
+            751,
+            10,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00019",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 15,
+            "text": 15
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1809,
+            751,
+            11,
+            6
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00020",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 32,
+            "text": 32
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1792,
+            752,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00021",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1795,
+            752,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00022",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1797,
+            752,
+            2,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00023",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1802,
+            752,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00024",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1806,
+            752,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00025",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1489,
+            917,
+            1,
+            8
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00026",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1489,
+            926,
+            1,
+            7
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00027",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1491,
+            933,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00028",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "preserve_source_without_type_priority",
+          "bbox": [
+            481,
+            1257,
+            2,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "signature"
+          ],
+          "candidate_confidences": {
+            "signature": 1.0,
+            "structural_line": 1.0
+          },
+          "conflict_id": "conflict-00029",
+          "conflict_reason": "overlapping_semantic_source_claims",
+          "downgrade_reason": "semantic_evidence_conflict",
+          "final_category": "residual",
+          "overlap_pixels": {
+            "signature": 2,
+            "structural_line": 2
+          },
+          "residual_pixels": 2
+        },
+        {
+          "arbitration_rule": "preserve_source_without_type_priority",
+          "bbox": [
+            458,
+            1299,
+            20,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "signature"
+          ],
+          "candidate_confidences": {
+            "signature": 1.0,
+            "structural_line": 1.0
+          },
+          "conflict_id": "conflict-00030",
+          "conflict_reason": "overlapping_semantic_source_claims",
+          "downgrade_reason": "semantic_evidence_conflict",
+          "final_category": "residual",
+          "overlap_pixels": {
+            "signature": 20,
+            "structural_line": 20
+          },
+          "residual_pixels": 20
+        }
+      ],
+      "downgrade_categories": {
+        "signature": 1,
+        "structural_line": 8,
+        "text": 4
+      },
+      "downgrade_count": 13,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 300,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 3
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 313,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 332
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 325,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 40
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 331,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 27
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 372,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 12
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 455,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 4
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 540,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 2
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 545,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 20
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            902,
+            221,
+            34,
+            16
+          ],
+          "candidate_category": "text",
+          "candidate_index": 6,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 54
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1593,
+            433,
+            16,
+            30
+          ],
+          "candidate_category": "text",
+          "candidate_index": 37,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 17
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1777,
+            752,
+            45,
+            15
+          ],
+          "candidate_category": "text",
+          "candidate_index": 58,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 8
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1591,
+            759,
+            16,
+            30
+          ],
+          "candidate_category": "text",
+          "candidate_index": 61,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 15
+        },
+        {
+          "arbitration_rule": "retain_only_exact_exclusive_source_mask",
+          "bbox": [
+            458,
+            1251,
+            172,
+            50
+          ],
+          "candidate_category": "signature",
+          "candidate_index": 0,
+          "conflict_reason": "masked_object_source_not_exclusively_owned",
+          "downgrade_reason": "conflicting_pixels_preserved_as_outline",
+          "final_category": "signature",
+          "overlap_pixels": 22
+        }
+      ],
+      "elapsed_seconds": 18.315,
+      "final_owner_pixels": {
+        "graphic": 172896,
+        "logo": 0,
+        "residual": 22,
+        "signature": 550,
+        "structural_line": 101321,
+        "text": 6781
+      },
+      "final_owner_total": 281570,
+      "graphic_fallback_pixels": 172896,
+      "id": "environment-scan-page-004-120dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 281570,
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-004-120dpi.png",
+      "raster_sha256": "b57945dc2d8bb99ac7020aa7c4d1fc53afab534986b151e877802d630a29658d",
+      "residual_pixels": 22,
+      "source_pixels": 281570,
+      "structure_id": "003cb31bd3ca4367e5dc6c1298e6e2f9521740b082c4de966195b9d462a81ec3",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 22
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "structural_line": 1,
+        "text": 4
+      },
+      "conflict_object_count": 5,
+      "conflict_pixels": 94,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1223,
+            985,
+            1,
+            20
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 20,
+            "text": 20
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            796,
+            254,
+            19,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 59,
+            "text": 59
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            670,
+            530,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            669,
+            843,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            681,
+            1096,
+            1,
+            13
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 13,
+            "text": 13
+          },
+          "residual_pixels": 0
+        }
+      ],
+      "downgrade_categories": {
+        "structural_line": 5,
+        "text": 1
+      },
+      "downgrade_count": 6,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 57,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 59
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 109,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 1
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 197,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 1
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 273,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 13
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 275,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 1
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1212,
+            983,
+            11,
+            24
+          ],
+          "candidate_category": "text",
+          "candidate_index": 58,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 20
+        }
+      ],
+      "elapsed_seconds": 12.922,
+      "final_owner_pixels": {
+        "graphic": 124415,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 43242,
+        "text": 1403
+      },
+      "final_owner_total": 169060,
+      "graphic_fallback_pixels": 124415,
+      "id": "environment-scan-page-008-120dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 169060,
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-008-120dpi.png",
+      "raster_sha256": "3d4f1d7e4dd9736fb0c75c1cac29f40c5ab4f6fbb90ee294ce579a7c68846fd8",
+      "residual_pixels": 0,
+      "source_pixels": 169060,
+      "structure_id": "cb68a934a481376e6cd3795bfa0315b69f5cee5b1af71cc3cd46f3bf4caac63b",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "structural_line": 5,
+        "text": 5
+      },
+      "conflict_object_count": 10,
+      "conflict_pixels": 156,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            896,
+            231,
+            8,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            910,
+            231,
+            15,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 15,
+            "text": 15
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1599,
+            450,
+            1,
+            3
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 3,
+            "text": 3
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1597,
+            862,
+            1,
+            27
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 27,
+            "text": 27
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            1593,
+            865,
+            3,
+            21
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 42,
+            "text": 42
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1596,
+            450,
+            2,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00006",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1781,
+            495,
+            43,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00007",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 43,
+            "text": 43
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1779,
+            505,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00008",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1780,
+            508,
+            2,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00009",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1240,
+            854,
+            4,
+            3
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00010",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 7,
+            "text": 7
+          },
+          "residual_pixels": 0
+        }
+      ],
+      "downgrade_categories": {
+        "structural_line": 4,
+        "text": 3
+      },
+      "downgrade_count": 7,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 129,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 2
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 141,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 43
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 170,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 9
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 389,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 7
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            894,
+            216,
+            33,
+            15
+          ],
+          "candidate_category": "text",
+          "candidate_index": 6,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 23
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1585,
+            428,
+            14,
+            27
+          ],
+          "candidate_category": "text",
+          "candidate_index": 36,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 3
+        },
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            1582,
+            860,
+            15,
+            29
+          ],
+          "candidate_category": "text",
+          "candidate_index": 83,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 69
+        }
+      ],
+      "elapsed_seconds": 16.482,
+      "final_owner_pixels": {
+        "graphic": 172906,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 90240,
+        "text": 4576
+      },
+      "final_owner_total": 267722,
+      "graphic_fallback_pixels": 172906,
+      "id": "environment-scan-page-014-120dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 267722,
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-014-120dpi.png",
+      "raster_sha256": "4d57d6efe0710d4b06bfde4709afe6d4547355be2613b743b56b592a4a5023e6",
+      "residual_pixels": 0,
+      "source_pixels": 267722,
+      "structure_id": "e7bad321c864faf8003a82d767083780a82df4823cb9fc69eb2c3f4392253d9e",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "structural_line": 3
+      },
+      "conflict_object_count": 3,
+      "conflict_pixels": 5,
+      "conflicts": [
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            693,
+            1234,
+            2,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            699,
+            1234,
+            2,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 2,
+            "text": 2
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "structural_endpoints_outside_other_semantic_claims",
+          "bbox": [
+            718,
+            1234,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_with_independent_line_endpoints",
+          "downgrade_reason": "",
+          "final_category": "structural_line",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        }
+      ],
+      "downgrade_categories": {
+        "text": 1
+      },
+      "downgrade_count": 1,
+      "downgrades": [
+        {
+          "arbitration_rule": "editable_text_requires_complete_source_ownership",
+          "bbox": [
+            688,
+            1217,
+            30,
+            22
+          ],
+          "candidate_category": "text",
+          "candidate_index": 81,
+          "conflict_reason": "text_source_not_exclusively_owned",
+          "downgrade_reason": "preserve_original_outline",
+          "final_category": "graphic",
+          "overlap_pixels": 5
+        }
+      ],
+      "elapsed_seconds": 20.034,
+      "final_owner_pixels": {
+        "graphic": 92446,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 74138,
+        "text": 64148
+      },
+      "final_owner_total": 230732,
+      "graphic_fallback_pixels": 92446,
+      "id": "warehouse-system-page-002-72dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 230732,
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-system-page-002-72dpi.png",
+      "raster_sha256": "488583a1c5253c098d773974ad8e40452e25b341129da8be8338eb7d28ca0053",
+      "residual_pixels": 0,
+      "source_pixels": 230732,
+      "structure_id": "c5d322526332016f1b9845148cfb55d200e023e3743986847772aaa7eb9df79e",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    },
+    {
+      "arbitration_observed": true,
+      "background_owned_pixels": 0,
+      "candidate_categories": [
+        "graphic",
+        "logo",
+        "signature",
+        "structural_line",
+        "text"
+      ],
+      "conflict_final_categories": {
+        "text": 12
+      },
+      "conflict_object_count": 12,
+      "conflict_pixels": 166,
+      "conflicts": [
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1698,
+            441,
+            4,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00001",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 4,
+            "text": 4
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1670,
+            443,
+            37,
+            4
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00002",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 97,
+            "text": 97
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1074,
+            613,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00003",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1115,
+            613,
+            3,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00004",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 6,
+            "text": 6
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1133,
+            613,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00005",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1172,
+            613,
+            5,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00006",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 10,
+            "text": 10
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1192,
+            613,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00007",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1232,
+            613,
+            4,
+            2
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00008",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 8,
+            "text": 8
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1071,
+            615,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00009",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1130,
+            615,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00010",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1189,
+            615,
+            1,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00011",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 1,
+            "text": 1
+          },
+          "residual_pixels": 0
+        },
+        {
+          "arbitration_rule": "accepted_text_footprint_overrides_weak_line_candidate",
+          "bbox": [
+            1450,
+            1567,
+            14,
+            1
+          ],
+          "candidate_categories": [
+            "structural_line",
+            "text"
+          ],
+          "candidate_confidences": {
+            "structural_line": 1.0,
+            "text": 1.0
+          },
+          "conflict_id": "conflict-00012",
+          "conflict_reason": "line_text_overlap_without_independent_line_endpoints",
+          "downgrade_reason": "weak_line_candidate",
+          "final_category": "text",
+          "overlap_pixels": {
+            "structural_line": 14,
+            "text": 14
+          },
+          "residual_pixels": 0
+        }
+      ],
+      "downgrade_categories": {
+        "structural_line": 5
+      },
+      "downgrade_count": 5,
+      "downgrades": [
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 124,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 101
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 150,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 19
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 151,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 15
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 152,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 17
+        },
+        {
+          "arbitration_rule": "exported_line_requires_complete_source_ownership",
+          "candidate_category": "structural_line",
+          "candidate_index": 415,
+          "conflict_reason": "line_source_not_exclusively_owned",
+          "downgrade_reason": "weak_or_conflicting_line_candidate",
+          "final_category": "graphic",
+          "overlap_pixels": 14
+        }
+      ],
+      "elapsed_seconds": 25.627,
+      "final_owner_pixels": {
+        "graphic": 157415,
+        "logo": 0,
+        "residual": 0,
+        "signature": 0,
+        "structural_line": 170775,
+        "text": 19469
+      },
+      "final_owner_total": 347659,
+      "graphic_fallback_pixels": 157415,
+      "id": "warehouse-plan-page-003-72dpi",
+      "incomplete_conflict_count": 0,
+      "incomplete_downgrade_count": 0,
+      "invalid_candidate_confidence_count": 0,
+      "lineage_observed": true,
+      "missing_candidate_categories": [],
+      "owned_pixels": 347659,
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-plan-page-003-72dpi.png",
+      "raster_sha256": "828aec9275ab23028ccc569f81532a1c3103e3fd5c1926269e40f4d9ec207ec9",
+      "residual_pixels": 0,
+      "source_pixels": 347659,
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
+      "unowned_source_pixels": 0,
+      "unresolved_conflict_pixels": 0
+    }
+  ],
+  "enable_ocr": true,
+  "git_commit": "8995cd458d699fb42f0786f899ea5c4200ad2a98",
+  "input_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\input-manifest.json",
+  "input_manifest_sha256": "5fab068497a87b672a93c3863db73ff9806d4183d561e736d2bbb63290a07f97",
+  "schema_version": 1
+}
