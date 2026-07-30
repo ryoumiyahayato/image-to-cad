@@ -5,6 +5,11 @@ from dataclasses import dataclass
 import cv2
 import numpy as np
 
+from .performance_observability import (
+    PerformanceCallback,
+    performance_clock,
+    record_performance,
+)
 from .resolution import image_resolution_scale
 
 
@@ -116,7 +121,11 @@ def _retain_connected_ink(strong: np.ndarray, weak: np.ndarray) -> np.ndarray:
     return retained
 
 
-def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def _clean_scanned_page(
+    gray: np.ndarray,
+    *,
+    performance_callback: PerformanceCallback | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
     """Recover ink from stained, folded, taped, or unevenly exposed paper.
 
     Broad paper shading is divided out first. A two-level connected-component gate
@@ -125,11 +134,18 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     do not allocate a page-sized 32-bit labels array.
     """
 
+    normalization_started = performance_clock()
     background = _background_estimate(gray)
     divided = cv2.divide(gray, background, scale=255)
     normalized = cv2.addWeighted(gray, 0.62, divided, 0.38, 0.0)
     local_delta = background.astype(np.int16) - gray.astype(np.int16)
+    record_performance(
+        performance_callback,
+        "background_normalization",
+        normalization_started,
+    )
 
+    binarization_started = performance_clock()
     strong = (divided < 190) | (gray < 95)
     weak = ((divided < 236) & (local_delta > 4)) | (gray < 155)
     retained = _retain_connected_ink(strong, weak)
@@ -143,6 +159,11 @@ def _clean_scanned_page(gray: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     # each real source component; any further repair must be semantic and
     # local, not a page-wide morphological bridge.
     binary = np.where(retained, 0, 255).astype(np.uint8)
+    record_performance(
+        performance_callback,
+        "binarization",
+        binarization_started,
+    )
     return np.ascontiguousarray(normalized), np.ascontiguousarray(binary)
 
 
@@ -275,6 +296,7 @@ def prepare_scan_page(
     image: np.ndarray,
     *,
     foreground_threshold: int | None = None,
+    performance_callback: PerformanceCallback | None = None,
 ) -> PreparedScanPage:
     """Prepare either a clean digital page or a damaged scan for OCR and tracing."""
 
@@ -283,22 +305,45 @@ def prepare_scan_page(
     clean_digital = exact_white_ratio >= _DIGITAL_WHITE_RATIO
 
     if foreground_threshold is not None:
+        normalization_started = performance_clock()
+        normalized = gray
+        record_performance(
+            performance_callback,
+            "background_normalization",
+            normalization_started,
+        )
+        binarization_started = performance_clock()
         threshold = int(max(1, min(254, foreground_threshold)))
         _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-        normalized = gray
     elif clean_digital:
+        normalization_started = performance_clock()
+        normalized = gray
+        record_performance(
+            performance_callback,
+            "background_normalization",
+            normalization_started,
+        )
+        binarization_started = performance_clock()
         threshold = 254
         _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
-        normalized = gray
     else:
         threshold = 128
-        normalized, binary = _clean_scanned_page(gray)
+        normalized, binary = _clean_scanned_page(
+            gray,
+            performance_callback=performance_callback,
+        )
+        binarization_started = performance_clock()
 
     if int(np.count_nonzero(binary == 0)) > binary.size // 2:
         binary = 255 - binary
     if not clean_digital and foreground_threshold is None:
         binary = _suppress_dense_speckle(binary)
         binary = _suppress_long_low_contrast_artifacts(gray, binary)
+    record_performance(
+        performance_callback,
+        "binarization",
+        binarization_started,
+    )
 
     return PreparedScanPage(
         gray=np.ascontiguousarray(gray),

@@ -1,0 +1,1339 @@
+{
+  "schema_version": 1,
+  "phase": 12,
+  "manifest": "tests/real_regression/manifest.json",
+  "measurement_contract": {
+    "isolated_process_per_run": true,
+    "runs_per_size": 3,
+    "size_selection": {
+      "small": "perspective-sample-plan",
+      "medium": "environment-plan-page-003-150dpi",
+      "large": "warehouse-plan-page-003-72dpi"
+    },
+    "required_stage_order": [
+      "page_load",
+      "background_normalization",
+      "binarization",
+      "ocr",
+      "structural_line_detection",
+      "roi_generation",
+      "connectivity",
+      "ownership",
+      "contour_tracing",
+      "final_structure_generation",
+      "gui_preview",
+      "dxf_export",
+      "cache_miss",
+      "cache_hit"
+    ],
+    "variation_fields": [
+      "range",
+      "population_stdev",
+      "coefficient_of_variation_percent"
+    ],
+    "peak_memory_metric": "process PeakWorkingSetSize",
+    "cache_miss_scope": "processing plus cache save",
+    "cache_hit_scope": "cache load and reconstruction"
+  },
+  "summaries": {
+    "large": {
+      "document_id": "warehouse-plan-page-003-72dpi",
+      "pixel_size": [
+        3118,
+        1786
+      ],
+      "pixel_count": 5568748,
+      "runs": 3,
+      "stage_seconds": {
+        "page_load": {
+          "samples": 3,
+          "mean": 1.0466255666688085,
+          "minimum": 1.0132588999986183,
+          "maximum": 1.0941228999872692,
+          "range": 0.0808639999886509,
+          "population_stdev": 0.034491577991199944,
+          "coefficient_of_variation_percent": 3.295503099640444
+        },
+        "background_normalization": {
+          "samples": 3,
+          "mean": 2.9333362666269145e-06,
+          "minimum": 2.600019797682762e-06,
+          "maximum": 3.3999967854470015e-06,
+          "range": 7.999769877642393e-07,
+          "population_stdev": 3.3992770992871737e-07,
+          "coefficient_of_variation_percent": 11.588433068384795
+        },
+        "binarization": {
+          "samples": 3,
+          "mean": 0.0036058000017267964,
+          "minimum": 0.0029943000117782503,
+          "maximum": 0.004430200002389029,
+          "range": 0.0014358999906107783,
+          "population_stdev": 0.0006052255814600174,
+          "coefficient_of_variation_percent": 16.784779554334087
+        },
+        "ocr": {
+          "samples": 3,
+          "mean": 8.74618943334402,
+          "minimum": 8.40353540002252,
+          "maximum": 9.019215900014387,
+          "range": 0.6156804999918677,
+          "population_stdev": 0.25612707529125367,
+          "coefficient_of_variation_percent": 2.9284418916744865
+        },
+        "structural_line_detection": {
+          "samples": 3,
+          "mean": 2.8711342666647397,
+          "minimum": 2.6400535000138916,
+          "maximum": 3.0659464999916963,
+          "range": 0.4258929999778047,
+          "population_stdev": 0.17575127641001315,
+          "coefficient_of_variation_percent": 6.121318617891564
+        },
+        "roi_generation": {
+          "samples": 3,
+          "mean": 0.046927433334834255,
+          "minimum": 0.04201949998969212,
+          "maximum": 0.051499799999874085,
+          "range": 0.009480300010181963,
+          "population_stdev": 0.003877583080421806,
+          "coefficient_of_variation_percent": 8.262934503054261
+        },
+        "connectivity": {
+          "samples": 3,
+          "mean": 0.10407483332285968,
+          "minimum": 0.06954870000481606,
+          "maximum": 0.12302029997226782,
+          "range": 0.053471599967451766,
+          "population_stdev": 0.02445227843711288,
+          "coefficient_of_variation_percent": 23.49490040618881
+        },
+        "ownership": {
+          "samples": 3,
+          "mean": 7.860670800000662,
+          "minimum": 6.6901109000027645,
+          "maximum": 8.477583700005198,
+          "range": 1.7874728000024334,
+          "population_stdev": 0.8281137213122248,
+          "coefficient_of_variation_percent": 10.534898895806133
+        },
+        "contour_tracing": {
+          "samples": 3,
+          "mean": 0.10380643333580035,
+          "minimum": 0.08576290000928566,
+          "maximum": 0.12624509999295697,
+          "range": 0.04048219998367131,
+          "population_stdev": 0.016816460718099575,
+          "coefficient_of_variation_percent": 16.199825172396114
+        },
+        "final_structure_generation": {
+          "samples": 3,
+          "mean": 0.005617099998441215,
+          "minimum": 0.005024799989769235,
+          "maximum": 0.006555799976922572,
+          "range": 0.0015309999871533364,
+          "population_stdev": 0.0006713096376878222,
+          "coefficient_of_variation_percent": 11.951178328214121
+        },
+        "gui_preview": {
+          "samples": 3,
+          "mean": 0.0013285333407111466,
+          "minimum": 0.0011551000061444938,
+          "maximum": 0.001641500013647601,
+          "range": 0.0004864000075031072,
+          "population_stdev": 0.00022173318231938412,
+          "coefficient_of_variation_percent": 16.690072843839452
+        },
+        "dxf_export": {
+          "samples": 3,
+          "mean": 1.7764083000074606,
+          "minimum": 1.513719399983529,
+          "maximum": 1.9808040000207257,
+          "range": 0.46708460003719665,
+          "population_stdev": 0.1950907118472322,
+          "coefficient_of_variation_percent": 10.9823125599229
+        },
+        "cache_miss": {
+          "samples": 3,
+          "mean": 27.42413676667881,
+          "minimum": 25.453350600000704,
+          "maximum": 28.604549300012877,
+          "range": 3.1511987000121735,
+          "population_stdev": 1.4026240104303775,
+          "coefficient_of_variation_percent": 5.114560295420528
+        },
+        "cache_hit": {
+          "samples": 3,
+          "mean": 0.152149999999286,
+          "minimum": 0.1308773999917321,
+          "maximum": 0.17628129999502562,
+          "range": 0.04540390000329353,
+          "population_stdev": 0.01864595859865455,
+          "coefficient_of_variation_percent": 12.254984290990503
+        }
+      },
+      "peak_working_set_mib": {
+        "samples": 3,
+        "mean": 974.6927083333334,
+        "minimum": 973.6484375,
+        "maximum": 975.484375,
+        "range": 1.8359375,
+        "population_stdev": 0.7705077437376747,
+        "coefficient_of_variation_percent": 0.07905134994342958
+      },
+      "object_counts": {
+        "contour_vertices": {
+          "samples": 3,
+          "mean": 30046.0,
+          "minimum": 30046.0,
+          "maximum": 30046.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "contours": {
+          "samples": 3,
+          "mean": 1669.0,
+          "minimum": 1669.0,
+          "maximum": 1669.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_entities": {
+          "samples": 3,
+          "mean": 2254.0,
+          "minimum": 2254.0,
+          "maximum": 2254.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_lines": {
+          "samples": 3,
+          "mean": 416.0,
+          "minimum": 416.0,
+          "maximum": 416.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_text": {
+          "samples": 3,
+          "mean": 36.0,
+          "minimum": 36.0,
+          "maximum": 36.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "editable_text": {
+          "samples": 3,
+          "mean": 36.0,
+          "minimum": 36.0,
+          "maximum": 36.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "fallback_text": {
+          "samples": 3,
+          "mean": 130.0,
+          "minimum": 130.0,
+          "maximum": 130.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "logos": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "ocr_candidates": {
+          "samples": 3,
+          "mean": 167.0,
+          "minimum": 167.0,
+          "maximum": 167.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "residual_graphic": {
+          "samples": 3,
+          "mean": 1.0,
+          "minimum": 1.0,
+          "maximum": 1.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "signatures": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "straight_lines": {
+          "samples": 3,
+          "mean": 416.0,
+          "minimum": 416.0,
+          "maximum": 416.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        }
+      },
+      "structure_ids": [
+        "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc"
+      ],
+      "deterministic_structure": true,
+      "dxf_audit_errors": 0
+    },
+    "medium": {
+      "document_id": "environment-plan-page-003-150dpi",
+      "pixel_size": [
+        2478,
+        1752
+      ],
+      "pixel_count": 4341456,
+      "runs": 3,
+      "stage_seconds": {
+        "page_load": {
+          "samples": 3,
+          "mean": 0.08120733333635144,
+          "minimum": 0.07549680001102388,
+          "maximum": 0.0855841999873519,
+          "range": 0.010087399976328015,
+          "population_stdev": 0.004224761111137027,
+          "coefficient_of_variation_percent": 5.202437929636911
+        },
+        "background_normalization": {
+          "samples": 3,
+          "mean": 0.03458803334312203,
+          "minimum": 0.032003600004827604,
+          "maximum": 0.0391278000024613,
+          "range": 0.007124199997633696,
+          "population_stdev": 0.003220357402407604,
+          "coefficient_of_variation_percent": 9.310611477850864
+        },
+        "binarization": {
+          "samples": 3,
+          "mean": 0.910701033329436,
+          "minimum": 0.8248459000024013,
+          "maximum": 1.05586249998305,
+          "range": 0.2310165999806486,
+          "population_stdev": 0.10321530327794504,
+          "coefficient_of_variation_percent": 11.333609988406376
+        },
+        "ocr": {
+          "samples": 3,
+          "mean": 7.513839266670402,
+          "minimum": 7.460549500014167,
+          "maximum": 7.58570029999828,
+          "range": 0.12515079998411238,
+          "population_stdev": 0.05275319670255554,
+          "coefficient_of_variation_percent": 0.7020804522204265
+        },
+        "structural_line_detection": {
+          "samples": 3,
+          "mean": 3.45326416665921,
+          "minimum": 2.7401081999996677,
+          "maximum": 3.9046424999833107,
+          "range": 1.164534299983643,
+          "population_stdev": 0.510183418615715,
+          "coefficient_of_variation_percent": 14.773947025005086
+        },
+        "roi_generation": {
+          "samples": 3,
+          "mean": 0.10448733334002706,
+          "minimum": 0.0702385000186041,
+          "maximum": 0.12445350000052713,
+          "range": 0.05421499998192303,
+          "population_stdev": 0.02432848099067233,
+          "coefficient_of_variation_percent": 23.28366531424586
+        },
+        "connectivity": {
+          "samples": 3,
+          "mean": 0.07464733333714928,
+          "minimum": 0.05053860001498833,
+          "maximum": 0.09931700001470745,
+          "range": 0.04877839999971911,
+          "population_stdev": 0.019917648142707467,
+          "coefficient_of_variation_percent": 26.68233043603605
+        },
+        "ownership": {
+          "samples": 3,
+          "mean": 6.2327294333372265,
+          "minimum": 6.051964400016004,
+          "maximum": 6.541091899998719,
+          "range": 0.48912749998271465,
+          "population_stdev": 0.21912288265735527,
+          "coefficient_of_variation_percent": 3.5156809709294414
+        },
+        "contour_tracing": {
+          "samples": 3,
+          "mean": 0.9922024333403291,
+          "minimum": 0.8723861000034958,
+          "maximum": 1.0738124000199605,
+          "range": 0.20142630001646467,
+          "population_stdev": 0.08655608364692076,
+          "coefficient_of_variation_percent": 8.7236314625356
+        },
+        "final_structure_generation": {
+          "samples": 3,
+          "mean": 0.005663033341988921,
+          "minimum": 0.003819799982011318,
+          "maximum": 0.008436900039669126,
+          "range": 0.004617100057657808,
+          "population_stdev": 0.0019964905947751667,
+          "coefficient_of_variation_percent": 35.254791455527204
+        },
+        "gui_preview": {
+          "samples": 3,
+          "mean": 0.0013596000014028202,
+          "minimum": 0.0008734999864827842,
+          "maximum": 0.0018286000122316182,
+          "range": 0.000955100025748834,
+          "population_stdev": 0.00039010538952211033,
+          "coefficient_of_variation_percent": 28.692658805501907
+        },
+        "dxf_export": {
+          "samples": 3,
+          "mean": 2.5358557333335434,
+          "minimum": 2.19288129999768,
+          "maximum": 2.7230363999842666,
+          "range": 0.5301550999865867,
+          "population_stdev": 0.2428578196035765,
+          "coefficient_of_variation_percent": 9.576957253965093
+        },
+        "cache_miss": {
+          "samples": 3,
+          "mean": 26.705132866666343,
+          "minimum": 24.37603559999843,
+          "maximum": 28.061598100000992,
+          "range": 3.685562500002561,
+          "population_stdev": 1.6543583931655148,
+          "coefficient_of_variation_percent": 6.1949079280953665
+        },
+        "cache_hit": {
+          "samples": 3,
+          "mean": 0.21875859999757571,
+          "minimum": 0.17124180000973865,
+          "maximum": 0.26504100000602193,
+          "range": 0.09379919999628328,
+          "population_stdev": 0.03830330958257199,
+          "coefficient_of_variation_percent": 17.50939601140091
+        }
+      },
+      "peak_working_set_mib": {
+        "samples": 3,
+        "mean": 804.9856770833334,
+        "minimum": 803.37109375,
+        "maximum": 806.1796875,
+        "range": 2.80859375,
+        "population_stdev": 1.1845423579903185,
+        "coefficient_of_variation_percent": 0.14715073717612154
+      },
+      "object_counts": {
+        "contour_vertices": {
+          "samples": 3,
+          "mean": 55684.0,
+          "minimum": 55684.0,
+          "maximum": 55684.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "contours": {
+          "samples": 3,
+          "mean": 2983.0,
+          "minimum": 2983.0,
+          "maximum": 2983.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_entities": {
+          "samples": 3,
+          "mean": 3846.0,
+          "minimum": 3846.0,
+          "maximum": 3846.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_lines": {
+          "samples": 3,
+          "mean": 590.0,
+          "minimum": 590.0,
+          "maximum": 590.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_text": {
+          "samples": 3,
+          "mean": 23.0,
+          "minimum": 23.0,
+          "maximum": 23.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "editable_text": {
+          "samples": 3,
+          "mean": 23.0,
+          "minimum": 23.0,
+          "maximum": 23.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "fallback_text": {
+          "samples": 3,
+          "mean": 131.0,
+          "minimum": 131.0,
+          "maximum": 131.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "logos": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "ocr_candidates": {
+          "samples": 3,
+          "mean": 154.0,
+          "minimum": 154.0,
+          "maximum": 154.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "residual_graphic": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "signatures": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "straight_lines": {
+          "samples": 3,
+          "mean": 590.0,
+          "minimum": 590.0,
+          "maximum": 590.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        }
+      },
+      "structure_ids": [
+        "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66"
+      ],
+      "deterministic_structure": true,
+      "dxf_audit_errors": 0
+    },
+    "small": {
+      "document_id": "perspective-sample-plan",
+      "pixel_size": [
+        1850,
+        1250
+      ],
+      "pixel_count": 2312500,
+      "runs": 3,
+      "stage_seconds": {
+        "page_load": {
+          "samples": 3,
+          "mean": 0.01059913334514325,
+          "minimum": 0.009705800010124221,
+          "maximum": 0.011880400008521974,
+          "range": 0.0021745999983977526,
+          "population_stdev": 0.0009291897863899321,
+          "coefficient_of_variation_percent": 8.766658142061273
+        },
+        "background_normalization": {
+          "samples": 3,
+          "mean": 0.024393999997604016,
+          "minimum": 0.021461600001202896,
+          "maximum": 0.029353899997659028,
+          "range": 0.007892299996456131,
+          "population_stdev": 0.0035265816316586004,
+          "coefficient_of_variation_percent": 14.456758350434459
+        },
+        "binarization": {
+          "samples": 3,
+          "mean": 0.11472823334042914,
+          "minimum": 0.10760370001662523,
+          "maximum": 0.12765050001326017,
+          "range": 0.020046799996634945,
+          "population_stdev": 0.009153463152129419,
+          "coefficient_of_variation_percent": 7.978387608365469
+        },
+        "ocr": {
+          "samples": 3,
+          "mean": 4.011738199992881,
+          "minimum": 3.2134553999931086,
+          "maximum": 4.802725999994436,
+          "range": 1.5892706000013277,
+          "population_stdev": 0.6488375106171937,
+          "coefficient_of_variation_percent": 16.173475891780402
+        },
+        "structural_line_detection": {
+          "samples": 3,
+          "mean": 1.7043793666622757,
+          "minimum": 1.0723594000155572,
+          "maximum": 2.153552599978866,
+          "range": 1.0811931999633089,
+          "population_stdev": 0.45994157587592877,
+          "coefficient_of_variation_percent": 26.9858685731829
+        },
+        "roi_generation": {
+          "samples": 3,
+          "mean": 0.005483499999778966,
+          "minimum": 0.004689599998528138,
+          "maximum": 0.006500799994682893,
+          "range": 0.0018111999961547554,
+          "population_stdev": 0.0007561049417423924,
+          "coefficient_of_variation_percent": 13.788728763980487
+        },
+        "connectivity": {
+          "samples": 3,
+          "mean": 0.022602833322404575,
+          "minimum": 0.015746899996884167,
+          "maximum": 0.031262599979527295,
+          "range": 0.015515699982643127,
+          "population_stdev": 0.00646140322757617,
+          "coefficient_of_variation_percent": 28.58669590405484
+        },
+        "ownership": {
+          "samples": 3,
+          "mean": 0.9743786000083977,
+          "minimum": 0.6998497000022326,
+          "maximum": 1.3892855000158306,
+          "range": 0.689435800013598,
+          "population_stdev": 0.29845146757707464,
+          "coefficient_of_variation_percent": 30.629928405088375
+        },
+        "contour_tracing": {
+          "samples": 3,
+          "mean": 0.21907079998830645,
+          "minimum": 0.17889689997537062,
+          "maximum": 0.2746218999964185,
+          "range": 0.09572500002104789,
+          "population_stdev": 0.04056404497438703,
+          "coefficient_of_variation_percent": 18.516408839768815
+        },
+        "final_structure_generation": {
+          "samples": 3,
+          "mean": 0.002657599999414136,
+          "minimum": 0.002275000006193295,
+          "maximum": 0.0033213999995496124,
+          "range": 0.0010463999933563173,
+          "population_stdev": 0.00047119940537640643,
+          "coefficient_of_variation_percent": 17.730260591521734
+        },
+        "gui_preview": {
+          "samples": 3,
+          "mean": 0.0006016666593495756,
+          "minimum": 0.0005494999932125211,
+          "maximum": 0.0006528999947477132,
+          "range": 0.00010340000153519213,
+          "population_stdev": 4.221803255380012e-05,
+          "coefficient_of_variation_percent": 7.016847601201537
+        },
+        "dxf_export": {
+          "samples": 3,
+          "mean": 0.2864509333351937,
+          "minimum": 0.20865200000116602,
+          "maximum": 0.4159862000087742,
+          "range": 0.20733420000760816,
+          "population_stdev": 0.09221118429548808,
+          "coefficient_of_variation_percent": 32.19091773305069
+        },
+        "cache_miss": {
+          "samples": 3,
+          "mean": 8.735892933327705,
+          "minimum": 6.638636999996379,
+          "maximum": 9.887085099995602,
+          "range": 3.248448099999223,
+          "population_stdev": 1.4853464809132775,
+          "coefficient_of_variation_percent": 17.002800884230552
+        },
+        "cache_hit": {
+          "samples": 3,
+          "mean": 0.045723866671323776,
+          "minimum": 0.03973550000227988,
+          "maximum": 0.05622590001439676,
+          "range": 0.01649040001211688,
+          "population_stdev": 0.007450423400634654,
+          "coefficient_of_variation_percent": 16.294386155463243
+        }
+      },
+      "peak_working_set_mib": {
+        "samples": 3,
+        "mean": 519.72265625,
+        "minimum": 518.78125,
+        "maximum": 520.24609375,
+        "range": 1.46484375,
+        "population_stdev": 0.6670658188219698,
+        "coefficient_of_variation_percent": 0.12835034432308717
+      },
+      "object_counts": {
+        "contour_vertices": {
+          "samples": 3,
+          "mean": 6579.0,
+          "minimum": 6579.0,
+          "maximum": 6579.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "contours": {
+          "samples": 3,
+          "mean": 146.0,
+          "minimum": 146.0,
+          "maximum": 146.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_entities": {
+          "samples": 3,
+          "mean": 382.0,
+          "minimum": 382.0,
+          "maximum": 382.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_lines": {
+          "samples": 3,
+          "mean": 172.0,
+          "minimum": 172.0,
+          "maximum": 172.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "dxf_text": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "editable_text": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "fallback_text": {
+          "samples": 3,
+          "mean": 2.0,
+          "minimum": 2.0,
+          "maximum": 2.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "logos": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "ocr_candidates": {
+          "samples": 3,
+          "mean": 2.0,
+          "minimum": 2.0,
+          "maximum": 2.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "residual_graphic": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "signatures": {
+          "samples": 3,
+          "mean": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        },
+        "straight_lines": {
+          "samples": 3,
+          "mean": 172.0,
+          "minimum": 172.0,
+          "maximum": 172.0,
+          "range": 0.0,
+          "population_stdev": 0.0,
+          "coefficient_of_variation_percent": 0.0
+        }
+      },
+      "structure_ids": [
+        "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3"
+      ],
+      "deterministic_structure": true,
+      "dxf_audit_errors": 0
+    }
+  },
+  "runs": [
+    {
+      "size_class": "small",
+      "run": 1,
+      "document_id": "perspective-sample-plan",
+      "source_path": "tests/real_regression/assets/test.jpg",
+      "page_number": 1,
+      "dpi": 96.0,
+      "pixel_size": [
+        1850,
+        1250
+      ],
+      "pixel_count": 2312500,
+      "stage_seconds": {
+        "page_load": 0.011880400008521974,
+        "background_normalization": 0.029353899997659028,
+        "binarization": 0.12765050001326017,
+        "ocr": 4.802725999994436,
+        "structural_line_detection": 1.8872260999924038,
+        "roi_generation": 0.006500799994682893,
+        "connectivity": 0.020798999990802258,
+        "ownership": 0.8340006000071298,
+        "contour_tracing": 0.2036935999931302,
+        "final_structure_generation": 0.002275000006193295,
+        "gui_preview": 0.0006025999900884926,
+        "dxf_export": 0.23471459999564104,
+        "cache_miss": 9.681956699991133,
+        "cache_hit": 0.041210199997294694
+      },
+      "peak_working_set_bytes": 543981568,
+      "peak_working_set_mib": 518.78125,
+      "object_counts": {
+        "contours": 146,
+        "contour_vertices": 6579,
+        "straight_lines": 172,
+        "ocr_candidates": 2,
+        "editable_text": 0,
+        "fallback_text": 2,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 382,
+        "dxf_lines": 172,
+        "dxf_text": 0
+      },
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "cache_key_digest": "7fd18f170156c12340ced9c9ce4ae4580c6b3221205f13f33813aa4518907253",
+      "cache_key_match": true,
+      "preview_shape": [
+        1250,
+        1850
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/small-run-1.dxf",
+      "cache_path": "output/ci/phase12-performance/small-run-1.npz"
+    },
+    {
+      "size_class": "small",
+      "run": 2,
+      "document_id": "perspective-sample-plan",
+      "source_path": "tests/real_regression/assets/test.jpg",
+      "page_number": 1,
+      "dpi": 96.0,
+      "pixel_size": [
+        1850,
+        1250
+      ],
+      "pixel_count": 2312500,
+      "stage_seconds": {
+        "page_load": 0.009705800010124221,
+        "background_normalization": 0.021461600001202896,
+        "binarization": 0.10760370001662523,
+        "ocr": 4.0190331999910995,
+        "structural_line_detection": 2.153552599978866,
+        "roi_generation": 0.005260100006125867,
+        "connectivity": 0.031262599979527295,
+        "ownership": 1.3892855000158306,
+        "contour_tracing": 0.2746218999964185,
+        "final_structure_generation": 0.0033213999995496124,
+        "gui_preview": 0.0006528999947477132,
+        "dxf_export": 0.4159862000087742,
+        "cache_miss": 9.887085099995602,
+        "cache_hit": 0.05622590001439676
+      },
+      "peak_working_set_bytes": 545517568,
+      "peak_working_set_mib": 520.24609375,
+      "object_counts": {
+        "contours": 146,
+        "contour_vertices": 6579,
+        "straight_lines": 172,
+        "ocr_candidates": 2,
+        "editable_text": 0,
+        "fallback_text": 2,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 382,
+        "dxf_lines": 172,
+        "dxf_text": 0
+      },
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "cache_key_digest": "7fd18f170156c12340ced9c9ce4ae4580c6b3221205f13f33813aa4518907253",
+      "cache_key_match": true,
+      "preview_shape": [
+        1250,
+        1850
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/small-run-2.dxf",
+      "cache_path": "output/ci/phase12-performance/small-run-2.npz"
+    },
+    {
+      "size_class": "small",
+      "run": 3,
+      "document_id": "perspective-sample-plan",
+      "source_path": "tests/real_regression/assets/test.jpg",
+      "page_number": 1,
+      "dpi": 96.0,
+      "pixel_size": [
+        1850,
+        1250
+      ],
+      "pixel_count": 2312500,
+      "stage_seconds": {
+        "page_load": 0.01021120001678355,
+        "background_normalization": 0.02236649999395013,
+        "binarization": 0.10893049999140203,
+        "ocr": 3.2134553999931086,
+        "structural_line_detection": 1.0723594000155572,
+        "roi_generation": 0.004689599998528138,
+        "connectivity": 0.015746899996884167,
+        "ownership": 0.6998497000022326,
+        "contour_tracing": 0.17889689997537062,
+        "final_structure_generation": 0.0023763999924995005,
+        "gui_preview": 0.0005494999932125211,
+        "dxf_export": 0.20865200000116602,
+        "cache_miss": 6.638636999996379,
+        "cache_hit": 0.03973550000227988
+      },
+      "peak_working_set_bytes": 545406976,
+      "peak_working_set_mib": 520.140625,
+      "object_counts": {
+        "contours": 146,
+        "contour_vertices": 6579,
+        "straight_lines": 172,
+        "ocr_candidates": 2,
+        "editable_text": 0,
+        "fallback_text": 2,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 382,
+        "dxf_lines": 172,
+        "dxf_text": 0
+      },
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "cache_key_digest": "7fd18f170156c12340ced9c9ce4ae4580c6b3221205f13f33813aa4518907253",
+      "cache_key_match": true,
+      "preview_shape": [
+        1250,
+        1850
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/small-run-3.dxf",
+      "cache_path": "output/ci/phase12-performance/small-run-3.npz"
+    },
+    {
+      "size_class": "medium",
+      "run": 1,
+      "document_id": "environment-plan-page-003-150dpi",
+      "source_path": "tests/real_regression/assets/environment-page-003.png",
+      "page_number": 3,
+      "dpi": 150.0,
+      "pixel_size": [
+        2478,
+        1752
+      ],
+      "pixel_count": 4341456,
+      "stage_seconds": {
+        "page_load": 0.07549680001102388,
+        "background_normalization": 0.03263270002207719,
+        "binarization": 0.8248459000024013,
+        "ocr": 7.460549500014167,
+        "structural_line_detection": 2.7401081999996677,
+        "roi_generation": 0.11877000000094995,
+        "connectivity": 0.07408639998175204,
+        "ownership": 6.051964400016004,
+        "contour_tracing": 0.8723861000034958,
+        "final_structure_generation": 0.004732400004286319,
+        "gui_preview": 0.0008734999864827842,
+        "dxf_export": 2.19288129999768,
+        "cache_miss": 24.37603559999843,
+        "cache_hit": 0.17124180000973865
+      },
+      "peak_working_set_bytes": 842395648,
+      "peak_working_set_mib": 803.37109375,
+      "object_counts": {
+        "contours": 2983,
+        "contour_vertices": 55684,
+        "straight_lines": 590,
+        "ocr_candidates": 154,
+        "editable_text": 23,
+        "fallback_text": 131,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 3846,
+        "dxf_lines": 590,
+        "dxf_text": 23
+      },
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "cache_key_digest": "092d27c6eaa6d1c62ddab2a54cea05cbebea35ec9091ffe787401f01b108b5c9",
+      "cache_key_match": true,
+      "preview_shape": [
+        1752,
+        2478
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/medium-run-1.dxf",
+      "cache_path": "output/ci/phase12-performance/medium-run-1.npz"
+    },
+    {
+      "size_class": "medium",
+      "run": 2,
+      "document_id": "environment-plan-page-003-150dpi",
+      "source_path": "tests/real_regression/assets/environment-page-003.png",
+      "page_number": 3,
+      "dpi": 150.0,
+      "pixel_size": [
+        2478,
+        1752
+      ],
+      "pixel_count": 4341456,
+      "stage_seconds": {
+        "page_load": 0.08254100001067854,
+        "background_normalization": 0.032003600004827604,
+        "binarization": 0.8513947000028566,
+        "ocr": 7.58570029999828,
+        "structural_line_detection": 3.9046424999833107,
+        "roi_generation": 0.12445350000052713,
+        "connectivity": 0.09931700001470745,
+        "ownership": 6.105131999996956,
+        "contour_tracing": 1.0304087999975309,
+        "final_structure_generation": 0.008436900039669126,
+        "gui_preview": 0.0018286000122316182,
+        "dxf_export": 2.691649500018684,
+        "cache_miss": 28.061598100000992,
+        "cache_hit": 0.21999299997696653
+      },
+      "peak_working_set_bytes": 844529664,
+      "peak_working_set_mib": 805.40625,
+      "object_counts": {
+        "contours": 2983,
+        "contour_vertices": 55684,
+        "straight_lines": 590,
+        "ocr_candidates": 154,
+        "editable_text": 23,
+        "fallback_text": 131,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 3846,
+        "dxf_lines": 590,
+        "dxf_text": 23
+      },
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "cache_key_digest": "092d27c6eaa6d1c62ddab2a54cea05cbebea35ec9091ffe787401f01b108b5c9",
+      "cache_key_match": true,
+      "preview_shape": [
+        1752,
+        2478
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/medium-run-2.dxf",
+      "cache_path": "output/ci/phase12-performance/medium-run-2.npz"
+    },
+    {
+      "size_class": "medium",
+      "run": 3,
+      "document_id": "environment-plan-page-003-150dpi",
+      "source_path": "tests/real_regression/assets/environment-page-003.png",
+      "page_number": 3,
+      "dpi": 150.0,
+      "pixel_size": [
+        2478,
+        1752
+      ],
+      "pixel_count": 4341456,
+      "stage_seconds": {
+        "page_load": 0.0855841999873519,
+        "background_normalization": 0.0391278000024613,
+        "binarization": 1.05586249998305,
+        "ocr": 7.4952679999987595,
+        "structural_line_detection": 3.7150417999946512,
+        "roi_generation": 0.0702385000186041,
+        "connectivity": 0.05053860001498833,
+        "ownership": 6.541091899998719,
+        "contour_tracing": 1.0738124000199605,
+        "final_structure_generation": 0.003819799982011318,
+        "gui_preview": 0.0013767000054940581,
+        "dxf_export": 2.7230363999842666,
+        "cache_miss": 27.6777648999996,
+        "cache_hit": 0.26504100000602193
+      },
+      "peak_working_set_bytes": 845340672,
+      "peak_working_set_mib": 806.1796875,
+      "object_counts": {
+        "contours": 2983,
+        "contour_vertices": 55684,
+        "straight_lines": 590,
+        "ocr_candidates": 154,
+        "editable_text": 23,
+        "fallback_text": 131,
+        "residual_graphic": 0,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 3846,
+        "dxf_lines": 590,
+        "dxf_text": 23
+      },
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "cache_key_digest": "092d27c6eaa6d1c62ddab2a54cea05cbebea35ec9091ffe787401f01b108b5c9",
+      "cache_key_match": true,
+      "preview_shape": [
+        1752,
+        2478
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/medium-run-3.dxf",
+      "cache_path": "output/ci/phase12-performance/medium-run-3.npz"
+    },
+    {
+      "size_class": "large",
+      "run": 1,
+      "document_id": "warehouse-plan-page-003-72dpi",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page_number": 3,
+      "dpi": 72.0,
+      "pixel_size": [
+        3118,
+        1786
+      ],
+      "pixel_count": 5568748,
+      "stage_seconds": {
+        "page_load": 1.032494900020538,
+        "background_normalization": 3.3999967854470015e-06,
+        "binarization": 0.004430200002389029,
+        "ocr": 8.81581699999515,
+        "structural_line_detection": 2.907402799988631,
+        "roi_generation": 0.04201949998969212,
+        "connectivity": 0.12302029997226782,
+        "ownership": 8.477583700005198,
+        "contour_tracing": 0.08576290000928566,
+        "final_structure_generation": 0.005024799989769235,
+        "gui_preview": 0.0011551000061444938,
+        "dxf_export": 1.9808040000207257,
+        "cache_miss": 28.214510400022846,
+        "cache_hit": 0.17628129999502562
+      },
+      "peak_working_set_bytes": 1022304256,
+      "peak_working_set_mib": 974.9453125,
+      "object_counts": {
+        "contours": 1669,
+        "contour_vertices": 30046,
+        "straight_lines": 416,
+        "ocr_candidates": 167,
+        "editable_text": 36,
+        "fallback_text": 130,
+        "residual_graphic": 1,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 2254,
+        "dxf_lines": 416,
+        "dxf_text": 36
+      },
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
+      "cache_key_digest": "926d091d609b36dc9ed4329a632dadc64156882377da7c182afbdc9671d61dc8",
+      "cache_key_match": true,
+      "preview_shape": [
+        1786,
+        3118
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/large-run-1.dxf",
+      "cache_path": "output/ci/phase12-performance/large-run-1.npz"
+    },
+    {
+      "size_class": "large",
+      "run": 2,
+      "document_id": "warehouse-plan-page-003-72dpi",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page_number": 3,
+      "dpi": 72.0,
+      "pixel_size": [
+        3118,
+        1786
+      ],
+      "pixel_count": 5568748,
+      "stage_seconds": {
+        "page_load": 1.0132588999986183,
+        "background_normalization": 2.600019797682762e-06,
+        "binarization": 0.0029943000117782503,
+        "ocr": 9.019215900014387,
+        "structural_line_detection": 2.6400535000138916,
+        "roi_generation": 0.051499799999874085,
+        "connectivity": 0.11965549999149516,
+        "ownership": 8.414317799994024,
+        "contour_tracing": 0.12624509999295697,
+        "final_structure_generation": 0.006555799976922572,
+        "gui_preview": 0.001641500013647601,
+        "dxf_export": 1.8347015000181273,
+        "cache_miss": 28.604549300012877,
+        "cache_hit": 0.14929130001110025
+      },
+      "peak_working_set_bytes": 1020944384,
+      "peak_working_set_mib": 973.6484375,
+      "object_counts": {
+        "contours": 1669,
+        "contour_vertices": 30046,
+        "straight_lines": 416,
+        "ocr_candidates": 167,
+        "editable_text": 36,
+        "fallback_text": 130,
+        "residual_graphic": 1,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 2254,
+        "dxf_lines": 416,
+        "dxf_text": 36
+      },
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
+      "cache_key_digest": "926d091d609b36dc9ed4329a632dadc64156882377da7c182afbdc9671d61dc8",
+      "cache_key_match": true,
+      "preview_shape": [
+        1786,
+        3118
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/large-run-2.dxf",
+      "cache_path": "output/ci/phase12-performance/large-run-2.npz"
+    },
+    {
+      "size_class": "large",
+      "run": 3,
+      "document_id": "warehouse-plan-page-003-72dpi",
+      "source_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page_number": 3,
+      "dpi": 72.0,
+      "pixel_size": [
+        3118,
+        1786
+      ],
+      "pixel_count": 5568748,
+      "stage_seconds": {
+        "page_load": 1.0941228999872692,
+        "background_normalization": 2.7999922167509794e-06,
+        "binarization": 0.0033928999910131097,
+        "ocr": 8.40353540002252,
+        "structural_line_detection": 3.0659464999916963,
+        "roi_generation": 0.04726300001493655,
+        "connectivity": 0.06954870000481606,
+        "ownership": 6.6901109000027645,
+        "contour_tracing": 0.09941130000515841,
+        "final_structure_generation": 0.005270700028631836,
+        "gui_preview": 0.001189000002341345,
+        "dxf_export": 1.513719399983529,
+        "cache_miss": 25.453350600000704,
+        "cache_hit": 0.1308773999917321
+      },
+      "peak_working_set_bytes": 1022869504,
+      "peak_working_set_mib": 975.484375,
+      "object_counts": {
+        "contours": 1669,
+        "contour_vertices": 30046,
+        "straight_lines": 416,
+        "ocr_candidates": 167,
+        "editable_text": 36,
+        "fallback_text": 130,
+        "residual_graphic": 1,
+        "logos": 0,
+        "signatures": 0,
+        "dxf_entities": 2254,
+        "dxf_lines": 416,
+        "dxf_text": 36
+      },
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
+      "cache_key_digest": "926d091d609b36dc9ed4329a632dadc64156882377da7c182afbdc9671d61dc8",
+      "cache_key_match": true,
+      "preview_shape": [
+        1786,
+        3118
+      ],
+      "dxf_audit_error_count": 0,
+      "dxf_audit_fix_count": 0,
+      "dxf_path": "output/ci/phase12-performance/large-run-3.dxf",
+      "cache_path": "output/ci/phase12-performance/large-run-3.npz"
+    }
+  ],
+  "checks": {
+    "three_size_classes": true,
+    "minimum_three_runs_each": true,
+    "all_required_stages_recorded": true,
+    "deterministic_structure_ids": true,
+    "zero_dxf_audit_errors": true,
+    "cache_keys_match": true,
+    "positive_peak_memory": true
+  },
+  "passed": true
+}

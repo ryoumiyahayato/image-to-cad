@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "phase": 12,
+  "captured_at": "2026-07-30T15:13:25+08:00",
+  "base_commit": "bf7071743adb7431dc591eb674eb9d9bf7077686",
+  "required_conditions": {
+    "whole_page_topology_removed_from_production": true,
+    "automatic_connections_only_inside_structural_roi": true,
+    "new_connections_do_not_enter_protection_masks": true,
+    "gui_preview_and_dxf_share_final_structure": true,
+    "minimum_ten_representative_complete_pages": true,
+    "ci_requires_nonempty_real_regression": true,
+    "all_object_ownership_is_traceable": true,
+    "high_confidence_text_is_stable_native_text": true,
+    "fallback_has_explicit_layer_and_reason": true,
+    "cache_contains_input_config_and_algorithm": true,
+    "pixel_lineage_has_saved_evidence": true,
+    "no_specific_screenshot_rule_masks_regression": true
+  },
+  "condition_count": 12,
+  "passed_condition_count": 12,
+  "all_conditions_passed": true,
+  "deliverables": [
+    "01-system-refactor-design.md",
+    "02-implementation-sequence-matrix.md",
+    "03-git-timeline.md",
+    "04-current-and-old-baselines.md",
+    "05-complete-data-flow.md",
+    "06-production-call-chain.md",
+    "07-legacy-paths-and-bypasses.md",
+    "08-observability.md",
+    "09-real-regression-catalog.md",
+    "10-whole-page-topology-comparison.md",
+    "11-structural-roi-validation.md",
+    "12-connectivity-metrics.md",
+    "13-ocr-text-output.md",
+    "14-logo-signature-text-confusion.md",
+    "15-residual-and-conflicts.md",
+    "16-gui-dxf-consistency.md",
+    "17-cache-reproducibility.md",
+    "18-performance-baseline.md",
+    "19-completion-status.md",
+    "20-next-round-recommendations.md"
+  ],
+  "deliverable_count": 20,
+  "performance_passed": true,
+  "unit_tests": {
+    "tests": 259,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time_seconds": 29.48
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_pages": 10
+  },
+  "recognition_thresholds_changed": false,
+  "new_features_added": false
+}

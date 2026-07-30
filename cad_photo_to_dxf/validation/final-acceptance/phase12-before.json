@@ -1,0 +1,16 @@
+{
+  "phase": 12,
+  "evidence_kind": "before",
+  "captured_from_commit": "bf70717",
+  "phase11_tag": "baseline/phase11-template-cache-gui-2026-07-30",
+  "unit_tests": 257,
+  "performance_baseline_present": false,
+  "performance_stage_callback_present": false,
+  "final_twenty_deliverables_present": false,
+  "formal_real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10
+  },
+  "recognition_threshold_change_authorized": false
+}

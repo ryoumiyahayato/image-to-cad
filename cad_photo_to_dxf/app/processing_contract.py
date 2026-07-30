@@ -23,6 +23,11 @@ from .final_structure import (
 )
 from .ocr_recognition import MAX_OCR_CANDIDATES, MIN_OCR_CONFIDENCE
 from .optimized_trace import trace_image_optimized
+from .performance_observability import (
+    PerformanceCallback,
+    performance_clock,
+    record_performance,
+)
 from .raster_trace import RasterTraceResult
 from .straight_line_reconstruction import (
     MAX_CONNECTION_DISTANCE_MM,
@@ -265,6 +270,7 @@ class ProductionProcessingService:
         *,
         cancellation_token: CancellationToken | None = None,
         progress_callback: ProgressCallback | None = None,
+        performance_callback: PerformanceCallback | None = None,
     ) -> RasterTraceResult:
         if config.layout_profile.enabled:
             raise ValueError(
@@ -277,10 +283,12 @@ class ProductionProcessingService:
             source_dpi=config.source_dpi,
             cancellation_token=cancellation_token,
             progress_callback=progress_callback,
+            performance_callback=performance_callback,
         )
         structure = final_structure_from_trace_result(result)
         provenance: dict[str, Any] = dict(structure.provenance)
         provenance["processing_contract"] = config.payload()
+        final_structure_started = performance_clock()
         contracted = build_final_structure(
             source_size_px=structure.source_size_px,
             contour_binary=structure.contour_binary,
@@ -294,6 +302,11 @@ class ProductionProcessingService:
             warnings=structure.warnings,
             provenance=provenance,
             observations=structure.observations,
+        )
+        record_performance(
+            performance_callback,
+            "final_structure_generation",
+            final_structure_started,
         )
         if contracted.structure_id != structure.structure_id:
             raise AssertionError(

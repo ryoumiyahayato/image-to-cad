@@ -1,0 +1,71 @@
+{
+  "phase": 12,
+  "evidence_kind": "after",
+  "captured_at": "2026-07-30T15:13:25+08:00",
+  "base_commit": "bf7071743adb7431dc591eb674eb9d9bf7077686",
+  "scope": {
+    "new_recognition_features_added": false,
+    "recognition_thresholds_changed": false,
+    "performance_observability_added": true,
+    "production_result_changed": false,
+    "final_reports_added": true
+  },
+  "performance": {
+    "passed": true,
+    "runs": 9,
+    "size_classes": [
+      "large",
+      "medium",
+      "small"
+    ],
+    "checks": {
+      "three_size_classes": true,
+      "minimum_three_runs_each": true,
+      "all_required_stages_recorded": true,
+      "deterministic_structure_ids": true,
+      "zero_dxf_audit_errors": true,
+      "cache_keys_match": true,
+      "positive_peak_memory": true
+    }
+  },
+  "unit_tests": {
+    "tests": 259,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "time_seconds": 29.48,
+    "passed": true
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "baseline_rerecorded": false
+  },
+  "static_checks": {
+    "ruff_passed": true,
+    "compileall_passed": true,
+    "git_diff_check_passed": true,
+    "mypy_passed": false,
+    "mypy_blocking": false,
+    "mypy_reason": "Local Python 3.14 NumPy typing uses Python 3.12 generic syntax while mypy.ini targets Python 3.11; mypy stops in NumPy before checking project code.",
+    "repository_hygiene_passed": false,
+    "repository_hygiene_blocking": false,
+    "repository_hygiene_reason": "Ten pre-existing tracked baseline DXF/font findings remain; phase 12 adds none."
+  },
+  "acceptance": {
+    "whole_page_topology_removed_from_production": true,
+    "automatic_connections_only_inside_structural_roi": true,
+    "new_connections_do_not_enter_protection_masks": true,
+    "gui_preview_and_dxf_share_final_structure": true,
+    "minimum_ten_representative_complete_pages": true,
+    "ci_requires_nonempty_real_regression": true,
+    "all_object_ownership_is_traceable": true,
+    "high_confidence_text_is_stable_native_text": true,
+    "fallback_has_explicit_layer_and_reason": true,
+    "cache_contains_input_config_and_algorithm": true,
+    "pixel_lineage_has_saved_evidence": true,
+    "no_specific_screenshot_rule_masks_regression": true
+  },
+  "passed": true
+}

@@ -31,6 +31,12 @@ from .observability import (
     rasterize_roi_corridors,
     rois_payload,
 )
+from .performance_observability import (
+    PerformanceCallback,
+    emit_performance,
+    performance_clock,
+    record_performance,
+)
 from .resolution import image_resolution_scale
 from .structural_roi import StructuralRoiSet, detect_structural_rois
 from .text_protection import detect_text_region_mask, filter_text_like_lines
@@ -1091,6 +1097,7 @@ def reconstruct_straight_lines(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
+    performance_callback: PerformanceCallback | None = None,
 ) -> tuple[LineSegment, ...]:
     """Detect table/frame rules without turning text or logos into blue lines.
 
@@ -1113,6 +1120,7 @@ def reconstruct_straight_lines(
         )
     )
     minimum_length = max(28.0 * scale, min(binary.shape[:2]) * 0.012)
+    line_detection_started = performance_clock()
     raw = detect_lines(
         binary,
         LineDetectionParams(
@@ -1134,6 +1142,11 @@ def reconstruct_straight_lines(
                 stage, 0.55 * max(0.0, min(1.0, fraction))
             )
         ),
+    )
+    record_performance(
+        performance_callback,
+        "structural_line_detection",
+        line_detection_started,
     )
     if observation_sink is not None:
         observe(
@@ -1210,6 +1223,8 @@ def reconstruct_straight_lines(
         )
     report_progress(progress_callback, "line-filtering", 0.58)
     if not candidates:
+        emit_performance(performance_callback, "roi_generation", 0.0)
+        emit_performance(performance_callback, "connectivity", 0.0)
         if observation_sink is not None:
             blank = np.zeros_like(binary)
             observe(
@@ -1317,11 +1332,17 @@ def reconstruct_straight_lines(
             ),
         )
     )
+    roi_started = performance_clock()
     structural_rois = detect_structural_rois(
         cleaned,
         image_shape=binary.shape,
         extension_budget=extension_budget,
         intersection_tolerance=max(2.0, 3.0 * scale),
+    )
+    record_performance(
+        performance_callback,
+        "roi_generation",
+        roi_started,
     )
     if observation_sink is not None:
         observe(
@@ -1349,6 +1370,7 @@ def reconstruct_straight_lines(
                 ),
             },
         )
+    connectivity_started = performance_clock()
     extended = extend_lines_to_first_intersection(
         cleaned,
         maximum_extension=extension_budget,
@@ -1363,6 +1385,11 @@ def reconstruct_straight_lines(
         protection_guards=protection_guards,
         cancellation_token=cancellation_token,
         observation_sink=observation_sink,
+    )
+    record_performance(
+        performance_callback,
+        "connectivity",
+        connectivity_started,
     )
     if support_mask is not None:
         extended = _filter_scan_artifact_lines(

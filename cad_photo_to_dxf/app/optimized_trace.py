@@ -27,6 +27,12 @@ from .observability import (
     rasterize_text_boxes,
     texts_payload,
 )
+from .performance_observability import (
+    PerformanceCallback,
+    emit_performance,
+    performance_clock,
+    record_performance,
+)
 from .raster_trace import RasterTraceResult, trace_binary
 from .scan_artifact_filter import suppress_scan_artifact_traces
 from .scan_cleanup import prepare_scan_page
@@ -49,6 +55,7 @@ def trace_image_optimized(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
+    performance_callback: PerformanceCallback | None = None,
 ) -> RasterTraceResult:
     """Run OCR and tracing without constructing full-resolution UI overlays.
 
@@ -72,6 +79,7 @@ def trace_image_optimized(
     prepared = prepare_scan_page(
         image,
         foreground_threshold=foreground_threshold,
+        performance_callback=performance_callback,
     )
     if observation_sink is not None:
         observe(
@@ -116,6 +124,7 @@ def trace_image_optimized(
     texts = ()
     warnings: list[str] = []
     if enable_ocr:
+        ocr_started = performance_clock()
         texts, ocr_warnings = recognize_text_candidates_optimized(
             prepared.gray,
             cancellation_token=cancellation_token,
@@ -129,8 +138,11 @@ def trace_image_optimized(
             ),
             observation_sink=observation_sink,
         )
+        record_performance(performance_callback, "ocr", ocr_started)
         warnings.extend(ocr_warnings)
-    elif observation_sink is not None:
+    else:
+        emit_performance(performance_callback, "ocr", 0.0)
+    if not enable_ocr and observation_sink is not None:
         for stage_key in (
             "ocr_raw_tiles",
             "ocr_rule_removed_tiles",
@@ -220,8 +232,10 @@ def trace_image_optimized(
             )
         ),
         observation_sink=observation_sink,
+        performance_callback=performance_callback,
     )
 
+    ownership_started = performance_clock()
     candidate_ownership = partition_content(
         prepared.binary,
         lines=line_candidates,
@@ -243,6 +257,11 @@ def trace_image_optimized(
         prepared.binary,
         candidates=candidate_ownership,
         arbitrated=arbitrated,
+    )
+    record_performance(
+        performance_callback,
+        "ownership",
+        ownership_started,
     )
     straight_lines = arbitrated.lines
     texts = arbitrated.texts
@@ -329,6 +348,7 @@ def trace_image_optimized(
     residual_binary = binary_from_foreground(outline_source)
     artifact_removed = 0
     if not prepared.clean_digital and np.any(outline_source):
+        contour_started = performance_clock()
         residual_paths = trace_binary(
             residual_binary,
             cancellation_token=cancellation_token,
@@ -341,6 +361,11 @@ def trace_image_optimized(
         if artifact_result.removed_root_count:
             residual_binary = artifact_result.binary
             artifact_removed = artifact_result.removed_root_count
+        record_performance(
+            performance_callback,
+            "contour_tracing",
+            contour_started,
+        )
 
     residual_foreground = np.where(residual_binary < 128, 255, 0).astype(np.uint8)
     contour_binary = binary_from_foreground(
@@ -382,6 +407,7 @@ def trace_image_optimized(
         )
 
     report_progress(progress_callback, "prepare-image", 0.71 if enable_ocr else 0.32)
+    contour_started = performance_clock()
     paths = trace_binary(
         contour_binary,
         cancellation_token=cancellation_token,
@@ -400,6 +426,11 @@ def trace_image_optimized(
                 ))
             )
         ),
+    )
+    record_performance(
+        performance_callback,
+        "contour_tracing",
+        contour_started,
     )
     if artifact_removed:
         warnings.append(
@@ -446,6 +477,7 @@ def trace_image_optimized(
             "signature_count": len(signatures),
         },
     )
+    final_structure_started = performance_clock()
     final_structure = build_final_structure(
         source_size_px=(contour_binary.shape[1], contour_binary.shape[0]),
         contour_binary=contour_binary,
@@ -462,6 +494,11 @@ def trace_image_optimized(
             "clean_digital": bool(prepared.clean_digital),
         },
         observations=observations,
+    )
+    record_performance(
+        performance_callback,
+        "final_structure_generation",
+        final_structure_started,
     )
     return RasterTraceResult(
         binary=contour_binary,
