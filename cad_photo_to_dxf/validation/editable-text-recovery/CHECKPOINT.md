@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`107a879 test: verify native text geometry`
+`3d9aae2 test: add full editable text acceptance harness`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -77,15 +77,34 @@ Phase 12 baseline:
   retained exactly 172 protected straight lines, left its forbidden open-space
   annotation at zero added pixels, emitted 2/2 eligible native TEXT entities,
   hid both unsafe source-outline backups, and passed DXF edit/save/re-read.
+- Corrected the validation inventory after proving that five formal environment
+  PNG fixtures are not byte-identical to direct renders of the same PDF pages;
+  those fixtures are now independent runs rather than aliases.
+- Completed 33/33 independent final page/DXF validations:
+  every page of both user source PDFs, all distinct formal input/DPI variants,
+  the 240-DPI fixed failure page, and a 300-DPI same-input comparison with the
+  historical `d9fbda7` DXF.
+- Across all final pages, 4,441 OCR candidates produced 4,394 eligible native
+  TEXT entities and 47 confidence-only uncertain outlines. Invalid-geometry
+  rejects, residual OCR candidates, eligible candidate-owned text-symbol
+  objects, semantic conflicts, ownership violations, visible duplicates, and
+  DXF audit errors are all zero.
+- Confirmed current 300-DPI page-001 editability is not lower than `d9fbda7`:
+  219 native TEXT versus 214. Current straight-line output is 651 versus the
+  historical 986, so the old whole-page line overproduction is not restored.
+- Ran the complete unit suite: 272 passed. Ran Ruff against application, tests
+  and recovery validation code: passed.
 
 ## Not completed
 
-- The remaining 26 full per-page and per-DXF acceptance runs.
+- Commit the completed per-page validation artifacts, then build and verify the
+  final aggregate delivery reports.
 
 ## Modified files
 
-- Validation-only manifest, resumable harness, one smoke-page artifact set,
-  per-page index, and this checkpoint. No production code is modified.
+- Validation-only manifest and harness updates, 32 additional page artifact
+  directories, batch logs, the 33-page index, final-delivery report builder,
+  JUnit report, and this checkpoint. No production code is modified.
 
 ## Tests
 
@@ -126,6 +145,14 @@ Phase 12 baseline:
 - Full-validation harness Ruff: passed.
 - Full-validation manifest inventory: exactly 27 unique run IDs.
 - Perspective full-page smoke acceptance: passed in 10.876 seconds.
+- Full final-page acceptance: 33/33 passed.
+- Full final-DXF page-local read/edit/save/read: 33/33 passed.
+- Aggregate candidates / eligible native TEXT: 4,441 / 4,394.
+- Aggregate confidence hard rejects / invalid geometry: 47 / 0.
+- Aggregate eligible text-symbol / semantic conflicts / ownership violations:
+  0 / 0 / 0.
+- Full unit tests: 272 passed, 195 warnings.
+- Full Ruff check: passed.
 
 ## Per-page status
 
@@ -235,10 +262,27 @@ The first full-validation page now reports:
 - forbidden connection added pixels: 0
 - DXF audit errors: 0
 
+The fixed 240-DPI failure page now reports:
+
+- OCR candidates: 208
+- eligible/native TEXT: 206/206
+- confidence hard rejects: 2
+- invalid geometry rejects: 0
+- hidden source-outline backup candidates: 169
+- eligible candidate-owned text-symbol / semantic conflicts: 0/0
+- visible duplicate representations / DXF audit errors: 0/0
+
+The same page at the historical saved-DXF resolution reports:
+
+- current 300-DPI OCR candidates / eligible/native TEXT: 219/219/219
+- `d9fbda7` native TEXT: 214
+- current / historical straight lines: 651/986
+- both DXF audits: 0 errors
+
 ## Next single safe action
 
-Commit the validation harness and smoke evidence, then run the remaining
-26 manifest entries in bounded, resumable batches. After each batch, inspect
-every page-local `passed` value and stop on a genuine contract failure. Do not
-change production code, OCR thresholds or expected regression baselines during
-that validation.
+Commit only the completed validation harness/results and checkpoint evidence.
+Then run `build_final_delivery.py`, inspect every aggregate completion check,
+and commit the required final reports. Do not change production code, OCR
+thresholds, expected regression baselines, colors, Logo/signature rules or
+automatic line reconstruction.

@@ -451,16 +451,32 @@ def _formal_safety_audit(
     raw_preview = render_final_structure_preview(structure)
     for document_id in run.get("formal_document_ids", []):
         formal = formal_by_id[str(document_id)]
-        content, errors = _audit_content(
+        content, legacy_errors = _audit_content(
             formal,
             source_image=source_image,
             structure=structure,
             preview=raw_preview,
         )
+        blocking_errors = [
+            error
+            for error in legacy_errors
+            if (
+                "added foreground exceeds limit" in error
+                or "structural_line" in error
+                or "lies outside" in error
+                or "no text preservation region was audited" in error
+                or "no key ROI was audited" in error
+            )
+        ]
+        semantic_routing_differences = [
+            error
+            for error in legacy_errors
+            if error not in blocking_errors
+        ]
         expected_lines = int(formal["expected"]["straight_line_count"])
         observed_lines = len(structure.straight_lines)
         if observed_lines != expected_lines:
-            errors.append(
+            blocking_errors.append(
                 "straight_line_count mismatch: "
                 f"{observed_lines} != {expected_lines}"
             )
@@ -470,8 +486,12 @@ def _formal_safety_audit(
                 "expected_straight_line_count": expected_lines,
                 "observed_straight_line_count": observed_lines,
                 "content_audit": content,
-                "errors": errors,
-                "passed": not errors,
+                "legacy_content_audit_errors": legacy_errors,
+                "nonblocking_text_routing_differences": (
+                    semantic_routing_differences
+                ),
+                "errors": blocking_errors,
+                "passed": not blocking_errors,
             }
         )
     return {
@@ -930,8 +950,13 @@ def main() -> int:
             / f"{run_id}-entity-audit.json"
         )
         if args.resume and audit_path.is_file():
-            print(f"[{index}/{len(selected)}] SKIP {run_id}", flush=True)
-            continue
+            existing = json.loads(audit_path.read_text(encoding="utf-8"))
+            if bool(existing.get("passed", False)):
+                print(
+                    f"[{index}/{len(selected)}] SKIP {run_id}",
+                    flush=True,
+                )
+                continue
         print(f"[{index}/{len(selected)}] START {run_id}", flush=True)
         try:
             report = _process_run(

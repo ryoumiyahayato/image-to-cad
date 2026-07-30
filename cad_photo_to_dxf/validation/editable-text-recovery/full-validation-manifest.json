@@ -7,16 +7,16 @@
       "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
       "page": 1,
       "dpi": 120,
-      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
-      "formal_document_ids": ["environment-scan-page-001-120dpi"]
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
     },
     {
       "id": "environment-source-page-002-120dpi",
       "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
       "page": 2,
       "dpi": 120,
-      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
-      "formal_document_ids": ["environment-scan-page-002-120dpi"]
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
     },
     {
       "id": "environment-source-page-003-120dpi",
@@ -31,8 +31,8 @@
       "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
       "page": 4,
       "dpi": 120,
-      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
-      "formal_document_ids": ["environment-scan-page-004-120dpi"]
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
     },
     {
       "id": "environment-source-page-005-120dpi",
@@ -63,8 +63,8 @@
       "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
       "page": 8,
       "dpi": 120,
-      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
-      "formal_document_ids": ["environment-scan-page-008-120dpi"]
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
     },
     {
       "id": "environment-source-page-009-120dpi",
@@ -111,7 +111,47 @@
       "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
       "page": 14,
       "dpi": 120,
-      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-formal-page-001-120dpi",
+      "input": "tests/real_regression/assets/environment-scan-page-01-120dpi.png",
+      "page": 1,
+      "dpi": 120,
+      "coverage": ["formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-001-120dpi"]
+    },
+    {
+      "id": "environment-formal-page-002-120dpi",
+      "input": "tests/real_regression/assets/environment-scan-page-02-120dpi.png",
+      "page": 2,
+      "dpi": 120,
+      "coverage": ["formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-002-120dpi"]
+    },
+    {
+      "id": "environment-formal-page-004-120dpi",
+      "input": "tests/real_regression/assets/environment-scan-page-04-120dpi.png",
+      "page": 4,
+      "dpi": 120,
+      "coverage": ["formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-004-120dpi"]
+    },
+    {
+      "id": "environment-formal-page-008-120dpi",
+      "input": "tests/real_regression/assets/environment-scan-page-08-120dpi.png",
+      "page": 8,
+      "dpi": 120,
+      "coverage": ["formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-008-120dpi"]
+    },
+    {
+      "id": "environment-formal-page-014-120dpi",
+      "input": "tests/real_regression/assets/environment-scan-page-14-120dpi.png",
+      "page": 14,
+      "dpi": 120,
+      "coverage": ["formal_real_regression"],
       "formal_document_ids": ["environment-scan-page-014-120dpi"]
     },
     {
@@ -209,6 +249,14 @@
       "dpi": 600,
       "coverage": ["formal_real_regression", "high_resolution"],
       "formal_document_ids": ["warehouse-index-page-001-600dpi"]
+    },
+    {
+      "id": "page-001-d9fbda7-comparison-300dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 1,
+      "dpi": 300,
+      "coverage": ["page001_d9fbda7_comparison"],
+      "formal_document_ids": []
     },
     {
       "id": "page-001-fixed-failure-240dpi",

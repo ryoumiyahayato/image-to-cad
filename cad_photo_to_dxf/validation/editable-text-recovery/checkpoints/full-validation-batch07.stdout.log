@@ -1,0 +1,8 @@
+[1/4] START warehouse-source-page-005-072dpi
+[1/4] PASS warehouse-source-page-005-072dpi (52.12s)
+[2/4] START warehouse-source-page-006-072dpi
+[2/4] PASS warehouse-source-page-006-072dpi (50.223s)
+[3/4] START warehouse-source-page-007-072dpi
+[3/4] PASS warehouse-source-page-007-072dpi (59.706s)
+[4/4] START warehouse-formal-page-001-150dpi
+[4/4] FAIL warehouse-formal-page-001-150dpi (17.581s)
