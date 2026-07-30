@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`6cabd4c test: capture editable-text recovery baseline`
+`f26a7b8 fix: decouple editable text emission from outline suppression`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -23,7 +23,7 @@ Phase 12 baseline:
 - Audited all 14 existing user-PDF DXFs without modifying them.
 - Recorded per-DXF TEXT, fallback-outline, text-symbol, residual and audit
   counts.
-- Implemented the first change set locally: editable emission no longer
+- Committed the first change set: editable emission no longer
   depends on `replacement_safe`; source suppression still does.
 - Added explicit `text_emit_eligible`, `source_outline_suppressible`, and hard
   reject fields to every text-output decision.
@@ -33,8 +33,6 @@ Phase 12 baseline:
 
 ## Not completed
 
-- Commit and post-commit verification of editable TEXT emission and
-  outline-suppression decoupling.
 - Hidden unsafe source-glyph backup layer.
 - Candidate-level semantic ownership.
 - Native TEXT geometry fitting.
@@ -42,15 +40,8 @@ Phase 12 baseline:
 
 ## Modified files
 
-- `app/text_output_contract.py`
-- `app/content_ownership.py`
-- `app/ocr_outline_export.py`
-- `app/trace_single_export.py`
-- `app/trace_document_export.py`
-- `tests/test_text_output_contract.py`
-- `tests/test_ocr_layout.py`
-- validation probe and commit-1 evidence under
-  `validation/editable-text-recovery/`
+- Checkpoint evidence only. The production-code worktree is clean after
+  commit `f26a7b8`.
 
 ## Tests
 
@@ -61,6 +52,8 @@ Phase 12 baseline:
 - Commit-1 focused tests: 39 passed, 72 warnings.
 - Commit-1 Ruff checks: passed.
 - Commit-1 page-001 DXF audit: 0 errors.
+- Commit-1 post-commit focused tests: 39 passed, 72 warnings.
+- Commit-1 post-commit Ruff checks: passed.
 
 ## Per-page status
 
@@ -96,8 +89,7 @@ next, separate commit.
 
 ## Next single safe action
 
-Commit the first change set as
-`fix: decouple editable text emission from outline suppression`, then rerun
-the same focused tests. Do not start hidden source-outline routing unless the
-post-commit tests pass.
+Implement `SOURCE_TEXT_OUTLINE` as a default-off backup layer for eligible,
+non-suppressible candidates. Keep the two hard-rejected page-001 candidates
+visible as uncertain/residual outline and do not alter text geometry yet.
 
