@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -13,6 +14,11 @@ from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
 from .signature_overlay import add_signature_images, set_foreground_draw_order
+from .text_output_contract import (
+    TextOutputState,
+    text_output_decisions,
+    text_output_summary,
+)
 from .trace_dxf_entities import (
     TRACE_LAYER_STYLES,
     TracePalette,
@@ -39,6 +45,10 @@ def _page_layer_names(index: int) -> dict[str, str]:
         "TRACE_STRAIGHT": f"{prefix}_TRACE_STRAIGHT",
         "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
         "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
+        "TEXT_FALLBACK_OUTLINE": (
+            f"{prefix}_TEXT_FALLBACK_OUTLINE"
+        ),
+        "RESIDUAL_GRAPHIC": f"{prefix}_RESIDUAL_GRAPHIC",
         "OCR_TEXT": f"{prefix}_OCR_TEXT",
         "SIGNATURE_OVERLAY": f"{prefix}_SIGNATURE_OVERLAY",
     }
@@ -109,6 +119,12 @@ def export_trace_document_streaming(
     trace_path_count = 0
     trace_vertex_count = 0
     text_count = 0
+    ocr_candidate_count = 0
+    fallback_text_count = 0
+    residual_graphic_count = 0
+    logo_count = 0
+    signature_count = 0
+    downgrade_reasons: Counter[str] = Counter()
     page_count = 0
     structure_ids: list[str] = []
     expected_pages = max(int(total_pages or 0), 1)
@@ -202,7 +218,19 @@ def export_trace_document_streaming(
                 page_origin + (vector_height - y) * scale_y,
             )
 
+        text_decisions = text_output_decisions(texts)
+        text_summary = text_output_summary(texts)
         exportable_texts = accepted_ocr_texts(texts)
+        fallback_texts = tuple(
+            decision.candidate
+            for decision in text_decisions
+            if decision.state is TextOutputState.TEXT_FALLBACK_OUTLINE
+        )
+        residual_texts = tuple(
+            decision.candidate
+            for decision in text_decisions
+            if decision.state is TextOutputState.RESIDUAL_GRAPHIC
+        )
         selected_palette = palette or TracePalette()
         if int(page.trace_color) != 7:
             selected_palette = TracePalette(
@@ -225,6 +253,8 @@ def export_trace_document_streaming(
             source_size=(vector_width, vector_height),
             palette=palette,
             ocr_texts=exportable_texts,
+            fallback_ocr_texts=fallback_texts,
+            residual_ocr_texts=residual_texts,
             layer_names=layer_names,
             cancellation_token=cancellation_token,
             progress_callback=page_progress,
@@ -261,6 +291,16 @@ def export_trace_document_streaming(
         trace_path_count += current_path_count
         trace_vertex_count += current_vertex_count
         text_count += current_text_count
+        ocr_candidate_count += text_summary.ocr_candidate_count
+        fallback_text_count += text_summary.fallback_outline_count
+        residual_graphic_count += text_summary.residual_graphic_count
+        logo_count += (
+            len(structure.logos)
+            if structure is not None
+            else 0
+        )
+        signature_count += len(signatures)
+        downgrade_reasons.update(dict(text_summary.downgrade_reasons))
 
         gap_units = max(1.0, float(modelspace_gap_mm) * page.drawing_scale)
         origin_y -= height_units + gap_units
@@ -305,4 +345,12 @@ def export_trace_document_streaming(
         group_names=(),
         signature_paths=tuple(signature_paths),
         structure_ids=tuple(structure_ids),
+        ocr_candidate_count=ocr_candidate_count,
+        fallback_text_count=fallback_text_count,
+        residual_graphic_count=residual_graphic_count,
+        logo_count=logo_count,
+        signature_count=signature_count,
+        text_downgrade_reasons=tuple(
+            sorted(downgrade_reasons.items())
+        ),
     )

@@ -67,7 +67,9 @@ def test_connected_high_confidence_text_stays_as_image_until_reviewed() -> None:
     assert "跨越多个字符格" in prepared.review_note
     assert accepted_ocr_texts((prepared,)) == ()
     reviewed = replace(prepared, reviewed=True)
-    assert accepted_ocr_texts((reviewed,)) == (reviewed,)
+    assert accepted_ocr_texts((reviewed,)) == ()
+    reviewed_safe = replace(reviewed, replacement_safe=True)
+    assert accepted_ocr_texts((reviewed_safe,)) == (reviewed_safe,)
 
     non_text_object = replace(
         prepared,

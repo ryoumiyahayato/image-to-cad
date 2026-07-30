@@ -1,0 +1,521 @@
+{
+  "acceptance": {
+    "all_documents_passed": true,
+    "every_downgrade_has_reason": true,
+    "fallback_outline_observed": true,
+    "minimum_ten_pages": true,
+    "native_text_observed": true,
+    "ocr_candidates_observed": true,
+    "residual_graphic_observed": true
+  },
+  "aggregate": {
+    "document_elapsed_total_seconds": 182.553,
+    "downgrade_reasons": {
+      "confidence_below_contract": 14,
+      "replacement_unsafe": 977
+    },
+    "fallback_count": 977,
+    "logo_count": 0,
+    "ocr_candidate_count": 1188,
+    "residual_count": 14,
+    "signature_count": 0,
+    "text_count": 197
+  },
+  "document_count": 10,
+  "documents": [
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "replacement_unsafe": 2
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\perspective-sample-plan.dxf",
+      "elapsed_seconds": 9.947,
+      "fallback_count": 2,
+      "fallback_outline_source_pixels": 4245,
+      "id": "perspective-sample-plan",
+      "layer_entity_counts": {
+        "TEXT_FALLBACK_OUTLINE": 26,
+        "TRACE_CURVE": 85,
+        "TRACE_STRAIGHT": 172,
+        "TRACE_TEXT_SYMBOL": 99
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 2,
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\perspective-sample-plan.png",
+      "raster_sha256": "f7e044163852635404c50c68b6fee8ca909ff37b4de4ec343d180e9c8ef77aed",
+      "residual_count": 0,
+      "residual_outline_source_pixels": 0,
+      "signature_count": 0,
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3",
+      "text_count": 0
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "replacement_unsafe": 131
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-plan-page-003-150dpi.dxf",
+      "elapsed_seconds": 34.396,
+      "fallback_count": 131,
+      "fallback_outline_source_pixels": 70365,
+      "id": "environment-plan-page-003-150dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 23,
+        "TEXT_FALLBACK_OUTLINE": 1153,
+        "TRACE_CURVE": 891,
+        "TRACE_STRAIGHT": 590,
+        "TRACE_TEXT_SYMBOL": 1189
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 154,
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-plan-page-003-150dpi.png",
+      "raster_sha256": "d517852f5bd754f6fe3a44491b678035df01be54093423a5d6f3bf79ec61a436",
+      "residual_count": 0,
+      "residual_outline_source_pixels": 0,
+      "signature_count": 0,
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66",
+      "text_count": 23
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 53
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\warehouse-index-page-001-150dpi.dxf",
+      "elapsed_seconds": 13.726,
+      "fallback_count": 53,
+      "fallback_outline_source_pixels": 31951,
+      "id": "warehouse-index-page-001-150dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 36,
+        "RESIDUAL_GRAPHIC": 2,
+        "TEXT_FALLBACK_OUTLINE": 852,
+        "TRACE_STRAIGHT": 503,
+        "TRACE_TEXT_SYMBOL": 3
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 91,
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-index-page-001-150dpi.png",
+      "raster_sha256": "c020ad1139a82cbbf006216bce507a529d846f5f467db7aba1b300ab99a94bc4",
+      "residual_count": 2,
+      "residual_outline_source_pixels": 96,
+      "signature_count": 0,
+      "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615",
+      "text_count": 36
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 1,
+        "replacement_unsafe": 129
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "elapsed_seconds": 18.655,
+      "fallback_count": 129,
+      "fallback_outline_source_pixels": 45416,
+      "id": "environment-scan-page-001-120dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 10,
+        "RESIDUAL_GRAPHIC": 14,
+        "TEXT_FALLBACK_OUTLINE": 1098,
+        "TRACE_CURVE": 925,
+        "TRACE_STRAIGHT": 513,
+        "TRACE_TEXT_SYMBOL": 1164
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 140,
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-001-120dpi.png",
+      "raster_sha256": "d3ac0725865ce3e2e9acffa0e8d07e914f61fe1efedc6b7e4f8b9799dfc93b6f",
+      "residual_count": 1,
+      "residual_outline_source_pixels": 40,
+      "signature_count": 0,
+      "structure_id": "b4f4285271d21eeaca264bd4bd892270551a5e79692b9f9eba15868635c9e7fe",
+      "text_count": 10
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 92
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-scan-page-002-120dpi.dxf",
+      "elapsed_seconds": 15.897,
+      "fallback_count": 92,
+      "fallback_outline_source_pixels": 24445,
+      "id": "environment-scan-page-002-120dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 5,
+        "RESIDUAL_GRAPHIC": 272,
+        "TEXT_FALLBACK_OUTLINE": 572,
+        "TRACE_CURVE": 795,
+        "TRACE_STRAIGHT": 360,
+        "TRACE_TEXT_SYMBOL": 1201
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 99,
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-002-120dpi.png",
+      "raster_sha256": "134c7060f8240365e990cb7dafe4127fdcab2dbe3112866e30c8f33b0664e7ab",
+      "residual_count": 2,
+      "residual_outline_source_pixels": 95,
+      "signature_count": 0,
+      "structure_id": "aca4eaf1d1dc0100a13697f49d1023e6b2a6730a733865f47a3c0c2cbda77dd0",
+      "text_count": 5
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "replacement_unsafe": 135
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-scan-page-004-120dpi.dxf",
+      "elapsed_seconds": 19.409,
+      "fallback_count": 135,
+      "fallback_outline_source_pixels": 43363,
+      "id": "environment-scan-page-004-120dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 22,
+        "TEXT_FALLBACK_OUTLINE": 911,
+        "TRACE_CURVE": 1140,
+        "TRACE_STRAIGHT": 589,
+        "TRACE_TEXT_SYMBOL": 1149
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 157,
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-004-120dpi.png",
+      "raster_sha256": "b57945dc2d8bb99ac7020aa7c4d1fc53afab534986b151e877802d630a29658d",
+      "residual_count": 0,
+      "residual_outline_source_pixels": 0,
+      "signature_count": 0,
+      "structure_id": "b89ba00b638c051b3f5aedb06a3047f8fbb03e46bcef12d500e311b38be285f1",
+      "text_count": 22
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 6,
+        "replacement_unsafe": 65
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-scan-page-008-120dpi.dxf",
+      "elapsed_seconds": 12.585,
+      "fallback_count": 65,
+      "fallback_outline_source_pixels": 21307,
+      "id": "environment-scan-page-008-120dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 12,
+        "RESIDUAL_GRAPHIC": 401,
+        "TEXT_FALLBACK_OUTLINE": 476,
+        "TRACE_CURVE": 739,
+        "TRACE_STRAIGHT": 309,
+        "TRACE_TEXT_SYMBOL": 753
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 83,
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-008-120dpi.png",
+      "raster_sha256": "3d4f1d7e4dd9736fb0c75c1cac29f40c5ab4f6fbb90ee294ce579a7c68846fd8",
+      "residual_count": 6,
+      "residual_outline_source_pixels": 641,
+      "signature_count": 0,
+      "structure_id": "cb68a934a481376e6cd3795bfa0315b69f5cee5b1af71cc3cd46f3bf4caac63b",
+      "text_count": 12
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "replacement_unsafe": 138
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\environment-scan-page-014-120dpi.dxf",
+      "elapsed_seconds": 17.438,
+      "fallback_count": 138,
+      "fallback_outline_source_pixels": 45975,
+      "id": "environment-scan-page-014-120dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 12,
+        "TEXT_FALLBACK_OUTLINE": 1117,
+        "TRACE_CURVE": 1144,
+        "TRACE_STRAIGHT": 511,
+        "TRACE_TEXT_SYMBOL": 1105
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 150,
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-014-120dpi.png",
+      "raster_sha256": "4d57d6efe0710d4b06bfde4709afe6d4547355be2613b743b56b592a4a5023e6",
+      "residual_count": 0,
+      "residual_outline_source_pixels": 0,
+      "signature_count": 0,
+      "structure_id": "e7bad321c864faf8003a82d767083780a82df4823cb9fc69eb2c3f4392253d9e",
+      "text_count": 12
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 102
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\warehouse-system-page-002-72dpi.dxf",
+      "elapsed_seconds": 20.183,
+      "fallback_count": 102,
+      "fallback_outline_source_pixels": 44535,
+      "id": "warehouse-system-page-002-72dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 41,
+        "RESIDUAL_GRAPHIC": 40,
+        "TEXT_FALLBACK_OUTLINE": 818,
+        "TRACE_CURVE": 120,
+        "TRACE_STRAIGHT": 117,
+        "TRACE_TEXT_SYMBOL": 567
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 145,
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-system-page-002-72dpi.png",
+      "raster_sha256": "488583a1c5253c098d773974ad8e40452e25b341129da8be8338eb7d28ca0053",
+      "residual_count": 2,
+      "residual_outline_source_pixels": 167,
+      "signature_count": 0,
+      "structure_id": "c5d322526332016f1b9845148cfb55d200e023e3743986847772aaa7eb9df79e",
+      "text_count": 41
+    },
+    {
+      "checks": {
+        "downgrade_reasons_complete": true,
+        "dxf_audit_passed": true,
+        "export_statistics_match_contract": true,
+        "fallback_layer_present_when_required": true,
+        "font_choice_does_not_change_editability": true,
+        "images_are_reliable_signatures_only": true,
+        "native_text_count_matches_contract": true,
+        "native_text_xdata_complete": true,
+        "native_texts_use_ocr_text_layer": true,
+        "no_unexpected_fallback_layer_entities": true,
+        "no_unexpected_residual_layer_entities": true,
+        "residual_layer_present_when_required": true,
+        "same_evidence_same_state": true
+      },
+      "downgrade_reasons": {
+        "confidence_below_contract": 1,
+        "replacement_unsafe": 130
+      },
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-text-contract-artifacts\\warehouse-plan-page-003-72dpi.dxf",
+      "elapsed_seconds": 20.317,
+      "fallback_count": 130,
+      "fallback_outline_source_pixels": 44812,
+      "id": "warehouse-plan-page-003-72dpi",
+      "layer_entity_counts": {
+        "OCR_TEXT": 36,
+        "RESIDUAL_GRAPHIC": 125,
+        "TEXT_FALLBACK_OUTLINE": 644,
+        "TRACE_CURVE": 303,
+        "TRACE_STRAIGHT": 416,
+        "TRACE_TEXT_SYMBOL": 730
+      },
+      "logo_count": 0,
+      "ocr_candidate_count": 167,
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "passed": true,
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-plan-page-003-72dpi.png",
+      "raster_sha256": "828aec9275ab23028ccc569f81532a1c3103e3fd5c1926269e40f4d9ec207ec9",
+      "residual_count": 1,
+      "residual_outline_source_pixels": 96,
+      "signature_count": 0,
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc",
+      "text_count": 36
+    }
+  ],
+  "git_commit": "d506d7164e23fdade36baad5395b3f333d319adc",
+  "input_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\input-manifest.json",
+  "input_manifest_sha256": "5fab068497a87b672a93c3863db73ff9806d4183d561e736d2bbb63290a07f97",
+  "schema_version": 1
+}

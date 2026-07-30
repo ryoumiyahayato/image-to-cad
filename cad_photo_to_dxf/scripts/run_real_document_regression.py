@@ -22,6 +22,7 @@ from app.final_structure import FINAL_STRUCTURE_SCHEMA_VERSION  # noqa: E402
 from app.image_loader import load_image  # noqa: E402
 from app.preview_renderer import render_final_structure_preview  # noqa: E402
 from app.trace_single_export import export_final_structure_dxf  # noqa: E402
+from app.text_output_contract import text_output_summary  # noqa: E402
 
 
 EXPECTED_METRICS = {
@@ -41,6 +42,11 @@ EXPECTED_METRICS = {
     "dxf_trace_path_count",
     "dxf_trace_vertex_count",
     "content_audit_sha256",
+    "ocr_candidate_count",
+    "editable_text_count",
+    "fallback_text_count",
+    "residual_graphic_count",
+    "text_downgrade_reasons",
 }
 REQUIRED_PROVENANCE = {
     "source",
@@ -592,6 +598,9 @@ def _audit_content(
         audited_regions[collection] = results
     audit = {
         "object_counts": object_counts,
+        "text_output_contract": text_output_summary(
+            structure.texts
+        ).payload(),
         "regions": audited_regions,
     }
     audit["sha256"] = _content_sha256(audit)
@@ -687,6 +696,19 @@ def _measure_document(
         "dxf_trace_path_count": int(export_result.trace_path_count),
         "dxf_trace_vertex_count": int(export_result.trace_vertex_count),
         "content_audit_sha256": content_audit["sha256"],
+        "ocr_candidate_count": int(
+            export_result.ocr_candidate_count
+        ),
+        "editable_text_count": int(export_result.text_count),
+        "fallback_text_count": int(
+            export_result.fallback_text_count
+        ),
+        "residual_graphic_count": int(
+            export_result.residual_graphic_count
+        ),
+        "text_downgrade_reasons": dict(
+            export_result.text_downgrade_reasons
+        ),
     }
     if compare_expected:
         expected = document["expected"]

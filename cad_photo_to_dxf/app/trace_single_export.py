@@ -23,6 +23,11 @@ from .signature_overlay import (
     add_signature_images,
     set_foreground_draw_order,
 )
+from .text_output_contract import (
+    TextOutputState,
+    text_output_decisions,
+    text_output_summary,
+)
 from .trace_dxf_entities import (
     TRACE_LAYER_STYLES,
     TracePalette,
@@ -140,7 +145,19 @@ def export_exact_trace_dxf(
     def transform(x: float, y: float) -> tuple[float, float]:
         return (x * scale, (image_height - y) * scale)
 
+    text_decisions = text_output_decisions(texts)
+    text_summary = text_output_summary(texts)
     exportable_texts = accepted_ocr_texts(texts)
+    fallback_texts = tuple(
+        decision.candidate
+        for decision in text_decisions
+        if decision.state is TextOutputState.TEXT_FALLBACK_OUTLINE
+    )
+    residual_texts = tuple(
+        decision.candidate
+        for decision in text_decisions
+        if decision.state is TextOutputState.RESIDUAL_GRAPHIC
+    )
     selected_palette = palette or TracePalette()
     if int(trace_color) != 7:
         selected_palette = TracePalette(
@@ -164,6 +181,8 @@ def export_exact_trace_dxf(
         source_size=(resolved_width, image_height),
         palette=palette,
         ocr_texts=exportable_texts,
+        fallback_ocr_texts=fallback_texts,
+        residual_ocr_texts=residual_texts,
         cancellation_token=cancellation_token,
         progress_callback=entity_progress,
     )
@@ -236,6 +255,11 @@ def export_exact_trace_dxf(
         drawing_scale=multiplier,
         underlay_path=underlay_path,
         signature_paths=signature_paths,
+        ocr_candidate_count=text_summary.ocr_candidate_count,
+        fallback_text_count=text_summary.fallback_outline_count,
+        residual_graphic_count=text_summary.residual_graphic_count,
+        signature_count=len(signature_paths),
+        text_downgrade_reasons=text_summary.downgrade_reasons,
     )
 
 
@@ -273,4 +297,9 @@ def export_final_structure_dxf(
         cancellation_token=cancellation_token,
         progress_callback=progress_callback,
     )
-    return replace(result, structure_id=structure.structure_id)
+    return replace(
+        result,
+        structure_id=structure.structure_id,
+        logo_count=len(structure.logos),
+        signature_count=len(structure.signatures),
+    )

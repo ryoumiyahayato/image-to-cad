@@ -29,6 +29,8 @@ TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
     "TRACE_CURVE": {"color": 6, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
+    "TEXT_FALLBACK_OUTLINE": {"color": 2, "lineweight": 0},
+    "RESIDUAL_GRAPHIC": {"color": 3, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
     "SIGNATURE_OVERLAY": {"color": 6, "lineweight": 0},
 }
@@ -102,6 +104,8 @@ def _classify_region(
 def _path_matches_ocr(
     path: TracePath,
     texts: Sequence[TextCandidate],
+    *,
+    allow_candidate_coverage: bool = False,
 ) -> bool:
     if not texts or len(path.points) < 3:
         return False
@@ -126,8 +130,21 @@ def _path_matches_ocr(
 
         intersection_width = max(0.0, min(max_x, right) - max(min_x, left))
         intersection_height = max(0.0, min(max_y, bottom) - max(min_y, top))
-        overlap = intersection_width * intersection_height / max(path_area, 1.0)
-        if overlap >= 0.55 and size_compatible:
+        intersection_area = intersection_width * intersection_height
+        path_overlap = intersection_area / max(path_area, 1.0)
+        if path_overlap >= 0.55 and size_compatible:
+            return True
+
+        # Unreliable OCR can cover only a short segment of a longer residual
+        # contour (for example, a vertical stroke misread as "S").  In that
+        # state the OCR box must not promote the contour to editable text, but
+        # it still provides enough evidence to place the owning contour on the
+        # explicit residual layer.  Measure coverage of the candidate box only
+        # for that residual classification; fallback and editable-text
+        # suppression retain the stricter whole-path compatibility rule.
+        candidate_area = max((right - left) * (bottom - top), 1.0)
+        candidate_overlap = intersection_area / candidate_area
+        if allow_candidate_coverage and candidate_overlap >= 0.55:
             return True
     return False
 
@@ -236,6 +253,8 @@ def add_exact_trace_entities(
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
     ocr_texts: Sequence[TextCandidate] = (),
+    fallback_ocr_texts: Sequence[TextCandidate] = (),
+    residual_ocr_texts: Sequence[TextCandidate] = (),
     layer_names: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
@@ -269,21 +288,33 @@ def add_exact_trace_entities(
             checkpoint(cancellation_token)
             report_progress(progress_callback, "cad-entities", position / total_black)
         trace_path = trace_paths[index]
-        if _path_matches_ocr(trace_path, ocr_texts):
-            continue
-
         hole_indices = [
             child_index
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
-        base_layer_name = _classify_region(
+        if _path_matches_ocr(
             trace_path,
-            source_size=source_size,
-            hole_count=len(hole_indices),
-        )
+            residual_ocr_texts,
+            allow_candidate_coverage=True,
+        ):
+            base_layer_name = "RESIDUAL_GRAPHIC"
+        elif _path_matches_ocr(trace_path, fallback_ocr_texts):
+            base_layer_name = "TEXT_FALLBACK_OUTLINE"
+        elif _path_matches_ocr(trace_path, ocr_texts):
+            continue
+        else:
+            base_layer_name = _classify_region(
+                trace_path,
+                source_size=source_size,
+                hole_count=len(hole_indices),
+            )
         if base_layer_name == "TRACE_STRAIGHT":
             entity_color = _resolved_color(selected_palette.straight, 5)
+        elif base_layer_name == "TEXT_FALLBACK_OUTLINE":
+            entity_color = 2
+        elif base_layer_name == "RESIDUAL_GRAPHIC":
+            entity_color = 3
         elif base_layer_name == "TRACE_TEXT_SYMBOL":
             entity_color = _resolved_color(selected_palette.text_symbol, 6)
         else:

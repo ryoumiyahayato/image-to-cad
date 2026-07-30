@@ -1,0 +1,100 @@
+{
+  "phase": 10,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-30T11:25:36+08:00",
+  "base_commit": "d506d7164e23fdade36baad5395b3f333d319adc",
+  "fixed_tag": "baseline/phase10-text-output-contract-2026-07-30",
+  "scope": {
+    "new_features_added": false,
+    "recognition_thresholds_changed": false,
+    "exclusive_text_output_contract_added": true,
+    "review_can_override_replacement_safety": false,
+    "font_choice_changes_editability": false,
+    "native_text_xdata_added": true,
+    "explicit_fallback_layer_added": true,
+    "explicit_residual_layer_added": true,
+    "required_export_statistics_added": true
+  },
+  "real_page_validation": {
+    "document_count": 10,
+    "checks_per_document": 13,
+    "total_checks": 130,
+    "all_checks_passed": true,
+    "ocr_candidate_count": 1188,
+    "editable_text_count": 197,
+    "fallback_text_count": 977,
+    "residual_graphic_count": 14,
+    "logo_count": 0,
+    "signature_count": 0,
+    "downgrade_reasons": {
+      "confidence_below_contract": 14,
+      "replacement_unsafe": 977
+    },
+    "same_evidence_same_state": true,
+    "font_independence_verified": true,
+    "dxf_audit_passed": true
+  },
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q --junitxml=validation\\text-output-contract\\phase10-pytest.xml",
+    "tests": 248,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_scope": "app scripts tests",
+    "ruff_passed": true,
+    "compileall_passed": true,
+    "git_diff_check_passed": true,
+    "mypy_passed": false,
+    "mypy_blocking": false,
+    "mypy_reason": "Python 3.14 and current NumPy typing use syntax newer than the repository Python 3.11 mypy target; mypy stopped before checking project code."
+  },
+  "real_regression": {
+    "recording_passed": true,
+    "strict_rerun_passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "recording_and_strict_metrics_equal": true,
+    "formal_manifest_semantically_equals_strict_candidate": true,
+    "non_expected_manifest_fields_unchanged": true
+  },
+  "evidence_files": {
+    "phase10-before.json": {
+      "sha256": "26657c63fd3dbee2c369cba81ab0d0f8bde75d5601e12358b22de0bd166f4b83"
+    },
+    "phase10-after.json": {
+      "sha256": "802fc3f53b52e810192726a801d58621ef7af9df578e3a989a9128afe787b816"
+    },
+    "phase10-recording.json": {
+      "sha256": "9da1fb9aaf6b1d0371a257f3e57dbe48173add6d6b2537fdc2c2d84403dc27f0"
+    },
+    "phase10-recorded-manifest.json": {
+      "sha256": "8874a4b8f9dc8cb78db85d128be17c636b181997909f47fef000bf39636af81a"
+    },
+    "phase10-real-regression.json": {
+      "sha256": "6730a8bd777e9889bdd81cb75ecb9d8fcdea94e26595834068818ed417dbf16e"
+    },
+    "phase10-pytest.xml": {
+      "sha256": "ac85a5347594a91109e902e79542099503858e8c59c186205cd81cc9627533a2"
+    },
+    "real-regression-manifest.json": {
+      "sha256": "4c36f0e2e4b33fec6b0e13c93ba9d7550aa346b691b2790b474e269be81ce4d6"
+    }
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "same_evidence_has_stable_semantics": true,
+    "unsafe_replacement_never_becomes_native_text": true,
+    "fallback_is_explicitly_non_editable": true,
+    "residual_is_not_text_or_signature": true,
+    "font_and_editability_are_independent": true,
+    "required_statistics_complete": true,
+    "every_downgrade_has_reason": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

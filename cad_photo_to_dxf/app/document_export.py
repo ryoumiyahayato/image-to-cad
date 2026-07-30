@@ -69,6 +69,12 @@ class DocumentExportResult:
     group_names: tuple[str, ...] = field(default_factory=tuple)
     signature_paths: tuple[Path, ...] = field(default_factory=tuple)
     structure_ids: tuple[str, ...] = field(default_factory=tuple)
+    ocr_candidate_count: int = 0
+    fallback_text_count: int = 0
+    residual_graphic_count: int = 0
+    logo_count: int = 0
+    signature_count: int = 0
+    text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
 
 
 def _safe_layout_name(sequence_number: int) -> str:

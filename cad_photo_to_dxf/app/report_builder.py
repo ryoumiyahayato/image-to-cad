@@ -159,6 +159,16 @@ class ReportBuilder:
                 "confirmed_circles": [_to_dict(item) for item in confirmed_circles],
                 "text_count": export_result.text_count,
                 "skipped_text_count": export_result.skipped_text_count,
+                "ocr_candidate_count": export_result.ocr_candidate_count,
+                "fallback_text_count": export_result.fallback_text_count,
+                "residual_graphic_count": (
+                    export_result.residual_graphic_count
+                ),
+                "logo_count": export_result.logo_count,
+                "signature_count": export_result.signature_count,
+                "text_downgrade_reasons": dict(
+                    export_result.text_downgrade_reasons
+                ),
                 "mm_per_pixel": calibrated_mm_per_pixel,
                 "drawing_units_per_pixel": drawing_units_per_pixel,
                 "calibrated": export_result.calibrated,

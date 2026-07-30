@@ -44,6 +44,12 @@ class ExportResult:
     output_format: str = "DXF"
     signature_paths: tuple[Path, ...] = ()
     structure_id: str | None = None
+    ocr_candidate_count: int = 0
+    fallback_text_count: int = 0
+    residual_graphic_count: int = 0
+    logo_count: int = 0
+    signature_count: int = 0
+    text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
 
 
 LAYER_STYLES = {

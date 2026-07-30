@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "phase": 10,
+  "baseline_commit": "d506d7164e23fdade36baad5395b3f333d319adc",
+  "baseline_tag": "baseline/phase9-logo-signature-evidence-2026-07-30",
+  "audit_scope": [
+    "OCR candidate acceptance",
+    "native DXF TEXT export",
+    "unsafe text outline export",
+    "unreliable OCR residual export",
+    "font and editability coupling",
+    "export and report statistics"
+  ],
+  "threshold_change_requested": false,
+  "threshold_change_performed": false,
+  "prior_contract": {
+    "exclusive_output_states": false,
+    "review_could_bypass_replacement_safety": true,
+    "unsafe_text_layer": null,
+    "unreliable_residual_layer": null,
+    "native_text_contract_xdata": false,
+    "font_choice_separate_from_editability": false,
+    "stable_downgrade_reason": false
+  },
+  "prior_reporting": {
+    "ocr_candidate_count": "not reported",
+    "editable_text_count": "reported only as generic DXF text count",
+    "fallback_text_count": "not reported",
+    "residual_graphic_count": "not reported",
+    "logo_count": "not reported with the text contract",
+    "signature_count": "not reported with the text contract",
+    "text_downgrade_reasons": "not reported"
+  },
+  "acceptance": {
+    "four_state_semantics_available": false,
+    "same_evidence_same_semantics_enforced": false,
+    "unsafe_replacement_cannot_become_text": false,
+    "fallback_is_explicitly_non_editable": false,
+    "residual_is_not_text_or_signature": false,
+    "required_statistics_complete": false
+  }
+}

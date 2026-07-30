@@ -17,61 +17,12 @@ from .librecad_lff import (
     librecad_character_advance_units,
     librecad_metric_ratios,
 )
-from .ocr_overlap import collapse_overlapping_candidates
+from .text_output_contract import accepted_ocr_texts
 
 
 PointTransform = Callable[[float, float], tuple[float, float]]
 _XDATA_APP = "OCR_TEXT_LINE"
-_AUTO_APPROVE_CONFIDENCE = 0.50
-_SINGLE_CHARACTER_CONFIDENCE = 0.55
-_SHORT_ASCII_CONFIDENCE = 0.52
-
-
-def _automatic_threshold(text: str) -> float:
-    compact = "".join(text.split())
-    if len(compact) <= 1:
-        return _SINGLE_CHARACTER_CONFIDENCE
-    if len(compact) <= 3 and compact.isascii():
-        return _SHORT_ASCII_CONFIDENCE
-    return _AUTO_APPROVE_CONFIDENCE
-
-
-def accepted_ocr_texts(
-    texts: Sequence[TextCandidate],
-    *,
-    minimum_confidence: float = 0.48,
-) -> tuple[TextCandidate, ...]:
-    """Return only text that can safely replace its source pixels.
-
-    Low-quality scans commonly join a glyph to a leader, symbol or neighbouring
-    cell. Replacing such a partial connected region with OCR text leaves the
-    surrounding contour in place and visually glues the two objects together.
-    Unreviewed unsafe candidates therefore stay as their exact source contours;
-    an explicit review can still approve a replacement.
-    """
-
-    accepted: list[TextCandidate] = []
-    for item in texts:
-        content = item.text.strip()
-        if item.kind not in {"text_candidate", "dimension_text_candidate"}:
-            continue
-        if not content or not item.approved:
-            continue
-        if item.reviewed:
-            accepted.append(item)
-            continue
-        if not item.replacement_safe:
-            continue
-        confidence = float(item.confidence)
-        required = max(float(minimum_confidence), _automatic_threshold(content))
-        if confidence >= required:
-            accepted.append(item)
-    # Apply a final export-time guard as well as the recognition-time guard.
-    # This also repairs old caches and reviewed results created before OCR
-    # overlap suppression was introduced.
-    return collapse_overlapping_candidates(accepted)
-
-
+_CONTRACT_XDATA_APP = "TEXT_OUTPUT_CONTRACT"
 def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
     if text.quad and len(text.quad) == 4:
         return text.quad
@@ -193,6 +144,21 @@ def _add_text_entity(
             (1040, float(candidate.font_match_score)),
         ],
     )
+    entity.set_xdata(
+        _CONTRACT_XDATA_APP,
+        [
+            (1000, "editable_text"),
+            (1000, str(candidate.source)[:250]),
+            (1000, str(candidate.font_family)[:250]),
+            (1000, str(candidate.font_file)[:250]),
+            (1000, str(style_name)[:250]),
+            (1040, float(insert[0])),
+            (1040, float(insert[1])),
+            (1040, float(rotation)),
+            (1040, float(candidate.confidence)),
+            (1070, int(candidate.replacement_safe)),
+        ],
+    )
     return entity
 
 
@@ -211,6 +177,8 @@ def add_ocr_outline_blocks(
     del block_prefix
     if _XDATA_APP not in doc.appids:
         doc.appids.add(_XDATA_APP)
+    if _CONTRACT_XDATA_APP not in doc.appids:
+        doc.appids.add(_CONTRACT_XDATA_APP)
     doc.header["$DWGCODEPAGE"] = "ANSI_936"
 
     entities: list[object] = []

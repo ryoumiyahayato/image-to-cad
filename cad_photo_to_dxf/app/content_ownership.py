@@ -9,9 +9,9 @@ import numpy as np
 from .auxiliary_recognition import TextCandidate
 from .line_detect import LineSegment
 from .logo_detection import LogoRegion
-from .ocr_outline_export import accepted_ocr_texts
 from .resolution import image_resolution_scale
 from .signature_overlay import SignatureRegion
+from .text_output_contract import accepted_ocr_texts
 
 
 def _mask_like(binary: np.ndarray) -> np.ndarray:

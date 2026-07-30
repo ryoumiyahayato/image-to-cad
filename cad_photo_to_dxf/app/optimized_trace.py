@@ -17,7 +17,6 @@ from .content_ownership import (
 )
 from .final_structure import build_final_structure
 from .logo_detection import detect_logo_regions
-from .ocr_outline_export import accepted_ocr_texts
 from .ocr_layout import constrain_texts_to_table_cells
 from .ocr_overlap import collapse_overlapping_candidates
 from .ocr_pipeline import recognize_text_candidates_optimized
@@ -35,6 +34,10 @@ from .signature_overlay import (
     detect_signature_regions,
 )
 from .straight_line_reconstruction import reconstruct_straight_lines
+from .text_output_contract import (
+    text_output_decisions,
+    text_output_summary,
+)
 
 
 def trace_image_optimized(
@@ -245,6 +248,8 @@ def trace_image_optimized(
     texts = arbitrated.texts
     logos = arbitrated.logos
     signatures = arbitrated.signatures
+    text_decisions = text_output_decisions(texts)
+    text_contract = text_output_summary(texts)
     if observation_sink is not None:
         owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
         for owner_code, mask in (
@@ -362,6 +367,11 @@ def trace_image_optimized(
             payload={
                 "texts": texts_payload(texts),
                 "count": len(texts),
+                "output_contract": text_contract.payload(),
+                "decisions": [
+                    decision.payload()
+                    for decision in text_decisions
+                ],
             },
         )
         observe(
@@ -404,12 +414,14 @@ def trace_image_optimized(
         warnings.append("页面细节较多，生成的 CAD 文件可能较大。")
     if not prepared.clean_digital:
         warnings.append("已自动校正扫描底色并抑制纸张破损、阴影和污渍纹理。")
-    if texts:
-        editable_count = len(accepted_ocr_texts(texts))
-        retained_count = max(0, len(texts) - editable_count)
+    if text_contract.ocr_candidate_count:
         warnings.append(
-            f"识别到 {len(texts)} 个文字候选，其中 {editable_count} 个导出为"
-            f"可编辑单行文字，{retained_count} 个保留为原始源轮廓且不改判为图像。"
+            f"识别到 {text_contract.ocr_candidate_count} 个文字候选，其中 "
+            f"{text_contract.editable_text_count} 个导出为可编辑单行文字，"
+            f"{text_contract.fallback_outline_count} 个进入 "
+            "TEXT_FALLBACK_OUTLINE，"
+            f"{text_contract.residual_graphic_count} 个进入 "
+            "RESIDUAL_GRAPHIC。"
         )
     if signatures:
         warnings.append(
@@ -426,6 +438,12 @@ def trace_image_optimized(
             "conflict_objects": len(ownership.conflicts),
             "downgrades": len(ownership.downgrades),
             "source_pixels": int(cv2.countNonZero(ownership.source)),
+        },
+        {
+            "event": "text_output_contract",
+            **text_contract.payload(),
+            "logo_count": len(logos),
+            "signature_count": len(signatures),
         },
     )
     final_structure = build_final_structure(
