@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 import json
 from pathlib import Path
@@ -29,6 +30,7 @@ class StoredTrace:
     preview_binary: np.ndarray | None = None
     logos: tuple[LogoRegion, ...] = ()
     final_structure: FinalStructure | None = None
+    cache_key: Mapping[str, object] | None = None
 
 
 def _serialize_lines(lines: tuple[LineSegment, ...]) -> str:
@@ -286,7 +288,12 @@ def _unpack_logos(
     )
 
 
-def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
+def save_trace_cache(
+    path: str | Path,
+    result: RasterTraceResult,
+    *,
+    cache_key: Mapping[str, object] | None = None,
+) -> Path:
     """Atomically store a page using packed pixels and uncompressed arrays.
 
     The old cache used zlib on an 80-megapixel byte image, which spent substantial
@@ -352,6 +359,17 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
         ],
         dtype=np.str_,
     )
+    cache_key_json = np.asarray(
+        [
+            json.dumps(
+                dict(cache_key or {}),
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        ],
+        dtype=np.str_,
+    )
 
     temporary_path: Path | None = None
     try:
@@ -364,7 +382,7 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
             temporary_path = Path(handle.name)
             np.savez(
                 handle,
-                cache_version=np.asarray([7], dtype=np.int32),
+                cache_version=np.asarray([8], dtype=np.int32),
                 binary_packed=binary_packed,
                 binary_shape=binary_shape,
                 preview_present=np.asarray(
@@ -390,6 +408,7 @@ def save_trace_cache(path: str | Path, result: RasterTraceResult) -> Path:
                 warnings=warnings,
                 structure_id=structure_id,
                 provenance_json=provenance_json,
+                cache_key_json=cache_key_json,
                 texts_json=texts_json,
                 lines_json=lines_json,
                 signature_bboxes=signature_bboxes,
@@ -523,6 +542,22 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 raise ValueError(
                     "Trace cache provenance metadata is invalid JSON"
                 ) from exc
+        cache_key: dict[str, object] | None = None
+        if "cache_key_json" in archive.files:
+            try:
+                value = json.loads(
+                    str(np.asarray(archive["cache_key_json"]).reshape(-1)[0])
+                )
+                if value:
+                    if not isinstance(value, dict):
+                        raise ValueError(
+                            "Trace cache key metadata must be an object"
+                        )
+                    cache_key = value
+            except json.JSONDecodeError as exc:
+                raise ValueError(
+                    "Trace cache key metadata is invalid JSON"
+                ) from exc
 
     path_count = len(parent)
     if offsets.shape != (path_count + 1,):
@@ -585,4 +620,5 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         preview_binary=preview_binary,
         logos=logos,
         final_structure=final_structure,
+        cache_key=cache_key,
     )

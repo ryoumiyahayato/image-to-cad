@@ -19,15 +19,22 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from .auxiliary_recognition import TextCandidate
 from .document_export import DocumentPage
-from .final_structure import FinalStructure, final_structure_from_trace_result
+from .final_structure import (
+    FinalStructure,
+    build_final_structure,
+    final_structure_from_trace_result,
+)
 from .gui_trace_release import TRACE_PDF_DPI
 from .gui_trace_release import MainWindow as _TraceReleaseMainWindow
 from .image_loader import load_image
 from .ocr_recognition import render_ocr_overlay
 from .ocr_review import OcrReviewDialog
 from .preview_renderer import render_final_structure_preview
+from .processing_contract import ProcessingCacheKey, cache_key_matches
 from .raster_trace import RasterTraceResult, trace_binary, trace_image
+from .text_output_contract import text_output_summary
 from .trace_paint import TracePaintDialog
 from .trace_storage import load_trace_cache, save_trace_cache
 
@@ -36,7 +43,7 @@ class MainWindow(_TraceReleaseMainWindow):
     """Exact-CAD shell with OCR-first text export and a reduced normal UI."""
 
     def __init__(self) -> None:
-        self._dirty_trace_keys: set[tuple[str, int | None]] = set()
+        self._dirty_trace_keys: set[object] = set()
         self._ocr_texts = ()
         self._signature_regions = ()
         self._cad_preview_binary = None
@@ -271,7 +278,19 @@ class MainWindow(_TraceReleaseMainWindow):
         )
         existing = self._trace_cache_by_key.get(key)
         if existing is None and state.get("trace_cache_path"):
-            existing = Path(str(state["trace_cache_path"]))
+            candidate = Path(str(state["trace_cache_path"]))
+            if isinstance(key, ProcessingCacheKey) and candidate.exists():
+                try:
+                    stored = load_trace_cache(candidate)
+                except (OSError, ValueError):
+                    stored = None
+                if stored is not None and cache_key_matches(
+                    stored.cache_key,
+                    key,
+                ):
+                    existing = candidate
+            elif not isinstance(key, ProcessingCacheKey):
+                existing = candidate
         if (
             key not in self._dirty_trace_keys
             and existing is not None
@@ -296,10 +315,78 @@ class MainWindow(_TraceReleaseMainWindow):
             logos=structure.logos,
             final_structure=structure,
         )
-        save_trace_cache(target, result)
+        save_trace_cache(
+            target,
+            result,
+            cache_key=(
+                key.payload()
+                if isinstance(key, ProcessingCacheKey)
+                else None
+            ),
+        )
         self._trace_cache_by_key[key] = target
         self._dirty_trace_keys.discard(key)
         return target
+
+    def _replace_final_structure_texts(
+        self,
+        texts: tuple[TextCandidate, ...],
+    ) -> FinalStructure:
+        structure = self._final_structure
+        if structure is None:
+            raise ValueError("Current page has no FinalStructure")
+        text_summary = text_output_summary(texts)
+        observations = tuple(
+            (
+                {
+                    "event": "text_output_contract",
+                    **text_summary.payload(),
+                    "logo_count": len(structure.logos),
+                    "signature_count": len(structure.signatures),
+                }
+                if item.get("event") == "text_output_contract"
+                else dict(item)
+            )
+            for item in structure.observations
+        )
+        if not any(
+            item.get("event") == "text_output_contract"
+            for item in observations
+        ):
+            observations = (
+                *observations,
+                {
+                    "event": "text_output_contract",
+                    **text_summary.payload(),
+                    "logo_count": len(structure.logos),
+                    "signature_count": len(structure.signatures),
+                },
+            )
+        provenance = {
+            **dict(structure.provenance),
+            "gui_text_reviewed": True,
+        }
+        updated = build_final_structure(
+            source_size_px=structure.source_size_px,
+            contour_binary=structure.contour_binary,
+            contours=structure.contours,
+            straight_lines=structure.straight_lines,
+            texts=texts,
+            logos=structure.logos,
+            signatures=structure.signatures,
+            preview_binary=structure.preview_binary,
+            threshold=structure.threshold,
+            warnings=structure.warnings,
+            provenance=provenance,
+            observations=observations,
+        )
+        self._final_structure = updated
+        self._preview_structure_id = updated.structure_id
+        self._ocr_texts = updated.texts
+        self._cad_preview_binary = render_final_structure_preview(updated)
+        self.detected_canvas.set_image(self._cad_preview_binary)
+        self._dirty_trace_keys.add(self._current_trace_key())
+        return updated
 
     def detect_and_clean(self) -> None:
         if self.corrected_image is None and not self._require_corrected():
@@ -443,8 +530,9 @@ class MainWindow(_TraceReleaseMainWindow):
         dialog = OcrReviewDialog(source, tuple(self._ocr_texts), self)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
-        self._ocr_texts = dialog.reviewed_texts()
-        self._dirty_trace_keys.add(self._current_trace_key())
+        self._replace_final_structure_texts(
+            tuple(dialog.reviewed_texts())
+        )
         self.preprocess_stages["OCR 文字识别结果"] = render_ocr_overlay(
             source,
             self._ocr_texts,

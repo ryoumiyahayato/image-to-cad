@@ -1,0 +1,99 @@
+{
+  "phase": 11,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-30T11:53:19+08:00",
+  "base_commit": "8fd1d6cdc5645fa27bc9bb9bf5045b5dcc0e2a8e",
+  "fixed_tag": "baseline/phase11-template-cache-gui-2026-07-30",
+  "scope": {
+    "new_recognition_features_added": false,
+    "recognition_thresholds_changed": false,
+    "fixed_title_block_template_in_generic_flow": false,
+    "fixed_field_dictionary_in_generic_flow": false,
+    "ocr_misread_aliases_in_generic_flow": false,
+    "layout_profile_default_disabled": true,
+    "complete_cache_key_added": true,
+    "cache_key_embedded_in_cache_file": true,
+    "single_and_batch_share_processing_service": true,
+    "final_structure_metadata_is_read_only": true
+  },
+  "cache_key_fields": [
+    "input_content_sha256",
+    "page_number",
+    "dpi",
+    "enable_ocr",
+    "algorithm_version",
+    "model_version",
+    "config_summary",
+    "layout_profile",
+    "final_structure_schema_version",
+    "critical_threshold_summary"
+  ],
+  "real_page_validation": {
+    "document_count": 10,
+    "document_check_count": 80,
+    "architecture_check_count": 5,
+    "all_checks_passed": true,
+    "all_structure_ids_match_phase10": true,
+    "representative_immediate_repeat_matches": true,
+    "all_cache_roundtrips_match": true,
+    "all_required_cache_key_mutations_miss": true,
+    "all_final_structure_masks_immutable": true
+  },
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q --junitxml=validation\\template-cache-gui\\phase11-pytest.xml",
+    "tests": 257,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_scope": "app scripts tests",
+    "ruff_passed": true,
+    "compileall_passed": true,
+    "git_diff_check_passed": true,
+    "mypy_passed": false,
+    "mypy_blocking": false,
+    "mypy_reason": "Python 3.14 and current NumPy typing use syntax newer than the repository Python 3.11 mypy target; mypy stopped before checking project code."
+  },
+  "real_regression": {
+    "passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "formal_baseline_changed": false
+  },
+  "evidence_files": {
+    "phase11-before.json": {
+      "sha256": "521e37a4d467af0da4a1fb32b8fb339ee1c8457bb453be73367b920efda9a67f"
+    },
+    "phase11-after.json": {
+      "sha256": "9b0727840d074f6e444e759c1de54377e7df693d72c1e600d94ffe7ac450ef4a"
+    },
+    "phase11-real-regression.json": {
+      "sha256": "250d18311a44c5896a03c515c3207e18c30f848e4772e29e05ef31c07e7280ec"
+    },
+    "phase11-pytest.xml": {
+      "sha256": "3f564d5acd44d0f5e81f0b859b6db0c0847986e4432122066c2d3899926eb574"
+    },
+    "real-regression-manifest.json": {
+      "sha256": "4c36f0e2e4b33fec6b0e13c93ba9d7550aa346b691b2790b474e269be81ce4d6"
+    }
+  },
+  "acceptance": {
+    "same_input_same_config_same_structure_id": true,
+    "same_input_same_config_same_content_summary": true,
+    "same_path_changed_content_misses_cache": true,
+    "ocr_change_misses_cache": true,
+    "dpi_change_misses_cache": true,
+    "algorithm_change_misses_cache": true,
+    "model_change_misses_cache": true,
+    "configuration_change_misses_cache": true,
+    "profile_change_misses_cache": true,
+    "single_and_batch_share_service": true,
+    "preview_and_export_share_immutable_final_structure": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

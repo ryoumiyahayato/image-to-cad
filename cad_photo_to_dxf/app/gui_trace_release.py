@@ -13,6 +13,7 @@ from PySide6.QtWidgets import QGroupBox, QLabel, QMessageBox, QPushButton
 from .document_export import DocumentPage
 from .gui_trace_mode import MainWindow as _TraceMainWindow
 from .image_loader import load_image
+from .processing_contract import ProcessingCacheKey
 from .raster_trace import RasterTraceResult, trace_image
 from .scale_calibrator import ScaleCalibration
 from .trace_gui_export import export_trace_from_window
@@ -28,7 +29,7 @@ class MainWindow(_TraceMainWindow):
 
     def __init__(self) -> None:
         self._trace_cache_tempdir = TemporaryDirectory(prefix="image-to-cad-trace-")
-        self._trace_cache_by_key: dict[tuple[str, int | None], Path] = {}
+        self._trace_cache_by_key: dict[object, Path] = {}
         super().__init__()
         self._update_scale_label()
 
@@ -170,12 +171,15 @@ class MainWindow(_TraceMainWindow):
         source = str(source_path.resolve()) if source_path is not None else fallback
         return source, page_index
 
-    def _current_trace_key(self) -> tuple[str, int | None]:
+    def _current_trace_key(self) -> object:
         page_index = self._current_pdf_page_index if self._native_pdf_mode else None
         return self._source_key(self.current_path, page_index)
 
-    def _cache_path_for_key(self, key: tuple[str, int | None]) -> Path:
-        digest = sha256(f"{key[0]}|{key[1]}".encode("utf-8")).hexdigest()[:24]
+    def _cache_path_for_key(self, key: object) -> Path:
+        if isinstance(key, ProcessingCacheKey):
+            digest = key.digest[:24]
+        else:
+            digest = sha256(repr(key).encode("utf-8")).hexdigest()[:24]
         return Path(self._trace_cache_tempdir.name) / f"trace-{digest}.npz"
 
     def _store_current_trace(self) -> Path | None:
@@ -205,7 +209,15 @@ class MainWindow(_TraceMainWindow):
                 else None
             ),
         )
-        save_trace_cache(target, result)
+        save_trace_cache(
+            target,
+            result,
+            cache_key=(
+                key.payload()
+                if isinstance(key, ProcessingCacheKey)
+                else None
+            ),
+        )
         self._trace_cache_by_key[key] = target
         return target
 
@@ -219,6 +231,10 @@ class MainWindow(_TraceMainWindow):
         cache_path = self._store_current_trace()
         if cache_path is not None:
             state["trace_cache_path"] = str(cache_path)
+            key = self._current_trace_key()
+            if isinstance(key, ProcessingCacheKey):
+                state["trace_cache_key"] = key.payload()
+                state["trace_cache_key_digest"] = key.digest
         state["drawing_scale"] = self._drawing_scale()
         state["trace_color"] = 7
         state.pop("binary_image", None)

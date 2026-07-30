@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "phase": 11,
+  "baseline_commit": "8fd1d6cdc5645fa27bc9bb9bf5045b5dcc0e2a8e",
+  "baseline_tag": "baseline/phase10-text-output-contract-2026-07-30",
+  "threshold_change_requested": false,
+  "threshold_change_performed": false,
+  "template_audit": {
+    "fixed_title_block_template_in_generic_pipeline": false,
+    "fixed_field_dictionary_in_generic_pipeline": false,
+    "ocr_misread_aliases_in_generic_pipeline": false,
+    "explicit_layout_profile_contract": false,
+    "default_profile_explicitly_disabled": false
+  },
+  "cache_key_before": {
+    "input_file_content_sha256": false,
+    "page_number": true,
+    "dpi": false,
+    "ocr_enabled": false,
+    "algorithm_version": false,
+    "model_version": false,
+    "configuration_summary": false,
+    "layout_profile": false,
+    "final_structure_schema_version": false,
+    "critical_threshold_summary": false,
+    "actual_fields": [
+      "resolved source path",
+      "zero-based page index"
+    ]
+  },
+  "gui_architecture_before": {
+    "single_and_batch_use_same_underlying_algorithm": true,
+    "single_and_batch_use_one_processing_service": false,
+    "preview_and_export_share_final_structure_guard": true,
+    "active_cache_restore_rebuilds_final_structure": false,
+    "reviewed_text_rebuilds_final_structure": false,
+    "cache_embeds_processing_key": false
+  },
+  "acceptance": {
+    "same_input_same_config_is_explicitly_reproducible": false,
+    "same_path_changed_content_misses_cache": false,
+    "ocr_change_misses_cache": false,
+    "dpi_change_misses_cache": false,
+    "algorithm_or_config_change_misses_cache": false,
+    "profile_change_misses_cache": false,
+    "single_and_batch_share_service": false,
+    "preview_and_export_consume_same_immutable_structure": false
+  }
+}

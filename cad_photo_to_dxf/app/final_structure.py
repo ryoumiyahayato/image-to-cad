@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field, replace
 from hashlib import sha256
 import json
+from types import MappingProxyType
 from typing import TYPE_CHECKING, Any, Mapping
 
 import numpy as np
@@ -207,8 +208,11 @@ def build_final_structure(
         preview_binary=_immutable_mask(preview_binary, shape=shape),
         threshold=int(threshold),
         warnings=tuple(warnings),
-        provenance=dict(provenance or {}),
-        observations=tuple(dict(item) for item in observations),
+        provenance=MappingProxyType(dict(provenance or {})),
+        observations=tuple(
+            MappingProxyType(dict(item))
+            for item in observations
+        ),
     )
     structure.assert_valid()
     return structure

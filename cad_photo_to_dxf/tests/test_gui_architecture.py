@@ -151,7 +151,14 @@ class GuiArchitectureTests(unittest.TestCase):
         self.assertIn("CAD 轮廓预览", exact_source)
         self.assertIn("正在按修改内容重新生成 CAD 轮廓", exact_source)
         self.assertIn("导出 CAD（每页独立文件）", librecad_source)
-        self.assertIn("trace_image_optimized", librecad_source)
+        self.assertIn("ProductionProcessingService", librecad_source)
+        self.assertNotIn("trace_image_optimized(", librecad_source)
+        self.assertEqual(
+            librecad_source.count(
+                "ProductionProcessingService.process_page("
+            ),
+            2,
+        )
         self.assertNotIn("内置字体匹配", librecad_source)
         self.assertNotIn("单字可编辑", ocr_review_source)
         self.assertNotIn("每个汉字、字母和数字分别生成", ocr_review_source)

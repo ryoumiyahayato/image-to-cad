@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import datetime, timezone
-from hashlib import sha256
 from pathlib import Path
 import time
 from typing import Any
@@ -26,7 +25,16 @@ from .image_loader import bounded_pdf_dpi, load_image
 from .font_library import default_font_face
 from .librecad_ocr_review import LibreCadLffOcrReviewDialog as _BaseOcrReviewDialog
 from .ocr_outline_export import accepted_ocr_texts
-from .optimized_trace import trace_image_optimized
+from .preview_renderer import render_final_structure_preview
+from .processing_contract import (
+    ProcessingCacheKey,
+    ProductionProcessingConfig,
+    ProductionProcessingService,
+    build_processing_cache_key,
+    cache_key_matches,
+    file_content_sha256,
+    image_content_sha256,
+)
 from .raster_trace import RasterTraceResult
 from .scale_calibrator import ScaleCalibration
 from .trace_storage import load_trace_cache, save_trace_cache
@@ -203,6 +211,72 @@ class MainWindow(_ExactMainWindow):
             max_dimension_px=PROCESS_PDF_MAX_SIDE,
         )
 
+    def _processing_config(
+        self,
+        page_index: int | None,
+        *,
+        enable_ocr: bool | None = None,
+    ) -> ProductionProcessingConfig:
+        resolved_ocr = (
+            self._ocr_enabled()
+            if enable_ocr is None
+            else bool(enable_ocr)
+        )
+        dpi = (
+            self._processing_pdf_dpi(page_index)
+            if self._native_pdf_mode and page_index is not None
+            else TRACE_PDF_DPI
+        )
+        return ProductionProcessingConfig(
+            source_dpi=float(dpi),
+            enable_ocr=resolved_ocr,
+        )
+
+    def _source_key(
+        self,
+        source_path: Path | None,
+        page_index: int | None,
+        fallback: str = "unsaved",
+        *,
+        input_content_sha256: str | None = None,
+        enable_ocr: bool | None = None,
+    ) -> ProcessingCacheKey:
+        config = self._processing_config(
+            page_index,
+            enable_ocr=enable_ocr,
+        )
+        if input_content_sha256 is not None:
+            content_hash = input_content_sha256
+        elif source_path is not None and source_path.exists():
+            content_hash = file_content_sha256(source_path)
+        elif self.corrected_image is not None:
+            content_hash = image_content_sha256(self.corrected_image)
+        else:
+            content_hash = image_content_sha256(
+                np.frombuffer(
+                    fallback.encode("utf-8"),
+                    dtype=np.uint8,
+                )
+            )
+        return build_processing_cache_key(
+            input_content_sha256=content_hash,
+            page_index=page_index,
+            config=config,
+        )
+
+    @staticmethod
+    def _cache_file_matches(
+        path: Path,
+        key: ProcessingCacheKey,
+    ) -> bool:
+        if not path.exists():
+            return False
+        try:
+            stored = load_trace_cache(path)
+        except (OSError, ValueError):
+            return False
+        return cache_key_matches(stored.cache_key, key)
+
     def _load_trace_source_for_current_page(self):
         if not self._native_pdf_mode or self.current_path is None:
             if self.corrected_image is None:
@@ -231,27 +305,19 @@ class MainWindow(_ExactMainWindow):
         duration: float,
         save_pdf_state: bool,
     ) -> None:
-        self._ocr_texts = tuple(result.texts)
-        self._signature_regions = tuple(result.signatures)
-        self._cad_preview_binary = (
-            np.ascontiguousarray(result.preview_binary.copy())
-            if result.preview_binary is not None
-            else np.ascontiguousarray(result.binary.copy())
+        super()._apply_trace_result(
+            result,
+            started_at=started_at,
+            duration=duration,
+            save_pdf_state=save_pdf_state,
         )
-        self._dirty_trace_keys.add(self._current_trace_key())
-        self.binary_image = result.binary
-        self.preprocess_stages = {}
-        self._clear_preprocess_tabs()
-        self._trace_paths = tuple(result.paths)
-        self._trace_threshold = int(result.threshold)
-        self._trace_foreground_pixels = int(result.foreground_pixels)
-        self._trace_vertex_count = int(result.vertex_count)
-        self.raw_lines = []
-        self.lines = list(result.straight_lines)
-        self.geometry_report = None
-        self.classification_report = None
-        self.auxiliary_result = None
-        self._reviewed_circles = []
+        if self._final_structure is None:
+            raise AssertionError(
+                "Active GUI processing produced no FinalStructure"
+            )
+        self._cad_preview_binary = render_final_structure_preview(
+            self._final_structure
+        )
         preview = self._scaled_for_preview(
             self._cad_preview_binary,
             target_shape=self._preview_shape(),
@@ -259,11 +325,6 @@ class MainWindow(_ExactMainWindow):
         self.corrected_canvas.set_image(preview)
         self.detected_canvas.set_image(preview)
         self.tabs.setCurrentWidget(self.detected_canvas)
-        self._run_started_at = started_at
-        self._run_duration_seconds = duration
-        self._last_warnings = tuple(result.warnings)
-        if save_pdf_state:
-            self._save_current_pdf_state()
         self._update_scale_label()
         safe = len(accepted_ocr_texts(result.texts))
         retained = max(0, len(result.texts) - safe)
@@ -283,29 +344,52 @@ class MainWindow(_ExactMainWindow):
             self._clear_preprocess_tabs()
             self._ocr_texts = ()
             self._signature_regions = ()
+            self._final_structure = None
+            self._preview_structure_id = None
             return
         cache_path = Path(str(cache_value))
+        expected_key = self._source_key(
+            self.current_path,
+            page_index,
+        )
         stored = load_trace_cache(cache_path)
-        self._trace_cache_by_key[self._current_trace_key()] = cache_path
-        self.binary_image = stored.binary
-        self._trace_paths = stored.paths
-        self._trace_threshold = stored.threshold
-        self._trace_foreground_pixels = stored.foreground_pixels
-        self._trace_vertex_count = stored.vertex_count
-        self._last_warnings = stored.warnings
-        self._ocr_texts = stored.texts
-        self._signature_regions = stored.signatures
-        self.lines = list(stored.straight_lines)
-        self._cad_preview_binary = stored.preview_binary
-        self._dirty_trace_keys.discard(self._current_trace_key())
+        if not cache_key_matches(stored.cache_key, expected_key):
+            self._clear_trace_state()
+            self.binary_image = None
+            self._ocr_texts = ()
+            self._signature_regions = ()
+            self._final_structure = None
+            self._preview_structure_id = None
+            raise ValueError(
+                "Trace cache key does not match current content or configuration"
+            )
+        structure = stored.final_structure
+        if structure is None:
+            raise ValueError("Trace cache has no FinalStructure")
+        self._trace_cache_by_key[expected_key] = cache_path
+        self.binary_image = structure.contour_binary
+        self._trace_paths = structure.contours
+        self._trace_threshold = structure.threshold
+        self._trace_foreground_pixels = int(
+            np.count_nonzero(structure.contour_binary == 0)
+        )
+        self._trace_vertex_count = sum(
+            len(path.points) for path in structure.contours
+        )
+        self._last_warnings = structure.warnings
+        self._ocr_texts = structure.texts
+        self._signature_regions = structure.signatures
+        self.lines = list(structure.straight_lines)
+        self._final_structure = structure
+        self._preview_structure_id = structure.structure_id
+        self._cad_preview_binary = render_final_structure_preview(
+            structure
+        )
+        self._dirty_trace_keys.discard(expected_key)
         self.preprocess_stages = {}
         self._clear_preprocess_tabs()
         preview = self._scaled_for_preview(
-            (
-                stored.preview_binary
-                if stored.preview_binary is not None
-                else stored.binary
-            ),
+            self._cad_preview_binary,
             target_shape=self._preview_shape(),
         )
         self.corrected_canvas.set_image(preview)
@@ -344,16 +428,17 @@ class MainWindow(_ExactMainWindow):
         enable_ocr = self._ocr_enabled()
 
         def operation(token, progress) -> object:
-            return trace_image_optimized(
-                source,
-                enable_ocr=enable_ocr,
-                source_dpi=(
-                    self._processing_pdf_dpi(
-                        self._current_pdf_page_index
-                    )
+            config = self._processing_config(
+                (
+                    self._current_pdf_page_index
                     if self._native_pdf_mode
-                    else TRACE_PDF_DPI
+                    else None
                 ),
+                enable_ocr=enable_ocr,
+            )
+            return ProductionProcessingService.process_page(
+                source,
+                config,
                 cancellation_token=token,
                 progress_callback=lambda stage, fraction: progress(
                     self._stage_text(stage), fraction
@@ -385,20 +470,34 @@ class MainWindow(_ExactMainWindow):
         started_at = datetime.now(timezone.utc)
         started = time.perf_counter()
         drawing_scale = self._drawing_scale()
-        cache_root = Path(self._trace_cache_tempdir.name)
         enable_ocr = self._ocr_enabled()
 
         def operation(token, progress) -> object:
             results: dict[int, dict[str, Any]] = {}
+            source_hash = file_content_sha256(source_path)
             for page_index in range(page_count):
                 token.checkpoint()
-                key = self._source_key(source_path, page_index)
+                config = self._processing_config(
+                    page_index,
+                    enable_ocr=enable_ocr,
+                )
+                key = self._source_key(
+                    source_path,
+                    page_index,
+                    input_content_sha256=source_hash,
+                    enable_ocr=enable_ocr,
+                )
                 old_state = self._pdf_page_states.get(page_index, {})
                 old_cache = old_state.get("trace_cache_path")
                 if (
                     key not in self._dirty_trace_keys
                     and old_cache
-                    and Path(str(old_cache)).exists()
+                    and old_state.get("trace_cache_key_digest")
+                    == key.digest
+                    and self._cache_file_matches(
+                        Path(str(old_cache)),
+                        key,
+                    )
                 ):
                     results[page_index] = dict(old_state)
                     progress(
@@ -421,16 +520,23 @@ class MainWindow(_ExactMainWindow):
                         / max(page_count, 1),
                     )
 
-                result = trace_image_optimized(
+                result = ProductionProcessingService.process_page(
                     image,
-                    enable_ocr=enable_ocr,
-                    source_dpi=self._processing_pdf_dpi(page_index),
+                    config,
                     cancellation_token=token,
                     progress_callback=page_progress,
                 )
-                digest = sha256(f"{key[0]}|{key[1]}".encode("utf-8")).hexdigest()[:24]
-                cache_path = cache_root / f"trace-{digest}.npz"
-                save_trace_cache(cache_path, result)
+                cache_path = self._cache_path_for_key(key)
+                save_trace_cache(
+                    cache_path,
+                    result,
+                    cache_key=key.payload(),
+                )
+                structure = result.final_structure
+                if structure is None:
+                    raise AssertionError(
+                        "Production service returned no FinalStructure"
+                    )
                 results[page_index] = {
                     "raw_lines": [],
                     "lines": [],
@@ -447,6 +553,10 @@ class MainWindow(_ExactMainWindow):
                     "trace_vertex_count": result.vertex_count,
                     "ocr_text_count": len(result.texts),
                     "processing_dpi": self._processing_pdf_dpi(page_index),
+                    "processing_config": config.payload(),
+                    "trace_cache_key": key.payload(),
+                    "trace_cache_key_digest": key.digest,
+                    "structure_id": structure.structure_id,
                     "drawing_scale": drawing_scale,
                     "trace_color": 7,
                 }
@@ -462,7 +572,9 @@ class MainWindow(_ExactMainWindow):
             for page_index, state in results.items():
                 state["run_duration_seconds"] = duration
                 total_texts += int(state.get("ocr_text_count", 0))
-                key = self._source_key(source_path, page_index)
+                key = ProcessingCacheKey.from_payload(
+                    state["trace_cache_key"]
+                )
                 cache_value = state.get("trace_cache_path")
                 if cache_value:
                     self._trace_cache_by_key[key] = Path(str(cache_value))
@@ -505,8 +617,9 @@ class MainWindow(_ExactMainWindow):
         dialog = LibreCadOcrReviewDialog(source, tuple(self._ocr_texts), self)
         if dialog.exec() != QDialog.DialogCode.Accepted:
             return
-        self._ocr_texts = dialog.reviewed_texts()
-        self._dirty_trace_keys.add(self._current_trace_key())
+        self._replace_final_structure_texts(
+            tuple(dialog.reviewed_texts())
+        )
         if self._native_pdf_mode:
             self._save_current_pdf_state()
         exportable = accepted_ocr_texts(self._ocr_texts)
