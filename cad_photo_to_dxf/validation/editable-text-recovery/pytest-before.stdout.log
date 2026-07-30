@@ -1,0 +1,25 @@
+........................................................................ [ 27%]
+........................................................................ [ 55%]
+........................................................................ [ 83%]
+...........................................                              [100%]
+============================== warnings summary ===============================
+tests/test_circle_export.py: 12 warnings
+tests/test_consolidated_pr_features.py: 6 warnings
+tests/test_core.py: 6 warnings
+tests/test_document_export.py: 6 warnings
+tests/test_font_aware_ocr_export.py: 6 warnings
+tests/test_librecad_lff_export.py: 6 warnings
+tests/test_observability.py: 21 warnings
+tests/test_pipeline_perspective.py: 6 warnings
+tests/test_scan_backed_export.py: 6 warnings
+tests/test_signature_overlay.py: 6 warnings
+tests/test_system_refactor_invariants.py: 6 warnings
+tests/test_text_output_contract.py: 12 warnings
+tests/test_trace_export.py: 42 warnings
+  C:\Users\agcrf\Desktop\image-to-cad\cad_photo_to_dxf\.venv\Lib\site-packages\ezdxf\math\_matrix44.py:637: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+  As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+    m.shape = (3, 3)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: C:\Users\agcrf\Desktop\image-to-cad\cad_photo_to_dxf\validation\editable-text-recovery\test-results-before.xml -
+259 passed, 141 warnings in 17.41s

@@ -1,0 +1,9 @@
+branch=fix/non-destructive-editable-text
+head=625dcd9
+phase12_tag=baseline/phase12-final-acceptance-2026-07-30
+phase12_commit=6f5f69329aabf0bd3a7eda84baf66eb1959bdcba
+worktree_before_validation_files=clean
+uat_evidence_commit=625dcd9
+production_code_modified=false
+tmp_modified=false
+regression_baseline_modified=false
