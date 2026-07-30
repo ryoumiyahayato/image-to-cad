@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "phase": 9,
+  "evidence_kind": "before",
+  "captured_at": "2026-07-30T10:00:00+08:00",
+  "base_commit": "16aeda69a724f362a4b3f30aa6ea7a1956df83c6",
+  "base_tag": "baseline/phase8-content-ownership-2026-07-30",
+  "source_evidence": {
+    "path": "validation/content-ownership/phase8-after.json",
+    "sha256": "6e489db3deb1473fdd64c5bb202b0ab7e1c39646961b4bd2dcb7ee4da0086929"
+  },
+  "input_manifest": {
+    "path": "output/ci/phase5-comparison-inputs/input-manifest.json",
+    "sha256": "5fab068497a87b672a93c3863db73ff9806d4183d561e736d2bbb63290a07f97"
+  },
+  "document_count": 10,
+  "source_pixels": 3104606,
+  "logo_candidate_count": 0,
+  "logo_final_pixels": 0,
+  "signature_candidate_count": 2,
+  "signature_candidate_pixels": 1292,
+  "signature_final_pixels": 1253,
+  "signature_final_outside_annotation_pixels": 1253,
+  "semantic_capture_in_normal_text_pixels": 0,
+  "findings": [
+    {
+      "document_id": "environment-scan-page-002-120dpi",
+      "bbox": [997, 602, 282, 48],
+      "candidate_pixels": 720,
+      "final_signature_pixels": 703,
+      "final_outside_annotation_pixels": 703,
+      "visual_evidence": {
+        "source_component_count": 4,
+        "source_pixel_count": 720,
+        "density": 0.05319148936170213,
+        "continuity": 1.0,
+        "directional_complexity": 11,
+        "positive_diagonal_span": 0.0,
+        "negative_diagonal_span": 283.4,
+        "bidirectional_diagonal_support": false,
+        "perimeter_per_pixel": 0.939851988852024,
+        "convex_solidity": 0.12280402524304963
+      },
+      "finding": "One-direction plan stroke was forced into the signature IMAGE owner."
+    },
+    {
+      "document_id": "environment-scan-page-004-120dpi",
+      "bbox": [458, 1251, 172, 50],
+      "candidate_pixels": 572,
+      "final_signature_pixels": 550,
+      "final_outside_annotation_pixels": 550,
+      "visual_evidence": {
+        "source_component_count": 4,
+        "source_pixel_count": 572,
+        "density": 0.06651162790697675,
+        "continuity": 0.8662790697674418,
+        "directional_complexity": 13,
+        "positive_diagonal_span": 46.2,
+        "negative_diagonal_span": 0.0,
+        "bidirectional_diagonal_support": false,
+        "perimeter_per_pixel": 0.8580739894113341,
+        "convex_solidity": 0.08915211970074813
+      },
+      "finding": "One-direction title-block or plan stroke was forced into the signature IMAGE owner."
+    }
+  ],
+  "acceptance": {
+    "semantic_terms_alone_cannot_classify_logo": true,
+    "bbox_overlap_alone_cannot_classify_signature": true,
+    "insufficient_signature_evidence_falls_back_to_outline": false,
+    "semantic_predictions_stay_inside_annotated_regions": false,
+    "safe_to_commit_phase": false
+  }
+}

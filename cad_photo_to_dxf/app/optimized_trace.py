@@ -173,13 +173,21 @@ def trace_image_optimized(
             observation_sink,
             "logo_candidate_mask",
             image=graphic_mask,
-            payload={"role": "candidate", "count": len(logos)},
+            payload={
+                "role": "candidate",
+                "count": len(logos),
+                "regions": [item.payload() for item in logos],
+            },
         )
         observe(
             observation_sink,
             "signature_candidate_mask",
             image=signature_mask,
-            payload={"role": "candidate", "count": len(signatures)},
+            payload={
+                "role": "candidate",
+                "count": len(signatures),
+                "regions": [item.payload() for item in signatures],
+            },
         )
     connection_protection = build_connection_protection(
         prepared.binary,
@@ -258,13 +266,21 @@ def trace_image_optimized(
             observation_sink,
             "logo_candidate_mask",
             image=ownership.logo,
-            payload={"role": "final-owned"},
+            payload={
+                "role": "final-owned",
+                "count": len(logos),
+                "regions": [item.payload() for item in logos],
+            },
         )
         observe(
             observation_sink,
             "signature_candidate_mask",
             image=ownership.signature,
-            payload={"role": "final-owned"},
+            payload={
+                "role": "final-owned",
+                "count": len(signatures),
+                "regions": [item.payload() for item in signatures],
+            },
         )
         observe(
             observation_sink,

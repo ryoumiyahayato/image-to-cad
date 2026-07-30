@@ -5,9 +5,11 @@ from pathlib import Path
 import cv2
 import ezdxf
 import numpy as np
+import pytest
 
 from app.auxiliary_recognition import TextCandidate
-from app.logo_detection import detect_logo_regions
+from app.content_ownership import partition_content
+from app.logo_detection import LogoRegion, detect_logo_regions
 from app.raster_trace import trace_binary
 from app.signature_overlay import (
     SignatureRegion,
@@ -223,6 +225,34 @@ def test_freeform_signature_beside_long_label_is_preserved() -> None:
     assert mark_signature_texts((candidate,), regions) == (candidate,)
 
 
+def test_one_direction_plan_stroke_is_not_forced_to_signature_image() -> None:
+    binary = np.full((180, 420), 255, dtype=np.uint8)
+    cv2.polylines(
+        binary,
+        [
+            np.asarray(
+                [(35, 125), (125, 110), (220, 95), (330, 75)],
+                dtype=np.int32,
+            )
+        ],
+        False,
+        0,
+        4,
+        cv2.LINE_8,
+    )
+
+    assert detect_signature_regions(binary) == ()
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(),
+        logos=(),
+        signatures=(),
+    )
+    assert cv2.countNonZero(ownership.signature) == 0
+    assert cv2.countNonZero(ownership.graphic) > 0
+
+
 def test_signature_rgba_keeps_original_stroke_footprint() -> None:
     mask = np.zeros((40, 80), dtype=np.uint8)
     cv2.line(mask, (5, 20), (70, 20), 255, 9, cv2.LINE_8)
@@ -369,3 +399,196 @@ def test_logo_detector_uses_closed_geometry_instead_of_ocr_words() -> None:
     assert len(regions) == 1
     assert regions[0].hole_count >= 2
     assert regions[0].structural_score > 0.5
+    assert regions[0].visual_kind == "graphic_mark"
+    assert regions[0].payload()["evidence_source"] == "source_geometry_only"
+
+
+@pytest.mark.parametrize(
+    ("rendered_text", "ocr_text"),
+    (
+        ("DESIGN GROUP", "普通正文包含设计集团"),
+        ("DESIGN", "标题中含 DESIGN"),
+    ),
+)
+def test_design_words_do_not_create_logo_without_visual_evidence(
+    rendered_text: str,
+    ocr_text: str,
+) -> None:
+    binary = np.full((180, 700), 255, dtype=np.uint8)
+    cv2.putText(
+        binary,
+        rendered_text,
+        (20, 105),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.2,
+        0,
+        2,
+        cv2.LINE_8,
+    )
+    candidate = TextCandidate(
+        text=ocr_text,
+        bbox=(15, 55, 650, 65),
+        confidence=0.99,
+        kind="text_candidate",
+        source="negative-example",
+        approved=True,
+        reviewed=True,
+        replacement_safe=True,
+    )
+
+    assert detect_logo_regions(binary) == ()
+    assert mark_graphic_texts((candidate,), page_shape=binary.shape) == (
+        candidate,
+    )
+
+
+def test_signature_bbox_overlap_does_not_capture_neighboring_body_text() -> None:
+    binary = np.full((160, 420), 255, dtype=np.uint8)
+    signature_mask = np.zeros((80, 300), dtype=np.uint8)
+    cv2.polylines(
+        signature_mask,
+        [
+            np.asarray(
+                [(10, 48), (45, 18), (82, 58), (125, 16)],
+                dtype=np.int32,
+            )
+        ],
+        False,
+        255,
+        5,
+        cv2.LINE_8,
+    )
+    binary[40:120, 20:320][signature_mask > 0] = 0
+    cv2.putText(
+        binary,
+        "NORMAL BODY",
+        (170, 92),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.65,
+        0,
+        2,
+        cv2.LINE_8,
+    )
+    signature = SignatureRegion(
+        bbox=(20, 40, 300, 80),
+        mask=signature_mask,
+    )
+    body = TextCandidate(
+        text="normal body",
+        bbox=(165, 62, 165, 40),
+        confidence=0.99,
+        kind="text_candidate",
+        source="negative-example",
+        approved=True,
+        reviewed=True,
+        replacement_safe=True,
+    )
+
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(body,),
+        logos=(),
+        signatures=(signature,),
+    )
+
+    body_x, body_y, body_width, body_height = body.bbox
+    body_signature_pixels = cv2.countNonZero(
+        ownership.signature[
+            body_y : body_y + body_height,
+            body_x : body_x + body_width,
+        ]
+    )
+    assert body_signature_pixels == 0
+    assert cv2.countNonZero(
+        ownership.text[
+            body_y : body_y + body_height,
+            body_x : body_x + body_width,
+        ]
+    ) > 0
+    assert cv2.countNonZero(ownership.signature) == cv2.countNonZero(
+        signature_mask
+    )
+
+
+def test_graphic_logo_mask_does_not_absorb_adjacent_project_name() -> None:
+    binary = np.full((220, 620), 255, dtype=np.uint8)
+    logo_bbox = (30, 45, 130, 130)
+    logo_mask = np.zeros((130, 130), dtype=np.uint8)
+    cv2.circle(logo_mask, (65, 65), 52, 255, 5)
+    cv2.circle(logo_mask, (65, 65), 25, 255, 5)
+    cv2.line(logo_mask, (65, 13), (65, 117), 255, 4)
+    binary[45:175, 30:160][logo_mask > 0] = 0
+    cv2.putText(
+        binary,
+        "PROJECT NAME",
+        (210, 120),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        0,
+        2,
+        cv2.LINE_8,
+    )
+    logo = LogoRegion(
+        bbox=logo_bbox,
+        mask=logo_mask,
+        structural_score=0.9,
+        hole_count=2,
+        contour_count=3,
+        visual_kind="graphic_mark",
+    )
+    project_name = TextCandidate(
+        text="Project Name",
+        bbox=(205, 85, 250, 50),
+        confidence=0.99,
+        kind="text_candidate",
+        source="negative-example",
+        approved=True,
+        reviewed=True,
+        replacement_safe=True,
+    )
+
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(project_name,),
+        logos=(logo,),
+        signatures=(),
+    )
+
+    x, y, width, height = project_name.bbox
+    assert cv2.countNonZero(
+        ownership.logo[y : y + height, x : x + width]
+    ) == 0
+    assert cv2.countNonZero(
+        ownership.text[y : y + height, x : x + width]
+    ) > 0
+    assert cv2.countNonZero(ownership.logo) == cv2.countNonZero(logo_mask)
+
+
+def test_letter_like_engineering_symbol_is_not_forced_to_logo_or_signature() -> None:
+    binary = np.full((220, 320), 255, dtype=np.uint8)
+    cv2.circle(binary, (120, 110), 40, 0, 3, cv2.LINE_8)
+    cv2.putText(
+        binary,
+        "A",
+        (96, 132),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.8,
+        0,
+        3,
+        cv2.LINE_8,
+    )
+
+    assert detect_logo_regions(binary) == ()
+    assert detect_signature_regions(binary) == ()
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(),
+        logos=(),
+        signatures=(),
+    )
+    assert cv2.countNonZero(ownership.logo) == 0
+    assert cv2.countNonZero(ownership.signature) == 0
+    assert cv2.countNonZero(ownership.graphic) > 0

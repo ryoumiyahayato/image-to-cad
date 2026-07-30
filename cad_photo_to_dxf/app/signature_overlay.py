@@ -15,6 +15,39 @@ from .structural_roi import verified_structural_rule_masks
 
 
 @dataclass(frozen=True)
+class SignatureVisualEvidence:
+    source_component_count: int
+    source_pixel_count: int
+    density: float
+    continuity: float
+    directional_complexity: int
+    positive_diagonal_span: float
+    negative_diagonal_span: float
+    bidirectional_diagonal_support: bool
+    perimeter_per_pixel: float
+    convex_solidity: float
+    confidence: float
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "source_component_count": int(self.source_component_count),
+            "source_pixel_count": int(self.source_pixel_count),
+            "density": float(self.density),
+            "continuity": float(self.continuity),
+            "directional_complexity": int(self.directional_complexity),
+            "positive_diagonal_span": float(self.positive_diagonal_span),
+            "negative_diagonal_span": float(self.negative_diagonal_span),
+            "bidirectional_diagonal_support": bool(
+                self.bidirectional_diagonal_support
+            ),
+            "perimeter_per_pixel": float(self.perimeter_per_pixel),
+            "convex_solidity": float(self.convex_solidity),
+            "confidence": float(self.confidence),
+            "evidence_source": "source_geometry_only",
+        }
+
+
+@dataclass(frozen=True)
 class SignatureRegion:
     """One structurally detected handwriting footprint.
 
@@ -24,6 +57,18 @@ class SignatureRegion:
 
     bbox: tuple[int, int, int, int]
     mask: np.ndarray
+    visual_evidence: SignatureVisualEvidence | None = None
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "bbox": [int(value) for value in self.bbox],
+            "mask_pixels": int(cv2.countNonZero(self.mask)),
+            "visual_evidence": (
+                None
+                if self.visual_evidence is None
+                else self.visual_evidence.payload()
+            ),
+        }
 
 
 @dataclass(frozen=True)
@@ -155,6 +200,43 @@ def _directional_complexity(mask: np.ndarray) -> int:
     )
 
 
+def _bidirectional_diagonal_spans(mask: np.ndarray) -> tuple[float, float]:
+    """Return the longest supported stroke in each diagonal direction.
+
+    Long one-directional plan, leader and title-block strokes are not sufficient
+    evidence for a signature IMAGE. A positive signature classification requires
+    source-supported diagonals in both directions; otherwise its pixels remain in
+    the ordinary outline pipeline.
+    """
+
+    height = int(mask.shape[0])
+    lines = cv2.HoughLinesP(
+        mask,
+        1,
+        np.pi / 180.0,
+        threshold=max(8, height // 3),
+        minLineLength=max(8, height // 2),
+        maxLineGap=max(2, height // 6),
+    )
+    positive_span = 0.0
+    negative_span = 0.0
+    if lines is None:
+        return positive_span, negative_span
+
+    minimum_vertical_span = max(2.0, height * 0.20)
+    for x1, y1, x2, y2 in lines[:, 0]:
+        dx = int(x2) - int(x1)
+        dy = int(y2) - int(y1)
+        if abs(dy) < minimum_vertical_span:
+            continue
+        span = hypot(dx, dy)
+        if dx * dy > 0:
+            positive_span = max(positive_span, span)
+        elif dx * dy < 0:
+            negative_span = max(negative_span, span)
+    return positive_span, negative_span
+
+
 def _signature_like(
     group: tuple[_InkComponent, ...],
     labels: np.ndarray,
@@ -191,13 +273,22 @@ def _signature_like(
         return None
     convex_area = cv2.contourArea(cv2.convexHull(foreground_points))
     convex_solidity = area / max(1.0, float(convex_area))
+    perimeter_per_pixel = perimeter / max(1.0, float(area))
+    positive_diagonal_span, negative_diagonal_span = (
+        _bidirectional_diagonal_spans(mask)
+    )
+    bidirectional_diagonal_support = bool(
+        positive_diagonal_span >= height
+        and negative_diagonal_span >= height
+    )
     if (
         area < max(24, int(round(width * 0.45)))
         or density >= 0.38
         or continuity < 0.55
         or complexity < 8
-        or perimeter / max(1.0, float(area)) > 1.15
+        or perimeter_per_pixel > 1.15
         or convex_solidity > 0.58
+        or not bidirectional_diagonal_support
     ):
         return None
 
@@ -219,6 +310,30 @@ def _signature_like(
             resolved_height,
         ),
         mask=resolved,
+        visual_evidence=SignatureVisualEvidence(
+            source_component_count=len(group),
+            source_pixel_count=area,
+            density=density,
+            continuity=continuity,
+            directional_complexity=complexity,
+            positive_diagonal_span=positive_diagonal_span,
+            negative_diagonal_span=negative_diagonal_span,
+            bidirectional_diagonal_support=(
+                bidirectional_diagonal_support
+            ),
+            perimeter_per_pixel=perimeter_per_pixel,
+            convex_solidity=convex_solidity,
+            confidence=float(
+                np.mean(
+                    (
+                        min(1.0, continuity),
+                        1.0 - density,
+                        min(1.0, complexity / 16.0),
+                        1.0 - convex_solidity,
+                    )
+                )
+            ),
+        ),
     )
 
 

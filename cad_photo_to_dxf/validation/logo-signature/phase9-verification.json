@@ -1,0 +1,107 @@
+{
+  "phase": 9,
+  "evidence_kind": "verification",
+  "captured_at": "2026-07-30T10:20:00+08:00",
+  "base_commit": "16aeda69a724f362a4b3f30aa6ea7a1956df83c6",
+  "fixed_tag": "baseline/phase9-logo-signature-evidence-2026-07-30",
+  "scope": {
+    "existing_recognition_thresholds_changed": false,
+    "ocr_semantic_logo_rules_added": false,
+    "bbox_overlap_signature_rules_added": false,
+    "fixed_coordinate_rules_added": false,
+    "page_percentage_rules_added": false,
+    "exact_source_masks_retained": true,
+    "mask_dilation_added": false,
+    "independent_visual_evidence_added": true,
+    "bidirectional_signature_evidence_required": true,
+    "logo_visual_kinds_recorded": true
+  },
+  "before_after": {
+    "document_count": 10,
+    "annotated_region_count": 12,
+    "source_pixels_before": 3104606,
+    "source_pixels_after": 3104606,
+    "logo_candidate_count_before": 0,
+    "logo_candidate_count_after": 0,
+    "logo_final_pixels_before": 0,
+    "logo_final_pixels_after": 0,
+    "signature_candidate_count_before": 2,
+    "signature_candidate_count_after": 0,
+    "signature_candidate_pixels_before": 1292,
+    "signature_candidate_pixels_after": 0,
+    "signature_final_pixels_before": 1253,
+    "signature_final_pixels_after": 0,
+    "signature_final_outside_annotation_pixels_before": 1253,
+    "signature_final_outside_annotation_pixels_after": 0,
+    "semantic_capture_in_normal_text_pixels_before": 0,
+    "semantic_capture_in_normal_text_pixels_after": 0,
+    "candidate_background_pixels_after": 0,
+    "final_outside_candidate_pixels_after": 0,
+    "confusion_matrix_after": {
+      "logo->fallback_outline": 6,
+      "signature->fallback_outline": 6
+    }
+  },
+  "unit_tests": {
+    "command": ".\\.venv\\Scripts\\python.exe -m pytest -q --junitxml=validation\\logo-signature\\phase9-pytest.xml",
+    "tests": 242,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": true
+  },
+  "static_checks": {
+    "ruff_scope": "app scripts tests",
+    "ruff_passed": true,
+    "compileall_passed": true,
+    "git_diff_check_passed": true,
+    "mypy_passed": false,
+    "mypy_blocking": false,
+    "mypy_reason": "Python 3.14 and current NumPy typing are incompatible with the repository Python 3.11 target; the current dependency graph also has pre-existing type errors outside phase 9."
+  },
+  "real_regression": {
+    "recording_passed": true,
+    "strict_rerun_passed": true,
+    "document_runs": 12,
+    "unique_source_pages": 10,
+    "coverage_category_count": 22,
+    "all_pipeline_stages_complete": true,
+    "formal_manifest_semantically_equals_strict_candidate": true,
+    "non_expected_manifest_fields_unchanged": true
+  },
+  "evidence_files": {
+    "phase9-before.json": {
+      "sha256": "7d8f12004b9ed5660e948ad0e764caeb69396dd81f66fb647de9da2d8ff2f498"
+    },
+    "phase9-after.json": {
+      "sha256": "454f5b5df1d49a4ff576b0d8dd53de4d443ef001333deb55a4d15205d1427083"
+    },
+    "phase9-recording.json": {
+      "sha256": "b0cde150cbda09fbd834e44eb6cd3567ee6ce2777b5282b9cb543e1b53315450"
+    },
+    "phase9-recorded-manifest.json": {
+      "sha256": "9c4e0f8ec3d1eff4e78a40c5a828254128d0db2455af50d8d1cfee481f659e25"
+    },
+    "phase9-real-regression.json": {
+      "sha256": "fed3c9a6e4c5d683e2fca7a72499ac2c7ba3826e62b91b7799ad525dceb9bf25"
+    },
+    "phase9-pytest.xml": {
+      "sha256": "15275c1307aae8d8aa702c393be2318abe9efa1e8b41da32604cfba76d02d9d0"
+    },
+    "real-regression-manifest.json": {
+      "sha256": "4e8acc44b48a807e42918c2bed26bb6c2360d02fd831616b2ea95552c3d24df7"
+    }
+  },
+  "acceptance": {
+    "minimum_ten_pages": true,
+    "semantic_terms_alone_cannot_classify_logo": true,
+    "bbox_overlap_alone_cannot_classify_signature": true,
+    "adjacent_normal_text_remains_independent": true,
+    "insufficient_evidence_falls_back_without_forced_classification": true,
+    "candidate_masks_claim_only_source_pixels": true,
+    "final_masks_are_subsets_of_candidate_masks": true,
+    "annotated_source_ink_is_never_lost": true,
+    "full_real_regression_passed": true,
+    "safe_to_commit_phase": true
+  }
+}

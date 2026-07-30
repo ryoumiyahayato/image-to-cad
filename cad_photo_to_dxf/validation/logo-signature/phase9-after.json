@@ -1,0 +1,646 @@
+{
+  "acceptance": {
+    "annotated_logo_regions_present": true,
+    "annotated_signature_regions_present": true,
+    "annotated_source_ink_is_never_lost": true,
+    "candidate_masks_claim_only_source_pixels": true,
+    "candidate_visual_evidence_complete": true,
+    "final_masks_are_subsets_of_candidate_masks": true,
+    "insufficient_evidence_falls_back_without_forced_classification": true,
+    "logo_ocr_semantic_terms_absent_from_production_classifiers": true,
+    "minimum_ten_pages": true,
+    "neighboring_normal_text_not_semantically_captured": true,
+    "semantic_predictions_stay_inside_annotated_regions": true
+  },
+  "aggregate": {
+    "confusion_matrix": {
+      "logo->fallback_outline": 6,
+      "signature->fallback_outline": 6
+    },
+    "document_elapsed_total_seconds": 283.934,
+    "logo_candidate_background_pixels": 0,
+    "logo_candidate_count": 0,
+    "logo_candidate_pixels": 0,
+    "logo_final_outside_annotation_pixels": 0,
+    "logo_final_outside_candidate_pixels": 0,
+    "logo_final_pixels": 0,
+    "semantic_capture_in_normal_text_pixels": 0,
+    "semantic_term_hits": {},
+    "signature_candidate_background_pixels": 0,
+    "signature_candidate_count": 0,
+    "signature_candidate_pixels": 0,
+    "signature_final_outside_annotation_pixels": 0,
+    "signature_final_outside_candidate_pixels": 0,
+    "signature_final_pixels": 0,
+    "source_pixels": 3104606
+  },
+  "annotated_region_count": 12,
+  "document_count": 10,
+  "documents": [
+    {
+      "elapsed_seconds": 6.24,
+      "evidence_errors": [],
+      "id": "perspective-sample-plan",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [],
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\perspective-sample-plan.png",
+      "raster_sha256": "f7e044163852635404c50c68b6fee8ca909ff37b4de4ec343d180e9c8ef77aed",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [],
+      "source_pixels": 771992,
+      "structure_id": "40263d322297761fa9656d9d807cd46c09f641d4ed1f1160e65b192f8a7955f3"
+    },
+    {
+      "elapsed_seconds": 56.684,
+      "evidence_errors": [],
+      "id": "environment-plan-page-003-150dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            2220,
+            20,
+            220,
+            220
+          ],
+          "fallback_outline_pixels": 7239,
+          "id": "top-right-graphic-mark",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 3784,
+          "owner_pixels": {
+            "graphic": 7239,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 3784,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "The graphic mark must at least remain as outline until semantic logo classification is validated.",
+          "source_pixels": 11023,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-plan-page-003-150dpi.png",
+      "raster_sha256": "d517852f5bd754f6fe3a44491b678035df01be54093423a5d6f3bf79ec61a436",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1360,
+            1360,
+            650,
+            260
+          ],
+          "fallback_outline_pixels": 16047,
+          "id": "lower-handwritten-approval",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 4434,
+          "owner_pixels": {
+            "graphic": 16047,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 2043,
+            "text": 2391
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Handwriting beside printed notes must remain without absorbing the printed text.",
+          "source_pixels": 20481,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 419525,
+      "structure_id": "2bc0143382b6e7506ee5c600768324ac3286c83ac2c0a7263101341687a3cb66"
+    },
+    {
+      "elapsed_seconds": 29.947,
+      "evidence_errors": [],
+      "id": "warehouse-index-page-001-150dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            170,
+            80,
+            620,
+            230
+          ],
+          "fallback_outline_pixels": 5148,
+          "id": "wordmark-and-graphic-logo",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 4480,
+          "owner_pixels": {
+            "graphic": 5148,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 4480,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve both the graphic symbol and adjacent company wordmark without absorbing nearby table text.",
+          "source_pixels": 9628,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-index-page-001-150dpi.png",
+      "raster_sha256": "c020ad1139a82cbbf006216bce507a529d846f5f467db7aba1b300ab99a94bc4",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [],
+      "source_pixels": 133387,
+      "structure_id": "f04fecf61ddd1becb0ea1bfa5a42cad90ac9c247fd8c5f731ba7543ee7612615"
+    },
+    {
+      "elapsed_seconds": 43.196,
+      "evidence_errors": [],
+      "id": "environment-scan-page-001-120dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            1780,
+            0,
+            190,
+            180
+          ],
+          "fallback_outline_pixels": 5872,
+          "id": "top-right-graphic-logo",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 1283,
+          "owner_pixels": {
+            "graphic": 5872,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 1283,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve the top-right graphic logo and adjacent wordmark; current type remains a recorded ownership finding.",
+          "source_pixels": 7155,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-001-120dpi.png",
+      "raster_sha256": "d3ac0725865ce3e2e9acffa0e8d07e914f61fe1efedc6b7e4f8b9799dfc93b6f",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1370,
+            1090,
+            520,
+            210
+          ],
+          "fallback_outline_pixels": 11949,
+          "id": "lower-right-approval-signature",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 2324,
+          "owner_pixels": {
+            "graphic": 11949,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 1377,
+            "text": 947
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve the approval handwriting independently from printed labels.",
+          "source_pixels": 14273,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 281888,
+      "structure_id": "b4f4285271d21eeaca264bd4bd892270551a5e79692b9f9eba15868635c9e7fe"
+    },
+    {
+      "elapsed_seconds": 31.875,
+      "evidence_errors": [],
+      "id": "environment-scan-page-002-120dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [],
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-002-120dpi.png",
+      "raster_sha256": "134c7060f8240365e990cb7dafe4127fdcab2dbe3112866e30c8f33b0664e7ab",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1590,
+            920,
+            330,
+            220
+          ],
+          "fallback_outline_pixels": 1793,
+          "id": "right-lower-handwriting",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 434,
+          "owner_pixels": {
+            "graphic": 1793,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 434,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Handwriting must remain separate from printed room lists.",
+          "source_pixels": 2227,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 201071,
+      "structure_id": "aca4eaf1d1dc0100a13697f49d1023e6b2a6730a733865f47a3c0c2cbda77dd0"
+    },
+    {
+      "elapsed_seconds": 43.858,
+      "evidence_errors": [],
+      "id": "environment-scan-page-004-120dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [],
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-004-120dpi.png",
+      "raster_sha256": "b57945dc2d8bb99ac7020aa7c4d1fc53afab534986b151e877802d630a29658d",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1300,
+            1040,
+            500,
+            230
+          ],
+          "fallback_outline_pixels": 7677,
+          "id": "lower-approval-marks",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 1826,
+          "owner_pixels": {
+            "graphic": 7677,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 1389,
+            "text": 437
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve handwritten approval marks beside printed labels.",
+          "source_pixels": 9503,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 281570,
+      "structure_id": "b89ba00b638c051b3f5aedb06a3047f8fbb03e46bcef12d500e311b38be285f1"
+    },
+    {
+      "elapsed_seconds": 17.162,
+      "evidence_errors": [],
+      "id": "environment-scan-page-008-120dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [],
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-008-120dpi.png",
+      "raster_sha256": "3d4f1d7e4dd9736fb0c75c1cac29f40c5ab4f6fbb90ee294ce579a7c68846fd8",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1510,
+            30,
+            360,
+            390
+          ],
+          "fallback_outline_pixels": 4561,
+          "id": "rotated-handwritten-notes",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 0,
+          "owner_pixels": {
+            "graphic": 4561,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 0,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve handwriting without merging it into rotated printed text.",
+          "source_pixels": 4561,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 169060,
+      "structure_id": "cb68a934a481376e6cd3795bfa0315b69f5cee5b1af71cc3cd46f3bf4caac63b"
+    },
+    {
+      "elapsed_seconds": 15.529,
+      "evidence_errors": [],
+      "id": "environment-scan-page-014-120dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            1770,
+            25,
+            180,
+            160
+          ],
+          "fallback_outline_pixels": 4706,
+          "id": "top-right-logo-and-wordmark",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 2453,
+          "owner_pixels": {
+            "graphic": 4706,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 2453,
+            "text": 0
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve the graphic logo and Chinese wordmark independently from the title block; current type remains a recorded ownership finding.",
+          "source_pixels": 7159,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\environment-scan-page-014-120dpi.png",
+      "raster_sha256": "4d57d6efe0710d4b06bfde4709afe6d4547355be2613b743b56b592a4a5023e6",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [
+        {
+          "bbox": [
+            1280,
+            1080,
+            520,
+            230
+          ],
+          "fallback_outline_pixels": 8805,
+          "id": "bottom-approval-signatures",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 581,
+          "owner_pixels": {
+            "graphic": 8805,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 580,
+            "text": 1
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve multiple approval marks adjacent to printed text.",
+          "source_pixels": 9386,
+          "target": "signature"
+        }
+      ],
+      "source_pixels": 267722,
+      "structure_id": "e7bad321c864faf8003a82d767083780a82df4823cb9fc69eb2c3f4392253d9e"
+    },
+    {
+      "elapsed_seconds": 17.293,
+      "evidence_errors": [],
+      "id": "warehouse-system-page-002-72dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            2300,
+            500,
+            170,
+            250
+          ],
+          "fallback_outline_pixels": 806,
+          "id": "right-titleblock-logo",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 3891,
+          "owner_pixels": {
+            "graphic": 806,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 3101,
+            "text": 790
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve the title-block graphic and wordmark without absorbing surrounding fields.",
+          "source_pixels": 4697,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-system-page-002-72dpi.png",
+      "raster_sha256": "488583a1c5253c098d773974ad8e40452e25b341129da8be8338eb7d28ca0053",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [],
+      "source_pixels": 230732,
+      "structure_id": "c5d322526332016f1b9845148cfb55d200e023e3743986847772aaa7eb9df79e"
+    },
+    {
+      "elapsed_seconds": 22.15,
+      "evidence_errors": [],
+      "id": "warehouse-plan-page-003-72dpi",
+      "logo_candidate_background_pixels": 0,
+      "logo_candidate_count": 0,
+      "logo_candidate_pixels": 0,
+      "logo_final_outside_annotation_pixels": 0,
+      "logo_final_outside_candidate_pixels": 0,
+      "logo_final_pixels": 0,
+      "logo_regions": [
+        {
+          "bbox": [
+            2840,
+            520,
+            190,
+            280
+          ],
+          "fallback_outline_pixels": 2320,
+          "id": "right-titleblock-brand",
+          "matching_semantic_pixels": 0,
+          "other_preserved_pixels": 4359,
+          "owner_pixels": {
+            "graphic": 2320,
+            "logo": 0,
+            "residual": 0,
+            "signature": 0,
+            "structural_line": 3084,
+            "text": 1275
+          },
+          "predicted": "fallback_outline",
+          "review_note": "Preserve the title-block brand separately from neighboring project fields.",
+          "source_pixels": 6679,
+          "target": "logo"
+        }
+      ],
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "raster_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\pages\\warehouse-plan-page-003-72dpi.png",
+      "raster_sha256": "828aec9275ab23028ccc569f81532a1c3103e3fd5c1926269e40f4d9ec207ec9",
+      "semantic_capture_in_normal_text_pixels": 0,
+      "signature_candidate_background_pixels": 0,
+      "signature_candidate_count": 0,
+      "signature_candidate_pixels": 0,
+      "signature_final_outside_annotation_pixels": 0,
+      "signature_final_outside_candidate_pixels": 0,
+      "signature_final_pixels": 0,
+      "signature_regions": [],
+      "source_pixels": 347659,
+      "structure_id": "05fc970a0e7890b6a7021267b7a4d88dd04040b1ca10c2a2d0dc51ae71ee5cdc"
+    }
+  ],
+  "enable_ocr": true,
+  "git_commit": "16aeda69a724f362a4b3f30aa6ea7a1956df83c6",
+  "input_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-comparison-inputs\\input-manifest.json",
+  "input_manifest_sha256": "5fab068497a87b672a93c3863db73ff9806d4183d561e736d2bbb63290a07f97",
+  "schema_version": 1
+}

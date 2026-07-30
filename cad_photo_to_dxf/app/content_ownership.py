@@ -817,7 +817,14 @@ def partition_content(
             source="independent_signature_visual_masks",
             candidate_count=len(signatures),
             claimed_pixels=int(cv2.countNonZero(signature_candidate)),
-            values=[1.0 for _item in signatures],
+            values=[
+                (
+                    1.0
+                    if item.visual_evidence is None
+                    else float(item.visual_evidence.confidence)
+                )
+                for item in signatures
+            ],
         ),
         _confidence_evidence(
             category="graphic",

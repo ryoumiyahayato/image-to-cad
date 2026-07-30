@@ -8,6 +8,9 @@ import numpy as np
 from .structural_roi import verified_structural_rule_masks
 
 
+LOGO_VISUAL_KINDS = ("graphic_mark", "wordmark")
+
+
 @dataclass(frozen=True)
 class LogoRegion:
     """A compact source-geometry cluster classified without OCR semantics."""
@@ -17,6 +20,24 @@ class LogoRegion:
     structural_score: float
     hole_count: int
     contour_count: int
+    visual_kind: str = "graphic_mark"
+    density: float = 0.0
+    closed_complexity: int = 0
+    reflection_similarity: float = 0.0
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "bbox": [int(value) for value in self.bbox],
+            "mask_pixels": int(cv2.countNonZero(self.mask)),
+            "visual_kind": self.visual_kind,
+            "structural_score": float(self.structural_score),
+            "hole_count": int(self.hole_count),
+            "contour_count": int(self.contour_count),
+            "density": float(self.density),
+            "closed_complexity": int(self.closed_complexity),
+            "reflection_similarity": float(self.reflection_similarity),
+            "evidence_source": "source_geometry_only",
+        }
 
 
 def _foreground(binary: np.ndarray) -> np.ndarray:
@@ -105,6 +126,10 @@ def _candidate_from_component(
         structural_score=score,
         hole_count=hole_count,
         contour_count=len(contours),
+        visual_kind="graphic_mark",
+        density=density,
+        closed_complexity=closed_complexity,
+        reflection_similarity=reflection_similarity,
     )
 
 
