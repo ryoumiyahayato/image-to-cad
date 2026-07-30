@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`cc4477f test: verify candidate-level text semantic ownership`
+`fc6cd80 fix: fit native text geometry to OCR bounds`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -64,6 +64,9 @@ Phase 12 baseline:
   content remained editable TEXT after another read-save-read cycle.
 - Strengthened `SOURCE_TEXT_OUTLINE` to both off and frozen because the target
   LibreCAD rewrites the negative off color when saving but preserves freeze.
+- Committed the isolated native TEXT geometry change as `fc6cd80`.
+- Re-ran the focused geometry and contract tests against the committed tree;
+  all 32 passed and Ruff reported no issues.
 
 ## Not completed
 
@@ -71,16 +74,8 @@ Phase 12 baseline:
 
 ## Modified files
 
-- `app/librecad_lff.py`
-- `app/ocr_outline_export.py`
-- `app/trace_document_export.py`
-- `app/trace_single_export.py`
-- `tests/test_native_text_geometry.py`
-- `tests/test_font_aware_ocr_export.py`
-- `tests/test_text_output_contract.py`
-- `tests/test_trace_export.py`
-- `validation/editable-text-recovery/run_recovery_probe.py`
-- This checkpoint and commit-4 evidence files.
+- Checkpoint post-commit evidence only. The production-code working tree was
+  clean immediately after commit `fc6cd80`.
 
 ## Tests
 
@@ -115,6 +110,8 @@ Phase 12 baseline:
 - Commit-4 page-001 rendered-height ratio: 1.0 within floating-point tolerance.
 - Commit-4 page-001 maximum center/rotation error: 0.0/0.0.
 - Commit-4 LibreCAD edit-save and ezdxf read-save-read audit: passed.
+- Commit-4 post-commit focused tests: 32 passed, 120 warnings.
+- Commit-4 post-commit Ruff checks: passed.
 
 ## Per-page status
 
@@ -213,7 +210,8 @@ XDATA and will be listed in the full per-page reports.
 
 ## Next single safe action
 
-Commit the isolated native TEXT geometry change as
-`fix: fit native text geometry to OCR bounds`, then run the same focused tests
-and Ruff checks against the committed tree. Do not begin full per-page
-validation unless those post-commit checks pass.
+Commit this post-commit checkpoint evidence, then inventory the exact formal
+real-regression pages, every page of every source PDF, and every current or
+newly generated DXF before starting the bounded per-page validation batches.
+Do not change production code, OCR thresholds or expected regression
+baselines during that validation.

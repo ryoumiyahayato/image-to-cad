@@ -15,11 +15,12 @@
 5. `185d44b refactor: preserve unsafe source glyphs as hidden text outlines`
 6. `892b150 test: verify hidden source glyph outlines`
 7. `66a17d7 fix: enforce candidate-level text semantic ownership`
+8. `cc4477f test: verify candidate-level text semantic ownership`
+9. `fc6cd80 fix: fit native text geometry to OCR bounds`
 
 ## Planned commits
 
-1. `test: verify candidate-level text semantic ownership`
-2. `fix: fit native text geometry to OCR bounds`
-3. Final validation evidence commit, only after every page passes.
+1. `test: verify native text geometry`
+2. Final validation evidence commit, only after every page passes.
 
 No commit may update a real-regression expected baseline.
