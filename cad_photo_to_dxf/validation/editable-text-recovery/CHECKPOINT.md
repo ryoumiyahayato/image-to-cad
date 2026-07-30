@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`625dcd9 test: record editable-text UAT failure evidence`
+`6cabd4c test: capture editable-text recovery baseline`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -23,10 +23,18 @@ Phase 12 baseline:
 - Audited all 14 existing user-PDF DXFs without modifying them.
 - Recorded per-DXF TEXT, fallback-outline, text-symbol, residual and audit
   counts.
+- Implemented the first change set locally: editable emission no longer
+  depends on `replacement_safe`; source suppression still does.
+- Added explicit `text_emit_eligible`, `source_outline_suppressible`, and hard
+  reject fields to every text-output decision.
+- Confirmed the 240 DPI fixed failure page now has 206 eligible candidates and
+  exactly 206 native DXF `TEXT` entities. The two non-eligible candidates are
+  both rejected only for `confidence_below_contract`.
 
 ## Not completed
 
-- Editable TEXT emission and outline-suppression decoupling.
+- Commit and post-commit verification of editable TEXT emission and
+  outline-suppression decoupling.
 - Hidden unsafe source-glyph backup layer.
 - Candidate-level semantic ownership.
 - Native TEXT geometry fitting.
@@ -34,10 +42,15 @@ Phase 12 baseline:
 
 ## Modified files
 
-- Validation evidence and the read-only DXF inventory helper under
-  `validation/editable-text-recovery/`.
-
-No production code has been modified.
+- `app/text_output_contract.py`
+- `app/content_ownership.py`
+- `app/ocr_outline_export.py`
+- `app/trace_single_export.py`
+- `app/trace_document_export.py`
+- `tests/test_text_output_contract.py`
+- `tests/test_ocr_layout.py`
+- validation probe and commit-1 evidence under
+  `validation/editable-text-recovery/`
 
 ## Tests
 
@@ -45,6 +58,9 @@ No production code has been modified.
 - Formal text-contract validation: 10/10 documents passed.
 - Formal generated-DXF audit: 10/10 passed.
 - Existing user-PDF DXF audit: 14/14 passed.
+- Commit-1 focused tests: 39 passed, 72 warnings.
+- Commit-1 Ruff checks: passed.
+- Commit-1 page-001 DXF audit: 0 errors.
 
 ## Per-page status
 
@@ -63,9 +79,25 @@ The 240 DPI fixed failure page remains:
 - `TRACE_TEXT_SYMBOL` entities: 1406
 - DXF audit errors: 0
 
+The local commit-1 probe now reports:
+
+- OCR candidates: 208
+- `text_emit_eligible`: 206
+- native DXF TEXT: 206
+- `source_outline_suppressible`: 37
+- unsafe source-outline backups required: 169
+- confidence hard rejects: 2
+- invalid geometry rejects: 0
+- DXF audit errors: 0
+
+Unsafe source glyphs are still visible through the general trace layers in
+this intermediate state. Moving them to hidden `SOURCE_TEXT_OUTLINE` is the
+next, separate commit.
+
 ## Next single safe action
 
-Audit the production text-output decision and export call chains for every
-place where `replacement_safe` can prevent native TEXT emission. Do not modify
-source-outline routing yet.
+Commit the first change set as
+`fix: decouple editable text emission from outline suppression`, then rerun
+the same focused tests. Do not start hidden source-outline routing unless the
+post-commit tests pass.
 

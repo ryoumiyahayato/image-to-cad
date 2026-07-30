@@ -25,6 +25,7 @@ from .signature_overlay import (
 )
 from .text_output_contract import (
     TextOutputState,
+    suppressible_ocr_texts,
     text_output_decisions,
     text_output_summary,
 )
@@ -148,6 +149,7 @@ def export_exact_trace_dxf(
     text_decisions = text_output_decisions(texts)
     text_summary = text_output_summary(texts)
     exportable_texts = accepted_ocr_texts(texts)
+    suppressible_texts = suppressible_ocr_texts(texts)
     fallback_texts = tuple(
         decision.candidate
         for decision in text_decisions
@@ -180,7 +182,7 @@ def export_exact_trace_dxf(
         color=trace_color,
         source_size=(resolved_width, image_height),
         palette=palette,
-        ocr_texts=exportable_texts,
+        ocr_texts=suppressible_texts,
         fallback_ocr_texts=fallback_texts,
         residual_ocr_texts=residual_texts,
         cancellation_token=cancellation_token,

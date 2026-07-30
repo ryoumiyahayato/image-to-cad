@@ -11,7 +11,10 @@ from .line_detect import LineSegment
 from .logo_detection import LogoRegion
 from .resolution import image_resolution_scale
 from .signature_overlay import SignatureRegion
-from .text_output_contract import accepted_ocr_texts
+from .text_output_contract import (
+    accepted_ocr_texts,
+    suppressible_ocr_texts,
+)
 
 
 def _mask_like(binary: np.ndarray) -> np.ndarray:
@@ -307,11 +310,11 @@ def editable_text_source_mask(
     *,
     excluded: np.ndarray,
 ) -> np.ndarray:
-    """Claim source glyph pixels for accepted OCR without blanking whole boxes."""
+    """Claim only safely suppressible source glyph pixels."""
 
     source = _source_foreground(binary)
     owned = _mask_like(binary)
-    for item in accepted_ocr_texts(texts):
+    for item in suppressible_ocr_texts(texts):
         region = _candidate_region_mask(item, binary.shape)
         owned[(region > 0) & (source > 0) & (excluded == 0)] = 255
     return owned

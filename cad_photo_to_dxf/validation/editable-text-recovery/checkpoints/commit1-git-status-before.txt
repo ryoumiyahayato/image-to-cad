@@ -1,0 +1,15 @@
+branch=fix/non-destructive-editable-text
+head=6cabd4c
+modified=app/content_ownership.py
+modified=app/ocr_outline_export.py
+modified=app/text_output_contract.py
+modified=app/trace_document_export.py
+modified=app/trace_single_export.py
+modified=tests/test_ocr_layout.py
+modified=tests/test_text_output_contract.py
+added=validation/editable-text-recovery/run_recovery_probe.py
+added=validation/editable-text-recovery/checkpoints/commit1-page001.json
+added=validation/editable-text-recovery/checkpoints/commit1-page001.dxf
+tmp_modified=false
+regression_baseline_modified=false
+

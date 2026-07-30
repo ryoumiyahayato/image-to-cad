@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from math import atan2, degrees, hypot
+from math import atan2, degrees, hypot, isfinite
 from unicodedata import east_asian_width
 
 from ezdxf.enums import TextEntityAlignment
@@ -25,7 +25,38 @@ _XDATA_APP = "OCR_TEXT_LINE"
 _CONTRACT_XDATA_APP = "TEXT_OUTPUT_CONTRACT"
 def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
     if text.quad and len(text.quad) == 4:
-        return text.quad
+        quad = tuple(
+            (float(point[0]), float(point[1]))
+            for point in text.quad
+        )
+        if all(
+            isfinite(value)
+            for point in quad
+            for value in point
+        ):
+            top_left, top_right, bottom_right, bottom_left = quad
+            width = (
+                hypot(
+                    top_right[0] - top_left[0],
+                    top_right[1] - top_left[1],
+                )
+                + hypot(
+                    bottom_right[0] - bottom_left[0],
+                    bottom_right[1] - bottom_left[1],
+                )
+            ) * 0.5
+            height = (
+                hypot(
+                    bottom_left[0] - top_left[0],
+                    bottom_left[1] - top_left[1],
+                )
+                + hypot(
+                    bottom_right[0] - top_right[0],
+                    bottom_right[1] - top_right[1],
+                )
+            ) * 0.5
+            if width > 0.0 and height > 0.0:
+                return quad
     x, y, width, height = text.bbox
     return (
         (float(x), float(y)),
@@ -82,7 +113,15 @@ def _line_placement_from_quad(
     left_height = hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
     right_height = hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
     target_height = (left_height + right_height) * 0.5
-    if target_width <= 0.0 or target_height <= 0.0:
+    if (
+        not all(
+            isfinite(value)
+            for point in transformed
+            for value in point
+        )
+        or target_width <= 0.0
+        or target_height <= 0.0
+    ):
         return None
 
     character_height = max(0.01, target_height * 0.78)
@@ -200,7 +239,10 @@ def add_ocr_outline_blocks(
             metric_ratios=metric_ratios,
         )
         if placement is None:
-            continue
+            raise ValueError(
+                "Eligible OCR candidate has no finite DXF placement: "
+                f"{candidate.bbox!r}"
+            )
         insert, character_height, rotation, width_factor, transformed = placement
         entities.append(
             _add_text_entity(
@@ -218,4 +260,8 @@ def add_ocr_outline_blocks(
         )
         bounds.extend(transformed)
 
+    if len(entities) != len(approved):
+        raise AssertionError(
+            "Native TEXT count differs from text_emit_eligible count"
+        )
     return len(entities), entities, bounds

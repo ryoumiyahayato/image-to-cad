@@ -16,6 +16,7 @@ from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
 from .signature_overlay import add_signature_images, set_foreground_draw_order
 from .text_output_contract import (
     TextOutputState,
+    suppressible_ocr_texts,
     text_output_decisions,
     text_output_summary,
 )
@@ -221,6 +222,7 @@ def export_trace_document_streaming(
         text_decisions = text_output_decisions(texts)
         text_summary = text_output_summary(texts)
         exportable_texts = accepted_ocr_texts(texts)
+        suppressible_texts = suppressible_ocr_texts(texts)
         fallback_texts = tuple(
             decision.candidate
             for decision in text_decisions
@@ -252,7 +254,7 @@ def export_trace_document_streaming(
             color=page.trace_color,
             source_size=(vector_width, vector_height),
             palette=palette,
-            ocr_texts=exportable_texts,
+            ocr_texts=suppressible_texts,
             fallback_ocr_texts=fallback_texts,
             residual_ocr_texts=residual_texts,
             layer_names=layer_names,
