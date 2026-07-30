@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`c7269b1 test: validate editable text recovery on every page`
+`ad58b3c docs: complete editable text recovery acceptance`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -104,17 +104,17 @@ Phase 12 baseline:
   entity-type audit, semantic-ownership audit, JUnit results, Git sequence and
   completion status.
 - The final completion report evaluates every required condition as PASS.
+- Committed the verified final aggregate delivery reports as `ad58b3c`.
+- Confirmed the worktree was clean immediately after `ad58b3c`.
 
 ## Not completed
 
-- Commit the verified final aggregate delivery reports, record the post-commit
-  Git status, and stop.
+- No task work remains. Stop.
 
 ## Modified files
 
-- Final aggregate reports, final-delivery builder encoding/index corrections,
-  report-builder logs, Git status evidence, and this checkpoint. No production
-  code is modified.
+- Final post-delivery Git status evidence and this completion checkpoint only.
+  No production code or validation result is modified.
 
 ## Tests
 
@@ -293,7 +293,5 @@ The same page at the historical saved-DXF resolution reports:
 
 ## Next single safe action
 
-Commit only the verified final delivery reports and checkpoint evidence. Then
-record the post-commit Git status and stop. Do not begin colors, automatic line
-repair, Logo/signature work, OCR threshold changes, baseline recording or any
-other task.
+Stop. Do not begin colors, automatic line repair, Logo/signature work, OCR
+threshold changes, baseline recording or any other task.

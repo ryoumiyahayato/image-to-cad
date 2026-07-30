@@ -13,6 +13,7 @@ fc6cd80 fix: fit native text geometry to OCR bounds
 107a879 test: verify native text geometry
 3d9aae2 test: add full editable text acceptance harness
 c7269b1 test: validate editable text recovery on every page
+ad58b3c docs: complete editable text recovery acceptance
 ```
 
 Phase 12 baseline tag remains `6f5f69329aabf0bd3a7eda84baf66eb1959bdcba`.
