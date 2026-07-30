@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`dd772f4 test: verify editable text emission decoupling`
+`185d44b refactor: preserve unsafe source glyphs as hidden text outlines`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -30,7 +30,7 @@ Phase 12 baseline:
 - Confirmed the 240 DPI fixed failure page now has 206 eligible candidates and
   exactly 206 native DXF `TEXT` entities. The two non-eligible candidates are
   both rejected only for `confidence_below_contract`.
-- Implemented the second change set locally: eligible unsafe source glyphs are
+- Committed the second change set: eligible unsafe source glyphs are
   routed to `SOURCE_TEXT_OUTLINE`, and that layer is default-off in single and
   multi-page DXF exports.
 - Reclassified OCR hard rejects as visible `TEXT_FALLBACK_OUTLINE`; truly
@@ -38,24 +38,14 @@ Phase 12 baseline:
 
 ## Not completed
 
-- Commit and post-commit verification of the hidden unsafe source-glyph backup
-  layer.
 - Candidate-level semantic ownership.
 - Native TEXT geometry fitting.
 - Full per-page and per-DXF acceptance.
 
 ## Modified files
 
-- `app/text_output_contract.py`
-- `app/trace_dxf_entities.py`
-- `app/trace_single_export.py`
-- `app/trace_document_export.py`
-- `app/dxf_exporter.py`
-- `app/document_export.py`
-- `app/trace_gui_export.py`
-- `app/optimized_trace.py`
-- `tests/test_text_output_contract.py`
-- validation probe/checkpoint evidence
+- Checkpoint evidence only. The production-code worktree is clean after
+  commit `185d44b`.
 
 ## Tests
 
@@ -71,6 +61,8 @@ Phase 12 baseline:
 - Commit-2 focused tests: 50 passed, 66 warnings.
 - Commit-2 Ruff checks: passed.
 - Commit-2 page-001 DXF audit: 0 errors.
+- Commit-2 post-commit focused tests: 50 passed, 66 warnings.
+- Commit-2 post-commit Ruff checks: passed.
 
 ## Per-page status
 
@@ -124,8 +116,8 @@ primary semantic without deleting unrelated structure.
 
 ## Next single safe action
 
-Commit the second change set as
-`refactor: preserve unsafe source glyphs as hidden text outlines`, then rerun
-the same focused tests. Do not begin candidate-level semantic ownership unless
-the post-commit tests pass.
+Add candidate source/ownership masks to the immutable `FinalStructure` and use
+those masks to prevent eligible candidate pixels from being emitted as visible
+`TRACE_TEXT_SYMBOL`, while preserving unrelated structural pixels. Do not
+alter native TEXT geometry yet.
 
