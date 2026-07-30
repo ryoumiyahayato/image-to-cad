@@ -1,0 +1,222 @@
+{
+  "schema_version": 1,
+  "description": "Every page of both user source PDFs plus distinct formal-regression and fixed-failure variants.",
+  "runs": [
+    {
+      "id": "environment-source-page-001-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 1,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-001-120dpi"]
+    },
+    {
+      "id": "environment-source-page-002-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 2,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-002-120dpi"]
+    },
+    {
+      "id": "environment-source-page-003-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 3,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-004-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 4,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-004-120dpi"]
+    },
+    {
+      "id": "environment-source-page-005-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 5,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-006-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 6,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-007-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 7,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-008-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 8,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-008-120dpi"]
+    },
+    {
+      "id": "environment-source-page-009-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 9,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-010-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 10,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-011-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 11,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-012-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 12,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-013-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 13,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "environment-source-page-014-120dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 14,
+      "dpi": 120,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["environment-scan-page-014-120dpi"]
+    },
+    {
+      "id": "warehouse-source-page-001-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 1,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "warehouse-source-page-002-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 2,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["warehouse-system-page-002-72dpi"]
+    },
+    {
+      "id": "warehouse-source-page-003-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 3,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages", "formal_real_regression"],
+      "formal_document_ids": ["warehouse-plan-page-003-72dpi"]
+    },
+    {
+      "id": "warehouse-source-page-004-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 4,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "warehouse-source-page-005-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 5,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "warehouse-source-page-006-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 6,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "warehouse-source-page-007-072dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 7,
+      "dpi": 72,
+      "coverage": ["all_source_pdf_pages"],
+      "formal_document_ids": []
+    },
+    {
+      "id": "perspective-sample-plan-096dpi",
+      "input": "tests/real_regression/assets/test.jpg",
+      "page": 1,
+      "dpi": 96,
+      "coverage": ["formal_real_regression", "historical_wrong_connection"],
+      "formal_document_ids": ["perspective-sample-plan"]
+    },
+    {
+      "id": "environment-formal-page-003-150dpi",
+      "input": "tests/real_regression/assets/environment-page-003.png",
+      "page": 3,
+      "dpi": 150,
+      "coverage": ["formal_real_regression", "historical_logo_signature"],
+      "formal_document_ids": ["environment-plan-page-003-150dpi"]
+    },
+    {
+      "id": "warehouse-formal-page-001-150dpi",
+      "input": "tests/real_regression/assets/warehouse-page-001.png",
+      "page": 1,
+      "dpi": 150,
+      "coverage": ["formal_real_regression", "historical_logo_signature"],
+      "formal_document_ids": ["warehouse-index-page-001-150dpi"]
+    },
+    {
+      "id": "warehouse-source-page-001-300dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 1,
+      "dpi": 300,
+      "coverage": ["formal_real_regression", "high_resolution"],
+      "formal_document_ids": ["warehouse-index-page-001-300dpi"]
+    },
+    {
+      "id": "warehouse-source-page-001-600dpi",
+      "input": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "page": 1,
+      "dpi": 600,
+      "coverage": ["formal_real_regression", "high_resolution"],
+      "formal_document_ids": ["warehouse-index-page-001-600dpi"]
+    },
+    {
+      "id": "page-001-fixed-failure-240dpi",
+      "input": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+      "page": 1,
+      "dpi": 240,
+      "coverage": ["fixed_uat_failure", "page001_d9fbda7_comparison"],
+      "formal_document_ids": []
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "all_complete": false,
+  "all_passed": false,
+  "complete_run_count": 1,
+  "expected_run_count": 27,
+  "git_commit": "107a879d77fadd34e1d1b5794241a5f512c387e7",
+  "passed_run_count": 1,
+  "runs": [
+    {
+      "id": "environment-source-page-001-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-002-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-003-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-004-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-005-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-006-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-007-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-008-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-009-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-010-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-011-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-012-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-013-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "environment-source-page-014-120dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-001-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-002-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-003-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-004-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-005-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-006-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-007-072dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\perspective-sample-plan-096dpi\\perspective-sample-plan-096dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\perspective-sample-plan-096dpi\\perspective-sample-plan-096dpi-entity-audit.json",
+      "id": "perspective-sample-plan-096dpi",
+      "native_TEXT_count": 2,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d"
+    },
+    {
+      "id": "environment-formal-page-003-150dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-formal-page-001-150dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-001-300dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "warehouse-source-page-001-600dpi",
+      "passed": false,
+      "status": "pending"
+    },
+    {
+      "id": "page-001-fixed-failure-240dpi",
+      "passed": false,
+      "status": "pending"
+    }
+  ],
+  "schema_version": 1
+}

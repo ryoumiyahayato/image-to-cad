@@ -1,0 +1,149 @@
+{
+  "decisions": [
+    {
+      "approved": true,
+      "bbox": [
+        764,
+        258,
+        78,
+        32
+      ],
+      "candidate_id": "ocr-001",
+      "confidence": 0.99997,
+      "downgrade_reason": null,
+      "editable": true,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "hard_reject_reason": null,
+      "kind": "dimension_text_candidate",
+      "output_layer": "OCR_TEXT",
+      "primary_semantic": "editable_text",
+      "replacement_safe": false,
+      "reviewed": false,
+      "rotation_deg": -2.231174608031251,
+      "source": "rapidocr-overview",
+      "source_outline_suppressible": false,
+      "state": "editable_text",
+      "text": "12000",
+      "text_emit_eligible": true
+    },
+    {
+      "approved": true,
+      "bbox": [
+        161,
+        1051,
+        320,
+        70
+      ],
+      "candidate_id": "ocr-002",
+      "confidence": 0.99645,
+      "downgrade_reason": null,
+      "editable": true,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "hard_reject_reason": null,
+      "kind": "text_candidate",
+      "output_layer": "OCR_TEXT",
+      "primary_semantic": "editable_text",
+      "replacement_safe": false,
+      "reviewed": false,
+      "rotation_deg": -1.801160515722367,
+      "source": "rapidocr-overview",
+      "source_outline_suppressible": false,
+      "state": "editable_text",
+      "text": "SAMPLE PLAN",
+      "text_emit_eligible": true
+    }
+  ],
+  "dpi": 96.0,
+  "hard_rejected_candidates": [],
+  "input": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\tests\\real_regression\\assets\\test.jpg",
+  "input_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+  "page": 1,
+  "processing_contract": {
+    "algorithm_version": "optimized-trace-phase11-v1",
+    "critical_thresholds": {
+      "connection_confidence_threshold": 0.95,
+      "foreground_threshold": null,
+      "maximum_connection_distance_mm": 0.4,
+      "maximum_direction_error_degrees": 1.0,
+      "maximum_line_width_difference_mm": 0.35,
+      "maximum_ocr_candidates": 3000,
+      "minimum_ocr_confidence": 0.5,
+      "minimum_text_output_confidence": 0.48,
+      "protection_expansion_mm": 0.0
+    },
+    "enable_ocr": true,
+    "final_structure_schema_version": 2,
+    "foreground_threshold": null,
+    "layout_profile": {
+      "enabled": false,
+      "name": "disabled"
+    },
+    "model_version": "rapidocr-runtime-and-geometry-rules-v1",
+    "source_dpi": 96.0
+  },
+  "run_id": "perspective-sample-plan-096dpi",
+  "schema_version": 1,
+  "semantic_ownership": {
+    "candidate_count": 2,
+    "candidate_primary_semantic_unique": true,
+    "candidate_source_pixels_conserved": true,
+    "candidates": [
+      {
+        "candidate_id": "ocr-001",
+        "final_owner_pixels": {
+          "editable_text_suppressed_source": 0,
+          "other_visible_source": 0,
+          "source_text_outline_backup": 441,
+          "structural_line": 0,
+          "uncertain_text_outline": 0
+        },
+        "primary_semantic": "editable_text",
+        "primary_semantic_unique": true,
+        "source_outline_suppressible": false,
+        "source_pixels": 441,
+        "source_pixels_conserved": true,
+        "text_emit_eligible": true
+      },
+      {
+        "candidate_id": "ocr-002",
+        "final_owner_pixels": {
+          "editable_text_suppressed_source": 0,
+          "other_visible_source": 0,
+          "source_text_outline_backup": 3822,
+          "structural_line": 552,
+          "uncertain_text_outline": 0
+        },
+        "primary_semantic": "editable_text",
+        "primary_semantic_unique": true,
+        "source_outline_suppressible": false,
+        "source_pixels": 4374,
+        "source_pixels_conserved": true,
+        "text_emit_eligible": true
+      }
+    ],
+    "editable_source_pixels": 4263,
+    "source_outline_pixels": 4263,
+    "uncertain_outline_pixels": 0
+  },
+  "source_shape": [
+    1250,
+    1850
+  ],
+  "structure_id": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+  "summary": {
+    "confidence_hard_reject_count": 0,
+    "downgrade_reasons": {},
+    "fallback_count": 0,
+    "invalid_geometry_count": 0,
+    "ocr_candidate_count": 2,
+    "residual_count": 0,
+    "source_outline_backup_count": 2,
+    "source_outline_suppressible_count": 0,
+    "text_count": 2,
+    "text_emit_eligible_count": 2
+  }
+}

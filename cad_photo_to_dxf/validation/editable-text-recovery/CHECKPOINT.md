@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`fc6cd80 fix: fit native text geometry to OCR bounds`
+`107a879 test: verify native text geometry`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -67,15 +67,25 @@ Phase 12 baseline:
 - Committed the isolated native TEXT geometry change as `fc6cd80`.
 - Re-ran the focused geometry and contract tests against the committed tree;
   all 32 passed and Ruff reported no issues.
+- Inventoried 27 independent acceptance runs: every page of both user source
+  PDFs, every distinct formal real-regression input/DPI variant, the 240-DPI
+  fixed failure page, and the perspective-photo page.
+- Added a resumable validation harness which writes the required routing,
+  geometry, entity, layer-isolated render, default-view, DXF and review
+  artifacts independently for every run.
+- Ran the perspective-photo smoke page. It passed all 16 page-local checks,
+  retained exactly 172 protected straight lines, left its forbidden open-space
+  annotation at zero added pixels, emitted 2/2 eligible native TEXT entities,
+  hid both unsafe source-outline backups, and passed DXF edit/save/re-read.
 
 ## Not completed
 
-- Full per-page and per-DXF acceptance.
+- The remaining 26 full per-page and per-DXF acceptance runs.
 
 ## Modified files
 
-- Checkpoint post-commit evidence only. The production-code working tree was
-  clean immediately after commit `fc6cd80`.
+- Validation-only manifest, resumable harness, one smoke-page artifact set,
+  per-page index, and this checkpoint. No production code is modified.
 
 ## Tests
 
@@ -112,6 +122,10 @@ Phase 12 baseline:
 - Commit-4 LibreCAD edit-save and ezdxf read-save-read audit: passed.
 - Commit-4 post-commit focused tests: 32 passed, 120 warnings.
 - Commit-4 post-commit Ruff checks: passed.
+- Full-validation harness PyCompile: passed.
+- Full-validation harness Ruff: passed.
+- Full-validation manifest inventory: exactly 27 unique run IDs.
+- Perspective full-page smoke acceptance: passed in 10.876 seconds.
 
 ## Per-page status
 
@@ -208,10 +222,23 @@ extend beyond the target box rather than being squeezed into an unreadable
 width. The per-entity raw and applied width factors are retained in geometry
 XDATA and will be listed in the full per-page reports.
 
+The first full-validation page now reports:
+
+- run: `perspective-sample-plan-096dpi`
+- OCR candidates / eligible / native TEXT: 2 / 2 / 2
+- hidden source-outline backup candidates / entities: 2 / 27
+- eligible candidate-owned `TRACE_TEXT_SYMBOL` objects/pixels: 0 / 0
+- primary semantic conflicts / ownership violations: 0 / 0
+- default-visible duplicate representations: 0
+- native TEXT geometry and editable read-save-read: passed
+- formal straight lines: 172 observed / 172 expected
+- forbidden connection added pixels: 0
+- DXF audit errors: 0
+
 ## Next single safe action
 
-Commit this post-commit checkpoint evidence, then inventory the exact formal
-real-regression pages, every page of every source PDF, and every current or
-newly generated DXF before starting the bounded per-page validation batches.
-Do not change production code, OCR thresholds or expected regression
-baselines during that validation.
+Commit the validation harness and smoke evidence, then run the remaining
+26 manifest entries in bounded, resumable batches. After each batch, inspect
+every page-local `passed` value and stop on a genuine contract failure. Do not
+change production code, OCR thresholds or expected regression baselines during
+that validation.
