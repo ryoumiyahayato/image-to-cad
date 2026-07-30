@@ -1,0 +1,20 @@
+## fix/non-destructive-editable-text
+ M app/content_ownership.py
+ M app/final_structure.py
+ M app/gui_exact_release.py
+ M app/optimized_trace.py
+ M app/processing_contract.py
+ M app/text_output_contract.py
+ M app/trace_document_export.py
+ M app/trace_dxf_entities.py
+ M app/trace_single_export.py
+ M app/trace_storage.py
+ M tests/test_content_ownership.py
+ M tests/test_text_output_contract.py
+ M tests/test_trace_export.py
+ M validation/editable-text-recovery/CHECKPOINT.md
+ M validation/editable-text-recovery/run_recovery_probe.py
+?? validation/editable-text-recovery/checkpoints/commit3-git-status-before.txt
+?? validation/editable-text-recovery/checkpoints/commit3-page001.dxf
+?? validation/editable-text-recovery/checkpoints/commit3-page001.json
+?? validation/editable-text-recovery/checkpoints/commit3-tests-before.txt

@@ -12,8 +12,10 @@ from .logo_detection import LogoRegion
 from .resolution import image_resolution_scale
 from .signature_overlay import SignatureRegion
 from .text_output_contract import (
+    TextOutputState,
     accepted_ocr_texts,
     suppressible_ocr_texts,
+    text_output_decisions,
 )
 
 
@@ -471,6 +473,201 @@ class ContentOwnership:
             },
             "downgrades": [dict(item) for item in self.downgrades],
         }
+
+
+@dataclass(frozen=True)
+class TextSemanticOwnership:
+    """Candidate masks routed independently from their primary OCR semantic."""
+
+    editable_source: np.ndarray
+    source_outline: np.ndarray
+    uncertain_outline: np.ndarray
+    candidates: tuple[dict[str, object], ...]
+
+    def assert_valid(self, source: np.ndarray) -> None:
+        masks = (
+            self.editable_source,
+            self.source_outline,
+            self.uncertain_outline,
+        )
+        if any(mask.shape != source.shape for mask in masks):
+            raise AssertionError(
+                "Text semantic masks must use source coordinates"
+            )
+        if any(mask.dtype != np.uint8 for mask in masks):
+            raise AssertionError("Text semantic masks must be 8-bit")
+        if np.any(
+            (self.source_outline > 0)
+            & (self.uncertain_outline > 0)
+        ):
+            raise AssertionError(
+                "One source pixel cannot be both editable backup and uncertain"
+            )
+        for mask in masks:
+            if np.any((mask > 0) & (source == 0)):
+                raise AssertionError(
+                    "Text semantic ownership cannot invent source pixels"
+                )
+        if np.any(
+            (self.source_outline > 0)
+            & (self.editable_source == 0)
+        ):
+            raise AssertionError(
+                "Source outline backup must belong to editable text"
+            )
+        if not all(
+            bool(item["source_pixels_conserved"])
+            for item in self.candidates
+        ):
+            raise AssertionError(
+                "Every candidate source pixel must retain one final owner"
+            )
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "candidate_count": len(self.candidates),
+            "editable_source_pixels": int(
+                cv2.countNonZero(self.editable_source)
+            ),
+            "source_outline_pixels": int(
+                cv2.countNonZero(self.source_outline)
+            ),
+            "uncertain_outline_pixels": int(
+                cv2.countNonZero(self.uncertain_outline)
+            ),
+            "candidate_primary_semantic_unique": all(
+                bool(item["primary_semantic_unique"])
+                for item in self.candidates
+            ),
+            "candidate_source_pixels_conserved": all(
+                bool(item["source_pixels_conserved"])
+                for item in self.candidates
+            ),
+            "candidates": [dict(item) for item in self.candidates],
+        }
+
+
+def build_text_semantic_ownership(
+    binary: np.ndarray,
+    texts: Sequence[TextCandidate],
+    *,
+    ownership: ContentOwnership,
+) -> TextSemanticOwnership:
+    """Route only candidate-owned source ink; never blank an enclosing bbox."""
+
+    source = _source_foreground(binary)
+    outline_owner = cv2.max(ownership.graphic, ownership.residual)
+    source_outline = _mask_like(binary)
+    uncertain_outline = _mask_like(binary)
+    decisions = text_output_decisions(texts)
+    candidate_regions: list[np.ndarray] = []
+
+    for decision in decisions:
+        region = _candidate_region_mask(
+            decision.candidate,
+            binary.shape,
+        )
+        candidate_source = np.where(
+            (region > 0) & (source > 0),
+            255,
+            0,
+        ).astype(np.uint8)
+        candidate_regions.append(candidate_source)
+        outline_pixels = (
+            (candidate_source > 0) & (outline_owner > 0)
+        )
+        if (
+            decision.text_emit_eligible
+            and not decision.source_outline_suppressible
+        ):
+            source_outline[outline_pixels] = 255
+        elif decision.state is TextOutputState.TEXT_FALLBACK_OUTLINE:
+            uncertain_outline[outline_pixels] = 255
+
+    uncertain_outline[source_outline > 0] = 0
+    editable_source = cv2.max(ownership.text, source_outline)
+    records: list[dict[str, object]] = []
+    other_owner = cv2.max(
+        ownership.logo,
+        cv2.max(
+            ownership.signature,
+            cv2.max(ownership.graphic, ownership.residual),
+        ),
+    )
+    other_visible = np.where(
+        (other_owner > 0)
+        & (source_outline == 0)
+        & (uncertain_outline == 0),
+        255,
+        0,
+    ).astype(np.uint8)
+
+    for index, (decision, candidate_source) in enumerate(
+        zip(decisions, candidate_regions, strict=True)
+    ):
+        source_pixels = int(cv2.countNonZero(candidate_source))
+        owner_counts = {
+            "structural_line": int(
+                np.count_nonzero(
+                    (candidate_source > 0) & (ownership.line > 0)
+                )
+            ),
+            "editable_text_suppressed_source": int(
+                np.count_nonzero(
+                    (candidate_source > 0) & (ownership.text > 0)
+                )
+            ),
+            "source_text_outline_backup": int(
+                np.count_nonzero(
+                    (candidate_source > 0) & (source_outline > 0)
+                )
+            ),
+            "uncertain_text_outline": int(
+                np.count_nonzero(
+                    (candidate_source > 0) & (uncertain_outline > 0)
+                )
+            ),
+            "other_visible_source": int(
+                np.count_nonzero(
+                    (candidate_source > 0) & (other_visible > 0)
+                )
+            ),
+        }
+        owned_pixels = sum(owner_counts.values())
+        records.append(
+            {
+                "candidate_id": f"ocr-{index + 1:03d}",
+                "primary_semantic": decision.primary_semantic,
+                "primary_semantic_unique": True,
+                "text_emit_eligible": bool(
+                    decision.text_emit_eligible
+                ),
+                "source_outline_suppressible": bool(
+                    decision.source_outline_suppressible
+                ),
+                "source_pixels": source_pixels,
+                "final_owner_pixels": owner_counts,
+                "source_pixels_conserved": owned_pixels == source_pixels,
+            }
+        )
+
+    result = TextSemanticOwnership(
+        editable_source=np.ascontiguousarray(
+            editable_source,
+            dtype=np.uint8,
+        ),
+        source_outline=np.ascontiguousarray(
+            source_outline,
+            dtype=np.uint8,
+        ),
+        uncertain_outline=np.ascontiguousarray(
+            uncertain_outline,
+            dtype=np.uint8,
+        ),
+        candidates=tuple(records),
+    )
+    result.assert_valid(source)
+    return result
 
 
 @dataclass(frozen=True)

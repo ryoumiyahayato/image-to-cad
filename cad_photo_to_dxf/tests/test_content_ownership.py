@@ -7,6 +7,7 @@ from app.auxiliary_recognition import TextCandidate
 from app.content_ownership import (
     arbitrate_content_candidates,
     binary_from_foreground,
+    build_text_semantic_ownership,
     finalize_content_ownership,
     graphic_source_mask,
     partition_content,
@@ -14,6 +15,7 @@ from app.content_ownership import (
 from app.line_detect import LineSegment
 from app.logo_detection import LogoRegion
 from app.signature_overlay import mark_graphic_texts
+from app.text_output_contract import decide_text_output
 
 
 def test_every_source_pixel_gets_exactly_one_owner() -> None:
@@ -109,6 +111,89 @@ def test_unsafe_text_stays_explicit_graphic_outline_not_default_residual() -> No
     assert cv2.countNonZero(ownership.graphic) == cv2.countNonZero(
         np.where(binary < 128, 255, 0).astype(np.uint8)
     )
+
+
+def test_connected_component_spans_characters_keeps_editable_primary_semantic() -> None:
+    binary = np.full((120, 280), 255, dtype=np.uint8)
+    cv2.putText(
+        binary,
+        "ABC",
+        (30, 75),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.2,
+        0,
+        3,
+        cv2.LINE_8,
+    )
+    candidate = TextCandidate(
+        text="ABC",
+        bbox=(25, 35, 105, 50),
+        confidence=0.93,
+        kind="text_candidate",
+        source="test",
+        approved=True,
+        replacement_safe=False,
+        review_note="connected_component_spans_characters",
+    )
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(candidate,),
+        signatures=(),
+    )
+    semantics = build_text_semantic_ownership(
+        binary,
+        (candidate,),
+        ownership=ownership,
+    )
+
+    decision = decide_text_output(candidate)
+    assert decision.text_emit_eligible
+    assert decision.primary_semantic == "editable_text"
+    assert cv2.countNonZero(semantics.source_outline) > 0
+    assert semantics.candidates[0]["source_pixels_conserved"]
+    assert semantics.candidates[0]["primary_semantic_unique"]
+
+
+def test_uncovered_nearby_ink_remains_visible_outside_candidate_mask() -> None:
+    binary = np.full((120, 280), 255, dtype=np.uint8)
+    cv2.putText(
+        binary,
+        "ABC",
+        (30, 75),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1.2,
+        0,
+        3,
+        cv2.LINE_8,
+    )
+    cv2.circle(binary, (155, 62), 3, 0, -1)
+    candidate = TextCandidate(
+        text="ABC",
+        bbox=(25, 35, 105, 50),
+        confidence=0.93,
+        kind="text_candidate",
+        source="test",
+        approved=True,
+        character_boxes=((25, 35, 105, 50),),
+        replacement_safe=False,
+        review_note="uncovered_nearby_ink",
+    )
+    ownership = partition_content(
+        binary,
+        lines=(),
+        texts=(candidate,),
+        signatures=(),
+    )
+    semantics = build_text_semantic_ownership(
+        binary,
+        (candidate,),
+        ownership=ownership,
+    )
+
+    assert semantics.source_outline[62, 155] == 0
+    assert ownership.graphic[62, 155] == 255
+    assert semantics.candidates[0]["source_pixels_conserved"]
     assert set(
         candidate.category for candidate in ownership.candidate_classes
     ) == {"structural_line", "text", "logo", "signature", "graphic"}
@@ -259,6 +344,18 @@ def test_true_structure_line_downgrades_overlapping_editable_text() -> None:
         == "line_text_overlap_with_independent_line_endpoints"
         for conflict in final.conflicts
     )
+    semantics = build_text_semantic_ownership(
+        binary,
+        arbitrated.texts,
+        ownership=final,
+    )
+    decision = decide_text_output(arbitrated.texts[0])
+    assert decision.text_emit_eligible
+    assert decision.primary_semantic == "editable_text"
+    assert not np.any(
+        (semantics.source_outline > 0) & (final.line > 0)
+    )
+    assert semantics.candidates[0]["source_pixels_conserved"]
 
 
 def test_logo_text_conflict_preserves_only_exact_overlap_as_residual() -> None:

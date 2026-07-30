@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
+from collections.abc import Mapping
 import json
 from pathlib import Path
+import re
 import sys
 
+import cv2
 import ezdxf
+import numpy as np
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -38,14 +42,44 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _base_layer(name: str) -> str:
-    parts = str(name).split("_", 3)
-    if (
-        len(parts) == 4
-        and parts[0] == "PAGE"
-        and parts[1].isdigit()
-    ):
-        return parts[3]
-    return str(name)
+    return re.sub(r"^PAGE_\d{3}_", "", str(name))
+
+
+def _entity_source_mask(
+    entity: object,
+    *,
+    shape: tuple[int, int],
+) -> np.ndarray:
+    mask = np.zeros(shape, dtype=np.uint8)
+    if entity.dxftype() != "LWPOLYLINE":  # type: ignore[attr-defined]
+        return mask
+    points = [
+        (
+            int(round(float(x))),
+            int(round(shape[0] - float(y))),
+        )
+        for x, y in entity.get_points("xy")  # type: ignore[attr-defined]
+    ]
+    if len(points) < 2:
+        return mask
+    polygon = np.asarray(points, dtype=np.int32)
+    cv2.polylines(
+        mask,
+        [polygon],
+        bool(entity.closed),  # type: ignore[attr-defined]
+        255,
+        1,
+        cv2.LINE_8,
+    )
+    return mask
+
+
+def _semantic_observation(structure: object) -> dict[str, object]:
+    for observation in structure.observations:  # type: ignore[attr-defined]
+        if observation.get("event") == "text_output_contract":
+            value = observation.get("semantic_ownership", {})
+            return dict(value) if isinstance(value, Mapping) else {}
+    return {}
 
 
 def main() -> int:
@@ -80,6 +114,70 @@ def main() -> int:
     decisions = text_output_decisions(structure.texts)
     summary = text_output_summary(structure.texts)
     native_texts = list(document.modelspace().query("TEXT"))
+    editable_mask = structure.editable_text_source_mask
+    uncertain_mask = structure.uncertain_text_outline_mask
+    general_trace_source = structure.contour_binary < 128
+    eligible_owned_trace_source = np.zeros(
+        structure.contour_binary.shape,
+        dtype=np.uint8,
+    )
+    uncertain_owned_trace_source = np.zeros(
+        structure.contour_binary.shape,
+        dtype=np.uint8,
+    )
+    if editable_mask is not None:
+        eligible_owned_trace_source[
+            general_trace_source & (editable_mask > 0)
+        ] = 255
+    if uncertain_mask is not None:
+        uncertain_owned_trace_source[
+            general_trace_source & (uncertain_mask > 0)
+        ] = 255
+    eligible_owned_symbol_objects = 0
+    uncertain_owned_symbol_objects = 0
+    eligible_symbol_geometric_objects = 0
+    uncertain_symbol_geometric_objects = 0
+    eligible_symbol_geometric_pixels = 0
+    uncertain_symbol_geometric_pixels = 0
+    for entity in document.modelspace():
+        if _base_layer(str(entity.dxf.layer)) != "TRACE_TEXT_SYMBOL":
+            continue
+        entity_mask = _entity_source_mask(
+            entity,
+            shape=structure.contour_binary.shape,
+        )
+        if editable_mask is not None:
+            overlap = int(
+                np.count_nonzero(
+                    (entity_mask > 0) & (editable_mask > 0)
+                )
+            )
+            eligible_symbol_geometric_pixels += overlap
+            eligible_symbol_geometric_objects += int(overlap > 0)
+            eligible_owned_symbol_objects += int(
+                np.any(
+                    (entity_mask > 0)
+                    & (eligible_owned_trace_source > 0)
+                )
+            )
+        if uncertain_mask is not None:
+            overlap = int(
+                np.count_nonzero(
+                    (entity_mask > 0) & (uncertain_mask > 0)
+                )
+            )
+            uncertain_symbol_geometric_pixels += overlap
+            uncertain_symbol_geometric_objects += int(overlap > 0)
+            uncertain_owned_symbol_objects += int(
+                np.any(
+                    (entity_mask > 0)
+                    & (uncertain_owned_trace_source > 0)
+                )
+            )
+    semantic_ownership = _semantic_observation(structure)
+    candidate_records = list(
+        semantic_ownership.get("candidates", [])
+    )
     payload = {
         "schema_version": 1,
         "input": str(args.input.resolve()),
@@ -105,6 +203,44 @@ def main() -> int:
             for layer in document.layers
         },
         "dxf_audit_error_count": len(audit.errors),
+        "eligible_candidate_text_symbol_object_count": (
+            eligible_owned_symbol_objects
+        ),
+        "eligible_candidate_text_symbol_pixel_count": (
+            int(cv2.countNonZero(eligible_owned_trace_source))
+        ),
+        "uncertain_candidate_text_symbol_object_count": (
+            uncertain_owned_symbol_objects
+        ),
+        "uncertain_candidate_text_symbol_pixel_count": (
+            int(cv2.countNonZero(uncertain_owned_trace_source))
+        ),
+        "eligible_candidate_text_symbol_geometric_touch_count": (
+            eligible_symbol_geometric_objects
+        ),
+        "eligible_candidate_text_symbol_geometric_touch_pixels": (
+            eligible_symbol_geometric_pixels
+        ),
+        "uncertain_candidate_text_symbol_geometric_touch_count": (
+            uncertain_symbol_geometric_objects
+        ),
+        "uncertain_candidate_text_symbol_geometric_touch_pixels": (
+            uncertain_symbol_geometric_pixels
+        ),
+        "candidate_primary_semantic_conflict_count": sum(
+            not bool(item.get("primary_semantic_unique", False))
+            for item in candidate_records
+            if isinstance(item, dict)
+        ),
+        "candidate_source_ownership_violation_count": sum(
+            not bool(item.get("source_pixels_conserved", False))
+            for item in candidate_records
+            if isinstance(item, dict)
+        ),
+        "fallback_and_text_symbol_conflict_count": (
+            uncertain_owned_symbol_objects
+        ),
+        "semantic_ownership": semantic_ownership,
         "hard_rejected_candidates": [
             {
                 "candidate_id": f"ocr-{index + 1:03d}",
@@ -136,6 +272,10 @@ def main() -> int:
     return 0 if (
         payload["native_TEXT_matches_eligible"]
         and payload["dxf_audit_error_count"] == 0
+        and payload["eligible_candidate_text_symbol_object_count"] == 0
+        and payload["candidate_primary_semantic_conflict_count"] == 0
+        and payload["candidate_source_ownership_violation_count"] == 0
+        and payload["fallback_and_text_symbol_conflict_count"] == 0
     ) else 1
 
 

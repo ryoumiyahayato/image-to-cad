@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`185d44b refactor: preserve unsafe source glyphs as hidden text outlines`
+`892b150 test: verify hidden source glyph outlines`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -35,17 +35,42 @@ Phase 12 baseline:
   multi-page DXF exports.
 - Reclassified OCR hard rejects as visible `TEXT_FALLBACK_OUTLINE`; truly
   unsupported non-text candidates remain `RESIDUAL_GRAPHIC`.
+- Built candidate-level source masks from existing character boxes, OCR quads,
+  or bbox fallback and intersected them with exact source-ink ownership.
+- Routed eligible unsafe glyph pixels only to the hidden
+  `SOURCE_TEXT_OUTLINE` backup and hard-rejected text pixels only to visible
+  `TEXT_FALLBACK_OUTLINE`.
+- Removed both semantic outline masks from the general contour input before
+  `TRACE_TEXT_SYMBOL`/`TRACE_CURVE` classification.
+- Preserved the text semantic masks in the immutable `FinalStructure`, the
+  processing and GUI rebuild paths, the trace cache, and single/multi-page
+  DXF export.
+- Confirmed candidate primary-semantic uniqueness and exact source-pixel
+  conservation on the 240 DPI fixed failure page.
 
 ## Not completed
 
-- Candidate-level semantic ownership.
 - Native TEXT geometry fitting.
 - Full per-page and per-DXF acceptance.
 
 ## Modified files
 
-- Checkpoint evidence only. The production-code worktree is clean after
-  commit `185d44b`.
+- `app/content_ownership.py`
+- `app/final_structure.py`
+- `app/gui_exact_release.py`
+- `app/optimized_trace.py`
+- `app/processing_contract.py`
+- `app/text_output_contract.py`
+- `app/trace_document_export.py`
+- `app/trace_dxf_entities.py`
+- `app/trace_single_export.py`
+- `app/trace_storage.py`
+- `tests/test_content_ownership.py`
+- `tests/test_text_output_contract.py`
+- `tests/test_trace_export.py`
+- `validation/editable-text-recovery/run_recovery_probe.py`
+- Candidate-level code and pre-commit evidence are ready for the required
+  `fix: enforce candidate-level text semantic ownership` commit.
 
 ## Tests
 
@@ -63,6 +88,13 @@ Phase 12 baseline:
 - Commit-2 page-001 DXF audit: 0 errors.
 - Commit-2 post-commit focused tests: 50 passed, 66 warnings.
 - Commit-2 post-commit Ruff checks: passed.
+- Commit-3 focused tests: 37 passed, 72 warnings.
+- Commit-3 Ruff checks: passed.
+- Commit-3 page-001 DXF audit: 0 errors.
+- Commit-3 page-001 candidate-owned eligible/fallback
+  `TRACE_TEXT_SYMBOL` objects: 0/0.
+- Commit-3 page-001 primary semantic conflicts: 0.
+- Commit-3 page-001 source ownership violations: 0.
 
 ## Per-page status
 
@@ -114,10 +146,30 @@ The remaining `TRACE_TEXT_SYMBOL` count is expected at this checkpoint; the
 next independent commit must remove eligible-candidate source pixels from that
 primary semantic without deleting unrelated structure.
 
+The local commit-3 probe now reports:
+
+- OCR candidates: 208
+- `text_emit_eligible`: 206
+- native DXF TEXT: 206
+- hidden source-outline backup candidates: 169
+- confidence hard rejects / visible fallback candidates: 2/2
+- eligible candidate-owned `TRACE_TEXT_SYMBOL` objects/pixels: 0/0
+- fallback candidate-owned `TRACE_TEXT_SYMBOL` objects/pixels: 0/0
+- candidate primary semantic conflicts: 0
+- candidate source ownership violations: 0
+- fallback/text-symbol conflicts: 0
+- DXF audit errors: 0
+- `SOURCE_TEXT_OUTLINE` default visible: false
+
+Thirteen `TRACE_TEXT_SYMBOL` polyline boundaries geometrically touch an
+eligible candidate mask edge after vector rasterization (123 boundary pixels),
+but their candidate-owned source-pixel count is zero. This adjacency is
+recorded separately and is not removed because it may be unrelated table or
+symbol geometry.
+
 ## Next single safe action
 
-Add candidate source/ownership masks to the immutable `FinalStructure` and use
-those masks to prevent eligible candidate pixels from being emitted as visible
-`TRACE_TEXT_SYMBOL`, while preserving unrelated structural pixels. Do not
-alter native TEXT geometry yet.
-
+Create the required isolated commit:
+`fix: enforce candidate-level text semantic ownership`. Then run the same
+focused test set after the commit and stop if it does not pass. Do not alter
+native TEXT geometry before that checkpoint succeeds.

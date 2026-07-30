@@ -8,6 +8,7 @@ import ezdxf
 import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
+from app.final_structure import build_final_structure
 from app.raster_trace import trace_binary
 from app.text_output_contract import (
     TextOutputState,
@@ -15,7 +16,10 @@ from app.text_output_contract import (
     decide_text_output,
     text_output_summary,
 )
-from app.trace_single_export import export_exact_trace_dxf
+from app.trace_single_export import (
+    export_exact_trace_dxf,
+    export_final_structure_dxf,
+)
 
 
 def _candidate(**changes: object) -> TextCandidate:
@@ -248,4 +252,49 @@ def test_small_unreliable_ocr_segment_marks_long_owner_as_residual(
     assert layers == {"TEXT_FALLBACK_OUTLINE"}
     assert result.fallback_text_count == 1
     assert result.residual_graphic_count == 0
+    assert not document.audit().errors
+
+
+def test_final_structure_masks_prevent_editable_text_symbol_conflict(
+    tmp_path: Path,
+) -> None:
+    main_binary = np.full((140, 360), 255, dtype=np.uint8)
+    cv2.circle(main_binary, (300, 70), 12, 0, 2)
+    source_outline = np.zeros_like(main_binary)
+    cv2.rectangle(source_outline, (20, 50), (90, 80), 255, -1)
+    candidate = _candidate(
+        text="UNSAFE",
+        bbox=(20, 50, 70, 30),
+        replacement_safe=False,
+    )
+    structure = build_final_structure(
+        source_size_px=(360, 140),
+        contour_binary=main_binary,
+        contours=tuple(trace_binary(main_binary)),
+        texts=(candidate,),
+        editable_text_source_mask=source_outline,
+        source_text_outline_mask=source_outline,
+        uncertain_text_outline_mask=np.zeros_like(main_binary),
+    )
+
+    result = export_final_structure_dxf(
+        structure,
+        tmp_path / "semantic-owner.dxf",
+    )
+    document = ezdxf.readfile(result.path)
+    modelspace = document.modelspace()
+
+    assert result.text_count == 1
+    assert result.source_text_outline_count == 1
+    assert result.fallback_text_count == 0
+    assert [entity.dxf.text for entity in modelspace.query("TEXT")] == [
+        "UNSAFE"
+    ]
+    assert modelspace.query(
+        'LWPOLYLINE[layer=="SOURCE_TEXT_OUTLINE"]'
+    )
+    assert not modelspace.query(
+        'LWPOLYLINE[layer=="TEXT_FALLBACK_OUTLINE"]'
+    )
+    assert document.layers.get("SOURCE_TEXT_OUTLINE").is_off()
     assert not document.audit().errors

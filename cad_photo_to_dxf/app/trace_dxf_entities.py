@@ -257,6 +257,7 @@ def add_exact_trace_entities(
     source_outline_ocr_texts: Sequence[TextCandidate] = (),
     fallback_ocr_texts: Sequence[TextCandidate] = (),
     residual_ocr_texts: Sequence[TextCandidate] = (),
+    forced_layer_name: str | None = None,
     layer_names: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
@@ -295,7 +296,9 @@ def add_exact_trace_entities(
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
-        if _path_matches_ocr(
+        if forced_layer_name is not None:
+            base_layer_name = str(forced_layer_name)
+        elif _path_matches_ocr(
             trace_path,
             residual_ocr_texts,
             allow_candidate_coverage=True,

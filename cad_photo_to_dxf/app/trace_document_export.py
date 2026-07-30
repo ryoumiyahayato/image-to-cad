@@ -7,12 +7,14 @@ from tempfile import NamedTemporaryFile
 
 import ezdxf
 from ezdxf import units
+import numpy as np
 
 from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
 from .document_export import DocumentExportResult, DocumentPage, _resolve_raster
 from .dxf_exporter import LAYER_STYLES
 from .image_loader import save_image
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
+from .raster_trace import TracePath, trace_binary
 from .signature_overlay import add_signature_images, set_foreground_draw_order
 from .text_output_contract import (
     TextOutputState,
@@ -86,6 +88,13 @@ def _add_page_underlay(
     )
 
 
+def _semantic_paths(mask: np.ndarray | None) -> tuple[TracePath, ...]:
+    if mask is None or not np.any(mask > 0):
+        return ()
+    binary = np.where(mask > 0, 0, 255).astype(np.uint8)
+    return tuple(trace_binary(binary))
+
+
 def export_trace_document_streaming(
     pages: Iterable[DocumentPage],
     output_path: str | Path,
@@ -143,6 +152,19 @@ def export_trace_document_streaming(
         if structure is not None:
             structure.assert_valid()
             trace_paths = structure.contours
+            source_text_outline_paths = _semantic_paths(
+                structure.source_text_outline_mask
+            )
+            uncertain_text_outline_paths = _semantic_paths(
+                structure.uncertain_text_outline_mask
+            )
+            semantic_outlines_prepartitioned = any(
+                mask is not None
+                for mask in (
+                    structure.source_text_outline_mask,
+                    structure.uncertain_text_outline_mask,
+                )
+            )
             lines = structure.straight_lines
             texts = structure.texts
             signatures = structure.signatures
@@ -150,6 +172,9 @@ def export_trace_document_streaming(
             structure_ids.append(structure.structure_id)
         else:
             trace_paths = page.trace_paths
+            source_text_outline_paths = ()
+            uncertain_text_outline_paths = ()
+            semantic_outlines_prepartitioned = False
             lines = page.lines
             texts = page.texts
             signatures = page.signatures
@@ -265,8 +290,14 @@ def export_trace_document_streaming(
             source_size=(vector_width, vector_height),
             palette=palette,
             ocr_texts=suppressible_texts,
-            source_outline_ocr_texts=source_outline_texts,
-            fallback_ocr_texts=fallback_texts,
+            source_outline_ocr_texts=(
+                ()
+                if semantic_outlines_prepartitioned
+                else source_outline_texts
+            ),
+            fallback_ocr_texts=(
+                () if semantic_outlines_prepartitioned else fallback_texts
+            ),
             residual_ocr_texts=residual_texts,
             layer_names=layer_names,
             cancellation_token=cancellation_token,
@@ -279,6 +310,46 @@ def export_trace_document_streaming(
             transform=transform,
             layer_name=layer_names["OCR_TEXT"],
             block_prefix=f"PAGE_{index:03d}_OCR_LINE",
+        )
+        (
+            source_path_count,
+            source_vertex_count,
+            _source_entities,
+            _source_bounds,
+        ) = add_exact_trace_entities(
+            modelspace,
+            source_text_outline_paths,
+            transform=transform,
+            color=page.trace_color,
+            source_size=(vector_width, vector_height),
+            palette=palette,
+            forced_layer_name="SOURCE_TEXT_OUTLINE",
+            layer_names=layer_names,
+            cancellation_token=cancellation_token,
+            progress_callback=page_progress,
+        )
+        (
+            uncertain_path_count,
+            uncertain_vertex_count,
+            _uncertain_entities,
+            _uncertain_bounds,
+        ) = add_exact_trace_entities(
+            modelspace,
+            uncertain_text_outline_paths,
+            transform=transform,
+            color=page.trace_color,
+            source_size=(vector_width, vector_height),
+            palette=palette,
+            forced_layer_name="TEXT_FALLBACK_OUTLINE",
+            layer_names=layer_names,
+            cancellation_token=cancellation_token,
+            progress_callback=page_progress,
+        )
+        current_path_count += (
+            source_path_count + uncertain_path_count
+        )
+        current_vertex_count += (
+            source_vertex_count + uncertain_vertex_count
         )
         current_signature_paths, signature_entities, _signature_bounds = (
             add_signature_images(

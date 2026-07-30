@@ -32,6 +32,7 @@ class TextOutputDecision:
     text_emit_eligible: bool
     source_outline_suppressible: bool
     hard_reject_reason: str | None
+    primary_semantic: str
 
     def payload(self) -> dict[str, object]:
         return {
@@ -56,6 +57,7 @@ class TextOutputDecision:
                 self.source_outline_suppressible
             ),
             "hard_reject_reason": self.hard_reject_reason,
+            "primary_semantic": self.primary_semantic,
         }
 
 
@@ -181,6 +183,15 @@ def _decision(
     text_emit_eligible: bool,
     hard_reject_reason: str | None,
 ) -> TextOutputDecision:
+    primary_semantic = (
+        "editable_text"
+        if text_emit_eligible
+        else (
+            "uncertain_text"
+            if state is TextOutputState.TEXT_FALLBACK_OUTLINE
+            else "residual_non_text"
+        )
+    )
     return TextOutputDecision(
         candidate=candidate,
         state=state,
@@ -192,6 +203,7 @@ def _decision(
             candidate.replacement_safe
         ),
         hard_reject_reason=hard_reject_reason,
+        primary_semantic=primary_semantic,
     )
 
 

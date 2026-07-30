@@ -8,6 +8,7 @@ import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
 from app.document_export import DocumentPage
+from app.final_structure import build_final_structure
 from app.raster_trace import TracePath, trace_binary
 from app.scale_calibrator import ScaleCalibration
 from app.trace_document_export import export_trace_document_streaming
@@ -241,4 +242,70 @@ def test_later_pages_are_spatially_separated_and_default_off(tmp_path: Path) -> 
     assert document.layers.get("PAGE_002_TRACE_CURVE").is_off()
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
+    assert not document.audit().errors
+
+
+def _semantic_document_page(number: int) -> DocumentPage:
+    main_binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.circle(main_binary, (180, 50), 10, 0, 2)
+    source_outline = np.zeros_like(main_binary)
+    cv2.rectangle(source_outline, (20, 35), (90, 65), 255, -1)
+    candidate = _ocr_text(
+        text=f"PAGE {number}",
+        bbox=(20, 35, 70, 30),
+        quad=((20.0, 35.0), (90.0, 35.0), (90.0, 65.0), (20.0, 65.0)),
+        replacement_safe=False,
+    )
+    structure = build_final_structure(
+        source_size_px=(220, 100),
+        contour_binary=main_binary,
+        contours=tuple(trace_binary(main_binary)),
+        texts=(candidate,),
+        editable_text_source_mask=source_outline,
+        source_text_outline_mask=source_outline,
+        uncertain_text_outline_mask=np.zeros_like(main_binary),
+    )
+    return DocumentPage(
+        page_number=number,
+        raster=cv2.cvtColor(main_binary, cv2.COLOR_GRAY2BGR),
+        page_size_mm=(220.0, 100.0),
+        vector_size_px=(220, 100),
+        label=f"semantic page {number}",
+        final_structure=structure,
+    )
+
+
+def test_document_final_structures_keep_hidden_source_outlines_per_page(
+    tmp_path: Path,
+) -> None:
+    result = export_trace_document_streaming(
+        [_semantic_document_page(1), _semantic_document_page(2)],
+        tmp_path / "semantic-pages.dxf",
+        total_pages=2,
+    )
+
+    document = ezdxf.readfile(result.path)
+    modelspace = document.modelspace()
+    assert result.page_count == 2
+    assert result.text_count == 2
+    assert result.source_text_outline_count == 2
+    assert result.fallback_text_count == 0
+    for page in (1, 2):
+        prefix = f"PAGE_{page:03d}"
+        assert len(
+            modelspace.query(f'TEXT[layer=="{prefix}_OCR_TEXT"]')
+        ) == 1
+        assert len(
+            modelspace.query(
+                f'LWPOLYLINE[layer=="{prefix}_SOURCE_TEXT_OUTLINE"]'
+            )
+        ) > 0
+        assert document.layers.get(
+            f"{prefix}_SOURCE_TEXT_OUTLINE"
+        ).is_off()
+        assert len(
+            modelspace.query(
+                f'LWPOLYLINE[layer=="{prefix}_TEXT_FALLBACK_OUTLINE"]'
+            )
+        ) == 0
     assert not document.audit().errors

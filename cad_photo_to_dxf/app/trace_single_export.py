@@ -16,7 +16,7 @@ from .final_structure import FinalStructure
 from .image_loader import save_image
 from .line_detect import LineSegment
 from .ocr_outline_export import accepted_ocr_texts, add_ocr_outline_blocks
-from .raster_trace import TracePath
+from .raster_trace import TracePath, trace_binary
 from .scale_calibrator import ScaleCalibration
 from .signature_overlay import (
     SignatureRegion,
@@ -49,6 +49,9 @@ def export_exact_trace_dxf(
     palette: TracePalette | None = None,
     straight_lines: tuple[LineSegment, ...] = (),
     texts: tuple[TextCandidate, ...] = (),
+    source_text_outline_paths: tuple[TracePath, ...] = (),
+    uncertain_text_outline_paths: tuple[TracePath, ...] = (),
+    semantic_outlines_prepartitioned: bool = False,
     signatures: tuple[SignatureRegion, ...] = (),
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
@@ -192,13 +195,53 @@ def export_exact_trace_dxf(
         source_size=(resolved_width, image_height),
         palette=palette,
         ocr_texts=suppressible_texts,
-        source_outline_ocr_texts=source_outline_texts,
-        fallback_ocr_texts=fallback_texts,
+        source_outline_ocr_texts=(
+            () if semantic_outlines_prepartitioned else source_outline_texts
+        ),
+        fallback_ocr_texts=(
+            () if semantic_outlines_prepartitioned else fallback_texts
+        ),
         residual_ocr_texts=residual_texts,
         cancellation_token=cancellation_token,
         progress_callback=entity_progress,
     )
     coordinates.extend(trace_bounds)
+    (
+        source_path_count,
+        source_vertex_count,
+        _source_entities,
+        source_bounds,
+    ) = add_exact_trace_entities(
+        modelspace,
+        source_text_outline_paths,
+        transform=transform,
+        color=trace_color,
+        source_size=(resolved_width, image_height),
+        palette=palette,
+        forced_layer_name="SOURCE_TEXT_OUTLINE",
+        cancellation_token=cancellation_token,
+        progress_callback=entity_progress,
+    )
+    coordinates.extend(source_bounds)
+    (
+        uncertain_path_count,
+        uncertain_vertex_count,
+        _uncertain_entities,
+        uncertain_bounds,
+    ) = add_exact_trace_entities(
+        modelspace,
+        uncertain_text_outline_paths,
+        transform=transform,
+        color=trace_color,
+        source_size=(resolved_width, image_height),
+        palette=palette,
+        forced_layer_name="TEXT_FALLBACK_OUTLINE",
+        cancellation_token=cancellation_token,
+        progress_callback=entity_progress,
+    )
+    coordinates.extend(uncertain_bounds)
+    trace_path_count += source_path_count + uncertain_path_count
+    trace_vertex_count += source_vertex_count + uncertain_vertex_count
     text_count, text_entities, text_bounds = add_ocr_outline_blocks(
         doc,
         modelspace,
@@ -295,6 +338,20 @@ def export_final_structure_dxf(
 
     structure.assert_valid()
     width, height = structure.source_size_px
+
+    def semantic_paths(mask: np.ndarray | None) -> tuple[TracePath, ...]:
+        if mask is None or not np.any(mask > 0):
+            return ()
+        binary = np.where(mask > 0, 0, 255).astype(np.uint8)
+        return tuple(trace_binary(binary))
+
+    semantic_outlines_prepartitioned = any(
+        mask is not None
+        for mask in (
+            structure.source_text_outline_mask,
+            structure.uncertain_text_outline_mask,
+        )
+    )
     result = export_exact_trace_dxf(
         structure.contours,
         output_path,
@@ -306,6 +363,15 @@ def export_final_structure_dxf(
         palette=palette,
         straight_lines=structure.straight_lines,
         texts=structure.texts,
+        source_text_outline_paths=semantic_paths(
+            structure.source_text_outline_mask
+        ),
+        uncertain_text_outline_paths=semantic_paths(
+            structure.uncertain_text_outline_mask
+        ),
+        semantic_outlines_prepartitioned=(
+            semantic_outlines_prepartitioned
+        ),
         signatures=structure.signatures,
         raster_image=raster_image,
         raster_output_path=raster_output_path,
