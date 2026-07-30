@@ -25,7 +25,8 @@ The existing OCR confidence threshold is unchanged.
 - Eligible and suppressible: one visible `OCR_TEXT` entity; no visible source
   glyph duplicate.
 - Eligible and not suppressible: one visible `OCR_TEXT` entity plus source
-  glyph pixels on the default-off `SOURCE_TEXT_OUTLINE` backup layer.
+  glyph pixels on the default-off and frozen `SOURCE_TEXT_OUTLINE` backup
+  layer.
 - Not eligible: no native `TEXT`; source glyphs remain visible on
   `TEXT_FALLBACK_OUTLINE` or `UNCERTAIN_TEXT_OUTLINE`.
 
@@ -53,4 +54,3 @@ permitted.
 This change does not alter OCR confidence thresholds, automatic line repair,
 colors, Logo/signature classification, page-specific rules, text dictionaries,
 or recorded real-regression baselines.
-

@@ -29,11 +29,16 @@ def _write_json(path: Path, value: object) -> None:
 
 
 def _git(*arguments: str, text: bool = True) -> str | bytes:
+    options: dict[str, Any] = {
+        "check": True,
+        "capture_output": True,
+        "text": text,
+    }
+    if text:
+        options["encoding"] = "utf-8"
     return subprocess.run(
         ["git", "-C", str(PROJECT_ROOT), *arguments],
-        check=True,
-        capture_output=True,
-        text=text,
+        **options,
     ).stdout
 
 
@@ -395,6 +400,8 @@ def main() -> int:
         _git("rev-parse", f"{BASELINE_TAG}^{{commit}}")
     ).strip()
     head = str(_git("rev-parse", "HEAD")).strip()
+    index["git_commit"] = head
+    _write_json(VALIDATION_ROOT / "per-page-index.json", index)
 
     fixed = next(
         item for item in pages
@@ -612,6 +619,8 @@ def main() -> int:
     (VALIDATION_ROOT / "completion-status.md").write_text(
         f"# Completion status: {status}\n\n"
         f"- Final pages/DXFs: {len(pages)}/{len(pages)} passed\n"
+        f"- All task DXF read-save-read inventory: "
+        f"{len(dxf_records)}/{len(dxf_records)} passed\n"
         f"- OCR candidates: {totals['candidate_count']}\n"
         f"- Eligible/native TEXT: "
         f"{totals['text_emit_eligible_count']}/"

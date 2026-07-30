@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`3d9aae2 test: add full editable text acceptance harness`
+`c7269b1 test: validate editable text recovery on every page`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -94,17 +94,27 @@ Phase 12 baseline:
   historical 986, so the old whole-page line overproduction is not restored.
 - Ran the complete unit suite: 272 passed. Ran Ruff against application, tests
   and recovery validation code: passed.
+- Committed all 33 independent page/DXF reports and the full validation harness
+  as `c7269b1`.
+- Re-read, saved and re-read every one of the 50 DXFs created or retained by
+  this task: 33 final pages, 10 before snapshots, 3 intermediate checkpoints
+  and 4 verification/LibreCAD checkpoints. All 50 passed.
+- Generated the required final delivery files: README, implementation
+  contract, before/after summary, per-page index, page-001 comparison,
+  entity-type audit, semantic-ownership audit, JUnit results, Git sequence and
+  completion status.
+- The final completion report evaluates every required condition as PASS.
 
 ## Not completed
 
-- Commit the completed per-page validation artifacts, then build and verify the
-  final aggregate delivery reports.
+- Commit the verified final aggregate delivery reports, record the post-commit
+  Git status, and stop.
 
 ## Modified files
 
-- Validation-only manifest and harness updates, 32 additional page artifact
-  directories, batch logs, the 33-page index, final-delivery report builder,
-  JUnit report, and this checkpoint. No production code is modified.
+- Final aggregate reports, final-delivery builder encoding/index corrections,
+  report-builder logs, Git status evidence, and this checkpoint. No production
+  code is modified.
 
 ## Tests
 
@@ -153,6 +163,8 @@ Phase 12 baseline:
   0 / 0 / 0.
 - Full unit tests: 272 passed, 195 warnings.
 - Full Ruff check: passed.
+- Task DXF read-save-read inventory: 50/50 passed.
+- Final completion checks: 13/13 passed.
 
 ## Per-page status
 
@@ -281,8 +293,7 @@ The same page at the historical saved-DXF resolution reports:
 
 ## Next single safe action
 
-Commit only the completed validation harness/results and checkpoint evidence.
-Then run `build_final_delivery.py`, inspect every aggregate completion check,
-and commit the required final reports. Do not change production code, OCR
-thresholds, expected regression baselines, colors, Logo/signature rules or
-automatic line reconstruction.
+Commit only the verified final delivery reports and checkpoint evidence. Then
+record the post-commit Git status and stop. Do not begin colors, automatic line
+repair, Logo/signature work, OCR threshold changes, baseline recording or any
+other task.

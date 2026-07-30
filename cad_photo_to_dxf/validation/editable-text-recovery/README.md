@@ -1,18 +1,15 @@
-# Editable TEXT recovery validation
+# Editable TEXT recovery acceptance
 
-This directory records the non-destructive OCR editable-TEXT recovery.
+Status: **PASS**
 
-The acceptance target is candidate-level:
+This directory records the non-destructive editable-TEXT recovery from the untouched phase 12 baseline. It contains 33 independent final page/DXF reports: every page of both user source PDFs, every distinct formal regression input and DPI variant, the fixed 240-DPI failure page, and the same-DPI d9fbda7 comparison.
 
-- every `text_emit_eligible=true` OCR candidate emits exactly one native DXF
-  `TEXT`;
-- source-outline suppression is decided independently;
-- unsafe source glyphs are retained on the hidden
-  `SOURCE_TEXT_OUTLINE` layer;
-- hard-rejected or invalid OCR remains visible as uncertain/fallback outline;
-- an eligible candidate contributes no primary `TRACE_TEXT_SYMBOL` semantic;
-- every generated DXF and every source page is audited independently.
+Key results:
 
-The phase 12 baseline tag and the real-regression manifests are immutable
-inputs. This task does not record or accept a new regression baseline.
+- 4394 eligible candidates emitted 4394 native DXF TEXT entities.
+- 47 candidates were hard rejected by the unchanged confidence contract; invalid geometry: 0.
+- 3726 unsafe source glyph candidates were retained on the default-hidden/frozen backup layer.
+- Eligible candidate-owned TRACE_TEXT_SYMBOL objects, semantic conflicts, ownership violations, visible duplicates and DXF audit errors are all zero.
+- Windows LibreCAD direct edit/save and ezdxf read-save-read passed with the bundled wqy-unicode LFF.
 
+Start with `completion-status.md`, `before-after-summary.json`, `per-page-index.json`, and `page001-before-after.md`. Each page directory contains routing, geometry, entity audit, four isolated renders, the DXF, and its review.
