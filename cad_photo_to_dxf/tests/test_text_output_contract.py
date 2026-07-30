@@ -58,8 +58,8 @@ def test_text_output_states_are_mutually_exclusive_and_reasoned() -> None:
     assert unsafe_editable.downgrade_reason is None
     assert unsafe_editable.hard_reject_reason is None
 
-    assert residual.state is TextOutputState.RESIDUAL_GRAPHIC
-    assert residual.output_layer == "RESIDUAL_GRAPHIC"
+    assert residual.state is TextOutputState.TEXT_FALLBACK_OUTLINE
+    assert residual.output_layer == "TEXT_FALLBACK_OUTLINE"
     assert not residual.editable
     assert residual.downgrade_reason == "confidence_below_contract"
     assert not residual.text_emit_eligible
@@ -92,7 +92,7 @@ def test_invalid_geometry_is_an_explicit_text_hard_reject() -> None:
     decision = decide_text_output(invalid)
 
     assert not decision.text_emit_eligible
-    assert decision.state is TextOutputState.RESIDUAL_GRAPHIC
+    assert decision.state is TextOutputState.TEXT_FALLBACK_OUTLINE
     assert decision.hard_reject_reason == "invalid_text_geometry"
 
 
@@ -131,8 +131,8 @@ def test_summary_reports_every_required_text_count_and_reason() -> None:
     assert summary.payload() == {
         "ocr_candidate_count": 3,
         "text_count": 2,
-        "fallback_count": 0,
-        "residual_count": 1,
+        "fallback_count": 1,
+        "residual_count": 0,
         "text_emit_eligible_count": 2,
         "source_outline_suppressible_count": 1,
         "source_outline_backup_count": 1,
@@ -194,12 +194,16 @@ def test_dxf_emits_native_text_independently_from_outline_safety(
         "SAFE",
         "UNSAFE",
     ]
-    assert "TEXT_FALLBACK_OUTLINE" not in outline_layers
-    assert "RESIDUAL_GRAPHIC" in outline_layers
+    assert "SOURCE_TEXT_OUTLINE" in outline_layers
+    assert "TEXT_FALLBACK_OUTLINE" in outline_layers
+    assert "RESIDUAL_GRAPHIC" not in outline_layers
+    assert document.layers.get("SOURCE_TEXT_OUTLINE").is_off()
+    assert not document.layers.get("TEXT_FALLBACK_OUTLINE").is_off()
     assert result.ocr_candidate_count == 3
     assert result.text_count == 2
-    assert result.fallback_text_count == 0
-    assert result.residual_graphic_count == 1
+    assert result.fallback_text_count == 1
+    assert result.source_text_outline_count == 1
+    assert result.residual_graphic_count == 0
     assert dict(result.text_downgrade_reasons) == {
         "candidate_not_approved": 1,
     }
@@ -241,6 +245,7 @@ def test_small_unreliable_ocr_segment_marks_long_owner_as_residual(
         str(entity.dxf.layer)
         for entity in document.modelspace().query("LWPOLYLINE")
     }
-    assert layers == {"RESIDUAL_GRAPHIC"}
-    assert result.residual_graphic_count == 1
+    assert layers == {"TEXT_FALLBACK_OUTLINE"}
+    assert result.fallback_text_count == 1
+    assert result.residual_graphic_count == 0
     assert not document.audit().errors

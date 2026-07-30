@@ -29,6 +29,7 @@ TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
     "TRACE_CURVE": {"color": 6, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
+    "SOURCE_TEXT_OUTLINE": {"color": 2, "lineweight": 0},
     "TEXT_FALLBACK_OUTLINE": {"color": 2, "lineweight": 0},
     "RESIDUAL_GRAPHIC": {"color": 3, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
@@ -253,6 +254,7 @@ def add_exact_trace_entities(
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
     ocr_texts: Sequence[TextCandidate] = (),
+    source_outline_ocr_texts: Sequence[TextCandidate] = (),
     fallback_ocr_texts: Sequence[TextCandidate] = (),
     residual_ocr_texts: Sequence[TextCandidate] = (),
     layer_names: Mapping[str, str] | None = None,
@@ -299,8 +301,14 @@ def add_exact_trace_entities(
             allow_candidate_coverage=True,
         ):
             base_layer_name = "RESIDUAL_GRAPHIC"
-        elif _path_matches_ocr(trace_path, fallback_ocr_texts):
+        elif _path_matches_ocr(
+            trace_path,
+            fallback_ocr_texts,
+            allow_candidate_coverage=True,
+        ):
             base_layer_name = "TEXT_FALLBACK_OUTLINE"
+        elif _path_matches_ocr(trace_path, source_outline_ocr_texts):
+            base_layer_name = "SOURCE_TEXT_OUTLINE"
         elif _path_matches_ocr(trace_path, ocr_texts):
             continue
         else:
@@ -311,7 +319,10 @@ def add_exact_trace_entities(
             )
         if base_layer_name == "TRACE_STRAIGHT":
             entity_color = _resolved_color(selected_palette.straight, 5)
-        elif base_layer_name == "TEXT_FALLBACK_OUTLINE":
+        elif base_layer_name in {
+            "SOURCE_TEXT_OUTLINE",
+            "TEXT_FALLBACK_OUTLINE",
+        }:
             entity_color = 2
         elif base_layer_name == "RESIDUAL_GRAPHIC":
             entity_color = 3

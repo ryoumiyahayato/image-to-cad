@@ -2,7 +2,7 @@
 
 ## Current commit
 
-`f26a7b8 fix: decouple editable text emission from outline suppression`
+`dd772f4 test: verify editable text emission decoupling`
 
 Branch: `fix/non-destructive-editable-text`
 
@@ -30,18 +30,32 @@ Phase 12 baseline:
 - Confirmed the 240 DPI fixed failure page now has 206 eligible candidates and
   exactly 206 native DXF `TEXT` entities. The two non-eligible candidates are
   both rejected only for `confidence_below_contract`.
+- Implemented the second change set locally: eligible unsafe source glyphs are
+  routed to `SOURCE_TEXT_OUTLINE`, and that layer is default-off in single and
+  multi-page DXF exports.
+- Reclassified OCR hard rejects as visible `TEXT_FALLBACK_OUTLINE`; truly
+  unsupported non-text candidates remain `RESIDUAL_GRAPHIC`.
 
 ## Not completed
 
-- Hidden unsafe source-glyph backup layer.
+- Commit and post-commit verification of the hidden unsafe source-glyph backup
+  layer.
 - Candidate-level semantic ownership.
 - Native TEXT geometry fitting.
 - Full per-page and per-DXF acceptance.
 
 ## Modified files
 
-- Checkpoint evidence only. The production-code worktree is clean after
-  commit `f26a7b8`.
+- `app/text_output_contract.py`
+- `app/trace_dxf_entities.py`
+- `app/trace_single_export.py`
+- `app/trace_document_export.py`
+- `app/dxf_exporter.py`
+- `app/document_export.py`
+- `app/trace_gui_export.py`
+- `app/optimized_trace.py`
+- `tests/test_text_output_contract.py`
+- validation probe/checkpoint evidence
 
 ## Tests
 
@@ -54,6 +68,9 @@ Phase 12 baseline:
 - Commit-1 page-001 DXF audit: 0 errors.
 - Commit-1 post-commit focused tests: 39 passed, 72 warnings.
 - Commit-1 post-commit Ruff checks: passed.
+- Commit-2 focused tests: 50 passed, 66 warnings.
+- Commit-2 Ruff checks: passed.
+- Commit-2 page-001 DXF audit: 0 errors.
 
 ## Per-page status
 
@@ -84,12 +101,31 @@ The local commit-1 probe now reports:
 - DXF audit errors: 0
 
 Unsafe source glyphs are still visible through the general trace layers in
-this intermediate state. Moving them to hidden `SOURCE_TEXT_OUTLINE` is the
-next, separate commit.
+the commit-1 intermediate state.
+
+The local commit-2 probe now reports:
+
+- OCR candidates: 208
+- `text_emit_eligible`: 206
+- native DXF TEXT: 206
+- hidden source-outline backup candidates: 169
+- `SOURCE_TEXT_OUTLINE` entities: 1393
+- `SOURCE_TEXT_OUTLINE` default visible: false
+- visible fallback candidates: 2
+- `TEXT_FALLBACK_OUTLINE` entities: 535
+- fallback layer default visible: true
+- residual candidates/entities: 0/0
+- `TRACE_TEXT_SYMBOL` entities: 1406
+- DXF audit errors: 0
+
+The remaining `TRACE_TEXT_SYMBOL` count is expected at this checkpoint; the
+next independent commit must remove eligible-candidate source pixels from that
+primary semantic without deleting unrelated structure.
 
 ## Next single safe action
 
-Implement `SOURCE_TEXT_OUTLINE` as a default-off backup layer for eligible,
-non-suppressible candidates. Keep the two hard-rejected page-001 candidates
-visible as uncertain/residual outline and do not alter text geometry yet.
+Commit the second change set as
+`refactor: preserve unsafe source glyphs as hidden text outlines`, then rerun
+the same focused tests. Do not begin candidate-level semantic ownership unless
+the post-commit tests pass.
 

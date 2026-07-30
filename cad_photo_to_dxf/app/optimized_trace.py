@@ -451,6 +451,8 @@ def trace_image_optimized(
             f"{text_contract.editable_text_count} 个导出为可编辑单行文字，"
             f"{text_contract.fallback_outline_count} 个进入 "
             "TEXT_FALLBACK_OUTLINE，"
+            f"{text_contract.source_outline_backup_count} 个保留到默认关闭的 "
+            "SOURCE_TEXT_OUTLINE，"
             f"{text_contract.residual_graphic_count} 个进入 "
             "RESIDUAL_GRAPHIC。"
         )

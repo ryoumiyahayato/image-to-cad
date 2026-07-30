@@ -1,0 +1,17 @@
+branch=fix/non-destructive-editable-text
+head=dd772f4
+modified=app/document_export.py
+modified=app/dxf_exporter.py
+modified=app/optimized_trace.py
+modified=app/text_output_contract.py
+modified=app/trace_document_export.py
+modified=app/trace_dxf_entities.py
+modified=app/trace_gui_export.py
+modified=app/trace_single_export.py
+modified=tests/test_text_output_contract.py
+modified=validation/editable-text-recovery/run_recovery_probe.py
+added=validation/editable-text-recovery/checkpoints/commit2-page001.json
+added=validation/editable-text-recovery/checkpoints/commit2-page001.dxf
+tmp_modified=false
+regression_baseline_modified=false
+

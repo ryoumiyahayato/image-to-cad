@@ -91,12 +91,19 @@ def main() -> int:
         "summary": summary.payload(),
         "native_TEXT_count": len(native_texts),
         "export_TEXT_count": int(export.text_count),
+        "export_source_text_outline_candidate_count": int(
+            export.source_text_outline_count
+        ),
         "native_TEXT_matches_eligible": (
             len(native_texts)
             == int(export.text_count)
             == int(summary.text_emit_eligible_count)
         ),
         "layer_entity_counts": dict(sorted(layer_counts.items())),
+        "layer_visibility": {
+            str(layer.dxf.name): not layer.is_off()
+            for layer in document.layers
+        },
         "dxf_audit_error_count": len(audit.errors),
         "hard_rejected_candidates": [
             {

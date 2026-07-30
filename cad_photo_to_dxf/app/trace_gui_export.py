@@ -40,6 +40,7 @@ class TraceExportCompletion:
     signature_count: int = 0
     ocr_candidate_count: int = 0
     fallback_text_count: int = 0
+    source_text_outline_count: int = 0
     residual_graphic_count: int = 0
     logo_count: int = 0
     text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
@@ -116,8 +117,9 @@ def _editable_text_strategy() -> dict[str, object]:
         "ocr_insert_blocks": False,
         "native_unicode_text_entities": True,
         "editability_independent_from_font_choice": True,
-        "unsafe_text_layer": "TEXT_FALLBACK_OUTLINE",
-        "unreliable_text_layer": "RESIDUAL_GRAPHIC",
+        "unsafe_text_layer": "SOURCE_TEXT_OUTLINE",
+        "unsafe_text_layer_default_visible": False,
+        "unreliable_text_layer": "TEXT_FALLBACK_OUTLINE",
         "absolute_font_path_embedded": False,
         "non_uniform_text_scaling": False,
         "ocr_unicode_preserved_as_line_xdata": True,
@@ -182,6 +184,7 @@ def _start_document_export(window: Any) -> None:
         total_signature_images = 0
         total_ocr_candidates = 0
         total_fallback_texts = 0
+        total_source_text_outlines = 0
         total_residual_graphics = 0
         total_logos = 0
         downgrade_reasons: Counter[str] = Counter()
@@ -216,6 +219,9 @@ def _start_document_export(window: Any) -> None:
             total_signature_images += len(result.signature_paths)
             total_ocr_candidates += result.ocr_candidate_count
             total_fallback_texts += result.fallback_text_count
+            total_source_text_outlines += (
+                result.source_text_outline_count
+            )
             total_residual_graphics += result.residual_graphic_count
             total_logos += result.logo_count
             downgrade_reasons.update(
@@ -260,6 +266,9 @@ def _start_document_export(window: Any) -> None:
                     "text_fallback_outline_count": (
                         result.fallback_text_count
                     ),
+                    "source_text_outline_count": (
+                        result.source_text_outline_count
+                    ),
                     "residual_graphic_count": (
                         result.residual_graphic_count
                     ),
@@ -291,6 +300,7 @@ def _start_document_export(window: Any) -> None:
                 "ocr_candidate_count": total_ocr_candidates,
                 "text_count": total_text_lines,
                 "fallback_count": total_fallback_texts,
+                "source_text_outline_count": total_source_text_outlines,
                 "residual_count": total_residual_graphics,
                 "logo_count": total_logos,
                 "signature_count": total_signature_images,
@@ -309,8 +319,8 @@ def _start_document_export(window: Any) -> None:
             "warnings": [
                 "为彻底消除第一页固定在第二页左上角的问题，多页 PDF 不再合并到同一个 DXF 模型空间。",
                 "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
-                "只有可靠且替换安全的 OCR 文字行导出为原生 TEXT。",
-                "识别成功但替换不安全的文字保留在 TEXT_FALLBACK_OUTLINE，低可靠结果保留在 RESIDUAL_GRAPHIC。",
+                "达到现有 OCR 内容合同的文字行均导出为原生 TEXT。",
+                "无法安全抑制的源字形保留在默认关闭的 SOURCE_TEXT_OUTLINE，低可靠文字保留在 TEXT_FALLBACK_OUTLINE。",
                 "跨越标题栏边框的签名保留为透明顶层图像，并与边框图层分离。",
                 "DXF 不嵌入导出电脑的绝对字体路径；Unicode 内容可保留，但不同 CAD 环境的具体字形可能随可用字体变化。",
                 *([converter_error] if requested_dwg and converter_error else []),
@@ -336,6 +346,7 @@ def _start_document_export(window: Any) -> None:
             signature_count=total_signature_images,
             ocr_candidate_count=total_ocr_candidates,
             fallback_text_count=total_fallback_texts,
+            source_text_outline_count=total_source_text_outlines,
             residual_graphic_count=total_residual_graphics,
             logo_count=total_logos,
             text_downgrade_reasons=tuple(
@@ -353,6 +364,10 @@ def _start_document_export(window: Any) -> None:
             f"非文字图形：{completion.trace_path_count}",
             f"可编辑文字行：{completion.text_count}",
             f"不可编辑文字轮廓：{completion.fallback_text_count}",
+            (
+                "隐藏源字形备份："
+                f"{completion.source_text_outline_count}"
+            ),
             f"不可靠图形残留：{completion.residual_graphic_count}",
             f"Logo：{completion.logo_count}",
             f"签名图像：{completion.signature_count}",
@@ -462,6 +477,9 @@ def _start_single_export(window: Any) -> None:
                 "text_fallback_outline_count": (
                     result.fallback_text_count
                 ),
+                "source_text_outline_count": (
+                    result.source_text_outline_count
+                ),
                 "residual_graphic_count": result.residual_graphic_count,
                 "logo_count": result.logo_count,
                 "signature_image_count": len(result.signature_paths),
@@ -483,6 +501,9 @@ def _start_single_export(window: Any) -> None:
                 "ocr_candidate_count": result.ocr_candidate_count,
                 "text_count": result.text_count,
                 "fallback_count": result.fallback_text_count,
+                "source_text_outline_count": (
+                    result.source_text_outline_count
+                ),
                 "residual_count": result.residual_graphic_count,
                 "logo_count": result.logo_count,
                 "signature_count": result.signature_count,
@@ -497,8 +518,8 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
-                "只有可靠且替换安全的文字会作为可编辑 TEXT 导出。",
-                "替换不安全的文字保留在 TEXT_FALLBACK_OUTLINE，低可靠结果保留在 RESIDUAL_GRAPHIC。",
+                "达到现有 OCR 内容合同的文字均作为可编辑 TEXT 导出。",
+                "无法安全抑制的源字形保留在默认关闭的 SOURCE_TEXT_OUTLINE，低可靠文字保留在 TEXT_FALLBACK_OUTLINE。",
                 "标题栏签名作为透明顶层图像导出，并与边框分层。",
                 "DXF 不写入导出电脑的绝对字体路径；不同 CAD 环境可能使用不同 Unicode 字体显示同一内容。",
                 f"超长非文字图形按最多 {MAX_EDITABLE_POLYLINE_VERTICES} 个顶点拆分。",
@@ -518,6 +539,9 @@ def _start_single_export(window: Any) -> None:
             signature_count=len(result.signature_paths),
             ocr_candidate_count=result.ocr_candidate_count,
             fallback_text_count=result.fallback_text_count,
+            source_text_outline_count=(
+                result.source_text_outline_count
+            ),
             residual_graphic_count=result.residual_graphic_count,
             logo_count=result.logo_count,
             text_downgrade_reasons=result.text_downgrade_reasons,
@@ -532,6 +556,7 @@ def _start_single_export(window: Any) -> None:
             f"非文字图形：{result.trace_path_count}",
             f"可编辑文字行：{result.text_count}",
             f"不可编辑文字轮廓：{result.fallback_text_count}",
+            f"隐藏源字形备份：{result.source_text_outline_count}",
             f"不可靠图形残留：{result.residual_graphic_count}",
             f"Logo：{result.logo_count}",
             f"签名图像：{len(result.signature_paths)}",

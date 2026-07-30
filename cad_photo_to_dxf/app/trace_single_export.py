@@ -84,6 +84,7 @@ def export_exact_trace_dxf(
     for layer_name, style in styles.items():
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
+    doc.layers.get("SOURCE_TEXT_OUTLINE").off()
     modelspace = doc.modelspace()
     coordinates: list[tuple[float, float]] = []
     underlay_path: Path | None = None
@@ -150,6 +151,14 @@ def export_exact_trace_dxf(
     text_summary = text_output_summary(texts)
     exportable_texts = accepted_ocr_texts(texts)
     suppressible_texts = suppressible_ocr_texts(texts)
+    source_outline_texts = tuple(
+        decision.candidate
+        for decision in text_decisions
+        if (
+            decision.text_emit_eligible
+            and not decision.source_outline_suppressible
+        )
+    )
     fallback_texts = tuple(
         decision.candidate
         for decision in text_decisions
@@ -183,6 +192,7 @@ def export_exact_trace_dxf(
         source_size=(resolved_width, image_height),
         palette=palette,
         ocr_texts=suppressible_texts,
+        source_outline_ocr_texts=source_outline_texts,
         fallback_ocr_texts=fallback_texts,
         residual_ocr_texts=residual_texts,
         cancellation_token=cancellation_token,
@@ -259,6 +269,9 @@ def export_exact_trace_dxf(
         signature_paths=signature_paths,
         ocr_candidate_count=text_summary.ocr_candidate_count,
         fallback_text_count=text_summary.fallback_outline_count,
+        source_text_outline_count=(
+            text_summary.source_outline_backup_count
+        ),
         residual_graphic_count=text_summary.residual_graphic_count,
         signature_count=len(signature_paths),
         text_downgrade_reasons=text_summary.downgrade_reasons,

@@ -46,6 +46,7 @@ def _page_layer_names(index: int) -> dict[str, str]:
         "TRACE_STRAIGHT": f"{prefix}_TRACE_STRAIGHT",
         "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
         "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
+        "SOURCE_TEXT_OUTLINE": f"{prefix}_SOURCE_TEXT_OUTLINE",
         "TEXT_FALLBACK_OUTLINE": (
             f"{prefix}_TEXT_FALLBACK_OUTLINE"
         ),
@@ -62,7 +63,7 @@ def _ensure_page_layers(doc, index: int) -> dict[str, str]:
         style = styles[base_name]
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
-        if index > 1:
+        if index > 1 or base_name == "SOURCE_TEXT_OUTLINE":
             doc.layers.get(layer_name).off()
     return names
 
@@ -122,6 +123,7 @@ def export_trace_document_streaming(
     text_count = 0
     ocr_candidate_count = 0
     fallback_text_count = 0
+    source_text_outline_count = 0
     residual_graphic_count = 0
     logo_count = 0
     signature_count = 0
@@ -223,6 +225,14 @@ def export_trace_document_streaming(
         text_summary = text_output_summary(texts)
         exportable_texts = accepted_ocr_texts(texts)
         suppressible_texts = suppressible_ocr_texts(texts)
+        source_outline_texts = tuple(
+            decision.candidate
+            for decision in text_decisions
+            if (
+                decision.text_emit_eligible
+                and not decision.source_outline_suppressible
+            )
+        )
         fallback_texts = tuple(
             decision.candidate
             for decision in text_decisions
@@ -255,6 +265,7 @@ def export_trace_document_streaming(
             source_size=(vector_width, vector_height),
             palette=palette,
             ocr_texts=suppressible_texts,
+            source_outline_ocr_texts=source_outline_texts,
             fallback_ocr_texts=fallback_texts,
             residual_ocr_texts=residual_texts,
             layer_names=layer_names,
@@ -295,6 +306,9 @@ def export_trace_document_streaming(
         text_count += current_text_count
         ocr_candidate_count += text_summary.ocr_candidate_count
         fallback_text_count += text_summary.fallback_outline_count
+        source_text_outline_count += (
+            text_summary.source_outline_backup_count
+        )
         residual_graphic_count += text_summary.residual_graphic_count
         logo_count += (
             len(structure.logos)
@@ -349,6 +363,7 @@ def export_trace_document_streaming(
         structure_ids=tuple(structure_ids),
         ocr_candidate_count=ocr_candidate_count,
         fallback_text_count=fallback_text_count,
+        source_text_outline_count=source_text_outline_count,
         residual_graphic_count=residual_graphic_count,
         logo_count=logo_count,
         signature_count=signature_count,

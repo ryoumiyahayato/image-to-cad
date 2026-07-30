@@ -217,32 +217,32 @@ def decide_text_output(
     if not content:
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="empty_ocr_content",
         )
     if not _dxf_encodable(content):
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="content_not_dxf_encodable",
         )
     if not candidate.approved:
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="candidate_not_approved",
         )
     if not isfinite(float(candidate.confidence)):
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="invalid_confidence",
         )
@@ -253,24 +253,24 @@ def decide_text_output(
     if not candidate.reviewed and float(candidate.confidence) < required:
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="confidence_below_contract",
         )
     if not (_valid_bbox(candidate) or _valid_quad(candidate)):
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="invalid_text_geometry",
         )
     if not isfinite(float(candidate.rotation_deg)):
         return _decision(
             candidate,
-            state=TextOutputState.RESIDUAL_GRAPHIC,
-            output_layer="RESIDUAL_GRAPHIC",
+            state=TextOutputState.TEXT_FALLBACK_OUTLINE,
+            output_layer="TEXT_FALLBACK_OUTLINE",
             text_emit_eligible=False,
             hard_reject_reason="invalid_text_geometry",
         )
