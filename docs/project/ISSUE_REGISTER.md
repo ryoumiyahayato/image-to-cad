@@ -43,3 +43,15 @@ Automated evidence states eligible candidate-owned `TRACE_TEXT_SYMBOL` conflicts
 ### CAD-003
 
 Automated protection checks and human UAT agree that catastrophic unsafe lines are reduced. They do not prove structure restoration is complete. Safety and recall must remain separate measurements.
+
+## P1A evidence update — 2026-07-31
+
+- CAD-001 remains open/release blocker: P1A found 346/436 minimum-width clamps and 94 predicted extra boundary crossings. Root cause identified, not fixed.
+- CAD-002 remains deferred: no native 90°/270° TEXT occurs in the selected pages or current 12-DXF evidence.
+- CAD-007 hypothesis is rejected for the canonical path: SOURCE_TEXT_OUTLINE does not size formal TEXT.
+- CAD-008 remains open/release blocker: the focused test explicitly accepts overflow and the GUI preview omits native TEXT geometry.
+- CAD-011 open: exact original OCR bbox/quad is not persisted in final DXF.
+- CAD-012 open: three inconsistent native TEXT creators remain in the repository.
+- CAD-013 open: live LibreCAD font resolution/substitution is not recorded.
+
+No issue is marked resolved by P1A. Existing routing, structure, color, OCR and full-UAT statuses are unchanged.
