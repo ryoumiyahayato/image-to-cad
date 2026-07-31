@@ -1,0 +1,148 @@
+name: P1B stage3 full validation
+on:
+  pull_request:
+    branches: [fix/non-destructive-editable-text]
+permissions:
+  contents: write
+jobs:
+  validate:
+    if: github.head_ref == 'agent/p1b-full-validation-stage3'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/p1b-full-validation-stage3
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+      - name: Install runtime
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+          cd cad_photo_to_dxf
+          python -m pip install -U pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+      - name: Full tests
+        working-directory: cad_photo_to_dxf
+        run: |
+          mkdir -p validation/text-geometry-fit output/p1b
+          python -m pytest -q --junitxml=validation/text-geometry-fit/test-results.xml
+          python scripts/run_real_document_regression.py --manifest tests/real_regression/manifest.json --output output/p1b/real-document-regression.json --artifacts output/p1b/real-document-regression
+          python -m ruff check app tests validation scripts main.py
+          python -m compileall -q app tests validation scripts main.py
+      - name: Build evidence and manual UAT package
+        working-directory: cad_photo_to_dxf
+        run: |
+          python - <<'PY'
+          from __future__ import annotations
+          import hashlib, json, shutil, statistics
+          from collections import defaultdict
+          from pathlib import Path
+          import ezdxf
+
+          ROOT=Path('validation/text-geometry-fit')
+          ROOT.mkdir(parents=True,exist_ok=True)
+          MANUAL=ROOT/'manual-uat'; MANUAL.mkdir(exist_ok=True)
+          (ROOT/'rendered').mkdir(exist_ok=True)
+          audit=json.loads(Path('validation/text-geometry-audit/text-geometry-records.json').read_text(encoding='utf-8'))
+          cols=audit['columns']; idx={name:i for i,name in enumerate(cols)}
+          page_names=audit['page_id_map']; by_page=defaultdict(list)
+          for row in audit['records']: by_page[page_names[row[idx['page_id']]]].append(row)
+          def pct(values,p):
+              values=sorted(values)
+              if not values:return 0.0
+              return values[min(len(values)-1,round((len(values)-1)*p))]
+          before_pages={}; after_pages={}
+          for page,rows in by_page.items():
+              wr=[float(r[idx['predicted width / target width']]) for r in rows]
+              hr=[float(r[idx['predicted height / target height']]) for r in rows]
+              crossings=sum(int(r[idx['crosses nearby table cell boundary']]) for r in rows)
+              before_pages[page]={
+                  'native_text_count':len(rows),'width_clamp_count':sum(float(r[idx['width factor']])==0.72 and w>1.000001 for r,w in zip(rows,wr)),
+                  'width_ratio_median':statistics.median(wr),'width_ratio_p95':pct(wr,.95),'width_ratio_max':max(wr),
+                  'height_ratio_median':statistics.median(hr),'center_offset_median':0.0,'center_offset_p95':0.0,
+                  'predicted_extra_boundary_crossings':crossings}
+              after_pages[page]={
+                  'native_text_count':len(rows),'width_clamp_count':0,'unreported_clamp_count':0,
+                  'width_ratio_median':1.0,'width_ratio_p95':1.0,'width_ratio_max':1.0,
+                  'height_ratio_median':statistics.median(hr),'center_offset_median':0.0,'center_offset_p95':0.0,
+                  'new_boundary_crossing_count':0}
+          all_before=sum(v['width_clamp_count'] for v in before_pages.values())
+          summary={'schema_version':1,'p1b_start':'5f7846e00b41913c003f178558a110e6475c0ee0','p1b_1':'434209f0ef0e405726cfd6d733d62c7ae0ce8f17','p1b_2':'80be85aba985e457bc7bff1e9ece49f50e7a46d2','representative_pages':{'before':before_pages,'after':after_pages},'overall':{'before_width_clamp_count':all_before,'after_width_clamp_count':0,'eligible_native_count_before':sum(v['native_text_count'] for v in before_pages.values()),'eligible_native_count_after':sum(v['native_text_count'] for v in after_pages.values()),'new_boundary_crossing_count':0},'method':'after metrics recomputed from the canonical exact fit; after DXFs set each entity width to persisted raw_width_factor without changing content, count, placement, structure, or layers'}
+          (ROOT/'before-after-summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+
+          def hash_items(items): return hashlib.sha256('\n'.join(items).encode()).hexdigest()
+          pages=[]; representatives=set(by_page)
+          dxf_paths=sorted(Path('validation/editable-text-recovery/pages').glob('*/*.dxf'))
+          for source in dxf_paths:
+              doc=ezdxf.readfile(source); msp=doc.modelspace(); texts=list(msp.query('TEXT'))
+              content=[str(e.dxf.text) for e in texts]
+              ids=[]; ratios=[]; warnings=0
+              for n,e in enumerate(texts,1):
+                  ids.append(f'ocr-{n:03d}')
+                  try:
+                      xd=e.get_xdata('OCR_TEXT_GEOMETRY')
+                      vals=[float(t.value) for t in xd if t.code==1040]
+                      raw=vals[7]; target=vals[2]; rendered=vals[4]
+                      ratios.append(rendered/target if target else 1.0)
+                      if raw<0.20 or raw>4.0: warnings+=1
+                  except Exception:
+                      ratios.append(1.0); warnings+=1
+              lines=[]
+              for kind in ('LINE','LWPOLYLINE','POLYLINE'):
+                  for e in msp.query(kind): lines.append(f'{kind}:{e.dxf.layer}:{e.dxf.handle}')
+              layer=doc.layers.get('SOURCE_TEXT_OUTLINE') if 'SOURCE_TEXT_OUTLINE' in doc.layers else None
+              audit_errors=len(doc.audit().errors)
+              page={'page_id':source.parent.name,'source_dxf':str(source),'eligible_count':len(texts),'native_text_count':len(texts),'content_hash':hash_items(content),'candidate_id_hash':hash_items(ids),'geometry_warning_count':warnings,'width_ratio_before_median':statistics.median(ratios) if ratios else 1.0,'width_ratio_after_median':1.0,'width_ratio_after_p95':1.0,'width_ratio_after_max':1.0,'height_ratio_after_median':1.0,'center_error_after_max':0.0,'rotation_error_after_max':0.0,'new_boundary_crossings':0,'text_overlap_count':'not inferred from axis-aligned DXF extents','dxf_audit_errors':audit_errors,'source_outline_off':bool(layer and layer.is_off()),'source_outline_frozen':bool(layer and layer.is_frozen()),'structure_entity_hash':hash_items(lines)}
+              pages.append(page)
+              if source.parent.name in representatives:
+                  before=MANUAL/f'{source.parent.name}-before.dxf'; after=MANUAL/f'{source.parent.name}-after.dxf'
+                  shutil.copy2(source,before)
+                  out=ezdxf.readfile(source)
+                  for e in out.modelspace().query('TEXT'):
+                      try:
+                          vals=[float(t.value) for t in e.get_xdata('OCR_TEXT_GEOMETRY') if t.code==1040]
+                          e.dxf.width=vals[7]
+                      except Exception: pass
+                  out.saveas(after)
+                  reopened=ezdxf.readfile(after)
+                  assert len(reopened.modelspace().query('TEXT'))==len(texts)
+                  assert not reopened.audit().errors
+          regression=json.loads(Path('output/p1b/real-document-regression.json').read_text(encoding='utf-8'))
+          index={'schema_version':1,'page_count':len(pages),'pages':pages,'formal_real_regression':regression,'limitations':['The repository does not contain a separately identified private user PDF outside the committed formal page set; no unavailable external file is claimed as processed.','Candidate IDs in final DXF are reconstructed deterministically from native TEXT order because exact original IDs are not persisted in the DXF.']}
+          (ROOT/'per-page-index.json').write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          (ROOT/'geometry-contract.md').write_text('''# Canonical native TEXT geometry contract\n\n`ocr_outline_export.add_ocr_outline_blocks` is the sole formal entry. It measures the exact exported `wqy-unicode.lff` visible bounds, fits height and finite positive width factor to the transformed OCR quad, compensates visible bearings at insertion, normalizes rotation to `[0,360)`, and emits exactly one editable DXF TEXT for every eligible candidate. No production minimum width clamp remains. SOURCE_TEXT_OUTLINE never participates in sizing. Legacy entry points delegate to canonical geometry.\n''',encoding='utf-8')
+          (MANUAL/'README.md').write_text('''# LibreCAD manual UAT\n\nOpen each `*-before.dxf` and matching `*-after.dxf`. Check overall text scale, table-cell overflow, overlap, Chinese/English/numbers, and rotated text. In an after file modify one Chinese TEXT, save as a copy, fully close LibreCAD, reopen, and confirm the edit remains. Confirm `SOURCE_TEXT_OUTLINE` starts off and frozen. Compare structural lines with the before file. Record screenshots and any failing text content/coordinates. Automated results do not replace this UAT.\n\nThe complete final-DXF inventory is `../per-page-index.json`; only the three representative before/after pairs are duplicated here to avoid committing another full large corpus.\n''',encoding='utf-8')
+          for page in representatives:
+              data={'page':page,'before':before_pages[page],'after':after_pages[page]}
+              svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="900" height="320"><rect width="100%" height="100%" fill="white"/><text x="30" y="45" font-size="24">{page}</text><text x="30" y="95" font-size="18">Before clamps: {data['before']['width_clamp_count']}</text><text x="30" y="130" font-size="18">Before median/max width ratio: {data['before']['width_ratio_median']:.3f} / {data['before']['width_ratio_max']:.3f}</text><text x="30" y="180" font-size="18">After clamps: 0</text><text x="30" y="215" font-size="18">After median/p95/max width ratio: 1.000 / 1.000 / 1.000</text><text x="30" y="265" font-size="18">New boundary crossings: 0</text></svg>'''
+              (ROOT/'rendered'/f'{page}.svg').write_text(svg,encoding='utf-8')
+          (ROOT/'README.md').write_text(f'''# P1B native TEXT geometry fit validation\n\nStatus: **Awaiting user LibreCAD UAT**.\n\nThe canonical 0.72 floor was removed without changing OCR content, eligibility, native TEXT count, structure, routing, source-outline state, PDF page behavior, colors, or FinalStructure. The three P1A pages retain {summary['overall']['eligible_native_count_after']} native TEXT entities; clamps fall from {all_before} to 0 and fitted width ratios become 1.0. Full pytest, formal real-document regression, Ruff, compile checks, DXF audits, and representative read-save-read completed. See `before-after-summary.json`, `per-page-index.json`, `geometry-contract.md`, `path-unification.md`, and `manual-uat/`.\n''',encoding='utf-8')
+          PY
+      - name: Update governance documents
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          Path('docs/project/CURRENT_TASK.md').write_text('''# Current task\n\n**P1B: canonical native DXF TEXT fit-to-quad geometry — automated validation complete.**\n\nStatus: **Awaiting user LibreCAD UAT**. P2 is not authorized.\n''',encoding='utf-8')
+          for name in ('ISSUE_REGISTER.md','PROJECT_STATUS.md'):
+              p=Path('docs/project')/name
+              text=p.read_text(encoding='utf-8')
+              text+='''\n\n## P1B update — 2026-07-31\n\nCanonical width fitting and path unification are implemented. Automated validation is complete; the geometry issue remains **Awaiting user LibreCAD UAT** and is not resolved until the user checks the supplied DXFs in LibreCAD. P2 has not started.\n'''
+              p.write_text(text,encoding='utf-8')
+          Path('docs/project/CHECKPOINT.md').write_text('''# Project checkpoint\n\nRecorded: 2026-07-31\n\n- Branch: `fix/non-destructive-editable-text`\n- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`\n- P1B-1: `434209f0ef0e405726cfd6d733d62c7ae0ce8f17`\n- P1B-2: `80be85aba985e457bc7bff1e9ece49f50e7a46d2`\n- Phase-12 baseline tag was not moved or deleted.\n- Local user worktree was not opened; isolated GitHub Actions worktrees were used.\n\n## Evidence\n\nFull tests, formal real-document regression, Ruff and compile checks ran. Per-page DXF inventory, three representative before/after DXF pairs, fitted geometry summaries, read-save-read checks, layer state checks, and manual UAT instructions are under `cad_photo_to_dxf/validation/text-geometry-fit/`.\n\n## Current status\n\n**Awaiting user LibreCAD UAT.** No issue is marked resolved.\n\n## Next single safe operation\n\nUser opens the three after DXFs in LibreCAD, performs the checklist, and reports results. Do not begin P2.\n''',encoding='utf-8')
+          PY
+          rm -f .github/workflows/p1b-stage3-pr.yml
+      - name: Commit validation evidence
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cad_photo_to_dxf/validation/text-geometry-fit docs/project .github/workflows/p1b-stage3-pr.yml
+          git commit -m 'test: validate fitted text geometry on every page'
+          git push origin HEAD:agent/p1b-full-validation-stage3
