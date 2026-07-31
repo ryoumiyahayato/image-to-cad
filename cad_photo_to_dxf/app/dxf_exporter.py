@@ -8,8 +8,8 @@ from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import ezdxf
-from ezdxf import units, zoom
 import numpy as np
+from ezdxf import units, zoom
 
 from .auxiliary_recognition import (
     MIN_CIRCLE_EXPORT_CONFIDENCE,
@@ -18,9 +18,9 @@ from .auxiliary_recognition import (
 )
 from .image_loader import save_image
 from .line_detect import LineSegment
+from .ocr_outline_export import add_ocr_outline_blocks
 from .raster_trace import TracePath
 from .scale_calibrator import ScaleCalibration
-
 
 MIN_TEXT_EXPORT_CONFIDENCE = 0.60
 
@@ -282,25 +282,19 @@ def export_dxf(
 
     requested_texts = list(texts or [])
     valid_texts = filter_exportable_texts(requested_texts)
-    for text in valid_texts:
-        x, y, width, height = text.bbox
-        insert = (
-            x * scale,
-            (image_height - 1 - (y + height)) * scale,
-        )
-        text_height = max(scale, height * scale * 0.85)
-        entity = modelspace.add_text(
-            text.text.strip(),
-            height=text_height,
-            dxfattribs={"layer": "OCR_TEXT"},
-        )
-        entity.set_placement(insert)
-        coordinates.extend(
-            (
-                insert,
-                (insert[0] + width * scale, insert[1] + height * scale),
-            )
-        )
+
+    def text_transform(x: float, y: float) -> tuple[float, float]:
+        return (x * scale, (image_height - 1 - y) * scale)
+
+    text_count, _text_entities, text_bounds = add_ocr_outline_blocks(
+        doc,
+        modelspace,
+        valid_texts,
+        transform=text_transform,
+        layer_name="OCR_TEXT",
+        minimum_confidence=MIN_TEXT_EXPORT_CONFIDENCE,
+    )
+    coordinates.extend(text_bounds)
 
     requested_trace_paths = tuple(trace_paths or ())
     trace_path_count, trace_vertex_count, trace_coordinates = _add_trace_entities(
@@ -352,7 +346,7 @@ def export_dxf(
         skipped_line_count=len(lines) - len(valid_lines),
         circle_count=len(valid_circles),
         skipped_circle_count=len(requested_circles) - len(valid_circles),
-        text_count=len(valid_texts),
+        text_count=text_count,
         skipped_text_count=len(requested_texts) - len(valid_texts),
         trace_path_count=trace_path_count,
         trace_vertex_count=trace_vertex_count,

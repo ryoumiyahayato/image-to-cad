@@ -21,7 +21,6 @@ from .librecad_lff import (
 )
 from .text_output_contract import accepted_ocr_texts
 
-
 PointTransform = Callable[[float, float], tuple[float, float]]
 _XDATA_APP = "OCR_TEXT_LINE"
 _CONTRACT_XDATA_APP = "TEXT_OUTPUT_CONTRACT"
