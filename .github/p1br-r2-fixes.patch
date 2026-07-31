@@ -72,7 +72,7 @@
              for tag in entity.get_xdata(appid)
          ]
 -    except Exception:
-+    except Exception:  # noqa: BLE001
++    except ezdxf.DXFError:
          return []
  
  
@@ -81,7 +81,7 @@
      try:
          layer = document.layers.get(layer_name)
 -    except Exception:
-+    except Exception:  # noqa: BLE001
++    except ezdxf.DXFError:
          return {"exists": False, "off": False, "frozen": False}
      return {
          "exists": True,
