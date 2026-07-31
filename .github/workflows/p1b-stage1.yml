@@ -1,0 +1,59 @@
+name: P1B canonical fit stage
+on:
+  push:
+    branches: [agent/p1b-canonical-fit-stage1]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/p1b-canonical-fit-stage1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Apply canonical fit patch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('cad_photo_to_dxf/app/ocr_outline_export.py')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('_MIN_READABLE_WIDTH_FACTOR = 0.72\n_MAX_WIDTH_FACTOR = 4.0\n', '# Deprecated audit reference only; canonical export must not clamp to it.\n_DEPRECATED_MIN_READABLE_WIDTH_FACTOR = 0.72\n_WIDTH_WARNING_NARROW = 0.20\n_WIDTH_WARNING_WIDE = 4.0\n')
+          old='''    width_factor = max(\n        _MIN_READABLE_WIDTH_FACTOR,\n        min(_MAX_WIDTH_FACTOR, raw_width_factor),\n    )\n    width_factor_clamped = not isfinite(raw_width_factor) or not (\n        _MIN_READABLE_WIDTH_FACTOR\n        <= raw_width_factor\n        <= _MAX_WIDTH_FACTOR\n    )\n'''
+          new='''    if not isfinite(raw_width_factor) or raw_width_factor <= 0.0:\n        return None\n    # Canonical fit-to-quad contract: preserve the actual finite positive fit.\n    # Extreme factors are observable geometry facts, not a reason to enlarge,\n    # reject, outline, or otherwise change an eligible native TEXT entity.\n    width_factor = raw_width_factor\n    width_factor_clamped = False\n'''
+          assert old in s
+          s=s.replace(old,new)
+          s=s.replace('rotation = degrees(atan2(baseline_dy, baseline_dx))','rotation = degrees(atan2(baseline_dy, baseline_dx)) % 360.0')
+          p.write_text(s,encoding='utf-8')
+
+          t=Path('cad_photo_to_dxf/tests/test_native_text_geometry.py')
+          q=t.read_text(encoding='utf-8')
+          q=q.replace('''        ("，。:;!?", 90.0),\n''','''        ("，。:;!?", 90.0),\n        ("中文123ABC", 180.0),\n        ("中文123ABC", 270.0),\n        ("中文123ABC", 315.0),\n''')
+          q=q.replace('''    assert isclose(measured_rotation, rotation, abs_tol=1e-9)\n    assert isclose(float(entity.dxf.rotation), rotation, abs_tol=1e-9)\n''','''    assert isclose(measured_rotation, rotation % 360.0, abs_tol=1e-9)\n    assert isclose(float(entity.dxf.rotation), rotation % 360.0, abs_tol=1e-9)\n''')
+          old_test='''def test_narrow_ocr_box_does_not_compress_native_text_below_readable_limit() -> None:\n    candidate = _candidate(\n        "NORMAL WIDTH TEXT",\n        width=25.0,\n        height=30.0,\n        rotation=0.0,\n    )\n    document = ezdxf.new("R2010", setup=True)\n\n    _count, entities, _bounds = add_ocr_outline_blocks(\n        document,\n        document.modelspace(),\n        (candidate,),\n        transform=lambda x, y: (x, PAGE_HEIGHT - y),\n    )\n\n    _strings, values, integers = _geometry_values(entities[0])\n    target_width = values[2]\n    rendered_width = values[4]\n    raw_width_factor = values[7]\n    width_factor = values[8]\n    assert raw_width_factor < 0.72\n    assert isclose(width_factor, 0.72, abs_tol=1e-12)\n    assert rendered_width > target_width\n    assert integers[-1] == 1\n'''
+          new_test='''def test_narrow_ocr_box_uses_true_fit_without_readability_clamp() -> None:\n    candidate = _candidate(\n        "NORMAL WIDTH TEXT",\n        width=25.0,\n        height=30.0,\n        rotation=0.0,\n    )\n    document = ezdxf.new("R2010", setup=True)\n\n    _count, entities, _bounds = add_ocr_outline_blocks(\n        document,\n        document.modelspace(),\n        (candidate,),\n        transform=lambda x, y: (x, PAGE_HEIGHT - y),\n    )\n\n    _strings, values, integers = _geometry_values(entities[0])\n    target_width = values[2]\n    rendered_width = values[4]\n    raw_width_factor = values[7]\n    width_factor = values[8]\n    assert raw_width_factor < 0.72\n    assert isclose(width_factor, raw_width_factor, rel_tol=1e-12)\n    assert isclose(rendered_width, target_width, rel_tol=1e-9)\n    assert integers[-1] == 0\n'''
+          assert old_test in q
+          q=q.replace(old_test,new_test)
+          t.write_text(q,encoding='utf-8')
+
+          Path('docs/project/CURRENT_TASK.md').write_text('''# Current task\n\n**P1B: canonical native DXF TEXT fit-to-quad geometry.**\n\nBranch: `fix/non-destructive-editable-text`  \nTask-start HEAD: `5f7846e00b41913c003f178558a110e6475c0ee0`\n\nP1B-1 removes the production `0.72` width-factor floor while preserving OCR content, eligibility, one native TEXT per eligible candidate, source-outline state, structures, routing, PDF behavior, colors, and FinalStructure. P2 is not authorized.\n''',encoding='utf-8')
+          Path('docs/project/CHECKPOINT.md').write_text('''# Project checkpoint\n\nRecorded: 2026-07-31\n\n- Branch: `fix/non-destructive-editable-text`\n- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`\n- Phase-12 baseline tag remains untouched.\n- Local user worktree was not opened; connector/Actions isolation used.\n\n## P1B-1\n\nCanonical `_line_placement_from_quad` now uses the finite positive raw width factor directly. The historical `0.72` value remains only as a deprecated audit reference. Rotation is normalized to `[0, 360)`. The narrow-box test now requires exact target-width fitting rather than deliberate overflow; cardinal and arbitrary rotation coverage is expanded.\n\n## Next safe operation\n\nInspect CI and diff, then unify reachable legacy TEXT creators in P1B-2. Do not begin P2.\n''',encoding='utf-8')
+          PY
+          rm .github/workflows/p1b-stage1.yml
+      - name: Install and test
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install -U pip
+          pip install -e '.[dev]'
+          QT_QPA_PLATFORM=offscreen pytest -q tests/test_native_text_geometry.py tests/test_font_aware_ocr_export.py
+      - name: Commit checkpoint
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add cad_photo_to_dxf/app/ocr_outline_export.py cad_photo_to_dxf/tests/test_native_text_geometry.py docs/project/CURRENT_TASK.md docs/project/CHECKPOINT.md .github/workflows/p1b-stage1.yml
+          git commit -m 'fix: fit native text width to OCR quad'
+          git push origin HEAD:agent/p1b-canonical-fit-stage1
