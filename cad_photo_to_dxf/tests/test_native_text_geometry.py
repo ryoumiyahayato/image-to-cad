@@ -98,6 +98,9 @@ def _geometry_values(entity) -> tuple[list[str], list[float], list[int]]:
         ("FIRE ALARM", 17.0),
         ("2026-07-30", -28.0),
         ("，。:;!?", 90.0),
+        ("中文123ABC", 180.0),
+        ("中文123ABC", 270.0),
+        ("中文123ABC", 315.0),
     ],
 )
 def test_lff_native_text_uses_visible_bounds_for_center_width_and_height(
@@ -153,12 +156,12 @@ def test_lff_native_text_uses_visible_bounds_for_center_width_and_height(
     assert center_error <= 1e-9
     assert isclose(raw_width_factor, 1.0, rel_tol=1e-9)
     assert isclose(width_factor, 1.0, rel_tol=1e-9)
-    assert isclose(measured_rotation, rotation, abs_tol=1e-9)
-    assert isclose(float(entity.dxf.rotation), rotation, abs_tol=1e-9)
+    assert isclose(measured_rotation, rotation % 360.0, abs_tol=1e-9)
+    assert isclose(float(entity.dxf.rotation), rotation % 360.0, abs_tol=1e-9)
     assert not document.audit().errors
 
 
-def test_narrow_ocr_box_does_not_compress_native_text_below_readable_limit() -> None:
+def test_narrow_ocr_box_uses_true_fit_without_readability_clamp() -> None:
     candidate = _candidate(
         "NORMAL WIDTH TEXT",
         width=25.0,
@@ -180,9 +183,9 @@ def test_narrow_ocr_box_does_not_compress_native_text_below_readable_limit() -> 
     raw_width_factor = values[7]
     width_factor = values[8]
     assert raw_width_factor < 0.72
-    assert isclose(width_factor, 0.72, abs_tol=1e-12)
-    assert rendered_width > target_width
-    assert integers[-1] == 1
+    assert isclose(width_factor, raw_width_factor, rel_tol=1e-12)
+    assert isclose(rendered_width, target_width, rel_tol=1e-9)
+    assert integers[-1] == 0
 
 
 def test_lff_metric_bounds_match_the_preview_stroke_path() -> None:
