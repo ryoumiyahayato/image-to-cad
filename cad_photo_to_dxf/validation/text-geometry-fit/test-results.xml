@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="P1B-3 full pytest" tests="282" failures="0" errors="0" skipped="0" time="9.29">
+  <testsuite name="p1b-stage3-full-pytest" tests="282" failures="0" errors="0" skipped="0" time="9.29">
+    <properties>
+      <property name="command" value="python -m pytest -q --junitxml=validation/text-geometry-fit/test-results.xml" />
+      <property name="source_workflow_run" value="30631003176" />
+      <property name="source_workflow_job" value="91157062020" />
+      <property name="transcribed_from_completed_job_log" value="true" />
+      <property name="original_runner_summary" value="282 passed in 9.29s" />
+    </properties>
+  </testsuite>
+</testsuites>
