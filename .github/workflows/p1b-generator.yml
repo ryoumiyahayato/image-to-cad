@@ -55,6 +55,7 @@ jobs:
           compile(source, '/tmp/p1b_generator.py', 'exec')
           print(f'Reassembled {len(parts)} parts into {len(source)} bytes')
           PY
+          python .github/scripts/p1b_generator_hotfix.py /tmp/p1b_generator.py
           python /tmp/p1b_generator.py
 
       - name: Show final commit sequence
