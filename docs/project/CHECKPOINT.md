@@ -1,7 +1,16 @@
 # Project checkpoint
 
-Recorded 2026-07-31. Task-start HEAD `242d7a487f5936477a90c63c478492d42d73b6c7`; branch `fix/non-destructive-editable-text`; phase-12 tag untouched. No user worktree was opened; GitHub connector/current-head artifacts were used.
+Recorded: 2026-07-31
 
-Pages: environment-scan-page-001-120dpi, environment-plan-page-003-150dpi, warehouse-system-page-002-72dpi. Evidence: 436 records, three code paths, font audit, 50 samples, three ten-panel SVG boards, one P1B recommendation. Confirmed: 346/436 minimum-width clamps, height ratio ~1, SOURCE_TEXT_OUTLINE not involved, preview omits native TEXT.
+- Branch: `fix/non-destructive-editable-text`
+- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`
+- Phase-12 baseline tag remains untouched.
+- Local user worktree was not opened; connector/Actions isolation used.
 
-Not completed: production repair, live user-font lookup, true source-raster overlays, 33-page rerun, P1B. Next single safe operation: stop and await explicit P1B authorization.
+## P1B-1
+
+Canonical `_line_placement_from_quad` now uses the finite positive raw width factor directly. The historical `0.72` value remains only as a deprecated audit reference. Rotation is normalized to `[0, 360)`. The narrow-box test now requires exact target-width fitting rather than deliberate overflow; cardinal and arbitrary rotation coverage is expanded.
+
+## Next safe operation
+
+Inspect CI and diff, then unify reachable legacy TEXT creators in P1B-2. Do not begin P2.

@@ -26,8 +26,10 @@ PointTransform = Callable[[float, float], tuple[float, float]]
 _XDATA_APP = "OCR_TEXT_LINE"
 _CONTRACT_XDATA_APP = "TEXT_OUTPUT_CONTRACT"
 _GEOMETRY_XDATA_APP = "OCR_TEXT_GEOMETRY"
-_MIN_READABLE_WIDTH_FACTOR = 0.72
-_MAX_WIDTH_FACTOR = 4.0
+# Deprecated audit reference only; canonical export must not clamp to it.
+_DEPRECATED_MIN_READABLE_WIDTH_FACTOR = 0.72
+_WIDTH_WARNING_NARROW = 0.20
+_WIDTH_WARNING_WIDE = 4.0
 
 
 @dataclass(frozen=True)
@@ -289,15 +291,13 @@ def _line_placement_from_quad(
         character_height * metrics.width / metrics.em_height
     )
     raw_width_factor = target_width / max(natural_width, 1e-12)
-    width_factor = max(
-        _MIN_READABLE_WIDTH_FACTOR,
-        min(_MAX_WIDTH_FACTOR, raw_width_factor),
-    )
-    width_factor_clamped = not isfinite(raw_width_factor) or not (
-        _MIN_READABLE_WIDTH_FACTOR
-        <= raw_width_factor
-        <= _MAX_WIDTH_FACTOR
-    )
+    if not isfinite(raw_width_factor) or raw_width_factor <= 0.0:
+        return None
+    # Canonical fit-to-quad contract: preserve the actual finite positive fit.
+    # Extreme factors are observable geometry facts, not a reason to enlarge,
+    # reject, outline, or otherwise change an eligible native TEXT entity.
+    width_factor = raw_width_factor
+    width_factor_clamped = False
     rendered_width = natural_width * width_factor
     rendered_height = (
         character_height * metrics.height / metrics.em_height
@@ -323,7 +323,7 @@ def _line_placement_from_quad(
         - unit_y * local_center_x
         - up_y * local_center_y,
     )
-    rotation = degrees(atan2(baseline_dy, baseline_dx))
+    rotation = degrees(atan2(baseline_dy, baseline_dx)) % 360.0
     rendered_center = (
         insert[0]
         + unit_x * local_center_x
