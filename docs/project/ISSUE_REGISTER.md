@@ -55,3 +55,15 @@ Automated protection checks and human UAT agree that catastrophic unsafe lines a
 - CAD-013 open: live LibreCAD font resolution/substitution is not recorded.
 
 No issue is marked resolved by P1A. Existing routing, structure, color, OCR and full-UAT statuses are unchanged.
+
+## P1B-3 blocked validation — 2026-07-31
+
+Status: **P1B automated validation blocked**.
+
+- The complete pytest suite passed: 282/282.
+- The mandatory formal real-document gate rejected all 12 document/DPI configurations covering 10 unique pages.
+- The dominant conflict is that checked-in expectations require `replacement_unsafe` candidates to become fallback outlines, while the approved current contract emits every eligible candidate as editable native `TEXT`.
+- Expected/observed editable counts, fallback counts, content hashes and `structure_id` values therefore differ on every formal page.
+- P1B-3 did not change production code, thresholds, routing or baselines and did not start P2.
+- CAD-001 and CAD-008 remain open release blockers. The actual generated-DXF `346 -> 0`, new-boundary-crossing and LibreCAD UAT gates remain unverified because the formal gate stopped the validation sequence.
+- A separate baseline/acceptance-contract reconciliation is required before P1B-3 can be rerun. PR #28 remains Draft and unmerged.
