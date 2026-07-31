@@ -1,0 +1,41 @@
+name: P1B stage1 PR runner
+on:
+  pull_request:
+    branches: [fix/non-destructive-editable-text]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.head_ref == 'agent/p1b-canonical-fit-stage1'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/p1b-canonical-fit-stage1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Execute saved patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('.github/workflows/p1b-stage1.yml').read_text(encoding='utf-8')
+          start=text.index("          python - <<'PY'\n")+len("          python - <<'PY'\n")
+          end=text.index("\n          PY\n",start)
+          code='\n'.join(line[10:] if line.startswith('          ') else line for line in text[start:end].splitlines())
+          exec(compile(code,'p1b-stage1','exec'))
+          PY
+          rm -f .github/workflows/p1b-stage1.yml .github/workflows/p1b-stage1-pr.yml .p1b-stage1-trigger
+      - name: Install and test
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install -U pip
+          pip install -e '.[dev]'
+          QT_QPA_PLATFORM=offscreen pytest -q tests/test_native_text_geometry.py tests/test_font_aware_ocr_export.py
+      - name: Commit and push
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m 'fix: fit native text width to OCR quad'
+          git push origin HEAD:agent/p1b-canonical-fit-stage1
