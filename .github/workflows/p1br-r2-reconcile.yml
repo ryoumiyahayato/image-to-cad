@@ -5,6 +5,10 @@ on:
     branches:
       - fix/non-destructive-editable-text
 
+concurrency:
+  group: p1br-r2-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 
@@ -60,6 +64,13 @@ jobs:
           cd cad_photo_to_dxf
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt -r requirements-test.txt
+
+      - name: Preflight contract static quality
+        shell: bash
+        run: |
+          python -m ruff check \
+            /tmp/p1br-r2-payload/editable_text_regression_contract.py \
+            /tmp/p1br-r2-payload/test_editable_text_regression_contract.py
 
       - name: Reconcile immutable-anchor contracts
         shell: bash
