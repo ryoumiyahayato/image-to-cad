@@ -59,7 +59,9 @@ jobs:
 
       - name: Reconcile immutable-anchor contracts
         shell: bash
-        run: bash /tmp/p1br-r2-payload/bootstrap.sh
+        run: |
+          rm -rf .github/p1br-r2-payload
+          bash /tmp/p1br-r2-payload/bootstrap.sh
 
       - name: Upload reconciliation evidence
         if: always()
