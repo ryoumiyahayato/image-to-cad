@@ -1,6 +1,6 @@
 --- editable_text_regression_contract.py
 +++ editable_text_regression_contract.py
-@@ -1,14 +1,14 @@
+@@ -1,19 +1,18 @@
  from __future__ import annotations
  
  import argparse
@@ -19,7 +19,12 @@
  from typing import Any
  
  import ezdxf
-@@ -61,14 +61,16 @@
+ 
+-
+ PHASE12_CONTRACT = "phase12-architecture-safety-v1"
+ ARCHITECTURE_CONTRACT = PHASE12_CONTRACT
+ EDITABLE_TEXT_CONTRACT = "non-destructive-editable-text-v1"
+@@ -61,14 +60,16 @@
      )
  
  
@@ -38,7 +43,7 @@
          )
      except subprocess.CalledProcessError as exc:
          detail = (exc.stderr or exc.stdout or str(exc)).strip()
-@@ -80,8 +82,9 @@
+@@ -80,8 +81,9 @@
  
  def verify_phase12_anchor(
      repository: Path,
@@ -49,7 +54,7 @@
      object_type = _git(repository, "cat-file", "-t", anchor.commit_sha)
      if object_type != "commit":
          raise ValueError(
-@@ -176,7 +179,7 @@
+@@ -176,7 +178,7 @@
  def load_json(path: Path) -> dict[str, Any]:
      value = json.loads(path.read_text(encoding="utf-8"))
      if not isinstance(value, dict):
@@ -58,7 +63,7 @@
      return value
  
  
-@@ -237,7 +240,7 @@
+@@ -237,7 +239,7 @@
      verified: list[dict[str, str]] = []
      for document in manifest.get("documents", []):
          if not isinstance(document, Mapping):
@@ -67,7 +72,7 @@
          page_id = str(document.get("id", "")).strip()
          for path_key, hash_key in (
              ("source_path", "sha256"),
-@@ -294,7 +297,7 @@
+@@ -294,7 +296,7 @@
              (int(tag.code), _normalise(tag.value))
              for tag in entity.get_xdata(appid)
          ]
@@ -76,7 +81,7 @@
          return []
  
  
-@@ -484,7 +487,7 @@
+@@ -484,7 +486,7 @@
  def _layer_state(document: Any, layer_name: str) -> dict[str, Any]:
      try:
          layer = document.layers.get(layer_name)
@@ -85,7 +90,7 @@
          return {"exists": False, "off": False, "frozen": False}
      return {
          "exists": True,
-@@ -677,11 +680,11 @@
+@@ -677,11 +679,11 @@
          content_audit = item.get("content_audit")
          page = item.get("page")
          if not isinstance(metrics, Mapping):
