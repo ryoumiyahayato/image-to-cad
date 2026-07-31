@@ -1,0 +1,77 @@
+name: P1B native text fit generator
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      P1B_BASE_SHA: 5f7846e00b41913c003f178558a110e6475c0ee0
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    steps:
+      - name: Check out generator branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/p1b-native-text-fit-generator
+          fetch-depth: 0
+
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+
+      - name: Install runtime and test dependencies
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+
+      - name: Reassemble and run the P1B generator
+        run: |
+          python - <<'PY'
+          import base64
+          import gzip
+          from pathlib import Path
+          parts = sorted(Path('.github/scripts').glob('p1b_generator.part*'))
+          encoded = ''.join(path.read_text(encoding='utf-8') for path in parts)
+          source = gzip.decompress(base64.b64decode(encoded))
+          Path('/tmp/p1b_generator.py').write_bytes(source)
+          compile(source, '/tmp/p1b_generator.py', 'exec')
+          print(f'Reassembled {len(parts)} parts into {len(source)} bytes')
+          PY
+          python /tmp/p1b_generator.py
+
+      - name: Show final commit sequence
+        if: success()
+        run: |
+          git status --short
+          git log -4 --oneline --decorate
+
+      - name: Push rewritten generator branch
+        if: success()
+        run: git push --force origin HEAD:agent/p1b-native-text-fit-generator
+
+      - name: Upload LibreCAD manual UAT package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1b-manual-uat-${{ github.run_id }}
+          path: /tmp/p1b-manual-uat/**
+          if-no-files-found: warn
+          retention-days: 30
