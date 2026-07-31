@@ -39,30 +39,11 @@ jobs:
           cat .github/p1br-r2-payload/part-* | base64 --decode > /tmp/p1br-r2-payload.tar.gz
           gzip -t /tmp/p1br-r2-payload.tar.gz
           tar -xzf /tmp/p1br-r2-payload.tar.gz -C /tmp/p1br-r2-payload
+          patch -d /tmp/p1br-r2-payload -p0 < .github/p1br-r2-fixes.patch
           bash -n /tmp/p1br-r2-payload/bootstrap.sh
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("/tmp/p1br-r2-payload/test_editable_text_regression_contract.py")
-          text = path.read_text(encoding="utf-8")
-          text = text.replace(
-              "def _git(repository: Path, *args: str) -> str:\n",
-              "def _git(repository: Path, *args: str, check: bool = True) -> str:\n",
-              1,
-          )
-          text = text.replace("        check=True,\n", "        check=check,\n", 1)
-          text = text.replace(
-              'before = _git(repository, "show-ref", "--tags")',
-              'before = _git(repository, "show-ref", "--tags", check=False)',
-              1,
-          )
-          text = text.replace(
-              'after = _git(repository, "show-ref", "--tags")',
-              'after = _git(repository, "show-ref", "--tags", check=False)',
-              1,
-          )
-          path.write_text(text, encoding="utf-8")
-          PY
+          python -m py_compile \
+            /tmp/p1br-r2-payload/editable_text_regression_contract.py \
+            /tmp/p1br-r2-payload/test_editable_text_regression_contract.py
 
       - uses: actions/setup-python@v5
         with:
@@ -83,7 +64,7 @@ jobs:
       - name: Reconcile immutable-anchor contracts
         shell: bash
         run: |
-          rm -rf .github/p1br-r2-payload
+          rm -rf .github/p1br-r2-payload .github/p1br-r2-fixes.patch
           bash /tmp/p1br-r2-payload/bootstrap.sh
 
       - name: Upload reconciliation evidence
