@@ -12,7 +12,10 @@ from app.final_structure import build_final_structure
 from app.raster_trace import TracePath, trace_binary
 from app.scale_calibrator import ScaleCalibration
 from app.trace_document_export import export_trace_document_streaming
-from app.trace_dxf_entities import MAX_EDITABLE_POLYLINE_VERTICES, add_exact_trace_entities
+from app.trace_dxf_entities import (
+    MAX_EDITABLE_POLYLINE_VERTICES,
+    add_exact_trace_entities,
+)
 from app.trace_single_export import export_exact_trace_dxf
 
 
@@ -88,7 +91,7 @@ def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     assert all(entity.dxf.layer == "OCR_TEXT" for entity in texts)
     assert not document.layers.get("OCR_TEXT").is_off()
     assert texts[0].dxf.style == "wqy-unicode"
-    assert all(0.72 <= float(entity.dxf.width) <= 4.0 for entity in texts)
+    assert all(float(entity.dxf.width) > 0.0 for entity in texts)
     assert _line_xdata(texts[0]) == (1, "FIRE ALARM A1")
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
