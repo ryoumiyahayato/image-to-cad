@@ -63,6 +63,21 @@ The phase-12 commit exists and the existing repository checkpoint records the ta
 
 P1 is limited to text geometry and font metrics. It must not change OCR content, OCR thresholds, text eligibility, source-outline contracts, symbol routing, structure lines, line repair, logo/signature logic, PDF export logic, or diagnostic colors.
 
+## P1B implementation state
+
+- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`.
+- P1B-1 canonical fit commit: `434209f0ef0e405726cfd6d733d62c7ae0ce8f17`.
+- P1B-2 path-unification commit and target-branch HEAD: `80be85aba985e457bc7bff1e9ece49f50e7a46d2`.
+- P1B-3 validation PR: #28, Draft and unmerged.
+
+Status: **P1B automated validation blocked**.
+
+The full pytest suite passed with 282 tests. The formal real-document gate then failed for 12 document/DPI configurations covering 10 unique source pages. The committed expectations still encode the old `replacement_safe` downgrade behavior, while the approved current contract requires every eligible candidate to remain native editable `TEXT`. This produces systematic expected/observed differences in editable/fallback counts, contour counts, content hashes and `structure_id` values.
+
+P1B-3 is prohibited from restoring the superseded routing, lowering acceptance criteria, modifying production algorithms, or recording replacement baselines. Therefore PR #28 remains Draft, no success validation commit was created, the target branch remains at `80be85aba985e457bc7bff1e9ece49f50e7a46d2`, and the manual LibreCAD UAT package is not released.
+
+The next safe action is a separately authorized real-regression baseline and acceptance-contract reconciliation. It is not P2. P2 has not started.
+
 ## Authoritative records
 
 - [Real-world UAT](REAL_WORLD_UAT.md)
