@@ -1,1 +1,78 @@
-<TOO_LARGE_PLACEHOLDER>
+name: P1B-R2 immutable-anchor contract reconciliation
+
+on:
+  pull_request:
+    branches:
+      - fix/non-destructive-editable-text
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    if: github.head_ref == 'agent/editable-text-regression-contract-v1-r2'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: '1'
+      BASE_HEAD: 80be85aba985e457bc7bff1e9ece49f50e7a46d2
+      BEFORE_HEAD: 5f7846e00b41913c003f178558a110e6475c0ee0
+      PHASE12_HEAD: 6f5f69329aabf0bd3a7eda84baf66eb1959bdcba
+      PHASE12_MANIFEST_BLOB: 533ae15afcef24dd4444f9acc3d504bbd94d9c87
+      CONTRACT: non-destructive-editable-text-v1
+      BRANCH: agent/editable-text-regression-contract-v1-r2
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/editable-text-regression-contract-v1-r2
+          fetch-depth: 0
+          fetch-tags: false
+
+      - name: Materialize authorized payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/p1br-r2-payload
+          cat .github/p1br-r2-payload/part-* | base64 --decode > /tmp/p1br-r2-payload.tar.gz
+          gzip -t /tmp/p1br-r2-payload.tar.gz
+          tar -xzf /tmp/p1br-r2-payload.tar.gz -C /tmp/p1br-r2-payload
+          bash -n /tmp/p1br-r2-payload/bootstrap.sh
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+
+      - name: Install complete runtime
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+          cd cad_photo_to_dxf
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+
+      - name: Reconcile immutable-anchor contracts
+        shell: bash
+        run: bash /tmp/p1br-r2-payload/bootstrap.sh
+
+      - name: Upload reconciliation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1br-r2-reconciliation-evidence
+          if-no-files-found: warn
+          path: |
+            /tmp/p1br-r2-a-output
+            /tmp/p1br-r2-b-output
+            /tmp/p1br-r2-c-output
+            /tmp/p1br-r2/environment.json
+            /tmp/p1br-r2-phase12-selection.log
+            /tmp/p1br-r2-formal-commits.txt
+            cad_photo_to_dxf/validation/baselines/non-destructive-editable-text-v1
+            cad_photo_to_dxf/validation/editable-text-contract-r2
