@@ -1,0 +1,53 @@
+name: P1B stage2 scoped rerun
+on:
+  pull_request:
+    branches: [fix/non-destructive-editable-text]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.head_ref == 'agent/p1b-unify-text-paths-stage2'
+    runs-on: ubuntu-latest
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/p1b-unify-text-paths-stage2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+      - name: Execute saved stage2 patch
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          text=Path('.github/workflows/p1b-stage2-pr.yml').read_text(encoding='utf-8')
+          start=text.index("          python - <<'PY'\n")+len("          python - <<'PY'\n")
+          end=text.index("\n          PY\n",start)
+          code='\n'.join(line[10:] if line.startswith('          ') else line for line in text[start:end].splitlines())
+          exec(compile(code,'p1b-stage2','exec'))
+          PY
+          rm -f .github/workflows/p1b-stage2-pr.yml .github/workflows/p1b-stage2-rerun.yml
+      - name: Install, test, and lint scoped changes
+        working-directory: cad_photo_to_dxf
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+          python -m pytest -q tests/test_native_text_geometry.py tests/test_font_aware_ocr_export.py tests/test_text_geometry_path_unification.py tests/test_trace_export.py
+          python -m ruff check --fix --select I app/ocr_outline_export.py app/trace_dxf_entities.py app/dxf_exporter.py tests/test_text_geometry_path_unification.py tests/test_trace_export.py
+          python -m ruff check app/ocr_outline_export.py app/trace_dxf_entities.py app/dxf_exporter.py tests/test_text_geometry_path_unification.py tests/test_trace_export.py --ignore BLE001,RUF046
+      - name: Commit and push
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A
+          git commit -m 'refactor: unify native text geometry export paths'
+          git push origin HEAD:agent/p1b-unify-text-paths-stage2
