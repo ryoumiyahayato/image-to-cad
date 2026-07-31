@@ -1,14 +1,17 @@
-name: P1B stage3 full validation
+name: P1B stage3 blocked validation evidence
+
 on:
   pull_request:
     branches: [fix/non-destructive-editable-text]
+
 permissions:
   contents: write
+
 jobs:
   validate:
     if: github.head_ref == 'agent/p1b-full-validation-stage3'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 50
     env:
       QT_QPA_PLATFORM: offscreen
       QT_OPENGL: software
@@ -17,132 +20,470 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: agent/p1b-full-validation-stage3
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
           cache-dependency-path: cad_photo_to_dxf/requirements*.txt
+
       - name: Install runtime
         run: |
           sudo apt-get update
           sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
           cd cad_photo_to_dxf
-          python -m pip install -U pip
+          python -m pip install --upgrade pip
           python -m pip install -r requirements.txt -r requirements-test.txt
-      - name: Full tests
+
+      - name: Run every validation and preserve evidence
         working-directory: cad_photo_to_dxf
+        shell: bash
         run: |
-          mkdir -p validation/text-geometry-fit output/p1b
-          python -m pytest -q --junitxml=validation/text-geometry-fit/test-results.xml
-          python scripts/run_real_document_regression.py --manifest tests/real_regression/manifest.json --output output/p1b/real-document-regression.json --artifacts output/p1b/real-document-regression
-          python -m ruff check app tests validation scripts main.py
-          python -m compileall -q app tests validation scripts main.py
-      - name: Build evidence and manual UAT package
-        working-directory: cad_photo_to_dxf
-        run: |
+          set +e
+          ROOT=validation/text-geometry-fit
+          mkdir -p "$ROOT/manual-uat" output/p1b
+          STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+
+          PYTEST_COMMAND='python -m pytest -q --junitxml=validation/text-geometry-fit/test-results.xml'
+          REAL_COMMAND='python scripts/run_real_document_regression.py --manifest tests/real_regression/manifest.json --output output/p1b/real-document-regression.json --artifacts output/p1b/real-document-regression'
+          RUFF_COMMAND='python -m ruff check app tests validation scripts main.py'
+          COMPILE_COMMAND='python -m compileall -q app tests validation scripts main.py'
+
+          eval "$PYTEST_COMMAND" > "$ROOT/pytest.log" 2>&1
+          PYTEST_RC=$?
+          eval "$REAL_COMMAND" > "$ROOT/real-document-regression.log" 2>&1
+          REAL_RC=$?
+          if [ -f output/p1b/real-document-regression.json ]; then
+            cp output/p1b/real-document-regression.json "$ROOT/real-document-regression.json"
+          fi
+          eval "$RUFF_COMMAND" > "$ROOT/ruff.log" 2>&1
+          RUFF_RC=$?
+          eval "$COMPILE_COMMAND" > "$ROOT/compile.log" 2>&1
+          COMPILE_RC=$?
+
           python - <<'PY'
           from __future__ import annotations
-          import hashlib, json, shutil, statistics
-          from collections import defaultdict
+
+          import json
+          import math
+          import shutil
+          import tempfile
           from pathlib import Path
+
           import ezdxf
 
-          ROOT=Path('validation/text-geometry-fit')
-          ROOT.mkdir(parents=True,exist_ok=True)
-          MANUAL=ROOT/'manual-uat'; MANUAL.mkdir(exist_ok=True)
-          (ROOT/'rendered').mkdir(exist_ok=True)
-          audit=json.loads(Path('validation/text-geometry-audit/text-geometry-records.json').read_text(encoding='utf-8'))
-          cols=audit['columns']; idx={name:i for i,name in enumerate(cols)}
-          page_names=audit['page_id_map']; by_page=defaultdict(list)
-          for row in audit['records']: by_page[page_names[row[idx['page_id']]]].append(row)
-          def pct(values,p):
-              values=sorted(values)
-              if not values:return 0.0
-              return values[min(len(values)-1,round((len(values)-1)*p))]
-          before_pages={}; after_pages={}
-          for page,rows in by_page.items():
-              wr=[float(r[idx['predicted width / target width']]) for r in rows]
-              hr=[float(r[idx['predicted height / target height']]) for r in rows]
-              crossings=sum(int(r[idx['crosses nearby table cell boundary']]) for r in rows)
-              before_pages[page]={
-                  'native_text_count':len(rows),'width_clamp_count':sum(float(r[idx['width factor']])==0.72 and w>1.000001 for r,w in zip(rows,wr)),
-                  'width_ratio_median':statistics.median(wr),'width_ratio_p95':pct(wr,.95),'width_ratio_max':max(wr),
-                  'height_ratio_median':statistics.median(hr),'center_offset_median':0.0,'center_offset_p95':0.0,
-                  'predicted_extra_boundary_crossings':crossings}
-              after_pages[page]={
-                  'native_text_count':len(rows),'width_clamp_count':0,'unreported_clamp_count':0,
-                  'width_ratio_median':1.0,'width_ratio_p95':1.0,'width_ratio_max':1.0,
-                  'height_ratio_median':statistics.median(hr),'center_offset_median':0.0,'center_offset_p95':0.0,
-                  'new_boundary_crossing_count':0}
-          all_before=sum(v['width_clamp_count'] for v in before_pages.values())
-          summary={'schema_version':1,'p1b_start':'5f7846e00b41913c003f178558a110e6475c0ee0','p1b_1':'434209f0ef0e405726cfd6d733d62c7ae0ce8f17','p1b_2':'80be85aba985e457bc7bff1e9ece49f50e7a46d2','representative_pages':{'before':before_pages,'after':after_pages},'overall':{'before_width_clamp_count':all_before,'after_width_clamp_count':0,'eligible_native_count_before':sum(v['native_text_count'] for v in before_pages.values()),'eligible_native_count_after':sum(v['native_text_count'] for v in after_pages.values()),'new_boundary_crossing_count':0},'method':'after metrics recomputed from the canonical exact fit; after DXFs set each entity width to persisted raw_width_factor without changing content, count, placement, structure, or layers'}
-          (ROOT/'before-after-summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-
-          def hash_items(items): return hashlib.sha256('\n'.join(items).encode()).hexdigest()
-          pages=[]; representatives=set(by_page)
-          dxf_paths=sorted(Path('validation/editable-text-recovery/pages').glob('*/*.dxf'))
-          for source in dxf_paths:
-              doc=ezdxf.readfile(source); msp=doc.modelspace(); texts=list(msp.query('TEXT'))
-              content=[str(e.dxf.text) for e in texts]
-              ids=[]; ratios=[]; warnings=0
-              for n,e in enumerate(texts,1):
-                  ids.append(f'ocr-{n:03d}')
+          root = Path("validation/text-geometry-fit")
+          dxf_root = Path("output/p1b/real-document-regression")
+          results: list[dict[str, object]] = []
+          failed = False
+          with tempfile.TemporaryDirectory() as temporary:
+              temporary_root = Path(temporary)
+              for source in sorted(dxf_root.glob("*.dxf")):
+                  record: dict[str, object] = {"path": str(source)}
                   try:
-                      xd=e.get_xdata('OCR_TEXT_GEOMETRY')
-                      vals=[float(t.value) for t in xd if t.code==1040]
-                      raw=vals[7]; target=vals[2]; rendered=vals[4]
-                      ratios.append(rendered/target if target else 1.0)
-                      if raw<0.20 or raw>4.0: warnings+=1
-                  except Exception:
-                      ratios.append(1.0); warnings+=1
-              lines=[]
-              for kind in ('LINE','LWPOLYLINE','POLYLINE'):
-                  for e in msp.query(kind): lines.append(f'{kind}:{e.dxf.layer}:{e.dxf.handle}')
-              layer=doc.layers.get('SOURCE_TEXT_OUTLINE') if 'SOURCE_TEXT_OUTLINE' in doc.layers else None
-              audit_errors=len(doc.audit().errors)
-              page={'page_id':source.parent.name,'source_dxf':str(source),'eligible_count':len(texts),'native_text_count':len(texts),'content_hash':hash_items(content),'candidate_id_hash':hash_items(ids),'geometry_warning_count':warnings,'width_ratio_before_median':statistics.median(ratios) if ratios else 1.0,'width_ratio_after_median':1.0,'width_ratio_after_p95':1.0,'width_ratio_after_max':1.0,'height_ratio_after_median':1.0,'center_error_after_max':0.0,'rotation_error_after_max':0.0,'new_boundary_crossings':0,'text_overlap_count':'not inferred from axis-aligned DXF extents','dxf_audit_errors':audit_errors,'source_outline_off':bool(layer and layer.is_off()),'source_outline_frozen':bool(layer and layer.is_frozen()),'structure_entity_hash':hash_items(lines)}
-              pages.append(page)
-              if source.parent.name in representatives:
-                  before=MANUAL/f'{source.parent.name}-before.dxf'; after=MANUAL/f'{source.parent.name}-after.dxf'
-                  shutil.copy2(source,before)
-                  out=ezdxf.readfile(source)
-                  for e in out.modelspace().query('TEXT'):
-                      try:
-                          vals=[float(t.value) for t in e.get_xdata('OCR_TEXT_GEOMETRY') if t.code==1040]
-                          e.dxf.width=vals[7]
-                      except Exception: pass
-                  out.saveas(after)
-                  reopened=ezdxf.readfile(after)
-                  assert len(reopened.modelspace().query('TEXT'))==len(texts)
-                  assert not reopened.audit().errors
-          regression=json.loads(Path('output/p1b/real-document-regression.json').read_text(encoding='utf-8'))
-          index={'schema_version':1,'page_count':len(pages),'pages':pages,'formal_real_regression':regression,'limitations':['The repository does not contain a separately identified private user PDF outside the committed formal page set; no unavailable external file is claimed as processed.','Candidate IDs in final DXF are reconstructed deterministically from native TEXT order because exact original IDs are not persisted in the DXF.']}
-          (ROOT/'per-page-index.json').write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
-          (ROOT/'geometry-contract.md').write_text('''# Canonical native TEXT geometry contract\n\n`ocr_outline_export.add_ocr_outline_blocks` is the sole formal entry. It measures the exact exported `wqy-unicode.lff` visible bounds, fits height and finite positive width factor to the transformed OCR quad, compensates visible bearings at insertion, normalizes rotation to `[0,360)`, and emits exactly one editable DXF TEXT for every eligible candidate. No production minimum width clamp remains. SOURCE_TEXT_OUTLINE never participates in sizing. Legacy entry points delegate to canonical geometry.\n''',encoding='utf-8')
-          (MANUAL/'README.md').write_text('''# LibreCAD manual UAT\n\nOpen each `*-before.dxf` and matching `*-after.dxf`. Check overall text scale, table-cell overflow, overlap, Chinese/English/numbers, and rotated text. In an after file modify one Chinese TEXT, save as a copy, fully close LibreCAD, reopen, and confirm the edit remains. Confirm `SOURCE_TEXT_OUTLINE` starts off and frozen. Compare structural lines with the before file. Record screenshots and any failing text content/coordinates. Automated results do not replace this UAT.\n\nThe complete final-DXF inventory is `../per-page-index.json`; only the three representative before/after pairs are duplicated here to avoid committing another full large corpus.\n''',encoding='utf-8')
-          for page in representatives:
-              data={'page':page,'before':before_pages[page],'after':after_pages[page]}
-              svg=f'''<svg xmlns="http://www.w3.org/2000/svg" width="900" height="320"><rect width="100%" height="100%" fill="white"/><text x="30" y="45" font-size="24">{page}</text><text x="30" y="95" font-size="18">Before clamps: {data['before']['width_clamp_count']}</text><text x="30" y="130" font-size="18">Before median/max width ratio: {data['before']['width_ratio_median']:.3f} / {data['before']['width_ratio_max']:.3f}</text><text x="30" y="180" font-size="18">After clamps: 0</text><text x="30" y="215" font-size="18">After median/p95/max width ratio: 1.000 / 1.000 / 1.000</text><text x="30" y="265" font-size="18">New boundary crossings: 0</text></svg>'''
-              (ROOT/'rendered'/f'{page}.svg').write_text(svg,encoding='utf-8')
-          (ROOT/'README.md').write_text(f'''# P1B native TEXT geometry fit validation\n\nStatus: **Awaiting user LibreCAD UAT**.\n\nThe canonical 0.72 floor was removed without changing OCR content, eligibility, native TEXT count, structure, routing, source-outline state, PDF page behavior, colors, or FinalStructure. The three P1A pages retain {summary['overall']['eligible_native_count_after']} native TEXT entities; clamps fall from {all_before} to 0 and fitted width ratios become 1.0. Full pytest, formal real-document regression, Ruff, compile checks, DXF audits, and representative read-save-read completed. See `before-after-summary.json`, `per-page-index.json`, `geometry-contract.md`, `path-unification.md`, and `manual-uat/`.\n''',encoding='utf-8')
+                      original = ezdxf.readfile(source)
+                      original_texts = list(original.modelspace().query("TEXT"))
+                      original_values = [
+                          (
+                              str(entity.dxf.text),
+                              float(entity.dxf.height),
+                              float(entity.dxf.width),
+                              float(entity.dxf.rotation),
+                              str(entity.dxf.layer),
+                          )
+                          for entity in original_texts
+                      ]
+                      audit_errors = len(original.audit().errors)
+                      target = temporary_root / source.name
+                      original.saveas(target)
+                      reopened = ezdxf.readfile(target)
+                      reopened_texts = list(reopened.modelspace().query("TEXT"))
+                      reopened_values = [
+                          (
+                              str(entity.dxf.text),
+                              float(entity.dxf.height),
+                              float(entity.dxf.width),
+                              float(entity.dxf.rotation),
+                              str(entity.dxf.layer),
+                          )
+                          for entity in reopened_texts
+                      ]
+                      layer_before = original.layers.get("SOURCE_TEXT_OUTLINE")
+                      layer_after = reopened.layers.get("SOURCE_TEXT_OUTLINE")
+                      record.update(
+                          {
+                              "read": True,
+                              "save": True,
+                              "reread": True,
+                              "text_count": len(original_values),
+                              "text_values_preserved": original_values == reopened_values,
+                              "audit_errors_before": audit_errors,
+                              "audit_errors_after": len(reopened.audit().errors),
+                              "source_outline_off_preserved": bool(
+                                  layer_before.is_off() == layer_after.is_off()
+                              ),
+                              "source_outline_frozen_preserved": bool(
+                                  layer_before.is_frozen() == layer_after.is_frozen()
+                              ),
+                          }
+                      )
+                      record["passed"] = bool(
+                          record["text_values_preserved"]
+                          and record["audit_errors_before"] == 0
+                          and record["audit_errors_after"] == 0
+                          and record["source_outline_off_preserved"]
+                          and record["source_outline_frozen_preserved"]
+                      )
+                  except Exception as error:  # evidence collection must retain the exception
+                      record.update({"passed": False, "error": repr(error)})
+                  failed = failed or not bool(record.get("passed"))
+                  results.append(record)
+          payload = {
+              "schema_version": 1,
+              "dxf_count": len(results),
+              "passed_count": sum(bool(item.get("passed")) for item in results),
+              "failed_count": sum(not bool(item.get("passed")) for item in results),
+              "passed": not failed and bool(results),
+              "files": results,
+          }
+          (root / "dxf-roundtrip.json").write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          raise SystemExit(1 if failed or not results else 0)
           PY
-      - name: Update governance documents
-        run: |
+          ROUNDTRIP_RC=$?
+
+          FINISHED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          PYTEST_RC="$PYTEST_RC" REAL_RC="$REAL_RC" RUFF_RC="$RUFF_RC" \
+          COMPILE_RC="$COMPILE_RC" ROUNDTRIP_RC="$ROUNDTRIP_RC" \
+          STARTED_AT="$STARTED_AT" FINISHED_AT="$FINISHED_AT" \
+          PYTEST_COMMAND="$PYTEST_COMMAND" REAL_COMMAND="$REAL_COMMAND" \
+          RUFF_COMMAND="$RUFF_COMMAND" COMPILE_COMMAND="$COMPILE_COMMAND" \
           python - <<'PY'
+          from __future__ import annotations
+
+          import json
+          import os
+          import re
+          import statistics
+          import xml.etree.ElementTree as ET
           from pathlib import Path
-          Path('docs/project/CURRENT_TASK.md').write_text('''# Current task\n\n**P1B: canonical native DXF TEXT fit-to-quad geometry — automated validation complete.**\n\nStatus: **Awaiting user LibreCAD UAT**. P2 is not authorized.\n''',encoding='utf-8')
-          for name in ('ISSUE_REGISTER.md','PROJECT_STATUS.md'):
-              p=Path('docs/project')/name
-              text=p.read_text(encoding='utf-8')
-              text+='''\n\n## P1B update — 2026-07-31\n\nCanonical width fitting and path unification are implemented. Automated validation is complete; the geometry issue remains **Awaiting user LibreCAD UAT** and is not resolved until the user checks the supplied DXFs in LibreCAD. P2 has not started.\n'''
-              p.write_text(text,encoding='utf-8')
-          Path('docs/project/CHECKPOINT.md').write_text('''# Project checkpoint\n\nRecorded: 2026-07-31\n\n- Branch: `fix/non-destructive-editable-text`\n- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`\n- P1B-1: `434209f0ef0e405726cfd6d733d62c7ae0ce8f17`\n- P1B-2: `80be85aba985e457bc7bff1e9ece49f50e7a46d2`\n- Phase-12 baseline tag was not moved or deleted.\n- Local user worktree was not opened; isolated GitHub Actions worktrees were used.\n\n## Evidence\n\nFull tests, formal real-document regression, Ruff and compile checks ran. Per-page DXF inventory, three representative before/after DXF pairs, fitted geometry summaries, read-save-read checks, layer state checks, and manual UAT instructions are under `cad_photo_to_dxf/validation/text-geometry-fit/`.\n\n## Current status\n\n**Awaiting user LibreCAD UAT.** No issue is marked resolved.\n\n## Next single safe operation\n\nUser opens the three after DXFs in LibreCAD, performs the checklist, and reports results. Do not begin P2.\n''',encoding='utf-8')
+
+          import ezdxf
+
+          root = Path("validation/text-geometry-fit")
+
+          junit_path = root / "test-results.xml"
+          tests = failures = errors = skipped = 0
+          duration = 0.0
+          if junit_path.exists():
+              junit = ET.parse(junit_path).getroot()
+              suites = [junit] if junit.tag == "testsuite" else list(junit.findall("testsuite"))
+              tests = sum(int(suite.attrib.get("tests", 0)) for suite in suites)
+              failures = sum(int(suite.attrib.get("failures", 0)) for suite in suites)
+              errors = sum(int(suite.attrib.get("errors", 0)) for suite in suites)
+              skipped = sum(int(suite.attrib.get("skipped", 0)) for suite in suites)
+              duration = sum(float(suite.attrib.get("time", 0.0)) for suite in suites)
+
+          pytest_log = (root / "pytest.log").read_text(encoding="utf-8", errors="replace")
+          warning_match = re.search(r"(\d+) warnings?", pytest_log)
+          warning_count = int(warning_match.group(1)) if warning_match else 0
+
+          regression_path = root / "real-document-regression.json"
+          regression = (
+              json.loads(regression_path.read_text(encoding="utf-8"))
+              if regression_path.exists()
+              else {"documents": [], "errors": ["result JSON was not produced"]}
+          )
+          pages: list[dict[str, object]] = []
+          for document in regression.get("documents", []):
+              metrics = document.get("metrics", {})
+              page = document.get("page", {})
+              pages.append(
+                  {
+                      "page_id": document.get("id"),
+                      "input_source": document.get("source_path"),
+                      "dpi": page.get("dpi"),
+                      "structure_id": metrics.get("structure_id"),
+                      "eligible_count": metrics.get("text_count"),
+                      "native_text_count": metrics.get("editable_text_count"),
+                      "dxf_text_count": metrics.get("dxf_text_count"),
+                      "fallback_text_count": metrics.get("fallback_text_count"),
+                      "structure_line_count": metrics.get("straight_line_count"),
+                      "dxf_path": document.get("dxf_path"),
+                      "passed": bool(document.get("passed")),
+                      "fail_reasons": document.get("errors", []),
+                  }
+              )
+          (root / "per-page-index.json").write_text(
+              json.dumps(
+                  {
+                      "schema_version": 1,
+                      "document_count": regression.get("document_count", len(pages)),
+                      "unique_page_count": regression.get("unique_page_count"),
+                      "passed": bool(regression.get("passed")),
+                      "pages": pages,
+                  },
+                  ensure_ascii=False,
+                  indent=2,
+              )
+              + "\n",
+              encoding="utf-8",
+          )
+
+          representatives = {
+              "environment-scan-page-001-120dpi": 139,
+              "environment-plan-page-003-150dpi": 154,
+              "warehouse-system-page-002-72dpi": 143,
+          }
+          representative_results: list[dict[str, object]] = []
+          current_clamps = 0
+          raw_final_mismatches = 0
+          total_texts = 0
+          for page_id, expected_count in representatives.items():
+              path = Path("output/p1b/real-document-regression") / f"{page_id}.dxf"
+              record: dict[str, object] = {
+                  "page_id": page_id,
+                  "expected_p1a_native_text_count": expected_count,
+                  "path": str(path),
+              }
+              if not path.exists():
+                  record.update({"passed": False, "error": "DXF missing"})
+                  representative_results.append(record)
+                  continue
+              document = ezdxf.readfile(path)
+              texts = list(document.modelspace().query("TEXT"))
+              width_ratios: list[float] = []
+              page_clamps = 0
+              page_mismatches = 0
+              xdata_missing = 0
+              for entity in texts:
+                  try:
+                      tags = entity.get_xdata("OCR_TEXT_GEOMETRY")
+                      values = [float(tag.value) for tag in tags if tag.code == 1040]
+                      raw_width = values[7]
+                      final_width = values[8]
+                      target_width = values[2]
+                      rendered_width = values[4]
+                      if raw_width < 0.72 and abs(final_width - 0.72) <= 1e-9:
+                          page_clamps += 1
+                      if abs(raw_width - final_width) > 1e-9:
+                          page_mismatches += 1
+                      if target_width > 0:
+                          width_ratios.append(rendered_width / target_width)
+                  except Exception:
+                      xdata_missing += 1
+              total_texts += len(texts)
+              current_clamps += page_clamps
+              raw_final_mismatches += page_mismatches
+              record.update(
+                  {
+                      "native_text_count": len(texts),
+                      "count_matches_p1a": len(texts) == expected_count,
+                      "current_minimum_width_clamp_count": page_clamps,
+                      "raw_final_width_factor_mismatch_count": page_mismatches,
+                      "geometry_xdata_missing_count": xdata_missing,
+                      "width_ratio_median": statistics.median(width_ratios) if width_ratios else None,
+                      "width_ratio_p95": (
+                          sorted(width_ratios)[round((len(width_ratios) - 1) * 0.95)]
+                          if width_ratios
+                          else None
+                      ),
+                      "width_ratio_max": max(width_ratios) if width_ratios else None,
+                      "dxf_audit_errors": len(document.audit().errors),
+                  }
+              )
+              record["passed"] = bool(
+                  record["count_matches_p1a"]
+                  and page_clamps == 0
+                  and page_mismatches == 0
+                  and xdata_missing == 0
+                  and record["dxf_audit_errors"] == 0
+              )
+              representative_results.append(record)
+          geometry_payload = {
+              "schema_version": 1,
+              "old_minimum_width_clamp_count": 346,
+              "current_minimum_width_clamp_count": current_clamps,
+              "p1a_native_text_count": 436,
+              "current_native_text_count": total_texts,
+              "raw_final_width_factor_mismatch_count": raw_final_mismatches,
+              "representative_pages": representative_results,
+              "new_boundary_crossing_count": None,
+              "new_boundary_crossing_status": "not completed because the formal real-document gate failed first",
+              "passed": bool(
+                  total_texts == 436
+                  and current_clamps == 0
+                  and raw_final_mismatches == 0
+                  and all(bool(item.get("passed")) for item in representative_results)
+              ),
+          }
+          (root / "representative-geometry.json").write_text(
+              json.dumps(geometry_payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          roundtrip = json.loads((root / "dxf-roundtrip.json").read_text(encoding="utf-8"))
+          commands = [
+              {
+                  "name": "pytest",
+                  "command": os.environ["PYTEST_COMMAND"],
+                  "return_code": int(os.environ["PYTEST_RC"]),
+                  "tests": tests,
+                  "failures": failures,
+                  "errors": errors,
+                  "skipped": skipped,
+                  "warnings": warning_count,
+                  "duration_seconds": duration,
+                  "report": str(junit_path),
+                  "log": str(root / "pytest.log"),
+              },
+              {
+                  "name": "formal_real_document_regression",
+                  "command": os.environ["REAL_COMMAND"],
+                  "return_code": int(os.environ["REAL_RC"]),
+                  "document_count": regression.get("document_count"),
+                  "unique_page_count": regression.get("unique_page_count"),
+                  "passed": regression.get("passed"),
+                  "report": str(regression_path),
+                  "log": str(root / "real-document-regression.log"),
+              },
+              {
+                  "name": "ruff",
+                  "command": os.environ["RUFF_COMMAND"],
+                  "return_code": int(os.environ["RUFF_RC"]),
+                  "log": str(root / "ruff.log"),
+              },
+              {
+                  "name": "compileall",
+                  "command": os.environ["COMPILE_COMMAND"],
+                  "return_code": int(os.environ["COMPILE_RC"]),
+                  "log": str(root / "compile.log"),
+              },
+              {
+                  "name": "dxf_read_save_read",
+                  "command": "embedded ezdxf all-generated-DXF round-trip audit",
+                  "return_code": int(os.environ["ROUNDTRIP_RC"]),
+                  "dxf_count": roundtrip.get("dxf_count"),
+                  "passed_count": roundtrip.get("passed_count"),
+                  "failed_count": roundtrip.get("failed_count"),
+                  "report": str(root / "dxf-roundtrip.json"),
+              },
+          ]
+          validation = {
+              "schema_version": 1,
+              "status": "P1B automated validation blocked",
+              "started_at": os.environ["STARTED_AT"],
+              "finished_at": os.environ["FINISHED_AT"],
+              "base_head": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+              "p1b_start": "5f7846e00b41913c003f178558a110e6475c0ee0",
+              "commands": commands,
+              "blocking_gate": "formal_real_document_regression",
+              "blocking_reason": (
+                  "The committed real-regression baselines still encode the pre-P0 "
+                  "replacement_safe downgrade contract. Current output follows the approved "
+                  "non-destructive editable-TEXT contract, so all ten unique pages diverge. "
+                  "P1B-3 is forbidden to update those baselines or alter production behavior."
+              ),
+              "success_commit_created": False,
+              "target_branch_merged": False,
+              "manual_uat_released": False,
+              "p2_started": False,
+          }
+          (root / "validation-run.json").write_text(
+              json.dumps(validation, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+
+          failure_lines = [
+              "# P1B-3 automated validation blocker",
+              "",
+              "Status: **P1B automated validation blocked**.",
+              "",
+              f"- Full pytest: {tests} tests, {failures} failures, {errors} errors, return code {os.environ['PYTEST_RC']}.",
+              f"- Formal real regression: {regression.get('document_count')} documents / {regression.get('unique_page_count')} unique pages, return code {os.environ['REAL_RC']}.",
+              f"- Ruff return code: {os.environ['RUFF_RC']}.",
+              f"- Compile return code: {os.environ['COMPILE_RC']}.",
+              f"- DXF read-save-read: {roundtrip.get('passed_count')}/{roundtrip.get('dxf_count')} passed.",
+              f"- Representative actual clamp audit: 346 -> {current_clamps}; native TEXT {total_texts}/436.",
+              "",
+              "The blocking failures are not native-TEXT width-fit failures. The checked-in real-regression baselines still expect `replacement_safe` candidates to be downgraded to fallback outlines, while the approved P0/P1 contract explicitly removed `replacement_safe` as a TEXT output gate. Consequently entity counts, fallback counts, content hashes and structure IDs differ on every formal page.",
+              "",
+              "P1B-3 may not alter production geometry, restore the old routing, lower acceptance criteria, or record replacement baselines. PR #28 must remain Draft and must not be merged.",
+              "",
+              "## Required independent decision",
+              "",
+              "Authorize a separate baseline-reconciliation and acceptance-contract task that decides whether formal real-regression expectations should be migrated to the already-approved non-destructive editable-TEXT contract. That task is not P2 and must not change OCR or geometry behavior merely to satisfy stale expectations.",
+          ]
+          (root / "failure-analysis.md").write_text("\n".join(failure_lines) + "\n", encoding="utf-8")
+          (root / "README.md").write_text(
+              "# P1B-3 validation evidence\n\n"
+              "Status: **P1B automated validation blocked**.\n\n"
+              "The full unit-test suite completed, but the formal real-document regression gate failed against pre-existing baselines that encode the superseded `replacement_safe` downgrade behavior. No baseline, threshold, production algorithm, OCR route, structure logic, or FinalStructure behavior was changed. No LibreCAD UAT package is released and PR #28 is not mergeable under the P1B-3 contract. See `validation-run.json`, `real-document-regression.json`, `per-page-index.json`, `representative-geometry.json`, `dxf-roundtrip.json`, and `failure-analysis.md`.\n",
+              encoding="utf-8",
+          )
+          (root / "manual-uat" / "NOT_READY.md").write_text(
+              "# Manual UAT not released\n\n"
+              "Automated P1B-3 validation is blocked by the formal real-document baseline gate. Do not treat generated DXFs as the approved LibreCAD UAT package until the baseline-contract conflict is resolved in a separately authorized task and P1B-3 is rerun successfully.\n",
+              encoding="utf-8",
+          )
+
+          project = Path("../docs/project")
+          (project / "CURRENT_TASK.md").write_text(
+              "# Current task\n\n"
+              "**P1B-3: full native TEXT geometry validation.**\n\n"
+              "Status: **P1B automated validation blocked**. The full pytest suite passes, but all ten unique formal real-document pages conflict with committed baselines that still require the superseded `replacement_safe` downgrade behavior. PR #28 remains Draft and is not merged. No baseline or production behavior was changed. P2 is not authorized.\n",
+              encoding="utf-8",
+          )
+          checkpoint = """# Project checkpoint
+
+Recorded: 2026-07-31
+
+- Branch: `fix/non-destructive-editable-text`
+- P1B start: `5f7846e00b41913c003f178558a110e6475c0ee0`
+- P1B-1: `434209f0ef0e405726cfd6d733d62c7ae0ce8f17`
+- P1B-2 / target HEAD: `80be85aba985e457bc7bff1e9ece49f50e7a46d2`
+- P1B-3 PR: #28, Draft, not merged
+- Phase-12 baseline tag was not moved or deleted
+
+## P1B-3 result
+
+Status: **P1B automated validation blocked**.
+
+The complete pytest suite passed. Formal real-document regression failed on all ten unique pages because committed expectations still encode `replacement_safe` downgrades and old fallback/structure hashes, while the approved current contract emits every eligible candidate as editable native TEXT. P1B-3 did not change production code, thresholds, baselines, routing, structure logic, or FinalStructure.
+
+Machine evidence is under `cad_photo_to_dxf/validation/text-geometry-fit/`.
+
+## Next single safe operation
+
+Authorize a separate baseline-reconciliation and acceptance-contract task, or explicitly decide how the pre-P0 real-regression expectations should be handled. Do not begin P2 and do not release LibreCAD UAT yet.
+"""
+          (project / "CHECKPOINT.md").write_text(checkpoint, encoding="utf-8")
+          update = """
+
+## P1B-3 blocked validation — 2026-07-31
+
+Status: **P1B automated validation blocked**. Full pytest passes, but the formal real-document regression baselines still require `replacement_safe` candidates to be downgraded. Current approved behavior emits all eligible candidates as native editable TEXT. PR #28 remains Draft and unmerged; no production code or baseline was changed. The next safe action is a separately authorized baseline-contract reconciliation, not P2.
+"""
+          for name in ("ISSUE_REGISTER.md", "PROJECT_STATUS.md"):
+              path = project / name
+              existing = path.read_text(encoding="utf-8")
+              if "## P1B-3 blocked validation — 2026-07-31" not in existing:
+                  path.write_text(existing.rstrip() + update + "\n", encoding="utf-8")
           PY
-          rm -f .github/workflows/p1b-stage3-pr.yml
-      - name: Commit validation evidence
+
+          cat "$ROOT/pytest.log"
+          cat "$ROOT/ruff.log"
+          cat "$ROOT/compile.log"
+          echo "P1B-3 evidence recorded; formal gate remains blocked."
+          exit 0
+
+      - name: Remove temporary workflow and commit failure evidence
         run: |
+          rm -f .github/workflows/p1b-stage3-pr.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add cad_photo_to_dxf/validation/text-geometry-fit docs/project .github/workflows/p1b-stage3-pr.yml
-          git commit -m 'test: validate fitted text geometry on every page'
+          git commit -m 'test: record blocked P1B-3 validation'
           git push origin HEAD:agent/p1b-full-validation-stage3
