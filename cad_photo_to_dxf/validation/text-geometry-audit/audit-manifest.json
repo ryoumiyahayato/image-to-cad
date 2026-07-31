@@ -1,0 +1,49 @@
+{
+  "audit_base": "242d7a487f5936477a90c63c478492d42d73b6c7",
+  "files": [
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/README.md",
+      "bytes": 2270
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/code-paths.md",
+      "bytes": 836
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/failure-categories.json",
+      "bytes": 27577
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/font-metrics.md",
+      "bytes": 537
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/p1b-recommendation.md",
+      "bytes": 1048
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/rendered/environment-plan-page-003-150dpi/evidence-board.svg",
+      "bytes": 30960
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/rendered/environment-scan-page-001-120dpi/evidence-board.svg",
+      "bytes": 28507
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/rendered/warehouse-system-page-002-72dpi/evidence-board.svg",
+      "bytes": 27931
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/review-samples.md",
+      "bytes": 7248
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/text-geometry-records.csv",
+      "bytes": 142544
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/text-geometry-audit/text-geometry-records.json",
+      "bytes": 163932
+    }
+  ]
+}
