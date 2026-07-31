@@ -1,0 +1,40 @@
+name: P1A audit generator
+
+on:
+  push:
+    branches:
+      - audit/p1a-text-geometry-generation
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download current-head audit evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/p1a-ci /tmp/p1a-win
+          gh api repos/${{ github.repository }}/actions/artifacts/8786010327/zip > /tmp/p1a-ci.zip
+          unzip -q /tmp/p1a-ci.zip -d /tmp/p1a-ci
+          gh api repos/${{ github.repository }}/actions/artifacts/8786055581/zip > /tmp/p1a-win.zip
+          unzip -q /tmp/p1a-win.zip -d /tmp/p1a-win
+      - name: Assemble and run read-only audit
+        run: |
+          for file in .github/p1a_generate_part_*.b64; do base64 --decode "$file"; done > /tmp/p1a_generate.py
+          cp .github/p1a_parse.py /tmp/p1a_parse.py
+          PYTHONPATH=/tmp python /tmp/p1a_generate.py
+      - name: Commit audit deliverables only
+        run: |
+          rm -f .github/p1a_parse.py .github/p1a_generate_part_*.b64 .github/workflows/p1a-generate.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "audit: identify native text geometry failures"
+          git push
