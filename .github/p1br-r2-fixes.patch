@@ -1,0 +1,160 @@
+--- editable_text_regression_contract.py
++++ editable_text_regression_contract.py
+@@ -1,19 +1,18 @@
+ from __future__ import annotations
+ 
+ import argparse
++import json
++import subprocess
++import tempfile
++from collections.abc import Iterable, Mapping
+ from dataclasses import asdict, dataclass
+ from datetime import datetime, timezone
+-from collections.abc import Iterable, Mapping
+ from hashlib import sha256
+-import json
+ from pathlib import Path
+-import subprocess
+-import tempfile
+ from typing import Any
+ 
+ import ezdxf
+ 
+-
+ PHASE12_CONTRACT = "phase12-architecture-safety-v1"
+ ARCHITECTURE_CONTRACT = PHASE12_CONTRACT
+ EDITABLE_TEXT_CONTRACT = "non-destructive-editable-text-v1"
+@@ -61,14 +60,16 @@
+     )
+ 
+ 
++DEFAULT_PHASE12_ANCHOR = Phase12ImmutableAnchor()
++
++
+ def _git(repository: Path, *args: str) -> str:
+     try:
+         result = subprocess.run(
+             ["git", "-C", str(repository), *args],
+             check=True,
+             text=True,
+-            stdout=subprocess.PIPE,
+-            stderr=subprocess.PIPE,
++            capture_output=True,
+         )
+     except subprocess.CalledProcessError as exc:
+         detail = (exc.stderr or exc.stdout or str(exc)).strip()
+@@ -80,8 +81,9 @@
+ 
+ def verify_phase12_anchor(
+     repository: Path,
+-    anchor: Phase12ImmutableAnchor = Phase12ImmutableAnchor(),
++    anchor: Phase12ImmutableAnchor | None = None,
+ ) -> dict[str, Any]:
++    anchor = anchor or DEFAULT_PHASE12_ANCHOR
+     object_type = _git(repository, "cat-file", "-t", anchor.commit_sha)
+     if object_type != "commit":
+         raise ValueError(
+@@ -176,7 +178,7 @@
+ def load_json(path: Path) -> dict[str, Any]:
+     value = json.loads(path.read_text(encoding="utf-8"))
+     if not isinstance(value, dict):
+-        raise ValueError(f"{path} must contain a JSON object")
++        raise TypeError(f"{path} must contain a JSON object")
+     return value
+ 
+ 
+@@ -237,7 +239,7 @@
+     verified: list[dict[str, str]] = []
+     for document in manifest.get("documents", []):
+         if not isinstance(document, Mapping):
+-            raise ValueError("Regression documents must be objects")
++            raise TypeError("Regression documents must be objects")
+         page_id = str(document.get("id", "")).strip()
+         for path_key, hash_key in (
+             ("source_path", "sha256"),
+@@ -294,7 +296,7 @@
+             (int(tag.code), _normalise(tag.value))
+             for tag in entity.get_xdata(appid)
+         ]
+-    except Exception:
++    except ezdxf.DXFError:
+         return []
+ 
+ 
+@@ -484,7 +486,7 @@
+ def _layer_state(document: Any, layer_name: str) -> dict[str, Any]:
+     try:
+         layer = document.layers.get(layer_name)
+-    except Exception:
++    except ezdxf.DXFError:
+         return {"exists": False, "off": False, "frozen": False}
+     return {
+         "exists": True,
+@@ -677,11 +679,11 @@
+         content_audit = item.get("content_audit")
+         page = item.get("page")
+         if not isinstance(metrics, Mapping):
+-            raise ValueError(f"{page_id}: missing observed metrics")
++            raise TypeError(f"{page_id}: missing observed metrics")
+         if not isinstance(content_audit, Mapping):
+-            raise ValueError(f"{page_id}: missing content audit")
++            raise TypeError(f"{page_id}: missing content audit")
+         if not isinstance(page, Mapping):
+-            raise ValueError(f"{page_id}: missing page metadata")
++            raise TypeError(f"{page_id}: missing page metadata")
+         page_metadata = dict(page)
+         page_metadata["source_path"] = item.get("source_path")
+         dxf_path = dxf_directory / f"{page_id}.dxf"
+--- test_editable_text_regression_contract.py
++++ test_editable_text_regression_contract.py
+@@ -1,10 +1,10 @@
+ from __future__ import annotations
+ 
+-from dataclasses import FrozenInstanceError, replace
+ import json
+-from pathlib import Path
+ import subprocess
+ import sys
++from dataclasses import FrozenInstanceError, replace
++from pathlib import Path
+ 
+ import pytest
+ 
+@@ -13,7 +13,7 @@
+ if str(SCRIPTS) not in sys.path:
+     sys.path.insert(0, str(SCRIPTS))
+ 
+-from editable_text_regression_contract import (  # noqa: E402
++from editable_text_regression_contract import (
+     BASELINE_SOURCE_COMMIT,
+     EDITABLE_TEXT_CONTRACT,
+     PHASE12_CONTRACT,
+@@ -39,13 +39,12 @@
+     )
+ 
+ 
+-def _git(repository: Path, *args: str) -> str:
++def _git(repository: Path, *args: str, check: bool = True) -> str:
+     return subprocess.run(
+         ["git", "-C", str(repository), *args],
+-        check=True,
++        check=check,
+         text=True,
+-        stdout=subprocess.PIPE,
+-        stderr=subprocess.PIPE,
++        capture_output=True,
+     ).stdout.strip()
+ 
+ 
+@@ -151,9 +150,9 @@
+ 
+ def test_anchor_verification_never_creates_tag(tmp_path: Path) -> None:
+     repository, anchor = _anchor_repository(tmp_path)
+-    before = _git(repository, "show-ref", "--tags")
++    before = _git(repository, "show-ref", "--tags", check=False)
+     verify_phase12_anchor(repository, anchor)
+-    after = _git(repository, "show-ref", "--tags")
++    after = _git(repository, "show-ref", "--tags", check=False)
+     assert before == after == ""
+ 
+ 
