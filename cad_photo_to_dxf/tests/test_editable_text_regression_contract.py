@@ -1,10 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import FrozenInstanceError, replace
+import gzip
+import hashlib
 import json
-from pathlib import Path
+import shutil
 import subprocess
 import sys
+from dataclasses import FrozenInstanceError, replace
+from pathlib import Path
 
 import pytest
 
@@ -13,7 +16,7 @@ SCRIPTS = PROJECT_ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from editable_text_regression_contract import (  # noqa: E402
+from editable_text_regression_contract import (
     BASELINE_SOURCE_COMMIT,
     CANDIDATE_COMMIT,
     EDITABLE_TEXT_CONTRACT,
@@ -23,19 +26,23 @@ from editable_text_regression_contract import (  # noqa: E402
     REQUIRED_EQUAL_PARTITIONS,
     SUPERSEDED_CONTRACT_ERROR,
     Phase12ImmutableAnchor,
+    _compact_page_summary,
+    _materialize_commit,
+    _parser,
+    _write_evidence_bytes,
     compare_before_after,
     content_hash,
+    file_sha256,
     load_json_from_commit,
     require_explicit_contract,
     select_baseline_manifest,
     validate_before_contract,
+    validate_compact_baseline_integrity,
+    validate_compact_page_summary,
     validate_fixture_hashes,
     verify_current_manifest_blob,
     verify_phase12_anchor,
-    _materialize_commit,
-    _parser,
 )
-
 
 BASELINE_DIR = PROJECT_ROOT / "validation" / "baselines" / EDITABLE_TEXT_CONTRACT
 
@@ -53,8 +60,7 @@ def _git(repository: Path, *args: str, check: bool = True) -> str:
         ["git", "-C", str(repository), *args],
         check=check,
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
     ).stdout.strip()
 
 
@@ -126,6 +132,45 @@ def _page() -> dict[str, object]:
         "partition_payloads": {"text_geometry": [{"width_factor": 1.0}]},
         "full_structure_id": "before-full-id",
     }
+
+
+def _compact_fixture_summary() -> dict[str, object]:
+    before = _page()
+    after = _page()
+    for page in (before, after):
+        page.update(
+            {
+                "fallback_count": 0,
+                "source_outline_entity_count": 2,
+                "text_symbol_entity_count": 1,
+                "source_dimensions": [100, 200],
+                "protected_content_part_hashes": {
+                    name: content_hash({"protected": name})
+                    for name in ("logo", "signature", "residual", "uncertain")
+                },
+            }
+        )
+    after["partition_hashes"] = dict(after["partition_hashes"])
+    after["partition_hashes"]["text_geometry_hash"] = content_hash("changed")
+    after["partition_payloads"] = {"text_geometry": [{"width_factor": 0.9}]}
+    comparison = compare_before_after(before, after)
+    return _compact_page_summary(
+        page_id="page-001",
+        phase12_document={
+            "source_path": "tests/fixtures/page.png",
+            "sha256": "a" * 64,
+            "original_path": "tests/fixtures/source.pdf",
+            "original_sha256": "b" * 64,
+            "page": {"number": 1, "dpi": 600},
+        },
+        before=before,
+        after=after,
+        comparison=comparison,
+        failure_reasons=[],
+        raw_evidence_path="raw/pages/page-001.json",
+        raw_evidence_sha256="c" * 64,
+        raw_evidence_record_count=3,
+    )
 
 
 def test_phase12_commit_and_blob_anchor_pass(tmp_path: Path) -> None:
@@ -315,14 +360,143 @@ def test_versioned_baseline_has_one_page_record_per_configuration() -> None:
                 encoding="utf-8"
             )
         )
-        assert payload["editable_text_baseline"]["page_id"] == page_id
-        assert payload["p1b_candidate"]["page_id"] == page_id
+        assert payload["page_id"] == page_id
+        assert payload["evidence_mode"] == "compact"
+        assert payload["baseline_source_commit"] == BASELINE_SOURCE_COMMIT
+        assert payload["candidate_commit"] == CANDIDATE_COMMIT
+        assert payload["changed_partitions"] == ["text_geometry_hash"]
+        assert payload["passed"] is True
+        assert "partition_payloads" not in payload
+        assert "candidate_ids" not in payload
         assert set(REQUIRED_EQUAL_PARTITIONS).issubset(
-            payload["editable_text_baseline"]["partition_hashes"]
+            payload["partition_hashes"]["baseline"]
         )
-        assert set(("logo", "signature", "residual", "uncertain")).issubset(
-            payload["editable_text_baseline"]["protected_content_part_hashes"]
+        assert {"logo", "signature", "residual", "uncertain"}.issubset(
+            payload["protected_content_part_hashes"]["baseline"]
         )
+
+
+def test_compact_and_raw_representations_preserve_partition_hashes() -> None:
+    summary = _compact_fixture_summary()
+    raw_page = {
+        "editable_text_baseline": {
+            "partition_hashes": summary["partition_hashes"]["baseline"]
+        },
+        "p1b_candidate": {
+            "partition_hashes": summary["partition_hashes"]["candidate"]
+        },
+    }
+    assert summary["partition_hashes"]["baseline"] == raw_page[
+        "editable_text_baseline"
+    ]["partition_hashes"]
+    assert summary["partition_hashes"]["candidate"] == raw_page["p1b_candidate"][
+        "partition_hashes"
+    ]
+    assert summary["changed_partitions"] == ["text_geometry_hash"]
+
+
+def test_compact_summary_has_no_full_vertices_or_repeated_entity_arrays() -> None:
+    summary = _compact_fixture_summary()
+    rendered = json.dumps(summary, ensure_ascii=False)
+    assert "partition_payloads" not in summary
+    assert "candidate_ids" not in summary
+    assert "ocr_contents" not in summary
+    assert "text_geometry_before" not in summary
+    assert "text_geometry_after" not in summary
+    assert "points" not in rendered
+
+
+def test_compact_summary_schema_is_complete() -> None:
+    validate_compact_page_summary(_compact_fixture_summary())
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("text_semantic_hash", "changed-semantic"),
+        ("non_text_structure_hash", "changed-non-text"),
+        ("source_sha256", "changed-source"),
+        ("full_raw_evidence_sha256", "changed-raw"),
+    ],
+    ids=("text-semantic", "non-text", "source", "raw-evidence"),
+)
+def test_compact_baseline_hash_tamper_fails(
+    tmp_path: Path,
+    field: str,
+    value: str,
+) -> None:
+    target = tmp_path / "baseline"
+    shutil.copytree(BASELINE_DIR, target)
+    page_path = target / "pages" / "environment-plan-page-003-150dpi.json"
+    payload = json.loads(page_path.read_text(encoding="utf-8"))
+    if field in {"text_semantic_hash", "non_text_structure_hash"}:
+        payload[field]["baseline"] = value
+    else:
+        payload[field] = value
+    _write_json(page_path, payload)
+    with pytest.raises(ValueError, match="compact page summary SHA256 mismatch"):
+        validate_compact_baseline_integrity(target / "manifest.json")
+
+
+def test_compact_protected_subhash_tamper_fails(tmp_path: Path) -> None:
+    target = tmp_path / "baseline"
+    shutil.copytree(BASELINE_DIR, target)
+    page_path = target / "pages" / "environment-plan-page-003-150dpi.json"
+    payload = json.loads(page_path.read_text(encoding="utf-8"))
+    payload["protected"]["signature"]["baseline"] = "changed-protected"
+    _write_json(page_path, payload)
+    with pytest.raises(ValueError, match="compact page summary SHA256 mismatch"):
+        validate_compact_baseline_integrity(target / "manifest.json")
+
+
+def test_raw_evidence_gzip_decompresses_to_original_sha(tmp_path: Path) -> None:
+    entry = _write_evidence_bytes(tmp_path, "pages/page-001.json", b"full raw")
+    raw_path = tmp_path / entry["logical_name"]
+    compressed_path = tmp_path / entry["compressed_logical_name"]
+    with gzip.open(compressed_path, "rb") as handle:
+        restored = handle.read()
+    assert restored == raw_path.read_bytes()
+    assert hashlib.sha256(restored).hexdigest() == entry["sha256"]
+    assert file_sha256(compressed_path) == entry["compressed_sha256"]
+
+
+def test_missing_external_raw_evidence_does_not_block_integrity_validation(
+    tmp_path: Path,
+) -> None:
+    target = tmp_path / "baseline"
+    shutil.copytree(BASELINE_DIR, target)
+    (target / "raw-evidence-manifest.json").unlink()
+    result = validate_compact_baseline_integrity(target / "manifest.json")
+    assert result["passed"] is True
+
+
+def test_compact_summary_records_regeneration_command_and_tool_version() -> None:
+    summary = _compact_fixture_summary()
+    assert "--evidence-mode compact" in summary["regeneration_command"]
+    assert "--raw-evidence-dir" in summary["regeneration_command"]
+    assert summary["regeneration_tool_version"]
+
+
+def test_compact_baseline_has_12_configurations_and_10_pages() -> None:
+    manifest = json.loads(
+        (BASELINE_DIR / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["document_configuration_count"] == 12
+    assert manifest["unique_page_count"] == 10
+    assert len(manifest["documents"]) == 12
+
+
+def test_compact_baseline_keeps_600dpi_page() -> None:
+    page = BASELINE_DIR / "pages" / "warehouse-index-page-001-600dpi.json"
+    payload = json.loads(page.read_text(encoding="utf-8"))
+    assert payload["dpi"] == 600
+    assert payload["passed"] is True
+
+
+def test_compact_baseline_size_and_file_hygiene_limits() -> None:
+    files = [path for path in BASELINE_DIR.rglob("*") if path.is_file()]
+    assert sum(path.stat().st_size for path in files) < 20 * 1024 * 1024
+    assert max(path.stat().st_size for path in files) <= 20 * 1024 * 1024
 
 
 def test_phase12_contract_is_rejected_for_editable_text_geometry(

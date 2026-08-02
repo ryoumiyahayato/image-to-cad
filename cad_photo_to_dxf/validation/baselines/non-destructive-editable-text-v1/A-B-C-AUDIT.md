@@ -52,3 +52,20 @@ B → C allows only `text_geometry_hash` changes: height, width factor, rotation
 - Input fixture hashes are checked against the B source tree; the phase 12 manifest file is not read from the current working tree as historical input.
 
 Result: A → B passed approved classification; B → C passed all prohibited-partition gates.
+
+## Versioned evidence storage
+
+The Git baseline stores compact page summaries (`schema_version=1`) and a
+compact contract manifest (`schema_version=3`). Runtime auditing still reads
+the complete A, B, and C reports and DXF entities before writing those
+summaries. The summaries retain the partition hashes, protected sub-hashes,
+counts, decisions, source anchors, raw-evidence SHA-256, record count, and
+regeneration command, but do not store entity vertices, text geometry arrays,
+or repeated A/B/C payloads.
+
+The complete raw page evidence and replay inputs are indexed by
+`raw-evidence-manifest.json` in the external P1B-R2 recovery package. Each
+raw file has an original SHA-256 and deterministic gzip SHA-256; daily
+contract validation does not require that external package. Re-running the
+documented build command with `--raw-evidence-dir` regenerates the full raw
+evidence from the same fixtures and reports.

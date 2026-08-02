@@ -1,6 +1,8 @@
 {
   "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
   "contract_version": "non-destructive-editable-text-v1",
+  "evidence_mode": "compact",
   "passed": true,
   "results": [
     {

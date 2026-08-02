@@ -48,3 +48,16 @@ Recorded: 2026-08-03
 - Temporary PR payload/workflow files are removed from the final working tree in the cleanup commit
 - P1B-3 has not started. P2 has not started.
 - Next safe operation: rerun the P1B-3 full native-text geometry validation.
+
+## P1B-R2 compact evidence reconciliation
+
+Recorded: 2026-08-03
+
+Status: **P1B-R2 compact evidence complete; merge blocked by pre-existing repository hygiene violations.**
+
+- PR #30 remains Draft because the required hygiene check retains 94 base-only findings, including the tracked 43,717,474-byte `resources/fonts/wqy-unicode.lff`; this PR introduces 0 new findings.
+- Git baseline: compact schema version 3 with 12 configurations and 10 unique pages; all page summaries are below 2 MiB and the baseline directory is below 20 MiB.
+- External full-evidence package: `C:\Users\agcrf\Desktop\image-to-cad-recovery\P1B-R2\full-evidence\`; its raw/compressed manifest contains 33 entries and SHA-256 verification passed.
+- Compact/raw partition hashes and protected sub-hashes are identical for all 12 pages; missing external raw evidence does not block daily compact validation.
+- Fresh C contract validation: 12/12 configurations and 10/10 unique pages PASS; the 600 DPI replay remains PASS at 222.586 seconds with DXF audit 0 and read-save-read PASS.
+- Production algorithms changed: no. P1B-3 has not started. P2 has not started.

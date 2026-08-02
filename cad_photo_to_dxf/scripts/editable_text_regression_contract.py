@@ -1,27 +1,29 @@
 from __future__ import annotations
 
 import argparse
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from collections.abc import Iterable, Mapping
-from hashlib import sha256
+import gzip
 import json
-from pathlib import Path
 import subprocess
 import sys
 import tarfile
 import tempfile
+from collections.abc import Iterable, Mapping
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from hashlib import sha256
+from pathlib import Path
 from typing import Any
 
 import ezdxf
-
 
 PHASE12_CONTRACT = "phase12-architecture-safety-v1"
 ARCHITECTURE_CONTRACT = PHASE12_CONTRACT
 EDITABLE_TEXT_CONTRACT = "non-destructive-editable-text-v1"
 BASELINE_SOURCE_COMMIT = "5f7846e00b41913c003f178558a110e6475c0ee0"
 CANDIDATE_COMMIT = "80be85aba985e457bc7bff1e9ece49f50e7a46d2"
-CONTRACT_SCHEMA_VERSION = 2
+CONTRACT_SCHEMA_VERSION = 3
+COMPACT_PAGE_SCHEMA_VERSION = 1
+EVIDENCE_TOOL_VERSION = "editable-text-regression-contract/compact-evidence-v1"
 PHASE12_COMMIT = "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba"
 PHASE12_MANIFEST_PATH = "cad_photo_to_dxf/tests/real_regression/manifest.json"
 PHASE12_MANIFEST_BLOB = "533ae15afcef24dd4444f9acc3d504bbd94d9c87"
@@ -63,14 +65,16 @@ class Phase12ImmutableAnchor:
     )
 
 
+DEFAULT_PHASE12_ANCHOR = Phase12ImmutableAnchor()
+
+
 def _git(repository: Path, *args: str) -> str:
     try:
         result = subprocess.run(
             ["git", "-C", str(repository), *args],
             check=True,
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
         )
     except subprocess.CalledProcessError as exc:
         detail = (exc.stderr or exc.stdout or str(exc)).strip()
@@ -82,8 +86,9 @@ def _git(repository: Path, *args: str) -> str:
 
 def verify_phase12_anchor(
     repository: Path,
-    anchor: Phase12ImmutableAnchor = Phase12ImmutableAnchor(),
+    anchor: Phase12ImmutableAnchor | None = None,
 ) -> dict[str, Any]:
+    anchor = anchor or DEFAULT_PHASE12_ANCHOR
     object_type = _git(repository, "cat-file", "-t", anchor.commit_sha)
     if object_type != "commit":
         raise ValueError(
@@ -210,10 +215,132 @@ def file_sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _render_json(value: object) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    ).encode("utf-8")
+
+
+def _write_json(path: Path, value: object) -> bytes:
+    rendered = _render_json(value)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(rendered)
+    return rendered
+
+
+def _portable_value(value: Any, *, key: str | None = None) -> Any:
+    """Remove machine-local paths from external evidence without changing data."""
+    if isinstance(value, Mapping):
+        return {
+            str(item_key): _portable_value(item, key=str(item_key))
+            for item_key, item in value.items()
+        }
+    if isinstance(value, list):
+        return [_portable_value(item) for item in value]
+    if isinstance(value, tuple):
+        return [_portable_value(item) for item in value]
+    if isinstance(value, str) and key and key.endswith("path"):
+        path = Path(value)
+        if path.is_absolute() or (len(value) > 1 and value[1] == ":"):
+            prefix = "artifacts" if key == "dxf_path" else "external"
+            return f"{prefix}/{path.name}"
+    return value
+
+
+def _portable_raw_page(payload: Mapping[str, Any]) -> dict[str, Any]:
+    return _portable_value(dict(payload))
+
+
+def _write_evidence_bytes(
+    evidence_root: Path,
+    relative_path: str,
+    data: bytes,
+) -> dict[str, Any]:
+    raw_path = evidence_root / "raw" / Path(relative_path)
+    compressed_path = evidence_root / "compressed" / f"{relative_path}.gz"
+    raw_path.parent.mkdir(parents=True, exist_ok=True)
+    compressed_path.parent.mkdir(parents=True, exist_ok=True)
+    raw_path.write_bytes(data)
+    compressed = gzip.compress(data, mtime=0)
+    compressed_path.write_bytes(compressed)
+    return {
+        "logical_name": f"raw/{Path(relative_path).as_posix()}",
+        "sha256": file_sha256(raw_path),
+        "compressed_logical_name": (
+            f"compressed/{Path(relative_path).as_posix()}.gz"
+        ),
+        "compressed_sha256": file_sha256(compressed_path),
+        "bytes": len(data),
+        "compressed_bytes": len(compressed),
+    }
+
+
+def _write_evidence_json(
+    evidence_root: Path,
+    relative_path: str,
+    payload: object,
+) -> dict[str, Any]:
+    return _write_evidence_bytes(
+        evidence_root,
+        relative_path,
+        _render_json(payload),
+    )
+
+
+def _copy_evidence_file(
+    evidence_root: Path,
+    relative_path: str,
+    source: Path,
+) -> dict[str, Any]:
+    if not source.is_file():
+        raise FileNotFoundError(f"Raw evidence source does not exist: {source}")
+    return _write_evidence_bytes(
+        evidence_root,
+        relative_path,
+        source.read_bytes(),
+    )
+
+
+def _audit_entity_record_count(audit: Mapping[str, Any]) -> int:
+    payloads = audit.get("partition_payloads", {})
+    if not isinstance(payloads, Mapping):
+        return 0
+    total = 0
+    for key in ("text_semantic", "text_geometry", "non_text_structure"):
+        value = payloads.get(key, [])
+        if isinstance(value, list):
+            total += len(value)
+    text_symbol = payloads.get("text_symbol", [])
+    if isinstance(text_symbol, list):
+        total += len(text_symbol)
+    source_outline = payloads.get("source_outline", {})
+    if isinstance(source_outline, Mapping) and isinstance(
+        source_outline.get("entities"), list
+    ):
+        total += len(source_outline["entities"])
+    protected = payloads.get("protected_content", {})
+    if isinstance(protected, Mapping):
+        for value in protected.values():
+            if isinstance(value, list):
+                total += len(value)
+    return total
+
+
+def _raw_page_record_count(
+    architecture: Mapping[str, Any],
+    before: Mapping[str, Any],
+    after: Mapping[str, Any],
+) -> int:
+    return sum(
+        _audit_entity_record_count(audit)
+        for audit in (architecture, before, after)
+    )
+
+
 def load_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise ValueError(f"{path} must contain a JSON object")
+        raise TypeError(f"{path} must contain a JSON object")
     return value
 
 
@@ -227,7 +354,7 @@ def load_json_from_commit(
         _git(repository, "show", f"{commit_sha}:{manifest_path}")
     )
     if not isinstance(value, dict):
-        raise ValueError(
+        raise TypeError(
             f"Historical manifest {commit_sha}:{manifest_path} must be an object"
         )
     return value
@@ -253,8 +380,7 @@ def _materialize_commit(
             commit_sha,
         ],
         check=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         text=True,
     )
     destination.mkdir(parents=True, exist_ok=True)
@@ -340,7 +466,7 @@ def validate_fixture_hashes(
     verified: list[dict[str, str]] = []
     for document in manifest.get("documents", []):
         if not isinstance(document, Mapping):
-            raise ValueError("Regression documents must be objects")
+            raise TypeError("Regression documents must be objects")
         page_id = str(document.get("id", "")).strip()
         for path_key, hash_key in (
             ("source_path", "sha256"),
@@ -397,7 +523,7 @@ def _xdata_values(entity: Any, appid: str) -> list[tuple[int, Any]]:
             (int(tag.code), _normalise(tag.value))
             for tag in entity.get_xdata(appid)
         ]
-    except Exception:
+    except (AttributeError, KeyError, TypeError, ValueError):
         return []
 
 
@@ -587,7 +713,7 @@ def _protected_layer(layer: str) -> bool:
 def _layer_state(document: Any, layer_name: str) -> dict[str, Any]:
     try:
         layer = document.layers.get(layer_name)
-    except Exception:
+    except (AttributeError, KeyError, TypeError, ValueError):
         return {"exists": False, "off": False, "frozen": False}
     return {
         "exists": True,
@@ -721,6 +847,7 @@ def audit_dxf(
         "dxf_path": str(dxf_path),
         "input_source": page_metadata.get("source_path"),
         "page": dict(page_metadata),
+        "source_dimensions": _normalise(source_size),
         "full_structure_id": report_metrics.get("structure_id"),
         "eligible_count": int(summary.get("text_emit_eligible_count", 0)),
         "native_text_count": len(text_entities),
@@ -780,11 +907,11 @@ def _audit_run(
         content_audit = item.get("content_audit")
         page = item.get("page")
         if not isinstance(metrics, Mapping):
-            raise ValueError(f"{page_id}: missing observed metrics")
+            raise TypeError(f"{page_id}: missing observed metrics")
         if not isinstance(content_audit, Mapping):
-            raise ValueError(f"{page_id}: missing content audit")
+            raise TypeError(f"{page_id}: missing content audit")
         if not isinstance(page, Mapping):
-            raise ValueError(f"{page_id}: missing page metadata")
+            raise TypeError(f"{page_id}: missing page metadata")
         page_metadata = dict(page)
         page_metadata["source_path"] = item.get("source_path")
         dxf_path = dxf_directory / f"{page_id}.dxf"
@@ -831,6 +958,8 @@ REQUIRED_EQUAL_PARTITIONS = (
     "protected_content_hash",
     "page_transform_hash",
 )
+ALL_PARTITION_HASHES = (*REQUIRED_EQUAL_PARTITIONS, "text_geometry_hash")
+PROTECTED_PARTS = ("logo", "signature", "residual", "uncertain")
 
 
 def compare_before_after(
@@ -897,6 +1026,252 @@ def compare_before_after(
         ),
         "errors": errors,
         "passed": not errors,
+    }
+
+
+def _compact_pair(before: Any, after: Any) -> dict[str, Any]:
+    return {
+        "baseline": before,
+        "candidate": after,
+        "equal": before == after,
+    }
+
+
+def _compact_comparison(comparison: Mapping[str, Any]) -> dict[str, Any]:
+    """Keep comparison decisions while omitting per-vertex geometry arrays."""
+    compact = {
+        key: value
+        for key, value in comparison.items()
+        if key not in {"text_geometry_before", "text_geometry_after"}
+    }
+    before_geometry = comparison.get("text_geometry_before", [])
+    after_geometry = comparison.get("text_geometry_after", [])
+    compact.update(
+        {
+            "text_geometry_record_count_before": len(before_geometry),
+            "text_geometry_record_count_after": len(after_geometry),
+            "text_geometry_content_sha256_before": content_hash(before_geometry),
+            "text_geometry_content_sha256_after": content_hash(after_geometry),
+        }
+    )
+    return compact
+
+
+def _compact_page_summary(
+    *,
+    page_id: str,
+    phase12_document: Mapping[str, Any],
+    before: Mapping[str, Any],
+    after: Mapping[str, Any],
+    comparison: Mapping[str, Any],
+    failure_reasons: list[str],
+    raw_evidence_path: str,
+    raw_evidence_sha256: str,
+    raw_evidence_record_count: int,
+) -> dict[str, Any]:
+    page_metadata = phase12_document.get("page") or before.get("page", {})
+    source_path = (
+        phase12_document.get("source_path")
+        or before.get("input_source")
+        or page_metadata.get("source_path")
+    )
+    source_dimensions = before.get("source_dimensions", [0, 0])
+    partition_pairs = {
+        key: _compact_pair(
+            before.get("partition_hashes", {}).get(key),
+            after.get("partition_hashes", {}).get(key),
+        )
+        for key in ALL_PARTITION_HASHES
+    }
+    protected_pairs = {
+        key: _compact_pair(
+            before.get("protected_content_part_hashes", {}).get(key),
+            after.get("protected_content_part_hashes", {}).get(key),
+        )
+        for key in PROTECTED_PARTS
+    }
+    changed_partitions = [
+        key
+        for key, value in partition_pairs.items()
+        if not value["equal"]
+    ]
+    counts = {
+        key: _compact_pair(before.get(before_key), after.get(after_key))
+        for key, before_key, after_key in (
+            ("eligible", "eligible_count", "eligible_count"),
+            ("native_text", "native_text_count", "native_text_count"),
+            ("fallback", "fallback_count", "fallback_count"),
+            (
+                "source_text_outline",
+                "source_outline_entity_count",
+                "source_outline_entity_count",
+            ),
+            (
+                "trace_text_symbol",
+                "text_symbol_entity_count",
+                "text_symbol_entity_count",
+            ),
+        )
+    }
+    return {
+        "schema_version": COMPACT_PAGE_SCHEMA_VERSION,
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "evidence_mode": "compact",
+        "page_id": page_id,
+        "source_relative_path": source_path,
+        "source_sha256": phase12_document.get("sha256"),
+        "original_source_relative_path": phase12_document.get("original_path"),
+        "original_source_sha256": phase12_document.get("original_sha256"),
+        "page_number": page_metadata.get("number"),
+        "dpi": page_metadata.get("dpi"),
+        "source_dimensions": source_dimensions,
+        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
+        "candidate_commit": CANDIDATE_COMMIT,
+        "counts": counts,
+        "eligible_count": counts["eligible"],
+        "native_text_count": counts["native_text"],
+        "fallback_count": counts["fallback"],
+        "source_text_outline_count": counts["source_text_outline"],
+        "trace_text_symbol_count": counts["trace_text_symbol"],
+        "source_text_outline_state": _compact_pair(
+            before.get("source_outline_state"),
+            after.get("source_outline_state"),
+        ),
+        "candidate_id_hash": _compact_pair(
+            before.get("candidate_id_hash"),
+            after.get("candidate_id_hash"),
+        ),
+        "ocr_content_hash": _compact_pair(
+            before.get("ocr_content_hash"),
+            after.get("ocr_content_hash"),
+        ),
+        "text_semantic_hash": partition_pairs["text_semantic_hash"],
+        "text_geometry_hash": partition_pairs["text_geometry_hash"],
+        "non_text_structure_hash": partition_pairs["non_text_structure_hash"],
+        "text_symbol_hash": partition_pairs["text_symbol_hash"],
+        "source_outline_hash": partition_pairs["source_outline_hash"],
+        "protected_content_hash": partition_pairs["protected_content_hash"],
+        "page_transform_hash": partition_pairs["page_transform_hash"],
+        "partition_hashes": {
+            "baseline": before.get("partition_hashes", {}),
+            "candidate": after.get("partition_hashes", {}),
+            "changed": changed_partitions,
+        },
+        "protected": protected_pairs,
+        "protected_content_part_hashes": {
+            "baseline": before.get("protected_content_part_hashes", {}),
+            "candidate": after.get("protected_content_part_hashes", {}),
+        },
+        "full_structure_id": _compact_pair(
+            before.get("full_structure_id"),
+            after.get("full_structure_id"),
+        ),
+        "dxf_audit_error_count": _compact_pair(
+            before.get("dxf_audit_errors"),
+            after.get("dxf_audit_errors"),
+        ),
+        "read_save_read": _compact_pair(
+            before.get("read_save_read"),
+            after.get("read_save_read"),
+        ),
+        "changed_partitions": changed_partitions,
+        "passed": not failure_reasons,
+        "failure_reasons": list(failure_reasons),
+        "full_raw_evidence_sha256": raw_evidence_sha256,
+        "full_raw_evidence_record_count": raw_evidence_record_count,
+        "full_raw_evidence_path": raw_evidence_path,
+        "regeneration_command": (
+            "python scripts/editable_text_regression_contract.py build "
+            f"--contract {EDITABLE_TEXT_CONTRACT} "
+            "--evidence-mode compact --raw-evidence-dir "
+            "<external-recovery-package>"
+        ),
+        "regeneration_tool_version": EVIDENCE_TOOL_VERSION,
+    }
+
+
+def compact_page_required_fields() -> tuple[str, ...]:
+    return (
+        "contract_version",
+        "schema_version",
+        "page_id",
+        "source_relative_path",
+        "source_sha256",
+        "page_number",
+        "dpi",
+        "source_dimensions",
+        "baseline_source_commit",
+        "candidate_commit",
+        "eligible_count",
+        "native_text_count",
+        "fallback_count",
+        "source_text_outline_count",
+        "trace_text_symbol_count",
+        "candidate_id_hash",
+        "ocr_content_hash",
+        "text_semantic_hash",
+        "text_geometry_hash",
+        "non_text_structure_hash",
+        "text_symbol_hash",
+        "source_outline_hash",
+        "protected_content_hash",
+        "page_transform_hash",
+        "full_structure_id",
+        "dxf_audit_error_count",
+        "read_save_read",
+        "changed_partitions",
+        "passed",
+        "failure_reasons",
+        "full_raw_evidence_sha256",
+        "full_raw_evidence_record_count",
+        "regeneration_command",
+        "regeneration_tool_version",
+    )
+
+
+def validate_compact_page_summary(summary: Mapping[str, Any]) -> None:
+    missing = [
+        key for key in compact_page_required_fields() if key not in summary
+    ]
+    if missing:
+        raise ValueError(
+            f"Compact page summary is missing required fields: {', '.join(missing)}"
+        )
+    forbidden = {
+        "candidate_ids",
+        "ocr_contents",
+        "partition_payloads",
+        "text_geometry_before",
+        "text_geometry_after",
+    }
+    present = sorted(key for key in forbidden if key in summary)
+    if present:
+        raise ValueError(
+            "Compact page summary contains full evidence fields: "
+            + ", ".join(present)
+        )
+    if summary.get("evidence_mode") != "compact":
+        raise ValueError("Compact page summary must declare evidence_mode=compact")
+
+
+def compact_baseline_schema() -> dict[str, Any]:
+    return {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "non-destructive-editable-text-v1 compact page summary",
+        "type": "object",
+        "required": list(compact_page_required_fields()),
+        "forbidden_properties": [
+            "candidate_ids",
+            "ocr_contents",
+            "partition_payloads",
+            "text_geometry_before",
+            "text_geometry_after",
+        ],
+        "notes": {
+            "partition_hashes": "baseline and candidate values are both retained",
+            "full_structure_id": "record-only; never an equality gate",
+            "full_raw_evidence_sha256": "hash of the complete external raw page record",
+        },
     }
 
 
@@ -1092,7 +1467,17 @@ def build_baseline(
     environment_path: Path,
     authorization_path: Path,
     before_source_tree: Path,
+    evidence_mode: str = "compact",
+    raw_evidence_dir: Path | None = None,
+    raw_candidate_validation_path: Path | None = None,
+    raw_600dpi_path: Path | None = None,
+    raw_tool_versions_path: Path | None = None,
+    raw_log_paths: Iterable[Path] = (),
 ) -> dict[str, Any]:
+    if evidence_mode not in {"compact", "raw"}:
+        raise ValueError("Evidence mode must be 'compact' or 'raw'")
+    if evidence_mode == "raw" and raw_evidence_dir is None:
+        raise ValueError("Raw evidence mode requires --raw-evidence-dir")
     if not authorization_path.is_file():
         raise ValueError("Human authorization record is required")
     try:
@@ -1143,6 +1528,64 @@ def build_baseline(
     environment = load_json(environment_path)
     phase12_documents = _manifest_documents(phase12_manifest)
 
+    raw_entries: list[dict[str, Any]] = []
+    raw_root = raw_evidence_dir.resolve() if raw_evidence_dir else None
+    if raw_root is not None:
+        raw_entries.extend(
+            [
+                _copy_evidence_file(
+                    raw_root,
+                    "reports/A-architecture-report.json",
+                    architecture_report_path,
+                ),
+                _copy_evidence_file(
+                    raw_root,
+                    "reports/B-editable-before-report.json",
+                    before_report_path,
+                ),
+                _copy_evidence_file(
+                    raw_root,
+                    "reports/C-p1b-candidate-report.json",
+                    after_report_path,
+                ),
+                _copy_evidence_file(
+                    raw_root,
+                    "contracts/phase12-manifest.json",
+                    phase12_manifest_path,
+                ),
+                _copy_evidence_file(
+                    raw_root,
+                    "contracts/AUTHORIZATION.md",
+                    authorization_path,
+                ),
+                _copy_evidence_file(
+                    raw_root,
+                    "contracts/environment.json",
+                    environment_path,
+                ),
+            ]
+        )
+        for source, relative_path in (
+            (
+                raw_candidate_validation_path,
+                "reports/candidate-validation-input.json",
+            ),
+            (raw_600dpi_path, "replays/600dpi-replay.json"),
+            (raw_tool_versions_path, "contracts/tool-versions.json"),
+        ):
+            if source is not None:
+                raw_entries.append(
+                    _copy_evidence_file(raw_root, relative_path, source)
+                )
+        for source in raw_log_paths:
+            raw_entries.append(
+                _copy_evidence_file(
+                    raw_root,
+                    f"logs/{source.parent.name}-{source.name}",
+                    source,
+                )
+            )
+
     architecture_pages = _audit_run(
         report=architecture_report,
         dxf_directory=architecture_dxf_directory,
@@ -1184,7 +1627,9 @@ def build_baseline(
 
     before_contract_errors: dict[str, list[str]] = {}
     comparisons: list[dict[str, Any]] = []
+    compact_comparisons: list[dict[str, Any]] = []
     baseline_pages: list[dict[str, Any]] = []
+    candidate_validation_results: list[dict[str, Any]] = []
     output_directory.mkdir(parents=True, exist_ok=True)
     page_directory = output_directory / "pages"
     page_directory.mkdir(parents=True, exist_ok=True)
@@ -1198,69 +1643,81 @@ def build_baseline(
             before_contract_errors[page_id] = errors
         comparison = compare_before_after(before, after)
         comparisons.append(comparison)
-        phase12_document = phase12_documents[page_id]
-        page_entry = {
-            "page_id": page_id,
-            "source_path": phase12_document.get("source_path"),
-            "source_sha256": phase12_document.get("sha256"),
-            "original_path": phase12_document.get("original_path"),
-            "original_sha256": phase12_document.get("original_sha256"),
-            "page": phase12_document.get("page"),
-            "eligible_count": before["eligible_count"],
-            "native_text_count": before["native_text_count"],
-            "fallback_count": before["fallback_count"],
-            "candidate_id_hash": before["candidate_id_hash"],
-            "ocr_content_hash": before["ocr_content_hash"],
-            "source_outline_entity_count": before[
-                "source_outline_entity_count"
-            ],
-            "source_outline_state": before["source_outline_state"],
-            "text_symbol_entity_count": before["text_symbol_entity_count"],
-            "residual_count": before["residual_count"],
-            "logo_count": before["logo_count"],
-            "signature_count": before["signature_count"],
-            "protected_content_part_hashes": before[
-                "protected_content_part_hashes"
-            ],
-            "non_text_structure_entity_count": before[
-                "non_text_structure_entity_count"
-            ],
-            "partition_hashes": before["partition_hashes"],
-            "full_structure_id": before["full_structure_id"],
-            "dxf_entity_audit": {
-                "errors": before["dxf_audit_errors"],
-                "native_text_count": before["native_text_count"],
-                "source_outline_entity_count": before[
-                    "source_outline_entity_count"
-                ],
-                "text_symbol_entity_count": before[
-                    "text_symbol_entity_count"
-                ],
-                "protected_entity_count": before["protected_entity_count"],
-                "non_text_structure_entity_count": before[
-                    "non_text_structure_entity_count"
-                ],
-            },
-            "read_save_read": before["read_save_read"],
-            "candidate_ids": before["candidate_ids"],
-            "ocr_contents": before["ocr_contents"],
-        }
-        baseline_pages.append(page_entry)
-        (page_directory / f"{page_id}.json").write_text(
-            json.dumps(
-                {
-                    "phase12_architecture": architecture,
-                    "editable_text_baseline": before,
-                    "p1b_candidate": after,
-                    "before_to_candidate_comparison": comparison,
-                },
-                ensure_ascii=False,
-                indent=2,
-                sort_keys=True,
-            )
-            + "\n",
-            encoding="utf-8",
+        compact_comparisons.append(_compact_comparison(comparison))
+        candidate_validation_results.append(
+            {
+                "page_id": page_id,
+                "text_geometry_changed": comparison["text_geometry_changed"],
+                "full_structure_id_expected": before.get("full_structure_id"),
+                "full_structure_id_observed": after.get("full_structure_id"),
+                "errors": comparison["errors"],
+                "passed": comparison["passed"],
+            }
         )
+        phase12_document = phase12_documents[page_id]
+        raw_page = _portable_raw_page(
+            {
+                "schema_version": CONTRACT_SCHEMA_VERSION,
+                "contract_version": EDITABLE_TEXT_CONTRACT,
+                "evidence_mode": "raw",
+                "page_id": page_id,
+                "phase12_architecture": architecture,
+                "editable_text_baseline": before,
+                "p1b_candidate": after,
+                "before_to_candidate_comparison": comparison,
+            }
+        )
+        raw_page_bytes = _render_json(raw_page)
+        raw_page_relative_path = f"pages/{page_id}.json"
+        raw_page_hash = sha256(raw_page_bytes).hexdigest()
+        raw_record_count = _raw_page_record_count(architecture, before, after)
+        if raw_root is not None:
+            raw_page_entry = _write_evidence_bytes(
+                raw_root,
+                raw_page_relative_path,
+                raw_page_bytes,
+            )
+            raw_page_entry.update(
+                {
+                    "page_id": page_id,
+                    "record_count": raw_record_count,
+                }
+            )
+            raw_entries.append(raw_page_entry)
+            raw_page_hash = str(raw_page_entry["sha256"])
+        else:
+            raw_entries.append(
+                {
+                    "logical_name": f"raw/{raw_page_relative_path}",
+                    "sha256": raw_page_hash,
+                    "bytes": len(raw_page_bytes),
+                    "external_file_present": False,
+                    "page_id": page_id,
+                    "record_count": raw_record_count,
+                }
+            )
+        compact_page = _compact_page_summary(
+            page_id=page_id,
+            phase12_document=phase12_document,
+            before=before,
+            after=after,
+            comparison=comparison,
+            failure_reasons=[*errors, *comparison["errors"]],
+            raw_evidence_path=f"raw/{raw_page_relative_path}",
+            raw_evidence_sha256=raw_page_hash,
+            raw_evidence_record_count=raw_record_count,
+        )
+        validate_compact_page_summary(compact_page)
+        page_path = page_directory / f"{page_id}.json"
+        _write_json(page_path, compact_page)
+        page_entry = dict(compact_page)
+        page_entry.update(
+            {
+                "page_file": f"pages/{page_id}.json",
+                "page_summary_sha256": file_sha256(page_path),
+            }
+        )
+        baseline_pages.append(page_entry)
 
     architecture_to_editable = classify_architecture_to_editable(
         architecture_pages,
@@ -1291,47 +1748,7 @@ def build_baseline(
             + json.dumps(comparison_errors, ensure_ascii=False)
         )
 
-    manifest = {
-        "schema_version": CONTRACT_SCHEMA_VERSION,
-        "contract_version": EDITABLE_TEXT_CONTRACT,
-        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
-        "candidate_commit": CANDIDATE_COMMIT,
-        "created_at": verified_at,
-        "created_by_command": (
-            "python scripts/editable_text_regression_contract.py build "
-            f"--contract {EDITABLE_TEXT_CONTRACT}"
-        ),
-        "document_configuration_count": len(baseline_pages),
-        "unique_page_count": len(unique_pages),
-        "phase12_immutable_anchor": {
-            **anchor_verification,
-            "current_target_manifest_blob_sha": current_manifest_blob,
-            "legacy_tag_history_note": (
-                "Project history documents recorded the tag name, but the "
-                "remote tag ref was absent and must not be claimed as "
-                "historically present. Commit/blob SHAs are authoritative."
-            ),
-            "cloud_tag_write_channel": "unavailable",
-            "tag_required_for_validation": False,
-        },
-        "environment": environment,
-        "fixture_hashes": verified_fixtures,
-        "font_hashes": _font_hashes(before_source_tree),
-        "partition_contract": {
-            "must_equal_before_to_candidate": list(REQUIRED_EQUAL_PARTITIONS),
-            "protected_subpart_must_equal": [
-                "logo",
-                "signature",
-                "residual",
-                "uncertain",
-            ],
-            "may_change_before_to_candidate": ["text_geometry_hash"],
-            "record_only": ["full_structure_id"],
-            "full_structure_id_gate": False,
-        },
-        "documents": baseline_pages,
-    }
-    comparison_report = {
+    full_comparison_report = {
         "schema_version": CONTRACT_SCHEMA_VERSION,
         "contract_version": EDITABLE_TEXT_CONTRACT,
         "phase12_architecture_to_editable_before": architecture_to_editable,
@@ -1349,20 +1766,153 @@ def build_baseline(
         ),
         "passed": True,
     }
-    (output_directory / "manifest.json").write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-    (output_directory / "comparison-report.json").write_text(
-        json.dumps(
-            comparison_report,
-            ensure_ascii=False,
-            indent=2,
-            sort_keys=True,
+    compact_comparison_report = {
+        "schema_version": CONTRACT_SCHEMA_VERSION,
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "evidence_mode": "compact",
+        "phase12_architecture_to_editable_before": architecture_to_editable,
+        "editable_before_to_p1b_candidate": {
+            "from_commit": BASELINE_SOURCE_COMMIT,
+            "to_commit": CANDIDATE_COMMIT,
+            "comparisons": compact_comparisons,
+            "passed": not comparison_errors,
+        },
+        "omitted_full_evidence_fields": [
+            "text_geometry_before",
+            "text_geometry_after",
+            "partition_payloads",
+        ],
+        "full_structure_id_rule": full_comparison_report["full_structure_id_rule"],
+        "passed": True,
+    }
+    candidate_validation = {
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
+        "candidate_commit": CANDIDATE_COMMIT,
+        "evidence_mode": "compact",
+        "results": candidate_validation_results,
+        "passed": all(item["passed"] for item in candidate_validation_results),
+    }
+
+    if raw_root is not None:
+        raw_entries.append(
+            _write_evidence_json(
+                raw_root,
+                "reports/comparison-report.json",
+                full_comparison_report,
+            )
         )
-        + "\n",
-        encoding="utf-8",
-    )
+        raw_entries.append(
+            _write_evidence_json(
+                raw_root,
+                "reports/candidate-validation.json",
+                candidate_validation,
+            )
+        )
+
+    raw_evidence_manifest = {
+        "schema_version": 1,
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "evidence_tool_version": EVIDENCE_TOOL_VERSION,
+        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
+        "candidate_commit": CANDIDATE_COMMIT,
+        "external_package_description": "P1B-R2/full-evidence",
+        "daily_contract_validation_requires_raw_evidence": False,
+        "regeneration_command": (
+            "python scripts/editable_text_regression_contract.py build "
+            f"--contract {EDITABLE_TEXT_CONTRACT} --evidence-mode compact "
+            "--raw-evidence-dir <external-recovery-package>"
+        ),
+        "files": sorted(
+            raw_entries,
+            key=lambda item: str(item.get("logical_name", "")),
+        ),
+    }
+    raw_manifest_path = output_directory / "raw-evidence-manifest.json"
+    _write_json(raw_manifest_path, raw_evidence_manifest)
+    if raw_root is not None:
+        external_raw_manifest_path = (
+            raw_root / "manifests" / "raw-evidence-manifest.json"
+        )
+        _write_json(external_raw_manifest_path, raw_evidence_manifest)
+        checksum_lines = []
+        for item in raw_evidence_manifest["files"]:
+            checksum_lines.append(
+                f"{item['sha256']}  {item['logical_name']}"
+            )
+            if item.get("compressed_sha256"):
+                checksum_lines.append(
+                    f"{item['compressed_sha256']}  "
+                    f"{item['compressed_logical_name']}"
+                )
+        checksum_path = raw_root / "checksums" / "SHA256SUMS"
+        checksum_path.parent.mkdir(parents=True, exist_ok=True)
+        checksum_path.write_text(
+            "\n".join(sorted(checksum_lines)) + "\n",
+            encoding="utf-8",
+        )
+
+    comparison_path = output_directory / "comparison-report.json"
+    candidate_validation_path = output_directory / "candidate-validation.json"
+    schema_path = output_directory / "schema.json"
+    _write_json(comparison_path, compact_comparison_report)
+    _write_json(candidate_validation_path, candidate_validation)
+    _write_json(schema_path, compact_baseline_schema())
+
+    manifest = {
+        "schema_version": CONTRACT_SCHEMA_VERSION,
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "evidence_mode": "compact",
+        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
+        "candidate_commit": CANDIDATE_COMMIT,
+        "created_at": verified_at,
+        "created_by_command": (
+            "python scripts/editable_text_regression_contract.py build "
+            f"--contract {EDITABLE_TEXT_CONTRACT} --evidence-mode compact"
+        ),
+        "document_configuration_count": len(baseline_pages),
+        "unique_page_count": len(unique_pages),
+        "phase12_immutable_anchor": {
+            **anchor_verification,
+            "current_target_manifest_blob_sha": current_manifest_blob,
+            "legacy_tag_history_note": (
+                "Project history documents recorded the tag name, but the "
+                "remote tag ref was absent and must not be claimed as "
+                "historically present. Commit/blob SHAs are authoritative."
+            ),
+            "cloud_tag_write_channel": "unavailable",
+            "tag_required_for_validation": False,
+        },
+        "environment": environment,
+        "fixture_hashes": verified_fixtures,
+        "font_hashes": _font_hashes(before_source_tree),
+        "raw_evidence": {
+            "manifest_file": "raw-evidence-manifest.json",
+            "manifest_sha256": file_sha256(raw_manifest_path),
+            "external_package_written": raw_root is not None,
+            "missing_external_evidence_allowed_for_daily_validation": True,
+        },
+        "baseline_artifact_hashes": {
+            "comparison-report.json": file_sha256(comparison_path),
+            "candidate-validation.json": file_sha256(candidate_validation_path),
+            "schema.json": file_sha256(schema_path),
+            "raw-evidence-manifest.json": file_sha256(raw_manifest_path),
+            "pages": {
+                str(item["page_id"]): item["page_summary_sha256"]
+                for item in baseline_pages
+            },
+        },
+        "partition_contract": {
+            "must_equal_before_to_candidate": list(REQUIRED_EQUAL_PARTITIONS),
+            "protected_subpart_must_equal": list(PROTECTED_PARTS),
+            "may_change_before_to_candidate": ["text_geometry_hash"],
+            "record_only": ["full_structure_id"],
+            "full_structure_id_gate": False,
+        },
+        "documents": baseline_pages,
+    }
+    manifest_path = output_directory / "manifest.json"
+    _write_json(manifest_path, manifest)
     (output_directory / "README.md").write_text(
         "# Non-destructive editable text regression baseline v1\n\n"
         f"- Contract: `{EDITABLE_TEXT_CONTRACT}`\n"
@@ -1373,6 +1923,11 @@ def build_baseline(
         f"- Recorded legacy tag: `{PHASE12_RECORDED_TAG}` (absent)\n"
         f"- Configurations: {len(baseline_pages)}\n"
         f"- Unique pages: {len(unique_pages)}\n\n"
+        "The versioned files are compact summaries. They retain all contract "
+        "hashes, counts, decisions, and integrity anchors but never store full "
+        "entity vertices, text geometry arrays, or repeated A/B/C payloads. "
+        "Complete raw page evidence is written only when `--raw-evidence-dir` "
+        "is supplied and is indexed by `raw-evidence-manifest.json`.\n\n"
         "The historical tag name is retained only as an identifier. Validation "
         "uses the immutable phase-12 commit and manifest blob. This baseline "
         "validates editable-text semantics and protected/non-text partitions. "
@@ -1384,12 +1939,71 @@ def build_baseline(
         "status": SUCCESS_STATUS,
         "manifest": str(output_directory / "manifest.json"),
         "comparison_report": str(output_directory / "comparison-report.json"),
+        "candidate_validation": str(candidate_validation_path),
+        "raw_evidence_manifest": str(raw_manifest_path),
+        "raw_evidence_file_count": len(raw_entries),
+        "evidence_mode": "compact",
         "document_configuration_count": len(baseline_pages),
         "unique_page_count": len(unique_pages),
         "phase12_anchor_verified": True,
         "passed": True,
     }
 
+
+
+def _baseline_value(value: Any) -> Any:
+    if isinstance(value, Mapping) and "baseline" in value:
+        return value["baseline"]
+    return value
+
+
+def validate_compact_baseline_integrity(
+    baseline_manifest_path: Path,
+) -> dict[str, Any]:
+    baseline = load_json(baseline_manifest_path)
+    if baseline.get("evidence_mode") != "compact":
+        raise ValueError("Baseline must declare evidence_mode=compact")
+    page_results: list[dict[str, Any]] = []
+    for document in baseline.get("documents", []):
+        if not isinstance(document, Mapping):
+            raise TypeError("Baseline documents must be compact page summaries")
+        validate_compact_page_summary(document)
+        page_id = str(document["page_id"])
+        page_file = baseline_manifest_path.parent / str(
+            document.get("page_file", f"pages/{page_id}.json")
+        )
+        if not page_file.is_file():
+            raise ValueError(f"{page_id}: compact page summary is missing")
+        observed_sha = file_sha256(page_file)
+        expected_sha = str(document.get("page_summary_sha256", ""))
+        if observed_sha != expected_sha:
+            raise ValueError(
+                f"{page_id}: compact page summary SHA256 mismatch: "
+                f"{observed_sha} != {expected_sha}"
+            )
+        page_payload = load_json(page_file)
+        validate_compact_page_summary(page_payload)
+        if page_payload.get("page_id") != page_id:
+            raise ValueError(f"{page_id}: compact page identity changed")
+        if page_payload.get("full_raw_evidence_sha256") != document.get(
+            "full_raw_evidence_sha256"
+        ):
+            raise ValueError(f"{page_id}: raw evidence SHA does not match manifest")
+        page_results.append(
+            {
+                "page_id": page_id,
+                "page_file": page_file.as_posix(),
+                "sha256": observed_sha,
+                "passed": True,
+            }
+        )
+    return {
+        "contract_version": baseline.get("contract_version"),
+        "schema_version": baseline.get("schema_version"),
+        "page_count": len(page_results),
+        "results": page_results,
+        "passed": True,
+    }
 
 
 def validate_observation_against_baseline(
@@ -1401,6 +2015,7 @@ def validate_observation_against_baseline(
     baseline = load_json(baseline_manifest_path)
     if baseline.get("contract_version") != EDITABLE_TEXT_CONTRACT:
         raise ValueError("Observed editable text must use editable-text-v1 baseline")
+    validate_compact_baseline_integrity(baseline_manifest_path)
     expected_pages = {
         str(item["page_id"]): item
         for item in baseline.get("documents", [])
@@ -1422,22 +2037,36 @@ def validate_observation_against_baseline(
             "source_sha256"
         ):
             errors.append("input source hash changed")
-        if expected.get("candidate_id_hash") != observed.get("candidate_id_hash"):
+        if _baseline_value(expected.get("candidate_id_hash")) != observed.get(
+            "candidate_id_hash"
+        ):
             errors.append("text_semantic candidate IDs changed")
-        if expected.get("ocr_content_hash") != observed.get("ocr_content_hash"):
+        if _baseline_value(expected.get("ocr_content_hash")) != observed.get(
+            "ocr_content_hash"
+        ):
             errors.append("text_semantic OCR content changed")
         expected_hashes = expected.get("partition_hashes", {})
+        if isinstance(expected_hashes, Mapping) and isinstance(
+            expected_hashes.get("baseline"), Mapping
+        ):
+            expected_hashes = expected_hashes["baseline"]
         observed_hashes = observed.get("partition_hashes", {})
         for key in REQUIRED_EQUAL_PARTITIONS:
             if expected_hashes.get(key) != observed_hashes.get(key):
                 errors.append(f"{key} changed")
         expected_parts = expected.get("protected_content_part_hashes", {})
+        if isinstance(expected_parts, Mapping) and isinstance(
+            expected_parts.get("baseline"), Mapping
+        ):
+            expected_parts = expected_parts["baseline"]
         observed_parts = observed.get("protected_content_part_hashes", {})
         for key in ("logo", "signature", "residual", "uncertain"):
             if expected_parts.get(key) != observed_parts.get(key):
                 errors.append(f"protected_content.{key} changed")
         for count_key in ("eligible_count", "native_text_count"):
-            if int(expected.get(count_key, 0)) != int(observed.get(count_key, 0)):
+            if int(_baseline_value(expected.get(count_key, 0))) != int(
+                observed.get(count_key, 0)
+            ):
                 errors.append(f"{count_key} changed")
         results.append(
             {
@@ -1578,6 +2207,16 @@ def _parser() -> argparse.ArgumentParser:
     build.add_argument("--environment", type=Path, required=True)
     build.add_argument("--authorization", type=Path, required=True)
     build.add_argument("--before-source-tree", type=Path, required=True)
+    build.add_argument(
+        "--evidence-mode",
+        choices=("compact", "raw"),
+        default="compact",
+    )
+    build.add_argument("--raw-evidence-dir", type=Path)
+    build.add_argument("--raw-candidate-validation", type=Path)
+    build.add_argument("--raw-600dpi-evidence", type=Path)
+    build.add_argument("--raw-tool-versions", type=Path)
+    build.add_argument("--raw-log", type=Path, action="append", default=[])
 
     validate = subparsers.add_parser("validate")
     validate.add_argument("--contract", required=True)
@@ -1668,6 +2307,28 @@ def main() -> int:
         environment_path=args.environment.resolve(),
         authorization_path=args.authorization.resolve(),
         before_source_tree=args.before_source_tree.resolve(),
+        evidence_mode=args.evidence_mode,
+        raw_evidence_dir=(
+            args.raw_evidence_dir.resolve()
+            if args.raw_evidence_dir is not None
+            else None
+        ),
+        raw_candidate_validation_path=(
+            args.raw_candidate_validation.resolve()
+            if args.raw_candidate_validation is not None
+            else None
+        ),
+        raw_600dpi_path=(
+            args.raw_600dpi_evidence.resolve()
+            if args.raw_600dpi_evidence is not None
+            else None
+        ),
+        raw_tool_versions_path=(
+            args.raw_tool_versions.resolve()
+            if args.raw_tool_versions is not None
+            else None
+        ),
+        raw_log_paths=tuple(path.resolve() for path in args.raw_log),
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

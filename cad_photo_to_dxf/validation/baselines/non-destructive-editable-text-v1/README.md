@@ -9,4 +9,6 @@
 - Configurations: 12
 - Unique pages: 10
 
+The versioned files are compact summaries. They retain all contract hashes, counts, decisions, and integrity anchors but never store full entity vertices, text geometry arrays, or repeated A/B/C payloads. Complete raw page evidence is written only when `--raw-evidence-dir` is supplied and is indexed by `raw-evidence-manifest.json`.
+
 The historical tag name is retained only as an identifier. Validation uses the immutable phase-12 commit and manifest blob. This baseline validates editable-text semantics and protected/non-text partitions. `text_geometry_hash` may change for P1B geometry; `full_structure_id` is recorded but is not an independent gate.
