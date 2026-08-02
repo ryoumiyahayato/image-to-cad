@@ -1,0 +1,404 @@
+from __future__ import annotations
+
+from dataclasses import FrozenInstanceError, replace
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+import pytest
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = PROJECT_ROOT / "scripts"
+if str(SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS))
+
+from editable_text_regression_contract import (  # noqa: E402
+    BASELINE_SOURCE_COMMIT,
+    CANDIDATE_COMMIT,
+    EDITABLE_TEXT_CONTRACT,
+    PHASE12_CONTRACT,
+    PHASE12_MANIFEST_BLOB,
+    PHASE12_MANIFEST_PATH,
+    REQUIRED_EQUAL_PARTITIONS,
+    SUPERSEDED_CONTRACT_ERROR,
+    Phase12ImmutableAnchor,
+    compare_before_after,
+    content_hash,
+    load_json_from_commit,
+    require_explicit_contract,
+    select_baseline_manifest,
+    validate_before_contract,
+    validate_fixture_hashes,
+    verify_current_manifest_blob,
+    verify_phase12_anchor,
+)
+
+
+def _write_json(path: Path, payload: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def _git(repository: Path, *args: str, check: bool = True) -> str:
+    return subprocess.run(
+        ["git", "-C", str(repository), *args],
+        check=check,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    ).stdout.strip()
+
+
+def _anchor_repository(tmp_path: Path) -> tuple[Path, Phase12ImmutableAnchor]:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    _git(repository, "init")
+    _git(repository, "config", "user.name", "Contract Test")
+    _git(repository, "config", "user.email", "contract@example.invalid")
+    manifest = repository / "cad_photo_to_dxf/tests/real_regression/manifest.json"
+    _write_json(manifest, {"schema_version": 2, "documents": []})
+    _git(repository, "add", manifest.relative_to(repository).as_posix())
+    title = "phase-12 immutable test anchor"
+    _git(repository, "commit", "-m", title)
+    commit = _git(repository, "rev-parse", "HEAD")
+    blob = _git(
+        repository,
+        "rev-parse",
+        f"{commit}:cad_photo_to_dxf/tests/real_regression/manifest.json",
+    )
+    return repository, Phase12ImmutableAnchor(
+        commit_sha=commit,
+        manifest_blob_sha=blob,
+        expected_commit_title=title,
+        recorded_tag_name="baseline/phase12-test-anchor",
+        tag_ref_status="absent",
+        verification_timestamp="2026-07-31T00:00:00+00:00",
+    )
+
+
+def _editable_manifest() -> dict[str, object]:
+    return {
+        "schema_version": 2,
+        "contract_version": EDITABLE_TEXT_CONTRACT,
+        "baseline_source_commit": BASELINE_SOURCE_COMMIT,
+        "documents": [],
+    }
+
+
+def _page() -> dict[str, object]:
+    hashes = {
+        key: content_hash({"partition": key})
+        for key in (*REQUIRED_EQUAL_PARTITIONS, "text_geometry_hash")
+    }
+    protected_parts = {
+        name: content_hash({"protected": name})
+        for name in ("logo", "signature", "residual", "uncertain")
+    }
+    return {
+        "page_id": "page-001",
+        "eligible_count": 1,
+        "native_text_count": 1,
+        "replacement_unsafe_downgrade_count": 0,
+        "source_outline_state": {
+            "exists": True,
+            "off": True,
+            "frozen": True,
+        },
+        "dxf_audit_errors": 0,
+        "read_save_read": {
+            "passed": True,
+            "audit_errors_after": 0,
+        },
+        "candidate_ids": ["page-001:000001"],
+        "candidate_id_hash": content_hash(["page-001:000001"]),
+        "ocr_content_hash": content_hash(["测试"]),
+        "partition_hashes": hashes,
+        "protected_content_part_hashes": protected_parts,
+        "partition_payloads": {"text_geometry": [{"width_factor": 1.0}]},
+        "full_structure_id": "before-full-id",
+    }
+
+
+def test_phase12_commit_and_blob_anchor_pass(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    result = verify_phase12_anchor(repository, anchor)
+    assert result["verified"] is True
+    assert result["resolved_commit_sha"] == anchor.commit_sha
+    assert result["observed_manifest_blob_sha"] == anchor.manifest_blob_sha
+
+
+def test_modified_commit_sha_fails(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    with pytest.raises(ValueError, match="Git verification failed"):
+        verify_phase12_anchor(repository, replace(anchor, commit_sha="0" * 40))
+
+
+def test_modified_blob_sha_fails(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    with pytest.raises(ValueError, match="manifest blob mismatch"):
+        verify_phase12_anchor(
+            repository,
+            replace(anchor, manifest_blob_sha="1" * 40),
+        )
+
+
+def test_missing_tag_still_verifies_commit_blob(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    assert _git(repository, "tag", "--list") == ""
+    result = verify_phase12_anchor(repository, anchor)
+    assert result["tag_ref_observed"] == "absent"
+
+
+def test_local_legacy_tag_does_not_replace_remote_absent_status(
+    tmp_path: Path,
+) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    _git(repository, "tag", anchor.recorded_tag_name, anchor.commit_sha)
+    result = verify_phase12_anchor(repository, anchor)
+    assert result["tag_ref_observed"] == "absent"
+    assert result["local_tag_ref_observed"] == "present"
+
+
+def test_anchor_verification_never_creates_tag(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    before = _git(repository, "show-ref", "--tags", check=False)
+    verify_phase12_anchor(repository, anchor)
+    after = _git(repository, "show-ref", "--tags", check=False)
+    assert before == after == ""
+
+
+def test_anchor_is_immutable_and_not_auto_updated(tmp_path: Path) -> None:
+    _repository, anchor = _anchor_repository(tmp_path)
+    with pytest.raises(FrozenInstanceError):
+        anchor.commit_sha = "2" * 40  # type: ignore[misc]
+
+
+def test_current_manifest_must_match_immutable_blob(tmp_path: Path) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    assert verify_current_manifest_blob(
+        repository,
+        ref=anchor.commit_sha,
+        expected_blob_sha=anchor.manifest_blob_sha,
+    ) == anchor.manifest_blob_sha
+    with pytest.raises(ValueError, match="Current manifest blob mismatch"):
+        verify_current_manifest_blob(
+            repository,
+            ref=anchor.commit_sha,
+            expected_blob_sha="3" * 40,
+        )
+
+
+def test_historical_manifest_is_read_from_commit_not_working_tree(
+    tmp_path: Path,
+) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    manifest = repository / anchor.manifest_path
+    manifest.write_text('{"schema_version": 999}\n', encoding="utf-8")
+    assert load_json_from_commit(
+        repository,
+        commit_sha=anchor.commit_sha,
+        manifest_path=anchor.manifest_path,
+    ) == {"schema_version": 2, "documents": []}
+
+
+def test_phase12_manifest_file_is_unchanged_on_candidate_commit() -> None:
+    repository = PROJECT_ROOT.parent
+    assert verify_current_manifest_blob(
+        repository,
+        ref=CANDIDATE_COMMIT,
+        manifest_path=PHASE12_MANIFEST_PATH,
+        expected_blob_sha=PHASE12_MANIFEST_BLOB,
+    ) == PHASE12_MANIFEST_BLOB
+    assert not subprocess.run(
+        [
+            "git",
+            "-C",
+            str(repository),
+            "diff",
+            "--quiet",
+            "--",
+            PHASE12_MANIFEST_PATH,
+        ],
+        check=False,
+    ).returncode
+
+
+def test_missing_contract_is_rejected() -> None:
+    with pytest.raises(ValueError, match="contract version is required"):
+        require_explicit_contract(None)
+
+
+def test_phase12_contract_is_rejected_for_editable_text_geometry(
+    tmp_path: Path,
+) -> None:
+    architecture = tmp_path / "architecture.json"
+    editable = tmp_path / "editable.json"
+    _write_json(architecture, {"schema_version": 2})
+    _write_json(editable, _editable_manifest())
+    with pytest.raises(ValueError, match="Phase-12 routing expectations"):
+        select_baseline_manifest(
+            contract=PHASE12_CONTRACT,
+            architecture_manifest=architecture,
+            editable_text_manifest=editable,
+            validation_scope="editable-text-geometry",
+        )
+
+
+def test_editable_text_contract_selects_5f7846e_manifest(
+    tmp_path: Path,
+) -> None:
+    architecture = tmp_path / "architecture.json"
+    editable = tmp_path / "editable.json"
+    _write_json(architecture, {"schema_version": 2})
+    _write_json(editable, _editable_manifest())
+    selected = select_baseline_manifest(
+        contract=EDITABLE_TEXT_CONTRACT,
+        architecture_manifest=architecture,
+        editable_text_manifest=editable,
+        validation_scope="editable-text-geometry",
+    )
+    assert selected == editable
+
+
+def test_phase12_and_editable_text_contracts_coexist(tmp_path: Path) -> None:
+    architecture = tmp_path / "tests" / "real_regression" / "manifest.json"
+    editable = (
+        tmp_path
+        / "validation"
+        / "baselines"
+        / EDITABLE_TEXT_CONTRACT
+        / "manifest.json"
+    )
+    _write_json(architecture, {"schema_version": 2})
+    old_bytes = architecture.read_bytes()
+    _write_json(editable, _editable_manifest())
+    assert select_baseline_manifest(
+        contract=PHASE12_CONTRACT,
+        architecture_manifest=architecture,
+        editable_text_manifest=editable,
+        validation_scope="architecture-safety",
+    ) == architecture
+    assert architecture.read_bytes() == old_bytes
+    assert architecture.resolve() != editable.resolve()
+
+
+def test_baseline_source_commit_must_match_manifest(tmp_path: Path) -> None:
+    architecture = tmp_path / "architecture.json"
+    editable = tmp_path / "editable.json"
+    _write_json(architecture, {"schema_version": 2})
+    payload = _editable_manifest()
+    payload["baseline_source_commit"] = "deadbeef"
+    _write_json(editable, payload)
+    with pytest.raises(ValueError, match="source commit mismatch"):
+        select_baseline_manifest(
+            contract=EDITABLE_TEXT_CONTRACT,
+            architecture_manifest=architecture,
+            editable_text_manifest=editable,
+            validation_scope="editable-text-geometry",
+        )
+
+
+def test_input_fixture_hash_change_is_rejected(tmp_path: Path) -> None:
+    source = tmp_path / "fixture.png"
+    source.write_bytes(b"original")
+    manifest = {
+        "documents": [
+            {
+                "id": "page-001",
+                "source_path": "fixture.png",
+                "sha256": content_hash("not-the-file"),
+                "original_path": "fixture.png",
+                "original_sha256": content_hash("not-the-file"),
+            }
+        ]
+    }
+    with pytest.raises(ValueError, match="input fixture hash changed"):
+        validate_fixture_hashes(manifest, tmp_path)
+
+
+def test_text_semantic_hash_change_fails() -> None:
+    before = _page()
+    after = _page()
+    after["partition_hashes"] = dict(after["partition_hashes"])
+    after["partition_hashes"]["text_semantic_hash"] = content_hash("changed")
+    result = compare_before_after(before, after)
+    assert result["passed"] is False
+    assert "text_semantic_hash changed" in result["errors"]
+
+
+def test_non_text_structure_hash_change_fails() -> None:
+    before = _page()
+    after = _page()
+    after["partition_hashes"] = dict(after["partition_hashes"])
+    after["partition_hashes"]["non_text_structure_hash"] = content_hash(
+        "changed"
+    )
+    result = compare_before_after(before, after)
+    assert result["passed"] is False
+    assert "non_text_structure_hash changed" in result["errors"]
+
+
+def test_text_geometry_hash_change_enters_geometry_comparison() -> None:
+    before = _page()
+    after = _page()
+    after["partition_hashes"] = dict(after["partition_hashes"])
+    after["partition_hashes"]["text_geometry_hash"] = content_hash("changed")
+    after["partition_payloads"] = {
+        "text_geometry": [{"width_factor": 0.91}]
+    }
+    result = compare_before_after(before, after)
+    assert result["passed"] is True
+    assert result["text_geometry_changed"] is True
+    assert result["text_geometry_before"] != result["text_geometry_after"]
+
+
+def test_full_structure_id_change_is_not_an_equality_gate() -> None:
+    before = _page()
+    after = _page()
+    after["full_structure_id"] = "after-full-id"
+    result = compare_before_after(before, after)
+    assert result["passed"] is True
+    assert result["full_structure_id_changed"] is True
+
+
+def test_source_outline_state_change_fails() -> None:
+    before = _page()
+    after = _page()
+    after["partition_hashes"] = dict(after["partition_hashes"])
+    after["partition_hashes"]["source_outline_hash"] = content_hash(
+        {"off": False, "frozen": True}
+    )
+    result = compare_before_after(before, after)
+    assert result["passed"] is False
+    assert "source_outline_hash changed" in result["errors"]
+
+
+def test_protected_content_subpart_change_fails() -> None:
+    before = _page()
+    after = _page()
+    after["protected_content_part_hashes"] = dict(
+        after["protected_content_part_hashes"]
+    )
+    after["protected_content_part_hashes"]["signature"] = content_hash(
+        "changed"
+    )
+    result = compare_before_after(before, after)
+    assert result["passed"] is False
+    assert "protected_content.signature changed" in result["errors"]
+
+
+def test_before_contract_rejects_replacement_safe_gate() -> None:
+    page = _page()
+    page["replacement_unsafe_downgrade_count"] = 1
+    errors = validate_before_contract(page)
+    assert "replacement_safe still gates native TEXT" in errors
+
+
+def test_error_message_names_historical_phase12_contract() -> None:
+    assert "Phase-12 routing expectations are historical" in (
+        SUPERSEDED_CONTRACT_ERROR
+    )
