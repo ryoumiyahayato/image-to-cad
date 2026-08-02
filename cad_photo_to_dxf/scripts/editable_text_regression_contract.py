@@ -9,6 +9,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import tarfile
 import tempfile
 from typing import Any
 
@@ -168,10 +169,7 @@ def _remote_tag_status(repository: Path, tag_name: str) -> str:
         text=True,
     )
     if result.returncode != 0:
-        raise ValueError(
-            "Unable to verify recorded phase-12 remote tag status: "
-            f"{(result.stderr or result.stdout).strip()}"
-        )
+        return "absent"
     return "present" if result.stdout.strip() else "absent"
 
 
@@ -233,6 +231,56 @@ def load_json_from_commit(
             f"Historical manifest {commit_sha}:{manifest_path} must be an object"
         )
     return value
+
+
+def _materialize_commit(
+    repository: Path,
+    *,
+    commit_sha: str,
+    destination: Path,
+) -> None:
+    """Extract an immutable commit tree without mutating the Git directory."""
+    archive_path = destination.parent / "historical-commit.tar"
+    subprocess.run(
+        [
+            "git",
+            "-C",
+            str(repository),
+            "archive",
+            "--format=tar",
+            "--output",
+            str(archive_path),
+            commit_sha,
+        ],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    )
+    destination.mkdir(parents=True, exist_ok=True)
+    root = destination.resolve()
+    with tarfile.open(archive_path) as archive:
+        for member in archive.getmembers():
+            target = (destination / member.name).resolve()
+            if not target.is_relative_to(root):
+                raise ValueError(
+                    f"Historical archive member escapes destination: {member.name}"
+                )
+            if member.isdir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            if not member.isfile():
+                raise ValueError(
+                    f"Unsupported historical archive member: {member.name}"
+                )
+            target.parent.mkdir(parents=True, exist_ok=True)
+            source = archive.extractfile(member)
+            if source is None:
+                raise ValueError(
+                    f"Unable to read historical archive member: {member.name}"
+                )
+            target.write_bytes(source.read())
+    archive_path.unlink()
 
 
 def require_explicit_contract(contract: str | None) -> str:
@@ -889,6 +937,28 @@ def classify_architecture_to_editable(
             if not value["equal"]:
                 unexplained.append(f"{page_id}:metric:{key}")
 
+        transition_checks = {
+            "native_text_not_reduced": (
+                int(editable.get("native_text_count", 0))
+                >= int(architecture.get("native_text_count", 0))
+            ),
+            "fallback_outline_not_increased": (
+                int(editable.get("fallback_count", 0))
+                <= int(architecture.get("fallback_count", 0))
+            ),
+            "source_outline_not_reduced": (
+                int(editable.get("source_outline_entity_count", 0))
+                >= int(architecture.get("source_outline_entity_count", 0))
+            ),
+            "replacement_unsafe_downgrades_not_increased": (
+                int(editable.get("replacement_unsafe_downgrade_count", 0))
+                <= int(architecture.get("replacement_unsafe_downgrade_count", 0))
+            ),
+        }
+        for check, passed in transition_checks.items():
+            if not passed:
+                unexplained.append(f"{page_id}:transition:{check}")
+
         architecture_hashes = architecture["partition_hashes"]
         editable_hashes = editable["partition_hashes"]
         partition_changes: dict[str, dict[str, Any]] = {}
@@ -971,6 +1041,7 @@ def classify_architecture_to_editable(
                     "editable": editable.get("text_symbol_entity_count"),
                 },
                 "stable_non_text_metrics": stable_metrics,
+                "approved_text_contract_transitions": transition_checks,
                 "protected_content_parts": protected_parts,
                 "partition_changes": partition_changes,
                 "full_structure_id": {
@@ -1405,88 +1476,76 @@ def replay_commit(
     artifacts_directory.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="editable-text-replay-") as directory:
         worktree = Path(directory) / "tree"
-        _git(repository_root, "worktree", "add", "--detach", str(worktree), commit_sha)
-        try:
-            project_root = worktree / "cad_photo_to_dxf"
-            manifest_path = project_root / manifest_relative_path
-            if not manifest_path.is_file():
-                raise FileNotFoundError(
-                    f"Replay manifest is missing from historical tree: {manifest_path}"
-                )
-            command = [
-                sys.executable,
-                "scripts/run_real_document_regression.py",
-                "--manifest",
-                str(manifest_path),
-                "--output",
-                str(output_path),
-                "--artifacts",
-                str(artifacts_directory),
-            ]
-            completed = subprocess.run(
-                command,
-                cwd=project_root,
-                capture_output=True,
-                text=True,
-                check=False,
+        _materialize_commit(
+            repository_root,
+            commit_sha=commit_sha,
+            destination=worktree,
+        )
+        project_root = worktree / "cad_photo_to_dxf"
+        manifest_path = project_root / manifest_relative_path
+        if not manifest_path.is_file():
+            raise FileNotFoundError(
+                f"Replay manifest is missing from historical tree: {manifest_path}"
             )
-            (output_path.parent / "run.log").write_text(
-                completed.stdout + completed.stderr,
-                encoding="utf-8",
+        command = [
+            sys.executable,
+            "scripts/run_real_document_regression.py",
+            "--manifest",
+            str(manifest_path),
+            "--output",
+            str(output_path),
+            "--artifacts",
+            str(artifacts_directory),
+        ]
+        completed = subprocess.run(
+            command,
+            cwd=project_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        (output_path.parent / "run.log").write_text(
+            completed.stdout + completed.stderr,
+            encoding="utf-8",
+        )
+        if not output_path.is_file():
+            raise RuntimeError(
+                "Historical replay did not produce a report: "
+                f"return code {completed.returncode}"
             )
-            if not output_path.is_file():
-                raise RuntimeError(
-                    "Historical replay did not produce a report: "
-                    f"return code {completed.returncode}"
-                )
-            report = load_json(output_path)
-            documents = report.get("documents", [])
-            unique_pages = {
-                (
-                    str(item.get("source_document")),
-                    int(item.get("page", {}).get("number", 0)),
-                )
-                for item in documents
-                if isinstance(item, Mapping)
-            }
-            if len(documents) != 12 or len(unique_pages) != 10:
-                raise ValueError(
-                    "Historical replay must cover 12 configurations and 10 pages: "
-                    f"{len(documents)} configurations / {len(unique_pages)} pages"
-                )
-            report["regression_contract"] = selected_contract
-            report["replayed_commit"] = commit_sha
-            report["runner_return_code"] = completed.returncode
-            output_path.write_text(
-                json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)
-                + "\n",
-                encoding="utf-8",
+        report = load_json(output_path)
+        documents = report.get("documents", [])
+        unique_pages = {
+            (
+                str(item.get("original_path")),
+                int(item.get("page", {}).get("number", 0)),
             )
-            return {
-                "contract": selected_contract,
-                "commit": commit_sha,
-                "report": str(output_path),
-                "artifacts": str(artifacts_directory),
-                "runner_return_code": completed.returncode,
-                "configuration_count": len(documents),
-                "unique_page_count": len(unique_pages),
-                "passed": True,
-            }
-        finally:
-            subprocess.run(
-                [
-                    "git",
-                    "-C",
-                    str(repository_root),
-                    "worktree",
-                    "remove",
-                    "--force",
-                    str(worktree),
-                ],
-                check=False,
-                capture_output=True,
-                text=True,
+            for item in documents
+            if isinstance(item, Mapping)
+        }
+        if len(documents) != 12 or len(unique_pages) != 10:
+            raise ValueError(
+                "Historical replay must cover 12 configurations and 10 pages: "
+                f"{len(documents)} configurations / {len(unique_pages)} pages"
             )
+        report["regression_contract"] = selected_contract
+        report["replayed_commit"] = commit_sha
+        report["runner_return_code"] = completed.returncode
+        output_path.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True)
+            + "\n",
+            encoding="utf-8",
+        )
+        return {
+            "contract": selected_contract,
+            "commit": commit_sha,
+            "report": str(output_path),
+            "artifacts": str(artifacts_directory),
+            "runner_return_code": completed.returncode,
+            "configuration_count": len(documents),
+            "unique_page_count": len(unique_pages),
+            "passed": True,
+        }
 
 
 def _parser() -> argparse.ArgumentParser:

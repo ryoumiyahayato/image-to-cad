@@ -32,7 +32,12 @@ from editable_text_regression_contract import (  # noqa: E402
     validate_fixture_hashes,
     verify_current_manifest_blob,
     verify_phase12_anchor,
+    _materialize_commit,
+    _parser,
 )
+
+
+BASELINE_DIR = PROJECT_ROOT / "validation" / "baselines" / EDITABLE_TEXT_CONTRACT
 
 
 def _write_json(path: Path, payload: object) -> None:
@@ -205,6 +210,22 @@ def test_historical_manifest_is_read_from_commit_not_working_tree(
     ) == {"schema_version": 2, "documents": []}
 
 
+def test_historical_commit_materialization_is_git_directory_read_only(
+    tmp_path: Path,
+) -> None:
+    repository, anchor = _anchor_repository(tmp_path)
+    destination = tmp_path / "historical-tree"
+    _materialize_commit(
+        repository,
+        commit_sha=anchor.commit_sha,
+        destination=destination,
+    )
+    assert json.loads(
+        (destination / anchor.manifest_path).read_text(encoding="utf-8")
+    ) == {"schema_version": 2, "documents": []}
+    assert not (repository / ".git" / "worktrees").exists()
+
+
 def test_phase12_manifest_file_is_unchanged_on_candidate_commit() -> None:
     repository = PROJECT_ROOT.parent
     assert verify_current_manifest_blob(
@@ -232,6 +253,78 @@ def test_missing_contract_is_rejected() -> None:
         require_explicit_contract(None)
 
 
+def test_cli_requires_explicit_contract() -> None:
+    with pytest.raises(SystemExit):
+        _parser().parse_args(
+            [
+                "select",
+                "--scope",
+                "architecture-safety",
+                "--architecture-manifest",
+                "architecture.json",
+                "--editable-text-manifest",
+                "editable.json",
+            ]
+        )
+
+
+def test_versioned_baseline_integrity_and_phase12_manifest_separation() -> None:
+    manifest = json.loads(
+        (BASELINE_DIR / "manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["contract_version"] == EDITABLE_TEXT_CONTRACT
+    assert manifest["baseline_source_commit"] == BASELINE_SOURCE_COMMIT
+    assert manifest["candidate_commit"] == CANDIDATE_COMMIT
+    assert manifest["document_configuration_count"] == 12
+    assert manifest["unique_page_count"] == 10
+    anchor = manifest["phase12_immutable_anchor"]
+    assert anchor["commit_sha"] == "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba"
+    assert anchor["manifest_path"] == PHASE12_MANIFEST_PATH
+    assert anchor["manifest_blob_sha"] == PHASE12_MANIFEST_BLOB
+    assert anchor["expected_commit_title"] == (
+        "perf: complete final acceptance baseline (phase 12)"
+    )
+    assert anchor["recorded_tag_name"] == (
+        "baseline/phase12-final-acceptance-2026-07-30"
+    )
+    assert anchor["tag_ref_status"] == "absent"
+    assert anchor["contract_identifier"] == PHASE12_CONTRACT
+    assert not (
+        BASELINE_DIR / "tests" / "real_regression" / "manifest.json"
+    ).exists()
+    comparison = json.loads(
+        (BASELINE_DIR / "comparison-report.json").read_text(encoding="utf-8")
+    )
+    assert comparison["phase12_architecture_to_editable_before"]["passed"]
+    assert comparison["editable_before_to_p1b_candidate"]["passed"]
+
+
+def test_versioned_baseline_has_one_page_record_per_configuration() -> None:
+    manifest = json.loads(
+        (BASELINE_DIR / "manifest.json").read_text(encoding="utf-8")
+    )
+    page_files = {
+        path.stem for path in (BASELINE_DIR / "pages").glob("*.json")
+    }
+    manifest_ids = {str(item["page_id"]) for item in manifest["documents"]}
+    assert len(manifest_ids) == 12
+    assert page_files == manifest_ids
+    for page_id in sorted(manifest_ids):
+        payload = json.loads(
+            (BASELINE_DIR / "pages" / f"{page_id}.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert payload["editable_text_baseline"]["page_id"] == page_id
+        assert payload["p1b_candidate"]["page_id"] == page_id
+        assert set(REQUIRED_EQUAL_PARTITIONS).issubset(
+            payload["editable_text_baseline"]["partition_hashes"]
+        )
+        assert set(("logo", "signature", "residual", "uncertain")).issubset(
+            payload["editable_text_baseline"]["protected_content_part_hashes"]
+        )
+
+
 def test_phase12_contract_is_rejected_for_editable_text_geometry(
     tmp_path: Path,
 ) -> None:
@@ -246,6 +339,21 @@ def test_phase12_contract_is_rejected_for_editable_text_geometry(
             editable_text_manifest=editable,
             validation_scope="editable-text-geometry",
         )
+
+
+def test_legacy_phase12_baseline_paths_are_unchanged() -> None:
+    repository = PROJECT_ROOT.parent
+    changed = _git(
+        repository,
+        "diff",
+        "--name-only",
+        CANDIDATE_COMMIT,
+        "--",
+        "tests/real_regression/manifest.json",
+        "validation/final-acceptance",
+        "validation/system-refactor-baselines",
+    )
+    assert changed == ""
 
 
 def test_editable_text_contract_selects_5f7846e_manifest(
