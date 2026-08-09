@@ -7,3 +7,18 @@ cad_photo_to_dxf/dist/
 cad_photo_to_dxf/installer/output/
 cad_photo_to_dxf/.audit-deps/
 cad_photo_to_dxf/test-output/
+cad_photo_to_dxf/repository-hygiene.json
+
+# Generated validation DXF outputs are recoverable outside Git. Keep this list
+# scoped to the known output directories; do not ignore the validation tree.
+cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/*.dxf
+cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/*.dxf
+cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/*.dxf
+cad_photo_to_dxf/validation/editable-text-recovery/pages/*/*.dxf
+cad_photo_to_dxf/validation/low-quality-blue-line-fix-2026-07-28/*.dxf
+cad_photo_to_dxf/validation/observability/phase3-sample/final/*.dxf
+cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/*.dxf
+cad_photo_to_dxf/validation/system-refactor-baselines/current/outputs/*.dxf
+cad_photo_to_dxf/validation/system-refactor-baselines/old/outputs/*.dxf
+cad_photo_to_dxf/validation/user-fix-2026-07-27/*.dxf
+cad_photo_to_dxf/validation/user-pdf-check/*.dxf
