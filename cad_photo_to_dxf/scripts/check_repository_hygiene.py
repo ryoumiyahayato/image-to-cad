@@ -21,12 +21,21 @@ GENERATED_DIRECTORY_NAMES = {
     ".agents",
     "build",
     "dist",
+    "diagnostic",
+    "diagnostics",
+    "export",
+    "exports",
+    "generated",
+    "test-output",
+    "validation-diagnostics",
 }
 GENERATED_DIRECTORY_PREFIXES = {
     "output",
     "installer/output",
     "packaging/output",
     "test-output",
+    "tests/fixtures/expected",
+    "tests/fixtures/generated",
     "validation-diagnostics",
 }
 GENERATED_SUFFIXES = {
@@ -41,7 +50,16 @@ FONT_SUFFIXES = {
 }
 GENERATED_FILENAMES = {
     "preview.png",
+    "repository-hygiene.json",
 }
+GENERATED_REPORT_FILENAMES = {
+    "repository-hygiene.json",
+}
+PROJECT_ROOT = PurePosixPath("cad_photo_to_dxf")
+GLOBAL_MAXIMUM_FILE_SIZE_BYTES = 20 * 1024 * 1024
+CANONICAL_RUNTIME_ASSET_PATH = "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff"
+CANONICAL_RUNTIME_ASSET_SHA256 = "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201"
+CANONICAL_RUNTIME_ASSET_SIZE_BYTES = 43_436_980
 RUNTIME_ASSET_MANIFEST = PurePosixPath(
     "cad_photo_to_dxf/validation/repository-hygiene/approved_runtime_assets.json"
 )
@@ -98,6 +116,15 @@ def _tracked_files(repository_root: Path) -> list[str]:
 def _is_under(path: PurePosixPath, prefix: str) -> bool:
     parts = PurePosixPath(prefix).parts
     return path.parts[: len(parts)] == parts
+
+
+def _path_variants(path: PurePosixPath) -> tuple[PurePosixPath, ...]:
+    variants = [path]
+    if path.parts[: len(PROJECT_ROOT.parts)] == PROJECT_ROOT.parts:
+        project_relative_parts = path.parts[len(PROJECT_ROOT.parts) :]
+        if project_relative_parts:
+            variants.append(PurePosixPath(*project_relative_parts))
+    return tuple(variants)
 
 
 def _normalize_manifest_path(value: object, *, field: str) -> str:
@@ -213,7 +240,7 @@ def _load_manifest(
     return payload, []
 
 
-def load_approved_runtime_assets(
+def _load_approved_runtime_assets(
     repository_root: Path,
     tracked_files: Iterable[str],
     manifest_path: Path | None = None,
@@ -306,6 +333,72 @@ def load_approved_runtime_assets(
     return assets, findings
 
 
+def validate_approved_runtime_asset_contract(
+    repository_root: Path,
+    manifest_path: Path,
+    assets: Mapping[str, ApprovedRuntimeAsset],
+) -> list[HygieneFinding]:
+    expected_paths = {CANONICAL_RUNTIME_ASSET_PATH}
+    findings: list[HygieneFinding] = []
+    for path in sorted(set(assets) - expected_paths):
+        findings.append(
+            _finding_for_manifest(
+                repository_root,
+                manifest_path,
+                f"runtime asset is not in the fixed approved asset set: {path}",
+            )
+        )
+    canonical = assets.get(CANONICAL_RUNTIME_ASSET_PATH)
+    if canonical is None:
+        findings.append(
+            _finding_for_manifest(
+                repository_root,
+                manifest_path,
+                f"canonical runtime asset is missing from the approved asset set: {CANONICAL_RUNTIME_ASSET_PATH}",
+            )
+        )
+        return findings
+    if canonical.sha256 != CANONICAL_RUNTIME_ASSET_SHA256:
+        findings.append(
+            _finding_for_manifest(
+                repository_root,
+                manifest_path,
+                f"canonical runtime asset SHA256 contract mismatch: {CANONICAL_RUNTIME_ASSET_PATH}",
+            )
+        )
+    if canonical.max_size_bytes != CANONICAL_RUNTIME_ASSET_SIZE_BYTES:
+        findings.append(
+            _finding_for_manifest(
+                repository_root,
+                manifest_path,
+                f"canonical runtime asset size contract mismatch: {CANONICAL_RUNTIME_ASSET_PATH}",
+            )
+        )
+    return findings
+
+
+def load_approved_runtime_assets(
+    repository_root: Path,
+    tracked_files: Iterable[str],
+    manifest_path: Path | None = None,
+) -> tuple[dict[str, ApprovedRuntimeAsset], list[HygieneFinding]]:
+    manifest = manifest_path or repository_root.joinpath(*RUNTIME_ASSET_MANIFEST.parts)
+    assets, findings = _load_approved_runtime_assets(repository_root, tracked_files, manifest)
+    contract_findings = validate_approved_runtime_asset_contract(repository_root, manifest, assets)
+    findings.extend(contract_findings)
+    if contract_findings:
+        canonical = assets.get(CANONICAL_RUNTIME_ASSET_PATH)
+        if (
+            canonical is not None
+            and canonical.sha256 == CANONICAL_RUNTIME_ASSET_SHA256
+            and canonical.max_size_bytes == CANONICAL_RUNTIME_ASSET_SIZE_BYTES
+        ):
+            assets = {CANONICAL_RUNTIME_ASSET_PATH: canonical}
+        else:
+            assets = {}
+    return assets, findings
+
+
 def load_approved_source_fixtures(
     repository_root: Path,
     tracked_files: Iterable[str],
@@ -341,6 +434,15 @@ def load_approved_source_fixtures(
         if path in fixtures:
             findings.append(_finding_for_manifest(repository_root, manifest, f"duplicate approved source fixture path: {path}"))
             continue
+        if _is_generated_path(PurePosixPath(path)):
+            findings.append(
+                _finding_for_manifest(
+                    repository_root,
+                    manifest,
+                    f"generated/test/output/diagnostic/export path cannot be an approved source fixture: {path}",
+                )
+            )
+            continue
         if entry["fixture_kind"] != "source" or entry["generated_by_test"] is not False:
             findings.append(_finding_for_manifest(repository_root, manifest, f"test output cannot be an approved source fixture: {path}"))
             continue
@@ -351,18 +453,17 @@ def load_approved_source_fixtures(
         if any(isinstance(value, bool) or not isinstance(value, int) or value <= 0 for value in sizes):
             findings.append(_finding_for_manifest(repository_root, manifest, f"source fixture size fields are invalid: {path}"))
             continue
+        if entry["max_size_bytes"] > GLOBAL_MAXIMUM_FILE_SIZE_BYTES:
+            findings.append(
+                _finding_for_manifest(
+                    repository_root,
+                    manifest,
+                    f"source fixture max_size_bytes cannot exceed the global repository limit: {path}",
+                )
+            )
+            continue
         if entry["size_bytes"] > entry["max_size_bytes"]:
             findings.append(_finding_for_manifest(repository_root, manifest, f"source fixture exceeds its max_size_bytes: {path}"))
-            continue
-        is_generated_output = (
-            path.startswith(("tests/fixtures/expected/", "output/"))
-            or (
-                _is_generated_path(PurePosixPath(path))
-                and not path.startswith("tests/fixtures/ground_truth/")
-            )
-        )
-        if is_generated_output:
-            findings.append(_finding_for_manifest(repository_root, manifest, f"generated/test output cannot be an approved source fixture: {path}"))
             continue
         if path not in tracked:
             findings.append(_finding_for_manifest(repository_root, manifest, f"approved source fixture is not tracked: {path}"))
@@ -390,13 +491,16 @@ def load_approved_source_fixtures(
 
 
 def _is_generated_path(path: PurePosixPath) -> bool:
-    return (
-        any(part in GENERATED_DIRECTORY_NAMES for part in path.parts)
-        or any(_is_under(path, prefix) for prefix in GENERATED_DIRECTORY_PREFIXES)
-        or path.suffix.lower() in GENERATED_SUFFIXES
-        or path.name.lower() in GENERATED_FILENAMES
-        or path.name.endswith(".report.json")
-    )
+    for candidate in _path_variants(path):
+        if (
+            any(part in GENERATED_DIRECTORY_NAMES for part in candidate.parts)
+            or any(_is_under(candidate, prefix) for prefix in GENERATED_DIRECTORY_PREFIXES)
+            or candidate.suffix.lower() in GENERATED_SUFFIXES
+            or candidate.name.lower() in GENERATED_FILENAMES
+            or candidate.name.endswith(".report.json")
+        ):
+            return True
+    return False
 
 
 def inspect_tracked_files(
@@ -407,6 +511,8 @@ def inspect_tracked_files(
     approved_runtime_assets: Mapping[str, ApprovedRuntimeAsset] | None = None,
     approved_source_fixtures: Mapping[str, ApprovedSourceFixture] | None = None,
 ) -> list[HygieneFinding]:
+    if maximum_file_size_bytes <= 0 or maximum_file_size_bytes > GLOBAL_MAXIMUM_FILE_SIZE_BYTES:
+        raise ValueError("maximum_file_size_bytes must be between 1 byte and the fixed 20 MiB limit")
     findings: list[HygieneFinding] = []
     approved_runtime_paths = set(approved_runtime_assets or {})
     approved_fixture_paths = set(approved_source_fixtures or {})
@@ -415,22 +521,31 @@ def inspect_tracked_files(
         relative = PurePosixPath(normalized)
         absolute = repository_root / Path(*relative.parts)
         size = absolute.stat().st_size if absolute.is_file() else 0
-
-        if normalized in approved_runtime_paths or normalized in approved_fixture_paths:
-            continue
+        path_variants = _path_variants(relative)
 
         reason: str | None = None
-        if any(part in GENERATED_DIRECTORY_NAMES for part in relative.parts):
+        canonical_runtime_asset = normalized == CANONICAL_RUNTIME_ASSET_PATH and normalized in approved_runtime_paths
+        if size > maximum_file_size_bytes and not canonical_runtime_asset:
+            reason = "tracked file exceeds repository size limit"
+        elif normalized in approved_runtime_paths or normalized in approved_fixture_paths:
+            continue
+        elif any(any(part in GENERATED_DIRECTORY_NAMES for part in candidate.parts) for candidate in path_variants):
             reason = "generated or local-only directory is tracked"
-        elif any(_is_under(relative, prefix) for prefix in GENERATED_DIRECTORY_PREFIXES):
+        elif any(
+            _is_under(candidate, prefix)
+            for candidate in path_variants
+            for prefix in GENERATED_DIRECTORY_PREFIXES
+        ):
             reason = "generated output directory is tracked"
-        elif relative.suffix.lower() in FONT_SUFFIXES:
+        elif any(candidate.suffix.lower() in FONT_SUFFIXES for candidate in path_variants):
             reason = "unapproved runtime font asset is tracked"
-        elif relative.suffix.lower() in GENERATED_SUFFIXES:
+        elif any(candidate.suffix.lower() in GENERATED_SUFFIXES for candidate in path_variants):
             reason = "generated output file is tracked"
-        elif relative.name.lower() in GENERATED_FILENAMES:
+        elif any(candidate.name.lower() in GENERATED_REPORT_FILENAMES for candidate in path_variants):
+            reason = "generated repository hygiene report is tracked"
+        elif any(candidate.name.lower() in GENERATED_FILENAMES for candidate in path_variants):
             reason = "generated preview file is tracked"
-        elif relative.name.endswith(".report.json"):
+        elif any(candidate.name.endswith(".report.json") for candidate in path_variants):
             reason = "generated processing report is tracked"
         elif size > maximum_file_size_bytes:
             reason = "tracked file exceeds repository size limit"
@@ -465,8 +580,8 @@ def main() -> int:
     args = build_parser().parse_args()
     root = args.repository_root.resolve()
     maximum = int(args.maximum_file_size_mib * 1024 * 1024)
-    if maximum <= 0:
-        raise SystemExit("Maximum file size must be greater than zero")
+    if maximum <= 0 or maximum > GLOBAL_MAXIMUM_FILE_SIZE_BYTES:
+        raise SystemExit("Maximum file size must be between 1 byte and the fixed 20 MiB limit")
 
     tracked = _tracked_files(root)
     runtime_assets, runtime_manifest_findings = load_approved_runtime_assets(
