@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "first_path": "C:\\Users\\agcrf\\AppData\\Local\\Temp\\h1-dxf-roundtrip-b20ow2_d\\first.dxf",
+  "roundtrip_path": "C:\\Users\\agcrf\\AppData\\Local\\Temp\\h1-dxf-roundtrip-b20ow2_d\\roundtrip.dxf",
+  "text_count": 1,
+  "text": "??",
+  "style": "wqy-unicode",
+  "style_font": "wqy-unicode.lff",
+  "width_factor": 1.6648706896551722,
+  "audit_errors": 0,
+  "entities": 1
+}
