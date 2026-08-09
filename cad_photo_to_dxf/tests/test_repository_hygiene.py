@@ -466,6 +466,51 @@ class RepositoryHygieneTests(unittest.TestCase):
         finding_paths = {finding.path for finding in findings}
         self.assertEqual(finding_paths, set(generated_paths))
 
+    def test_case_variant_generated_directories_are_reported_without_overmatching_sources(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            generated_paths = [
+                "cad_photo_to_dxf/OUTPUT/generated-result.bin",
+                "cad_photo_to_dxf/Output/generated-result.bin",
+                "cad_photo_to_dxf/installer/OUTPUT/generated-result.bin",
+                "cad_photo_to_dxf/Installer/Output/generated-result.bin",
+                "cad_photo_to_dxf/packaging/OUTPUT/generated-result.bin",
+                "cad_photo_to_dxf/TEST-OUTPUT/generated-result.bin",
+                "cad_photo_to_dxf/Test-Output/generated-result.bin",
+                "cad_photo_to_dxf/VALIDATION-DIAGNOSTICS/report.json",
+                "cad_photo_to_dxf/Validation-Diagnostics/report.json",
+                "cad_photo_to_dxf\\Installer\\Output\\backslash.bin",
+            ]
+            legal_paths = [
+                "cad_photo_to_dxf/tests/fixtures/ground_truth/source.png",
+                "cad_photo_to_dxf/source/output-specification.txt",
+                "cad_photo_to_dxf/tests/fixtures/output_reference/source.png",
+            ]
+            normalized_generated_paths = [relative.replace("\\", "/") for relative in generated_paths]
+            for relative in [*normalized_generated_paths, *legal_paths]:
+                path = root.joinpath(*relative.split("/"))
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"data")
+
+            findings = inspect_tracked_files(root, [*generated_paths, *legal_paths])
+
+        finding_paths = {finding.path for finding in findings}
+        self.assertEqual(finding_paths, set(normalized_generated_paths))
+
+    def test_case_variant_generated_paths_cannot_be_approved_source_fixtures(self) -> None:
+        generated_paths = [
+            "cad_photo_to_dxf/OUTPUT/generated.dxf",
+            "cad_photo_to_dxf/TEST-OUTPUT/generated.bin",
+        ]
+        for relative in generated_paths:
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                manifest = _write_source_fixture_manifest(root, relative)
+                _commit_tree(root)
+                _approved, findings = load_approved_source_fixtures(root, [relative], manifest)
+
+            self.assertTrue(any("generated/test/output/diagnostic/export path" in item.reason for item in findings))
+
     def test_new_generated_artifact_cannot_enter_git(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

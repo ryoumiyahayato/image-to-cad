@@ -120,11 +120,19 @@ def _is_under(path: PurePosixPath, prefix: str) -> bool:
 
 def _path_variants(path: PurePosixPath) -> tuple[PurePosixPath, ...]:
     variants = [path]
-    if path.parts[: len(PROJECT_ROOT.parts)] == PROJECT_ROOT.parts:
+    project_root_parts = tuple(part.casefold() for part in PROJECT_ROOT.parts)
+    if tuple(part.casefold() for part in path.parts[: len(project_root_parts)]) == project_root_parts:
         project_relative_parts = path.parts[len(PROJECT_ROOT.parts) :]
         if project_relative_parts:
             variants.append(PurePosixPath(*project_relative_parts))
     return tuple(variants)
+
+
+def _classification_path_variants(path: PurePosixPath) -> tuple[PurePosixPath, ...]:
+    return tuple(
+        PurePosixPath(*(part.casefold() for part in candidate.parts))
+        for candidate in _path_variants(path)
+    )
 
 
 def _normalize_manifest_path(value: object, *, field: str) -> str:
@@ -491,7 +499,7 @@ def load_approved_source_fixtures(
 
 
 def _is_generated_path(path: PurePosixPath) -> bool:
-    for candidate in _path_variants(path):
+    for candidate in _classification_path_variants(path):
         if (
             any(part in GENERATED_DIRECTORY_NAMES for part in candidate.parts)
             or any(_is_under(candidate, prefix) for prefix in GENERATED_DIRECTORY_PREFIXES)
@@ -521,7 +529,7 @@ def inspect_tracked_files(
         relative = PurePosixPath(normalized)
         absolute = repository_root / Path(*relative.parts)
         size = absolute.stat().st_size if absolute.is_file() else 0
-        path_variants = _path_variants(relative)
+        classification_path_variants = _classification_path_variants(relative)
 
         reason: str | None = None
         canonical_runtime_asset = normalized == CANONICAL_RUNTIME_ASSET_PATH and normalized in approved_runtime_paths
@@ -529,23 +537,26 @@ def inspect_tracked_files(
             reason = "tracked file exceeds repository size limit"
         elif normalized in approved_runtime_paths or normalized in approved_fixture_paths:
             continue
-        elif any(any(part in GENERATED_DIRECTORY_NAMES for part in candidate.parts) for candidate in path_variants):
+        elif any(
+            any(part in GENERATED_DIRECTORY_NAMES for part in candidate.parts)
+            for candidate in classification_path_variants
+        ):
             reason = "generated or local-only directory is tracked"
         elif any(
             _is_under(candidate, prefix)
-            for candidate in path_variants
+            for candidate in classification_path_variants
             for prefix in GENERATED_DIRECTORY_PREFIXES
         ):
             reason = "generated output directory is tracked"
-        elif any(candidate.suffix.lower() in FONT_SUFFIXES for candidate in path_variants):
+        elif any(candidate.suffix in FONT_SUFFIXES for candidate in classification_path_variants):
             reason = "unapproved runtime font asset is tracked"
-        elif any(candidate.suffix.lower() in GENERATED_SUFFIXES for candidate in path_variants):
+        elif any(candidate.suffix in GENERATED_SUFFIXES for candidate in classification_path_variants):
             reason = "generated output file is tracked"
-        elif any(candidate.name.lower() in GENERATED_REPORT_FILENAMES for candidate in path_variants):
+        elif any(candidate.name in GENERATED_REPORT_FILENAMES for candidate in classification_path_variants):
             reason = "generated repository hygiene report is tracked"
-        elif any(candidate.name.lower() in GENERATED_FILENAMES for candidate in path_variants):
+        elif any(candidate.name in GENERATED_FILENAMES for candidate in classification_path_variants):
             reason = "generated preview file is tracked"
-        elif any(candidate.name.endswith(".report.json") for candidate in path_variants):
+        elif any(candidate.name.endswith(".report.json") for candidate in classification_path_variants):
             reason = "generated processing report is tracked"
         elif size > maximum_file_size_bytes:
             reason = "tracked file exceeds repository size limit"
