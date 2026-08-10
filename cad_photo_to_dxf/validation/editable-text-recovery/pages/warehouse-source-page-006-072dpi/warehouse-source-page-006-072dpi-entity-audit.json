@@ -1,0 +1,88 @@
+{
+  "candidate_primary_semantic_conflict_count": 0,
+  "candidate_source_ownership_violation_count": 0,
+  "checks": {
+    "DXF_audit_error_count_is_zero": true,
+    "DXF_read_save_read_and_edit_passes": true,
+    "OCR_threshold_contract_recorded_unchanged": true,
+    "baseline_was_not_updated": true,
+    "candidate_primary_semantic_conflict_count_is_zero": true,
+    "candidate_source_pixel_ownership_is_conserved": true,
+    "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+    "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+    "fallback_and_text_symbol_conflict_count_is_zero": true,
+    "formal_structure_and_protection_audit_passes": true,
+    "native_TEXT_count_equals_text_emit_eligible_count": true,
+    "native_TEXT_geometry_contract_passes": true,
+    "no_duplicate_visible_text_representation": true,
+    "preview_and_DXF_consumed_same_FinalStructure": true,
+    "replacement_unsafe_does_not_downgrade_eligible_text": true,
+    "unsafe_source_outline_backup_is_default_hidden": true
+  },
+  "duplicate_visible_representation_count": 0,
+  "dxf_audit_error_count": 0,
+  "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-006-072dpi\\warehouse-source-page-006-072dpi.dxf",
+  "dxf_sha256": "28140306989eb030f35aee57ba025df20a210682cb150fbc84de489bd332230c",
+  "elapsed_seconds": 50.223,
+  "eligible_candidate_text_symbol_count": 0,
+  "fallback_and_text_symbol_conflict_count": 0,
+  "formal_structural_safety": {
+    "baseline_was_updated": false,
+    "mode": "whole_source_page_without_frozen_page_metric",
+    "passed": true,
+    "records": []
+  },
+  "layer_entity_counts": {
+    "OCR_TEXT": 130,
+    "SOURCE_TEXT_OUTLINE": 522,
+    "TEXT_FALLBACK_OUTLINE": 2,
+    "TRACE_CURVE": 208,
+    "TRACE_STRAIGHT": 350,
+    "TRACE_TEXT_SYMBOL": 365
+  },
+  "native_TEXT_count": 130,
+  "passed": true,
+  "replacement_unsafe_fallback_without_hard_reject_count": 0,
+  "residual_OCR_candidate_count": 0,
+  "roundtrip": {
+    "all_reopened_entities_still_TEXT": true,
+    "audit_error_count": 0,
+    "expected_TEXT_count": 130,
+    "initial_TEXT_count": 130,
+    "modified_original": "8",
+    "modified_value": "8 [editable-roundtrip]",
+    "modified_value_preserved": true,
+    "passed": true,
+    "reopened_TEXT_count": 130
+  },
+  "run_id": "warehouse-source-page-006-072dpi",
+  "schema_version": 1,
+  "source_text_outline_candidate_count": 100,
+  "source_text_outline_entity_count": 522,
+  "source_text_outline_layer": {
+    "default_visible": false,
+    "frozen": true,
+    "off": true,
+    "present": true
+  },
+  "structure_id": "e0c7288f92e233bd42c053b29c3c2ddd7e95692cb49dea6de05ffb5e51c65782",
+  "text_symbol_entity_count": 365,
+  "text_symbol_ownership": {
+    "eligible_geometric_touch_objects": 6,
+    "eligible_geometric_touch_pixels": 20,
+    "eligible_owned_objects": 0,
+    "eligible_owned_pixels": 0,
+    "uncertain_geometric_touch_objects": 0,
+    "uncertain_geometric_touch_pixels": 0,
+    "uncertain_owned_objects": 0,
+    "uncertain_owned_pixels": 0
+  },
+  "uncertain_text_candidate_count": 2,
+  "uncertain_text_outline_entity_count": 2,
+  "uncertain_text_outline_layer": {
+    "default_visible": true,
+    "frozen": false,
+    "off": false,
+    "present": true
+  }
+}

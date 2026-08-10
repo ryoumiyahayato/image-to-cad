@@ -1,0 +1,1686 @@
+{
+  "all_final_DXFs_passed": true,
+  "all_inventory_DXFs_read_save_read_passed": true,
+  "category_counts": {
+    "before_snapshot": 10,
+    "final_page": 33,
+    "intermediate_checkpoint": 3,
+    "verification_checkpoint": 4
+  },
+  "files": [
+    {
+      "OCR_TEXT_layer_entity_count": 23,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 590,
+        "LWPOLYLINE": 3233,
+        "TEXT": 23
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 23,
+        "TEXT_FALLBACK_OUTLINE": 1153,
+        "TRACE_CURVE": 891,
+        "TRACE_STRAIGHT": 590,
+        "TRACE_TEXT_SYMBOL": 1189
+      },
+      "native_TEXT_count": 23,
+      "path": "validation/editable-text-recovery/before/dxf/environment-plan-page-003-150dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 23,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "3d8abd9aa5747a36b4f2a274e286792ed458488a0a239cfe63568b79427db177",
+      "size_bytes": 1951803,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 10,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 513,
+        "LWPOLYLINE": 3201,
+        "TEXT": 10
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 10,
+        "RESIDUAL_GRAPHIC": 14,
+        "TEXT_FALLBACK_OUTLINE": 1098,
+        "TRACE_CURVE": 925,
+        "TRACE_STRAIGHT": 513,
+        "TRACE_TEXT_SYMBOL": 1164
+      },
+      "native_TEXT_count": 10,
+      "path": "validation/editable-text-recovery/before/dxf/environment-scan-page-001-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 10,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "b9c95d5d51cdd6c7af4bd494c7e9ef71636f12c0f508b93902733d28f80109f7",
+      "size_bytes": 1735834,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 5,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 360,
+        "LWPOLYLINE": 2840,
+        "TEXT": 5
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 5,
+        "RESIDUAL_GRAPHIC": 272,
+        "TEXT_FALLBACK_OUTLINE": 572,
+        "TRACE_CURVE": 795,
+        "TRACE_STRAIGHT": 360,
+        "TRACE_TEXT_SYMBOL": 1201
+      },
+      "native_TEXT_count": 5,
+      "path": "validation/editable-text-recovery/before/dxf/environment-scan-page-002-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 5,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "3ed6202d106eeac6f5cea864c5416e9d55bf2aca04423e842bb856937a9e35c2",
+      "size_bytes": 1489502,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 22,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 589,
+        "LWPOLYLINE": 3200,
+        "TEXT": 22
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 22,
+        "TEXT_FALLBACK_OUTLINE": 911,
+        "TRACE_CURVE": 1140,
+        "TRACE_STRAIGHT": 589,
+        "TRACE_TEXT_SYMBOL": 1149
+      },
+      "native_TEXT_count": 22,
+      "path": "validation/editable-text-recovery/before/dxf/environment-scan-page-004-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 22,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "72d556215eb428d7517525eb86f00da75d41c9f958a7edf54007ef6c2b436c15",
+      "size_bytes": 1709392,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 12,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 309,
+        "LWPOLYLINE": 2369,
+        "TEXT": 12
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 12,
+        "RESIDUAL_GRAPHIC": 401,
+        "TEXT_FALLBACK_OUTLINE": 476,
+        "TRACE_CURVE": 739,
+        "TRACE_STRAIGHT": 309,
+        "TRACE_TEXT_SYMBOL": 753
+      },
+      "native_TEXT_count": 12,
+      "path": "validation/editable-text-recovery/before/dxf/environment-scan-page-008-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 12,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "ad3d22505fa8a95edf92ec8778e83539245ab3a9b392e29d56c306d671389e12",
+      "size_bytes": 1251244,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 12,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 511,
+        "LWPOLYLINE": 3366,
+        "TEXT": 12
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 12,
+        "TEXT_FALLBACK_OUTLINE": 1117,
+        "TRACE_CURVE": 1144,
+        "TRACE_STRAIGHT": 511,
+        "TRACE_TEXT_SYMBOL": 1105
+      },
+      "native_TEXT_count": 12,
+      "path": "validation/editable-text-recovery/before/dxf/environment-scan-page-014-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 12,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "112f51c95ccc732d0d8d09aa2a91b3b5cff21fdda12768c9fc45abd52ca2fb43",
+      "size_bytes": 1795135,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 0,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 172,
+        "LWPOLYLINE": 210
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "TEXT_FALLBACK_OUTLINE": 26,
+        "TRACE_CURVE": 85,
+        "TRACE_STRAIGHT": 172,
+        "TRACE_TEXT_SYMBOL": 99
+      },
+      "native_TEXT_count": 0,
+      "path": "validation/editable-text-recovery/before/dxf/perspective-sample-plan.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 0,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "4df98a54b7f6116c096f280fa878c880fe9008789b76681ec708d9feb873b758",
+      "size_bytes": 268338,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 36,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 503,
+        "LWPOLYLINE": 857,
+        "TEXT": 36
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 36,
+        "RESIDUAL_GRAPHIC": 2,
+        "TEXT_FALLBACK_OUTLINE": 852,
+        "TRACE_STRAIGHT": 503,
+        "TRACE_TEXT_SYMBOL": 3
+      },
+      "native_TEXT_count": 36,
+      "path": "validation/editable-text-recovery/before/dxf/warehouse-index-page-001-150dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 36,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "e4b4a62ede0412466a5c310527d11ff6ab9807b0afbc4fee77f93273b3fe7715",
+      "size_bytes": 571044,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 36,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 416,
+        "LWPOLYLINE": 1802,
+        "TEXT": 36
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 36,
+        "RESIDUAL_GRAPHIC": 125,
+        "TEXT_FALLBACK_OUTLINE": 644,
+        "TRACE_CURVE": 303,
+        "TRACE_STRAIGHT": 416,
+        "TRACE_TEXT_SYMBOL": 730
+      },
+      "native_TEXT_count": 36,
+      "path": "validation/editable-text-recovery/before/dxf/warehouse-plan-page-003-72dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 36,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "a237b4a06b503366f428da16049f02c0a9331f8a08ebd267e15b46071f0a59a0",
+      "size_bytes": 1118604,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 41,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "before_snapshot",
+      "entity_types": {
+        "LINE": 117,
+        "LWPOLYLINE": 1545,
+        "TEXT": 41
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 41,
+        "RESIDUAL_GRAPHIC": 40,
+        "TEXT_FALLBACK_OUTLINE": 818,
+        "TRACE_CURVE": 120,
+        "TRACE_STRAIGHT": 117,
+        "TRACE_TEXT_SYMBOL": 567
+      },
+      "native_TEXT_count": 41,
+      "path": "validation/editable-text-recovery/before/dxf/warehouse-system-page-002-72dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 41,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "5a4ba0e2f745913ff875e442b3f7d1cbee33102d218f2742f0cabb3241bd4451",
+      "size_bytes": 794781,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 206,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "intermediate_checkpoint",
+      "entity_types": {
+        "LINE": 633,
+        "LWPOLYLINE": 3857,
+        "TEXT": 206
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 206,
+        "RESIDUAL_GRAPHIC": 535,
+        "TRACE_CURVE": 523,
+        "TRACE_STRAIGHT": 633,
+        "TRACE_TEXT_SYMBOL": 2799
+      },
+      "native_TEXT_count": 206,
+      "path": "validation/editable-text-recovery/checkpoints/commit1-page001.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 206,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "39fb2f81c6263a864de1d8a0cdcd2dd0ec8fc9ccc440f21cc034060016dd58d8",
+      "size_bytes": 3171205,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": false,
+        "default_visible": false,
+        "present": false
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 206,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "intermediate_checkpoint",
+      "entity_types": {
+        "LINE": 633,
+        "LWPOLYLINE": 3857,
+        "TEXT": 206
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 206,
+        "SOURCE_TEXT_OUTLINE": 1393,
+        "TEXT_FALLBACK_OUTLINE": 535,
+        "TRACE_CURVE": 523,
+        "TRACE_STRAIGHT": 633,
+        "TRACE_TEXT_SYMBOL": 1406
+      },
+      "native_TEXT_count": 206,
+      "path": "validation/editable-text-recovery/checkpoints/commit2-page001.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 206,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "7e7652c750230fa43401ad5405124e754d0d5bbb5e538b1672a400958c3ceb8e",
+      "size_bytes": 3176838,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 206,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "intermediate_checkpoint",
+      "entity_types": {
+        "LINE": 633,
+        "LWPOLYLINE": 4165,
+        "TEXT": 206
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 206,
+        "SOURCE_TEXT_OUTLINE": 1784,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 894,
+        "TRACE_STRAIGHT": 633,
+        "TRACE_TEXT_SYMBOL": 1482
+      },
+      "native_TEXT_count": 206,
+      "path": "validation/editable-text-recovery/checkpoints/commit3-page001.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 206,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "0261181ad38659524775b8e63ea27f53db16222fc9977b315e81c6d82b869cf2",
+      "size_bytes": 3300010,
+      "source_text_outline_layer": {
+        "all_frozen": false,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 1,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "verification_checkpoint",
+      "entity_types": {
+        "LWPOLYLINE": 1,
+        "TEXT": 1
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 1,
+        "SOURCE_TEXT_OUTLINE": 1
+      },
+      "native_TEXT_count": 1,
+      "path": "validation/editable-text-recovery/checkpoints/commit4-librecad-editability-edited.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 1,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "1e5a712cee9a46f3aa0b4c512fa9c4eb443d0f441d85c9cdcb30543d71546900",
+      "size_bytes": 22802,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": false,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 1,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "verification_checkpoint",
+      "entity_types": {
+        "LWPOLYLINE": 1,
+        "TEXT": 1
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 1,
+        "SOURCE_TEXT_OUTLINE": 1
+      },
+      "native_TEXT_count": 1,
+      "path": "validation/editable-text-recovery/checkpoints/commit4-librecad-editability-original.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 1,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "694be3a8350fccdc01d5a4178ed94f7adf53079ee27789b47c609e884489f953",
+      "size_bytes": 46137,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 1,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "verification_checkpoint",
+      "entity_types": {
+        "LWPOLYLINE": 1,
+        "TEXT": 1
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 1,
+        "SOURCE_TEXT_OUTLINE": 1
+      },
+      "native_TEXT_count": 1,
+      "path": "validation/editable-text-recovery/checkpoints/commit4-librecad-editability-roundtrip.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 1,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "53714c91f41065de04999f0b7807b04e650e353019193185afd06504cc19849a",
+      "size_bytes": 29352,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": false,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 206,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "verification_checkpoint",
+      "entity_types": {
+        "LINE": 633,
+        "LWPOLYLINE": 4165,
+        "TEXT": 206
+      },
+      "final_page_report_passed": null,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 206,
+        "SOURCE_TEXT_OUTLINE": 1784,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 894,
+        "TRACE_STRAIGHT": 633,
+        "TRACE_TEXT_SYMBOL": 1482
+      },
+      "native_TEXT_count": 206,
+      "path": "validation/editable-text-recovery/checkpoints/commit4-page001.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 206,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "6348332a95cd442827778ed6f78925cd7f57ce4827893a83dfec61b7be2ce4a7",
+      "size_bytes": 3366214,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 139,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 513,
+        "LWPOLYLINE": 3399,
+        "TEXT": 139
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 139,
+        "SOURCE_TEXT_OUTLINE": 1311,
+        "TEXT_FALLBACK_OUTLINE": 3,
+        "TRACE_CURVE": 879,
+        "TRACE_STRAIGHT": 513,
+        "TRACE_TEXT_SYMBOL": 1206
+      },
+      "native_TEXT_count": 139,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-001-120dpi/environment-formal-page-001-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 139,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "45dbf6ffd4976d6363a99b78ef5db5741d32d4431827112e159a9140cd6e41ea",
+      "size_bytes": 1939410,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 97,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 360,
+        "LWPOLYLINE": 2884,
+        "TEXT": 97
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 97,
+        "SOURCE_TEXT_OUTLINE": 672,
+        "TEXT_FALLBACK_OUTLINE": 8,
+        "TRACE_CURVE": 920,
+        "TRACE_STRAIGHT": 360,
+        "TRACE_TEXT_SYMBOL": 1284
+      },
+      "native_TEXT_count": 97,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-002-120dpi/environment-formal-page-002-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 97,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "04767d352939b2abd15e22c4ab87c649c2444867b6f2ad3f23e2e072270287c9",
+      "size_bytes": 1575684,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 154,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 590,
+        "LWPOLYLINE": 3346,
+        "TEXT": 154
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 154,
+        "SOURCE_TEXT_OUTLINE": 1382,
+        "TRACE_CURVE": 768,
+        "TRACE_STRAIGHT": 590,
+        "TRACE_TEXT_SYMBOL": 1196
+      },
+      "native_TEXT_count": 154,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-003-150dpi/environment-formal-page-003-150dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 154,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "1243f3d198b207371281fc54cc25368d4b384be57773809ee93c856c1d719e81",
+      "size_bytes": 2098978,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 157,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 589,
+        "LWPOLYLINE": 3490,
+        "TEXT": 157
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 157,
+        "SOURCE_TEXT_OUTLINE": 1284,
+        "TRACE_CURVE": 974,
+        "TRACE_STRAIGHT": 589,
+        "TRACE_TEXT_SYMBOL": 1232
+      },
+      "native_TEXT_count": 157,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-004-120dpi/environment-formal-page-004-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 157,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "d482f4eb898eeaa1766672a4211dd60a9f61a2580bb3e6b6028df55d19f989a3",
+      "size_bytes": 1957922,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 77,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 309,
+        "LWPOLYLINE": 2387,
+        "TEXT": 77
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 77,
+        "SOURCE_TEXT_OUTLINE": 521,
+        "TEXT_FALLBACK_OUTLINE": 30,
+        "TRACE_CURVE": 1055,
+        "TRACE_STRAIGHT": 309,
+        "TRACE_TEXT_SYMBOL": 781
+      },
+      "native_TEXT_count": 77,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-008-120dpi/environment-formal-page-008-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 77,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "f2292499dea8422527bc64f9905206f6ff86e603efaf6a95b0d76d118302e004",
+      "size_bytes": 1314525,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 150,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 511,
+        "LWPOLYLINE": 3551,
+        "TEXT": 150
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 150,
+        "SOURCE_TEXT_OUTLINE": 1362,
+        "TRACE_CURVE": 983,
+        "TRACE_STRAIGHT": 511,
+        "TRACE_TEXT_SYMBOL": 1206
+      },
+      "native_TEXT_count": 150,
+      "path": "validation/editable-text-recovery/pages/environment-formal-page-014-120dpi/environment-formal-page-014-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 150,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "69c48b02484136f11ef49f34beb26f9c5501f17e5cda2135fe1e45c41eb674eb",
+      "size_bytes": 1983874,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 145,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "IMAGE": 1,
+        "LINE": 530,
+        "LWPOLYLINE": 3338,
+        "TEXT": 145
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 145,
+        "SIGNATURE_OVERLAY": 1,
+        "SOURCE_TEXT_OUTLINE": 1273,
+        "TRACE_CURVE": 792,
+        "TRACE_STRAIGHT": 530,
+        "TRACE_TEXT_SYMBOL": 1273
+      },
+      "native_TEXT_count": 145,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-001-120dpi/environment-source-page-001-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 145,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "0b5fa71326c0495ad1d0d20725ba6dc2b4390466832dc50e8bb7d8a2f3988796",
+      "size_bytes": 1912489,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 112,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 311,
+        "LWPOLYLINE": 2829,
+        "TEXT": 112
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 112,
+        "SOURCE_TEXT_OUTLINE": 793,
+        "TEXT_FALLBACK_OUTLINE": 18,
+        "TRACE_CURVE": 934,
+        "TRACE_STRAIGHT": 311,
+        "TRACE_TEXT_SYMBOL": 1084
+      },
+      "native_TEXT_count": 112,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-002-120dpi/environment-source-page-002-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 112,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "3b9eea09a51a09b2ae500bdeeb9aa3bb638d8e5c4ca3401635ad5dfdcffe83cf",
+      "size_bytes": 1545660,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 145,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 559,
+        "LWPOLYLINE": 3051,
+        "TEXT": 145
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 145,
+        "SOURCE_TEXT_OUTLINE": 1250,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 792,
+        "TRACE_STRAIGHT": 559,
+        "TRACE_TEXT_SYMBOL": 1004
+      },
+      "native_TEXT_count": 145,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-003-120dpi/environment-source-page-003-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 145,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "24b0e8bfbd2531e46f3a9406d3dcdab14d7ed2da0239ebc7d91620987814ea3a",
+      "size_bytes": 1751768,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 159,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 526,
+        "LWPOLYLINE": 3332,
+        "TEXT": 159
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 159,
+        "SOURCE_TEXT_OUTLINE": 1254,
+        "TEXT_FALLBACK_OUTLINE": 3,
+        "TRACE_CURVE": 935,
+        "TRACE_STRAIGHT": 526,
+        "TRACE_TEXT_SYMBOL": 1140
+      },
+      "native_TEXT_count": 159,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-004-120dpi/environment-source-page-004-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 159,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "3139e7ab2f70ffdf86d1f18ffb289a85debc8de6859b22fd2460a7d54c51d9b4",
+      "size_bytes": 1888484,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 150,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 501,
+        "LWPOLYLINE": 2956,
+        "TEXT": 150
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 150,
+        "SOURCE_TEXT_OUTLINE": 1144,
+        "TRACE_CURVE": 694,
+        "TRACE_STRAIGHT": 501,
+        "TRACE_TEXT_SYMBOL": 1118
+      },
+      "native_TEXT_count": 150,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-005-120dpi/environment-source-page-005-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 150,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "d9038e52ae5550c61b82cd94f0567462525354d94f8efaacdf0d955e6bd20c0a",
+      "size_bytes": 1701385,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 158,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 470,
+        "LWPOLYLINE": 3187,
+        "TEXT": 158
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 158,
+        "SOURCE_TEXT_OUTLINE": 1234,
+        "TEXT_FALLBACK_OUTLINE": 11,
+        "TRACE_CURVE": 834,
+        "TRACE_STRAIGHT": 470,
+        "TRACE_TEXT_SYMBOL": 1108
+      },
+      "native_TEXT_count": 158,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-006-120dpi/environment-source-page-006-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 158,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "fa4242c5e6beae543328d948f5b74955ddb69b477d119a0dc855a73d8095a71c",
+      "size_bytes": 1761256,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 151,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "IMAGE": 1,
+        "LINE": 450,
+        "LWPOLYLINE": 3191,
+        "TEXT": 151
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 151,
+        "SIGNATURE_OVERLAY": 1,
+        "SOURCE_TEXT_OUTLINE": 1220,
+        "TEXT_FALLBACK_OUTLINE": 29,
+        "TRACE_CURVE": 885,
+        "TRACE_STRAIGHT": 450,
+        "TRACE_TEXT_SYMBOL": 1057
+      },
+      "native_TEXT_count": 151,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-007-120dpi/environment-source-page-007-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 151,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "75938e2e6db935c4875fcfb6e9c9c5fd7af8f21f4003e552b6e2fc677de07691",
+      "size_bytes": 1782894,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 82,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 302,
+        "LWPOLYLINE": 2250,
+        "TEXT": 82
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 82,
+        "SOURCE_TEXT_OUTLINE": 556,
+        "TEXT_FALLBACK_OUTLINE": 10,
+        "TRACE_CURVE": 954,
+        "TRACE_STRAIGHT": 302,
+        "TRACE_TEXT_SYMBOL": 730
+      },
+      "native_TEXT_count": 82,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-008-120dpi/environment-source-page-008-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 82,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "07073278ca83ce6f228417c3a1a443dc8ff106ed72ab0a95f1b414126d303d43",
+      "size_bytes": 1262464,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 157,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 474,
+        "LWPOLYLINE": 2915,
+        "TEXT": 157
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 157,
+        "SOURCE_TEXT_OUTLINE": 1076,
+        "TEXT_FALLBACK_OUTLINE": 4,
+        "TRACE_CURVE": 864,
+        "TRACE_STRAIGHT": 474,
+        "TRACE_TEXT_SYMBOL": 971
+      },
+      "native_TEXT_count": 157,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-009-120dpi/environment-source-page-009-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 157,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "cca81d7a509c80c29cef8a4beacd466f725e3bb0cac1cdd4c5db8a6f45d3b665",
+      "size_bytes": 1660759,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 149,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 458,
+        "LWPOLYLINE": 3071,
+        "TEXT": 149
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 149,
+        "SOURCE_TEXT_OUTLINE": 1100,
+        "TEXT_FALLBACK_OUTLINE": 6,
+        "TRACE_CURVE": 925,
+        "TRACE_STRAIGHT": 458,
+        "TRACE_TEXT_SYMBOL": 1040
+      },
+      "native_TEXT_count": 149,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-010-120dpi/environment-source-page-010-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 149,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "6caf8944a8f6da9b8242b5fdb8172ffe67f9c721eeba96cafd5b898e9908b006",
+      "size_bytes": 1742956,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 161,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 496,
+        "LWPOLYLINE": 2892,
+        "TEXT": 161
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 161,
+        "SOURCE_TEXT_OUTLINE": 1105,
+        "TEXT_FALLBACK_OUTLINE": 14,
+        "TRACE_CURVE": 787,
+        "TRACE_STRAIGHT": 496,
+        "TRACE_TEXT_SYMBOL": 986
+      },
+      "native_TEXT_count": 161,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-011-120dpi/environment-source-page-011-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 161,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "9121d68b06484dfee1466e741489054e4743aed9286f6e69b5c4e0888533adb8",
+      "size_bytes": 1678678,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 166,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 491,
+        "LWPOLYLINE": 3218,
+        "TEXT": 166
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 166,
+        "SOURCE_TEXT_OUTLINE": 1218,
+        "TEXT_FALLBACK_OUTLINE": 4,
+        "TRACE_CURVE": 877,
+        "TRACE_STRAIGHT": 491,
+        "TRACE_TEXT_SYMBOL": 1119
+      },
+      "native_TEXT_count": 166,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-012-120dpi/environment-source-page-012-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 166,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "9e5fbcc24b6a751ade299934ba92f1a19e65711adeb40f3c4f85335b20561ef7",
+      "size_bytes": 1856515,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 153,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 470,
+        "LWPOLYLINE": 3085,
+        "TEXT": 153
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 153,
+        "SOURCE_TEXT_OUTLINE": 1088,
+        "TEXT_FALLBACK_OUTLINE": 3,
+        "TRACE_CURVE": 878,
+        "TRACE_STRAIGHT": 470,
+        "TRACE_TEXT_SYMBOL": 1116
+      },
+      "native_TEXT_count": 153,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-013-120dpi/environment-source-page-013-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 153,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "dd56a0d0f2d07b0c5b6075d703fc43678f9ca8b2afa5aba75fab3d036e78fcb8",
+      "size_bytes": 1721272,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 154,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 477,
+        "LWPOLYLINE": 3339,
+        "TEXT": 154
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 154,
+        "SOURCE_TEXT_OUTLINE": 1303,
+        "TRACE_CURVE": 950,
+        "TRACE_STRAIGHT": 477,
+        "TRACE_TEXT_SYMBOL": 1086
+      },
+      "native_TEXT_count": 154,
+      "path": "validation/editable-text-recovery/pages/environment-source-page-014-120dpi/environment-source-page-014-120dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 154,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "6e28c69ed4a076eff2faa1c97982b9c0fd8f8c0e0ab794183a38492779d18c36",
+      "size_bytes": 1915332,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 219,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 651,
+        "LWPOLYLINE": 4984,
+        "TEXT": 219
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 219,
+        "SOURCE_TEXT_OUTLINE": 1908,
+        "TRACE_CURVE": 991,
+        "TRACE_STRAIGHT": 651,
+        "TRACE_TEXT_SYMBOL": 2085
+      },
+      "native_TEXT_count": 219,
+      "path": "validation/editable-text-recovery/pages/page-001-d9fbda7-comparison-300dpi/page-001-d9fbda7-comparison-300dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 219,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "8aded304670142d1c9c53726c69fa674cb9e46dea5b6057003571083e7a939c9",
+      "size_bytes": 4166873,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 206,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 633,
+        "LWPOLYLINE": 4165,
+        "TEXT": 206
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 206,
+        "SOURCE_TEXT_OUTLINE": 1784,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 894,
+        "TRACE_STRAIGHT": 633,
+        "TRACE_TEXT_SYMBOL": 1482
+      },
+      "native_TEXT_count": 206,
+      "path": "validation/editable-text-recovery/pages/page-001-fixed-failure-240dpi/page-001-fixed-failure-240dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 206,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "b3d39d37bd62e7f5d7bfc3201313e8c574ee0ab9d4752f95040984117d84a69c",
+      "size_bytes": 3366215,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 2,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 172,
+        "LWPOLYLINE": 212,
+        "TEXT": 2
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 2,
+        "SOURCE_TEXT_OUTLINE": 27,
+        "TRACE_CURVE": 85,
+        "TRACE_STRAIGHT": 172,
+        "TRACE_TEXT_SYMBOL": 100
+      },
+      "native_TEXT_count": 2,
+      "path": "validation/editable-text-recovery/pages/perspective-sample-plan-096dpi/perspective-sample-plan-096dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 2,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "f427837dd8f74236cc92af3e6a6776230355341728c05d996eac69b35edc73a9",
+      "size_bytes": 271345,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 89,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 503,
+        "LWPOLYLINE": 858,
+        "TEXT": 89
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 89,
+        "SOURCE_TEXT_OUTLINE": 851,
+        "TEXT_FALLBACK_OUTLINE": 2,
+        "TRACE_STRAIGHT": 503,
+        "TRACE_TEXT_SYMBOL": 5
+      },
+      "native_TEXT_count": 89,
+      "path": "validation/editable-text-recovery/pages/warehouse-formal-page-001-150dpi/warehouse-formal-page-001-150dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 89,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "941342ef67cb23bd18bb26090f7822a8f280ea735236ec119066821a40c90797",
+      "size_bytes": 625626,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 77,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 318,
+        "LWPOLYLINE": 605,
+        "TEXT": 77
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 77,
+        "SOURCE_TEXT_OUTLINE": 471,
+        "TRACE_CURVE": 15,
+        "TRACE_STRAIGHT": 318,
+        "TRACE_TEXT_SYMBOL": 119
+      },
+      "native_TEXT_count": 77,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-001-072dpi/warehouse-source-page-001-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 77,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "76d413586126c3f77d6c09476a794083a39f23656bf7e70b54686225fdacc201",
+      "size_bytes": 414991,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 83,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 468,
+        "LWPOLYLINE": 907,
+        "TEXT": 83
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 83,
+        "SOURCE_TEXT_OUTLINE": 728,
+        "TRACE_CURVE": 25,
+        "TRACE_STRAIGHT": 468,
+        "TRACE_TEXT_SYMBOL": 154
+      },
+      "native_TEXT_count": 83,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-001-300dpi/warehouse-source-page-001-300dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 83,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "02186c83b8f15fdecee9d2ac97b3e8032d54a8d966d4d1b9651c32ce70b8811b",
+      "size_bytes": 802165,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 88,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 568,
+        "LWPOLYLINE": 1078,
+        "TEXT": 88
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 88,
+        "SOURCE_TEXT_OUTLINE": 960,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 39,
+        "TRACE_STRAIGHT": 568,
+        "TRACE_TEXT_SYMBOL": 74
+      },
+      "native_TEXT_count": 88,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-001-600dpi/warehouse-source-page-001-600dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 88,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "05e5c1f91e85ca9e49800b4425b7b56072a4b073db17e962f3f022b863065cd7",
+      "size_bytes": 1407997,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 143,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 117,
+        "LWPOLYLINE": 1591,
+        "TEXT": 143
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 143,
+        "SOURCE_TEXT_OUTLINE": 888,
+        "TEXT_FALLBACK_OUTLINE": 5,
+        "TRACE_CURVE": 140,
+        "TRACE_STRAIGHT": 117,
+        "TRACE_TEXT_SYMBOL": 558
+      },
+      "native_TEXT_count": 143,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-002-072dpi/warehouse-source-page-002-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 143,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "47b529271d1714bc288a2c4af600aa345d445564e845c0b3cc7c6fa91e473a2f",
+      "size_bytes": 903085,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 166,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 416,
+        "LWPOLYLINE": 1900,
+        "TEXT": 166
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 166,
+        "SOURCE_TEXT_OUTLINE": 891,
+        "TEXT_FALLBACK_OUTLINE": 1,
+        "TRACE_CURVE": 278,
+        "TRACE_STRAIGHT": 416,
+        "TRACE_TEXT_SYMBOL": 730
+      },
+      "native_TEXT_count": 166,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-003-072dpi/warehouse-source-page-003-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 166,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "c27f66b8415ff26188c01e65d306cbc8820e1e1d7222e2c6a49bb05f8a4b5b92",
+      "size_bytes": 1260535,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 121,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 377,
+        "LWPOLYLINE": 1155,
+        "TEXT": 121
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 121,
+        "SOURCE_TEXT_OUTLINE": 517,
+        "TEXT_FALLBACK_OUTLINE": 1,
+        "TRACE_CURVE": 210,
+        "TRACE_STRAIGHT": 377,
+        "TRACE_TEXT_SYMBOL": 427
+      },
+      "native_TEXT_count": 121,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-004-072dpi/warehouse-source-page-004-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 121,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "8f8cd39d5d240892a67dc74c4428f20572a5ff6bf09353572c30b9805b45284f",
+      "size_bytes": 876467,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 128,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 345,
+        "LWPOLYLINE": 1160,
+        "TEXT": 128
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 128,
+        "SOURCE_TEXT_OUTLINE": 553,
+        "TEXT_FALLBACK_OUTLINE": 1,
+        "TRACE_CURVE": 225,
+        "TRACE_STRAIGHT": 345,
+        "TRACE_TEXT_SYMBOL": 381
+      },
+      "native_TEXT_count": 128,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-005-072dpi/warehouse-source-page-005-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 128,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "ca9944bbb2e8403bfa8ad46a24b96a7e80f13eb81410b899320f5e30d344b175",
+      "size_bytes": 877676,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 130,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 350,
+        "LWPOLYLINE": 1097,
+        "TEXT": 130
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 130,
+        "SOURCE_TEXT_OUTLINE": 522,
+        "TEXT_FALLBACK_OUTLINE": 2,
+        "TRACE_CURVE": 208,
+        "TRACE_STRAIGHT": 350,
+        "TRACE_TEXT_SYMBOL": 365
+      },
+      "native_TEXT_count": 130,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-006-072dpi/warehouse-source-page-006-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 130,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "28140306989eb030f35aee57ba025df20a210682cb150fbc84de489bd332230c",
+      "size_bytes": 839639,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    },
+    {
+      "OCR_TEXT_layer_entity_count": 126,
+      "all_OCR_TEXT_layer_entities_are_TEXT": true,
+      "category": "final_page",
+      "entity_types": {
+        "LINE": 410,
+        "LWPOLYLINE": 1601,
+        "TEXT": 126
+      },
+      "final_page_report_passed": true,
+      "initial_audit_error_count": 0,
+      "layer_entity_counts": {
+        "OCR_TEXT": 126,
+        "SOURCE_TEXT_OUTLINE": 642,
+        "TEXT_FALLBACK_OUTLINE": 1,
+        "TRACE_CURVE": 205,
+        "TRACE_STRAIGHT": 410,
+        "TRACE_TEXT_SYMBOL": 753
+      },
+      "native_TEXT_count": 126,
+      "path": "validation/editable-text-recovery/pages/warehouse-source-page-007-072dpi/warehouse-source-page-007-072dpi.dxf",
+      "read_save_read_passed": true,
+      "roundtrip_TEXT_content_preserved": true,
+      "roundtrip_TEXT_count": 126,
+      "roundtrip_audit_error_count": 0,
+      "sha256": "4cd24c01a33a5418a99f6d0d8cb9ff0267021f71853253f54faf26d1b7095305",
+      "size_bytes": 1046631,
+      "source_text_outline_layer": {
+        "all_frozen": true,
+        "all_off": true,
+        "default_visible": false,
+        "present": true
+      }
+    }
+  ],
+  "final_DXF_count": 33,
+  "git_commit": "c7269b1dee8eaf84c386e97759d56064de3dac1b",
+  "inventory_count": 50,
+  "schema_version": 1
+}

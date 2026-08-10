@@ -1,0 +1,5 @@
+# P1B unique recommendation
+
+Implement one canonical fit-to-quad function in `ocr_outline_export.py`; keep every eligible item as one native TEXT and keep counts unchanged. Use original OCR quad, exact exported LFF bounds, target height, unconstrained finite width fit that never enlarges beyond target, visible-bounds-centered insertion, normalized 0/90/180/270 rotation, explicit abnormal-box fallback and persisted original/predicted geometry. Delegate or retire legacy creators in `trace_dxf_entities.py` and `dxf_exporter.py`.
+
+Automatic gates: unchanged candidate IDs/count/entity type; per-entity width/height fit; zero unreported clamp; no new cell crossing; 0/90/270/arbitrary fixtures; same single/batch geometry; STYLE/font source and read-edit-save-read persistence. LibreCAD UAT: inspect Chinese, digits, English, mixed/title/border/rotated samples on three pages, modify and reopen, then run all real pages/DXFs. One independent commit `fix: fit native text geometry to OCR quads`; revert that commit to roll back. Do not combine P2.

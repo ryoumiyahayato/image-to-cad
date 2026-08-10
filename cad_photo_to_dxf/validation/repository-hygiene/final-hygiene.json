@@ -1,0 +1,11 @@
+{
+  "approved_runtime_asset_count": 1,
+  "approved_runtime_assets_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p1br2-final\\cad_photo_to_dxf\\validation\\repository-hygiene\\approved_runtime_assets.json",
+  "approved_source_fixture_count": 0,
+  "approved_source_fixtures_manifest": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p1br2-final\\cad_photo_to_dxf\\validation\\repository-hygiene\\approved_source_fixtures.json",
+  "finding_count": 0,
+  "findings": [],
+  "maximum_file_size_bytes": 20971520,
+  "passed": true,
+  "repository_root": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p1br2-final"
+}

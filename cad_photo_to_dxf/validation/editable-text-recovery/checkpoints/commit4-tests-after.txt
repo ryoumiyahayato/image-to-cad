@@ -1,0 +1,16 @@
+Ruff:
+All checks passed!
+
+Focused post-commit tests:
+................................                                         [100%]
+32 passed, 120 warnings in 1.70s
+
+Included:
+- tests/test_native_text_geometry.py
+- tests/test_font_aware_ocr_export.py
+- tests/test_text_output_contract.py
+- tests/test_trace_export.py
+- tests/test_system_refactor_invariants.py
+
+Committed tree:
+- fc6cd80 fix: fit native text geometry to OCR bounds

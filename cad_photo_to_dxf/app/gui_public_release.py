@@ -3,16 +3,88 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import time
 
-from PySide6.QtWidgets import QDialog, QMessageBox
+from PySide6.QtWidgets import QDialog, QLabel, QMessageBox, QPushButton
 
 from .gui_final_release import MainWindow as _OptimizedMainWindow
+from .gui_page_export import (
+    export_current_page_from_window,
+    export_processed_pages_from_window,
+)
 from .raster_trace import RasterTraceResult, trace_binary
 from .trace_paint import TracePaintDialog
 from .trace_verification import TraceVerificationResult, verify_trace_paths
 
 
+_EXPORT_BUTTON_LABELS = {
+    "导出同一 CAD（DWG / DXF）",
+    "导出当前 PDF 全部页 CAD（DWG / DXF）",
+    "导出 CAD（每页独立文件）",
+}
+
+
 class MainWindow(_OptimizedMainWindow):
     """Final user-facing terminology for editing and verification actions."""
+
+    def _build_controls(self):  # type: ignore[override]
+        scroll = super()._build_controls()
+        export_button: QPushButton | None = None
+        for button in scroll.findChildren(QPushButton):
+            if button.text() in _EXPORT_BUTTON_LABELS:
+                export_button = button
+                break
+
+        if export_button is not None:
+            export_button.setText("导出当前页 CAD")
+            export_button.setToolTip(
+                "只导出当前已经处理完成的页面，不检查其他 PDF 页面。"
+            )
+            parent = export_button.parentWidget()
+            parent_layout = parent.layout() if parent is not None else None
+            self.export_processed_pages_button = QPushButton(
+                "导出已处理页面（每页独立文件）",
+                parent,
+            )
+            self.export_processed_pages_button.setToolTip(
+                "导出所有已经处理完成的页面；未处理页面会被跳过。"
+            )
+            self.export_processed_pages_button.clicked.connect(
+                self.export_processed_pages
+            )
+            if parent_layout is not None:
+                index = parent_layout.indexOf(export_button)
+                if hasattr(parent_layout, "insertWidget"):
+                    parent_layout.insertWidget(
+                        index + 1,
+                        self.export_processed_pages_button,
+                    )
+                elif hasattr(parent_layout, "addRow"):
+                    parent_layout.addRow(self.export_processed_pages_button)
+                else:
+                    parent_layout.addWidget(self.export_processed_pages_button)
+
+        for label in scroll.findChildren(QLabel):
+            text = label.text()
+            if "多页 PDF" in text and (
+                "合并" in text or "PAGE-###" in text
+            ):
+                label.setText(
+                    "“导出当前页 CAD”只导出当前处理结果；"
+                    "“导出已处理页面”会为每个已处理页面生成独立文件，"
+                    "未处理页面不会阻止导出。"
+                )
+                label.setWordWrap(True)
+
+        if hasattr(self, "page_summary_label"):
+            self.page_summary_label.setText(
+                "当前页处理完成后可立即导出；也可批量导出所有已处理页面。"
+            )
+        return scroll
+
+    def export_file(self) -> None:
+        export_current_page_from_window(self)
+
+    def export_processed_pages(self) -> None:
+        export_processed_pages_from_window(self)
 
     def review_layers(self) -> None:
         if self.binary_image is None:

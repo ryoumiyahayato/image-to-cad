@@ -1,0 +1,88 @@
+{
+  "candidate_primary_semantic_conflict_count": 0,
+  "candidate_source_ownership_violation_count": 0,
+  "checks": {
+    "DXF_audit_error_count_is_zero": true,
+    "DXF_read_save_read_and_edit_passes": true,
+    "OCR_threshold_contract_recorded_unchanged": true,
+    "baseline_was_not_updated": true,
+    "candidate_primary_semantic_conflict_count_is_zero": true,
+    "candidate_source_pixel_ownership_is_conserved": true,
+    "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+    "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+    "fallback_and_text_symbol_conflict_count_is_zero": true,
+    "formal_structure_and_protection_audit_passes": true,
+    "native_TEXT_count_equals_text_emit_eligible_count": true,
+    "native_TEXT_geometry_contract_passes": true,
+    "no_duplicate_visible_text_representation": true,
+    "preview_and_DXF_consumed_same_FinalStructure": true,
+    "replacement_unsafe_does_not_downgrade_eligible_text": true,
+    "unsafe_source_outline_backup_is_default_hidden": true
+  },
+  "duplicate_visible_representation_count": 0,
+  "dxf_audit_error_count": 0,
+  "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-009-120dpi\\environment-source-page-009-120dpi.dxf",
+  "dxf_sha256": "cca81d7a509c80c29cef8a4beacd466f725e3bb0cac1cdd4c5db8a6f45d3b665",
+  "elapsed_seconds": 48.59,
+  "eligible_candidate_text_symbol_count": 0,
+  "fallback_and_text_symbol_conflict_count": 0,
+  "formal_structural_safety": {
+    "baseline_was_updated": false,
+    "mode": "whole_source_page_without_frozen_page_metric",
+    "passed": true,
+    "records": []
+  },
+  "layer_entity_counts": {
+    "OCR_TEXT": 157,
+    "SOURCE_TEXT_OUTLINE": 1076,
+    "TEXT_FALLBACK_OUTLINE": 4,
+    "TRACE_CURVE": 864,
+    "TRACE_STRAIGHT": 474,
+    "TRACE_TEXT_SYMBOL": 971
+  },
+  "native_TEXT_count": 157,
+  "passed": true,
+  "replacement_unsafe_fallback_without_hard_reject_count": 0,
+  "residual_OCR_candidate_count": 0,
+  "roundtrip": {
+    "all_reopened_entities_still_TEXT": true,
+    "audit_error_count": 0,
+    "expected_TEXT_count": 157,
+    "initial_TEXT_count": 157,
+    "modified_original": "无锡市建筑",
+    "modified_value": "无锡市建筑 [editable-roundtrip]",
+    "modified_value_preserved": true,
+    "passed": true,
+    "reopened_TEXT_count": 157
+  },
+  "run_id": "environment-source-page-009-120dpi",
+  "schema_version": 1,
+  "source_text_outline_candidate_count": 137,
+  "source_text_outline_entity_count": 1076,
+  "source_text_outline_layer": {
+    "default_visible": false,
+    "frozen": true,
+    "off": true,
+    "present": true
+  },
+  "structure_id": "91125bf9b13ec6a64a48483ed8798392bbb7ef39a81b559564a8654ea9d925e7",
+  "text_symbol_entity_count": 971,
+  "text_symbol_ownership": {
+    "eligible_geometric_touch_objects": 3,
+    "eligible_geometric_touch_pixels": 7,
+    "eligible_owned_objects": 0,
+    "eligible_owned_pixels": 0,
+    "uncertain_geometric_touch_objects": 0,
+    "uncertain_geometric_touch_pixels": 0,
+    "uncertain_owned_objects": 0,
+    "uncertain_owned_pixels": 0
+  },
+  "uncertain_text_candidate_count": 1,
+  "uncertain_text_outline_entity_count": 4,
+  "uncertain_text_outline_layer": {
+    "default_visible": true,
+    "frozen": false,
+    "off": false,
+    "present": true
+  }
+}

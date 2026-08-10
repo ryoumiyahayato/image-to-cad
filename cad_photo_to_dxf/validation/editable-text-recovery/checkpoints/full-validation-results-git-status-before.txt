@@ -1,0 +1,11 @@
+## fix/non-destructive-editable-text
+ M validation/editable-text-recovery/full-validation-manifest.json
+ M validation/editable-text-recovery/per-page-index.json
+ M validation/editable-text-recovery/run_full_validation.py
+?? validation/editable-text-recovery/build_final_delivery.py
+?? validation/editable-text-recovery/checkpoints/full-validation-batch*.log
+?? validation/editable-text-recovery/pages/<32-new-page-directories>/
+?? validation/editable-text-recovery/test-results.xml
+
+No production files, regression baselines, tmp files, or unrelated untracked
+directories are modified or staged by this validation-results commit.

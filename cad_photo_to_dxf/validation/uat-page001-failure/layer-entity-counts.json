@@ -1,0 +1,741 @@
+{
+  "audit_scope": "read_only_production_audit",
+  "candidate_to_entity_distinction": {
+    "RESIDUAL_GRAPHIC_candidate_count": 2,
+    "RESIDUAL_GRAPHIC_dxf_entity_count": 535,
+    "TEXT_FALLBACK_OUTLINE_candidate_count": 169,
+    "TEXT_FALLBACK_OUTLINE_dxf_entity_count": 1393
+  },
+  "color_audit": {
+    "current_curve_color_commit": "5a1b06585b6f068bb5f61e16fd32b96e4f54275b",
+    "diagnostic_mode_design": {
+      "aci_map": {
+        "OCR_TEXT": 6,
+        "RESIDUAL_GRAPHIC": 3,
+        "SCAN_UNDERLAY": 8,
+        "SIGNATURE_OVERLAY": 6,
+        "TEXT_FALLBACK_OUTLINE": 2,
+        "TRACE_CURVE": 6,
+        "TRACE_STRAIGHT": 5,
+        "TRACE_TEXT_SYMBOL": 6
+      },
+      "default": false,
+      "preserve_current_category_colors": true
+    },
+    "fallback_residual_color_commit": "8fd1d6cdc5645fa27bc9bb9bf5045b5dcc0e2a8e",
+    "first_default_multicolor_commit": "c96545f84f537e075e75de23ea91886f9b6df2b7",
+    "normal_mode_design": {
+      "configurable": true,
+      "default": true,
+      "entity_color": "BYLAYER",
+      "optional_secondary_aci": 8,
+      "preserve_semantic_layers": true,
+      "primary_default_aci": 7
+    },
+    "purpose_in_source": "TracePalette docstring: colors used to distinguish geometry without changing its shape.",
+    "source_locations": [
+      "app/trace_dxf_entities.py:20-35",
+      "app/trace_gui_export.py:22"
+    ]
+  },
+  "dxf_modelspace_entity_count": 4527,
+  "entity_counts": {
+    "OCR_TEXT": {
+      "by_type": {
+        "TEXT": 37
+      },
+      "entity_aci_colors": {
+        "6": 37
+      },
+      "total": 37
+    },
+    "RESIDUAL_GRAPHIC": {
+      "by_type": {
+        "LWPOLYLINE": 535
+      },
+      "entity_aci_colors": {
+        "3": 535
+      },
+      "total": 535
+    },
+    "TEXT_FALLBACK_OUTLINE": {
+      "by_type": {
+        "LWPOLYLINE": 1393
+      },
+      "entity_aci_colors": {
+        "2": 1393
+      },
+      "total": 1393
+    },
+    "TRACE_CURVE": {
+      "by_type": {
+        "LWPOLYLINE": 523
+      },
+      "entity_aci_colors": {
+        "6": 523
+      },
+      "total": 523
+    },
+    "TRACE_STRAIGHT": {
+      "by_type": {
+        "LINE": 633
+      },
+      "entity_aci_colors": {
+        "5": 633
+      },
+      "total": 633
+    },
+    "TRACE_TEXT_SYMBOL": {
+      "by_type": {
+        "LWPOLYLINE": 1406
+      },
+      "entity_aci_colors": {
+        "6": 1406
+      },
+      "total": 1406
+    }
+  },
+  "git": {
+    "first_explicit_fallback_commit": "8fd1d6cdc5645fa27bc9bb9bf5045b5dcc0e2a8e",
+    "first_native_text_regression_commit": "5a1b06585b6f068bb5f61e16fd32b96e4f54275b",
+    "head": "aa1e7cd0b5cb383879aace65b494be36eef23d70"
+  },
+  "historical_same_dpi_probes": {
+    "5a1b065": {
+      "accepted_native_text_count": 43,
+      "approved_false": 0,
+      "approved_true": 208,
+      "dpi": 240,
+      "ocr_candidate_count": 208,
+      "replacement_safe_false": 165,
+      "replacement_safe_true": 43
+    },
+    "d9fbda7": {
+      "accepted_native_text_count": 139,
+      "approved_false": 67,
+      "approved_true": 141,
+      "dpi": 240,
+      "ocr_candidate_count": 208,
+      "replacement_safe_false": 165,
+      "replacement_safe_true": 43
+    }
+  },
+  "historical_saved_artifact": {
+    "entity_counts": {
+      "OCR_TEXT": {
+        "by_type": {
+          "TEXT": 214
+        },
+        "entity_aci_colors": {
+          "6": 214
+        },
+        "total": 214
+      },
+      "SIGNATURE_OVERLAY": {
+        "by_type": {
+          "IMAGE": 2
+        },
+        "entity_aci_colors": {
+          "256": 2
+        },
+        "total": 2
+      },
+      "TRACE_CURVE": {
+        "by_type": {
+          "LWPOLYLINE": 62
+        },
+        "entity_aci_colors": {
+          "3": 62
+        },
+        "total": 62
+      },
+      "TRACE_STRAIGHT": {
+        "by_type": {
+          "LINE": 986
+        },
+        "entity_aci_colors": {
+          "5": 986
+        },
+        "total": 986
+      },
+      "TRACE_TEXT_SYMBOL": {
+        "by_type": {
+          "LWPOLYLINE": 861
+        },
+        "entity_aci_colors": {
+          "6": 861
+        },
+        "total": 861
+      }
+    },
+    "layer_definitions": [
+      {
+        "aci_color": 7,
+        "base_name": "0",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": -3,
+        "name": "0",
+        "rgb": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "aci_color": 7,
+        "base_name": "Defpoints",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": -3,
+        "name": "Defpoints",
+        "rgb": [
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "aci_color": 8,
+        "base_name": "SCAN_UNDERLAY",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "SCAN_UNDERLAY",
+        "rgb": [
+          128,
+          128,
+          128
+        ]
+      },
+      {
+        "aci_color": 5,
+        "base_name": "TRACE_STRAIGHT",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "TRACE_STRAIGHT",
+        "rgb": [
+          0,
+          0,
+          255
+        ]
+      },
+      {
+        "aci_color": 3,
+        "base_name": "TRACE_CURVE",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "TRACE_CURVE",
+        "rgb": [
+          0,
+          255,
+          0
+        ]
+      },
+      {
+        "aci_color": 6,
+        "base_name": "TRACE_TEXT_SYMBOL",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "TRACE_TEXT_SYMBOL",
+        "rgb": [
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "aci_color": 6,
+        "base_name": "OCR_TEXT",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "OCR_TEXT",
+        "rgb": [
+          255,
+          0,
+          255
+        ]
+      },
+      {
+        "aci_color": 6,
+        "base_name": "SIGNATURE_OVERLAY",
+        "is_frozen": false,
+        "is_off": false,
+        "lineweight": 0,
+        "name": "SIGNATURE_OVERLAY",
+        "rgb": [
+          255,
+          0,
+          255
+        ]
+      }
+    ],
+    "native_text_samples": [
+      "无锡市建筑设计研究院",
+      "有限责任公司",
+      "WUOI ARCHITECTURAL",
+      "DESIGH AND RESEARCH INSTTUTE Ca,LH.",
+      "2000",
+      "国泉甲级工程设计证卡编号：100107-aj",
+      "附楼3",
+      "49100",
+      "NOWEB",
+      "3-B",
+      "7600",
+      "1800",
+      "7600",
+      "8400",
+      "5800",
+      "11400",
+      "6500",
+      "3800",
+      "1800",
+      "2000",
+      "3800",
+      "3800",
+      "3800",
+      "11400",
+      "3800",
+      "3800",
+      "5900",
+      "2700",
+      "2500",
+      "5400",
+      "50",
+      "90",
+      "161",
+      "重注机柜",
+      "肥电间",
+      "潮防控制室与安保监控宣",
+      "5500",
+      "5500",
+      "环保展览厅",
+      "③"
+    ],
+    "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\user-pdf-check\\environment-page-001.dxf",
+    "sha256": "a2f3e537b508cb303a277c8fd5715740eb99aae37743aed8a59406f56c69daf2"
+  },
+  "inputs": {
+    "dxf": {
+      "bytes": 5401619,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-001.dxf",
+      "sha256": "ebefb5d2a7789f48e7388b572a90552ba7de9da4a31ac0c23e44cb54dd6d997e"
+    },
+    "pdf": {
+      "bytes": 18746417,
+      "path": "C:\\Users\\agcrf\\Desktop\\环保局主大楼.pdf",
+      "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7"
+    },
+    "report": {
+      "bytes": 12320,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\export.report.json",
+      "sha256": "3c97f698554eceee22a9252393d717acb92b12712d5e3715359f09c77c84a2d5"
+    }
+  },
+  "layer_definitions": [
+    {
+      "aci_color": 7,
+      "base_name": "0",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": -3,
+      "name": "0",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "aci_color": 7,
+      "base_name": "Defpoints",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": -3,
+      "name": "Defpoints",
+      "rgb": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "aci_color": 8,
+      "base_name": "SCAN_UNDERLAY",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_SCAN_UNDERLAY",
+      "rgb": [
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "aci_color": 5,
+      "base_name": "TRACE_STRAIGHT",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_TRACE_STRAIGHT",
+      "rgb": [
+        0,
+        0,
+        255
+      ]
+    },
+    {
+      "aci_color": 6,
+      "base_name": "TRACE_CURVE",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_TRACE_CURVE",
+      "rgb": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "aci_color": 6,
+      "base_name": "TRACE_TEXT_SYMBOL",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_TRACE_TEXT_SYMBOL",
+      "rgb": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "aci_color": 2,
+      "base_name": "TEXT_FALLBACK_OUTLINE",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_TEXT_FALLBACK_OUTLINE",
+      "rgb": [
+        255,
+        255,
+        0
+      ]
+    },
+    {
+      "aci_color": 3,
+      "base_name": "RESIDUAL_GRAPHIC",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_RESIDUAL_GRAPHIC",
+      "rgb": [
+        0,
+        255,
+        0
+      ]
+    },
+    {
+      "aci_color": 6,
+      "base_name": "OCR_TEXT",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_OCR_TEXT",
+      "rgb": [
+        255,
+        0,
+        255
+      ]
+    },
+    {
+      "aci_color": 6,
+      "base_name": "SIGNATURE_OVERLAY",
+      "is_frozen": false,
+      "is_off": false,
+      "lineweight": 0,
+      "name": "PAGE_001_SIGNATURE_OVERLAY",
+      "rgb": [
+        255,
+        0,
+        255
+      ]
+    }
+  ],
+  "ocr_routing_matrix": {
+    "approved_x_final_layer": {
+      "True": {
+        "OCR_TEXT": 37,
+        "RESIDUAL_GRAPHIC": 2,
+        "TEXT_FALLBACK_OUTLINE": 169
+      }
+    },
+    "downgrade_reason_x_final_layer": {
+      "confidence_below_contract": {
+        "RESIDUAL_GRAPHIC": 2
+      },
+      "none": {
+        "OCR_TEXT": 37
+      },
+      "replacement_unsafe": {
+        "TEXT_FALLBACK_OUTLINE": 169
+      }
+    },
+    "final_layer_counts": {
+      "OCR_TEXT": 37,
+      "RESIDUAL_GRAPHIC": 2,
+      "TEXT_FALLBACK_OUTLINE": 169
+    },
+    "primary_cause_x_final_layer": {
+      "bbox_or_orientation_unreliable": {
+        "TEXT_FALLBACK_OUTLINE": 3
+      },
+      "connected_component_crosses_bbox": {
+        "TEXT_FALLBACK_OUTLINE": 72
+      },
+      "connected_component_spans_characters": {
+        "TEXT_FALLBACK_OUTLINE": 42
+      },
+      "incomplete_character_coverage": {
+        "TEXT_FALLBACK_OUTLINE": 1
+      },
+      "ocr_confidence_below_contract": {
+        "RESIDUAL_GRAPHIC": 2
+      },
+      "ownership_pixels_incomplete": {
+        "TEXT_FALLBACK_OUTLINE": 6
+      },
+      "safe_before_ownership": {
+        "OCR_TEXT": 37
+      },
+      "uncovered_nearby_ink": {
+        "TEXT_FALLBACK_OUTLINE": 45
+      }
+    },
+    "replacement_safe_x_final_layer": {
+      "False": {
+        "RESIDUAL_GRAPHIC": 2,
+        "TEXT_FALLBACK_OUTLINE": 169
+      },
+      "True": {
+        "OCR_TEXT": 37
+      }
+    }
+  },
+  "phase_dxf_timeline": [
+    {
+      "fallback_outline_entities": 0,
+      "native_text_entities": 11,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase4-real-document-regression-dxf\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase4",
+      "residual_graphic_entities": 0,
+      "trace_text_symbol_entities": 2275
+    },
+    {
+      "fallback_outline_entities": 0,
+      "native_text_entities": 11,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase5-strict-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase5",
+      "residual_graphic_entities": 0,
+      "trace_text_symbol_entities": 2256
+    },
+    {
+      "fallback_outline_entities": 0,
+      "native_text_entities": 11,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase7-final-strict-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase7",
+      "residual_graphic_entities": 0,
+      "trace_text_symbol_entities": 2256
+    },
+    {
+      "fallback_outline_entities": 0,
+      "native_text_entities": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase8-final-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase8",
+      "residual_graphic_entities": 0,
+      "trace_text_symbol_entities": 2262
+    },
+    {
+      "fallback_outline_entities": 0,
+      "native_text_entities": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase9-real-regression-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase9",
+      "residual_graphic_entities": 0,
+      "trace_text_symbol_entities": 2262
+    },
+    {
+      "fallback_outline_entities": 1098,
+      "native_text_entities": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase10-real-regression-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase10",
+      "residual_graphic_entities": 14,
+      "trace_text_symbol_entities": 1164
+    },
+    {
+      "fallback_outline_entities": 1098,
+      "native_text_entities": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase11-real-regression-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase11",
+      "residual_graphic_entities": 14,
+      "trace_text_symbol_entities": 1164
+    },
+    {
+      "fallback_outline_entities": 1098,
+      "native_text_entities": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\output\\ci\\phase12-real-regression-artifacts\\environment-scan-page-001-120dpi.dxf",
+      "phase": "phase12",
+      "residual_graphic_entities": 14,
+      "trace_text_symbol_entities": 1164
+    }
+  ],
+  "report_page_001": {
+    "dwg": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-001.dwg",
+    "dwg_error": null,
+    "dxf": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-001.dxf",
+    "logo_count": 0,
+    "ocr_candidate_count": 208,
+    "ocr_text_line_count": 37,
+    "page": 1,
+    "residual_graphic_count": 2,
+    "scan_underlays": [],
+    "signature_overlays": [],
+    "structure_id": "cb64caae9892bdb64147f991f06a98b29e56eec18d593caff58d040d7697b441",
+    "text_downgrade_reasons": {
+      "confidence_below_contract": 2,
+      "replacement_unsafe": 169
+    },
+    "text_fallback_outline_count": 169,
+    "trace_path_count": 3175,
+    "trace_vertex_count": 94976
+  },
+  "reproduction": {
+    "dpi": 240,
+    "matches_report": true,
+    "pdf_page_size_mm": [
+      419.48098449707027,
+      296.54501291910805
+    ],
+    "source_shape": [
+      2803,
+      3964
+    ],
+    "structure_id": "cb64caae9892bdb64147f991f06a98b29e56eec18d593caff58d040d7697b441"
+  },
+  "sample_analysis": {
+    "current_native_correct_samples_present": [
+      "附楼3",
+      "49100",
+      "8400",
+      "7600",
+      "11400",
+      "3800",
+      "2700",
+      "±0.000",
+      "FK1"
+    ],
+    "current_native_unique_text_count": 31,
+    "current_ocr_known_error_samples_present": [
+      "DESIGH AND RESEARCH INSTIUTE Co,LH.",
+      "国泉甲级工程资计证卡编号：100107-sj",
+      "NOWES",
+      "肥电间",
+      "驿电机房"
+    ],
+    "current_ocr_unique_text_count": 159,
+    "current_recognized_but_not_native_examples": [
+      "无锡市建筑设计研究院",
+      "有限责任公司",
+      "WUDI ARCHITECTURAL",
+      "DESIGH AND RESEARCH INSTIUTE Co,LH.",
+      "国泉甲级工程资计证卡编号：100107-sj",
+      "3",
+      "NOWES",
+      "5800",
+      "6500",
+      "2500",
+      "5900",
+      "5400",
+      "162",
+      "监注机柜",
+      "潮防控制室与安保监控宣",
+      "5500",
+      "5500",
+      "环保展览厅",
+      "③",
+      "143",
+      "140",
+      "136",
+      "③",
+      "137",
+      "146",
+      "空科机房",
+      "3",
+      "S",
+      "消防报警主机及广据主机",
+      "直鸟控制放银作"
+    ],
+    "historical_correct_samples_present": [
+      "无锡市建筑设计研究院",
+      "有限责任公司",
+      "附楼3",
+      "49100",
+      "8400",
+      "5800",
+      "7600",
+      "11400",
+      "6500",
+      "3800",
+      "2700",
+      "±0.000",
+      "FK1",
+      "一层消防平面图"
+    ],
+    "historical_known_error_samples_present": [
+      "WUOI ARCHITECTURAL",
+      "DESIGH AND RESEARCH INSTTUTE Ca,LH.",
+      "国泉甲级工程设计证卡编号：100107-aj",
+      "NOWEB",
+      "肥电间"
+    ],
+    "historical_native_unique_text_count": 164,
+    "historical_text_not_recognized_by_current_ocr_examples": [
+      "WUOI ARCHITECTURAL",
+      "DESIGH AND RESEARCH INSTTUTE Ca,LH.",
+      "国泉甲级工程设计证卡编号：100107-aj",
+      "NOWEB",
+      "3-B",
+      "50",
+      "90",
+      "161",
+      "重注机柜",
+      "147",
+      "应鸟控制被恒您",
+      "NH-BV-4x-G209C",
+      "消火栓居泵钱",
+      "165",
+      "135",
+      "100×100防火线槽，凤机水泵等应急控制",
+      "100x100防火线槽，凤机水泵等应急控制线",
+      "接待大厅",
+      "400x1C0防火线槽，内部换1:2用金属隔板分隔",
+      "152",
+      "梁底效设，分别效设广播及消防报警朝电线踏",
+      "详见系统图(竖井内沿墙明敷)",
+      "M",
+      "NH-BV-4x2.5-G20.WC消火栓启泵线",
+      "151首室",
+      "(169",
+      "环保晨览厅",
+      "150",
+      "消防靖子箱50M",
+      "清火检启泵线"
+    ]
+  },
+  "unsupported_raster_entity_types": {}
+}

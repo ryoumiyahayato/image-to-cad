@@ -1,0 +1,216 @@
+{
+  "candidate_primary_semantic_conflict_count": 0,
+  "candidate_source_ownership_violation_count": 0,
+  "checks": {
+    "DXF_audit_error_count_is_zero": true,
+    "DXF_read_save_read_and_edit_passes": true,
+    "OCR_threshold_contract_recorded_unchanged": true,
+    "baseline_was_not_updated": true,
+    "candidate_primary_semantic_conflict_count_is_zero": true,
+    "candidate_source_pixel_ownership_is_conserved": true,
+    "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+    "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+    "fallback_and_text_symbol_conflict_count_is_zero": true,
+    "formal_structure_and_protection_audit_passes": true,
+    "native_TEXT_count_equals_text_emit_eligible_count": true,
+    "native_TEXT_geometry_contract_passes": true,
+    "no_duplicate_visible_text_representation": true,
+    "preview_and_DXF_consumed_same_FinalStructure": true,
+    "replacement_unsafe_does_not_downgrade_eligible_text": true,
+    "unsafe_source_outline_backup_is_default_hidden": true
+  },
+  "duplicate_visible_representation_count": 0,
+  "dxf_audit_error_count": 0,
+  "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-002-072dpi\\warehouse-source-page-002-072dpi.dxf",
+  "dxf_sha256": "47b529271d1714bc288a2c4af600aa345d445564e845c0b3cc7c6fa91e473a2f",
+  "elapsed_seconds": 53.269,
+  "eligible_candidate_text_symbol_count": 0,
+  "fallback_and_text_symbol_conflict_count": 0,
+  "formal_structural_safety": {
+    "baseline_was_updated": false,
+    "mode": "formal_page_exact_baseline",
+    "passed": true,
+    "records": [
+      {
+        "content_audit": {
+          "object_counts": {
+            "logo": 0,
+            "outline": 693,
+            "signature": 0,
+            "structural_line": 117,
+            "text": 145
+          },
+          "regions": {
+            "forbidden_connection_regions": [
+              {
+                "added_foreground_pixels": 3614,
+                "bbox": [
+                  1150,
+                  950,
+                  420,
+                  280
+                ],
+                "final_foreground_pixels": 9599,
+                "id": "open-center-paper",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 114,
+                  "preserved_foreground": 9599,
+                  "signature": 0,
+                  "structural_line": 0,
+                  "text": 23354
+                },
+                "source_foreground_pixels": 5985
+              }
+            ],
+            "key_rois": [
+              {
+                "added_foreground_pixels": 8948,
+                "bbox": [
+                  450,
+                  250,
+                  850,
+                  800
+                ],
+                "final_foreground_pixels": 22383,
+                "id": "fire-system-schematic",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 13163,
+                  "preserved_foreground": 22383,
+                  "signature": 0,
+                  "structural_line": 3743,
+                  "text": 20239
+                },
+                "source_foreground_pixels": 13435
+              }
+            ],
+            "logo_regions": [
+              {
+                "added_foreground_pixels": 1370,
+                "bbox": [
+                  2300,
+                  500,
+                  170,
+                  250
+                ],
+                "final_foreground_pixels": 4697,
+                "id": "right-titleblock-logo",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 244,
+                  "preserved_foreground": 4697,
+                  "signature": 0,
+                  "structural_line": 4854,
+                  "text": 2991
+                },
+                "source_foreground_pixels": 3327
+              }
+            ],
+            "signature_regions": [],
+            "text_regions_to_preserve": [
+              {
+                "added_foreground_pixels": 16480,
+                "bbox": [
+                  1280,
+                  380,
+                  850,
+                  500
+                ],
+                "final_foreground_pixels": 43431,
+                "id": "system-notes",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 95,
+                  "preserved_foreground": 43431,
+                  "signature": 0,
+                  "structural_line": 0,
+                  "text": 110310
+                },
+                "source_foreground_pixels": 26951
+              }
+            ],
+            "true_breaks_to_repair": []
+          },
+          "sha256": "e7e89753919eb056f764c1c1b85bccb2f047e7dd57232cadb2a951f7eb0b8f62",
+          "text_output_contract": {
+            "confidence_hard_reject_count": 2,
+            "downgrade_reasons": {
+              "confidence_below_contract": 2
+            },
+            "fallback_count": 2,
+            "invalid_geometry_count": 0,
+            "ocr_candidate_count": 145,
+            "residual_count": 0,
+            "source_outline_backup_count": 102,
+            "source_outline_suppressible_count": 41,
+            "text_count": 143,
+            "text_emit_eligible_count": 143
+          }
+        },
+        "errors": [],
+        "expected_straight_line_count": 117,
+        "formal_document_id": "warehouse-system-page-002-72dpi",
+        "observed_straight_line_count": 117,
+        "passed": true
+      }
+    ]
+  },
+  "layer_entity_counts": {
+    "OCR_TEXT": 143,
+    "SOURCE_TEXT_OUTLINE": 888,
+    "TEXT_FALLBACK_OUTLINE": 5,
+    "TRACE_CURVE": 140,
+    "TRACE_STRAIGHT": 117,
+    "TRACE_TEXT_SYMBOL": 558
+  },
+  "native_TEXT_count": 143,
+  "passed": true,
+  "replacement_unsafe_fallback_without_hard_reject_count": 0,
+  "residual_OCR_candidate_count": 0,
+  "roundtrip": {
+    "all_reopened_entities_still_TEXT": true,
+    "audit_error_count": 0,
+    "expected_TEXT_count": 143,
+    "initial_TEXT_count": 143,
+    "modified_original": "G",
+    "modified_value": "G [editable-roundtrip]",
+    "modified_value_preserved": true,
+    "passed": true,
+    "reopened_TEXT_count": 143
+  },
+  "run_id": "warehouse-source-page-002-072dpi",
+  "schema_version": 1,
+  "source_text_outline_candidate_count": 102,
+  "source_text_outline_entity_count": 888,
+  "source_text_outline_layer": {
+    "default_visible": false,
+    "frozen": true,
+    "off": true,
+    "present": true
+  },
+  "structure_id": "189a5f3012f5cf0835ff4f1df276d94ace4d48ab8cb1b2c6ef7d012d19e4f774",
+  "text_symbol_entity_count": 558,
+  "text_symbol_ownership": {
+    "eligible_geometric_touch_objects": 3,
+    "eligible_geometric_touch_pixels": 24,
+    "eligible_owned_objects": 0,
+    "eligible_owned_pixels": 0,
+    "uncertain_geometric_touch_objects": 0,
+    "uncertain_geometric_touch_pixels": 0,
+    "uncertain_owned_objects": 0,
+    "uncertain_owned_pixels": 0
+  },
+  "uncertain_text_candidate_count": 2,
+  "uncertain_text_outline_entity_count": 5,
+  "uncertain_text_outline_layer": {
+    "default_visible": true,
+    "frozen": false,
+    "off": false,
+    "present": true
+  }
+}

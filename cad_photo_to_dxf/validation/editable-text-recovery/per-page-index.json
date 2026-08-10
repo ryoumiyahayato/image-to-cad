@@ -1,0 +1,308 @@
+{
+  "all_complete": true,
+  "all_passed": true,
+  "complete_run_count": 33,
+  "expected_run_count": 33,
+  "git_commit": "c7269b1dee8eaf84c386e97759d56064de3dac1b",
+  "passed_run_count": 33,
+  "runs": [
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-001-120dpi\\environment-source-page-001-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-001-120dpi\\environment-source-page-001-120dpi-entity-audit.json",
+      "id": "environment-source-page-001-120dpi",
+      "native_TEXT_count": 145,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "bcb23470a1e396ca13e0b5e8a166429274d619a426350bc92694d1f8f3174379"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-002-120dpi\\environment-source-page-002-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-002-120dpi\\environment-source-page-002-120dpi-entity-audit.json",
+      "id": "environment-source-page-002-120dpi",
+      "native_TEXT_count": 112,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "43c9e47e3daac8f6ff523aad25cd5baf5caaabdda185d5419af75c81b315a1e5"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-003-120dpi\\environment-source-page-003-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-003-120dpi\\environment-source-page-003-120dpi-entity-audit.json",
+      "id": "environment-source-page-003-120dpi",
+      "native_TEXT_count": 145,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "9bf5ca82448e1ab076849eb341e7a979b86a10c3e44545d56d775d44608538e9"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-004-120dpi\\environment-source-page-004-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-004-120dpi\\environment-source-page-004-120dpi-entity-audit.json",
+      "id": "environment-source-page-004-120dpi",
+      "native_TEXT_count": 159,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "e625966782a50469e0002fcf288d6bd9ab28dbb9635d0975ea8957953190bb32"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-005-120dpi\\environment-source-page-005-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-005-120dpi\\environment-source-page-005-120dpi-entity-audit.json",
+      "id": "environment-source-page-005-120dpi",
+      "native_TEXT_count": 150,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "7ab0d9bb4534322f9bd6027beada853f1ff6eea71550c24f2aac9300afd7b51c"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-006-120dpi\\environment-source-page-006-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-006-120dpi\\environment-source-page-006-120dpi-entity-audit.json",
+      "id": "environment-source-page-006-120dpi",
+      "native_TEXT_count": 158,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "e959d82ff8c1bb81b068fde28651342f114b3131fbb100c366feccf13de3d130"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-007-120dpi\\environment-source-page-007-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-007-120dpi\\environment-source-page-007-120dpi-entity-audit.json",
+      "id": "environment-source-page-007-120dpi",
+      "native_TEXT_count": 151,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "3c356efe50ad6a065e8940d4fef396febfbe20ffa7c2164f76a442f648bbda3a"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-008-120dpi\\environment-source-page-008-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-008-120dpi\\environment-source-page-008-120dpi-entity-audit.json",
+      "id": "environment-source-page-008-120dpi",
+      "native_TEXT_count": 82,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "9d414c97eb2880b788e27af4d0d368fc49553f32006f5b8f78108c7cced74d37"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-009-120dpi\\environment-source-page-009-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-009-120dpi\\environment-source-page-009-120dpi-entity-audit.json",
+      "id": "environment-source-page-009-120dpi",
+      "native_TEXT_count": 157,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "91125bf9b13ec6a64a48483ed8798392bbb7ef39a81b559564a8654ea9d925e7"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-010-120dpi\\environment-source-page-010-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-010-120dpi\\environment-source-page-010-120dpi-entity-audit.json",
+      "id": "environment-source-page-010-120dpi",
+      "native_TEXT_count": 149,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "921e680076771568ad1f899824d24104983219c3af98981a43c68dfe21f28808"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-011-120dpi\\environment-source-page-011-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-011-120dpi\\environment-source-page-011-120dpi-entity-audit.json",
+      "id": "environment-source-page-011-120dpi",
+      "native_TEXT_count": 161,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "9a5afaeb1bd94a552d356de00dc7756ce8f0e3c650795204d9f594c1000b9b09"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-012-120dpi\\environment-source-page-012-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-012-120dpi\\environment-source-page-012-120dpi-entity-audit.json",
+      "id": "environment-source-page-012-120dpi",
+      "native_TEXT_count": 166,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "8e8893431314b79433060d3f36b0acf3e983de144069f1bc26ddfef41dfdd091"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-013-120dpi\\environment-source-page-013-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-013-120dpi\\environment-source-page-013-120dpi-entity-audit.json",
+      "id": "environment-source-page-013-120dpi",
+      "native_TEXT_count": 153,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "bb72ac449c5da893430f9a9fe24065297c272d1c7826071d034a88a2b00ea45f"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-014-120dpi\\environment-source-page-014-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-source-page-014-120dpi\\environment-source-page-014-120dpi-entity-audit.json",
+      "id": "environment-source-page-014-120dpi",
+      "native_TEXT_count": 154,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "93671c0f99f3f798e87369c37dbca22238c2d8ba2975a3d4d3a381fab59f3d22"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-001-120dpi\\environment-formal-page-001-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-001-120dpi\\environment-formal-page-001-120dpi-entity-audit.json",
+      "id": "environment-formal-page-001-120dpi",
+      "native_TEXT_count": 139,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "6cfee7631e221619f3dde0b430c86df394667d4c63e2a09ade2a3702364f0a81"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-002-120dpi\\environment-formal-page-002-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-002-120dpi\\environment-formal-page-002-120dpi-entity-audit.json",
+      "id": "environment-formal-page-002-120dpi",
+      "native_TEXT_count": 97,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "95742be6e0345561130863efdc546f199b60966de366aacf46739c432d86a2f1"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-004-120dpi\\environment-formal-page-004-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-004-120dpi\\environment-formal-page-004-120dpi-entity-audit.json",
+      "id": "environment-formal-page-004-120dpi",
+      "native_TEXT_count": 157,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "47a7ed550ae08f45dd9dbf78b0f3397951383248db67921eec3c4897f36d4239"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-008-120dpi\\environment-formal-page-008-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-008-120dpi\\environment-formal-page-008-120dpi-entity-audit.json",
+      "id": "environment-formal-page-008-120dpi",
+      "native_TEXT_count": 77,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "bf4429c38b55955be52f86659ad9793aea2a5e12d2ffd59c290a8ac7e25249da"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-014-120dpi\\environment-formal-page-014-120dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-014-120dpi\\environment-formal-page-014-120dpi-entity-audit.json",
+      "id": "environment-formal-page-014-120dpi",
+      "native_TEXT_count": 150,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "ef773af1b3f77d1c7ec1b8c5ccfcadf7c8ed01df68956e849ec58493fcad8af7"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-072dpi\\warehouse-source-page-001-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-072dpi\\warehouse-source-page-001-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-001-072dpi",
+      "native_TEXT_count": 77,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "e8a465890ce09ddb3fdda8cacaaffc8cd11fe0698f48e0c0ca4787be2b93f134"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-002-072dpi\\warehouse-source-page-002-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-002-072dpi\\warehouse-source-page-002-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-002-072dpi",
+      "native_TEXT_count": 143,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "189a5f3012f5cf0835ff4f1df276d94ace4d48ab8cb1b2c6ef7d012d19e4f774"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-003-072dpi\\warehouse-source-page-003-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-003-072dpi\\warehouse-source-page-003-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-003-072dpi",
+      "native_TEXT_count": 166,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "b4ab43947d4daa702721474a4aacee25c638671d02874c8699ecdce8554fa824"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-004-072dpi\\warehouse-source-page-004-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-004-072dpi\\warehouse-source-page-004-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-004-072dpi",
+      "native_TEXT_count": 121,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "ed6dc1ec4175021268e877e877b7d8156773229517eb83a32916a25de38dba4e"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-005-072dpi\\warehouse-source-page-005-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-005-072dpi\\warehouse-source-page-005-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-005-072dpi",
+      "native_TEXT_count": 128,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "79d3ff694a7333d2486daee5350d85d8af055059651bffeccfdc9b4a3090d400"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-006-072dpi\\warehouse-source-page-006-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-006-072dpi\\warehouse-source-page-006-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-006-072dpi",
+      "native_TEXT_count": 130,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "e0c7288f92e233bd42c053b29c3c2ddd7e95692cb49dea6de05ffb5e51c65782"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-007-072dpi\\warehouse-source-page-007-072dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-007-072dpi\\warehouse-source-page-007-072dpi-entity-audit.json",
+      "id": "warehouse-source-page-007-072dpi",
+      "native_TEXT_count": 126,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "e3f6f1f5a9dd3dbe9ae0d9217721a916467878d2f7d995375d8bbee63c297cc2"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\perspective-sample-plan-096dpi\\perspective-sample-plan-096dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\perspective-sample-plan-096dpi\\perspective-sample-plan-096dpi-entity-audit.json",
+      "id": "perspective-sample-plan-096dpi",
+      "native_TEXT_count": 2,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-003-150dpi\\environment-formal-page-003-150dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-003-150dpi\\environment-formal-page-003-150dpi-entity-audit.json",
+      "id": "environment-formal-page-003-150dpi",
+      "native_TEXT_count": 154,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "f102cf60cda4f6c1fd38df5a398a2afe3e39b86ad7c7967de02042a1966ca173"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-formal-page-001-150dpi\\warehouse-formal-page-001-150dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-formal-page-001-150dpi\\warehouse-formal-page-001-150dpi-entity-audit.json",
+      "id": "warehouse-formal-page-001-150dpi",
+      "native_TEXT_count": 89,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "6f29197ea5d469c8e69245472e1ac122e8c86755f526dfa007c79013a31646f2"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-300dpi\\warehouse-source-page-001-300dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-300dpi\\warehouse-source-page-001-300dpi-entity-audit.json",
+      "id": "warehouse-source-page-001-300dpi",
+      "native_TEXT_count": 83,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "d73f9ead44e316f29436221ab983e82f656d8a03b1eff5cbe2cb41fd74b50d6f"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-600dpi\\warehouse-source-page-001-600dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-600dpi\\warehouse-source-page-001-600dpi-entity-audit.json",
+      "id": "warehouse-source-page-001-600dpi",
+      "native_TEXT_count": 88,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "6a4fc732a2e92fcf2b9f1e19031b15d2aeab2af127c92ddaa6c9f8ebe59b4499"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\page-001-d9fbda7-comparison-300dpi\\page-001-d9fbda7-comparison-300dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\page-001-d9fbda7-comparison-300dpi\\page-001-d9fbda7-comparison-300dpi-entity-audit.json",
+      "id": "page-001-d9fbda7-comparison-300dpi",
+      "native_TEXT_count": 219,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "1ffb909a3818aac8b3dae0a78f06c73e9b0551f651b9b03a2b668d32e4daa991"
+    },
+    {
+      "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\page-001-fixed-failure-240dpi\\page-001-fixed-failure-240dpi.dxf",
+      "entity_audit": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\page-001-fixed-failure-240dpi\\page-001-fixed-failure-240dpi-entity-audit.json",
+      "id": "page-001-fixed-failure-240dpi",
+      "native_TEXT_count": 206,
+      "passed": true,
+      "status": "complete",
+      "structure_id": "1e5f1e4e1727a5138d5e5c5d1e5c9cfc009353bd85920a746c2936b3e3c27782"
+    }
+  ],
+  "schema_version": 1
+}

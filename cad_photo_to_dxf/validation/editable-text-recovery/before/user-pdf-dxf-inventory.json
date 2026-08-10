@@ -1,0 +1,849 @@
+{
+  "all_dxf_audits_passed": true,
+  "documents": [
+    {
+      "all_TEXT_entity_count": 37,
+      "bytes": 5401619,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 169
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 169,
+      "fallback_outline_entity_count": 1393,
+      "id": "user-pdf-page-001",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 37
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 535
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1393
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 523
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 633
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1406
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 4527,
+      "native_TEXT_count": 37,
+      "native_text_candidate_count": 37,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 208,
+      "page": 1,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-001.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 535,
+      "sha256": "ebefb5d2a7789f48e7388b572a90552ba7de9da4a31ac0c23e44cb54dd6d997e",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "cb64caae9892bdb64147f991f06a98b29e56eec18d593caff58d040d7697b441",
+      "text_symbol_entity_count": 1406,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 31,
+      "bytes": 4367771,
+      "downgrade_reasons": {
+        "confidence_below_contract": 3,
+        "replacement_unsafe": 172
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 172,
+      "fallback_outline_entity_count": 867,
+      "id": "user-pdf-page-002",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 31
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 114
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 867
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1096
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 373
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 910
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3391,
+      "native_TEXT_count": 31,
+      "native_text_candidate_count": 31,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 206,
+      "page": 2,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-002.dxf",
+      "residual_candidate_count": 3,
+      "residual_entity_count": 114,
+      "sha256": "0ef7cca5e09a00a6ba58cfe53e5c79c459bdabd6bdd76d9abe91602c3c38bd24",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "0482c53d43756d5f5ab5baa218fcf50e97f55f9af87a406700d6b07349535101",
+      "text_symbol_entity_count": 910,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 32,
+      "bytes": 4717841,
+      "downgrade_reasons": {
+        "confidence_below_contract": 5,
+        "replacement_unsafe": 159
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 159,
+      "fallback_outline_entity_count": 1341,
+      "id": "user-pdf-page-003",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 32
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 383
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1341
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 559
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 665
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1196
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 4176,
+      "native_TEXT_count": 32,
+      "native_text_candidate_count": 32,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 196,
+      "page": 3,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-003.dxf",
+      "residual_candidate_count": 5,
+      "residual_entity_count": 383,
+      "sha256": "9bc706c4c2457e3876d4f56d0a8a0b594d6df9f7d66f036407c069a4a6af9431",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "38c2ec888249f119f4a2aa5bc8992c730577404b0838e8355b72ca1dba07da09",
+      "text_symbol_entity_count": 1196,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 49,
+      "bytes": 5148442,
+      "downgrade_reasons": {
+        "confidence_below_contract": 5,
+        "replacement_unsafe": 167
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 167,
+      "fallback_outline_entity_count": 1311,
+      "id": "user-pdf-page-004",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 49
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 248
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1311
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 918
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 674
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1274
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 4474,
+      "native_TEXT_count": 49,
+      "native_text_candidate_count": 49,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 221,
+      "page": 4,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-004.dxf",
+      "residual_candidate_count": 5,
+      "residual_entity_count": 248,
+      "sha256": "eae28cbb70aa1c1d3a4a26d3f79329d15948cc3fa7b446e873402faeebf103f1",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "9cc5d6d14032597c10993afeb9b27d89810d8932131d13c8c87c4cf6600e3082",
+      "text_symbol_entity_count": 1274,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 36,
+      "bytes": 4410562,
+      "downgrade_reasons": {
+        "confidence_below_contract": 7,
+        "replacement_unsafe": 157
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 157,
+      "fallback_outline_entity_count": 1130,
+      "id": "user-pdf-page-005",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 36
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 231
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1130
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 726
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 630
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1069
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3822,
+      "native_TEXT_count": 36,
+      "native_text_candidate_count": 36,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 200,
+      "page": 5,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-005.dxf",
+      "residual_candidate_count": 7,
+      "residual_entity_count": 231,
+      "sha256": "3ac84466ec87771d5ddb2ea7f5707e902b84c6865e5f6cd0c8481bb88be47155",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "8f1739677d40b82f439127d1b9bac9898c6440c716cbd3780ed7f1bdd280ca91",
+      "text_symbol_entity_count": 1069,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 47,
+      "bytes": 4462380,
+      "downgrade_reasons": {
+        "confidence_below_contract": 5,
+        "replacement_unsafe": 154
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 154,
+      "fallback_outline_entity_count": 1101,
+      "id": "user-pdf-page-006",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 47
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 170
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1101
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 859
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 581
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1072
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3830,
+      "native_TEXT_count": 47,
+      "native_text_candidate_count": 47,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 206,
+      "page": 6,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-006.dxf",
+      "residual_candidate_count": 5,
+      "residual_entity_count": 170,
+      "sha256": "3fd4fa53bd348737697a4630a89eb14385015aa22db8c0801e2b9605fccdaca1",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "63135fc649f8575c1f006b336a730e8df3be0952578b70a1696e7f0cd3a718e8",
+      "text_symbol_entity_count": 1072,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 43,
+      "bytes": 4342142,
+      "downgrade_reasons": {
+        "confidence_below_contract": 5,
+        "replacement_unsafe": 169
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 169,
+      "fallback_outline_entity_count": 1080,
+      "id": "user-pdf-page-007",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 43
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 531
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1080
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 533
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 545
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 974
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3706,
+      "native_TEXT_count": 43,
+      "native_text_candidate_count": 43,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 217,
+      "page": 7,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-007.dxf",
+      "residual_candidate_count": 5,
+      "residual_entity_count": 531,
+      "sha256": "edb7ff446ee004ce74127c35cc5c32d3b39b073d74a922207bc5d1fef73ba455",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "99d3f0ad02ab0463b68dee2b7ab77dd2a592d7147edc62c4caeeaf663c2cb479",
+      "text_symbol_entity_count": 974,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 24,
+      "bytes": 3632045,
+      "downgrade_reasons": {
+        "confidence_below_contract": 3,
+        "replacement_unsafe": 84
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 84,
+      "fallback_outline_entity_count": 524,
+      "id": "user-pdf-page-008",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 24
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 93
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 524
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1221
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 314
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 970
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3146,
+      "native_TEXT_count": 24,
+      "native_text_candidate_count": 24,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 111,
+      "page": 8,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-008.dxf",
+      "residual_candidate_count": 3,
+      "residual_entity_count": 93,
+      "sha256": "336dea32f6b51cf1015b73095231f28afa1867e7351260ff2b294efe04e79ea9",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "c79eb10dad8bc98b36fc5126b6a2338e058a997e8ac27c74cf63a2cb6b577ef3",
+      "text_symbol_entity_count": 970,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 43,
+      "bytes": 4369683,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 163
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 163,
+      "fallback_outline_entity_count": 1108,
+      "id": "user-pdf-page-009",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 43
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 8
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1108
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1045
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 572
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 985
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3761,
+      "native_TEXT_count": 43,
+      "native_text_candidate_count": 43,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 208,
+      "page": 9,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-009.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 8,
+      "sha256": "eda5d93016c2b6736c8f75b784df1b2d34d64c96dfd568e9475f3fe05f5adc85",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "dd1d90f679b0ac841963284ef607601fd3ace4a05c9f718b0b6ea8451134a096",
+      "text_symbol_entity_count": 985,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 44,
+      "bytes": 4455957,
+      "downgrade_reasons": {
+        "confidence_below_contract": 4,
+        "replacement_unsafe": 160
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 160,
+      "fallback_outline_entity_count": 1251,
+      "id": "user-pdf-page-010",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 44
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 387
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1251
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 666
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 621
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 947
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3916,
+      "native_TEXT_count": 44,
+      "native_text_candidate_count": 44,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 208,
+      "page": 10,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-010.dxf",
+      "residual_candidate_count": 4,
+      "residual_entity_count": 387,
+      "sha256": "817b33a294acf9fc9619ea6f1a046e316cceeb1ef76c683c0dcce2a24b681e7b",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "0ead739d1baf74ea9e7c989aa3d42a14a34b240d35b7740ae3879d2365c9627d",
+      "text_symbol_entity_count": 947,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 48,
+      "bytes": 4440450,
+      "downgrade_reasons": {
+        "confidence_below_contract": 3,
+        "replacement_unsafe": 160
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 160,
+      "fallback_outline_entity_count": 1215,
+      "id": "user-pdf-page-011",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 48
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 352
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1215
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 663
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 566
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 983
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3827,
+      "native_TEXT_count": 48,
+      "native_text_candidate_count": 48,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 211,
+      "page": 11,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-011.dxf",
+      "residual_candidate_count": 3,
+      "residual_entity_count": 352,
+      "sha256": "45ba8fe30b0c29e3650b8018b0a3144e71decab496f09286d21035f0286ec9b0",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "3666182ddd53f9df4219bc947af108d041d5ef18369048abf7658d75655af734",
+      "text_symbol_entity_count": 983,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 41,
+      "bytes": 4974076,
+      "downgrade_reasons": {
+        "confidence_below_contract": 6,
+        "replacement_unsafe": 173
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 173,
+      "fallback_outline_entity_count": 1355,
+      "id": "user-pdf-page-012",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 41
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 525
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1355
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 486
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 604
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1247
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 4258,
+      "native_TEXT_count": 41,
+      "native_text_candidate_count": 41,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 220,
+      "page": 12,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-012.dxf",
+      "residual_candidate_count": 6,
+      "residual_entity_count": 525,
+      "sha256": "c7c6461f8f145ac1c58204469383f7b98b98126769072a1a30e151ef3b96720b",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "320c0f96029200515811da97fbfc6d498c68cc623f99f392e6041d66afd242da",
+      "text_symbol_entity_count": 1247,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 48,
+      "bytes": 4491296,
+      "downgrade_reasons": {
+        "confidence_below_contract": 5,
+        "replacement_unsafe": 158
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 158,
+      "fallback_outline_entity_count": 1100,
+      "id": "user-pdf-page-013",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 48
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 27
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1100
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1051
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 591
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1100
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3917,
+      "native_TEXT_count": 48,
+      "native_text_candidate_count": 48,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 211,
+      "page": 13,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-013.dxf",
+      "residual_candidate_count": 5,
+      "residual_entity_count": 27,
+      "sha256": "b65efb621508c7446d2934b86a09e3a656bc049c2eff87b799927d03c9a05ba9",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "ebf88fe0df673237cd8bfe324e39193ef44df440a9827a00412a4db60491c462",
+      "text_symbol_entity_count": 1100,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 35,
+      "bytes": 5099585,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 183
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 183,
+      "fallback_outline_entity_count": 1276,
+      "id": "user-pdf-page-014",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 35
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 213
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1276
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 959
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 550
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1137
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 4170,
+      "native_TEXT_count": 35,
+      "native_text_candidate_count": 35,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 220,
+      "page": 14,
+      "path": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\page-014.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 213,
+      "sha256": "727dd71fe1bf35019444c023e28fb2ed9852c2aca288c834d29d4b37aacce851",
+      "source_text_outline_entity_count": 0,
+      "structure_id": "9840b08e42a1f4f86b0af3436740160a03ef24a8c3f18abd616b03d95032fbba",
+      "text_symbol_entity_count": 1137,
+      "uncertain_text_outline_entity_count": 0
+    }
+  ],
+  "dxf_count": 14,
+  "report_kind": "user-export",
+  "schema_version": 1,
+  "source_report": "C:\\Users\\agcrf\\Desktop\\drawing-pages-pages\\export.report.json"
+}

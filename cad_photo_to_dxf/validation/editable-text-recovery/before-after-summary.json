@@ -1,0 +1,278 @@
+{
+  "after": {
+    "all_final_DXFs_passed": true,
+    "all_pages_passed": true,
+    "run_count": 33,
+    "totals": {
+      "candidate_count": 4441,
+      "candidate_primary_semantic_conflict_count": 0,
+      "candidate_source_ownership_violation_count": 0,
+      "confidence_hard_reject_count": 47,
+      "duplicate_visible_representation_count": 0,
+      "dxf_audit_error_count": 0,
+      "eligible_candidate_text_symbol_count": 0,
+      "invalid_geometry_count": 0,
+      "native_TEXT_count": 4394,
+      "residual_OCR_candidate_count": 0,
+      "source_text_outline_candidate_count": 3726,
+      "text_emit_eligible_count": 4394,
+      "uncertain_text_candidate_count": 47
+    }
+  },
+  "before": {
+    "formal_unique_real_pages": {
+      "document_count": 10,
+      "dxf_audit_passed_count": 10,
+      "fallback_candidate_count": 977,
+      "native_TEXT_count": 197,
+      "ocr_candidate_count": 1188,
+      "residual_candidate_count": 14,
+      "source": "before/text-contract.json"
+    },
+    "git": {
+      "branch": "fix/non-destructive-editable-text",
+      "head": "625dcd9",
+      "phase12_baseline_commit": "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba",
+      "production_code_modified": false,
+      "regression_baseline_modified": false,
+      "tmp_modified": false
+    },
+    "schema_version": 1,
+    "uat_page001_240dpi": {
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 169,
+      "fallback_outline_entity_count": 1393,
+      "native_TEXT_count": 37,
+      "ocr_candidate_count": 208,
+      "residual_candidate_count": 2,
+      "residual_entity_count": 535,
+      "text_symbol_entity_count": 1406
+    },
+    "unit_tests": {
+      "errors": 0,
+      "failed": 0,
+      "junit": "test-results-before.xml",
+      "passed": 259,
+      "warnings": 141
+    },
+    "user_pdf_all_pages": {
+      "document_count": 14,
+      "dxf_audit_passed_count": 14,
+      "fallback_candidate_count": 2228,
+      "fallback_outline_entity_count": 16052,
+      "native_TEXT_count": 558,
+      "ocr_candidate_count": 2843,
+      "residual_candidate_count": 57,
+      "residual_entity_count": 3817,
+      "source": "before/user-pdf-dxf-inventory.json",
+      "text_symbol_entity_count": 15270
+    }
+  },
+  "completion_checks": {
+    "LibreCAD_direct_edit_passed": true,
+    "OCR_confidence_thresholds_unchanged": true,
+    "all_pages_and_final_DXFs_passed": true,
+    "all_text_emit_eligible_candidates_are_native_TEXT": true,
+    "d9fbda7_editability_not_lower": true,
+    "d9fbda7_whole_page_line_overproduction_not_restored": true,
+    "eligible_text_never_enters_TRACE_TEXT_SYMBOL": true,
+    "native_text_geometry_has_no_systematic_height_shrink": true,
+    "phase12_baseline_tag_unchanged": true,
+    "regression_baseline_not_recorded": true,
+    "replacement_safe_no_longer_blocks_eligible_TEXT": true,
+    "source_outline_backups_are_default_hidden": true,
+    "structure_line_and_protection_checks_passed": true
+  },
+  "git_commit": "c7269b1dee8eaf84c386e97759d56064de3dac1b",
+  "page001_240dpi": {
+    "after": {
+      "candidate_count": 208,
+      "candidate_primary_semantic_conflict_count": 0,
+      "candidate_source_ownership_violation_count": 0,
+      "checks": {
+        "DXF_audit_error_count_is_zero": true,
+        "DXF_read_save_read_and_edit_passes": true,
+        "OCR_threshold_contract_recorded_unchanged": true,
+        "baseline_was_not_updated": true,
+        "candidate_primary_semantic_conflict_count_is_zero": true,
+        "candidate_source_pixel_ownership_is_conserved": true,
+        "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+        "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+        "fallback_and_text_symbol_conflict_count_is_zero": true,
+        "formal_structure_and_protection_audit_passes": true,
+        "native_TEXT_count_equals_text_emit_eligible_count": true,
+        "native_TEXT_geometry_contract_passes": true,
+        "no_duplicate_visible_text_representation": true,
+        "preview_and_DXF_consumed_same_FinalStructure": true,
+        "replacement_unsafe_does_not_downgrade_eligible_text": true,
+        "unsafe_source_outline_backup_is_default_hidden": true
+      },
+      "confidence_hard_reject_count": 2,
+      "duplicate_visible_representation_count": 0,
+      "dxf_audit_error_count": 0,
+      "eligible_candidate_text_symbol_count": 0,
+      "geometry_contract_count": 206,
+      "id": "page-001-fixed-failure-240dpi",
+      "invalid_geometry_count": 0,
+      "maximum_center_error": 0.0,
+      "maximum_rotation_error": 0.0,
+      "maximum_width_factor": 3.1758620689655164,
+      "minimum_width_factor": 0.72,
+      "native_TEXT_count": 206,
+      "passed": true,
+      "residual_OCR_candidate_count": 0,
+      "source_outline_default_visible": false,
+      "source_text_outline_candidate_count": 169,
+      "source_text_outline_entity_count": 1784,
+      "text_emit_eligible_count": 206,
+      "text_symbol_entity_count": 1482,
+      "uncertain_text_candidate_count": 2,
+      "uncertain_text_outline_entity_count": 5
+    },
+    "before": {
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 169,
+      "fallback_outline_entity_count": 1393,
+      "native_TEXT_count": 37,
+      "ocr_candidate_count": 208,
+      "residual_candidate_count": 2,
+      "residual_entity_count": 535,
+      "text_symbol_entity_count": 1406
+    },
+    "hard_rejected_candidates": [
+      {
+        "bbox": [
+          1603,
+          865,
+          28,
+          28
+        ],
+        "candidate_id": "ocr-048",
+        "hard_reject_reason": "confidence_below_contract",
+        "text": "3"
+      },
+      {
+        "bbox": [
+          2472,
+          1470,
+          13,
+          26
+        ],
+        "candidate_id": "ocr-083",
+        "hard_reject_reason": "confidence_below_contract",
+        "text": "③"
+      }
+    ]
+  },
+  "page001_300dpi_d9fbda7": {
+    "current": {
+      "candidate_count": 219,
+      "candidate_primary_semantic_conflict_count": 0,
+      "candidate_source_ownership_violation_count": 0,
+      "checks": {
+        "DXF_audit_error_count_is_zero": true,
+        "DXF_read_save_read_and_edit_passes": true,
+        "OCR_threshold_contract_recorded_unchanged": true,
+        "baseline_was_not_updated": true,
+        "candidate_primary_semantic_conflict_count_is_zero": true,
+        "candidate_source_pixel_ownership_is_conserved": true,
+        "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+        "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+        "fallback_and_text_symbol_conflict_count_is_zero": true,
+        "formal_structure_and_protection_audit_passes": true,
+        "native_TEXT_count_equals_text_emit_eligible_count": true,
+        "native_TEXT_geometry_contract_passes": true,
+        "no_duplicate_visible_text_representation": true,
+        "preview_and_DXF_consumed_same_FinalStructure": true,
+        "replacement_unsafe_does_not_downgrade_eligible_text": true,
+        "unsafe_source_outline_backup_is_default_hidden": true
+      },
+      "confidence_hard_reject_count": 0,
+      "duplicate_visible_representation_count": 0,
+      "dxf_audit_error_count": 0,
+      "eligible_candidate_text_symbol_count": 0,
+      "geometry_contract_count": 219,
+      "id": "page-001-d9fbda7-comparison-300dpi",
+      "invalid_geometry_count": 0,
+      "maximum_center_error": 4.547473508864641e-13,
+      "maximum_rotation_error": 0.0,
+      "maximum_width_factor": 3.175862068965517,
+      "minimum_width_factor": 0.72,
+      "native_TEXT_count": 219,
+      "passed": true,
+      "residual_OCR_candidate_count": 0,
+      "source_outline_default_visible": false,
+      "source_text_outline_candidate_count": 187,
+      "source_text_outline_entity_count": 1908,
+      "straight_line_count": 651,
+      "text_emit_eligible_count": 219,
+      "text_symbol_entity_count": 2085,
+      "uncertain_text_candidate_count": 0,
+      "uncertain_text_outline_entity_count": 0
+    },
+    "historical": {
+      "byte_count": 887883,
+      "commit": "d9fbda763e95c6dd7154934b801b59dbf034e711",
+      "dxf_audit_error_count": 0,
+      "entity_types": {
+        "IMAGE": 2,
+        "LINE": 986,
+        "LWPOLYLINE": 923,
+        "TEXT": 214
+      },
+      "layer_entity_counts": {
+        "OCR_TEXT": 214,
+        "SIGNATURE_OVERLAY": 2,
+        "TRACE_CURVE": 62,
+        "TRACE_STRAIGHT": 986,
+        "TRACE_TEXT_SYMBOL": 861
+      },
+      "native_TEXT_count": 214,
+      "path": "cad_photo_to_dxf/validation/user-pdf-check/environment-page-001.dxf",
+      "straight_line_count": 986
+    }
+  },
+  "passed": true,
+  "phase12_baseline_commit": "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba",
+  "phase12_tag_commit": "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba",
+  "schema_version": 1,
+  "threshold_contract": {
+    "all_unchanged": true,
+    "files": {
+      "app/ocr_recognition.py": {
+        "MAX_OCR_CANDIDATES": {
+          "baseline": "3000",
+          "current": "3000",
+          "unchanged": true
+        },
+        "MIN_OCR_CONFIDENCE": {
+          "baseline": "0.50",
+          "current": "0.50",
+          "unchanged": true
+        }
+      },
+      "app/text_output_contract.py": {
+        "DEFAULT_MINIMUM_TEXT_CONFIDENCE": {
+          "baseline": "0.48",
+          "current": "0.48",
+          "unchanged": true
+        },
+        "_AUTO_APPROVE_CONFIDENCE": {
+          "baseline": "0.50",
+          "current": "0.50",
+          "unchanged": true
+        },
+        "_SHORT_ASCII_CONFIDENCE": {
+          "baseline": "0.52",
+          "current": "0.52",
+          "unchanged": true
+        },
+        "_SINGLE_CHARACTER_CONFIDENCE": {
+          "baseline": "0.55",
+          "current": "0.55",
+          "unchanged": true
+        }
+      }
+    }
+  }
+}

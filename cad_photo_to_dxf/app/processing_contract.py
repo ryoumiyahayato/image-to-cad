@@ -297,6 +297,15 @@ class ProductionProcessingService:
             texts=structure.texts,
             logos=structure.logos,
             signatures=structure.signatures,
+            editable_text_source_mask=(
+                structure.editable_text_source_mask
+            ),
+            source_text_outline_mask=(
+                structure.source_text_outline_mask
+            ),
+            uncertain_text_outline_mask=(
+                structure.uncertain_text_outline_mask
+            ),
             preview_binary=structure.preview_binary,
             threshold=structure.threshold,
             warnings=structure.warnings,

@@ -1,0 +1,228 @@
+{
+  "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+  "candidate_id_hash": {
+    "baseline": "79180d2ca042b0e4b4acc2973982ec658ab0f7863789275c2f222a92ccfca30e",
+    "candidate": "79180d2ca042b0e4b4acc2973982ec658ab0f7863789275c2f222a92ccfca30e",
+    "equal": true
+  },
+  "changed_partitions": [
+    "text_geometry_hash"
+  ],
+  "contract_version": "non-destructive-editable-text-v1",
+  "counts": {
+    "eligible": {
+      "baseline": 154,
+      "candidate": 154,
+      "equal": true
+    },
+    "fallback": {
+      "baseline": 0,
+      "candidate": 0,
+      "equal": true
+    },
+    "native_text": {
+      "baseline": 154,
+      "candidate": 154,
+      "equal": true
+    },
+    "source_text_outline": {
+      "baseline": 1382,
+      "candidate": 1382,
+      "equal": true
+    },
+    "trace_text_symbol": {
+      "baseline": 1196,
+      "candidate": 1196,
+      "equal": true
+    }
+  },
+  "dpi": 150,
+  "dxf_audit_error_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "eligible_count": {
+    "baseline": 154,
+    "candidate": 154,
+    "equal": true
+  },
+  "evidence_mode": "compact",
+  "failure_reasons": [],
+  "fallback_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "full_raw_evidence_path": "raw/pages/environment-plan-page-003-150dpi.json",
+  "full_raw_evidence_record_count": 12357,
+  "full_raw_evidence_sha256": "35787dca2333b69591096b05b88c2884b7262687d2a1b3b555541112ce41888c",
+  "full_structure_id": {
+    "baseline": "f102cf60cda4f6c1fd38df5a398a2afe3e39b86ad7c7967de02042a1966ca173",
+    "candidate": "f102cf60cda4f6c1fd38df5a398a2afe3e39b86ad7c7967de02042a1966ca173",
+    "equal": true
+  },
+  "native_text_count": {
+    "baseline": 154,
+    "candidate": 154,
+    "equal": true
+  },
+  "non_text_structure_hash": {
+    "baseline": "e51e4f8b7bfe75896cfe4e4664a24c0a7b6facf347df98861aaac6bdefa6fcc5",
+    "candidate": "e51e4f8b7bfe75896cfe4e4664a24c0a7b6facf347df98861aaac6bdefa6fcc5",
+    "equal": true
+  },
+  "ocr_content_hash": {
+    "baseline": "4b26ac57f64f6df0a5d26e15b9e3469ed360c49bc25f39216bee72ca40a11751",
+    "candidate": "4b26ac57f64f6df0a5d26e15b9e3469ed360c49bc25f39216bee72ca40a11751",
+    "equal": true
+  },
+  "original_source_relative_path": "tests/real_regression/assets/sources/environment-building-scan.pdf",
+  "original_source_sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+  "page_id": "environment-plan-page-003-150dpi",
+  "page_number": 3,
+  "page_transform_hash": {
+    "baseline": "dea850bb4be084d963061dc76941e1edb21d18d08d8b5ef03846da918e589e52",
+    "candidate": "dea850bb4be084d963061dc76941e1edb21d18d08d8b5ef03846da918e589e52",
+    "equal": true
+  },
+  "partition_hashes": {
+    "baseline": {
+      "non_text_structure_hash": "e51e4f8b7bfe75896cfe4e4664a24c0a7b6facf347df98861aaac6bdefa6fcc5",
+      "page_transform_hash": "dea850bb4be084d963061dc76941e1edb21d18d08d8b5ef03846da918e589e52",
+      "protected_content_hash": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+      "source_outline_hash": "76f4449d3cad6ad9107d56fd7208bebd7ab8a621a1e87017f34f92a0ca49a079",
+      "text_geometry_hash": "022726b4aeb8243df133442c967e26195101ecaf9e7d9e0df5bcf8027868695d",
+      "text_semantic_hash": "ce07d7a3e3d12bb04ddbb32b22c932c55048b8dc9e44f5389d0ba14fb7732a21",
+      "text_symbol_hash": "17eb899026cbf2292ea451267b780d2b48a37ee30f37cc01f1432b318b4c389a"
+    },
+    "candidate": {
+      "non_text_structure_hash": "e51e4f8b7bfe75896cfe4e4664a24c0a7b6facf347df98861aaac6bdefa6fcc5",
+      "page_transform_hash": "dea850bb4be084d963061dc76941e1edb21d18d08d8b5ef03846da918e589e52",
+      "protected_content_hash": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+      "source_outline_hash": "76f4449d3cad6ad9107d56fd7208bebd7ab8a621a1e87017f34f92a0ca49a079",
+      "text_geometry_hash": "fd98bd7a3e43d9e086570ee3f87b3b189327e89482b3b04a243e77e7986578d6",
+      "text_semantic_hash": "ce07d7a3e3d12bb04ddbb32b22c932c55048b8dc9e44f5389d0ba14fb7732a21",
+      "text_symbol_hash": "17eb899026cbf2292ea451267b780d2b48a37ee30f37cc01f1432b318b4c389a"
+    },
+    "changed": [
+      "text_geometry_hash"
+    ]
+  },
+  "passed": true,
+  "protected": {
+    "logo": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "residual": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "signature": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "uncertain": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    }
+  },
+  "protected_content_hash": {
+    "baseline": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+    "candidate": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+    "equal": true
+  },
+  "protected_content_part_hashes": {
+    "baseline": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "candidate": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "read_save_read": {
+    "baseline": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "candidate": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "equal": true
+  },
+  "regeneration_command": "python scripts/editable_text_regression_contract.py build --contract non-destructive-editable-text-v1 --evidence-mode compact --raw-evidence-dir <external-recovery-package>",
+  "regeneration_tool_version": "editable-text-regression-contract/compact-evidence-v1",
+  "schema_version": 1,
+  "source_dimensions": [
+    2478,
+    1752
+  ],
+  "source_outline_hash": {
+    "baseline": "76f4449d3cad6ad9107d56fd7208bebd7ab8a621a1e87017f34f92a0ca49a079",
+    "candidate": "76f4449d3cad6ad9107d56fd7208bebd7ab8a621a1e87017f34f92a0ca49a079",
+    "equal": true
+  },
+  "source_relative_path": "tests/real_regression/assets/environment-page-003.png",
+  "source_sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+  "source_text_outline_count": {
+    "baseline": 1382,
+    "candidate": 1382,
+    "equal": true
+  },
+  "source_text_outline_state": {
+    "baseline": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "candidate": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "equal": true
+  },
+  "text_geometry_hash": {
+    "baseline": "022726b4aeb8243df133442c967e26195101ecaf9e7d9e0df5bcf8027868695d",
+    "candidate": "fd98bd7a3e43d9e086570ee3f87b3b189327e89482b3b04a243e77e7986578d6",
+    "equal": false
+  },
+  "text_semantic_hash": {
+    "baseline": "ce07d7a3e3d12bb04ddbb32b22c932c55048b8dc9e44f5389d0ba14fb7732a21",
+    "candidate": "ce07d7a3e3d12bb04ddbb32b22c932c55048b8dc9e44f5389d0ba14fb7732a21",
+    "equal": true
+  },
+  "text_symbol_hash": {
+    "baseline": "17eb899026cbf2292ea451267b780d2b48a37ee30f37cc01f1432b318b4c389a",
+    "candidate": "17eb899026cbf2292ea451267b780d2b48a37ee30f37cc01f1432b318b4c389a",
+    "equal": true
+  },
+  "trace_text_symbol_count": {
+    "baseline": 1196,
+    "candidate": 1196,
+    "equal": true
+  }
+}

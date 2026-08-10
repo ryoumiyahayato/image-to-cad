@@ -3,14 +3,18 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from math import atan2, degrees, hypot
-from unicodedata import east_asian_width
+from math import hypot
 
 from .auxiliary_recognition import TextCandidate
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from .line_detect import LineSegment
+from .ocr_outline_export import add_ocr_outline_blocks
 from .raster_trace import TracePath
-
 
 PointTransform = Callable[[float, float], tuple[float, float]]
 MAX_EDITABLE_POLYLINE_VERTICES = 64
@@ -29,6 +33,7 @@ TRACE_LAYER_STYLES = {
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
     "TRACE_CURVE": {"color": 6, "lineweight": 0},
     "TRACE_TEXT_SYMBOL": {"color": 6, "lineweight": 0},
+    "SOURCE_TEXT_OUTLINE": {"color": 2, "lineweight": 0},
     "TEXT_FALLBACK_OUTLINE": {"color": 2, "lineweight": 0},
     "RESIDUAL_GRAPHIC": {"color": 3, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
@@ -253,8 +258,10 @@ def add_exact_trace_entities(
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
     ocr_texts: Sequence[TextCandidate] = (),
+    source_outline_ocr_texts: Sequence[TextCandidate] = (),
     fallback_ocr_texts: Sequence[TextCandidate] = (),
     residual_ocr_texts: Sequence[TextCandidate] = (),
+    forced_layer_name: str | None = None,
     layer_names: Mapping[str, str] | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
@@ -293,14 +300,22 @@ def add_exact_trace_entities(
             for child_index in children.get(index, [])
             if trace_paths[child_index].depth == trace_path.depth + 1
         ]
-        if _path_matches_ocr(
+        if forced_layer_name is not None:
+            base_layer_name = str(forced_layer_name)
+        elif _path_matches_ocr(
             trace_path,
             residual_ocr_texts,
             allow_candidate_coverage=True,
         ):
             base_layer_name = "RESIDUAL_GRAPHIC"
-        elif _path_matches_ocr(trace_path, fallback_ocr_texts):
+        elif _path_matches_ocr(
+            trace_path,
+            fallback_ocr_texts,
+            allow_candidate_coverage=True,
+        ):
             base_layer_name = "TEXT_FALLBACK_OUTLINE"
+        elif _path_matches_ocr(trace_path, source_outline_ocr_texts):
+            base_layer_name = "SOURCE_TEXT_OUTLINE"
         elif _path_matches_ocr(trace_path, ocr_texts):
             continue
         else:
@@ -311,7 +326,10 @@ def add_exact_trace_entities(
             )
         if base_layer_name == "TRACE_STRAIGHT":
             entity_color = _resolved_color(selected_palette.straight, 5)
-        elif base_layer_name == "TEXT_FALLBACK_OUTLINE":
+        elif base_layer_name in {
+            "SOURCE_TEXT_OUTLINE",
+            "TEXT_FALLBACK_OUTLINE",
+        }:
             entity_color = 2
         elif base_layer_name == "RESIDUAL_GRAPHIC":
             entity_color = 3
@@ -367,29 +385,6 @@ def add_exact_trace_entities(
     )
 
 
-def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
-    if text.quad and len(text.quad) == 4:
-        return text.quad
-    x, y, width, height = text.bbox
-    return (
-        (float(x), float(y)),
-        (float(x + width), float(y)),
-        (float(x + width), float(y + height)),
-        (float(x), float(y + height)),
-    )
-
-
-def _text_width_units(content: str) -> float:
-    units = 0.0
-    for character in content:
-        if character.isspace():
-            units += 0.35
-        elif east_asian_width(character) in {"W", "F", "A"}:
-            units += 1.0
-        else:
-            units += 0.58
-    return max(units, 1.0)
-
 
 def add_ocr_text_entities(
     layout,
@@ -400,45 +395,14 @@ def add_ocr_text_entities(
     style_name: str = "OCR_CJK",
     minimum_confidence: float = 0.58,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
-    """Add one complete, directly editable DXF TEXT per OCR line."""
+    """Compatibility entry point delegated to canonical fit-to-quad geometry."""
 
-    entities: list[object] = []
-    bounds: list[tuple[float, float]] = []
-    for candidate in texts:
-        content = " ".join(
-            candidate.text.replace("\r", " ").replace("\n", " ").split()
-        )
-        if not content or candidate.confidence < minimum_confidence:
-            continue
-        quad = _candidate_quad(candidate)
-        transformed = [transform(float(x), float(y)) for x, y in quad]
-        top_left, top_right, bottom_right, bottom_left = transformed
-        target_height = (
-            hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
-            + hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
-        ) * 0.5
-        target_width = (
-            hypot(top_right[0] - top_left[0], top_right[1] - top_left[1])
-            + hypot(bottom_right[0] - bottom_left[0], bottom_right[1] - bottom_left[1])
-        ) * 0.5
-        char_height = max(0.01, target_height * 0.82)
-        natural_width = char_height * _text_width_units(content)
-        width_factor = min(4.0, max(0.20, target_width / max(natural_width, 0.01)))
-        rotation = degrees(
-            atan2(bottom_right[1] - bottom_left[1], bottom_right[0] - bottom_left[0])
-        )
-        entity = layout.add_text(
-            content,
-            height=char_height,
-            dxfattribs={
-                "layer": layer_name,
-                "color": 6,
-                "style": style_name,
-                "rotation": float(rotation),
-                "width": float(width_factor),
-            },
-        )
-        entity.set_placement(bottom_left)
-        entities.append(entity)
-        bounds.extend(transformed)
-    return len(entities), entities, bounds
+    del style_name
+    return add_ocr_outline_blocks(
+        layout.doc,
+        layout,
+        texts,
+        transform=transform,
+        layer_name=layer_name,
+        minimum_confidence=minimum_confidence,
+    )

@@ -9,6 +9,7 @@ from .content_ownership import (
     arbitrate_content_candidates,
     binary_from_foreground,
     build_connection_protection,
+    build_text_semantic_ownership,
     finalize_content_ownership,
     graphic_source_mask,
     partition_content,
@@ -269,6 +270,11 @@ def trace_image_optimized(
     signatures = arbitrated.signatures
     text_decisions = text_output_decisions(texts)
     text_contract = text_output_summary(texts)
+    text_semantics = build_text_semantic_ownership(
+        prepared.binary,
+        texts,
+        ownership=ownership,
+    )
     if observation_sink is not None:
         owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
         for owner_code, mask in (
@@ -345,9 +351,16 @@ def trace_image_optimized(
             },
         )
     outline_source = cv2.max(ownership.graphic, ownership.residual)
-    residual_binary = binary_from_foreground(outline_source)
+    primary_outline_source = np.where(
+        (outline_source > 0)
+        & (text_semantics.source_outline == 0)
+        & (text_semantics.uncertain_outline == 0),
+        255,
+        0,
+    ).astype(np.uint8)
+    residual_binary = binary_from_foreground(primary_outline_source)
     artifact_removed = 0
-    if not prepared.clean_digital and np.any(outline_source):
+    if not prepared.clean_digital and np.any(primary_outline_source):
         contour_started = performance_clock()
         residual_paths = trace_binary(
             residual_binary,
@@ -388,16 +401,29 @@ def trace_image_optimized(
         observe(
             observation_sink,
             "final_text_layer",
-            image=ownership.text,
+            image=text_semantics.editable_source,
             payload={
                 "texts": texts_payload(texts),
                 "count": len(texts),
                 "output_contract": text_contract.payload(),
+                "semantic_ownership": text_semantics.payload(),
                 "decisions": [
                     decision.payload()
                     for decision in text_decisions
                 ],
             },
+        )
+        observe(
+            observation_sink,
+            "final_text_layer",
+            image=text_semantics.source_outline,
+            payload={"role": "hidden-source-text-outline"},
+        )
+        observe(
+            observation_sink,
+            "final_text_layer",
+            image=text_semantics.uncertain_outline,
+            payload={"role": "visible-uncertain-text-outline"},
         )
         observe(
             observation_sink,
@@ -451,6 +477,8 @@ def trace_image_optimized(
             f"{text_contract.editable_text_count} 个导出为可编辑单行文字，"
             f"{text_contract.fallback_outline_count} 个进入 "
             "TEXT_FALLBACK_OUTLINE，"
+            f"{text_contract.source_outline_backup_count} 个保留到默认关闭的 "
+            "SOURCE_TEXT_OUTLINE，"
             f"{text_contract.residual_graphic_count} 个进入 "
             "RESIDUAL_GRAPHIC。"
         )
@@ -473,6 +501,7 @@ def trace_image_optimized(
         {
             "event": "text_output_contract",
             **text_contract.payload(),
+            "semantic_ownership": text_semantics.payload(),
             "logo_count": len(logos),
             "signature_count": len(signatures),
         },
@@ -486,6 +515,9 @@ def trace_image_optimized(
         texts=tuple(texts),
         logos=tuple(logos),
         signatures=tuple(signatures),
+        editable_text_source_mask=text_semantics.editable_source,
+        source_text_outline_mask=text_semantics.source_outline,
+        uncertain_text_outline_mask=text_semantics.uncertain_outline,
         preview_binary=prepared.binary,
         threshold=prepared.threshold,
         warnings=tuple(warnings),

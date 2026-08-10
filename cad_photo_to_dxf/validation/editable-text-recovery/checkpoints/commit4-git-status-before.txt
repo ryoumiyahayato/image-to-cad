@@ -1,0 +1,25 @@
+## fix/non-destructive-editable-text
+ M app/librecad_lff.py
+ M app/ocr_outline_export.py
+ M app/trace_document_export.py
+ M app/trace_single_export.py
+ M tests/test_font_aware_ocr_export.py
+ M tests/test_text_output_contract.py
+ M tests/test_trace_export.py
+ M validation/editable-text-recovery/CHECKPOINT.md
+ M validation/editable-text-recovery/run_recovery_probe.py
+?? tests/test_native_text_geometry.py
+?? validation/editable-text-recovery/checkpoints/commit4-git-status-before.txt
+?? validation/editable-text-recovery/checkpoints/commit4-librecad-editability-edited.dxf
+?? validation/editable-text-recovery/checkpoints/commit4-librecad-editability-original.dxf
+?? validation/editable-text-recovery/checkpoints/commit4-librecad-editability-roundtrip.dxf
+?? validation/editable-text-recovery/checkpoints/commit4-page001.dxf
+?? validation/editable-text-recovery/checkpoints/commit4-page001.json
+?? validation/editable-text-recovery/checkpoints/commit4-tests-before.txt
+
+HEAD before commit: cc4477f
+Branch: fix/non-destructive-editable-text
+Phase 12 tag target: 6f5f69329aabf0bd3a7eda84baf66eb1959bdcba
+
+The pre-existing tmp/ directory and unrelated untracked paths were not staged
+or modified.

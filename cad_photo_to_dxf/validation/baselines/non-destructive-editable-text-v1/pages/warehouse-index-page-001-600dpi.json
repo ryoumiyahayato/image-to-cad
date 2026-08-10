@@ -1,0 +1,228 @@
+{
+  "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+  "candidate_id_hash": {
+    "baseline": "c17fc228949b520fe61d48621e377365c7acd4f09e8ee36404d2ac0e8f6c2dd1",
+    "candidate": "c17fc228949b520fe61d48621e377365c7acd4f09e8ee36404d2ac0e8f6c2dd1",
+    "equal": true
+  },
+  "changed_partitions": [
+    "text_geometry_hash"
+  ],
+  "contract_version": "non-destructive-editable-text-v1",
+  "counts": {
+    "eligible": {
+      "baseline": 88,
+      "candidate": 88,
+      "equal": true
+    },
+    "fallback": {
+      "baseline": 1,
+      "candidate": 1,
+      "equal": true
+    },
+    "native_text": {
+      "baseline": 88,
+      "candidate": 88,
+      "equal": true
+    },
+    "source_text_outline": {
+      "baseline": 960,
+      "candidate": 960,
+      "equal": true
+    },
+    "trace_text_symbol": {
+      "baseline": 74,
+      "candidate": 74,
+      "equal": true
+    }
+  },
+  "dpi": 600,
+  "dxf_audit_error_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "eligible_count": {
+    "baseline": 88,
+    "candidate": 88,
+    "equal": true
+  },
+  "evidence_mode": "compact",
+  "failure_reasons": [],
+  "fallback_count": {
+    "baseline": 1,
+    "candidate": 1,
+    "equal": true
+  },
+  "full_raw_evidence_path": "raw/pages/warehouse-index-page-001-600dpi.json",
+  "full_raw_evidence_record_count": 5348,
+  "full_raw_evidence_sha256": "d744f57163fe77a276f417b2a17ba1176ad6e2ed2a76a8a5f644a1fed79d7223",
+  "full_structure_id": {
+    "baseline": "6a4fc732a2e92fcf2b9f1e19031b15d2aeab2af127c92ddaa6c9f8ebe59b4499",
+    "candidate": "6a4fc732a2e92fcf2b9f1e19031b15d2aeab2af127c92ddaa6c9f8ebe59b4499",
+    "equal": true
+  },
+  "native_text_count": {
+    "baseline": 88,
+    "candidate": 88,
+    "equal": true
+  },
+  "non_text_structure_hash": {
+    "baseline": "98b47f0f1b0af767190fc14e16897406717822799d681e84efe41f0d4915016d",
+    "candidate": "98b47f0f1b0af767190fc14e16897406717822799d681e84efe41f0d4915016d",
+    "equal": true
+  },
+  "ocr_content_hash": {
+    "baseline": "b5da991185665f4c0adafcd3d078de832cda443aa688b1611d9a3fcc8d48eb7a",
+    "candidate": "b5da991185665f4c0adafcd3d078de832cda443aa688b1611d9a3fcc8d48eb7a",
+    "equal": true
+  },
+  "original_source_relative_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+  "original_source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+  "page_id": "warehouse-index-page-001-600dpi",
+  "page_number": 1,
+  "page_transform_hash": {
+    "baseline": "95b989d16034b22373fd6421d4ff3abd5f099aa76f099179e7d7ada12a5996e4",
+    "candidate": "95b989d16034b22373fd6421d4ff3abd5f099aa76f099179e7d7ada12a5996e4",
+    "equal": true
+  },
+  "partition_hashes": {
+    "baseline": {
+      "non_text_structure_hash": "98b47f0f1b0af767190fc14e16897406717822799d681e84efe41f0d4915016d",
+      "page_transform_hash": "95b989d16034b22373fd6421d4ff3abd5f099aa76f099179e7d7ada12a5996e4",
+      "protected_content_hash": "d295fde7d3c63d7b497ae1ff169f908d072880df1cb4ed1015efc2dcefb25229",
+      "source_outline_hash": "a1aca1a6c2401eb46e72710a51a9e17d2efbfd7edc79c03c81a2dd7a1736bc91",
+      "text_geometry_hash": "104e2f294b5c84fbbae88da8cac76a0f0afb002b0bc2d583ccdceef29ad6aac8",
+      "text_semantic_hash": "f6cf40ead95cd96216312389caf9ffd9d9ce4f0493f70b545a59c305c12bdc2c",
+      "text_symbol_hash": "292b6f413d69aff0a5258cc9d3c15b5f589174c1149eb43252ee030ef3afcab1"
+    },
+    "candidate": {
+      "non_text_structure_hash": "98b47f0f1b0af767190fc14e16897406717822799d681e84efe41f0d4915016d",
+      "page_transform_hash": "95b989d16034b22373fd6421d4ff3abd5f099aa76f099179e7d7ada12a5996e4",
+      "protected_content_hash": "d295fde7d3c63d7b497ae1ff169f908d072880df1cb4ed1015efc2dcefb25229",
+      "source_outline_hash": "a1aca1a6c2401eb46e72710a51a9e17d2efbfd7edc79c03c81a2dd7a1736bc91",
+      "text_geometry_hash": "66855908fe87a9f8f0dbe88597c1079c8ab21fc4ccdff84946f6468f3eb04578",
+      "text_semantic_hash": "f6cf40ead95cd96216312389caf9ffd9d9ce4f0493f70b545a59c305c12bdc2c",
+      "text_symbol_hash": "292b6f413d69aff0a5258cc9d3c15b5f589174c1149eb43252ee030ef3afcab1"
+    },
+    "changed": [
+      "text_geometry_hash"
+    ]
+  },
+  "passed": true,
+  "protected": {
+    "logo": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "residual": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "signature": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "uncertain": {
+      "baseline": "9311051ce2f88afcdd26e1786f06dfb00f8816f72587a30b292d2ec47a7ce13a",
+      "candidate": "9311051ce2f88afcdd26e1786f06dfb00f8816f72587a30b292d2ec47a7ce13a",
+      "equal": true
+    }
+  },
+  "protected_content_hash": {
+    "baseline": "d295fde7d3c63d7b497ae1ff169f908d072880df1cb4ed1015efc2dcefb25229",
+    "candidate": "d295fde7d3c63d7b497ae1ff169f908d072880df1cb4ed1015efc2dcefb25229",
+    "equal": true
+  },
+  "protected_content_part_hashes": {
+    "baseline": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "9311051ce2f88afcdd26e1786f06dfb00f8816f72587a30b292d2ec47a7ce13a"
+    },
+    "candidate": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "9311051ce2f88afcdd26e1786f06dfb00f8816f72587a30b292d2ec47a7ce13a"
+    }
+  },
+  "read_save_read": {
+    "baseline": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "candidate": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "equal": true
+  },
+  "regeneration_command": "python scripts/editable_text_regression_contract.py build --contract non-destructive-editable-text-v1 --evidence-mode compact --raw-evidence-dir <external-recovery-package>",
+  "regeneration_tool_version": "editable-text-regression-contract/compact-evidence-v1",
+  "schema_version": 1,
+  "source_dimensions": [
+    5434,
+    7559
+  ],
+  "source_outline_hash": {
+    "baseline": "a1aca1a6c2401eb46e72710a51a9e17d2efbfd7edc79c03c81a2dd7a1736bc91",
+    "candidate": "a1aca1a6c2401eb46e72710a51a9e17d2efbfd7edc79c03c81a2dd7a1736bc91",
+    "equal": true
+  },
+  "source_relative_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+  "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+  "source_text_outline_count": {
+    "baseline": 960,
+    "candidate": 960,
+    "equal": true
+  },
+  "source_text_outline_state": {
+    "baseline": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "candidate": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "equal": true
+  },
+  "text_geometry_hash": {
+    "baseline": "104e2f294b5c84fbbae88da8cac76a0f0afb002b0bc2d583ccdceef29ad6aac8",
+    "candidate": "66855908fe87a9f8f0dbe88597c1079c8ab21fc4ccdff84946f6468f3eb04578",
+    "equal": false
+  },
+  "text_semantic_hash": {
+    "baseline": "f6cf40ead95cd96216312389caf9ffd9d9ce4f0493f70b545a59c305c12bdc2c",
+    "candidate": "f6cf40ead95cd96216312389caf9ffd9d9ce4f0493f70b545a59c305c12bdc2c",
+    "equal": true
+  },
+  "text_symbol_hash": {
+    "baseline": "292b6f413d69aff0a5258cc9d3c15b5f589174c1149eb43252ee030ef3afcab1",
+    "candidate": "292b6f413d69aff0a5258cc9d3c15b5f589174c1149eb43252ee030ef3afcab1",
+    "equal": true
+  },
+  "trace_text_symbol_count": {
+    "baseline": 74,
+    "candidate": 74,
+    "equal": true
+  }
+}

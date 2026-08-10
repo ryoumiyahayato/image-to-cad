@@ -1,0 +1,1965 @@
+{
+  "candidate_layer_footprints": [
+    {
+      "candidate_id": "ocr-001",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "无锡市建筑设计研究院",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-002",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "有限责任公司",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-003",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "WUDI ARCHITECTURAL",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-004",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "DESIGH AND RESEARCH INSTIUTE Co,LH.",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-005",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2000",
+      "text_symbol_pixels": 231
+    },
+    {
+      "candidate_id": "ocr-006",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "国泉甲级工程资计证卡编号：100107-sj",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-007",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "附楼3",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-008",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-009",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "49100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-010",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NOWES",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-011",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "HB",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-012",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "7600",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-013",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "1800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-014",
+      "fallback_outline_pixels": 203,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-015",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "7600",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-016",
+      "fallback_outline_pixels": 206,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "8400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-017",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "11400",
+      "text_symbol_pixels": 27
+    },
+    {
+      "candidate_id": "ocr-018",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "6500",
+      "text_symbol_pixels": 34
+    },
+    {
+      "candidate_id": "ocr-019",
+      "fallback_outline_pixels": 200,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-020",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "2000",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-021",
+      "fallback_outline_pixels": 199,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-022",
+      "fallback_outline_pixels": 221,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2500",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-023",
+      "fallback_outline_pixels": 198,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-024",
+      "fallback_outline_pixels": 213,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 55
+    },
+    {
+      "candidate_id": "ocr-025",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-026",
+      "fallback_outline_pixels": 186,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "1800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-027",
+      "fallback_outline_pixels": 200,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-028",
+      "fallback_outline_pixels": 269,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "11400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-029",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "2700",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-030",
+      "fallback_outline_pixels": 245,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5900",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-031",
+      "fallback_outline_pixels": 201,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-032",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "A",
+      "text_symbol_pixels": 232
+    },
+    {
+      "candidate_id": "ocr-033",
+      "fallback_outline_pixels": 380,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "162",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-034",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "监注机柜",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-035",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "肥电间",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-036",
+      "fallback_outline_pixels": 506,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "潮防控制室与安保监控宣",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-037",
+      "fallback_outline_pixels": 217,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5500",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-038",
+      "fallback_outline_pixels": 208,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5500",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-039",
+      "fallback_outline_pixels": 237,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "环保展览厅",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-040",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-041",
+      "fallback_outline_pixels": 300,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "143",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-042",
+      "fallback_outline_pixels": 227,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "140",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-043",
+      "fallback_outline_pixels": 300,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "136",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-044",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-045",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "137",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-046",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "146",
+      "text_symbol_pixels": 297
+    },
+    {
+      "candidate_id": "ocr-047",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "空科机房",
+      "text_symbol_pixels": 260
+    },
+    {
+      "candidate_id": "ocr-048",
+      "fallback_outline_pixels": 0,
+      "final_layer": "RESIDUAL_GRAPHIC",
+      "raw_duplicate_pixels": 0,
+      "text": "3",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-049",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "S",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-050",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防报警主机及广据主机",
+      "text_symbol_pixels": 14
+    },
+    {
+      "candidate_id": "ocr-051",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "直鸟控制放银作",
+      "text_symbol_pixels": 391
+    },
+    {
+      "candidate_id": "ocr-052",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BY-4-G20WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-053",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "S",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-054",
+      "fallback_outline_pixels": 299,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "145",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-055",
+      "fallback_outline_pixels": 205,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-056",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "2100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-057",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "139",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-058",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "S",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-059",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "S",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-060",
+      "fallback_outline_pixels": 306,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "注册师用章",
+      "text_symbol_pixels": 3
+    },
+    {
+      "candidate_id": "ocr-061",
+      "fallback_outline_pixels": 270,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "158",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-062",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 137
+    },
+    {
+      "candidate_id": "ocr-063",
+      "fallback_outline_pixels": 252,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "23400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-064",
+      "fallback_outline_pixels": 199,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "8200",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-065",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "100x100防火线槽，风机水泵等应急控制线",
+      "text_symbol_pixels": 3
+    },
+    {
+      "candidate_id": "ocr-066",
+      "fallback_outline_pixels": 1308,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "100x100防火线槽，凤机水泵等应急控制",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-067",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "±0.000",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-068",
+      "fallback_outline_pixels": 211,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "接传大厅",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-069",
+      "fallback_outline_pixels": 1395,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "400x100防火线槽，内部换1:2月金属隔板分隔",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-070",
+      "fallback_outline_pixels": 246,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "400×100防火线槽，内部按1:2用金属隔板分",
+      "text_symbol_pixels": 1437
+    },
+    {
+      "candidate_id": "ocr-071",
+      "fallback_outline_pixels": 248,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "133",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-072",
+      "fallback_outline_pixels": 243,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "25900",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-073",
+      "fallback_outline_pixels": 1037,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "梁底敷设，分别效设广播及消防报警聘电线踏",
+      "text_symbol_pixels": 80
+    },
+    {
+      "candidate_id": "ocr-074",
+      "fallback_outline_pixels": 820,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "详见系统图竖井内沿墙明效)",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-075",
+      "fallback_outline_pixels": 130,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "工",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-076",
+      "fallback_outline_pixels": 774,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4x2.5-G20.WC消火栓启泵线路",
+      "text_symbol_pixels": 249
+    },
+    {
+      "candidate_id": "ocr-077",
+      "fallback_outline_pixels": 296,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "157",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-078",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "B",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-079",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "FK1",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-080",
+      "fallback_outline_pixels": 194,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-081",
+      "fallback_outline_pixels": 123,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4x2.5-G20WC",
+      "text_symbol_pixels": 821
+    },
+    {
+      "candidate_id": "ocr-082",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "(69)",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-083",
+      "fallback_outline_pixels": 0,
+      "final_layer": "RESIDUAL_GRAPHIC",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-084",
+      "fallback_outline_pixels": 293,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "126",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-085",
+      "fallback_outline_pixels": 251,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "环保晨意厅",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-086",
+      "fallback_outline_pixels": 249,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "149",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-087",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防靖子辖50M",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-088",
+      "fallback_outline_pixels": 287,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "清火栓启泵线",
+      "text_symbol_pixels": 196
+    },
+    {
+      "candidate_id": "ocr-089",
+      "fallback_outline_pixels": 185,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "380",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-090",
+      "fallback_outline_pixels": 250,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "130",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-091",
+      "fallback_outline_pixels": 169,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "出图专用章",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-092",
+      "fallback_outline_pixels": 1,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "S",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-093",
+      "fallback_outline_pixels": 99,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4x2.5-G20.WC消火检启泵路",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-094",
+      "fallback_outline_pixels": 180,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "1700",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-095",
+      "fallback_outline_pixels": 260,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "163)",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-096",
+      "fallback_outline_pixels": 1274,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4x2.5-GC25.FC消火栓启泵线路",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-097",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "斑",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-098",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "380",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-099",
+      "fallback_outline_pixels": 178,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "380",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-100",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "153",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-101",
+      "fallback_outline_pixels": 226,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "129",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-102",
+      "fallback_outline_pixels": 88,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "办会",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-103",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "驿电机房",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-104",
+      "fallback_outline_pixels": 328,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "154",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-105",
+      "fallback_outline_pixels": 276,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "155",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-106",
+      "fallback_outline_pixels": 91,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "办会",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-107",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 64
+    },
+    {
+      "candidate_id": "ocr-108",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "A",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-109",
+      "fallback_outline_pixels": 128,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "工",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-110",
+      "fallback_outline_pixels": 354,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "12369 值丰室",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-111",
+      "fallback_outline_pixels": 235,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "环境信诊科",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-112",
+      "fallback_outline_pixels": 212,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2500",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-113",
+      "fallback_outline_pixels": 331,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "无牌碍放道",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-114",
+      "fallback_outline_pixels": 209,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "200",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-115",
+      "fallback_outline_pixels": 2154,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "地下空，血垫口.",
+      "text_symbol_pixels": 13
+    },
+    {
+      "candidate_id": "ocr-116",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "1. 火灾自动报警系统的设备安装应按照",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-117",
+      "fallback_outline_pixels": 875,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防联动总线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-118",
+      "fallback_outline_pixels": 136,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "FK",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-119",
+      "fallback_outline_pixels": 1130,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4*2.5-G20-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-120",
+      "fallback_outline_pixels": 210,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "201",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-121",
+      "fallback_outline_pixels": 1636,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "《火灾自动报警系统施工及验收规范》施工。",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-122",
+      "fallback_outline_pixels": 551,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "显示总线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-123",
+      "fallback_outline_pixels": 1101,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4*1.5-G20-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-124",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "FX",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-125",
+      "fallback_outline_pixels": 1951,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2.探测器安装位置若与灯具或其他设备的安装",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-126",
+      "fallback_outline_pixels": 1079,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消火栓启泵控制线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-127",
+      "fallback_outline_pixels": 177,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "FK1",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-128",
+      "fallback_outline_pixels": 1122,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-4*2.5-G20-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-129",
+      "fallback_outline_pixels": 112,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "6",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-130",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "项久赏",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-131",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "电气",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-132",
+      "fallback_outline_pixels": 150,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "梅晓虹",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-133",
+      "fallback_outline_pixels": 1644,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "间距不能满足规范要求时，可做适当调整。",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-134",
+      "fallback_outline_pixels": 705,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防电话线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-135",
+      "fallback_outline_pixels": 1074,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "NH-BV-2*1.5-G15-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-136",
+      "fallback_outline_pixels": 149,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "H",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-137",
+      "fallback_outline_pixels": 90,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "建筑",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-138",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "IGAG",
+      "text_symbol_pixels": 23
+    },
+    {
+      "candidate_id": "ocr-139",
+      "fallback_outline_pixels": 1710,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "安装时应保证其距梁边、墙边的距离",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-140",
+      "fallback_outline_pixels": 89,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "方室",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-141",
+      "fallback_outline_pixels": 809,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防报警总线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-142",
+      "fallback_outline_pixels": 551,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "BV-2*1.5-G15-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-143",
+      "fallback_outline_pixels": 257,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "符合规范要求。",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-144",
+      "fallback_outline_pixels": 625,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消防广播线",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-145",
+      "fallback_outline_pixels": 543,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "RVS-2*1.0-$15-CC/WC",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-146",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "G",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-147",
+      "fallback_outline_pixels": 1140,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3. 非消防电源切换设在本层配电箱内。",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-148",
+      "fallback_outline_pixels": 85,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "审定",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-149",
+      "fallback_outline_pixels": 195,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-150",
+      "fallback_outline_pixels": 218,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2700",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-151",
+      "fallback_outline_pixels": 199,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "1800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-152",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "11400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-153",
+      "fallback_outline_pixels": 209,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-154",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "8400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-155",
+      "fallback_outline_pixels": 207,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-156",
+      "fallback_outline_pixels": 205,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-157",
+      "fallback_outline_pixels": 206,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "3800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-158",
+      "fallback_outline_pixels": 239,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-159",
+      "fallback_outline_pixels": 1063,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "感烟",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-160",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "专业负费",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-161",
+      "fallback_outline_pixels": 141,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "泳腾话",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-162",
+      "fallback_outline_pixels": 863,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "125-158",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-163",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "1800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-164",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "7600",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-165",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "11400",
+      "text_symbol_pixels": 7
+    },
+    {
+      "candidate_id": "ocr-166",
+      "fallback_outline_pixels": 200,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "7600",
+      "text_symbol_pixels": 23
+    },
+    {
+      "candidate_id": "ocr-167",
+      "fallback_outline_pixels": 220,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "6500",
+      "text_symbol_pixels": 2
+    },
+    {
+      "candidate_id": "ocr-168",
+      "fallback_outline_pixels": 0,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "8400",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-169",
+      "fallback_outline_pixels": 208,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "5800",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-170",
+      "fallback_outline_pixels": 141,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "孙春鲜",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-171",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "49100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-172",
+      "fallback_outline_pixels": 797,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "手报",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-173",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "设计",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-174",
+      "fallback_outline_pixels": 145,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "陈腾希",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-175",
+      "fallback_outline_pixels": 844,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "159-163",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-176",
+      "fallback_outline_pixels": 331,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "③",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-177",
+      "fallback_outline_pixels": 95,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "4",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-178",
+      "fallback_outline_pixels": 275,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "6",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-179",
+      "fallback_outline_pixels": 269,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-180",
+      "fallback_outline_pixels": 753,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "声光",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-181",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "164-165",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-182",
+      "fallback_outline_pixels": 361,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "173",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-183",
+      "fallback_outline_pixels": 156,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "建设单位",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-184",
+      "fallback_outline_pixels": 527,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "泰州市环境保护局",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-185",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "CLENT",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-186",
+      "fallback_outline_pixels": 1157,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "消火栓",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-187",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "166-170",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-188",
+      "fallback_outline_pixels": 665,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "江苏省苏中环境督查中心及江苏省",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-189",
+      "fallback_outline_pixels": 987,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "电174",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-190",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "工程名称",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-191",
+      "fallback_outline_pixels": 93,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "PROMICT",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-192",
+      "fallback_outline_pixels": 679,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "环境重察局苏中分局业务用房—主楼",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-193",
+      "fallback_outline_pixels": 3318,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "一层消防平面图",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-194",
+      "fallback_outline_pixels": 1644,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "水流、信号",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-195",
+      "fallback_outline_pixels": 783,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "171-172",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-196",
+      "fallback_outline_pixels": 521,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "1:100",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-197",
+      "fallback_outline_pixels": 114,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "昌名",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-198",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "一层消防平面面",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-199",
+      "fallback_outline_pixels": 96,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "TLE",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-200",
+      "fallback_outline_pixels": 1966,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "控制模块",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-201",
+      "fallback_outline_pixels": 0,
+      "final_layer": "OCR_TEXT",
+      "raw_duplicate_pixels": 0,
+      "text": "173-177",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-202",
+      "fallback_outline_pixels": 25,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "设计箱号",
+      "text_symbol_pixels": 206
+    },
+    {
+      "candidate_id": "ocr-203",
+      "fallback_outline_pixels": 428,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "T08028-ZL",
+      "text_symbol_pixels": 0
+    },
+    {
+      "candidate_id": "ocr-204",
+      "fallback_outline_pixels": 2081,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "电梯前宝风口176",
+      "text_symbol_pixels": 404
+    },
+    {
+      "candidate_id": "ocr-205",
+      "fallback_outline_pixels": 106,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "电施",
+      "text_symbol_pixels": 1
+    },
+    {
+      "candidate_id": "ocr-206",
+      "fallback_outline_pixels": 45,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "号",
+      "text_symbol_pixels": 91
+    },
+    {
+      "candidate_id": "ocr-207",
+      "fallback_outline_pixels": 101,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "24/69",
+      "text_symbol_pixels": 239
+    },
+    {
+      "candidate_id": "ocr-208",
+      "fallback_outline_pixels": 305,
+      "final_layer": "TEXT_FALLBACK_OUTLINE",
+      "raw_duplicate_pixels": 0,
+      "text": "2008.12",
+      "text_symbol_pixels": 18
+    }
+  ],
+  "fallback_vs_text_symbol": {
+    "fallback_routed_candidates_with_both_layer_footprints": 16,
+    "fallback_split_examples": [
+      {
+        "candidate_id": "ocr-024",
+        "fallback_outline_pixels": 213,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "3800",
+        "text_symbol_pixels": 55
+      },
+      {
+        "candidate_id": "ocr-060",
+        "fallback_outline_pixels": 306,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "注册师用章",
+        "text_symbol_pixels": 3
+      },
+      {
+        "candidate_id": "ocr-070",
+        "fallback_outline_pixels": 246,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "400×100防火线槽，内部按1:2用金属隔板分",
+        "text_symbol_pixels": 1437
+      },
+      {
+        "candidate_id": "ocr-073",
+        "fallback_outline_pixels": 1037,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "梁底敷设，分别效设广播及消防报警聘电线踏",
+        "text_symbol_pixels": 80
+      },
+      {
+        "candidate_id": "ocr-076",
+        "fallback_outline_pixels": 774,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "NH-BV-4x2.5-G20.WC消火栓启泵线路",
+        "text_symbol_pixels": 249
+      },
+      {
+        "candidate_id": "ocr-081",
+        "fallback_outline_pixels": 123,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "NH-BV-4x2.5-G20WC",
+        "text_symbol_pixels": 821
+      },
+      {
+        "candidate_id": "ocr-088",
+        "fallback_outline_pixels": 287,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "清火栓启泵线",
+        "text_symbol_pixels": 196
+      },
+      {
+        "candidate_id": "ocr-115",
+        "fallback_outline_pixels": 2154,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "地下空，血垫口.",
+        "text_symbol_pixels": 13
+      },
+      {
+        "candidate_id": "ocr-166",
+        "fallback_outline_pixels": 200,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "7600",
+        "text_symbol_pixels": 23
+      },
+      {
+        "candidate_id": "ocr-167",
+        "fallback_outline_pixels": 220,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "6500",
+        "text_symbol_pixels": 2
+      },
+      {
+        "candidate_id": "ocr-202",
+        "fallback_outline_pixels": 25,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "设计箱号",
+        "text_symbol_pixels": 206
+      },
+      {
+        "candidate_id": "ocr-204",
+        "fallback_outline_pixels": 2081,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "电梯前宝风口176",
+        "text_symbol_pixels": 404
+      },
+      {
+        "candidate_id": "ocr-205",
+        "fallback_outline_pixels": 106,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "电施",
+        "text_symbol_pixels": 1
+      },
+      {
+        "candidate_id": "ocr-206",
+        "fallback_outline_pixels": 45,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "号",
+        "text_symbol_pixels": 91
+      },
+      {
+        "candidate_id": "ocr-207",
+        "fallback_outline_pixels": 101,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "24/69",
+        "text_symbol_pixels": 239
+      },
+      {
+        "candidate_id": "ocr-208",
+        "fallback_outline_pixels": 305,
+        "final_layer": "TEXT_FALLBACK_OUTLINE",
+        "raw_duplicate_pixels": 0,
+        "text": "2008.12",
+        "text_symbol_pixels": 18
+      }
+    ],
+    "first_entities_with_any_bbox_overlap": 24,
+    "near_duplicate_examples": [],
+    "ocr_candidates_with_both_layer_footprints": 16,
+    "overlapping_bbox_pair_count": 129,
+    "raw_intersection_pixels": 0,
+    "second_entities_with_any_bbox_overlap": 87,
+    "trace_text_symbol_entities_with_60pct_exact_overlap": 0,
+    "trace_text_symbol_entities_with_60pct_one_px_near_overlap": 0
+  },
+  "layer_pixel_counts": {
+    "OCR_TEXT": 35084,
+    "RESIDUAL_GRAPHIC": 48002,
+    "TEXT_FALLBACK_OUTLINE": 71696,
+    "TRACE_CURVE": 69854,
+    "TRACE_STRAIGHT": 84227,
+    "TRACE_TEXT_SYMBOL": 67951
+  },
+  "pairwise_pixel_overlap": {
+    "RESIDUAL_GRAPHIC__OCR_TEXT": {
+      "first_pixels": 48002,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 35084,
+      "union_pixels": 83086
+    },
+    "TEXT_FALLBACK_OUTLINE__OCR_TEXT": {
+      "first_pixels": 71696,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 35084,
+      "union_pixels": 106780
+    },
+    "TEXT_FALLBACK_OUTLINE__RESIDUAL_GRAPHIC": {
+      "first_pixels": 71696,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 48002,
+      "union_pixels": 119698
+    },
+    "TRACE_CURVE__OCR_TEXT": {
+      "first_pixels": 69854,
+      "intersection_over_smaller_layer": 0.001083114810169878,
+      "intersection_pixels": 38,
+      "iou": 0.00036224976167778837,
+      "second_pixels": 35084,
+      "union_pixels": 104900
+    },
+    "TRACE_CURVE__RESIDUAL_GRAPHIC": {
+      "first_pixels": 69854,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 48002,
+      "union_pixels": 117856
+    },
+    "TRACE_CURVE__TEXT_FALLBACK_OUTLINE": {
+      "first_pixels": 69854,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 71696,
+      "union_pixels": 141550
+    },
+    "TRACE_CURVE__TRACE_TEXT_SYMBOL": {
+      "first_pixels": 69854,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 67951,
+      "union_pixels": 137805
+    },
+    "TRACE_STRAIGHT__OCR_TEXT": {
+      "first_pixels": 84227,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 35084,
+      "union_pixels": 119311
+    },
+    "TRACE_STRAIGHT__RESIDUAL_GRAPHIC": {
+      "first_pixels": 84227,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 48002,
+      "union_pixels": 132229
+    },
+    "TRACE_STRAIGHT__TEXT_FALLBACK_OUTLINE": {
+      "first_pixels": 84227,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 71696,
+      "union_pixels": 155923
+    },
+    "TRACE_STRAIGHT__TRACE_CURVE": {
+      "first_pixels": 84227,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 69854,
+      "union_pixels": 154081
+    },
+    "TRACE_STRAIGHT__TRACE_TEXT_SYMBOL": {
+      "first_pixels": 84227,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 67951,
+      "union_pixels": 152178
+    },
+    "TRACE_TEXT_SYMBOL__OCR_TEXT": {
+      "first_pixels": 67951,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 35084,
+      "union_pixels": 103035
+    },
+    "TRACE_TEXT_SYMBOL__RESIDUAL_GRAPHIC": {
+      "first_pixels": 67951,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 48002,
+      "union_pixels": 115953
+    },
+    "TRACE_TEXT_SYMBOL__TEXT_FALLBACK_OUTLINE": {
+      "first_pixels": 67951,
+      "intersection_over_smaller_layer": 0.0,
+      "intersection_pixels": 0,
+      "iou": 0.0,
+      "second_pixels": 71696,
+      "union_pixels": 139647
+    }
+  },
+  "rasterization": {
+    "anti_aliasing": false,
+    "bbox_semantics": "Inclusive pixel bbox of each DXF entity after mm-to-source coordinate conversion.",
+    "closed_polylines_filled": false,
+    "coordinate_space": "current production source pixels",
+    "line_thickness_px": 1,
+    "page_shape": [
+      2803,
+      3964
+    ],
+    "same_glyph_proxy": "At least 60% of one TRACE_TEXT_SYMBOL entity's raster pixels coincide with, or are within one pixel of, fallback pixels."
+  },
+  "semantic_contract": {
+    "contract_violated": true,
+    "finding": "Pixel duplication and OCR-candidate semantic splitting are reported separately. A candidate routed to fallback but also represented by text-symbol geometry has more than one final semantic representation even when exact stroke pixels do not coincide.",
+    "ocr_candidate_object_semantics_exclusive": false,
+    "source_pixel_exclusive_between_fallback_and_text_symbol": true
+  },
+  "trace_text_symbol_inside_any_ocr_bbox": {
+    "entities_fully_inside_one_bbox": 88,
+    "entities_with_bbox_intersection": 154,
+    "entities_with_center_inside": 114,
+    "entity_count": 1406,
+    "note": "The union pixel total double-counts pixels where OCR boxes overlap; entity counts use geometry/bbox tests.",
+    "union_ocr_bbox_symbol_pixels": 5558
+  }
+}
