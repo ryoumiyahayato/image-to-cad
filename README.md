@@ -1,12 +1,12 @@
-# CAD Photo / Scan PDF to CAD v1.3.0（内部预览）
+# CAD Photo / Scan PDF to CAD v1.3.0
 
-将纸质图纸照片、扫描图片和图片型多页 PDF 转换为“扫描保真底图 + 可编辑结构线”的 DXF/DWG 辅助工具。
+An auxiliary DXF/DWG conversion tool that converts photos of paper drawings, scanned images, and image-based multi-page PDFs into **scan-faithful underlays + editable structural linework**.
 
-多页 PDF 会作为一个文档载入并合并导出：每页建立 `PAGE-###` 布局，模型空间同时纵向排列，并为每页保留独立扫描底图。人工复核已改为直接在图纸上框选、改层和删除错误线段。
+Multi-page PDFs are loaded as a single document and exported together. Each page is assigned a `PAGE-###` layout, while all pages are also arranged vertically in model space. A separate scanned underlay is preserved for each page. Manual review is performed directly on the drawing by selecting regions, changing layers, and deleting incorrectly detected line segments.
 
-> 当前仍是内部预览。扫描底图用于保留原始视觉内容；自动矢量线只是辅助结果，不能视为原始 DWG 恢复，也不承诺 95% 或 98% 的全矢量重建率。
+> This project is currently an internal preview. The scanned underlay is used to preserve the original visual content; automatically generated vector linework is only an auxiliary result. It should not be treated as a recovery of the original DWG, nor does the project claim a 95% or 98% full-vector reconstruction rate.
 
-项目源码与完整说明位于 [`cad_photo_to_dxf/`](cad_photo_to_dxf/README.md)。
+The project source code and full documentation are available at [`cad_photo_to_dxf/`](https://github.com/ryoumiyahayato/image-to-cad/blob/main/cad_photo_to_dxf/README.md).
 
 ```powershell
 Set-Location .\cad_photo_to_dxf
@@ -16,10 +16,10 @@ python -m pip install -r requirements.txt
 python main.py
 ```
 
-支持的坐标模式：
+Supported coordinate modes:
 
-- `paper_mm`：PDF 或打印纸面毫米；
-- `model_mm`：通过已知实际尺寸独立校准后的模型坐标；
-- `pixel`：尚未校准的图像坐标。
+* `paper_mm`: millimeters on the PDF or printed sheet;
+* `model_mm`: model coordinates independently calibrated using a known real-world dimension;
+* `pixel`: uncalibrated image coordinates.
 
-历史审计整改状态见 [`docs/AUDIT_REMEDIATION.md`](docs/AUDIT_REMEDIATION.md)。
+For the status of historical audit remediation, see [`docs/AUDIT_REMEDIATION.md`](https://github.com/ryoumiyahayato/image-to-cad/blob/main/docs/AUDIT_REMEDIATION.md).
