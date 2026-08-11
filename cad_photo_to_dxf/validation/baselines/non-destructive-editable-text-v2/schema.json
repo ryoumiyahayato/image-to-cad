@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "non-destructive-editable-text-v2/schema.json",
+  "title": "Non-destructive editable text V2 evidence package",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "schema_version",
+    "page_schema_version",
+    "validator",
+    "parent_contract_version",
+    "parent_v1",
+    "pages"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "non-destructive-editable-text-v2"
+    },
+    "schema_version": {
+      "const": 4
+    },
+    "page_schema_version": {
+      "const": 2
+    },
+    "validator": {
+      "const": "editable-text-regression-contract/v2"
+    },
+    "parent_contract_version": {
+      "const": "non-destructive-editable-text-v1"
+    },
+    "parent_v1": {
+      "$ref": "#/$defs/parent"
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/page"
+          },
+          {
+            "$ref": "#/$defs/pageReference"
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "gitObject": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "relativeFile": {
+      "type": "object",
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": true
+    },
+    "parent": {
+      "type": "object",
+      "required": [
+        "contract_version",
+        "baseline_source_commit",
+        "phase12_commit",
+        "phase12_manifest_path",
+        "phase12_manifest_blob_sha256",
+        "baseline_manifest_path",
+        "baseline_manifest_sha256"
+      ],
+      "properties": {
+        "contract_version": {
+          "const": "non-destructive-editable-text-v1"
+        },
+        "baseline_source_commit": {
+          "$ref": "#/$defs/commit"
+        },
+        "phase12_commit": {
+          "$ref": "#/$defs/commit"
+        },
+        "phase12_manifest_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "phase12_manifest_blob_sha256": {
+          "$ref": "#/$defs/gitObject"
+        },
+        "baseline_manifest_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "baseline_manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "page_number",
+        "dpi",
+        "relative_path",
+        "sha256",
+        "config_hash",
+        "dimensions"
+      ],
+      "properties": {
+        "page_number": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dpi": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "relative_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "config_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "dimensions": {
+          "type": "array",
+          "prefixItems": [
+            {
+              "type": "integer",
+              "minimum": 1
+            },
+            {
+              "type": "integer",
+              "minimum": 1
+            }
+          ],
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "additionalProperties": true
+    },
+    "geometry": {
+      "type": "object"
+    },
+    "record": {
+      "type": "object",
+      "required": [
+        "restoration_id",
+        "contract_version",
+        "page_id",
+        "source_sha256",
+        "source_config_hash",
+        "base_commit",
+        "entity_type",
+        "layer",
+        "canonical_entity_id",
+        "canonical_payload_hash",
+        "canonical_entity",
+        "source_geometry",
+        "world_geometry",
+        "pre_mask_provenance",
+        "mask_provenance",
+        "structural_decision_evidence",
+        "r2_restoration_provenance",
+        "ownership_negative_result",
+        "duplicate_check",
+        "entity_hash",
+        "source_evidence_hash",
+        "decision_evidence_hash",
+        "evidence_hash"
+      ],
+      "properties": {
+        "restoration_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_version": {
+          "const": "non-destructive-editable-text-v2"
+        },
+        "page_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_config_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "base_commit": {
+          "$ref": "#/$defs/commit"
+        },
+        "entity_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layer": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonical_payload_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "canonical_entity": {
+          "type": "object",
+          "required": ["type", "layer"]
+        },
+        "source_geometry": {
+          "$ref": "#/$defs/geometry"
+        },
+        "world_geometry": {
+          "$ref": "#/$defs/geometry"
+        },
+        "pre_mask_provenance": {
+          "type": "object"
+        },
+        "mask_provenance": {
+          "type": "object"
+        },
+        "structural_decision_evidence": {
+          "type": "object"
+        },
+        "r2_restoration_provenance": {
+          "type": "object"
+        },
+        "ownership_negative_result": {
+          "type": "object"
+        },
+        "duplicate_check": {
+          "type": "object"
+        },
+        "entity_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "source_evidence_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "decision_evidence_hash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "evidence_hash": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": true
+    },
+    "page": {
+      "type": "object",
+      "required": [
+        "page_id",
+        "page_schema_version",
+        "source",
+        "base_artifact",
+        "candidate_artifact",
+        "parent_v1",
+        "algorithm_profile",
+        "policy",
+        "partition_hashes",
+        "base_structure",
+        "restorations",
+        "restoration_delta",
+        "determinism"
+      ],
+      "properties": {
+        "page_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page_schema_version": {
+          "const": 2
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "base_artifact": {
+          "$ref": "#/$defs/relativeFile"
+        },
+        "candidate_artifact": {
+          "$ref": "#/$defs/relativeFile"
+        },
+        "parent_v1": {
+          "$ref": "#/$defs/parent"
+        },
+        "algorithm_profile": {
+          "type": "object",
+          "required": ["id", "sha256"]
+        },
+        "policy": {
+          "type": "object",
+          "required": ["mode", "allowed_changed_partitions"]
+        },
+        "partition_hashes": {
+          "type": "object",
+          "required": ["base", "candidate", "equal"]
+        },
+        "base_structure": {
+          "type": "object",
+          "required": [
+            "base_entity_count",
+            "candidate_entity_count",
+            "shared_preserved_count",
+            "base_missing_count",
+            "added_delta_count",
+            "proof_passed"
+          ]
+        },
+        "restorations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/record"
+          }
+        },
+        "restoration_delta": {
+          "type": "object",
+          "required": ["count", "multiset_hash", "restoration_digest"]
+        },
+        "determinism": {
+          "type": "object",
+          "required": ["replay_runs", "manifest_deterministic", "restoration_digest", "runs"]
+        }
+      },
+      "additionalProperties": true
+    },
+    "pageReference": {
+      "type": "object",
+      "required": ["page_path", "sha256"],
+      "properties": {
+        "page_path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
