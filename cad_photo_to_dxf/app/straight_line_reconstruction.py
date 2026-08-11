@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
-from typing import Any, Mapping
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 import cv2
 import numpy as np
@@ -39,7 +39,11 @@ from .performance_observability import (
 )
 from .resolution import image_resolution_scale
 from .structural_roi import StructuralRoiSet, detect_structural_rois
-from .text_protection import detect_text_region_mask, filter_text_like_lines
+from .text_protection import (
+    TEXT_MASK_RESTORATION,
+    detect_text_region_mask,
+    filter_text_like_lines,
+)
 
 MAX_CONNECTION_DISTANCE_MM = 0.4
 PROTECTION_EXPANSION_MM = 0.0
@@ -152,7 +156,7 @@ def _axis_distance(angle: float) -> float:
 
 
 def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
-    sample_count = max(12, min(512, int(math.ceil(line.length))))
+    sample_count = max(12, min(512, math.ceil(line.length)))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(np.int32), 0, mask.shape[1] - 1)
@@ -174,8 +178,7 @@ def _scan_support_mask(
         raise ValueError("Scan support image must be an 8-bit grayscale image")
     foreground_tones = gray[binary < 128]
     if foreground_tones.size:
-        dark_threshold = int(
-            round(
+        dark_threshold = round(
                 float(
                     np.clip(
                         np.percentile(foreground_tones, 50.0),
@@ -184,11 +187,10 @@ def _scan_support_mask(
                     )
                 )
             )
-        )
     else:
         dark_threshold = 125
     deep_ink = np.where(gray <= dark_threshold, 255, 0).astype(np.uint8)
-    radius = max(2, int(round(3.0 * scale)))
+    radius = max(2, round(3.0 * scale))
     return cv2.dilate(
         deep_ink,
         cv2.getStructuringElement(
@@ -203,7 +205,7 @@ def _binary_support_mask(binary: np.ndarray, *, scale: float) -> np.ndarray:
     """Return a narrow corridor around source ink for all page types."""
 
     foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
-    radius = max(1, int(round(1.5 * scale)))
+    radius = max(1, round(1.5 * scale))
     return cv2.dilate(
         foreground,
         cv2.getStructuringElement(
@@ -242,7 +244,7 @@ def _trim_endpoints_to_source_support(
 
     trimmed: list[LineSegment] = []
     for line in lines:
-        sample_count = max(2, min(4096, int(math.ceil(line.length)) + 1))
+        sample_count = max(2, min(4096, math.ceil(line.length) + 1))
         parameters = np.linspace(0.0, 1.0, sample_count)
         xs = line.x1 + (line.x2 - line.x1) * parameters
         ys = line.y1 + (line.y2 - line.y1) * parameters
@@ -277,7 +279,7 @@ def _line_support_quality(
 ) -> tuple[float, float]:
     """Return total ink support and the longest unsupported fraction."""
 
-    sample_count = max(12, min(2048, int(math.ceil(line.length))))
+    sample_count = max(12, min(2048, math.ceil(line.length)))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(np.int32), 0, support_mask.shape[1] - 1)
@@ -391,11 +393,11 @@ def _parallel_band_ink_support(
     # Sample only between the two detections. Padding with surrounding paper
     # made the decision unstable for anti-aliased coordinates (for example,
     # 2191.0 versus 2191.03 could add a complete white row).
-    cross_start = int(math.ceil(low))
-    cross_end = int(math.floor(high))
+    cross_start = math.ceil(low)
+    cross_end = math.floor(high)
     along_samples = max(
         12,
-        min(384, int(math.ceil((overlap_end - overlap_start) / max(1.0, scale)))),
+        min(384, math.ceil((overlap_end - overlap_start) / max(1.0, scale))),
     )
     along = np.linspace(overlap_start, overlap_end, along_samples)
     cross = np.arange(cross_start, cross_end + 1, dtype=np.int32)
@@ -631,6 +633,71 @@ def suppress_parallel_duplicate_detections(
             )
         output.append(base)
     return output
+
+
+def _line_interval_coverage(
+    line: LineSegment,
+    existing: Sequence[LineSegment],
+    *,
+    scale: float,
+) -> float:
+    """Measure how much of a proposed line already exists in base geometry."""
+
+    orientation = _axis_orientation(line)
+    if orientation is None:
+        return 0.0
+    tolerance = max(3.0, 3.0 * scale)
+    start, end = _axis_interval(line, orientation)
+    length = max(end - start, 1e-9)
+    coordinate = _axis_coordinate(line, orientation)
+    spans: list[tuple[float, float]] = []
+    for other in existing:
+        if _axis_orientation(other) != orientation:
+            continue
+        if abs(_axis_coordinate(other, orientation) - coordinate) > tolerance:
+            continue
+        other_start, other_end = _axis_interval(other, orientation)
+        if other_end < start - tolerance or end < other_start - tolerance:
+            continue
+        spans.append((max(start, other_start), min(end, other_end)))
+    if not spans:
+        return 0.0
+    spans.sort()
+    covered = 0.0
+    current_start, current_end = spans[0]
+    for span_start, span_end in spans[1:]:
+        if span_start <= current_end + tolerance:
+            current_end = max(current_end, span_end)
+            continue
+        covered += max(0.0, current_end - current_start)
+        current_start, current_end = span_start, span_end
+    covered += max(0.0, current_end - current_start)
+    return min(1.0, covered / length)
+
+
+def _prepare_late_restorations(
+    candidates: Sequence[LineSegment],
+    existing: Sequence[LineSegment],
+    *,
+    gray: np.ndarray,
+    scale: float,
+) -> tuple[LineSegment, ...]:
+    """Keep only thin, additive candidates not already represented by base lines."""
+
+    width_limit = max(3.0, 6.0 * scale)
+    uncovered = [
+        line
+        for line in candidates
+        if line.width <= width_limit
+        and _line_interval_coverage(line, existing, scale=scale) < 0.95
+    ]
+    return tuple(
+        suppress_parallel_duplicate_detections(
+            uncovered,
+            gray=gray,
+            scale=scale,
+        )
+    )
 
 
 def _structural_intersection_pair(
@@ -1098,6 +1165,7 @@ def reconstruct_straight_lines(
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
     performance_callback: PerformanceCallback | None = None,
+    late_restoration_output: list[LineSegment] | None = None,
 ) -> tuple[LineSegment, ...]:
     """Detect table/frame rules without turning text or logos into blue lines.
 
@@ -1168,11 +1236,40 @@ def reconstruct_straight_lines(
         support_mask=source_support,
     )
     text_protection = detect_text_region_mask(binary)
-    candidates, _text_protection = filter_text_like_lines(
+    candidates, text_protection = filter_text_like_lines(
         candidates,
         text_protection,
         binary.shape,
     )
+    restoration_ids = {id(line) for line in text_protection.restored_lines}
+    restoration_candidates = tuple(
+        line for line in candidates if id(line) in restoration_ids
+    )
+    if late_restoration_output is not None:
+        candidates = [
+            line for line in candidates if id(line) not in restoration_ids
+        ]
+        if support_mask is not None:
+            restoration_candidates = tuple(
+                _filter_scan_artifact_lines(
+                    restoration_candidates,
+                    support_mask=support_mask,
+                    image_shape=binary.shape,
+                    scale=scale,
+                )
+            )
+        restoration_candidates = tuple(
+            _filter_source_supported_lines(
+                restoration_candidates,
+                support_mask=source_support,
+            )
+        )
+        restoration_candidates = tuple(
+            _trim_endpoints_to_source_support(
+                restoration_candidates,
+                support_mask=source_support,
+            )
+        )
     if support_mask is not None:
         candidates = _filter_scan_artifact_lines(
             candidates,
@@ -1286,6 +1383,24 @@ def reconstruct_straight_lines(
                 "structural_line_candidate_mask",
                 image=blank,
                 payload={"lines": [], "count": 0},
+            )
+        if late_restoration_output is not None:
+            restoration_gray = (
+                binary if scan_support_gray is None else scan_support_gray
+            )
+            late_restorations = _prepare_late_restorations(
+                restoration_candidates,
+                (),
+                gray=restoration_gray,
+                scale=scale,
+            )
+            late_restoration_output.extend(
+                line.copy(
+                    history=tuple(
+                        dict.fromkeys((*line.history, TEXT_MASK_RESTORATION))
+                    )
+                )
+                for line in late_restorations
             )
         return ()
 
@@ -1417,6 +1532,22 @@ def reconstruct_straight_lines(
                 "count": len(extended),
             },
         )
+    if late_restoration_output is not None:
+        restoration_gray = binary if scan_support_gray is None else scan_support_gray
+        late_restorations = _prepare_late_restorations(
+            restoration_candidates,
+            extended,
+            gray=restoration_gray,
+            scale=scale,
+        )
+        late_restoration_output.extend(
+            line.copy(
+                history=tuple(
+                    dict.fromkeys((*line.history, TEXT_MASK_RESTORATION))
+                )
+            )
+            for line in late_restorations
+        )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-reconstruction", 1.0)
     return tuple(
@@ -1441,19 +1572,19 @@ def suppress_reconstructed_lines(
     if not lines:
         return result
     scale = image_resolution_scale(binary.shape)
-    maximum_thickness = max(5, int(round(20.0 * scale)))
+    maximum_thickness = max(5, round(20.0 * scale))
     for line in lines:
         thickness = max(
             2,
             min(
                 maximum_thickness,
-                int(math.ceil(max(1.0, line.width) * 1.35)) + 2,
+                math.ceil(max(1.0, line.width) * 1.35) + 2,
             ),
         )
         cv2.line(
             result,
-            (int(round(line.x1)), int(round(line.y1))),
-            (int(round(line.x2)), int(round(line.y2))),
+            (round(line.x1), round(line.y1)),
+            (round(line.x2), round(line.y2)),
             255,
             thickness,
             cv2.LINE_8,

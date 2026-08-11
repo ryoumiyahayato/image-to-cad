@@ -4,14 +4,15 @@ import cv2
 import numpy as np
 
 from app.line_detect import LineSegment
-from app.structural_roi import detect_structural_rois
 from app.straight_line_reconstruction import (
+    _prepare_late_restorations,
     collapse_scan_parallel_duplicates,
     extend_lines_to_first_intersection,
     reconstruct_straight_lines,
     suppress_parallel_duplicate_detections,
     suppress_reconstructed_lines,
 )
+from app.structural_roi import detect_structural_rois
 
 
 def test_gapped_perpendicular_lines_are_not_extended_without_structural_roi() -> None:
@@ -25,6 +26,38 @@ def test_gapped_perpendicular_lines_are_not_extended_without_structural_roi() ->
 
     assert (resolved[0].x2, resolved[0].y2) == (46.0, 50.0)
     assert (resolved[1].x1, resolved[1].y1) == (50.0, 54.0)
+
+
+def test_late_restoration_output_is_additive_and_deduplicates_base_geometry() -> None:
+    gray = np.zeros((120, 160), dtype=np.uint8)
+    base = [LineSegment(20.0, 50.0, 100.0, 50.0, width=2.0)]
+    candidates = [
+        LineSegment(20.0, 50.0, 100.0, 50.0, width=2.0),
+        LineSegment(20.0, 80.0, 100.0, 80.0, width=2.0),
+    ]
+
+    prepared = _prepare_late_restorations(
+        candidates,
+        base,
+        gray=gray,
+        scale=1.0,
+    )
+
+    assert prepared == (candidates[1],)
+
+
+def test_late_restoration_output_rejects_thick_candidates() -> None:
+    gray = np.zeros((120, 160), dtype=np.uint8)
+    candidate = LineSegment(20.0, 80.0, 100.0, 80.0, width=7.0)
+
+    prepared = _prepare_late_restorations(
+        [candidate],
+        (),
+        gray=gray,
+        scale=1.0,
+    )
+
+    assert prepared == ()
 
 
 def test_gapped_frame_rules_reconnect_only_inside_detected_roi() -> None:

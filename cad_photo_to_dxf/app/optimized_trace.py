@@ -3,7 +3,12 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from .connectivity_safety import DEFAULT_CONNECTION_DPI
 from .content_ownership import (
     arbitrate_content_candidates,
@@ -17,10 +22,8 @@ from .content_ownership import (
     text_candidate_source_mask,
 )
 from .final_structure import build_final_structure
+from .line_detect import LineSegment
 from .logo_detection import detect_logo_regions
-from .ocr_layout import constrain_texts_to_table_cells
-from .ocr_overlap import collapse_overlapping_candidates
-from .ocr_pipeline import recognize_text_candidates_optimized
 from .observability import (
     ObservationSink,
     observe,
@@ -28,6 +31,9 @@ from .observability import (
     rasterize_text_boxes,
     texts_payload,
 )
+from .ocr_layout import constrain_texts_to_table_cells
+from .ocr_overlap import collapse_overlapping_candidates
+from .ocr_pipeline import recognize_text_candidates_optimized
 from .performance_observability import (
     PerformanceCallback,
     emit_performance,
@@ -37,9 +43,7 @@ from .performance_observability import (
 from .raster_trace import RasterTraceResult, trace_binary
 from .scan_artifact_filter import suppress_scan_artifact_traces
 from .scan_cleanup import prepare_scan_page
-from .signature_overlay import (
-    detect_signature_regions,
-)
+from .signature_overlay import detect_signature_regions
 from .straight_line_reconstruction import reconstruct_straight_lines
 from .text_output_contract import (
     text_output_decisions,
@@ -213,6 +217,7 @@ def trace_image_optimized(
     )
     protected_mask = connection_protection.mask
     report_progress(progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08)
+    late_restorations: list[LineSegment] = []
     line_candidates = reconstruct_straight_lines(
         prepared.binary,
         source_dpi=source_dpi,
@@ -234,6 +239,7 @@ def trace_image_optimized(
         ),
         observation_sink=observation_sink,
         performance_callback=performance_callback,
+        late_restoration_output=late_restorations,
     )
 
     ownership_started = performance_clock()
@@ -264,7 +270,7 @@ def trace_image_optimized(
         "ownership",
         ownership_started,
     )
-    straight_lines = arbitrated.lines
+    straight_lines = tuple(arbitrated.lines) + tuple(late_restorations)
     texts = arbitrated.texts
     logos = arbitrated.logos
     signatures = arbitrated.signatures
