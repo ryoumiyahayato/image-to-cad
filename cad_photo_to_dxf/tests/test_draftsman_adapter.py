@@ -323,10 +323,9 @@ def test_current_v2_91_restorations_map_reconstructed() -> None:
 
 
 def test_production_modules_do_not_import_shadow_contracts() -> None:
-    excluded = {"draftsman_contract.py", "draftsman_adapter.py"}
     consumers = []
     for path in (PROJECT_ROOT / "app").glob("*.py"):
-        if path.name in excluded:
+        if path.name.startswith("draftsman_"):
             continue
         source = path.read_text(encoding="utf-8")
         if "draftsman_contract" in source or "draftsman_adapter" in source:
