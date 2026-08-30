@@ -17,10 +17,10 @@
       "const": "non-destructive-editable-text-v2"
     },
     "schema_version": {
-      "const": 4
+      "const": 5
     },
     "page_schema_version": {
-      "const": 2
+      "const": 3
     },
     "validator": {
       "const": "editable-text-regression-contract/v2"
@@ -274,6 +274,7 @@
         "page_schema_version",
         "source",
         "base_artifact",
+        "base_semantic_evidence",
         "candidate_artifact",
         "parent_v1",
         "algorithm_profile",
@@ -290,12 +291,24 @@
           "minLength": 1
         },
         "page_schema_version": {
-          "const": 2
+          "const": 3
         },
         "source": {
           "$ref": "#/$defs/source"
         },
         "base_artifact": {
+          "allOf": [
+            {"$ref": "#/$defs/relativeFile"},
+            {
+              "required": ["identity_role", "reproducible"],
+              "properties": {
+                "identity_role": {"const": "historical_raw_record"},
+                "reproducible": {"const": false}
+              }
+            }
+          ]
+        },
+        "base_semantic_evidence": {
           "$ref": "#/$defs/relativeFile"
         },
         "candidate_artifact": {

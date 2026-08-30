@@ -6,6 +6,6 @@ materialized in the ignored review package under
 `local-artifacts/review/p1-v2-implementation/raw-evidence/`; it binds the 91
 per-entity provenance hashes back to the immutable R3 provisional manifest.
 
-The committed V2 surface intentionally contains only this layout contract,
-schema, validator, and tests. DXF files, full per-entity review records, and
-replay outputs remain generated review artifacts rather than baseline source.
+DXF files, full per-restoration review records, and replay outputs remain
+generated review artifacts. The separate committed `pages/*-base-evidence.json`
+files contain only deterministic canonical base identity and replay attestations.

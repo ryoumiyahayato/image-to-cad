@@ -14,20 +14,21 @@ SCRIPTS = PROJECT_ROOT / "scripts"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
-from editable_text_contract_dispatch import dispatch_contract
-from editable_text_regression_contract import (
+from editable_text_contract_dispatch import dispatch_contract  # noqa: E402
+from editable_text_regression_contract import (  # noqa: E402
     EDITABLE_TEXT_CONTRACT,
     require_explicit_contract,
 )
-from editable_text_v2_contract import (
+from editable_text_v2_contract import (  # noqa: E402
     V2_CONTRACT,
     V2_PAGE_SCHEMA_VERSION,
     V2_SCHEMA_VERSION,
     V2SchemaError,
+    _payloads_from_base_evidence,
     _validate_page,
     validate_v2_manifest_shape,
 )
-from v2_canonical_structure import (
+from v2_canonical_structure import (  # noqa: E402
     canonical_payload,
     content_hash,
     multiset_digest,
@@ -91,6 +92,13 @@ def _current_page(name: str) -> dict[str, object]:
         if path.is_file():
             return json.loads(path.read_text(encoding="utf-8"))
     pytest.skip(f"current V2 review page is not materialized: {name}")
+
+
+def _current_base_evidence(page: dict[str, object]) -> dict[str, object]:
+    reference = page["base_semantic_evidence"]
+    assert isinstance(reference, dict)
+    path = WORKSPACE_ROOT / str(reference["path"])
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def test_v2_historical_empty_delta_is_valid() -> None:
@@ -290,3 +298,83 @@ def test_v2_600_nonempty_policy_is_rejected() -> None:
     result = _validate_page(WORKSPACE_ROOT, mutated, verify_evidence_files=False)
     assert result["passed"] is False
     assert any("expected restoration count" in error for error in result["errors"])
+
+
+@pytest.mark.parametrize("field", ["sha256", "config_hash", "page_number", "dpi"])
+def test_v2_base_evidence_binds_source_config_page_and_dpi(field: str) -> None:
+    page = _current_page("environment-plan-page-003-150dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(page)
+    source = mutated["source"]
+    assert isinstance(source, dict)
+    source[field] = "0" * 64 if field in {"sha256", "config_hash"} else int(source[field]) + 1
+    _, errors = _payloads_from_base_evidence(mutated, evidence)
+    assert any(f"source mismatch: {field}" in error for error in errors)
+
+
+def test_v2_base_evidence_rejects_page_transform_change() -> None:
+    page = _current_page("environment-plan-page-003-150dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(page)
+    transform = mutated["transform"]
+    assert isinstance(transform, dict)
+    transform["rotation_degrees"] = 0.001
+    _, errors = _payloads_from_base_evidence(mutated, evidence)
+    assert any("page transform mismatch" in error for error in errors)
+
+
+def test_v2_base_evidence_rejects_canonical_geometry_change() -> None:
+    page = _current_page("environment-plan-page-003-150dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(evidence)
+    structure = mutated["canonical_structure"]
+    assert isinstance(structure, dict)
+    entities = structure["entities"]
+    assert isinstance(entities, list)
+    payload = entities[0]["canonical_payload"]
+    assert isinstance(payload, dict)
+    if payload["type"] == "LINE":
+        payload["start"][0] += 0.001
+    else:
+        payload["layer"] = "TAMPERED"
+    _, errors = _payloads_from_base_evidence(page, mutated)
+    assert any("canonical payload hash mismatch" in error for error in errors)
+    assert any("semantic multiset hash mismatch" in error for error in errors)
+
+
+def test_v2_base_evidence_rejects_entity_multiplicity_change() -> None:
+    page = _current_page("warehouse-index-page-001-600dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(evidence)
+    structure = mutated["canonical_structure"]
+    assert isinstance(structure, dict)
+    entities = structure["entities"]
+    assert isinstance(entities, list)
+    entities[0]["multiplicity"] += 1
+    _, errors = _payloads_from_base_evidence(page, mutated)
+    assert any("entity count mismatch" in error for error in errors)
+    assert any("semantic multiset hash mismatch" in error for error in errors)
+
+
+def test_v2_base_evidence_rejects_historical_raw_record_substitution() -> None:
+    page = _current_page("warehouse-index-page-001-600dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(evidence)
+    historical = mutated["historical_raw_artifact"]
+    assert isinstance(historical, dict)
+    historical["sha256"] = "0" * 64
+    _, errors = _payloads_from_base_evidence(page, mutated)
+    assert any("historical raw SHA record mismatch" in error for error in errors)
+
+
+def test_v2_base_evidence_rejects_replay_manifest_substitution() -> None:
+    page = _current_page("warehouse-index-page-001-600dpi")
+    evidence = _current_base_evidence(page)
+    mutated = copy.deepcopy(evidence)
+    replay = mutated["replay"]
+    assert isinstance(replay, dict)
+    runs = replay["runs"]
+    assert isinstance(runs, list)
+    runs[1]["semantic_sha256"] = "0" * 64
+    _, errors = _payloads_from_base_evidence(page, mutated)
+    assert any("semantic replay mismatch" in error for error in errors)

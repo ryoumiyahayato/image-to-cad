@@ -29,8 +29,10 @@ try:  # Package import from tests/application code.
         verify_phase12_anchor,
     )
     from .v2_canonical_structure import (
+        canonical_json_bytes,
         canonical_payload,
         content_hash,
+        counted_entities,
         delta_entities,
         multiset_digest,
         read_structure_payloads,
@@ -53,8 +55,10 @@ except ImportError:  # Direct ``python scripts/editable_text_v2_contract.py`` us
         verify_phase12_anchor,
     )
     from v2_canonical_structure import (
+        canonical_json_bytes,
         canonical_payload,
         content_hash,
+        counted_entities,
         delta_entities,
         multiset_digest,
         read_structure_payloads,
@@ -64,9 +68,10 @@ except ImportError:  # Direct ``python scripts/editable_text_v2_contract.py`` us
 
 
 V2_CONTRACT = "non-destructive-editable-text-v2"
-V2_SCHEMA_VERSION = 4
-V2_PAGE_SCHEMA_VERSION = 2
+V2_SCHEMA_VERSION = 5
+V2_PAGE_SCHEMA_VERSION = 3
 V2_VALIDATOR_ID = "editable-text-regression-contract/v2"
+V2_BASE_EVIDENCE_ID = "deterministic-canonical-semantic-evidence/v1"
 V2_PARENT_CONTRACT = EDITABLE_TEXT_CONTRACT
 V2_ALLOWED_STRUCTURE_PARTITIONS = ("non_text_structure_hash",)
 V2_REQUIRED_RECORD_FIELDS = (
@@ -236,6 +241,7 @@ def _validate_page_shape(page: Mapping[str, Any], path: str) -> None:
             "page_schema_version",
             "source",
             "base_artifact",
+            "base_semantic_evidence",
             "candidate_artifact",
             "parent_v1",
             "algorithm_profile",
@@ -277,6 +283,22 @@ def _validate_page_shape(page: Mapping[str, Any], path: str) -> None:
     )
     _sha256_string(parent["page_summary_sha256"], f"{path}.parent_v1.page_summary_sha256")
     _require_mapping(page["partition_hashes"], f"{path}.partition_hashes")
+    base_artifact = _require_mapping(page["base_artifact"], f"{path}.base_artifact")
+    _require_fields(
+        base_artifact,
+        ("path", "sha256", "identity_role", "reproducible"),
+        f"{path}.base_artifact",
+    )
+    if base_artifact["identity_role"] != "historical_raw_record":
+        raise V2SchemaError(f"{path}.base_artifact must be a historical raw record")
+    if base_artifact["reproducible"] is not False:
+        raise V2SchemaError(f"{path}.base_artifact must explicitly be non-reproducible")
+    evidence = _require_mapping(
+        page["base_semantic_evidence"],
+        f"{path}.base_semantic_evidence",
+    )
+    _require_fields(evidence, ("path", "sha256"), f"{path}.base_semantic_evidence")
+    _sha256_string(evidence["sha256"], f"{path}.base_semantic_evidence.sha256")
     _require_mapping(page["base_structure"], f"{path}.base_structure")
     _require_mapping(page["restoration_delta"], f"{path}.restoration_delta")
     _require_mapping(page["determinism"], f"{path}.determinism")
@@ -330,6 +352,151 @@ def _audit_partition_page(
         content_audit=content_audit,
     )
     return base_audit, candidate_audit
+
+
+def _audit_candidate(page: Mapping[str, Any], candidate_path: Path) -> dict[str, Any]:
+    page_metadata, report_metrics, content_audit = _audit_inputs(page)
+    return audit_dxf(
+        page_id=str(page["page_id"]),
+        dxf_path=candidate_path,
+        page_metadata=page_metadata,
+        report_metrics=report_metrics,
+        content_audit=content_audit,
+    )
+
+
+def _base_evidence_identity(evidence: Mapping[str, Any]) -> dict[str, Any]:
+    """Select every deterministic field that defines the authoritative base."""
+
+    return {
+        "evidence_contract": evidence.get("evidence_contract"),
+        "page_id": evidence.get("page_id"),
+        "base_commit": evidence.get("base_commit"),
+        "source": evidence.get("source"),
+        "transform": evidence.get("transform"),
+        "transform_sha256": evidence.get("transform_sha256"),
+        "canonical_structure": evidence.get("canonical_structure"),
+        "partition_hashes": evidence.get("partition_hashes"),
+        "audit_identity": evidence.get("audit_identity"),
+        "generation": evidence.get("generation"),
+        "historical_raw_artifact": evidence.get("historical_raw_artifact"),
+    }
+
+
+def _grouped_structure(payloads: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[str, dict[str, Any]] = {}
+    for raw in payloads:
+        payload = canonical_payload(raw)
+        key = canonical_json_bytes(payload).decode("utf-8")
+        item = grouped.setdefault(
+            key,
+            {
+                "canonical_payload": payload,
+                "canonical_payload_hash": content_hash(payload),
+                "multiplicity": 0,
+            },
+        )
+        item["multiplicity"] += 1
+    return [grouped[key] for key in sorted(grouped)]
+
+
+def _payloads_from_base_evidence(
+    page: Mapping[str, Any],
+    evidence: Mapping[str, Any],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    page_id = str(page["page_id"])
+    errors: list[str] = []
+    if evidence.get("evidence_contract") != V2_BASE_EVIDENCE_ID:
+        errors.append(f"{page_id}: base semantic evidence contract mismatch")
+    if evidence.get("page_id") != page_id:
+        errors.append(f"{page_id}: base semantic evidence page mismatch")
+    parent = _require_mapping(page["parent_v1"], f"{page_id}.parent_v1")
+    if evidence.get("base_commit") != parent.get("base_commit"):
+        errors.append(f"{page_id}: base semantic evidence commit mismatch")
+
+    source = _require_mapping(page["source"], f"{page_id}.source")
+    evidence_source = _require_mapping(evidence.get("source"), f"{page_id}.base_evidence.source")
+    for key in ("relative_path", "sha256", "config_hash", "page_number", "dpi", "dimensions"):
+        if evidence_source.get(key) != source.get(key):
+            errors.append(f"{page_id}: base semantic evidence source mismatch: {key}")
+
+    transform = _require_mapping(page.get("transform"), f"{page_id}.transform")
+    evidence_transform = _require_mapping(
+        evidence.get("transform"),
+        f"{page_id}.base_evidence.transform",
+    )
+    if canonical_json_bytes(evidence_transform) != canonical_json_bytes(transform):
+        errors.append(f"{page_id}: base semantic evidence page transform mismatch")
+    if evidence.get("transform_sha256") != content_hash(evidence_transform):
+        errors.append(f"{page_id}: base semantic evidence transform hash mismatch")
+
+    historical = _require_mapping(
+        evidence.get("historical_raw_artifact"),
+        f"{page_id}.base_evidence.historical_raw_artifact",
+    )
+    page_historical = _require_mapping(page["base_artifact"], f"{page_id}.base_artifact")
+    if historical.get("sha256") != page_historical.get("sha256"):
+        errors.append(f"{page_id}: historical raw SHA record mismatch")
+    if historical.get("identity_role") != "historical_raw_record" or historical.get("reproducible") is not False:
+        errors.append(f"{page_id}: historical raw artifact is not explicitly non-reproducible")
+
+    structure = _require_mapping(
+        evidence.get("canonical_structure"),
+        f"{page_id}.base_evidence.canonical_structure",
+    )
+    entities = _require_list(
+        structure.get("entities"),
+        f"{page_id}.base_evidence.canonical_structure.entities",
+    )
+    payloads: list[dict[str, Any]] = []
+    for index, raw_entity in enumerate(entities):
+        entity = _require_mapping(
+            raw_entity,
+            f"{page_id}.base_evidence.canonical_structure.entities[{index}]",
+        )
+        payload = canonical_payload(entity.get("canonical_payload"))
+        if entity.get("canonical_payload_hash") != content_hash(payload):
+            errors.append(f"{page_id}: base canonical payload hash mismatch at {index}")
+        multiplicity = int(entity.get("multiplicity", 0))
+        if multiplicity < 1:
+            errors.append(f"{page_id}: base canonical multiplicity is invalid at {index}")
+            continue
+        payloads.extend([payload] * multiplicity)
+
+    records = counted_entities(payloads, page_id=page_id, role="base")
+    if int(structure.get("entity_count", -1)) != len(records):
+        errors.append(f"{page_id}: base semantic entity count mismatch")
+    if structure.get("multiset_hash") != multiset_digest(records):
+        errors.append(f"{page_id}: base semantic multiset hash mismatch")
+    if structure.get("canonical_records_hash") != content_hash(records):
+        errors.append(f"{page_id}: base canonical records hash mismatch")
+
+    semantic_sha256 = content_hash(_base_evidence_identity(evidence))
+    if evidence.get("semantic_sha256") != semantic_sha256:
+        errors.append(f"{page_id}: base semantic identity hash mismatch")
+    replay = _require_mapping(evidence.get("replay"), f"{page_id}.base_evidence.replay")
+    runs = _require_list(replay.get("runs"), f"{page_id}.base_evidence.replay.runs")
+    if int(replay.get("run_count", 0)) < 2 or len(runs) < 2:
+        errors.append(f"{page_id}: base semantic evidence has fewer than two replay runs")
+    if not bool(replay.get("semantic_manifest_deterministic")):
+        errors.append(f"{page_id}: base semantic replay is not declared deterministic")
+    for index, raw_run in enumerate(runs):
+        run = _require_mapping(raw_run, f"{page_id}.base_evidence.replay.runs[{index}]")
+        if run.get("semantic_sha256") != semantic_sha256:
+            errors.append(f"{page_id}: base semantic replay mismatch at run {index + 1}")
+        if int(run.get("dxf_audit_errors", -1)) != 0:
+            errors.append(f"{page_id}: base replay DXF audit failed at run {index + 1}")
+        read_save_read = _require_mapping(
+            run.get("read_save_read"),
+            f"{page_id}.base_evidence.replay.runs[{index}].read_save_read",
+        )
+        if not bool(read_save_read.get("passed")):
+            errors.append(f"{page_id}: base replay read-save-read failed at run {index + 1}")
+        try:
+            _sha256_string(run.get("raw_sha256"), f"{page_id}.base_evidence.replay.runs[{index}].raw_sha256")
+        except V2SchemaError as exc:
+            errors.append(str(exc))
+    return payloads, errors
 
 
 def _record_source_hash(record: Mapping[str, Any]) -> str:
@@ -527,7 +694,19 @@ def _validate_page(
     page_id = str(page["page_id"])
     errors: list[str] = []
     source = _require_mapping(page["source"], f"{page_id}.source")
-    base_path = _verify_file_hash(repository_root, page["base_artifact"], f"{page_id}.base_artifact")
+    base_artifact = _require_mapping(page["base_artifact"], f"{page_id}.base_artifact")
+    _sha256_string(base_artifact.get("sha256"), f"{page_id}.base_artifact.sha256")
+    evidence_path = _verify_file_hash(
+        repository_root,
+        _require_mapping(
+            page["base_semantic_evidence"],
+            f"{page_id}.base_semantic_evidence",
+        ),
+        f"{page_id}.base_semantic_evidence",
+    )
+    base_evidence = load_json(evidence_path)
+    base_payloads, evidence_errors = _payloads_from_base_evidence(page, base_evidence)
+    errors.extend(evidence_errors)
     candidate_path = _verify_file_hash(
         repository_root,
         page["candidate_artifact"],
@@ -566,12 +745,20 @@ def _validate_page(
         except ValueError as exc:
             errors.append(str(exc))
 
-    base_audit, candidate_audit = _audit_partition_page(page, base_path, candidate_path)
+    candidate_audit = _audit_candidate(page, candidate_path)
+    base_partitions = _require_mapping(
+        base_evidence.get("partition_hashes"),
+        f"{page_id}.base_evidence.partition_hashes",
+    )
+    base_audit_identity = _require_mapping(
+        base_evidence.get("audit_identity"),
+        f"{page_id}.base_evidence.audit_identity",
+    )
     expected_partitions = _require_mapping(page["partition_hashes"], f"{page_id}.partition_hashes")
     expected_base = _require_mapping(expected_partitions.get("base"), f"{page_id}.partition_hashes.base")
     expected_candidate = _require_mapping(expected_partitions.get("candidate"), f"{page_id}.partition_hashes.candidate")
     for name in ALL_PARTITION_HASHES:
-        if base_audit["partition_hashes"].get(name) != expected_base.get(name):
+        if base_partitions.get(name) != expected_base.get(name):
             errors.append(f"{page_id}: base {name} does not match manifest")
         if candidate_audit["partition_hashes"].get(name) != expected_candidate.get(name):
             errors.append(f"{page_id}: candidate {name} does not match manifest")
@@ -581,17 +768,16 @@ def _validate_page(
     if not allowed_changed.issubset(set(V2_ALLOWED_STRUCTURE_PARTITIONS)):
         errors.append(f"{page_id}: policy allows a non-V2 partition to change")
     for name in ALL_PARTITION_HASHES:
-        if name not in allowed_changed and base_audit["partition_hashes"].get(name) != candidate_audit["partition_hashes"].get(name):
+        if name not in allowed_changed and base_partitions.get(name) != candidate_audit["partition_hashes"].get(name):
             errors.append(f"{page_id}: immutable partition changed: {name}")
-    if int(candidate_audit["dxf_audit_errors"]) != 0 or int(base_audit["dxf_audit_errors"]) != 0:
+    if int(candidate_audit["dxf_audit_errors"]) != 0:
         errors.append(f"{page_id}: DXF audit errors are non-zero")
-    if not base_audit["read_save_read"].get("passed") or not candidate_audit["read_save_read"].get("passed"):
+    if not candidate_audit["read_save_read"].get("passed"):
         errors.append(f"{page_id}: DXF read-save-read failed")
     for key in ("candidate_id_hash", "ocr_content_hash", "native_text_count", "eligible_count"):
-        if base_audit.get(key) != candidate_audit.get(key):
+        if base_audit_identity.get(key) != candidate_audit.get(key):
             errors.append(f"{page_id}: V1 semantic field changed: {key}")
 
-    _, base_payloads = read_structure_payloads(base_path)
     _, candidate_payloads = read_structure_payloads(candidate_path)
     restorations = _require_list(page["restorations"], f"{page_id}.restorations")
     relation = validate_structure_relation(
@@ -651,6 +837,9 @@ def _validate_page(
         "candidate_entity_count": proof["candidate_entity_count"],
         "restoration_count": len(delta_records),
         "base_missing_count": proof["base_missing_count"],
+        "resegmentation_count": (
+            proof["base_missing_count"] if proof["added_delta_count"] else 0
+        ),
         "missing_approved_count": relation["missing_approved_count"],
         "unapproved_additions": relation["unapproved_count"],
         "duplicate_manifest_id_count": relation["duplicate_manifest_id_count"],
@@ -658,6 +847,17 @@ def _validate_page(
             bool(_require_mapping(item, f"{page_id}.restoration")["ownership_negative_result"].get("conflicts"))
             for item in restorations
         ),
+        "changed_partitions": [
+            name
+            for name in ALL_PARTITION_HASHES
+            if base_partitions.get(name) != candidate_audit["partition_hashes"].get(name)
+        ],
+        "non_target_partition_changes": [
+            name
+            for name in ALL_PARTITION_HASHES
+            if name not in allowed_changed
+            and base_partitions.get(name) != candidate_audit["partition_hashes"].get(name)
+        ],
         "errors": errors,
         "passed": not errors,
     }
@@ -753,6 +953,136 @@ def _record_from_provisional(
     return record
 
 
+def materialize_base_semantic_evidence(
+    *,
+    repository_root: Path,
+    page_path: Path,
+    replay_dxf_paths: Sequence[Path],
+    evidence_output_path: Path,
+    updated_page_output_path: Path,
+    generation_command: str,
+) -> dict[str, Any]:
+    """Create a base identity only when independent replay semantics agree."""
+
+    if len(replay_dxf_paths) < 2:
+        raise ValueError("base semantic evidence requires at least two replay DXFs")
+    page = dict(load_json(page_path))
+    page_id = str(page["page_id"])
+    run_values: list[dict[str, Any]] = []
+    reference_payloads: list[dict[str, Any]] | None = None
+    reference_partitions: Mapping[str, Any] | None = None
+    reference_audit_identity: dict[str, Any] | None = None
+    audit_keys = ("candidate_id_hash", "ocr_content_hash", "native_text_count", "eligible_count")
+    for index, dxf_path in enumerate(replay_dxf_paths, start=1):
+        audit = _audit_candidate(page, dxf_path)
+        _, payloads = read_structure_payloads(dxf_path)
+        canonical = sorted(
+            (canonical_payload(payload) for payload in payloads),
+            key=canonical_json_bytes,
+        )
+        partitions = dict(audit["partition_hashes"])
+        audit_identity = {key: audit.get(key) for key in audit_keys}
+        if reference_payloads is None:
+            reference_payloads = canonical
+            reference_partitions = partitions
+            reference_audit_identity = audit_identity
+        elif (
+            canonical_json_bytes(canonical) != canonical_json_bytes(reference_payloads)
+            or partitions != reference_partitions
+            or audit_identity != reference_audit_identity
+        ):
+            raise ValueError(
+                f"{page_id}: deterministic semantic replay mismatch at run {index}"
+            )
+        run_values.append(
+            {
+                "run_id": f"c4b-detached-replay-{index}",
+                "raw_sha256": file_sha256(dxf_path),
+                "dxf_audit_errors": int(audit["dxf_audit_errors"]),
+                "read_save_read": audit["read_save_read"],
+            }
+        )
+
+    assert reference_payloads is not None
+    assert reference_partitions is not None
+    assert reference_audit_identity is not None
+    source = _require_mapping(page["source"], f"{page_id}.source")
+    transform = _require_mapping(page["transform"], f"{page_id}.transform")
+    historical = _require_mapping(page["base_artifact"], f"{page_id}.base_artifact")
+    base_records = counted_entities(reference_payloads, page_id=page_id, role="base")
+    evidence: dict[str, Any] = {
+        "evidence_contract": V2_BASE_EVIDENCE_ID,
+        "page_id": page_id,
+        "base_commit": page["parent_v1"]["base_commit"],
+        "source": {
+            key: source.get(key)
+            for key in (
+                "relative_path",
+                "sha256",
+                "config_hash",
+                "page_number",
+                "dpi",
+                "dimensions",
+            )
+        },
+        "transform": transform,
+        "transform_sha256": content_hash(transform),
+        "canonical_structure": {
+            "entity_count": len(base_records),
+            "multiset_hash": multiset_digest(base_records),
+            "canonical_records_hash": content_hash(base_records),
+            "entities": _grouped_structure(reference_payloads),
+        },
+        "partition_hashes": dict(reference_partitions),
+        "audit_identity": reference_audit_identity,
+        "generation": {
+            "runner": "cad_photo_to_dxf/scripts/run_real_document_regression.py",
+            "manifest": "cad_photo_to_dxf/tests/real_regression/manifest.json",
+            "command": generation_command,
+            "python": "3.11",
+        },
+        "historical_raw_artifact": {
+            "path": historical["path"],
+            "sha256": historical["sha256"],
+            "identity_role": "historical_raw_record",
+            "reproducible": False,
+        },
+    }
+    semantic_sha256 = content_hash(_base_evidence_identity(evidence))
+    evidence["semantic_sha256"] = semantic_sha256
+    evidence["replay"] = {
+        "run_count": len(run_values),
+        "semantic_manifest_deterministic": True,
+        "runs": [dict(run, semantic_sha256=semantic_sha256) for run in run_values],
+    }
+    evidence_output_path.parent.mkdir(parents=True, exist_ok=True)
+    evidence_output_path.write_text(
+        json.dumps(evidence, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+
+    page["page_schema_version"] = V2_PAGE_SCHEMA_VERSION
+    page["base_artifact"] = {
+        "path": historical["path"],
+        "sha256": historical["sha256"],
+        "identity_role": "historical_raw_record",
+        "reproducible": False,
+    }
+    candidate = dict(_require_mapping(page["candidate_artifact"], f"{page_id}.candidate_artifact"))
+    candidate["identity_role"] = "delivery_integrity_only"
+    page["candidate_artifact"] = candidate
+    page["base_semantic_evidence"] = {
+        "path": evidence_output_path.relative_to(repository_root).as_posix(),
+        "sha256": file_sha256(evidence_output_path),
+    }
+    updated_page_output_path.parent.mkdir(parents=True, exist_ok=True)
+    updated_page_output_path.write_text(
+        json.dumps(page, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    return evidence
+
+
 def materialize_page_from_provisional(
     *,
     repository_root: Path,
@@ -761,6 +1091,7 @@ def materialize_page_from_provisional(
     page_summary_path: Path,
     base_dxf_path: Path,
     candidate_dxf_path: Path,
+    base_semantic_evidence_path: Path,
     output_path: Path,
     raw_evidence_path: Path | None = None,
     require_empty_delta: bool = False,
@@ -769,6 +1100,7 @@ def materialize_page_from_provisional(
     provisional = load_json(provisional_path)
     source_config = load_json(source_config_path)
     page_summary = load_json(page_summary_path)
+    base_semantic_evidence = load_json(base_semantic_evidence_path)
     page_id = str(provisional.get("page_id") or source_config["page_id"])
     _, base_payloads = read_structure_payloads(base_dxf_path)
     _, candidate_payloads = read_structure_payloads(candidate_dxf_path)
@@ -860,12 +1192,19 @@ def materialize_page_from_provisional(
         "page_schema_version": V2_PAGE_SCHEMA_VERSION,
         "source": source,
         "base_artifact": {
-            "path": base_dxf_path.relative_to(repository_root).as_posix(),
-            "sha256": file_sha256(base_dxf_path),
+            "path": base_semantic_evidence["historical_raw_artifact"]["path"],
+            "sha256": base_semantic_evidence["historical_raw_artifact"]["sha256"],
+            "identity_role": "historical_raw_record",
+            "reproducible": False,
+        },
+        "base_semantic_evidence": {
+            "path": base_semantic_evidence_path.relative_to(repository_root).as_posix(),
+            "sha256": file_sha256(base_semantic_evidence_path),
         },
         "candidate_artifact": {
             "path": candidate_dxf_path.relative_to(repository_root).as_posix(),
             "sha256": file_sha256(candidate_dxf_path),
+            "identity_role": "delivery_integrity_only",
         },
         "parent_v1": {
             "contract_version": V2_PARENT_CONTRACT,
@@ -944,10 +1283,18 @@ def _parser() -> argparse.ArgumentParser:
     materialize.add_argument("--page-summary", type=Path, required=True)
     materialize.add_argument("--base-dxf", type=Path, required=True)
     materialize.add_argument("--candidate-dxf", type=Path, required=True)
+    materialize.add_argument("--base-semantic-evidence", type=Path, required=True)
     materialize.add_argument("--output", type=Path, required=True)
     materialize.add_argument("--raw-evidence", type=Path)
     materialize.add_argument("--require-empty-delta", action="store_true")
     materialize.add_argument("--algorithm-profile-id", default="rc3-r2-source-backed-restoration")
+    base_evidence = subparsers.add_parser("materialize-base-evidence")
+    base_evidence.add_argument("--repository-root", type=Path, required=True)
+    base_evidence.add_argument("--page", type=Path, required=True)
+    base_evidence.add_argument("--replay-dxf", type=Path, action="append", required=True)
+    base_evidence.add_argument("--evidence-output", type=Path, required=True)
+    base_evidence.add_argument("--updated-page-output", type=Path, required=True)
+    base_evidence.add_argument("--generation-command", required=True)
     return parser
 
 
@@ -964,6 +1311,27 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
         return 0 if result["passed"] else 1
+    if args.command == "materialize-base-evidence":
+        evidence = materialize_base_semantic_evidence(
+            repository_root=args.repository_root.resolve(),
+            page_path=args.page.resolve(),
+            replay_dxf_paths=[path.resolve() for path in args.replay_dxf],
+            evidence_output_path=args.evidence_output.resolve(),
+            updated_page_output_path=args.updated_page_output.resolve(),
+            generation_command=args.generation_command,
+        )
+        print(
+            json.dumps(
+                {
+                    "page_id": evidence["page_id"],
+                    "semantic_sha256": evidence["semantic_sha256"],
+                    "replay_runs": evidence["replay"]["run_count"],
+                    "output": str(args.evidence_output),
+                },
+                indent=2,
+            )
+        )
+        return 0
     page = materialize_page_from_provisional(
         repository_root=args.repository_root.resolve(),
         provisional_path=args.provisional.resolve(),
@@ -971,6 +1339,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         page_summary_path=args.page_summary.resolve(),
         base_dxf_path=args.base_dxf.resolve(),
         candidate_dxf_path=args.candidate_dxf.resolve(),
+        base_semantic_evidence_path=args.base_semantic_evidence.resolve(),
         output_path=args.output.resolve(),
         raw_evidence_path=args.raw_evidence.resolve() if args.raw_evidence else None,
         require_empty_delta=args.require_empty_delta,
