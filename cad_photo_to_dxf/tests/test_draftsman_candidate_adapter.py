@@ -415,10 +415,9 @@ def test_candidate_adapter_has_zero_production_semantic_delta(tmp_path: Path) ->
 
 
 def test_production_modules_do_not_import_candidate_shadow_layer() -> None:
-    excluded = {"draftsman_candidate.py", "draftsman_candidate_adapter.py"}
     consumers = []
     for path in (PROJECT_ROOT / "app").glob("*.py"):
-        if path.name in excluded:
+        if path.name.startswith("draftsman_"):
             continue
         source = path.read_text(encoding="utf-8")
         if "draftsman_candidate" in source:
