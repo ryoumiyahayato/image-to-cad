@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Protocol
 
 from .draftsman_contract import semantic_id
@@ -101,6 +102,98 @@ class TableRuleConvention:
         }
 
 
+class ElectricalPortSide(str, Enum):
+    TOP = "TOP"
+    BOTTOM = "BOTTOM"
+
+
+class ElectricalConnectionStyle(str, Enum):
+    CONTINUOUS_SIGNAL = "CONTINUOUS_SIGNAL"
+    DASHED_DIRECTIONAL_CONTROL = "DASHED_DIRECTIONAL_CONTROL"
+
+
+@dataclass(frozen=True)
+class ElectricalPortRule:
+    port_key: str
+    side: ElectricalPortSide
+    lateral_fraction: float
+    connection_style: ElectricalConnectionStyle
+    direction: str
+
+    def __post_init__(self) -> None:
+        if not 0.0 <= float(self.lateral_fraction) <= 1.0:
+            raise ValueError("Port lateral_fraction must be in [0, 1]")
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "port_key": self.port_key,
+            "side": self.side.value,
+            "lateral_fraction": self.lateral_fraction,
+            "connection_style": self.connection_style.value,
+            "direction": self.direction,
+        }
+
+
+@dataclass(frozen=True)
+class BoxedGlyphRecognitionSignature:
+    minimum_frame_size_pt: float
+    maximum_frame_size_pt: float
+    interior_segment_count_multiset: tuple[int, ...]
+    required_interior_path_count: int
+
+    def __post_init__(self) -> None:
+        if not 0.0 < self.minimum_frame_size_pt <= self.maximum_frame_size_pt:
+            raise ValueError("Electrical frame-size limits must be ordered")
+        if self.required_interior_path_count <= 0:
+            raise ValueError("An electrical glyph signature requires interior evidence")
+        if len(self.interior_segment_count_multiset) != self.required_interior_path_count:
+            raise ValueError("Interior segment signature/path count mismatch")
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "minimum_frame_size_pt": self.minimum_frame_size_pt,
+            "maximum_frame_size_pt": self.maximum_frame_size_pt,
+            "interior_segment_count_multiset": list(
+                self.interior_segment_count_multiset
+            ),
+            "required_interior_path_count": self.required_interior_path_count,
+        }
+
+
+@dataclass(frozen=True)
+class ElectricalSymbolRule:
+    rule_key: str
+    inventory_canonical_identity: str
+    canonical_domain_identity: str
+    drawing_legend_identity: str
+    recognition_signature: BoxedGlyphRecognitionSignature
+    ports: tuple[ElectricalPortRule, ...]
+    body_crossing_permitted: bool
+    annotation_expected: bool
+    authority: str
+
+    @property
+    def rule_id(self) -> str:
+        return semantic_id(
+            "draftsman-electrical-symbol-rule",
+            DRAFTSMAN_DOMAIN_PACK_VERSION,
+            self.to_dict(),
+        )
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "rule_key": self.rule_key,
+            "inventory_canonical_identity": self.inventory_canonical_identity,
+            "canonical_domain_identity": self.canonical_domain_identity,
+            "drawing_legend_identity": self.drawing_legend_identity,
+            "recognition_signature": self.recognition_signature.to_dict(),
+            "ports": [port.to_dict() for port in self.ports],
+            "body_crossing_permitted": self.body_crossing_permitted,
+            "annotation_expected": self.annotation_expected,
+            "authority": self.authority,
+        }
+
+
 class DomainPack(Protocol):
     @property
     def pack_id(self) -> str: ...
@@ -111,13 +204,17 @@ class DomainPack(Protocol):
     @property
     def table_rule_conventions(self) -> tuple[TableRuleConvention, ...]: ...
 
+    @property
+    def electrical_symbol_rules(self) -> tuple[ElectricalSymbolRule, ...]: ...
+
 
 @dataclass(frozen=True)
 class ElectricalDomainPackV0:
-    """Golden-scoped v0 pack: only the electrical drawing-index convention."""
+    """Golden-scoped v0 pack with one verified electrical symbol rule."""
 
     descriptor: DomainPackDescriptor
     table_rule_conventions: tuple[TableRuleConvention, ...]
+    electrical_symbol_rules: tuple[ElectricalSymbolRule, ...]
 
     @classmethod
     def create(cls) -> ElectricalDomainPackV0:
@@ -141,6 +238,57 @@ class ElectricalDomainPackV0:
                     footer_clearance_spacing_multiplier=2.5,
                 ),
             ),
+            electrical_symbol_rules=(
+                ElectricalSymbolRule(
+                    rule_key="single-input-output-control-module-c1",
+                    inventory_canonical_identity="控制模块",
+                    canonical_domain_identity=(
+                        "ELECTRICAL.SINGLE_INPUT_OUTPUT_CONTROL_MODULE"
+                    ),
+                    drawing_legend_identity="单输入输出控制模块 (C1)",
+                    recognition_signature=BoxedGlyphRecognitionSignature(
+                        minimum_frame_size_pt=11.0,
+                        maximum_frame_size_pt=15.5,
+                        interior_segment_count_multiset=(4, 6, 8, 18, 18),
+                        required_interior_path_count=5,
+                    ),
+                    ports=(
+                        ElectricalPortRule(
+                            "TOP_SIGNAL_A",
+                            ElectricalPortSide.TOP,
+                            0.29,
+                            ElectricalConnectionStyle.CONTINUOUS_SIGNAL,
+                            "IN",
+                        ),
+                        ElectricalPortRule(
+                            "TOP_SIGNAL_B",
+                            ElectricalPortSide.TOP,
+                            0.71,
+                            ElectricalConnectionStyle.CONTINUOUS_SIGNAL,
+                            "IN",
+                        ),
+                        ElectricalPortRule(
+                            "BOTTOM_CONTROL_OUT",
+                            ElectricalPortSide.BOTTOM,
+                            0.28,
+                            ElectricalConnectionStyle.DASHED_DIRECTIONAL_CONTROL,
+                            "OUT",
+                        ),
+                        ElectricalPortRule(
+                            "BOTTOM_CONTROL_IN",
+                            ElectricalPortSide.BOTTOM,
+                            0.72,
+                            ElectricalConnectionStyle.DASHED_DIRECTIONAL_CONTROL,
+                            "IN",
+                        ),
+                    ),
+                    body_crossing_permitted=False,
+                    annotation_expected=False,
+                    authority=(
+                        "drawing-specific page legend; inventory family ELEC-150-S06"
+                    ),
+                ),
+            ),
         )
 
     @property
@@ -156,5 +304,8 @@ class ElectricalDomainPackV0:
             "descriptor": self.descriptor.to_dict(),
             "table_rule_conventions": [
                 convention.to_dict() for convention in self.table_rule_conventions
+            ],
+            "electrical_symbol_rules": [
+                rule.to_dict() for rule in self.electrical_symbol_rules
             ],
         }
