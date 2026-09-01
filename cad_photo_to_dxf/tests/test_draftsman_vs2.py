@@ -214,8 +214,10 @@ def test_shadow_modules_are_not_imported_by_production_entrypoints() -> None:
 
 def test_electrical_pack_rule_is_declarative_and_fixed_contract() -> None:
     pack = ElectricalDomainPackV0.create()
-    assert len(pack.electrical_symbol_rules) == 1
-    rule = pack.electrical_symbol_rules[0]
+    assert len(pack.electrical_symbol_rules) == 2
+    rule = next(
+        item for item in pack.electrical_symbol_rules if item.recognition_signature
+    )
     assert rule.drawing_legend_identity == "单输入输出控制模块 (C1)"
     assert len(rule.ports) == 4
     assert not rule.body_crossing_permitted

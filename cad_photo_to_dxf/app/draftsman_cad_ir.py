@@ -277,7 +277,7 @@ class EditableCadElectricalLine:
     linetype_ref: str
     direction: str
     logical_line_id: str
-    logical_symbol_id: str
+    logical_symbol_ids: tuple[str, ...]
     provenance_ref: str
     source_evidence_ids: tuple[str, ...]
     meaningful_boundary: str = "SYMBOL_BOUNDARY"
@@ -291,10 +291,17 @@ class EditableCadElectricalLine:
             "source_evidence_ids",
             tuple(sorted(set(self.source_evidence_ids))),
         )
+        object.__setattr__(
+            self,
+            "logical_symbol_ids",
+            tuple(sorted(set(self.logical_symbol_ids))),
+        )
         if self.length <= 0.0:
             raise ValueError("Electrical CAD IR line must have positive length")
         if not self.source_evidence_ids:
             raise ValueError("Electrical CAD IR line requires source evidence")
+        if not self.logical_symbol_ids:
+            raise ValueError("Electrical CAD IR line requires a logical symbol relation")
         expected = semantic_id(
             "editable-cad-electrical-line",
             self.schema_version,
@@ -312,7 +319,7 @@ class EditableCadElectricalLine:
         cls,
         connection: LogicalElectricalConnection,
         *,
-        logical_symbol_id: str,
+        logical_symbol_ids: Sequence[str],
     ) -> EditableCadElectricalLine:
         layer_style_ref = (
             "ELECTRICAL_CONTROL"
@@ -332,7 +339,7 @@ class EditableCadElectricalLine:
             "linetype_ref": linetype_ref,
             "direction": connection.direction,
             "logical_line_id": connection.logical_line_id,
-            "logical_symbol_id": logical_symbol_id,
+            "logical_symbol_ids": list(sorted(set(logical_symbol_ids))),
             "provenance_ref": connection.provenance_id,
             "source_evidence_ids": list(source_ids),
             "meaningful_boundary": connection.meaningful_boundary,
@@ -349,7 +356,7 @@ class EditableCadElectricalLine:
             linetype_ref=linetype_ref,
             direction=connection.direction,
             logical_line_id=connection.logical_line_id,
-            logical_symbol_id=logical_symbol_id,
+            logical_symbol_ids=tuple(sorted(set(logical_symbol_ids))),
             provenance_ref=connection.provenance_id,
             source_evidence_ids=source_ids,
         )
@@ -362,11 +369,17 @@ class EditableCadElectricalLine:
             "linetype_ref": self.linetype_ref,
             "direction": self.direction,
             "logical_line_id": self.logical_line_id,
-            "logical_symbol_id": self.logical_symbol_id,
+            "logical_symbol_ids": list(self.logical_symbol_ids),
             "provenance_ref": self.provenance_ref,
             "source_evidence_ids": list(self.source_evidence_ids),
             "meaningful_boundary": self.meaningful_boundary,
         }
+
+    @property
+    def logical_symbol_id(self) -> str:
+        """Compatibility accessor for single-owner VS2 connections."""
+
+        return self.logical_symbol_ids[0]
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -422,8 +435,8 @@ class EditableCadElectricalSymbol:
         symbol: LogicalElectricalSymbol,
     ) -> EditableCadElectricalSymbol:
         identity = {
-            "block_definition_ref": "ELEC_CONTROL_MODULE_C1",
-            "display_label": "C1",
+            "block_definition_ref": symbol.cad_block_ref,
+            "display_label": symbol.display_label,
             "frame_bounds": list(symbol.frame_bounds_pt),
             "layer_style_ref": "ELECTRICAL_SYMBOL",
             "logical_entity_id": symbol.logical_entity_id,
@@ -436,8 +449,8 @@ class EditableCadElectricalSymbol:
                 DRAFTSMAN_ELECTRICAL_CAD_IR_VERSION,
                 identity,
             ),
-            block_definition_ref="ELEC_CONTROL_MODULE_C1",
-            display_label="C1",
+            block_definition_ref=symbol.cad_block_ref,
+            display_label=symbol.display_label,
             frame_bounds=symbol.frame_bounds_pt,
             layer_style_ref="ELECTRICAL_SYMBOL",
             logical_entity_id=symbol.logical_entity_id,
@@ -542,15 +555,22 @@ def assemble_editable_electrical_cad_ir(
             key=lambda item: item.stable_entity_id,
         )
     )
+    memberships: dict[str, set[str]] = {}
+    for symbol in logical.symbols:
+        for connection in symbol.connections:
+            memberships.setdefault(connection.logical_line_id, set()).add(
+                symbol.logical_entity_id
+            )
     lines = tuple(
         sorted(
             (
                 EditableCadElectricalLine.from_logical_connection(
                     connection,
-                    logical_symbol_id=symbol.logical_entity_id,
+                    logical_symbol_ids=tuple(
+                        sorted(memberships[connection.logical_line_id])
+                    ),
                 )
-                for symbol in logical.symbols
-                for connection in symbol.connections
+                for connection in logical.connections
             ),
             key=lambda item: item.stable_entity_id,
         )
@@ -558,7 +578,7 @@ def assemble_editable_electrical_cad_ir(
     return EditableElectricalCadIrManifest(
         source_document_id=logical.source_document_id,
         source_page=logical.source_page,
-        coordinate_space="normalized-page-point",
+        coordinate_space=logical.coordinate_space,
         logical_manifest_id=logical.manifest_id,
         symbols=symbols,
         lines=lines,
@@ -629,10 +649,14 @@ def audit_vs2_cad_ir(
     line_counts = {item.logical_line_id: 0 for item in logical.connections}
     for line in cad_ir.lines:
         logical_line = logical_lines.get(line.logical_line_id)
-        logical_symbol = logical_symbols.get(line.logical_symbol_id)
+        related_symbols = tuple(
+            logical_symbols[item]
+            for item in line.logical_symbol_ids
+            if item in logical_symbols
+        )
         if (
             logical_line is None
-            or logical_symbol is None
+            or len(related_symbols) != len(line.logical_symbol_ids)
             or not line.source_evidence_ids
         ):
             unsupported += 1
@@ -644,17 +668,30 @@ def audit_vs2_cad_ir(
             or line.meaningful_boundary != "SYMBOL_BOUNDARY"
         ):
             invalid_ports += 1
-        left, bottom, right, top = logical_symbol.frame_bounds_pt
         endpoints = {line.start, line.end}
-        touches_boundary = any(
-            (
-                left - 1e-6 <= point[0] <= right + 1e-6
-                and (
-                    abs(point[1] - bottom) <= 1e-6
-                    or abs(point[1] - top) <= 1e-6
+        touches_boundary = all(
+            any(
+                (
+                    symbol.frame_bounds_pt[0] - 1e-6
+                    <= point[0]
+                    <= symbol.frame_bounds_pt[2] + 1e-6
+                    and (
+                        abs(point[1] - symbol.frame_bounds_pt[1]) <= 1e-6
+                        or abs(point[1] - symbol.frame_bounds_pt[3]) <= 1e-6
+                    )
                 )
+                or (
+                    symbol.frame_bounds_pt[1] - 1e-6
+                    <= point[1]
+                    <= symbol.frame_bounds_pt[3] + 1e-6
+                    and (
+                        abs(point[0] - symbol.frame_bounds_pt[0]) <= 1e-6
+                        or abs(point[0] - symbol.frame_bounds_pt[2]) <= 1e-6
+                    )
+                )
+                for point in endpoints
             )
-            for point in endpoints
+            for symbol in related_symbols
         )
         if not touches_boundary:
             invalid_ports += 1
@@ -662,8 +699,10 @@ def audit_vs2_cad_ir(
             (line.start[0] + line.end[0]) / 2.0,
             (line.start[1] + line.end[1]) / 2.0,
         )
-        if left < midpoint[0] < right and bottom < midpoint[1] < top:
-            line_through += 1
+        for symbol in related_symbols:
+            left, bottom, right, top = symbol.frame_bounds_pt
+            if left < midpoint[0] < right and bottom < midpoint[1] < top:
+                line_through += 1
     unnecessary = sum(max(0, count - 1) for count in line_counts.values())
     missing_lines = sum(1 for count in line_counts.values() if count == 0)
     source_ids = {

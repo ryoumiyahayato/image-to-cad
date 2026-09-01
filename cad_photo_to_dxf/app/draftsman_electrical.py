@@ -93,6 +93,10 @@ class ElectricalSymbolHypothesis:
     frame_bounds_pt: tuple[float, float, float, float]
     body_crossing_permitted: bool
     annotation_expected: bool
+    cad_block_ref: str
+    display_label: str
+    coordinate_space: str
+    frontend_kind: str
     schema_version: str = DRAFTSMAN_ELECTRICAL_DECISION_VERSION
 
     @classmethod
@@ -122,6 +126,10 @@ class ElectricalSymbolHypothesis:
             "frame_bounds_pt": list(candidate.frame_bounds_pt),
             "body_crossing_permitted": rule.body_crossing_permitted,
             "annotation_expected": rule.annotation_expected,
+            "cad_block_ref": rule.cad_block_ref,
+            "display_label": rule.display_label,
+            "coordinate_space": "normalized-page-point",
+            "frontend_kind": "VECTOR_PDF",
         }
         return cls(
             stable_hypothesis_id=semantic_id(
@@ -141,6 +149,72 @@ class ElectricalSymbolHypothesis:
             frame_bounds_pt=candidate.frame_bounds_pt,
             body_crossing_permitted=rule.body_crossing_permitted,
             annotation_expected=rule.annotation_expected,
+            cad_block_ref=rule.cad_block_ref,
+            display_label=rule.display_label,
+            coordinate_space="normalized-page-point",
+            frontend_kind="VECTOR_PDF",
+        )
+
+    @classmethod
+    def from_normalized_evidence(
+        cls,
+        *,
+        candidate_id: str,
+        rule: ElectricalSymbolRule,
+        state: ElectricalDecisionState,
+        confidence: float,
+        reasons: Iterable[str],
+        source_primitive_ids: Iterable[str],
+        ports: Iterable[ElectricalPortDecision],
+        frame_bounds: Sequence[float],
+        coordinate_space: str,
+        frontend_kind: str,
+    ) -> ElectricalSymbolHypothesis:
+        ordered_reasons = tuple(sorted(set(reasons)))
+        ordered_source = tuple(sorted(set(source_primitive_ids)))
+        ordered_ports = tuple(sorted(ports, key=lambda item: item.port_key))
+        bounds = tuple(_number(value) for value in frame_bounds)
+        if len(bounds) != 4:
+            raise ValueError("Electrical hypothesis bounds require four values")
+        identity = {
+            "candidate_id": candidate_id,
+            "rule_id": rule.rule_id,
+            "canonical_domain_identity": rule.canonical_domain_identity,
+            "state": state.value,
+            "confidence": _number(confidence),
+            "reasons": list(ordered_reasons),
+            "source_primitive_ids": list(ordered_source),
+            "ports": [port.to_dict() for port in ordered_ports],
+            "frame_bounds_pt": list(bounds),
+            "body_crossing_permitted": rule.body_crossing_permitted,
+            "annotation_expected": rule.annotation_expected,
+            "cad_block_ref": rule.cad_block_ref,
+            "display_label": rule.display_label,
+            "coordinate_space": coordinate_space,
+            "frontend_kind": frontend_kind,
+        }
+        return cls(
+            stable_hypothesis_id=semantic_id(
+                "draftsman-electrical-symbol-hypothesis",
+                DRAFTSMAN_ELECTRICAL_DECISION_VERSION,
+                identity,
+            ),
+            candidate_id=candidate_id,
+            rule_id=rule.rule_id,
+            canonical_domain_identity=rule.canonical_domain_identity,
+            inventory_canonical_identity=rule.inventory_canonical_identity,
+            state=state,
+            confidence=_number(confidence),
+            reasons=ordered_reasons,
+            source_primitive_ids=ordered_source,
+            ports=ordered_ports,
+            frame_bounds_pt=bounds,  # type: ignore[arg-type]
+            body_crossing_permitted=rule.body_crossing_permitted,
+            annotation_expected=rule.annotation_expected,
+            cad_block_ref=rule.cad_block_ref,
+            display_label=rule.display_label,
+            coordinate_space=coordinate_space,
+            frontend_kind=frontend_kind,
         )
 
     def to_dict(self) -> dict[str, object]:
@@ -159,6 +233,10 @@ class ElectricalSymbolHypothesis:
             "frame_bounds_pt": list(self.frame_bounds_pt),
             "body_crossing_permitted": self.body_crossing_permitted,
             "annotation_expected": self.annotation_expected,
+            "cad_block_ref": self.cad_block_ref,
+            "display_label": self.display_label,
+            "coordinate_space": self.coordinate_space,
+            "frontend_kind": self.frontend_kind,
         }
 
 
@@ -373,6 +451,8 @@ def interpret_electrical_symbols(
     hypotheses: list[ElectricalSymbolHypothesis] = []
     for rule in pack.electrical_symbol_rules:
         signature = rule.recognition_signature
+        if signature is None:
+            continue
         for candidate in evidence.boxed_candidates:
             left, bottom, right, top = candidate.frame_bounds_pt
             width = right - left
@@ -441,6 +521,10 @@ class LogicalElectricalConnection:
     source_primitive_ids: tuple[str, ...]
     provenance_id: str
     meaningful_boundary: str = "SYMBOL_BOUNDARY"
+    observed_evidence_coverage: float = 1.0
+    inferred_length: float = 0.0
+    gap_causes: tuple[str, ...] = ("SYMBOL_BOUNDARY",)
+    state: str = "OBSERVED"
     schema_version: str = DRAFTSMAN_LOGICAL_ELECTRICAL_VERSION
 
     @classmethod
@@ -468,6 +552,10 @@ class LogicalElectricalConnection:
             "source_primitive_ids": list(port.source_primitive_ids),
             "provenance_id": provenance,
             "meaningful_boundary": "SYMBOL_BOUNDARY",
+            "observed_evidence_coverage": 1.0,
+            "inferred_length": 0.0,
+            "gap_causes": ["SYMBOL_BOUNDARY"],
+            "state": "OBSERVED",
         }
         return cls(
             logical_line_id=semantic_id(
@@ -496,6 +584,10 @@ class LogicalElectricalConnection:
             "source_primitive_ids": list(self.source_primitive_ids),
             "provenance_id": self.provenance_id,
             "meaningful_boundary": self.meaningful_boundary,
+            "observed_evidence_coverage": self.observed_evidence_coverage,
+            "inferred_length": self.inferred_length,
+            "gap_causes": list(self.gap_causes),
+            "state": self.state,
         }
 
 
@@ -509,6 +601,9 @@ class LogicalElectricalSymbol:
     connections: tuple[LogicalElectricalConnection, ...]
     provenance_id: str
     confidence: float
+    cad_block_ref: str
+    display_label: str
+    coordinate_space: str
     state: str = "OBSERVED"
     annotation_relationship: str | None = None
     schema_version: str = DRAFTSMAN_LOGICAL_ELECTRICAL_VERSION
@@ -547,6 +642,9 @@ class LogicalElectricalSymbol:
             "connection_ids": [item.logical_line_id for item in connections],
             "provenance_id": provenance,
             "state": "OBSERVED",
+            "cad_block_ref": hypothesis.cad_block_ref,
+            "display_label": hypothesis.display_label,
+            "coordinate_space": hypothesis.coordinate_space,
         }
         return cls(
             logical_entity_id=semantic_id(
@@ -561,6 +659,9 @@ class LogicalElectricalSymbol:
             connections=connections,
             provenance_id=provenance,
             confidence=hypothesis.confidence,
+            cad_block_ref=hypothesis.cad_block_ref,
+            display_label=hypothesis.display_label,
+            coordinate_space=hypothesis.coordinate_space,
         )
 
     def to_dict(self) -> dict[str, object]:
@@ -576,6 +677,9 @@ class LogicalElectricalSymbol:
             "confidence": self.confidence,
             "state": self.state,
             "annotation_relationship": self.annotation_relationship,
+            "cad_block_ref": self.cad_block_ref,
+            "display_label": self.display_label,
+            "coordinate_space": self.coordinate_space,
         }
 
 
@@ -584,6 +688,7 @@ class LogicalElectricalManifest:
     source_document_id: str
     source_page: int
     decision_manifest_id: str
+    coordinate_space: str
     symbols: tuple[LogicalElectricalSymbol, ...]
     schema_version: str = DRAFTSMAN_LOGICAL_ELECTRICAL_VERSION
 
@@ -596,18 +701,21 @@ class LogicalElectricalManifest:
                 "source_document_id": self.source_document_id,
                 "source_page": self.source_page,
                 "decision_manifest_id": self.decision_manifest_id,
+                "coordinate_space": self.coordinate_space,
                 "symbol_ids": [item.logical_entity_id for item in self.symbols],
             },
         )
 
     @property
     def connections(self) -> tuple[LogicalElectricalConnection, ...]:
-        return tuple(
-            sorted(
-                (line for symbol in self.symbols for line in symbol.connections),
-                key=lambda item: item.logical_line_id,
-            )
-        )
+        by_id: dict[str, LogicalElectricalConnection] = {}
+        for symbol in self.symbols:
+            for line in symbol.connections:
+                existing = by_id.get(line.logical_line_id)
+                if existing is not None and existing != line:
+                    raise ValueError("Shared logical connection definitions disagree")
+                by_id[line.logical_line_id] = line
+        return tuple(sorted(by_id.values(), key=lambda item: item.logical_line_id))
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -616,9 +724,11 @@ class LogicalElectricalManifest:
             "source_document_id": self.source_document_id,
             "source_page": self.source_page,
             "decision_manifest_id": self.decision_manifest_id,
+            "coordinate_space": self.coordinate_space,
             "symbol_count": len(self.symbols),
             "connected_line_count": len(self.connections),
             "symbols": [item.to_dict() for item in self.symbols],
+            "connections": [item.to_dict() for item in self.connections],
         }
 
     def canonical_bytes(self) -> bytes:
@@ -638,5 +748,6 @@ def assemble_logical_electrical_entities(
         source_document_id=decisions.source_document_id,
         source_page=decisions.source_page,
         decision_manifest_id=decisions.manifest_id,
+        coordinate_space="normalized-page-point",
         symbols=symbols,
     )

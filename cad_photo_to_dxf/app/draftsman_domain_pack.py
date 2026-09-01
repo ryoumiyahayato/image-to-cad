@@ -105,6 +105,8 @@ class TableRuleConvention:
 class ElectricalPortSide(str, Enum):
     TOP = "TOP"
     BOTTOM = "BOTTOM"
+    LEFT = "LEFT"
+    RIGHT = "RIGHT"
 
 
 class ElectricalConnectionStyle(str, Enum):
@@ -161,16 +163,72 @@ class BoxedGlyphRecognitionSignature:
 
 
 @dataclass(frozen=True)
+class RasterGlyphRecognitionSignature:
+    """Declarative normalized raster signature, independent of source coordinates."""
+
+    normalized_template_rows: tuple[str, ...]
+    minimum_template_score: float
+    minimum_ring_coverage: float
+    minimum_port_support: float
+    minimum_aligned_repetition: int
+    alignment_tolerance_px: float
+    minimum_connection_evidence_coverage: float
+    allowed_variant: str
+
+    def __post_init__(self) -> None:
+        if not self.normalized_template_rows:
+            raise ValueError("Raster signature requires a normalized template")
+        width = len(self.normalized_template_rows[0])
+        if width <= 0 or any(len(row) != width for row in self.normalized_template_rows):
+            raise ValueError("Raster template rows must form a non-empty rectangle")
+        if any(set(row) - {".", "#"} for row in self.normalized_template_rows):
+            raise ValueError("Raster template rows may only use '.' and '#'")
+        for value in (
+            self.minimum_template_score,
+            self.minimum_ring_coverage,
+            self.minimum_port_support,
+            self.minimum_connection_evidence_coverage,
+        ):
+            if not 0.0 <= float(value) <= 1.0:
+                raise ValueError("Raster signature scores must be in [0, 1]")
+        if self.minimum_aligned_repetition < 2:
+            raise ValueError("Raster signature requires repeated source examples")
+        if self.alignment_tolerance_px < 0.0:
+            raise ValueError("Raster alignment tolerance must not be negative")
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "normalized_template_rows": list(self.normalized_template_rows),
+            "minimum_template_score": self.minimum_template_score,
+            "minimum_ring_coverage": self.minimum_ring_coverage,
+            "minimum_port_support": self.minimum_port_support,
+            "minimum_aligned_repetition": self.minimum_aligned_repetition,
+            "alignment_tolerance_px": self.alignment_tolerance_px,
+            "minimum_connection_evidence_coverage": (
+                self.minimum_connection_evidence_coverage
+            ),
+            "allowed_variant": self.allowed_variant,
+        }
+
+
+@dataclass(frozen=True)
 class ElectricalSymbolRule:
     rule_key: str
     inventory_canonical_identity: str
     canonical_domain_identity: str
     drawing_legend_identity: str
-    recognition_signature: BoxedGlyphRecognitionSignature
+    recognition_signature: BoxedGlyphRecognitionSignature | None
+    raster_recognition_signature: RasterGlyphRecognitionSignature | None
     ports: tuple[ElectricalPortRule, ...]
     body_crossing_permitted: bool
     annotation_expected: bool
     authority: str
+    cad_block_ref: str
+    display_label: str
+
+    def __post_init__(self) -> None:
+        if self.recognition_signature is None and self.raster_recognition_signature is None:
+            raise ValueError("Electrical rule requires at least one recognition signature")
 
     @property
     def rule_id(self) -> str:
@@ -186,11 +244,22 @@ class ElectricalSymbolRule:
             "inventory_canonical_identity": self.inventory_canonical_identity,
             "canonical_domain_identity": self.canonical_domain_identity,
             "drawing_legend_identity": self.drawing_legend_identity,
-            "recognition_signature": self.recognition_signature.to_dict(),
+            "recognition_signature": (
+                None
+                if self.recognition_signature is None
+                else self.recognition_signature.to_dict()
+            ),
+            "raster_recognition_signature": (
+                None
+                if self.raster_recognition_signature is None
+                else self.raster_recognition_signature.to_dict()
+            ),
             "ports": [port.to_dict() for port in self.ports],
             "body_crossing_permitted": self.body_crossing_permitted,
             "annotation_expected": self.annotation_expected,
             "authority": self.authority,
+            "cad_block_ref": self.cad_block_ref,
+            "display_label": self.display_label,
         }
 
 
@@ -252,6 +321,7 @@ class ElectricalDomainPackV0:
                         interior_segment_count_multiset=(4, 6, 8, 18, 18),
                         required_interior_path_count=5,
                     ),
+                    raster_recognition_signature=None,
                     ports=(
                         ElectricalPortRule(
                             "TOP_SIGNAL_A",
@@ -287,6 +357,71 @@ class ElectricalDomainPackV0:
                     authority=(
                         "drawing-specific page legend; inventory family ELEC-150-S06"
                     ),
+                    cad_block_ref="ELEC_CONTROL_MODULE_C1",
+                    display_label="C1",
+                ),
+                ElectricalSymbolRule(
+                    rule_key="raster-smoke-detector-inline-horizontal",
+                    inventory_canonical_identity="感烟",
+                    canonical_domain_identity="ELECTRICAL.FIRE_ALARM.SMOKE_DETECTOR",
+                    drawing_legend_identity="tags 140-177: 感烟",
+                    recognition_signature=None,
+                    raster_recognition_signature=RasterGlyphRecognitionSignature(
+                        normalized_template_rows=(
+                            ".....................",
+                            ".....................",
+                            "........####.........",
+                            ".......#######.......",
+                            ".....##########......",
+                            "....############.....",
+                            "....#############....",
+                            "...##########.####...",
+                            "...##########..###...",
+                            ".####.######...######",
+                            "#####..######..######",
+                            "######...#####.######",
+                            "..####...#####.####..",
+                            "...##############....",
+                            "....#######.#####....",
+                            "....############.....",
+                            ".....##########......",
+                            "......########.......",
+                            ".......########......",
+                            ".........###.........",
+                            "...........#.........",
+                        ),
+                        minimum_template_score=0.62,
+                        minimum_ring_coverage=0.60,
+                        minimum_port_support=0.85,
+                        minimum_aligned_repetition=5,
+                        alignment_tolerance_px=5.0,
+                        minimum_connection_evidence_coverage=0.80,
+                        allowed_variant="INLINE_HORIZONTAL_TWO_PORT",
+                    ),
+                    ports=(
+                        ElectricalPortRule(
+                            "LEFT_ALARM_BUS",
+                            ElectricalPortSide.LEFT,
+                            0.5,
+                            ElectricalConnectionStyle.CONTINUOUS_SIGNAL,
+                            "BIDIRECTIONAL",
+                        ),
+                        ElectricalPortRule(
+                            "RIGHT_ALARM_BUS",
+                            ElectricalPortSide.RIGHT,
+                            0.5,
+                            ElectricalConnectionStyle.CONTINUOUS_SIGNAL,
+                            "BIDIRECTIONAL",
+                        ),
+                    ),
+                    body_crossing_permitted=False,
+                    annotation_expected=True,
+                    authority=(
+                        "drawing-specific tag range 140-177; inventory family "
+                        "ELEC-150-S01; raster signature from repeated source examples"
+                    ),
+                    cad_block_ref="ELEC_SMOKE_DETECTOR",
+                    display_label="S",
                 ),
             ),
         )
