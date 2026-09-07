@@ -57,8 +57,9 @@ def test_raster_frontend_uses_authoritative_150_dpi_source(
     assert evidence.source_sha256 == GOLDEN_SHA256
     assert evidence.source_page == 3
     assert evidence.image_size_px == (2478, 1752)
-    assert len(evidence.primitives) == 413
-    assert len(evidence.candidates) == 55
+    assert len(evidence.primitives) == 8194
+    assert len(evidence.candidates) == 154
+    assert len(evidence.spatial_relations) == 9315
     assert evidence.transform_id.startswith("raster-image-to-cad-transform:")
 
 

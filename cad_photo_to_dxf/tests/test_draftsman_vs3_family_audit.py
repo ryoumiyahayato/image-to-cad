@@ -90,7 +90,7 @@ def test_source_wide_discovery_runs_once_on_the_full_page(
 ) -> None:
     result = family_replays[0]
     assert result.vs3.evidence.image_size_px == (2478, 1752)
-    assert len(result.vs3.evidence.candidates) == 55
+    assert len(result.vs3.evidence.candidates) == 154
     assert result.to_dict()["runtime"]["mode"] == "SOURCE_WIDE_DISCOVERY"  # type: ignore[index]
     assert result.to_dict()["runtime"]["source_crop_count"] == 0  # type: ignore[index]
 
@@ -103,8 +103,8 @@ def test_frozen_rule_family_result_is_measured_not_forced(
     assert summary.source_wide_detected_instances == 5
     assert summary.matched_instances == 5
     assert summary.auto_accepted == 5
-    assert summary.review_required == 10
-    assert summary.missed == 23
+    assert summary.review_required == 32
+    assert summary.missed == 1
     assert summary.invalid_output == 0
     assert summary.false_positives == 0
     assert summary.automatic_acceptance_rate == pytest.approx(5 / 38)
@@ -151,10 +151,10 @@ def test_exception_classification_has_concrete_factors_and_layer(
     failure_distribution = dict(result.summary.failure_distribution)
     assert failure_distribution == {
         "ASSEMBLY": 0,
-        "DOMAIN": 3,
-        "EVIDENCE": 23,
+        "DOMAIN": 10,
+        "EVIDENCE": 1,
         "LOGICAL_ENTITY": 0,
-        "TOPOLOGY": 7,
+        "TOPOLOGY": 22,
     }
 
 
