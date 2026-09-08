@@ -1,0 +1,225 @@
+{
+  "schema_version": "draftsman-corpus-v1-split-proposal-v1",
+  "corpus_version": "DRAFTSMAN_GENERALIZATION_CORPUS_V1",
+  "freeze_status": "NOT_FROZEN_ACQUISITION_PENDING",
+  "reason_not_frozen": "Current execution container cannot resolve external hosts, so original files cannot be acquired and SHA256 cannot be computed. EVALUATION_READY hard gate is therefore unmet.",
+  "planned_counts": {
+    "DEV": 15,
+    "VALIDATION": 7,
+    "LOCKED_BLIND": 8
+  },
+  "entries": [
+    {
+      "source_group_id": "A2-SG-001",
+      "candidate_id": "G0A2-001",
+      "planned_split": "DEV",
+      "source_family_id": "TAIWAN_GAO_ER_PAN_OFFICE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-008",
+      "candidate_id": "G0A2-008",
+      "planned_split": "DEV",
+      "source_family_id": "US_NARA_BUILDING9",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-003",
+      "candidate_id": "G0A-003",
+      "planned_split": "DEV",
+      "source_family_id": "US_DOUGLAS_COUNTY_SCHOOL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-024",
+      "candidate_id": "G0A-025",
+      "planned_split": "DEV",
+      "source_family_id": "US_SOUTH_SEATTLE_COLLEGE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-013",
+      "candidate_id": "G0A2-013",
+      "planned_split": "DEV",
+      "source_family_id": "CN_NANPING_WELFARE_INSTITUTION",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-017",
+      "candidate_id": "G0A2-017",
+      "planned_split": "DEV",
+      "source_family_id": "KR_GYEONGGI_CROP_DIAGNOSTIC_LAB",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-022",
+      "candidate_id": "G0A2-022",
+      "planned_split": "DEV",
+      "source_family_id": "UK_BANBURY_TRAMWAY_ASBUILT",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-027",
+      "candidate_id": "G0A-028",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_DIPPER_HARBOUR",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-028",
+      "candidate_id": "G0A-029",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_TECUMSEH_PUBLIC_WORKS",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-036",
+      "candidate_id": "G0A-037",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_CLARKSON_COMMUNITY_CENTRE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-051",
+      "candidate_id": "G0A-052",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_PARKGATE_LIBRARY_1993",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-020",
+      "candidate_id": "G0A-021",
+      "planned_split": "DEV",
+      "source_family_id": "US_SUNY_PURCHASE_SOUND_STAGE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-002",
+      "candidate_id": "G0A-002",
+      "planned_split": "DEV",
+      "source_family_id": "US_WILDWOOD_PUBLIC_WORKS",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-055",
+      "candidate_id": "G0A-056",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_GUELPH_SOUTH_END_CC",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-034",
+      "candidate_id": "G0A-035",
+      "planned_split": "DEV",
+      "source_family_id": "CAN_BOURGET_COMMUNITY_CENTRE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-002",
+      "candidate_id": "G0A2-002",
+      "planned_split": "VALIDATION",
+      "source_family_id": "TAIWAN_CHEN_CHI_KUAN_OFFICE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-009",
+      "candidate_id": "G0A2-009",
+      "planned_split": "VALIDATION",
+      "source_family_id": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-007",
+      "candidate_id": "G0A-008",
+      "planned_split": "VALIDATION",
+      "source_family_id": "US_TITUSVILLE_SCHOOL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-045",
+      "candidate_id": "G0A-046",
+      "planned_split": "VALIDATION",
+      "source_family_id": "CAN_VANCOUVER_CITY_HALL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-014",
+      "candidate_id": "G0A2-014",
+      "planned_split": "VALIDATION",
+      "source_family_id": "CN_GDMHVC_SECOND_CAFETERIA",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-018",
+      "candidate_id": "G0A2-018",
+      "planned_split": "VALIDATION",
+      "source_family_id": "KR_UIJEONGBU_PARK_ELECTRICAL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-029",
+      "candidate_id": "G0A-030",
+      "planned_split": "VALIDATION",
+      "source_family_id": "CAN_GLEN_TAY_PUBLIC_SCHOOL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-005",
+      "candidate_id": "G0A2-005",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "TAIWAN_SHEN_TSU_HAI_OFFICE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-006",
+      "candidate_id": "G0A2-006",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "TAIWAN_EAST_CATHOLIC_ARCHIVE_FAMILY",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-007",
+      "candidate_id": "G0A2-007",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "TAIWAN_EAST_CATHOLIC_ARCHIVE_FAMILY",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-010",
+      "candidate_id": "G0A2-010",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "US_OREGON_HISTORICAL_RESIDENCE",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-008",
+      "candidate_id": "G0A-009",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "US_FARMINGTON_SENIOR_CENTER",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "A2-SG-015",
+      "candidate_id": "G0A2-015",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "CN_ZHANGZHOU_TCM_HOSPITAL",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-035",
+      "candidate_id": "G0A-036",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "CAN_YUKON_MAIN_ADMIN",
+      "previously_exposed": false
+    },
+    {
+      "source_group_id": "SGC-022",
+      "candidate_id": "G0A-023",
+      "planned_split": "LOCKED_BLIND",
+      "source_family_id": "US_URI_HEALTH_SCIENCES",
+      "previously_exposed": false
+    }
+  ],
+  "provisional_manifest_sha256": "725b71a5e645b35f6cd1ebf13c913a367e90089468eff1af456aca3cd8d74dc6",
+  "authoritative_frozen_digest": null
+}
