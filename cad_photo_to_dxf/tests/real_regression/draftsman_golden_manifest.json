@@ -1,0 +1,74 @@
+{
+  "schema_version": "draftsman-golden-manifest-v1",
+  "purpose": "Compact canonical source identity and replay truth for fresh-clone Draftsman development",
+  "authority_policy": {
+    "source_is_truth": true,
+    "generated_artifacts_are_canonical": false,
+    "semantic_identity_requires_source_or_drawing_authority": true,
+    "unverified_semantics_may_preserve_editable_geometry": true
+  },
+  "golden_sources": [
+    {
+      "canonical_id": "environment-plan-page-003-150dpi",
+      "tracked_source_path": "cad_photo_to_dxf/tests/real_regression/assets/environment-page-003.png",
+      "sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+      "source_type": "raster_scan_render",
+      "page": 3,
+      "dpi": 150,
+      "orientation": "landscape",
+      "size_px": [2478, 1752],
+      "original_document": {
+        "tracked_source_path": "cad_photo_to_dxf/tests/real_regression/assets/sources/environment-building-scan.pdf",
+        "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7"
+      },
+      "role": "Canonical raster/scanned electrical plan for VS3, family, topology, unverified-editability, and QA evaluation",
+      "related_replay_slices": ["VS3", "VS3-E1", "VS3-T1", "VS3-U1", "QA1", "QA2-S1", "QA2-S2"],
+      "tracked_reference": "cad_photo_to_dxf/tests/real_regression/assets/references/environment-page-003-smoke-family-v1.json",
+      "compact_truth": {
+        "drawing_role": "third-floor fire-alarm/fire-protection plan",
+        "primary_evaluated_family": {"identity": "感烟", "count": 38, "status": "DRAWING_VERIFIED"},
+        "other_inventory_families": [
+          {"identity": "手报", "count": 4, "status": "DRAWING_VERIFIED"},
+          {"identity": "声光", "count": 4, "status": "DRAWING_VERIFIED"},
+          {"identity": "消火栓", "count": 5, "status": "DRAWING_VERIFIED"},
+          {"identity": "水流、信号 grouped family", "count": 2, "status": "SEMANTIC_IDENTITY_UNVERIFIED"},
+          {"identity": "控制模块", "count": 3, "status": "DRAWING_VERIFIED"}
+        ],
+        "electrical_line_codes": ["FK", "FX", "FK1", "FH", "F", "G"],
+        "topology_families_for_primary_family": ["SERIES_THROUGH_DEGREE_2", "TERMINAL_DEGREE_1", "BRANCH_DEGREE_3"],
+        "reference_caveat": "Reference instance ELEC-150-S01-176 was human-adjudicated as a bad family locator; runtime reference files remain frozen and programmatic labels are not automatic root-cause truth."
+      }
+    },
+    {
+      "canonical_id": "warehouse-index-page-001-600dpi",
+      "tracked_source_path": "cad_photo_to_dxf/tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "source_type": "vector_pdf_with_outlined_text",
+      "page": 1,
+      "dpi": 600,
+      "dpi_role": "canonical regression render scale; Draftsman VS1/VS2 read native PDF coordinates directly",
+      "orientation": "portrait",
+      "page_size_pt": [652.0, 907.0],
+      "role": "Canonical vector-PDF electrical drawing for direct path evidence and the first Logical/CAD IR slices",
+      "related_replay_slices": ["VS1", "VS2"],
+      "compact_truth": {
+        "page_1": {
+          "native_path_count": 2481,
+          "logical_kind": "TABLE_RULE",
+          "expected_logical_entities": 19,
+          "expected_cad_ir_line_entities": 19,
+          "expected_unsupported_geometry": 0,
+          "expected_unnecessary_fragments": 0
+        },
+        "page_2_related_slice": {
+          "native_path_count": 168335,
+          "identity": "ELECTRICAL.SINGLE_INPUT_OUTPUT_CONTROL_MODULE",
+          "expected_logical_symbols": 1,
+          "expected_connected_lines": 4,
+          "expected_cad_ir_entities": 5
+        },
+        "text_authority_caveat": "Visible text is outlined path geometry; Unicode content and original font identity are not native PDF text evidence."
+      }
+    }
+  ]
+}

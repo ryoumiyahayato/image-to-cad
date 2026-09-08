@@ -8,6 +8,9 @@
 
 项目源码与完整说明位于 [`cad_photo_to_dxf/`](cad_photo_to_dxf/README.md)。
 
+Draftsman 云端/新克隆开发的当前权威入口见
+[`docs/draftsman/CURRENT_STATE.md`](docs/draftsman/CURRENT_STATE.md)。
+
 ```powershell
 Set-Location .\cad_photo_to_dxf
 python -m venv .venv

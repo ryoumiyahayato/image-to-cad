@@ -2,6 +2,7 @@ __pycache__/
 *.py[cod]
 .venv/
 .pytest_cache/
+/local-artifacts/
 cad_photo_to_dxf/build/
 cad_photo_to_dxf/dist/
 cad_photo_to_dxf/installer/output/
