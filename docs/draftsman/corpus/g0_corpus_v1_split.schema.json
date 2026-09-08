@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ryoumiyahayato/image-to-cad/blob/draftsman/cloud-baseline-20260908/docs/draftsman/corpus/g0_corpus_v1_split.schema.json",
+  "title": "Draftsman authoritative Corpus V1 split",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "corpus_version",
+    "authoritative",
+    "freeze_status",
+    "candidate_registry",
+    "selection_policy",
+    "counts",
+    "corpus_v1_source_group_ids",
+    "selected_source_group_ids",
+    "splits",
+    "gates",
+    "deterministic_replay"
+  ],
+  "properties": {
+    "schema_version": {"const": "draftsman-corpus-v1-split-v1"},
+    "corpus_version": {"const": "DRAFTSMAN_GENERALIZATION_CORPUS_V1"},
+    "authoritative": {"const": true},
+    "freeze_status": {"const": "FROZEN"},
+    "candidate_registry": {
+      "type": "object",
+      "required": ["path", "sha256", "records"],
+      "properties": {
+        "path": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "records": {"const": 99}
+      },
+      "additionalProperties": false
+    },
+    "selection_policy": {
+      "type": "object",
+      "required": ["version", "algorithm", "split_order", "configuration"]
+    },
+    "counts": {
+      "type": "object",
+      "required": ["CORPUS_V1", "DEV", "VALIDATION", "LOCKED_BLIND", "RESERVE"],
+      "properties": {
+        "CORPUS_V1": {"const": 30},
+        "DEV": {"const": 15},
+        "VALIDATION": {"const": 7},
+        "LOCKED_BLIND": {"const": 8},
+        "RESERVE": {"const": 15}
+      },
+      "additionalProperties": false
+    },
+    "corpus_v1_source_group_ids": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "selected_source_group_ids": {
+      "type": "array",
+      "minItems": 45,
+      "maxItems": 45,
+      "uniqueItems": true,
+      "items": {"type": "string"}
+    },
+    "splits": {
+      "type": "object",
+      "required": ["DEV", "VALIDATION", "LOCKED_BLIND", "RESERVE"],
+      "properties": {
+        "DEV": {"$ref": "#/$defs/devEntries"},
+        "VALIDATION": {"$ref": "#/$defs/validationEntries"},
+        "LOCKED_BLIND": {"$ref": "#/$defs/blindEntries"},
+        "RESERVE": {"$ref": "#/$defs/reserveEntries"}
+      },
+      "additionalProperties": false
+    },
+    "gates": {
+      "type": "object",
+      "required": [
+        "exact_split_counts",
+        "split_overlap_count",
+        "source_family_leakage",
+        "previously_exposed_locked_blind",
+        "ineligible_selected",
+        "candidate_registry_digest_matches",
+        "fabricated_records"
+      ],
+      "properties": {
+        "exact_split_counts": {"const": true},
+        "split_overlap_count": {"const": 0},
+        "source_family_leakage": {"type": "array", "maxItems": 0},
+        "previously_exposed_locked_blind": {"const": 0},
+        "ineligible_selected": {"type": "array", "maxItems": 0},
+        "candidate_registry_digest_matches": {"const": true},
+        "fabricated_records": {"const": 0}
+      },
+      "additionalProperties": false
+    },
+    "deterministic_replay": {
+      "type": "object",
+      "required": ["registry_sha256", "policy_version", "serialization"]
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_group_id",
+        "source_family_id",
+        "eligibility",
+        "governance_status",
+        "split_eligibility",
+        "blind_exposure_status",
+        "quality_tier",
+        "macro_region",
+        "vector_raster_status",
+        "historical_archival",
+        "degraded_scan",
+        "native_image",
+        "drawing_families"
+      ],
+      "properties": {
+        "source_group_id": {"type": "string"},
+        "source_family_id": {"type": "string"},
+        "eligibility": {"enum": ["ELIGIBLE", "ELIGIBLE_WITH_ADVISORY"]},
+        "governance_status": {"type": "string"},
+        "split_eligibility": {"type": "string"},
+        "blind_exposure_status": {"enum": ["NOT_APPLICABLE", "NEVER_EXECUTED"]},
+        "quality_tier": {"enum": ["STRONG", "SECONDARY", "UNKNOWN"]},
+        "macro_region": {"enum": ["East Asia", "Europe", "North America", "Oceania"]},
+        "vector_raster_status": {"enum": ["CONFIRMED_VECTOR", "CONFIRMED_RASTER", "CONFIRMED_MIXED", "UNKNOWN"]},
+        "historical_archival": {"type": ["boolean", "null"]},
+        "degraded_scan": {"type": ["boolean", "null"]},
+        "native_image": {"type": ["boolean", "null"]},
+        "drawing_families": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+      }
+    },
+    "devEntries": {"type": "array", "minItems": 15, "maxItems": 15, "items": {"$ref": "#/$defs/entry"}},
+    "validationEntries": {"type": "array", "minItems": 7, "maxItems": 7, "items": {"$ref": "#/$defs/entry"}},
+    "blindEntries": {"type": "array", "minItems": 8, "maxItems": 8, "items": {"$ref": "#/$defs/entry"}},
+    "reserveEntries": {"type": "array", "minItems": 15, "maxItems": 15, "items": {"$ref": "#/$defs/entry"}}
+  }
+}

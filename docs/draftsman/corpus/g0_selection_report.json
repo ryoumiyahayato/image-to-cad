@@ -1,0 +1,749 @@
+{
+  "candidate_decisions": [
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_GAO_ER_PAN_OFFICE",
+      "source_group_id": "A2-SG-001"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_CHEN_CHI_KUAN_OFFICE",
+      "source_group_id": "A2-SG-002"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "A2-SG-003",
+      "source_group_id": "A2-SG-003"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_GAO_ER_PAN_OFFICE",
+      "source_group_id": "A2-SG-004"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_SHEN_TSU_HAI_OFFICE",
+      "source_group_id": "A2-SG-005"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_EAST_CATHOLIC_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-006"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "TAIWAN_EAST_CATHOLIC_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-007"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE",
+      "reason": "Public download is recorded as clear.",
+      "source_family_id": "US_NARA_BUILDING9",
+      "source_group_id": "A2-SG-008"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE",
+      "reason": "Public download is recorded as clear.",
+      "source_family_id": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+      "source_group_id": "A2-SG-009"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_OREGON_HISTORICAL_RESIDENCE",
+      "source_group_id": "A2-SG-010"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "A2-SG-011",
+      "source_group_id": "A2-SG-011"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "A2-SG-012",
+      "source_group_id": "A2-SG-012"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_NANPING_WELFARE_INSTITUTION",
+      "source_group_id": "A2-SG-013"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_GDMHVC_SECOND_CAFETERIA",
+      "source_group_id": "A2-SG-014"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_ZHANGZHOU_TCM_HOSPITAL",
+      "source_group_id": "A2-SG-015"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "KR_GYEONGGI_CROP_DIAGNOSTIC_LAB",
+      "source_group_id": "A2-SG-017"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "KR_UIJEONGBU_PARK_ELECTRICAL",
+      "source_group_id": "A2-SG-018"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "A2-SG-019",
+      "source_group_id": "A2-SG-019"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "A2-SG-020",
+      "source_group_id": "A2-SG-020"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "A2-SG-021",
+      "source_group_id": "A2-SG-021"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "UK_BANBURY_TRAMWAY_ASBUILT",
+      "source_group_id": "A2-SG-022"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "HISTORIC_ENGLAND_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-023"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "HISTORIC_ENGLAND_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-024"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "HISTORIC_ENGLAND_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-025"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "HISTORIC_ENGLAND_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-027"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "HISTORIC_ENGLAND_ARCHIVE_FAMILY",
+      "source_group_id": "A2-SG-028"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_BESSIE_SURTEES_PF_BES_002",
+      "source_group_id": "G0R2-0156A26BEAB2E2DE"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_ISHINOMAKI_EAST_SCHOOL_MEAL_CENTER",
+      "source_group_id": "G0R2-12366099AAD5F10E"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_4291000114",
+      "source_group_id": "G0R2-15EE2398726E8037"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_THETFORD_PRIORY_PF_THP",
+      "source_group_id": "G0R2-220064FA2ED8B0B3"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_HI0583",
+      "source_group_id": "G0R2-2279F661AA38A9F4"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+      "source_group_id": "G0R2-22E85E2DB7746A00"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_SAKADO_KITASAKADO_SCHOOL_DEMOLITION",
+      "source_group_id": "G0R2-2E9BDFFDD8C89AE7"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_DOVER_CASTLE_MP_DOV1542",
+      "source_group_id": "G0R2-3050F968D6B7912B"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_APSLEY_HOUSE_MP_APS0124",
+      "source_group_id": "G0R2-33F05349E2F8A6AD"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_HUNAN_HUAYUAN_PUBLIC_DRAWING_2023",
+      "source_group_id": "G0R2-345AA483FD068A11"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+      "source_group_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "DEDUP_UNRESOLVED",
+      "reason": "Fort McPherson WWII Station Hospital standardized mess-hall drawing family",
+      "source_family_id": "US_LOC_HABS_GA0711",
+      "source_group_id": "G0R2-3811E2A2F0494CEC"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+      "source_group_id": "G0R2-3B970FD759C6026F"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "NZ_WESTLAND_MILK_STAFF_CARPARK_150080",
+      "source_group_id": "G0R2-420BF9693D881A41"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2020000600",
+      "source_group_id": "G0R2-49F2FE2F2DDF3FEF"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+      "source_group_id": "G0R2-4A34D1B8D93B1B06"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_NABARI_MINAMI_JHS_GYM_R5",
+      "source_group_id": "G0R2-4BF33D8ECCAE6097"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HAER_CA1868",
+      "source_group_id": "G0R2-4CF3C6EBEFDD1EBE"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_GOLDCOAST_OPW_2014_2240",
+      "source_group_id": "G0R2-4DC97797ABE2CB18"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2019000897",
+      "source_group_id": "G0R2-4E33D8D7099FFD99"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_ARGYLE_STORES_301350511",
+      "source_group_id": "G0R2-53C88494D6CE893C"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_FL0572",
+      "source_group_id": "G0R2-5FB6FE7CB6D476E1"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_GAINSBOROUGH_PF_GAN_006",
+      "source_group_id": "G0R2-6AE0ED39049CDC15"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2020000378",
+      "source_group_id": "G0R2-6C9464FA73A2A027"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_CA4439",
+      "source_group_id": "G0R2-6DFEC5FDC69FC0CD"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2019001677",
+      "source_group_id": "G0R2-7568A9C69D3F025A"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2022000195",
+      "source_group_id": "G0R2-7AC7A0A46D6D1829"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_NSW_P5_2023_61",
+      "source_group_id": "G0R2-7E30C7F445081F40"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2021001993",
+      "source_group_id": "G0R2-83053D198E1B3EEB"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_ST_PETERS_PF_SPE_005",
+      "source_group_id": "G0R2-88DFF0AD9C70B3FD"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_GU0014",
+      "source_group_id": "G0R2-99D5B85436EBB965"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2022000271",
+      "source_group_id": "G0R2-9A35586E279F963C"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_ISHIKAWA_KIBAGATA_AGRICULTURAL_HOUSE",
+      "source_group_id": "G0R2-9A7160DE38A48B87"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2019001243",
+      "source_group_id": "G0R2-9B950CDE724F24EF"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "TW_NHRM_B5_DETAILED_DESIGN",
+      "source_group_id": "G0R2-9ED083269D740D71"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_NARUTO_BRANCH_OFFICE_ELECTRICAL",
+      "source_group_id": "G0R2-A51232D15039BC38"
+    },
+    {
+      "assignment": "LOCKED_BLIND",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HAER_HI0822",
+      "source_group_id": "G0R2-AEA044C8E75CB3AB"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_SYDNEY_BRICK_KILN_212710",
+      "source_group_id": "G0R2-AFE53C2A00EB7D8F"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "DEDUP_UNRESOLVED",
+      "reason": "SOURCE_GROUP or parent-package relation is unresolved.",
+      "source_family_id": "AU_NSW_BBB_ELECTRICAL_18",
+      "source_group_id": "G0R2-B31F59D728827A93"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_FL0790",
+      "source_group_id": "G0R2-B441E5911528F402"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_NSW_P5_2024_93",
+      "source_group_id": "G0R2-C2D095E069663C17"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_EYNSFORD_CASTLE_PF_EYN",
+      "source_group_id": "G0R2-D21BC2566F0D1218"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "DEDUP_UNRESOLVED",
+      "reason": "Fort McPherson WWII Station Hospital standardized mess-hall drawing family",
+      "source_family_id": "US_LOC_HABS_GA0703",
+      "source_group_id": "G0R2-D93E7F1D84FE931F"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_C605EC",
+      "source_group_id": "G0R2-DB54B97CB04CDD93"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "UK_HE_CALSHOT_CASTLE_MP_CAL0049",
+      "source_group_id": "G0R2-DC9DD4399B91DAD9"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_IGA_2020001965",
+      "source_group_id": "G0R2-DE943FBDFF3AA712"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "US_LOC_HABS_FL0042",
+      "source_group_id": "G0R2-DFDEB75F11F8DD55"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_GOLDCOAST_OPW_2012_887",
+      "source_group_id": "G0R2-E5D21A3F643B7F2A"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "DEDUP_UNRESOLVED",
+      "reason": "SOURCE_GROUP or parent-package relation is unresolved.",
+      "source_family_id": "AU_NSW_APPENDIX_Z2_21",
+      "source_group_id": "G0R2-EA6843AA389DEF0A"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_LOC_HABS_UT0288",
+      "source_group_id": "G0R2-F519B357241CAC3A"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "DEDUP_UNRESOLVED",
+      "reason": "SOURCE_GROUP or parent-package relation is unresolved.",
+      "source_family_id": "TW_TYCG_DOCUMENT_95746",
+      "source_group_id": "G0R2-F8F1CD341413C999"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "REVIEW_REQUIRED",
+      "reason": "Access, rights, or parent-package review is required.",
+      "source_family_id": "US_LOC_HABS_FL0326",
+      "source_group_id": "G0R2-FAA5B72282926550"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "AU_NSW_WESTMEAD_WCEOL",
+      "source_group_id": "G0R2-FCB5912CBA25CC2C"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "JP_KUKI_HIGASHIWASHIMIYA_STATION",
+      "source_group_id": "G0R2-FD999AAD85D294F9"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_WILDWOOD_PUBLIC_WORKS",
+      "source_group_id": "SGC-002"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "US_DOUGLAS_COUNTY_SCHOOL",
+      "source_group_id": "SGC-003"
+    },
+    {
+      "assignment": "VALIDATION",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_TITUSVILLE_SCHOOL",
+      "source_group_id": "SGC-007"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_FARMINGTON_SENIOR_CENTER",
+      "source_group_id": "SGC-008"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_SUNY_PURCHASE_SOUND_STAGE",
+      "source_group_id": "SGC-020"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_URI_HEALTH_SCIENCES",
+      "source_group_id": "SGC-022"
+    },
+    {
+      "assignment": "DEV",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "US_SOUTH_SEATTLE_COLLEGE",
+      "source_group_id": "SGC-024"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "CAN_DIPPER_HARBOUR",
+      "source_group_id": "SGC-027"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "CAN_TECUMSEH_PUBLIC_WORKS",
+      "source_group_id": "SGC-028"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_GLEN_TAY_PUBLIC_SCHOOL",
+      "source_group_id": "SGC-029"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "SGC-030",
+      "source_group_id": "SGC-030"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "SGC-032",
+      "source_group_id": "SGC-032"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_BOURGET_COMMUNITY_CENTRE",
+      "source_group_id": "SGC-034"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_YUKON_MAIN_ADMIN",
+      "source_group_id": "SGC-035"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_CLARKSON_COMMUNITY_CENTRE",
+      "source_group_id": "SGC-036"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "INELIGIBLE",
+      "reason": "Explicit license restriction or split restriction.",
+      "source_family_id": "CAN_VANCOUVER_CITY_HALL",
+      "source_group_id": "SGC-045"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_PARKGATE_LIBRARY_1993",
+      "source_group_id": "SGC-051"
+    },
+    {
+      "assignment": "UNSELECTED",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "CAN_GUELPH_SOUTH_END_CC",
+      "source_group_id": "SGC-055"
+    },
+    {
+      "assignment": "RESERVE",
+      "eligibility": "ELIGIBLE_WITH_ADVISORY",
+      "reason": "Public access is repeatable; local evaluation is provisional and redistribution is not granted.",
+      "source_family_id": "SGC-064",
+      "source_group_id": "SGC-064"
+    }
+  ],
+  "candidate_registry_sha256": "07e25d6d876c0d0416556aefe01267d688da495111eec69e521bb2c70803e780",
+  "eligibility_counts": {
+    "DEDUP_UNRESOLVED": 5,
+    "ELIGIBLE": 2,
+    "ELIGIBLE_WITH_ADVISORY": 65,
+    "INELIGIBLE": 17,
+    "REVIEW_REQUIRED": 10
+  },
+  "gates": {
+    "candidate_registry_digest_matches": true,
+    "exact_split_counts": true,
+    "fabricated_records": 0,
+    "ineligible_selected": [],
+    "previously_exposed_locked_blind": 0,
+    "source_family_leakage": [],
+    "split_overlap_count": 0
+  },
+  "governance_gate_counts": {
+    "explicitly_ineligible": 17,
+    "policy_dedup_unresolved_added": 2,
+    "registry_dedup_unresolved": 12,
+    "registry_review_required": 13
+  },
+  "schema_version": "draftsman-g0-selection-report-v1",
+  "selected_statistics": {
+    "confirmed_degraded": 6,
+    "drawing_family_distribution": {
+      "fire_alarm": 3,
+      "lighting": 10,
+      "low_voltage": 4,
+      "other_electrical": 11,
+      "panel_schedule": 9,
+      "power": 10,
+      "single_line": 1,
+      "wiring_control": 3
+    },
+    "historical_archival": 11,
+    "native_image": 5,
+    "region_distribution": {
+      "East Asia": 9,
+      "Europe": 1,
+      "North America": 11,
+      "Oceania": 9
+    },
+    "vector_raster_status": {
+      "CONFIRMED_MIXED": 4,
+      "CONFIRMED_RASTER": 7,
+      "CONFIRMED_VECTOR": 3,
+      "UNKNOWN": 16
+    }
+  },
+  "selection_policy_version": "draftsman-g0-b3-selection-v1"
+}
