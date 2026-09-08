@@ -11,6 +11,9 @@ from scripts.g0_candidate_registry import (
     RegistryValidationError,
     canonical_registry_bytes,
     load_registry,
+    normalize_canonical_url,
+    rediscovered_source_group_id,
+    registry_stats,
     registry_sha256,
     validate_record,
     validate_registry,
@@ -105,6 +108,42 @@ class G0CandidateRegistryTests(unittest.TestCase):
         self.assertEqual(canonical_registry_bytes(forward), canonical_registry_bytes(reverse))
         self.assertEqual(registry_sha256(forward), registry_sha256(reverse))
 
+    def test_g0_r2_identity_is_deterministic_after_url_normalization(self) -> None:
+        first = "HTTPS://Example.COM:443/drawing.pdf?b=2&a=1#page=2"
+        second = "https://example.com/drawing.pdf?a=1&b=2"
+        self.assertEqual(normalize_canonical_url(first), second)
+        self.assertEqual(rediscovered_source_group_id(first), rediscovered_source_group_id(second))
+
+    def test_g0_r2_record_requires_deterministic_id_and_web_provenance(self) -> None:
+        record = _record(rediscovered_source_group_id("https://example.invalid/new.pdf"))
+        record.update(
+            {
+                "canonical_source_url": "https://example.invalid/new.pdf",
+                "discovery_phase": "G0-R2",
+                "record_status": "REDISCOVERED_REAL_CANDIDATE",
+                "legacy_proposal_role": None,
+                "legacy_planned_split": None,
+                "recovery_provenance": [
+                    {
+                        "kind": "PUBLIC_WEB_REDISCOVERY",
+                        "source_url": "https://example.invalid/new.pdf",
+                        "observed_at": "2026-09-08",
+                    }
+                ],
+            }
+        )
+        validate_record(record)
+        record["source_group_id"] = "G0R2-NOT-DETERMINISTIC"
+        with self.assertRaisesRegex(RegistryValidationError, "non-deterministic"):
+            validate_record(record)
+
+    def test_duplicate_normalized_url_is_rejected(self) -> None:
+        first = _record("SG-001")
+        second = _record("SG-002")
+        second["canonical_source_url"] = "HTTPS://EXAMPLE.INVALID:443/drawing.pdf#fragment"
+        with self.assertRaisesRegex(RegistryValidationError, "duplicate canonical_source_url"):
+            validate_registry([first, second])
+
     def test_loader_rejects_noncanonical_or_invalid_data(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "registry.jsonl"
@@ -119,8 +158,20 @@ class G0CandidateRegistryTests(unittest.TestCase):
         records = load_registry(registry_path)
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         self.assertEqual(set(schema["required"]), set(records[0]))
+        for record in records:
+            self.assertEqual(set(record), set(schema["required"]))
+            for field, specification in schema["properties"].items():
+                if "enum" in specification:
+                    self.assertIn(record[field], specification["enum"])
         self.assertEqual(registry_path.read_bytes(), canonical_registry_bytes(records))
         self.assertEqual(registry_sha256(records), digest_path.read_text(encoding="utf-8").strip())
+
+    def test_checked_in_registry_reaches_g0_r2_pool_target(self) -> None:
+        registry_path = REPOSITORY_ROOT / "docs/draftsman/corpus/g0_candidate_registry.jsonl"
+        stats = registry_stats(load_registry(registry_path))
+        self.assertEqual(stats["total_real_source_groups"], 99)
+        self.assertEqual(stats["new_g0_r2_source_groups"], 54)
+        self.assertGreaterEqual(stats["total_viable_source_groups"], 96)
 
     def test_legacy_proposal_is_preserved_but_not_frozen(self) -> None:
         path = REPOSITORY_ROOT / "docs/draftsman/corpus/legacy_g0b_provisional_split.json"

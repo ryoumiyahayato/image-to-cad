@@ -60,7 +60,7 @@
     "era": {"type": "string"},
     "discipline": {"type": "string"},
     "drawing_type": {"type": "string"},
-    "discovery_phase": {"enum": ["G0-A", "G0-A2", "RECOVERED_LEGACY", "FUTURE_REDISCOVERY"]},
+    "discovery_phase": {"enum": ["G0-A", "G0-A2", "G0-R2", "RECOVERED_LEGACY", "FUTURE_REDISCOVERY"]},
     "quality_tier": {"enum": ["STRONG", "SECONDARY", "UNKNOWN"]},
     "quality_flags": {"type": "array", "items": {"type": "string"}},
     "governance_status": {"type": "string"},
@@ -72,22 +72,30 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["kind", "artifact_name", "artifact_sha256", "member_path"],
+        "required": ["kind"],
         "properties": {
           "kind": {"type": "string"},
           "artifact_name": {"type": "string"},
           "artifact_sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
           "member_path": {"type": "string"},
-          "candidate_id": {"type": "string"}
+          "candidate_id": {"type": "string"},
+          "source_url": {"type": "string", "pattern": "^https?://"},
+          "observed_at": {"type": "string", "format": "date"},
+          "search_query": {"type": "string"},
+          "evidence_note": {"type": "string"}
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "oneOf": [
+          {"required": ["artifact_name", "artifact_sha256", "member_path"]},
+          {"required": ["source_url", "observed_at"]}
+        ]
       }
     },
     "record_status": {"enum": ["RECOVERED_REAL_CANDIDATE", "REDISCOVERED_REAL_CANDIDATE"]},
-    "split_eligibility": {"enum": ["PROVISIONAL_PENDING_ACQUISITION", "INELIGIBLE", "UNRESOLVED"]},
+    "split_eligibility": {"enum": ["PROVISIONAL_PENDING_ACQUISITION", "INELIGIBLE", "UNRESOLVED", "RESTRICTED", "REVIEW_REQUIRED"]},
     "identity_scope": {"enum": ["SOURCE_GROUP", "UNRESOLVED"]},
     "dedup_status": {"enum": ["DISTINCT", "UNRESOLVED"]},
-    "legacy_proposal_role": {"enum": ["SELECTED", "RESERVE"]},
+    "legacy_proposal_role": {"enum": ["SELECTED", "RESERVE", null]},
     "legacy_planned_split": {"enum": ["DEV", "VALIDATION", "LOCKED_BLIND", null]},
     "legacy_proposal_authoritative": {"const": false}
   }
