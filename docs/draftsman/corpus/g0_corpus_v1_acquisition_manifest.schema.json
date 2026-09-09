@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ryoumiyahayato/image-to-cad/blob/draftsman/cloud-baseline-20260908/docs/draftsman/corpus/g0_corpus_v1_acquisition_manifest.schema.json",
+  "title": "Draftsman Corpus V1 acquisition manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "corpus_version",
+    "authoritative_split_modified",
+    "candidate_registry_sha256",
+    "authoritative_split_sha256",
+    "material_root",
+    "generated_at_utc",
+    "source_groups",
+    "summary",
+    "gates",
+    "deterministic_serialization"
+  ],
+  "properties": {
+    "schema_version": {"const": "draftsman-corpus-v1-acquisition-manifest-v1"},
+    "corpus_version": {"const": "DRAFTSMAN_GENERALIZATION_CORPUS_V1"},
+    "authoritative_split_modified": {"const": false},
+    "candidate_registry_sha256": {"const": "07e25d6d876c0d0416556aefe01267d688da495111eec69e521bb2c70803e780"},
+    "authoritative_split_sha256": {"const": "05283c960096941ecac34f73e109fe9d850e8d2354b144387c00370755d288cd"},
+    "material_root": {"const": "local-artifacts/draftsman/corpus-v1"},
+    "generated_at_utc": {"type": "string", "pattern": "Z$"},
+    "source_groups": {
+      "type": "array",
+      "minItems": 30,
+      "maxItems": 30,
+      "items": {"$ref": "#/$defs/sourceGroup"}
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "source_groups",
+        "acquisition_attempted",
+        "successfully_acquired",
+        "evaluation_ready",
+        "acquisition_failed",
+        "manual_access_required",
+        "network_environment_failures",
+        "governance_blocked",
+        "source_files_materialized",
+        "sha256_coverage",
+        "provenance_coverage",
+        "governance_coverage",
+        "changed_source_byte_conflicts",
+        "corrupt_or_unsupported",
+        "by_split"
+      ],
+      "properties": {
+        "source_groups": {"const": 30},
+        "acquisition_attempted": {"const": 30},
+        "successfully_acquired": {"type": "integer", "minimum": 0, "maximum": 30},
+        "evaluation_ready": {"type": "integer", "minimum": 0, "maximum": 30},
+        "acquisition_failed": {"type": "integer", "minimum": 0, "maximum": 30},
+        "manual_access_required": {"type": "integer", "minimum": 0, "maximum": 30},
+        "network_environment_failures": {"type": "integer", "minimum": 0, "maximum": 30},
+        "governance_blocked": {"type": "integer", "minimum": 0, "maximum": 30},
+        "source_files_materialized": {"type": "integer", "minimum": 0},
+        "sha256_coverage": {"type": "integer", "minimum": 0},
+        "provenance_coverage": {"const": 30},
+        "governance_coverage": {"const": 30},
+        "changed_source_byte_conflicts": {"type": "integer", "minimum": 0},
+        "corrupt_or_unsupported": {"type": "integer", "minimum": 0},
+        "by_split": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "gates": {
+      "type": "object",
+      "required": [
+        "registry_digest_bound",
+        "split_digest_bound",
+        "locked_blind_runtime_executed",
+        "locked_blind_visual_manual_development_inspection",
+        "source_bytes_committed_to_git"
+      ],
+      "properties": {
+        "registry_digest_bound": {"const": true},
+        "split_digest_bound": {"const": true},
+        "locked_blind_runtime_executed": {"const": 0},
+        "locked_blind_visual_manual_development_inspection": {"const": false},
+        "source_bytes_committed_to_git": {"const": 0}
+      },
+      "additionalProperties": false
+    },
+    "deterministic_serialization": {"type": "string"}
+  },
+  "$defs": {
+    "sourceGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_group_id",
+        "split",
+        "canonical_source_url",
+        "resolved_acquisition_url",
+        "url_resolution_evidence",
+        "acquisition_method",
+        "governance_state",
+        "redistribution_state",
+        "governance_or_access_notes",
+        "runtime_executed",
+        "blind_exposure_status",
+        "visual_manual_development_inspection",
+        "acquisition_state",
+        "attempted_at_utc",
+        "failure",
+        "files",
+        "materialization_state",
+        "evaluation_ready"
+      ],
+      "properties": {
+        "source_group_id": {"type": "string"},
+        "split": {"enum": ["DEV", "VALIDATION", "LOCKED_BLIND"]},
+        "canonical_source_url": {"type": "string", "format": "uri"},
+        "resolved_acquisition_url": {"type": "string", "format": "uri"},
+        "url_resolution_evidence": {"type": "string"},
+        "acquisition_method": {"type": "string"},
+        "governance_state": {"enum": ["DOWNLOAD_ALLOWED_FOR_LOCAL_EVALUATION", "RIGHTS_UNCLEAR", "ARCHIVE_ADVISORY", "ACQUISITION_BLOCKED"]},
+        "redistribution_state": {"enum": ["REDISTRIBUTION_NOT_GRANTED", "REDISTRIBUTION_RESTRICTED"]},
+        "governance_or_access_notes": {"type": "string"},
+        "runtime_executed": {"const": false},
+        "blind_exposure_status": {"enum": ["NOT_APPLICABLE", "NEVER_EXECUTED"]},
+        "visual_manual_development_inspection": {"const": false},
+        "acquisition_state": {"enum": ["SUCCESS", "REUSED_VERIFIED", "ACQUISITION_FAILED", "MANUAL_ACCESS_REQUIRED", "SOURCE_BYTES_CHANGED"]},
+        "attempted_at_utc": {"type": "string", "pattern": "Z$"},
+        "failure": {"type": ["object", "null"]},
+        "files": {"type": "array", "items": {"$ref": "#/$defs/sourceFile"}},
+        "materialization_state": {"enum": ["EVALUATION_READY", "NOT_MATERIALIZED", "CONFLICT"]},
+        "evaluation_ready": {"type": "boolean"}
+      }
+    },
+    "sourceFile": {
+      "type": "object",
+      "required": ["local_relative_path", "sha256", "byte_size", "detected_format", "mime_type", "integrity_check"],
+      "properties": {
+        "local_relative_path": {"type": "string", "pattern": "^local-artifacts/draftsman/corpus-v1/"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "byte_size": {"type": "integer", "minimum": 1},
+        "detected_format": {"enum": ["PDF", "JPEG", "TIFF", "PNG", "ZIP"]},
+        "mime_type": {"type": "string"},
+        "integrity_check": {"type": "string"},
+        "page_count": {"type": ["integer", "null"]},
+        "encrypted": {"type": ["boolean", "null"]},
+        "width": {"type": "integer"},
+        "height": {"type": "integer"},
+        "mode": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  }
+}
