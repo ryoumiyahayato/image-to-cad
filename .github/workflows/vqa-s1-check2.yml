@@ -1,0 +1,84 @@
+name: VQA-S1 focused check 2
+
+on:
+  push:
+    branches:
+      - "fix/vqa-s1-check2"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: "1"
+    defaults:
+      run:
+        working-directory: cad_photo_to_dxf
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt -r requirements-test.txt
+      - name: Run VQA-S1 tests
+        run: python -m pytest -q tests/test_visual_acceptance.py
+      - name: Run VQA-S1 Ruff checks
+        run: >-
+          python -m ruff check
+          app/visual_acceptance.py
+          app/gui_public_release.py
+          scripts/run_visual_acceptance_smoke.py
+          tests/test_visual_acceptance.py
+      - name: Compile VQA-S1 sources
+        run: >-
+          python -m compileall -q
+          app/visual_acceptance.py
+          app/gui_public_release.py
+          scripts/run_visual_acceptance_smoke.py
+          tests/test_visual_acceptance.py
+      - name: Download one allowed DEV source and verify bytes
+        run: |
+          mkdir -p output/vqa-s1/source output/vqa-s1/artifacts
+          python - <<'PY'
+          from hashlib import sha256
+          from pathlib import Path
+          from urllib.request import urlopen
+
+          url = "https://upload.wikimedia.org/wikipedia/commons/1/17/Electrical_plans_for_four_floors_%28CABHC_2024-014-13%29.jpg"
+          expected = "25b448cbfca0375352afe2a6bc91fdd9a5eb826d744b5075cd26d89182f2297a"
+          target = Path("output/vqa-s1/source/A2-SG-009.jpg")
+          with urlopen(url, timeout=60) as response:
+              data = response.read()
+          observed = sha256(data).hexdigest()
+          if observed != expected:
+              raise SystemExit(f"DEV source SHA256 mismatch: {observed}")
+          target.write_bytes(data)
+          print(f"verified A2-SG-009: {len(data)} bytes")
+          PY
+      - name: Run real DEV visual acceptance smoke
+        run: >-
+          python scripts/run_visual_acceptance_smoke.py
+          output/vqa-s1/source/A2-SG-009.jpg
+          --output output/vqa-s1/artifacts
+          --source-label A2-SG-009
+          --dpi 300
+      - name: Upload real DEV visual artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vqa-s1-real-dev-${{ github.sha }}
+          path: cad_photo_to_dxf/output/vqa-s1/artifacts/**
+          if-no-files-found: error
+          retention-days: 14
