@@ -124,7 +124,11 @@ class MainWindow(_OptimizedMainWindow):
         return scroll
 
     def _visual_acceptance_source_label(self) -> str:
-        source = Path(self.current_path).name if self.current_path is not None else "未保存图像"
+        source = (
+            Path(self.current_path).name
+            if self.current_path is not None
+            else "未保存图像"
+        )
         if bool(getattr(self, "_native_pdf_mode", False)):
             page_index = int(getattr(self, "_current_pdf_page_index", 0)) + 1
             return f"{source}-page-{page_index:03d}"
@@ -152,6 +156,13 @@ class MainWindow(_OptimizedMainWindow):
             structure.assert_valid()
             if getattr(self, "_preview_structure_id", None) != structure.structure_id:
                 raise ValueError("视觉验收拒绝使用与当前导出结构不一致的预览状态")
+            width, height = structure.source_size_px
+            if source.shape[:2] != (height, width):
+                if not bool(getattr(self, "_native_pdf_mode", False)):
+                    raise ValueError("视觉验收原图与最终结构坐标尺寸不一致")
+                source = self._load_trace_source_for_current_page()
+                if source.shape[:2] != (height, width):
+                    raise ValueError("PDF 处理原图与最终结构坐标尺寸仍不一致")
             label = self._visual_acceptance_source_label()
             workbench.set_result(source, structure, source_label=label)
             artifacts = write_visual_acceptance_artifacts(
