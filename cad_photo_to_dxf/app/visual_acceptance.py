@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
-import json
 from pathlib import Path
-from typing import Mapping
 
 import cv2
 import numpy as np
@@ -130,7 +130,7 @@ def build_visual_acceptance_images(
     """Return original, canonical reconstruction, and same-coordinate overlay images.
 
     The center reconstruction comes directly from the existing FinalStructure
-    preview path.  The overlay never changes geometry; it only tints canonical
+    preview path. The overlay never changes geometry; it only tints canonical
     output pixels and adds review-only bounding boxes for categories that are
     explicitly present in FinalStructure.
     """
@@ -188,7 +188,7 @@ def _overview_image(
         if image.shape[0] == height:
             return image
         ratio = height / max(float(image.shape[0]), 1.0)
-        width = max(1, int(round(image.shape[1] * ratio)))
+        width = max(1, round(image.shape[1] * ratio))
         return cv2.resize(image, (width, height), interpolation=cv2.INTER_AREA)
 
     images = [sized(original), sized(reconstructed), sized(overlay)]
@@ -330,17 +330,22 @@ class VisualAcceptanceWorkbench(QWidget):
         self.show_text = QCheckBox("文字标记", controls)
         self.show_symbols = QCheckBox("符号/签名标记", controls)
         self.show_unverified = QCheckBox("未确认区域", controls)
-        self.show_warnings = QCheckBox("警告", controls)
+        self.show_warnings = QCheckBox("警告（仅计数）", controls)
+        self.show_warnings.setChecked(True)
+        self.show_warnings.setEnabled(False)
+        self.show_warnings.setToolTip(
+            "当前 warning 没有可信的页面区域坐标，所以只显示数量，不伪造高亮框。"
+        )
         for checkbox in (
             self.show_structure,
             self.show_text,
             self.show_symbols,
             self.show_unverified,
-            self.show_warnings,
         ):
             checkbox.setChecked(True)
             checkbox.toggled.connect(self._refresh_overlay)
             toggle_row.addWidget(checkbox)
+        toggle_row.addWidget(self.show_warnings)
         controls_layout.addLayout(toggle_row)
 
         verdict_row = QHBoxLayout()
