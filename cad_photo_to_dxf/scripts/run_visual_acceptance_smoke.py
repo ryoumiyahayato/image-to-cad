@@ -4,13 +4,19 @@ import argparse
 from pathlib import Path
 
 from app.image_loader import load_image
-from app.processing_contract import ProductionProcessingConfig, ProductionProcessingService
+from app.processing_contract import (
+    ProductionProcessingConfig,
+    ProductionProcessingService,
+)
 from app.visual_acceptance import write_visual_acceptance_artifacts
 
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run one allowed source through production Draftsman and emit human-visible VQA artifacts."
+        description=(
+            "Run one allowed source through production Draftsman and emit "
+            "human-visible VQA artifacts."
+        )
     )
     parser.add_argument("input", type=Path)
     parser.add_argument("--output", type=Path, required=True)
