@@ -1,9 +1,18 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import json
+from pathlib import Path
 import time
 
-from PySide6.QtWidgets import QDialog, QLabel, QMessageBox, QPushButton
+from PySide6.QtWidgets import (
+    QDialog,
+    QGroupBox,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
 from .gui_final_release import MainWindow as _OptimizedMainWindow
 from .gui_page_export import (
@@ -13,6 +22,12 @@ from .gui_page_export import (
 from .raster_trace import RasterTraceResult, trace_binary
 from .trace_paint import TracePaintDialog
 from .trace_verification import TraceVerificationResult, verify_trace_paths
+from .visual_acceptance import (
+    VisualAcceptanceArtifacts,
+    VisualAcceptanceWorkbench,
+    write_visual_acceptance_artifacts,
+    write_visual_acceptance_review,
+)
 
 
 _EXPORT_BUTTON_LABELS = {
@@ -23,7 +38,18 @@ _EXPORT_BUTTON_LABELS = {
 
 
 class MainWindow(_OptimizedMainWindow):
-    """Final user-facing terminology for editing and verification actions."""
+    """Final user-facing terminology and human-visible CAD acceptance."""
+
+    def __init__(self) -> None:
+        self.visual_acceptance: VisualAcceptanceWorkbench | None = None
+        self._last_visual_acceptance_artifacts: VisualAcceptanceArtifacts | None = None
+        super().__init__()
+        self.visual_acceptance = VisualAcceptanceWorkbench(self)
+        self.visual_acceptance.review_changed.connect(
+            self._on_visual_acceptance_review_changed
+        )
+        self.tabs.addTab(self.visual_acceptance, "视觉验收")
+        self._refresh_visual_acceptance(open_tab=False)
 
     def _build_controls(self):  # type: ignore[override]
         scroll = super()._build_controls()
@@ -74,11 +100,141 @@ class MainWindow(_OptimizedMainWindow):
                 )
                 label.setWordWrap(True)
 
+        container = scroll.widget()
+        layout = container.layout() if container is not None else None
+        if layout is not None:
+            visual_group = QGroupBox("肉眼验收", container)
+            visual_layout = QVBoxLayout(visual_group)
+            visual_note = QLabel(
+                "处理完成后直接对比原图、最终 CAD 重建和同坐标叠加。"
+                "这里看见的重建结果绑定当前 FinalStructure，不使用另一套漂亮预览。",
+                visual_group,
+            )
+            visual_note.setWordWrap(True)
+            visual_layout.addWidget(visual_note)
+            visual_button = QPushButton("打开视觉验收", visual_group)
+            visual_button.clicked.connect(self.open_visual_acceptance)
+            visual_layout.addWidget(visual_button)
+            layout.insertWidget(max(0, layout.count() - 1), visual_group)
+
         if hasattr(self, "page_summary_label"):
             self.page_summary_label.setText(
-                "当前页处理完成后可立即导出；也可批量导出所有已处理页面。"
+                "当前页处理完成后可立即肉眼对比并导出；也可批量导出所有已处理页面。"
             )
         return scroll
+
+    def _visual_acceptance_source_label(self) -> str:
+        source = Path(self.current_path).name if self.current_path is not None else "未保存图像"
+        if bool(getattr(self, "_native_pdf_mode", False)):
+            page_index = int(getattr(self, "_current_pdf_page_index", 0)) + 1
+            return f"{source}-page-{page_index:03d}"
+        return source
+
+    @staticmethod
+    def _visual_acceptance_root() -> Path:
+        return Path.cwd() / "local-artifacts" / "draftsman" / "visual-acceptance"
+
+    def _visual_acceptance_source(self):
+        if self.corrected_image is not None:
+            return self.corrected_image
+        return self.original_image
+
+    def _refresh_visual_acceptance(self, *, open_tab: bool) -> None:
+        workbench = self.visual_acceptance
+        structure = getattr(self, "_final_structure", None)
+        source = self._visual_acceptance_source()
+        if workbench is None:
+            return
+        if source is None or structure is None:
+            workbench.clear()
+            return
+        try:
+            structure.assert_valid()
+            if getattr(self, "_preview_structure_id", None) != structure.structure_id:
+                raise ValueError("视觉验收拒绝使用与当前导出结构不一致的预览状态")
+            label = self._visual_acceptance_source_label()
+            workbench.set_result(source, structure, source_label=label)
+            artifacts = write_visual_acceptance_artifacts(
+                source,
+                structure,
+                root=self._visual_acceptance_root(),
+                source_label=label,
+                review=workbench.review_payload(),
+            )
+            self._last_visual_acceptance_artifacts = artifacts
+            workbench.set_artifact_paths(artifacts)
+            if open_tab:
+                self.tabs.setCurrentWidget(workbench)
+            self.statusBar().showMessage(
+                f"视觉验收已更新；总览截图：{artifacts.overview_path}"
+            )
+        except (OSError, ValueError, AssertionError) as exc:
+            self._last_visual_acceptance_artifacts = None
+            self.statusBar().showMessage(f"视觉验收生成失败：{exc}")
+
+    def open_visual_acceptance(self) -> None:
+        workbench = self.visual_acceptance
+        if workbench is None:
+            return
+        if getattr(self, "_final_structure", None) is None:
+            QMessageBox.warning(self, "尚无处理结果", "请先处理当前页，再进行肉眼验收。")
+            return
+        self._refresh_visual_acceptance(open_tab=True)
+
+    def _on_visual_acceptance_review_changed(self, payload: object) -> None:
+        if not isinstance(payload, dict):
+            return
+        artifacts = self._last_visual_acceptance_artifacts
+        if artifacts is None:
+            return
+        current: dict[str, object] = {}
+        try:
+            if artifacts.review_path.exists():
+                loaded = json.loads(artifacts.review_path.read_text(encoding="utf-8"))
+                if isinstance(loaded, dict):
+                    current = loaded
+        except (OSError, ValueError, json.JSONDecodeError):
+            current = {}
+        current["human_review"] = dict(payload)
+        write_visual_acceptance_review(artifacts.review_path, current)
+        if bool(getattr(self, "_native_pdf_mode", False)):
+            state = self._pdf_page_states.setdefault(
+                int(getattr(self, "_current_pdf_page_index", 0)),
+                {},
+            )
+            state["visual_acceptance_review"] = dict(payload)
+
+    def _clear_trace_state(self) -> None:
+        super()._clear_trace_state()
+        self._last_visual_acceptance_artifacts = None
+        workbench = self.visual_acceptance
+        if workbench is not None:
+            workbench.clear()
+
+    def _apply_trace_result(
+        self,
+        result: RasterTraceResult,
+        *,
+        started_at: datetime,
+        duration: float,
+        save_pdf_state: bool,
+    ) -> None:
+        super()._apply_trace_result(
+            result,
+            started_at=started_at,
+            duration=duration,
+            save_pdf_state=save_pdf_state,
+        )
+        self._refresh_visual_acceptance(open_tab=True)
+
+    def _restore_cached_trace_for_page(self, page_index: int) -> None:
+        super()._restore_cached_trace_for_page(page_index)
+        self._refresh_visual_acceptance(open_tab=False)
+
+    def _replace_final_structure_texts(self, texts):  # type: ignore[override]
+        structure = super()._replace_final_structure_texts(texts)
+        self._refresh_visual_acceptance(open_tab=False)
+        return structure
 
     def export_file(self) -> None:
         export_current_page_from_window(self)
