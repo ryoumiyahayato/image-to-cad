@@ -84,3 +84,28 @@ Use an intake file outside the final group directory, then run the acquisition t
 ```
 
 The importer permits only the approved remediation set, rejects LOCKED_BLIND and non-manual states, validates file format/integrity, rejects duplicate hashes and existing targets, copies with exclusive creation, verifies SHA256 after copying, records byte metadata and identity evidence without recording the intake path, and updates the manifest/report deterministically.
+
+## G0-B4R2 browser-assisted follow-up
+
+Checked at: `2026-09-09T08:52:27Z`
+
+- Browser-assisted sources attempted: 6
+- Browser downloads completed: 0
+- Manual imports completed: 0
+- User browser interaction still required: 6
+- Newly evaluation-ready: 0
+- Final evaluation-ready: 23 / 30
+- Computer Use boundary: the OHS page opened in the in-app browser, but state inspection timed out twice, including once after the prescribed reset. Browser automation stopped at that point; no CAPTCHA, login, access-control, or anti-bot bypass was attempted.
+
+### Browser handoff states
+
+- `A2-SG-010`: `USER_BROWSER_INTERACTION_REQUIRED`. The exact OHS item tab was opened and left available. Complete the site's normal verification if presented, choose **Access Copies**, and download the master for item `Mss3077-3_21`.
+- `G0R2-53C88494D6CE893C`: `USER_BROWSER_INTERACTION_REQUIRED`. Start from the [City of Sydney application search](https://www.cityofsydney.nsw.gov.au/development-applications/search-development-applications), locate the Argyle Stores structural-upgrade application, and verify project `301350511` before selecting the 792,563-byte electrical-services PDF.
+- `G0R2-AFE53C2A00EB7D8F`: `USER_BROWSER_INTERACTION_REQUIRED`. Use the same official application search independently for Sydney Park Brick Kiln Precinct Renewal; verify project `212710` before selecting the 3,626,682-byte electrical-services PDF.
+- `SGC-007`: `USER_LOGIN_OR_MANUAL_DOWNLOAD_REQUIRED`. The [PennBid portal](https://pennbid.bonfirehub.com/portal) is live but requires a JavaScript-capable normal browser and may require login for the closed-project document. Do not create an account automatically. Select the Titusville Area School District project `225306` and the `02.25.2026` 100% CD drawings.
+- `SGC-008`: `USER_BROWSER_INTERACTION_REQUIRED`. Open the Town of Farmington official listing and select the exact `25.119 Farmington Senior & Community Center HVAC Upgrade BID Dwgs` entry; do not substitute the similarly named bid/manual files.
+- `SGC-024`: `USER_LOGIN_OR_MANUAL_DOWNLOAD_REQUIRED`. Follow the official Washington project page to DES Bonfire and select project `2026-150 G (1-1)`; login or other human action may be required.
+
+### Sakado follow-up
+
+The [official project explanation page](https://www.city.sakado.lg.jp/soshiki/62/53445.html) is live and publishes three meeting-related PDFs: a Q&A summary, a 4.23 MiB handout, and a 2.07 MiB presentation. These are explanatory meeting materials, not a verified relocation of the registered electrical drawing package. No new official URL for `31595.pdf` was established, so `G0R2-2E9BDFFDD8C89AE7` remains `OFFICIAL_SOURCE_UNAVAILABLE`, not `PERMANENTLY_UNMATERIALIZABLE`.
