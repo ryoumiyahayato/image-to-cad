@@ -40,6 +40,11 @@ def test_manifest_schema_counts_and_coverage() -> None:
     assert set(manifest) == set(schema["required"])
     assert manifest["schema_version"] == schema["properties"]["schema_version"]["const"]
     assert len(manifest["source_groups"]) == schema["properties"]["source_groups"]["minItems"]
+    allowed_states = set(
+        schema["$defs"]["sourceGroup"]["properties"]["acquisition_state"]["enum"]
+    )
+    assert all(entry["acquisition_state"] in allowed_states for entry in manifest["source_groups"])
+    assert "manual_import" in schema["$defs"]["sourceGroup"]["properties"]
     acquisition.validate_manifest(manifest)
     assert manifest["summary"]["source_groups"] == 30
     assert manifest["summary"]["acquisition_attempted"] == 30
@@ -179,3 +184,128 @@ def test_source_bytes_are_not_tracked_by_git() -> None:
         check=True,
     )
     assert result.stdout.strip() == ""
+
+
+def test_resolved_url_requires_provenance() -> None:
+    manifest = _manifest()
+    entry = next(item for item in manifest["source_groups"] if item["source_group_id"] == "SGC-008")
+    assert entry["resolved_acquisition_url"] != entry["canonical_source_url"]
+    assert entry["url_resolution_evidence"] != "REGISTRY_URL"
+    broken = copy.deepcopy(manifest)
+    broken_entry = next(
+        item for item in broken["source_groups"] if item["source_group_id"] == "SGC-008"
+    )
+    broken_entry["url_resolution_evidence"] = "REGISTRY_URL"
+    with pytest.raises(acquisition.AcquisitionError, match="relocation provenance"):
+        acquisition.validate_manifest(broken)
+
+
+def test_manual_import_validates_hash_and_identity_evidence(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    report_path = tmp_path / "report.md"
+    manifest_path.write_bytes(MANIFEST_PATH.read_bytes())
+    source = tmp_path / "intake.pdf"
+    source.write_bytes(b"%PDF-1.4\nmanual official source\n%%EOF\n")
+    monkeypatch.setattr(
+        acquisition,
+        "inspect_file",
+        lambda path: {
+            "detected_format": "PDF",
+            "mime_type": "application/pdf",
+            "integrity_check": "TEST_PASS",
+            "page_count": 1,
+            "encrypted": False,
+        },
+    )
+    with pytest.raises(acquisition.AcquisitionError, match="identity evidence"):
+        acquisition.register_manual_acquisition(
+            REGISTRY_PATH,
+            SPLIT_PATH,
+            SPLIT_DIGEST_PATH,
+            manifest_path,
+            report_path,
+            tmp_path / acquisition.MATERIAL_ROOT,
+            tmp_path,
+            source_group_id="A2-SG-010",
+            source_file=source,
+            identity_evidence="too short",
+        )
+    with pytest.raises(acquisition.AcquisitionError, match="approved remediation target"):
+        acquisition.register_manual_acquisition(
+            REGISTRY_PATH,
+            SPLIT_PATH,
+            SPLIT_DIGEST_PATH,
+            manifest_path,
+            report_path,
+            tmp_path / acquisition.MATERIAL_ROOT,
+            tmp_path,
+            source_group_id="NOT-IN-AUTHORITATIVE-SPLIT",
+            source_file=source,
+            identity_evidence="specific official project and document identity evidence",
+        )
+    updated = acquisition.register_manual_acquisition(
+        REGISTRY_PATH,
+        SPLIT_PATH,
+        SPLIT_DIGEST_PATH,
+        manifest_path,
+        report_path,
+        tmp_path / acquisition.MATERIAL_ROOT,
+        tmp_path,
+        source_group_id="A2-SG-010",
+        source_file=source,
+        identity_evidence="OHS item Mss3077-3_21 exact master JPEG/PDF test evidence",
+    )
+    entry = next(item for item in updated["source_groups"] if item["source_group_id"] == "A2-SG-010")
+    target = tmp_path / entry["files"][0]["local_relative_path"]
+    assert target.read_bytes() == source.read_bytes()
+    assert entry["files"][0]["sha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
+    assert entry["acquisition_state"] == "MANUAL_IMPORT_SUCCESS"
+    assert entry["manual_import"]["source_path_recorded"] is False
+    assert report_path.read_text(encoding="utf-8") == acquisition.build_report(updated)
+
+
+def test_manual_import_rejects_existing_target(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    manifest_path = tmp_path / "manifest.json"
+    report_path = tmp_path / "report.md"
+    manifest_path.write_bytes(MANIFEST_PATH.read_bytes())
+    source = tmp_path / "intake.jpg"
+    source.write_bytes(b"\xff\xd8\xffmanual-source")
+    target = (
+        tmp_path
+        / acquisition.MATERIAL_ROOT
+        / "dev"
+        / "A2-SG-010"
+        / "A2-SG-010.jpg"
+    )
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"\xff\xd8\xffexisting-source")
+    monkeypatch.setattr(
+        acquisition,
+        "inspect_file",
+        lambda path: {
+            "detected_format": "JPEG",
+            "mime_type": "image/jpeg",
+            "integrity_check": "TEST_PASS",
+            "width": 1,
+            "height": 1,
+            "mode": "RGB",
+        },
+    )
+    with pytest.raises(acquisition.AcquisitionError, match="refusing overwrite"):
+        acquisition.register_manual_acquisition(
+            REGISTRY_PATH,
+            SPLIT_PATH,
+            SPLIT_DIGEST_PATH,
+            manifest_path,
+            report_path,
+            tmp_path / acquisition.MATERIAL_ROOT,
+            tmp_path,
+            source_group_id="A2-SG-010",
+            source_file=source,
+            identity_evidence="OHS item Mss3077-3_21 exact master JPEG identity evidence",
+        )
+    assert target.read_bytes() == b"\xff\xd8\xffexisting-source"

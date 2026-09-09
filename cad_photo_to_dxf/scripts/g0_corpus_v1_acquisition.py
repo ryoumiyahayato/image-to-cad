@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib
 import json
 import shutil
 import subprocess
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,6 +32,20 @@ CORPUS_VERSION = "DRAFTSMAN_GENERALIZATION_CORPUS_V1"
 MATERIAL_ROOT = "local-artifacts/draftsman/corpus-v1"
 SPLITS = ("DEV", "VALIDATION", "LOCKED_BLIND")
 USER_AGENT = "image-to-cad-g0-b4/1.0 (+source acquisition; no evaluation)"
+REMEDIATION_SOURCE_GROUP_IDS = frozenset(
+    {
+        "A2-SG-010",
+        "G0R2-2E9BDFFDD8C89AE7",
+        "G0R2-53C88494D6CE893C",
+        "G0R2-AFE53C2A00EB7D8F",
+        "SGC-007",
+        "SGC-008",
+        "SGC-024",
+    }
+)
+MANUAL_IMPORTABLE_STATES = frozenset(
+    {"MANUAL_ACCESS_REQUIRED", "MANUAL_DOWNLOAD_REQUIRED"}
+)
 
 # These byte URLs were resolved through the official Wikimedia Commons API.
 # The canonical registry URL remains the provenance identity.
@@ -498,11 +514,16 @@ def build_manifest(
             "successfully_acquired": ready,
             "evaluation_ready": ready,
             "acquisition_failed": sum(
-                entry["acquisition_state"] in {"ACQUISITION_FAILED", "SOURCE_BYTES_CHANGED"}
+                entry["acquisition_state"]
+                in {
+                    "ACQUISITION_FAILED",
+                    "OFFICIAL_SOURCE_UNAVAILABLE",
+                    "SOURCE_BYTES_CHANGED",
+                }
                 for entry in entries
             ),
             "manual_access_required": sum(
-                entry["acquisition_state"] == "MANUAL_ACCESS_REQUIRED" for entry in entries
+                entry["acquisition_state"] in MANUAL_IMPORTABLE_STATES for entry in entries
             ),
             "network_environment_failures": sum(
                 entry.get("failure", {}).get("code")
@@ -565,6 +586,27 @@ def validate_manifest(manifest: dict[str, Any], *, read_locked_blind: bool = Fal
     if len(file_hashes) != len(set(file_hashes)):
         raise AcquisitionError("duplicate file identity across SOURCE_GROUP records")
     for entry in entries:
+        resolved = urllib.parse.urlsplit(entry["resolved_acquisition_url"])
+        if resolved.scheme != "https" or not resolved.netloc:
+            raise AcquisitionError("resolved acquisition URL must be an absolute HTTPS URL")
+        if (
+            entry["source_group_id"] in REMEDIATION_SOURCE_GROUP_IDS
+            and entry["resolved_acquisition_url"] != entry["canonical_source_url"]
+            and entry["url_resolution_evidence"] == "REGISTRY_URL"
+        ):
+            raise AcquisitionError("resolved URL requires relocation provenance")
+        ready = entry["evaluation_ready"]
+        files = entry["files"]
+        if ready != bool(files):
+            raise AcquisitionError("evaluation-ready state must match materialized files")
+        if ready and entry["materialization_state"] != "EVALUATION_READY":
+            raise AcquisitionError("materialized entry has inconsistent state")
+        if not ready and entry["materialization_state"] == "EVALUATION_READY":
+            raise AcquisitionError("unmaterialized entry has inconsistent state")
+        if entry["acquisition_state"] == "MANUAL_IMPORT_SUCCESS" and not entry.get(
+            "manual_import"
+        ):
+            raise AcquisitionError("manual import requires identity evidence")
         if entry["split"] == "LOCKED_BLIND":
             if entry["runtime_executed"] or entry["blind_exposure_status"] != "NEVER_EXECUTED":
                 raise AcquisitionError("LOCKED_BLIND execution/exposure guard failed")
@@ -603,7 +645,7 @@ def build_report(manifest: dict[str, Any]) -> str:
         f"- Corpus V1 SOURCE_GROUPS: {summary['source_groups']}",
         f"- Successfully acquired: {summary['successfully_acquired']}",
         f"- Evaluation-ready: {summary['evaluation_ready']}",
-        f"- Manual access required: {summary['manual_access_required']}",
+        f"- Manual download required: {summary['manual_access_required']}",
         f"- Acquisition failed: {summary['acquisition_failed']}",
         f"- Source files materialized: {summary['source_files_materialized']}",
         "- LOCKED_BLIND runtime executed: 0 / 8",
@@ -629,6 +671,110 @@ def build_report(manifest: dict[str, Any]) -> str:
         ]
     )
     return "\n".join(lines)
+
+
+def register_manual_acquisition(
+    registry_path: Path,
+    split_path: Path,
+    split_digest_path: Path,
+    manifest_path: Path,
+    report_path: Path,
+    material_root: Path,
+    repository_root: Path,
+    *,
+    source_group_id: str,
+    source_file: Path,
+    identity_evidence: str,
+) -> dict[str, Any]:
+    """Validate and register a human-downloaded official source without overwriting bytes."""
+    records, split = validate_authoritative_inputs(registry_path, split_path, split_digest_path)
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    validate_manifest(manifest)
+    expected_ids = {
+        selected["source_group_id"]
+        for split_name in SPLITS
+        for selected in split["splits"][split_name]
+    }
+    if source_group_id not in expected_ids or source_group_id not in REMEDIATION_SOURCE_GROUP_IDS:
+        raise AcquisitionError("manual import SOURCE_GROUP is not an approved remediation target")
+    evidence = identity_evidence.strip()
+    if len(evidence) < 20:
+        raise AcquisitionError("manual import requires specific source identity evidence")
+    entries = copy.deepcopy(manifest["source_groups"])
+    entry = next(item for item in entries if item["source_group_id"] == source_group_id)
+    if entry["split"] == "LOCKED_BLIND":
+        raise AcquisitionError("manual import cannot inspect LOCKED_BLIND material")
+    if entry["acquisition_state"] not in MANUAL_IMPORTABLE_STATES or entry["files"]:
+        raise AcquisitionError("SOURCE_GROUP state does not allow manual import")
+    source = source_file.resolve(strict=True)
+    if not source.is_file():
+        raise AcquisitionError("manual import path is not a file")
+    metadata = inspect_file(source)
+    source_hash = sha256_file(source)
+    known_hashes = {
+        file["sha256"] for item in manifest["source_groups"] for file in item["files"]
+    }
+    if source_hash in known_hashes:
+        raise AcquisitionError("manual import duplicates an existing source identity")
+    root = material_root.resolve()
+    repository = repository_root.resolve()
+    expected_root = (repository / MATERIAL_ROOT).resolve()
+    if root != expected_root:
+        raise AcquisitionError("material root does not match the ignored Corpus V1 root")
+    try:
+        root.relative_to(repository)
+    except ValueError as exc:
+        raise AcquisitionError("material root must remain inside the repository") from exc
+    extension = {
+        "PDF": ".pdf",
+        "JPEG": ".jpg",
+        "TIFF": ".tiff",
+        "PNG": ".png",
+        "ZIP": ".zip",
+    }[metadata["detected_format"]]
+    group_root = root / entry["split"].lower().replace("_", "-") / source_group_id
+    group_root.mkdir(parents=True, exist_ok=True)
+    if any(group_root.iterdir()):
+        raise AcquisitionError("manual import target directory is not empty; refusing overwrite")
+    target = group_root / f"{source_group_id}{extension}"
+    if source == target:
+        raise AcquisitionError("manual import target already exists; refusing overwrite")
+    try:
+        with source.open("rb") as input_stream, target.open("xb") as output_stream:
+            shutil.copyfileobj(input_stream, output_stream, length=1024 * 1024)
+        if sha256_file(target) != source_hash:
+            raise AcquisitionError("manual import copy hash mismatch")
+        relative_path = target.relative_to(repository).as_posix()
+        entry.update(
+            {
+                "acquisition_method": "MANUAL_OFFICIAL_SOURCE_IMPORT",
+                "acquisition_state": "MANUAL_IMPORT_SUCCESS",
+                "attempted_at_utc": _utc_now(),
+                "failure": None,
+                "files": [
+                    {
+                        "local_relative_path": relative_path,
+                        "sha256": source_hash,
+                        "byte_size": target.stat().st_size,
+                        **metadata,
+                    }
+                ],
+                "manual_import": {
+                    "identity_evidence": evidence,
+                    "source_path_recorded": False,
+                },
+                "materialization_state": "EVALUATION_READY",
+                "evaluation_ready": True,
+            }
+        )
+        updated = build_manifest(records, split, entries)
+        validate_manifest(updated)
+        manifest_path.write_bytes(canonical_json_bytes(updated))
+        report_path.write_text(build_report(updated), encoding="utf-8", newline="\n")
+    except Exception:
+        target.unlink(missing_ok=True)
+        raise
+    return updated
 
 
 def acquire(
@@ -681,12 +827,37 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--include-locked-blind", action="store_true")
     parser.add_argument("--timeout", type=int, default=60)
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--manual-source-group-id")
+    parser.add_argument("--manual-file", type=Path)
+    parser.add_argument("--manual-identity-evidence")
     return parser
 
 
 def main() -> int:
     args = _parser().parse_args()
     records, split = validate_authoritative_inputs(args.registry, args.split, args.split_digest)
+    manual_values = (
+        args.manual_source_group_id,
+        args.manual_file,
+        args.manual_identity_evidence,
+    )
+    if any(value is not None for value in manual_values):
+        if not all(value is not None for value in manual_values) or args.check:
+            raise AcquisitionError("manual import requires all manual options and cannot use --check")
+        manifest = register_manual_acquisition(
+            args.registry,
+            args.split,
+            args.split_digest,
+            args.manifest,
+            args.report,
+            args.material_root,
+            args.repository_root,
+            source_group_id=args.manual_source_group_id,
+            source_file=args.manual_file,
+            identity_evidence=args.manual_identity_evidence,
+        )
+        print(json.dumps(manifest["summary"], sort_keys=True))
+        return 0
     if args.check:
         manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
         validate_manifest(manifest, read_locked_blind=args.include_locked_blind)

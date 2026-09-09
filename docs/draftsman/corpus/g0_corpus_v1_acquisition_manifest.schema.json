@@ -126,12 +126,21 @@
         "runtime_executed": {"const": false},
         "blind_exposure_status": {"enum": ["NOT_APPLICABLE", "NEVER_EXECUTED"]},
         "visual_manual_development_inspection": {"const": false},
-        "acquisition_state": {"enum": ["SUCCESS", "REUSED_VERIFIED", "ACQUISITION_FAILED", "MANUAL_ACCESS_REQUIRED", "SOURCE_BYTES_CHANGED"]},
+        "acquisition_state": {"enum": ["SUCCESS", "REUSED_VERIFIED", "ACQUISITION_FAILED", "MANUAL_ACCESS_REQUIRED", "MANUAL_DOWNLOAD_REQUIRED", "MANUAL_IMPORT_SUCCESS", "OFFICIAL_SOURCE_UNAVAILABLE", "SOURCE_BYTES_CHANGED"]},
         "attempted_at_utc": {"type": "string", "pattern": "Z$"},
         "failure": {"type": ["object", "null"]},
         "files": {"type": "array", "items": {"$ref": "#/$defs/sourceFile"}},
         "materialization_state": {"enum": ["EVALUATION_READY", "NOT_MATERIALIZED", "CONFLICT"]},
-        "evaluation_ready": {"type": "boolean"}
+        "evaluation_ready": {"type": "boolean"},
+        "manual_import": {
+          "type": "object",
+          "required": ["identity_evidence", "source_path_recorded"],
+          "properties": {
+            "identity_evidence": {"type": "string", "minLength": 20},
+            "source_path_recorded": {"const": false}
+          },
+          "additionalProperties": false
+        }
       }
     },
     "sourceFile": {

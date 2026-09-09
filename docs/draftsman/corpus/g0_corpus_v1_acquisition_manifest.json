@@ -81,13 +81,13 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:30Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://staff.digitalcollections.ohs.org/robert-park-residence-electrical-plan-and-fixture-schedule",
       "evaluation_ready": false,
       "failure": {
-        "code": "MANUAL_ACCESS_REQUIRED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 200
       },
       "files": [],
@@ -259,14 +259,17 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "ACQUISITION_FAILED",
+      "acquisition_state": "OFFICIAL_SOURCE_UNAVAILABLE",
       "attempted_at_utc": "2026-09-09T07:18:37Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://www.city.sakado.lg.jp/uploaded/attachment/31595.pdf",
       "evaluation_ready": false,
       "failure": {
-        "code": "SOURCE_NOT_FOUND",
-        "http_status": 404
+        "code": "OFFICIAL_SOURCE_UNAVAILABLE",
+        "http_status": 404,
+        "official_alternative_checked": "https://www.city.sakado.lg.jp/uploaded/attachment/31604.pdf",
+        "official_alternative_http_status": 404,
+        "permanently_unmaterializable": false
       },
       "files": [],
       "governance_or_access_notes": "Public municipal attachment; reuse terms require review.",
@@ -500,13 +503,13 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:35Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://eplanning.cityofsydney.nsw.gov.au/Common/Integration/FileDownload.ashx?ext=PDF&filesize=792563&id=%21%21MPqVeI7%2Bm%2FPC%2Bxps6Jd7%2Fi0VeJ%2BMH%2B579uowxQ%3D%3DFM%2BT8%2B%2FiyLw%3D&modified=2021-12-10T01%3A34%3A41Z",
       "evaluation_ready": false,
       "failure": {
-        "code": "HTTP_RESTRICTED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 403
       },
       "files": [],
@@ -710,13 +713,13 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:35Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://eplanning.cityofsydney.nsw.gov.au/Common/Integration/FileDownload.ashx?ext=PDF&filesize=3626682&id=%21%215SfcrhnSRSdllDIkVxG2Lj%2FMJS0%2Fd3oOstPPhA%3D%3DJNe6xI8AhDk%3D&modified=2023-08-03T04%3A26%3A28Z",
       "evaluation_ready": false,
       "failure": {
-        "code": "HTTP_RESTRICTED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 403
       },
       "files": [],
@@ -826,13 +829,13 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:38Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://govtribe.com/file/government-file/2-2026-02-25-titusville-ms-entry-reno-100-cd-submission-drawings-dot-pdf",
       "evaluation_ready": false,
       "failure": {
-        "code": "HTTP_RESTRICTED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 403
       },
       "files": [],
@@ -840,22 +843,22 @@
       "governance_state": "RIGHTS_UNCLEAR",
       "materialization_state": "NOT_MATERIALIZED",
       "redistribution_state": "REDISTRIBUTION_RESTRICTED",
-      "resolved_acquisition_url": "https://govtribe.com/file/government-file/2-2026-02-25-titusville-ms-entry-reno-100-cd-submission-drawings-dot-pdf",
+      "resolved_acquisition_url": "https://pennbid.bonfirehub.com/",
       "runtime_executed": false,
       "source_group_id": "SGC-007",
       "split": "VALIDATION",
-      "url_resolution_evidence": "REGISTRY_URL",
+      "url_resolution_evidence": "OFFICIAL_PROJECT_BIDDING_DOCUMENTS_NAME_PENNBID_PORTAL",
       "visual_manual_development_inspection": false
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:36Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://govtribe.com/file/government-file/25-dot-119-farmington-senior-community-center-hvac-upgrade-bid-dwgs-dot-pdf",
       "evaluation_ready": false,
       "failure": {
-        "code": "HTTP_RESTRICTED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 403
       },
       "files": [],
@@ -872,13 +875,13 @@
     },
     {
       "acquisition_method": "HTTPS_DIRECT_SOURCE",
-      "acquisition_state": "MANUAL_ACCESS_REQUIRED",
+      "acquisition_state": "MANUAL_DOWNLOAD_REQUIRED",
       "attempted_at_utc": "2026-09-09T07:18:36Z",
       "blind_exposure_status": "NOT_APPLICABLE",
       "canonical_source_url": "https://govtribe.com/file/government-file/2-2026-150-g-1-1-bidding-documents-bid-drawings-dot-pdf",
       "evaluation_ready": false,
       "failure": {
-        "code": "HTTP_RESTRICTED",
+        "code": "MANUAL_DOWNLOAD_REQUIRED",
         "http_status": 403
       },
       "files": [],
@@ -886,11 +889,11 @@
       "governance_state": "RIGHTS_UNCLEAR",
       "materialization_state": "NOT_MATERIALIZED",
       "redistribution_state": "REDISTRIBUTION_RESTRICTED",
-      "resolved_acquisition_url": "https://govtribe.com/file/government-file/2-2026-150-g-1-1-bidding-documents-bid-drawings-dot-pdf",
+      "resolved_acquisition_url": "https://omwbe.wa.gov/bid-opportunities/2026-150-g-1-1-hvac-main-campus-%E2%80%93-oly-and-uni-%E2%80%93-boiler-replacements",
       "runtime_executed": false,
       "source_group_id": "SGC-024",
       "split": "DEV",
-      "url_resolution_evidence": "REGISTRY_URL",
+      "url_resolution_evidence": "OFFICIAL_STATE_PROJECT_PAGE_LINKS_DES_BONFIRE_PORTAL",
       "visual_manual_development_inspection": false
     }
   ],
