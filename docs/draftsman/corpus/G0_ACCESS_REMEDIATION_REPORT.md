@@ -109,3 +109,18 @@ Checked at: `2026-09-09T08:52:27Z`
 ### Sakado follow-up
 
 The [official project explanation page](https://www.city.sakado.lg.jp/soshiki/62/53445.html) is live and publishes three meeting-related PDFs: a Q&A summary, a 4.23 MiB handout, and a 2.07 MiB presentation. These are explanatory meeting materials, not a verified relocation of the registered electrical drawing package. No new official URL for `31595.pdf` was established, so `G0R2-2E9BDFFDD8C89AE7` remains `OFFICIAL_SOURCE_UNAVAILABLE`, not `PERMANENTLY_UNMATERIALIZABLE`.
+
+## G0-B4R3 manual-download import check
+
+Checked at: `2026-09-09T09:04:04Z`
+
+- Download roots checked: the user's normal `Downloads` directory and the files explicitly attached to this task.
+- Eligible manual source files discovered: 0.
+- Identity-verified files: 0.
+- Manual imports completed: 0.
+- Identity verification failures: 0; no candidate source file was present to validate.
+- Still awaiting user download: 6.
+- The only Draftsman-named archive in `Downloads`, `draftsman_g0b_repository_import_pending.zip`, predates this task and is 17,689 bytes. Its members are corpus documentation, manifests, governance records, split records, and exposure metadata; it contains no drawing source bytes and was not imported.
+- No source file was selected merely by recency or filename. No source bytes were modified, copied, or committed.
+- Acquisition manifest remains at 23 / 30 evaluation-ready with 23 SHA256-covered local files.
+- `G0R2-2E9BDFFDD8C89AE7` remains `OFFICIAL_SOURCE_UNAVAILABLE`. No network search or download was performed in G0-B4R3.
