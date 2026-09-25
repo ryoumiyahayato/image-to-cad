@@ -53,7 +53,7 @@ def test_regular_separated_printed_text_gets_character_boxes_and_auto_export() -
     assert accepted_ocr_texts((prepared,)) == (prepared,)
 
 
-def test_connected_high_confidence_text_stays_as_image_until_reviewed() -> None:
+def test_connected_high_confidence_text_remains_editable_with_source_backup() -> None:
     image = np.full((100, 300, 3), 255, dtype=np.uint8)
     points = np.asarray(
         [[25, 55], [65, 28], [105, 62], [150, 25], [205, 63], [255, 35]],
@@ -65,9 +65,9 @@ def test_connected_high_confidence_text_stays_as_image_until_reviewed() -> None:
 
     assert not prepared.replacement_safe
     assert "跨越多个字符格" in prepared.review_note
-    assert accepted_ocr_texts((prepared,)) == ()
+    assert accepted_ocr_texts((prepared,)) == (prepared,)
     reviewed = replace(prepared, reviewed=True)
-    assert accepted_ocr_texts((reviewed,)) == ()
+    assert accepted_ocr_texts((reviewed,)) == (reviewed,)
     reviewed_safe = replace(reviewed, replacement_safe=True)
     assert accepted_ocr_texts((reviewed_safe,)) == (reviewed_safe,)
 

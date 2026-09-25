@@ -4,7 +4,14 @@ import cv2
 import numpy as np
 
 from app.raster_trace import trace_binary
-from app.scan_artifact_filter import suppress_scan_artifact_traces
+from app.scan_artifact_filter import (
+    _remove_nearby_damage_fragments,
+    suppress_scan_artifact_traces,
+)
+from app.source_support_lifecycle import (
+    SourceSupportLifecycle,
+    StructuralEvidenceSignal,
+)
 
 
 def _synthetic_damaged_scan() -> tuple[np.ndarray, np.ndarray]:
@@ -94,3 +101,60 @@ def test_scan_artifact_filter_removes_corner_tape_joined_to_page_border() -> Non
     assert result.binary[70, 105] == 255
     assert result.binary[135, 30] == 255
     assert result.binary[5, 500] == 255
+
+
+def test_near_damage_cleanup_respects_exact_structural_protection() -> None:
+    gray = np.full((100, 180), 220, dtype=np.uint8)
+    binary = np.full_like(gray, 255)
+    damage_mask = np.zeros_like(gray)
+    protected_mask = np.zeros_like(gray)
+    cv2.line(gray, (40, 50), (140, 50), 170, 3)
+    cv2.line(binary, (40, 50), (140, 50), 0, 3)
+    cv2.circle(damage_mask, (35, 50), 8, 255, -1)
+    cv2.line(protected_mask, (40, 50), (140, 50), 255, 3)
+
+    removed = _remove_nearby_damage_fragments(
+        gray,
+        binary,
+        damage_mask,
+        1.0,
+    )
+    protected = _remove_nearby_damage_fragments(
+        gray,
+        binary,
+        damage_mask,
+        1.0,
+        protected_mask=protected_mask,
+    )
+
+    assert removed[50, 80] == 255
+    assert protected[50, 80] == 0
+
+
+def test_direct_damage_wins_over_structural_provenance() -> None:
+    class AlwaysCredibleLifecycle(SourceSupportLifecycle):
+        def structural_evidence_for_artifact_path(
+            self,
+            **_kwargs: object,
+        ) -> StructuralEvidenceSignal:
+            return StructuralEvidenceSignal(
+                credible=True,
+                support_ids=("SS-CREDIBLE",),
+                overlap_pixels=100,
+                maximum_support_fraction=1.0,
+            )
+
+    gray, binary = _synthetic_damaged_scan()
+    paths = trace_binary(binary)
+    lifecycle = AlwaysCredibleLifecycle(binary.shape)
+
+    result = suppress_scan_artifact_traces(
+        gray,
+        binary,
+        paths,
+        source_support_lifecycle=lifecycle,
+    )
+
+    assert result.binary[45, 110] == 255
+    assert result.binary[360, 432] == 255
+    assert result.binary[180, 350] == 255

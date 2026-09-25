@@ -40,6 +40,27 @@ class LffGlyph:
 
 
 @dataclass(frozen=True)
+class LffTextMetrics:
+    """Exact visible LFF bounds in the font's native 9-unit coordinates."""
+
+    min_x: float
+    min_y: float
+    max_x: float
+    max_y: float
+    advance: float
+    em_height: float
+    fallback_glyph_count: int = 0
+
+    @property
+    def width(self) -> float:
+        return max(0.0, self.max_x - self.min_x)
+
+    @property
+    def height(self) -> float:
+        return max(0.0, self.max_y - self.min_y)
+
+
+@dataclass(frozen=True)
 class LibreCadFontInstallReport:
     available: bool
     installed: int
@@ -185,7 +206,10 @@ class LffFont:
         min_y = min(point.y for point in points)
         max_x = max(point.x for point in points)
         max_y = max(point.y for point in points)
-        advance = max(max_x, 0.0) - min(min_x, 0.0) + self.letter_spacing
+        # LibreCAD advances from the current insertion point to the glyph's
+        # maximum X and then adds LetterSpacing (RS_Text::update). Negative
+        # left bearings therefore affect the visible bound, not the advance.
+        advance = max(max_x, 0.0) + self.letter_spacing
         glyph = LffGlyph(tuple(strokes), min_x, min_y, max_x, max_y, max(advance, 1.0))
         self._glyphs[codepoint] = glyph
         return glyph
@@ -246,6 +270,75 @@ def _fallback_glyph_path(path: QPainterPath, offset_x: float) -> None:
     path.closeSubpath()
 
 
+def _resolved_glyph(
+    font: LffFont,
+    character: str,
+) -> tuple[LffGlyph | None, bool]:
+    glyph = font.glyph(character)
+    if glyph is not None:
+        return glyph, False
+    replacement = font.glyph("\ufffd")
+    return replacement, True
+
+
+def librecad_text_metrics(text: str) -> LffTextMetrics:
+    """Measure the same LFF glyph bounds and spacing LibreCAD will render."""
+
+    content = str(text or "")
+    font = _font()
+    font._build_index()
+    cursor = 0.0
+    min_x = float("inf")
+    min_y = float("inf")
+    max_x = float("-inf")
+    max_y = float("-inf")
+    visible_glyphs = 0
+    fallback_count = 0
+    for character in content:
+        if character.isspace():
+            cursor += max(font.word_spacing, 3.0)
+            continue
+        glyph, used_fallback = _resolved_glyph(font, character)
+        fallback_count += int(used_fallback)
+        if glyph is None:
+            glyph_min_x = 0.0
+            glyph_min_y = 0.0
+            glyph_max_x = 7.0
+            glyph_max_y = 9.0
+            advance = 7.0 + font.letter_spacing
+        else:
+            glyph_min_x = glyph.min_x
+            glyph_min_y = glyph.min_y
+            glyph_max_x = glyph.max_x
+            glyph_max_y = glyph.max_y
+            advance = glyph.advance
+        min_x = min(min_x, cursor + glyph_min_x)
+        min_y = min(min_y, glyph_min_y)
+        max_x = max(max_x, cursor + glyph_max_x)
+        max_y = max(max_y, glyph_max_y)
+        cursor += max(advance, 1.0)
+        visible_glyphs += 1
+    if not visible_glyphs:
+        return LffTextMetrics(
+            0.0,
+            0.0,
+            max(cursor, 1.0),
+            _LFF_EM_HEIGHT,
+            cursor,
+            _LFF_EM_HEIGHT,
+            fallback_count,
+        )
+    return LffTextMetrics(
+        min_x,
+        min_y,
+        max_x,
+        max_y,
+        cursor,
+        _LFF_EM_HEIGHT,
+        fallback_count,
+    )
+
+
 def librecad_text_path(text: str) -> QPainterPath:
     """Return the exact LibreCAD LFF stroke path used by the exported TEXT style."""
 
@@ -253,26 +346,29 @@ def librecad_text_path(text: str) -> QPainterPath:
     path = QPainterPath()
     cursor = 0.0
     font = _font()
+    font._build_index()
     for character in content:
         if character.isspace():
             cursor += max(font.word_spacing, 3.0)
             continue
-        glyph = font.glyph(character)
+        glyph, _used_fallback = _resolved_glyph(font, character)
         if glyph is None:
             _fallback_glyph_path(path, cursor)
-            cursor += 8.0
+            cursor += 7.0 + font.letter_spacing
             continue
-        _append_glyph_path(path, glyph, cursor - min(glyph.min_x, 0.0))
+        _append_glyph_path(path, glyph, cursor)
         cursor += glyph.advance
     return path
 
 
 def librecad_character_advance_units(character: str) -> float:
+    font = _font()
+    font._build_index()
     if character.isspace():
-        return 0.5
-    glyph = _font().glyph(character)
+        return max(font.word_spacing / _LFF_EM_HEIGHT, 0.20)
+    glyph, _used_fallback = _resolved_glyph(font, character)
     if glyph is None:
-        return 1.0 if ord(character) >= 0x2E80 else 0.65
+        return (7.0 + font.letter_spacing) / _LFF_EM_HEIGHT
     value = glyph.advance / _LFF_EM_HEIGHT
     return max(0.20, min(value, 2.0))
 

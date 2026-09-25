@@ -39,6 +39,12 @@ def _rounded(value: float) -> float:
     return round(float(value), 6)
 
 
+def _mask_sha256(value: np.ndarray | None) -> str | None:
+    if value is None:
+        return None
+    return sha256(np.ascontiguousarray(value).tobytes()).hexdigest()
+
+
 def _path_payload(path: Any) -> dict[str, object]:
     return {
         "points": [[_rounded(x), _rounded(y)] for x, y in path.points],
@@ -96,6 +102,9 @@ class FinalStructure:
     texts: tuple[TextCandidate, ...] = ()
     logos: tuple[LogoRegion, ...] = ()
     signatures: tuple[SignatureRegion, ...] = ()
+    editable_text_source_mask: np.ndarray | None = None
+    source_text_outline_mask: np.ndarray | None = None
+    uncertain_text_outline_mask: np.ndarray | None = None
     preview_binary: np.ndarray | None = None
     threshold: int = 128
     warnings: tuple[str, ...] = ()
@@ -111,6 +120,37 @@ class FinalStructure:
             raise AssertionError("Contour binary does not match source coordinates")
         if self.preview_binary is not None and self.preview_binary.shape != expected_shape:
             raise AssertionError("Preview binary does not match source coordinates")
+        for mask in (
+            self.editable_text_source_mask,
+            self.source_text_outline_mask,
+            self.uncertain_text_outline_mask,
+        ):
+            if mask is not None and mask.shape != expected_shape:
+                raise AssertionError(
+                    "Text semantic mask does not match source coordinates"
+                )
+        if (
+            self.source_text_outline_mask is not None
+            and self.uncertain_text_outline_mask is not None
+            and np.any(
+                (self.source_text_outline_mask > 0)
+                & (self.uncertain_text_outline_mask > 0)
+            )
+        ):
+            raise AssertionError(
+                "Source and uncertain text outlines must be disjoint"
+            )
+        if (
+            self.source_text_outline_mask is not None
+            and self.editable_text_source_mask is not None
+            and np.any(
+                (self.source_text_outline_mask > 0)
+                & (self.editable_text_source_mask == 0)
+            )
+        ):
+            raise AssertionError(
+                "Source outline backup must belong to editable text"
+            )
         for collection in (self.logos, self.signatures):
             for item in collection:
                 x, y, item_width, item_height = item.bbox
@@ -139,6 +179,15 @@ class FinalStructure:
                 else sha256(
                     np.ascontiguousarray(self.preview_binary).tobytes()
                 ).hexdigest()
+            ),
+            "editable_text_source_sha256": _mask_sha256(
+                self.editable_text_source_mask
+            ),
+            "source_text_outline_sha256": _mask_sha256(
+                self.source_text_outline_mask
+            ),
+            "uncertain_text_outline_sha256": _mask_sha256(
+                self.uncertain_text_outline_mask
             ),
             "contours": [_path_payload(path) for path in self.contours],
             "straight_lines": [
@@ -187,6 +236,9 @@ def build_final_structure(
     texts: tuple[TextCandidate, ...] = (),
     logos: tuple[LogoRegion, ...] = (),
     signatures: tuple[SignatureRegion, ...] = (),
+    editable_text_source_mask: np.ndarray | None = None,
+    source_text_outline_mask: np.ndarray | None = None,
+    uncertain_text_outline_mask: np.ndarray | None = None,
     preview_binary: np.ndarray | None = None,
     threshold: int = 128,
     warnings: tuple[str, ...] = (),
@@ -204,6 +256,18 @@ def build_final_structure(
         logos=tuple(_immutable_masked_object(item) for item in logos),
         signatures=tuple(
             _immutable_masked_object(item) for item in signatures
+        ),
+        editable_text_source_mask=_immutable_mask(
+            editable_text_source_mask,
+            shape=shape,
+        ),
+        source_text_outline_mask=_immutable_mask(
+            source_text_outline_mask,
+            shape=shape,
+        ),
+        uncertain_text_outline_mask=_immutable_mask(
+            uncertain_text_outline_mask,
+            shape=shape,
         ),
         preview_binary=_immutable_mask(preview_binary, shape=shape),
         threshold=int(threshold),

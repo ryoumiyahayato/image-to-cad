@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
+from dataclasses import dataclass
 
 import cv2
 import numpy as np
 
 from .line_detect import LineSegment
 from .resolution import image_resolution_scale, scaled_int
+
+TEXT_MASK_RESTORATION = "text_mask_restoration"
 
 
 @dataclass(frozen=True)
@@ -16,6 +18,7 @@ class TextProtectionResult:
     candidate_component_count: int
     text_region_count: int
     rejected_line_count: int = 0
+    restored_lines: tuple[LineSegment, ...] = ()
 
 
 def _as_binary_gray(image: np.ndarray) -> np.ndarray:
@@ -46,8 +49,8 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     min_height = scaled_int(4, scale, minimum=3)
     max_height = scaled_int(120, scale, minimum=24)
     max_width = scaled_int(180, scale, minimum=32)
-    min_area = max(4, int(round(5.0 * scale * scale)))
-    max_area = max(320, int(round(12000.0 * scale * scale)))
+    min_area = max(4, round(5.0 * scale * scale))
+    max_area = max(320, round(12000.0 * scale * scale))
 
     candidate_mask = np.zeros_like(image)
     candidate_boxes: list[tuple[int, int, int, int]] = []
@@ -136,12 +139,55 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
 
 
 def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
-    sample_count = max(8, min(256, int(math.ceil(line.length / 2.0))))
+    sample_count = max(8, min(256, math.ceil(line.length / 2.0)))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(int), 0, mask.shape[1] - 1)
     yi = np.clip(np.rint(ys).astype(int), 0, mask.shape[0] - 1)
     return float(np.mean(mask[yi, xi] > 0))
+
+
+def _line_mask_continuity(
+    line: LineSegment,
+    mask: np.ndarray,
+    *,
+    scale: float,
+) -> bool:
+    """Return whether source-supported ink continues outside the text mask.
+
+    A glyph stroke is normally wholly contained by the compact text region. A
+    wall, dimension or leader that crosses a text label retains source-backed
+    runs on one or both sides of that region. The run thresholds are expressed
+    in the existing resolution scale so this evidence has the same physical
+    meaning across page sizes.
+    """
+    if line.length < max(42.0 * scale, 1.0):
+        return False
+    sample_count = max(16, min(2048, math.ceil(line.length) + 1))
+    xs = np.linspace(line.x1, line.x2, sample_count)
+    ys = np.linspace(line.y1, line.y2, sample_count)
+    xi = np.clip(np.rint(xs).astype(int), 0, mask.shape[1] - 1)
+    yi = np.clip(np.rint(ys).astype(int), 0, mask.shape[0] - 1)
+    outside = mask[yi, xi] == 0
+    padded = np.concatenate(([False], outside, [False]))
+    starts = np.flatnonzero(padded[1:] & ~padded[:-1])
+    ends = np.flatnonzero(~padded[1:] & padded[:-1])
+    run_lengths = ends - starts
+    if not run_lengths.size:
+        return False
+    outside_ratio = float(np.mean(outside))
+    minimum_run = max(12.0 * scale, 3.0 * float(line.width))
+    longest_run = float(np.max(run_lengths))
+    long_continuation = longest_run >= max(minimum_run, line.length * 0.18)
+    distributed_continuation = bool(
+        run_lengths.size >= 2
+        and outside_ratio >= 0.45
+        and longest_run >= minimum_run
+    )
+    return bool(
+        outside_ratio >= 0.35
+        and (long_continuation or distributed_continuation)
+    )
 
 
 def _axis_orientation(line: LineSegment) -> str | None:
@@ -150,6 +196,54 @@ def _axis_orientation(line: LineSegment) -> str | None:
     if abs(line.x2 - line.x1) <= abs(line.y2 - line.y1) * 0.08:
         return "vertical"
     return None
+
+
+def _axis_interval(line: LineSegment, orientation: str) -> tuple[float, float]:
+    if orientation == "horizontal":
+        start, end = sorted((float(line.x1), float(line.x2)))
+        return start, end
+    start, end = sorted((float(line.y1), float(line.y2)))
+    return start, end
+
+
+def _collinear_peer_indices(
+    lines: list[LineSegment],
+    index: int,
+    *,
+    scale: float,
+) -> tuple[int, ...]:
+    """Find nearby same-axis candidates that can continue a masked line."""
+    line = lines[index]
+    orientation = _axis_orientation(line)
+    if orientation is None:
+        return ()
+    coordinate = (
+        (float(line.y1) + float(line.y2)) * 0.5
+        if orientation == "horizontal"
+        else (float(line.x1) + float(line.x2)) * 0.5
+    )
+    interval = _axis_interval(line, orientation)
+    coordinate_tolerance = max(3.0, 3.0 * scale)
+    interval_gap = max(8.0, 18.0 * scale)
+    peers: list[int] = []
+    for other_index, other in enumerate(lines):
+        if other_index == index or _axis_orientation(other) != orientation:
+            continue
+        other_coordinate = (
+            (float(other.y1) + float(other.y2)) * 0.5
+            if orientation == "horizontal"
+            else (float(other.x1) + float(other.x2)) * 0.5
+        )
+        if abs(coordinate - other_coordinate) > coordinate_tolerance:
+            continue
+        other_interval = _axis_interval(other, orientation)
+        if (
+            other_interval[1] < interval[0] - interval_gap
+            or interval[1] < other_interval[0] - interval_gap
+        ):
+            continue
+        peers.append(other_index)
+    return tuple(peers)
 
 
 def _structural_connection_counts(
@@ -203,8 +297,17 @@ def filter_text_like_lines(
         lines,
         tolerance=max(3.0, 3.0 * scale),
     )
+    continuity = [
+        _line_mask_continuity(line, protection.mask, scale=scale)
+        for line in lines
+    ]
+    collinear_peers = [
+        _collinear_peer_indices(lines, index, scale=scale)
+        for index in range(len(lines))
+    ]
     network_minimum = max(42.0 * scale, diagonal * 0.012)
     kept: list[LineSegment] = []
+    restored_lines: list[LineSegment] = []
     rejected = 0
     for index, line in enumerate(lines):
         coverage = _line_mask_coverage(line, protection.mask)
@@ -212,12 +315,23 @@ def filter_text_like_lines(
             line.length >= network_minimum
             and connection_counts[index] >= 2
         )
+        continuation_network = bool(
+            line.length >= network_minimum
+            and connection_counts[index] >= 1
+            and any(continuity[peer] for peer in collinear_peers[index])
+        )
         reject = (
             coverage >= 0.28 and line.length <= local_line_limit
         ) or coverage >= 0.72
-        if reject and not structural_network:
+        restoration_evidence = bool(
+            not structural_network
+            and (continuity[index] or continuation_network)
+        )
+        if reject and not (structural_network or restoration_evidence):
             rejected += 1
             continue
+        if reject and restoration_evidence:
+            restored_lines.append(line)
         kept.append(line)
 
     return kept, TextProtectionResult(
@@ -225,4 +339,5 @@ def filter_text_like_lines(
         protection.candidate_component_count,
         protection.text_region_count,
         rejected_line_count=rejected,
+        restored_lines=tuple(restored_lines),
     )

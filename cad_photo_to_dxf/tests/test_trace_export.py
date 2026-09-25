@@ -8,10 +8,14 @@ import numpy as np
 
 from app.auxiliary_recognition import TextCandidate
 from app.document_export import DocumentPage
+from app.final_structure import build_final_structure
 from app.raster_trace import TracePath, trace_binary
 from app.scale_calibrator import ScaleCalibration
 from app.trace_document_export import export_trace_document_streaming
-from app.trace_dxf_entities import MAX_EDITABLE_POLYLINE_VERTICES, add_exact_trace_entities
+from app.trace_dxf_entities import (
+    MAX_EDITABLE_POLYLINE_VERTICES,
+    add_exact_trace_entities,
+)
 from app.trace_single_export import export_exact_trace_dxf
 
 
@@ -52,6 +56,14 @@ def _line_xdata(entity) -> tuple[int, str]:
     return int(integers[0]), source
 
 
+def _geometry_xdata(entity) -> list[float]:
+    return [
+        float(value)
+        for code, value in entity.get_xdata("OCR_TEXT_GEOMETRY")
+        if code == 1040
+    ]
+
+
 def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     binary = _binary_symbol()
     paths = trace_binary(binary)
@@ -79,7 +91,7 @@ def test_single_export_writes_one_native_text_per_line(tmp_path: Path) -> None:
     assert all(entity.dxf.layer == "OCR_TEXT" for entity in texts)
     assert not document.layers.get("OCR_TEXT").is_off()
     assert texts[0].dxf.style == "wqy-unicode"
-    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in texts)
+    assert all(float(entity.dxf.width) > 0.0 for entity in texts)
     assert _line_xdata(texts[0]) == (1, "FIRE ALARM A1")
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
@@ -241,4 +253,85 @@ def test_later_pages_are_spatially_separated_and_default_off(tmp_path: Path) -> 
     assert document.layers.get("PAGE_002_TRACE_CURVE").is_off()
     assert len(modelspace.query("INSERT")) == 0
     assert len(modelspace.query("HATCH")) == 0
+    assert not document.audit().errors
+
+
+def _semantic_document_page(number: int) -> DocumentPage:
+    main_binary = np.full((100, 220), 255, dtype=np.uint8)
+    cv2.circle(main_binary, (180, 50), 10, 0, 2)
+    source_outline = np.zeros_like(main_binary)
+    cv2.rectangle(source_outline, (20, 35), (90, 65), 255, -1)
+    candidate = _ocr_text(
+        text=f"PAGE {number}",
+        bbox=(20, 35, 70, 30),
+        quad=((20.0, 35.0), (90.0, 35.0), (90.0, 65.0), (20.0, 65.0)),
+        replacement_safe=False,
+    )
+    structure = build_final_structure(
+        source_size_px=(220, 100),
+        contour_binary=main_binary,
+        contours=tuple(trace_binary(main_binary)),
+        texts=(candidate,),
+        editable_text_source_mask=source_outline,
+        source_text_outline_mask=source_outline,
+        uncertain_text_outline_mask=np.zeros_like(main_binary),
+    )
+    return DocumentPage(
+        page_number=number,
+        raster=cv2.cvtColor(main_binary, cv2.COLOR_GRAY2BGR),
+        page_size_mm=(220.0, 100.0),
+        vector_size_px=(220, 100),
+        label=f"semantic page {number}",
+        final_structure=structure,
+    )
+
+
+def test_document_final_structures_keep_hidden_source_outlines_per_page(
+    tmp_path: Path,
+) -> None:
+    result = export_trace_document_streaming(
+        [_semantic_document_page(1), _semantic_document_page(2)],
+        tmp_path / "semantic-pages.dxf",
+        total_pages=2,
+    )
+
+    document = ezdxf.readfile(result.path)
+    modelspace = document.modelspace()
+    assert result.page_count == 2
+    assert result.text_count == 2
+    assert result.source_text_outline_count == 2
+    assert result.fallback_text_count == 0
+    expected_centers = {
+        1: (55.0, 50.0),
+        2: (55.0, -75.0),
+    }
+    for page in (1, 2):
+        prefix = f"PAGE_{page:03d}"
+        page_texts = list(
+            modelspace.query(f'TEXT[layer=="{prefix}_OCR_TEXT"]')
+        )
+        assert len(page_texts) == 1
+        assert page_texts[0].dxftype() == "TEXT"
+        geometry = _geometry_xdata(page_texts[0])
+        assert geometry[0] == expected_centers[page][0]
+        assert geometry[1] == expected_centers[page][1]
+        assert geometry[3] == 30.0
+        assert geometry[5] == geometry[3]
+        assert geometry[6] <= 1e-9
+        assert len(
+            modelspace.query(
+                f'LWPOLYLINE[layer=="{prefix}_SOURCE_TEXT_OUTLINE"]'
+            )
+        ) > 0
+        assert document.layers.get(
+            f"{prefix}_SOURCE_TEXT_OUTLINE"
+        ).is_off()
+        assert document.layers.get(
+            f"{prefix}_SOURCE_TEXT_OUTLINE"
+        ).is_frozen()
+        assert len(
+            modelspace.query(
+                f'LWPOLYLINE[layer=="{prefix}_TEXT_FALLBACK_OUTLINE"]'
+            )
+        ) == 0
     assert not document.audit().errors

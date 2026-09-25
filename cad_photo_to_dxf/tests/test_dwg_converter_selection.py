@@ -3,6 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 
+import pytest
+
 from app import dwg_converter
 
 
@@ -105,3 +107,137 @@ def test_oda_cli_arguments_do_not_open_folder_selection(monkeypatch, tmp_path: P
         "1",
         "drawing.dxf",
     ]
+
+
+def test_oda_cli_arguments_can_select_dxf_output(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    executable = tmp_path / "ODAFileConverter.exe"
+    executable.write_bytes(b"fake")
+    source = tmp_path / "drawing.dwg"
+    source.write_bytes(b"fake dwg")
+    output_dir = tmp_path / "out"
+    output_dir.mkdir()
+    captured: dict[str, object] = {}
+
+    def fake_subprocess_run(arguments, **kwargs):
+        captured["arguments"] = arguments
+        captured["kwargs"] = kwargs
+        return subprocess.CompletedProcess(arguments, 0, "", "")
+
+    monkeypatch.setattr(dwg_converter.subprocess, "run", fake_subprocess_run)
+    dwg_converter._run_converter(
+        executable,
+        source,
+        output_dir,
+        "R2013",
+        output_type="DXF",
+    )
+
+    assert captured["arguments"] == [
+        str(executable),
+        str(tmp_path),
+        str(output_dir),
+        "ACAD2013",
+        "DXF",
+        "0",
+        "1",
+        "drawing.dwg",
+    ]
+
+
+def test_convert_dwg_to_dxf_normalizes_destination_and_preserves_source(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    _isolate_settings(monkeypatch, tmp_path)
+    converter = tmp_path / "ODAFileConverter.exe"
+    converter.write_bytes(b"fake executable")
+    source = tmp_path / "drawing.dwg"
+    source.write_bytes(b"source dwg")
+    destination = tmp_path / "renamed-output.any"
+    calls: dict[str, object] = {}
+
+    def fake_run(executable, source_path, output_dir, version, *, output_type):
+        calls.update(
+            executable=executable,
+            source=source_path,
+            version=version,
+            output_type=output_type,
+        )
+        (output_dir / "drawing.dxf").write_text(
+            "0\nSECTION\n2\nHEADER\n0\nENDSEC\n0\nEOF\n",
+            encoding="ascii",
+        )
+        return subprocess.CompletedProcess([], 0, "", "")
+
+    monkeypatch.setattr(dwg_converter, "_run_converter", fake_run)
+
+    result = dwg_converter.convert_dwg_to_dxf(
+        source,
+        destination,
+        version="R2013",
+        converter_executable=converter,
+    )
+
+    assert result == (tmp_path / "renamed-output.dxf").resolve()
+    assert result.read_text(encoding="ascii").endswith("0\nEOF\n")
+    assert source.read_bytes() == b"source dwg"
+    assert calls["executable"] == converter.resolve()
+    assert calls["source"] == source.resolve()
+    assert calls["version"] == "R2013"
+    assert calls["output_type"] == "DXF"
+
+
+def test_convert_dwg_to_dxf_rejects_non_dwg_source(tmp_path: Path) -> None:
+    source = tmp_path / "drawing.dxf"
+    source.write_text("0\nEOF\n", encoding="ascii")
+
+    with pytest.raises(ValueError, match=r"\.dwg"):
+        dwg_converter.convert_dwg_to_dxf(source, tmp_path / "out.dxf")
+
+
+def test_convert_dwg_to_dxf_reports_unavailable_converter(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "drawing.dwg"
+    source.write_bytes(b"source dwg")
+
+    with pytest.raises(dwg_converter.DwgConversionUnavailable, match="ODA"):
+        dwg_converter.convert_dwg_to_dxf(
+            source,
+            tmp_path / "out.dxf",
+            converter_executable=tmp_path / "missing" / "ODAFileConverter.exe",
+        )
+
+
+def test_convert_dwg_to_dxf_validates_converter_result_and_keeps_output_detail(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    _isolate_settings(monkeypatch, tmp_path)
+    converter = tmp_path / "ODAFileConverter.exe"
+    converter.write_bytes(b"fake executable")
+    source = tmp_path / "drawing.dwg"
+    source.write_bytes(b"source dwg")
+
+    def fake_run(executable, source_path, output_dir, version, *, output_type):
+        return subprocess.CompletedProcess(
+            [],
+            7,
+            "converter stdout",
+            "converter stderr",
+        )
+
+    monkeypatch.setattr(dwg_converter, "_run_converter", fake_run)
+
+    with pytest.raises(
+        dwg_converter.DwgConversionUnavailable,
+        match="exit status 7.*converter stderr.*converter stdout",
+    ):
+        dwg_converter.convert_dwg_to_dxf(
+            source,
+            tmp_path / "out.dxf",
+            converter_executable=converter,
+        )

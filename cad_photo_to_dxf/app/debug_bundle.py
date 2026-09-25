@@ -17,7 +17,10 @@ from . import __version__
 from .final_structure import FINAL_STRUCTURE_SCHEMA_VERSION, FinalStructure
 from .image_loader import load_image, save_image
 from .observability import STAGE_BY_KEY, STAGE_SPECS
-from .optimized_trace import trace_image_optimized
+from .processing_contract import (
+    ProductionProcessingConfig,
+    ProductionProcessingService,
+)
 from .trace_single_export import export_final_structure_dxf
 
 
@@ -205,8 +208,7 @@ class DebugBundleCollector:
             raise ValueError(f"{stage_key}: observation image is empty or invalid")
         normalized_image = np.ascontiguousarray(image)
         artifact_path = (
-            self._stage_dir(stage_key)
-            / f"artifact-{len(record.artifacts) + 1:03d}.png"
+            self._stage_dir(stage_key) / f"artifact-{len(record.artifacts) + 1:03d}.png"
         )
         save_image(artifact_path, normalized_image)
         record.artifacts.append(
@@ -264,13 +266,10 @@ class DebugBundleCollector:
         dxf_entity_count: int,
     ) -> Path:
         structure.assert_valid()
-        missing = [
-            spec.key for spec in STAGE_SPECS if spec.key not in self._records
-        ]
+        missing = [spec.key for spec in STAGE_SPECS if spec.key not in self._records]
         if missing:
             raise AssertionError(
-                "Debug bundle did not observe required stages: "
-                + ", ".join(missing)
+                "Debug bundle did not observe required stages: " + ", ".join(missing)
             )
 
         structure_id = structure.structure_id
@@ -311,8 +310,7 @@ class DebugBundleCollector:
                     "stage_name": spec.name,
                     "generated_at": artifact.generated_at,
                     "upstream_stage_ids": [
-                        STAGE_BY_KEY[key].stage_id
-                        for key in spec.upstream_keys
+                        STAGE_BY_KEY[key].stage_id for key in spec.upstream_keys
                     ],
                     "artifact_path": relative_artifact.as_posix(),
                     "artifact_sha256": _file_sha256(artifact.path),
@@ -495,12 +493,15 @@ def capture_debug_bundle(
         source_path,
         page_index=page_index,
         pdf_dpi=dpi,
+        grayscale=source_path.suffix.lower() == ".pdf",
     )
-    result = trace_image_optimized(
+    result = ProductionProcessingService.process_page(
         image,
-        foreground_threshold=foreground_threshold,
-        enable_ocr=enable_ocr,
-        source_dpi=float(dpi),
+        ProductionProcessingConfig(
+            source_dpi=float(dpi),
+            enable_ocr=enable_ocr,
+            foreground_threshold=foreground_threshold,
+        ),
         observation_sink=collector,
     )
     structure = result.final_structure
