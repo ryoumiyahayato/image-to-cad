@@ -4,14 +4,16 @@ import cv2
 import numpy as np
 
 from app.line_detect import LineSegment
-from app.structural_roi import detect_structural_rois
 from app.straight_line_reconstruction import (
+    _prepare_late_restorations,
     collapse_scan_parallel_duplicates,
+    consolidate_source_supported_thick_fragments,
     extend_lines_to_first_intersection,
     reconstruct_straight_lines,
     suppress_parallel_duplicate_detections,
     suppress_reconstructed_lines,
 )
+from app.structural_roi import detect_structural_rois
 
 
 def test_gapped_perpendicular_lines_are_not_extended_without_structural_roi() -> None:
@@ -25,6 +27,123 @@ def test_gapped_perpendicular_lines_are_not_extended_without_structural_roi() ->
 
     assert (resolved[0].x2, resolved[0].y2) == (46.0, 50.0)
     assert (resolved[1].x1, resolved[1].y1) == (50.0, 54.0)
+
+
+def test_late_restoration_output_is_additive_and_deduplicates_base_geometry() -> None:
+    gray = np.zeros((120, 160), dtype=np.uint8)
+    base = [LineSegment(20.0, 50.0, 100.0, 50.0, width=2.0)]
+    candidates = [
+        LineSegment(20.0, 50.0, 100.0, 50.0, width=2.0),
+        LineSegment(20.0, 80.0, 100.0, 80.0, width=2.0),
+    ]
+
+    prepared = _prepare_late_restorations(
+        candidates,
+        base,
+        gray=gray,
+        scale=1.0,
+    )
+
+    assert prepared == (candidates[1],)
+
+
+def test_late_restoration_output_rejects_thick_candidates() -> None:
+    gray = np.zeros((120, 160), dtype=np.uint8)
+    candidate = LineSegment(20.0, 80.0, 100.0, 80.0, width=7.0)
+
+    prepared = _prepare_late_restorations(
+        [candidate],
+        (),
+        gray=gray,
+        scale=1.0,
+    )
+
+    assert prepared == ()
+
+
+def test_source_supported_thick_fragments_consolidate_to_one_centerline() -> None:
+    binary = np.full((260, 180), 255, dtype=np.uint8)
+    cv2.line(binary, (90, 20), (90, 240), 0, 13, cv2.LINE_8)
+    fragments = [
+        LineSegment(
+            90.0,
+            20.0,
+            90.0,
+            105.0,
+            width=13.0,
+            history=("detected:hough", "recenter_thick_stroke"),
+        ),
+        LineSegment(
+            90.5,
+            75.0,
+            90.5,
+            165.0,
+            width=13.0,
+            history=("detected:lsd", "recenter_thick_stroke"),
+        ),
+        LineSegment(
+            89.5,
+            150.0,
+            89.5,
+            240.0,
+            width=13.0,
+            history=("detected:hough", "recenter_thick_stroke"),
+        ),
+    ]
+
+    consolidated = consolidate_source_supported_thick_fragments(
+        fragments,
+        binary=binary,
+        scale=1.0,
+    )
+
+    assert len(consolidated) == 1
+    assert consolidated[0].y1 == 20.0
+    assert consolidated[0].y2 == 240.0
+    assert abs(consolidated[0].x1 - 90.0) <= 0.5
+    assert "consolidate_source_supported_thick_fragments" in consolidated[0].history
+
+
+def test_thick_fragment_consolidation_never_invents_source_gap_or_double_line() -> None:
+    binary = np.full((260, 180), 255, dtype=np.uint8)
+    cv2.line(binary, (70, 20), (70, 105), 0, 13, cv2.LINE_8)
+    cv2.line(binary, (70, 135), (70, 240), 0, 13, cv2.LINE_8)
+    cv2.line(binary, (105, 20), (105, 240), 0, 7, cv2.LINE_8)
+    fragments = [
+        LineSegment(
+            70.0,
+            20.0,
+            70.0,
+            105.0,
+            width=13.0,
+            history=("recenter_thick_stroke",),
+        ),
+        LineSegment(
+            70.0,
+            135.0,
+            70.0,
+            240.0,
+            width=13.0,
+            history=("recenter_thick_stroke",),
+        ),
+        LineSegment(
+            105.0,
+            20.0,
+            105.0,
+            240.0,
+            width=7.0,
+            history=("recenter_thick_stroke",),
+        ),
+    ]
+
+    consolidated = consolidate_source_supported_thick_fragments(
+        fragments,
+        binary=binary,
+        scale=1.0,
+    )
+
+    assert len(consolidated) == 3
+    assert sorted(round(line.x1) for line in consolidated) == [70, 70, 105]
 
 
 def test_gapped_frame_rules_reconnect_only_inside_detected_roi() -> None:
@@ -160,15 +279,12 @@ def test_crossing_rule_segments_are_not_globally_rejoined() -> None:
 
     assert lines
     horizontal = [
-        line
-        for line in lines
-        if abs((line.y1 + line.y2) * 0.5 - 95.0) <= 4.0
+        line for line in lines if abs((line.y1 + line.y2) * 0.5 - 95.0) <= 4.0
     ]
     assert any(max(line.x1, line.x2) < 180.0 for line in horizontal)
     assert any(min(line.x1, line.x2) > 180.0 for line in horizontal)
     assert not any(
-        min(line.x1, line.x2) < 170.0
-        and max(line.x1, line.x2) > 190.0
+        min(line.x1, line.x2) < 170.0 and max(line.x1, line.x2) > 190.0
         for line in horizontal
     )
 

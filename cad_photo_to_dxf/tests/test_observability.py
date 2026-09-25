@@ -12,6 +12,10 @@ from app.debug_bundle import capture_debug_bundle
 from app.image_loader import save_image
 from app.observability import STAGE_SPECS
 from app.optimized_trace import trace_image_optimized
+from app.processing_contract import (
+    ProductionProcessingConfig,
+    ProductionProcessingService,
+)
 
 
 class _MemorySink:
@@ -28,9 +32,11 @@ class _MemorySink:
     ) -> None:
         metadata = dict(payload or {})
         if image is not None:
-            metadata["image_sha256"] = __import__("hashlib").sha256(
-                np.ascontiguousarray(image).tobytes()
-            ).hexdigest()
+            metadata["image_sha256"] = (
+                __import__("hashlib")
+                .sha256(np.ascontiguousarray(image).tobytes())
+                .hexdigest()
+            )
         self.records.append((stage_key, status, metadata))
 
 
@@ -65,8 +71,7 @@ def test_observation_sink_does_not_change_final_structure() -> None:
     assert baseline.final_structure is not None
     assert observed.final_structure is not None
     assert (
-        baseline.final_structure.structure_id
-        == observed.final_structure.structure_id
+        baseline.final_structure.structure_id == observed.final_structure.structure_id
     )
     assert baseline.foreground_pixels == observed.foreground_pixels
     assert baseline.vertex_count == observed.vertex_count
@@ -75,6 +80,28 @@ def test_observation_sink_does_not_change_final_structure() -> None:
     assert {record[0] for record in sink.records} == {
         spec.key for spec in STAGE_SPECS if spec.index < 26
     }
+
+
+def test_production_observation_sink_does_not_change_result() -> None:
+    image = _synthetic_page()
+    config = ProductionProcessingConfig(enable_ocr=False)
+    baseline = ProductionProcessingService.process_page(image, config)
+    sink = _MemorySink()
+
+    observed = ProductionProcessingService.process_page(
+        image,
+        config,
+        observation_sink=sink,
+    )
+
+    assert baseline.final_structure is not None
+    assert observed.final_structure is not None
+    assert (
+        baseline.final_structure.structure_id == observed.final_structure.structure_id
+    )
+    assert baseline.paths == observed.paths
+    assert baseline.straight_lines == observed.straight_lines
+    assert sink.records
 
 
 def test_debug_bundle_has_all_stages_metadata_and_pixel_lineage(
@@ -156,6 +183,11 @@ def test_ocr_overview_records_raw_and_rule_removed_views(
 
     assert texts == ()
     keys = [record[0] for record in sink.records]
-    assert keys == ["ocr_raw_tiles", "ocr_rule_removed_tiles"]
+    assert keys == [
+        "ocr_raw_tiles",
+        "ocr_rule_removed_tiles",
+        "ocr_text_boxes",
+    ]
     assert sink.records[0][2]["used_by_ocr"] is True
     assert sink.records[1][2]["diagnostic_only"] is True
+    assert sink.records[2][2]["role"] == "raw-recognition"

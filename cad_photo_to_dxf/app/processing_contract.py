@@ -22,6 +22,7 @@ from .final_structure import (
     final_structure_from_trace_result,
 )
 from .ocr_recognition import MAX_OCR_CANDIDATES, MIN_OCR_CONFIDENCE
+from .observability import ObservationSink
 from .optimized_trace import trace_image_optimized
 from .performance_observability import (
     PerformanceCallback,
@@ -120,21 +121,11 @@ class ProductionProcessingConfig:
             "foreground_threshold": self.foreground_threshold,
             "minimum_ocr_confidence": MIN_OCR_CONFIDENCE,
             "maximum_ocr_candidates": MAX_OCR_CANDIDATES,
-            "minimum_text_output_confidence": (
-                DEFAULT_MINIMUM_TEXT_CONFIDENCE
-            ),
-            "connection_confidence_threshold": (
-                CONNECTION_CONFIDENCE_THRESHOLD
-            ),
-            "maximum_direction_error_degrees": (
-                MAX_DIRECTION_ERROR_DEGREES
-            ),
-            "maximum_line_width_difference_mm": (
-                MAX_LINE_WIDTH_DIFFERENCE_MM
-            ),
-            "maximum_connection_distance_mm": (
-                MAX_CONNECTION_DISTANCE_MM
-            ),
+            "minimum_text_output_confidence": (DEFAULT_MINIMUM_TEXT_CONFIDENCE),
+            "connection_confidence_threshold": (CONNECTION_CONFIDENCE_THRESHOLD),
+            "maximum_direction_error_degrees": (MAX_DIRECTION_ERROR_DEGREES),
+            "maximum_line_width_difference_mm": (MAX_LINE_WIDTH_DIFFERENCE_MM),
+            "maximum_connection_distance_mm": (MAX_CONNECTION_DISTANCE_MM),
             "protection_expansion_mm": PROTECTION_EXPANSION_MM,
         }
 
@@ -146,9 +137,7 @@ class ProductionProcessingConfig:
             "layout_profile": self.layout_profile.payload(),
             "algorithm_version": self.algorithm_version,
             "model_version": self.model_version,
-            "final_structure_schema_version": (
-                FINAL_STRUCTURE_SCHEMA_VERSION
-            ),
+            "final_structure_schema_version": (FINAL_STRUCTURE_SCHEMA_VERSION),
             "critical_thresholds": self.threshold_summary(),
         }
 
@@ -180,12 +169,8 @@ class ProcessingCacheKey:
             "model_version": self.model_version,
             "config_summary": json.loads(self.config_summary_json),
             "layout_profile": self.layout_profile,
-            "final_structure_schema_version": int(
-                self.final_structure_schema_version
-            ),
-            "critical_threshold_summary": json.loads(
-                self.threshold_summary_json
-            ),
+            "final_structure_schema_version": int(self.final_structure_schema_version),
+            "critical_threshold_summary": json.loads(self.threshold_summary_json),
         }
 
     @classmethod
@@ -200,9 +185,7 @@ class ProcessingCacheKey:
             enable_ocr=bool(payload["enable_ocr"]),
             algorithm_version=str(payload["algorithm_version"]),
             model_version=str(payload["model_version"]),
-            config_summary_json=_canonical_json(
-                payload["config_summary"]
-            ),
+            config_summary_json=_canonical_json(payload["config_summary"]),
             layout_profile=str(payload["layout_profile"]),
             final_structure_schema_version=int(
                 payload["final_structure_schema_version"]
@@ -221,8 +204,7 @@ def build_processing_cache_key(
 ) -> ProcessingCacheKey:
     content_hash = input_content_sha256.strip().lower()
     if len(content_hash) != 64 or any(
-        character not in "0123456789abcdef"
-        for character in content_hash
+        character not in "0123456789abcdef" for character in content_hash
     ):
         raise ValueError("Input content hash must be a SHA-256 hex digest")
     page_number = 1 if page_index is None else int(page_index) + 1
@@ -238,12 +220,8 @@ def build_processing_cache_key(
         model_version=config.model_version,
         config_summary_json=_canonical_json(config_payload),
         layout_profile=config.layout_profile.name,
-        final_structure_schema_version=(
-            FINAL_STRUCTURE_SCHEMA_VERSION
-        ),
-        threshold_summary_json=_canonical_json(
-            config.threshold_summary()
-        ),
+        final_structure_schema_version=(FINAL_STRUCTURE_SCHEMA_VERSION),
+        threshold_summary_json=_canonical_json(config.threshold_summary()),
     )
 
 
@@ -271,6 +249,7 @@ class ProductionProcessingService:
         cancellation_token: CancellationToken | None = None,
         progress_callback: ProgressCallback | None = None,
         performance_callback: PerformanceCallback | None = None,
+        observation_sink: ObservationSink | None = None,
     ) -> RasterTraceResult:
         if config.layout_profile.enabled:
             raise ValueError(
@@ -284,6 +263,7 @@ class ProductionProcessingService:
             cancellation_token=cancellation_token,
             progress_callback=progress_callback,
             performance_callback=performance_callback,
+            observation_sink=observation_sink,
         )
         structure = final_structure_from_trace_result(result)
         provenance: dict[str, Any] = dict(structure.provenance)
@@ -297,6 +277,9 @@ class ProductionProcessingService:
             texts=structure.texts,
             logos=structure.logos,
             signatures=structure.signatures,
+            editable_text_source_mask=(structure.editable_text_source_mask),
+            source_text_outline_mask=(structure.source_text_outline_mask),
+            uncertain_text_outline_mask=(structure.uncertain_text_outline_mask),
             preview_binary=structure.preview_binary,
             threshold=structure.threshold,
             warnings=structure.warnings,
@@ -309,7 +292,5 @@ class ProductionProcessingService:
             final_structure_started,
         )
         if contracted.structure_id != structure.structure_id:
-            raise AssertionError(
-                "Processing metadata changed FinalStructure content"
-            )
+            raise AssertionError("Processing metadata changed FinalStructure content")
         return replace(result, final_structure=contracted)

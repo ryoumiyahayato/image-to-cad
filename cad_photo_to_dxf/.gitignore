@@ -3,7 +3,6 @@
 venv/
 __pycache__/
 *.py[cod]
-*$py.class
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
@@ -11,22 +10,27 @@ __pycache__/
 .coverage.*
 htmlcov/
 
-# Packaging and generated application artifacts
+# Packaging outputs
 build/
 dist/
 installer/output/
 packaging/output/
 *.egg-info/
 
-# Local pipeline and validation output
+# Local inputs and runtime artifacts
+local-artifacts/
 output/
 test-output/
+tmp/
+samples/
+tests/real_regression/
+.audit-deps/
+repository-hygiene.json
 *.report.json
 *.validation.json
 *.freecad.json
 
-# Local editor and operating-system metadata
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
+# Only the two reviewed generic validators are tracked under validation/.
+validation/*
+!validation/freecad_import_check.py
+!validation/validate_dxf.py

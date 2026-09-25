@@ -3,12 +3,18 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from .connectivity_safety import DEFAULT_CONNECTION_DPI
 from .content_ownership import (
     arbitrate_content_candidates,
     binary_from_foreground,
     build_connection_protection,
+    build_text_semantic_ownership,
     finalize_content_ownership,
     graphic_source_mask,
     partition_content,
@@ -16,10 +22,8 @@ from .content_ownership import (
     text_candidate_source_mask,
 )
 from .final_structure import build_final_structure
+from .line_detect import LineSegment
 from .logo_detection import detect_logo_regions
-from .ocr_layout import constrain_texts_to_table_cells
-from .ocr_overlap import collapse_overlapping_candidates
-from .ocr_pipeline import recognize_text_candidates_optimized
 from .observability import (
     ObservationSink,
     observe,
@@ -27,6 +31,9 @@ from .observability import (
     rasterize_text_boxes,
     texts_payload,
 )
+from .ocr_layout import constrain_texts_to_table_cells
+from .ocr_overlap import collapse_overlapping_candidates
+from .ocr_pipeline import recognize_text_candidates_optimized
 from .performance_observability import (
     PerformanceCallback,
     emit_performance,
@@ -36,10 +43,9 @@ from .performance_observability import (
 from .raster_trace import RasterTraceResult, trace_binary
 from .scan_artifact_filter import suppress_scan_artifact_traces
 from .scan_cleanup import prepare_scan_page
-from .signature_overlay import (
-    detect_signature_regions,
-)
+from .signature_overlay import detect_signature_regions
 from .straight_line_reconstruction import reconstruct_straight_lines
+from .source_support_lifecycle import SourceSupportLifecycle
 from .text_output_contract import (
     text_output_decisions,
     text_output_summary,
@@ -56,6 +62,7 @@ def trace_image_optimized(
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
     performance_callback: PerformanceCallback | None = None,
+    source_support_lifecycle: SourceSupportLifecycle | None = None,
 ) -> RasterTraceResult:
     """Run OCR and tracing without constructing full-resolution UI overlays.
 
@@ -65,6 +72,11 @@ def trace_image_optimized(
     """
 
     checkpoint(cancellation_token)
+    if (
+        source_support_lifecycle is not None
+        and source_support_lifecycle.shape != image.shape[:2]
+    ):
+        raise ValueError("SourceSupportLifecycle shape must match the source image")
     if observation_sink is not None:
         observe(
             observation_sink,
@@ -212,6 +224,7 @@ def trace_image_optimized(
     )
     protected_mask = connection_protection.mask
     report_progress(progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08)
+    late_restorations: list[LineSegment] = []
     line_candidates = reconstruct_straight_lines(
         prepared.binary,
         source_dpi=source_dpi,
@@ -233,6 +246,8 @@ def trace_image_optimized(
         ),
         observation_sink=observation_sink,
         performance_callback=performance_callback,
+        late_restoration_output=late_restorations,
+        source_support_lifecycle=source_support_lifecycle,
     )
 
     ownership_started = performance_clock()
@@ -263,12 +278,17 @@ def trace_image_optimized(
         "ownership",
         ownership_started,
     )
-    straight_lines = arbitrated.lines
+    straight_lines = tuple(arbitrated.lines) + tuple(late_restorations)
     texts = arbitrated.texts
     logos = arbitrated.logos
     signatures = arbitrated.signatures
     text_decisions = text_output_decisions(texts)
     text_contract = text_output_summary(texts)
+    text_semantics = build_text_semantic_ownership(
+        prepared.binary,
+        texts,
+        ownership=ownership,
+    )
     if observation_sink is not None:
         owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
         for owner_code, mask in (
@@ -345,26 +365,94 @@ def trace_image_optimized(
             },
         )
     outline_source = cv2.max(ownership.graphic, ownership.residual)
-    residual_binary = binary_from_foreground(outline_source)
+    primary_outline_source = np.where(
+        (outline_source > 0)
+        & (text_semantics.source_outline == 0)
+        & (text_semantics.uncertain_outline == 0),
+        255,
+        0,
+    ).astype(np.uint8)
+    residual_binary = binary_from_foreground(primary_outline_source)
     artifact_removed = 0
-    if not prepared.clean_digital and np.any(outline_source):
+    if not prepared.clean_digital and np.any(primary_outline_source):
         contour_started = performance_clock()
         residual_paths = trace_binary(
             residual_binary,
             cancellation_token=cancellation_token,
         )
+        if source_support_lifecycle is not None:
+            if source_support_lifecycle.auto_register_fallback:
+                source_support_lifecycle.register_fallback_roots(
+                    residual_binary,
+                    residual_paths,
+                )
+            text_adjacent = cv2.dilate(
+                text_candidate_source_mask(prepared.binary, texts),
+                np.ones((9, 9), dtype=np.uint8),
+            )
+            symbol_adjacent = cv2.dilate(
+                cv2.max(ownership.logo, ownership.signature),
+                np.ones((9, 9), dtype=np.uint8),
+            )
+            source_support_lifecycle.observe_ownership(
+                owner_masks={
+                    "LINE": ownership.line,
+                    "TEXT": ownership.text,
+                    "LOGO": ownership.logo,
+                    "SIGNATURE": ownership.signature,
+                    "GRAPHIC_FALLBACK": ownership.graphic,
+                    "RESIDUAL": ownership.residual,
+                },
+                downgrades=ownership.downgrades,
+                text_adjacent_mask=text_adjacent,
+                symbol_adjacent_mask=symbol_adjacent,
+            )
+            source_support_lifecycle.observe_fallback_start(
+                residual_binary,
+                residual_paths,
+            )
         artifact_result = suppress_scan_artifact_traces(
             prepared.gray,
             residual_binary,
             residual_paths,
+            source_support_lifecycle=source_support_lifecycle,
         )
         if artifact_result.removed_root_count:
             residual_binary = artifact_result.binary
             artifact_removed = artifact_result.removed_root_count
+        if source_support_lifecycle is not None:
+            source_support_lifecycle.observe_fallback_result(
+                artifact_result.binary,
+            )
         record_performance(
             performance_callback,
             "contour_tracing",
             contour_started,
+        )
+    elif source_support_lifecycle is not None:
+        source_support_lifecycle.observe_ownership(
+            owner_masks={
+                "LINE": ownership.line,
+                "TEXT": ownership.text,
+                "LOGO": ownership.logo,
+                "SIGNATURE": ownership.signature,
+                "GRAPHIC_FALLBACK": ownership.graphic,
+                "RESIDUAL": ownership.residual,
+            },
+            downgrades=ownership.downgrades,
+            text_adjacent_mask=cv2.dilate(
+                text_candidate_source_mask(prepared.binary, texts),
+                np.ones((9, 9), dtype=np.uint8),
+            ),
+            symbol_adjacent_mask=cv2.dilate(
+                cv2.max(ownership.logo, ownership.signature),
+                np.ones((9, 9), dtype=np.uint8),
+            ),
+        )
+        source_support_lifecycle.observe_fallback_start(
+            residual_binary,
+            (),
+            executed=False,
         )
 
     residual_foreground = np.where(residual_binary < 128, 255, 0).astype(np.uint8)
@@ -388,16 +476,29 @@ def trace_image_optimized(
         observe(
             observation_sink,
             "final_text_layer",
-            image=ownership.text,
+            image=text_semantics.editable_source,
             payload={
                 "texts": texts_payload(texts),
                 "count": len(texts),
                 "output_contract": text_contract.payload(),
+                "semantic_ownership": text_semantics.payload(),
                 "decisions": [
                     decision.payload()
                     for decision in text_decisions
                 ],
             },
+        )
+        observe(
+            observation_sink,
+            "final_text_layer",
+            image=text_semantics.source_outline,
+            payload={"role": "hidden-source-text-outline"},
+        )
+        observe(
+            observation_sink,
+            "final_text_layer",
+            image=text_semantics.uncertain_outline,
+            payload={"role": "visible-uncertain-text-outline"},
         )
         observe(
             observation_sink,
@@ -451,6 +552,8 @@ def trace_image_optimized(
             f"{text_contract.editable_text_count} 个导出为可编辑单行文字，"
             f"{text_contract.fallback_outline_count} 个进入 "
             "TEXT_FALLBACK_OUTLINE，"
+            f"{text_contract.source_outline_backup_count} 个保留到默认关闭的 "
+            "SOURCE_TEXT_OUTLINE，"
             f"{text_contract.residual_graphic_count} 个进入 "
             "RESIDUAL_GRAPHIC。"
         )
@@ -473,6 +576,7 @@ def trace_image_optimized(
         {
             "event": "text_output_contract",
             **text_contract.payload(),
+            "semantic_ownership": text_semantics.payload(),
             "logo_count": len(logos),
             "signature_count": len(signatures),
         },
@@ -486,6 +590,9 @@ def trace_image_optimized(
         texts=tuple(texts),
         logos=tuple(logos),
         signatures=tuple(signatures),
+        editable_text_source_mask=text_semantics.editable_source,
+        source_text_outline_mask=text_semantics.source_outline,
+        uncertain_text_outline_mask=text_semantics.uncertain_outline,
         preview_binary=prepared.binary,
         threshold=prepared.threshold,
         warnings=tuple(warnings),
@@ -495,6 +602,13 @@ def trace_image_optimized(
         },
         observations=observations,
     )
+    if source_support_lifecycle is not None:
+        source_support_lifecycle.observe_final(
+            contours=tuple(paths),
+            straight_lines=tuple(straight_lines),
+            contour_binary=contour_binary,
+            final_structure_id=final_structure.structure_id,
+        )
     record_performance(
         performance_callback,
         "final_structure_generation",

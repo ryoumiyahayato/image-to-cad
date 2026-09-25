@@ -6,7 +6,12 @@ import math
 import cv2
 import numpy as np
 
-from .cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from .cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from .resolution import image_resolution_scale, scaled_int
 
 
@@ -195,6 +200,7 @@ def detect_lines(
     params: LineDetectionParams | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
+    preparation_trace: list[LineSegment] | None = None,
 ) -> list[LineSegment]:
     """Detect resolution-normalized candidate line segments from a binary image."""
     params = params or LineDetectionParams()
@@ -205,7 +211,9 @@ def detect_lines(
         return []
 
     resolution_scale = image_resolution_scale(binary_image.shape)
-    effective_min_length = scaled_int(params.min_line_length, resolution_scale, minimum=5)
+    effective_min_length = scaled_int(
+        params.min_line_length, resolution_scale, minimum=5
+    )
     effective_max_gap = scaled_int(params.max_line_gap, resolution_scale, minimum=0)
     effective_hough_threshold = scaled_int(
         params.hough_threshold,
@@ -243,6 +251,8 @@ def detect_lines(
                 history=("detected:hough",),
             )
             if segment.length >= effective_min_length:
+                if preparation_trace is not None:
+                    preparation_trace.append(segment)
                 segments.append(
                     _prepare_segment(distance_map, segment, params, resolution_scale)
                 )
@@ -269,13 +279,19 @@ def detect_lines(
                     history=("detected:lsd",),
                 )
                 if segment.length >= effective_min_length:
+                    if preparation_trace is not None:
+                        preparation_trace.append(segment)
                     segments.append(
-                        _prepare_segment(distance_map, segment, params, resolution_scale)
+                        _prepare_segment(
+                            distance_map, segment, params, resolution_scale
+                        )
                     )
     report_progress(progress_callback, "lsd", 0.9)
 
     # Prefer longer and stronger lines if a noisy image creates an excessive number.
-    segments.sort(key=lambda line: (line.length * line.confidence, line.width), reverse=True)
+    segments.sort(
+        key=lambda line: (line.length * line.confidence, line.width), reverse=True
+    )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-detection", 1.0)
     return segments[: max(0, int(params.max_segments))]

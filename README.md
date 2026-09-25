@@ -22,4 +22,4 @@ Supported coordinate modes:
 * `model_mm`: model coordinates independently calibrated using a known real-world dimension;
 * `pixel`: uncalibrated image coordinates.
 
-For the status of historical audit remediation, see [`docs/AUDIT_REMEDIATION.md`](https://github.com/ryoumiyahayato/image-to-cad/blob/main/docs/AUDIT_REMEDIATION.md).
+For this code-only snapshot and its available checks, see [`PUBLICATION.md`](PUBLICATION.md).

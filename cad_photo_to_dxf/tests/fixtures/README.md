@@ -56,4 +56,4 @@ Run the release qualification and ground-truth benchmarks:
 python scripts/validate_fixtures.py tests/fixtures --minimum 1
 ```
 
-The release workflow runs the second command and stops when no qualifying fixture exists, any required category is absent, or any benchmark exceeds tolerance. Do not fabricate ground truth. Unknown provenance, unknown licence, generated images presented as camera captures, or unreviewed CAD cannot satisfy the release gate.
+A future public release gate should run the second command and stop when no qualifying fixture exists, any required category is absent, or any benchmark exceeds tolerance. Do not fabricate ground truth. Unknown provenance, unknown licence, generated images presented as camera captures, or unreviewed CAD cannot satisfy the release gate.

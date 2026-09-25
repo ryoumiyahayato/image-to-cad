@@ -23,7 +23,12 @@ from .ocr_layout import candidate_touches_internal_tile_edge, tile_regions
 from .ocr_overlap import collapse_overlapping_candidates
 from .ocr_recognition import _recognize_rapidocr_pass
 from .ocr_tile_filter import tile_has_probable_text
-from .observability import ObservationSink, observe
+from .observability import (
+    ObservationSink,
+    observe,
+    rasterize_text_boxes,
+    texts_payload,
+)
 
 
 NATIVE_TILE_MIN_SIDE = 3000
@@ -281,6 +286,18 @@ def recognize_text_candidates_optimized(
     except Exception as exc:
         warnings.append(f"文字识别失败：{exc}；已继续处理非文字内容。")
 
+    if observation_sink is not None:
+        gray = _gray(image)
+        observe(
+            observation_sink,
+            "ocr_text_boxes",
+            image=rasterize_text_boxes(candidates, gray.shape),
+            payload={
+                "role": "raw-recognition",
+                "texts": texts_payload(candidates),
+                "count": len(candidates),
+            },
+        )
     candidates = _mark_cross_pass_consensus(candidates)
     deduplicated = collapse_overlapping_candidates(deduplicate_candidates(candidates))
     resolved: list[TextCandidate] = []

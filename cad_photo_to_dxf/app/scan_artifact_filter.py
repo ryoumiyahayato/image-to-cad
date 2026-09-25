@@ -8,6 +8,7 @@ import numpy as np
 
 from .raster_trace import TracePath, trace_binary
 from .resolution import image_resolution_scale, scaled_int, scaled_odd
+from .source_support_lifecycle import SourceSupportLifecycle, StructuralEvidenceSignal
 
 
 @dataclass(frozen=True)
@@ -351,6 +352,8 @@ def _remove_nearby_damage_fragments(
     binary: np.ndarray,
     damage_mask: np.ndarray,
     scale: float,
+    *,
+    protected_mask: np.ndarray | None = None,
 ) -> np.ndarray:
     """Clear light crack fragments split from the main tear by drawing rules."""
 
@@ -379,6 +382,10 @@ def _remove_nearby_damage_fragments(
         area = int(np.count_nonzero(component))
         if area <= 0:
             continue
+        if protected_mask is not None and np.any(
+            component & (protected_mask[y : y + height, x : x + width] > 0)
+        ):
+            continue
         overlap = float(
             np.count_nonzero(
                 component & (corridor[y : y + height, x : x + width] > 0)
@@ -399,6 +406,8 @@ def suppress_scan_artifact_traces(
     gray: np.ndarray,
     binary: np.ndarray,
     paths: tuple[TracePath, ...],
+    *,
+    source_support_lifecycle: SourceSupportLifecycle | None = None,
 ) -> ScanArtifactSuppressionResult:
     """Remove fold/tape/tear contours that survived scan normalization.
 
@@ -434,6 +443,19 @@ def suppress_scan_artifact_traces(
         scale,
     )
     prefiltered_region_count = corner_region_count + int(edge_band_removed)
+    if source_support_lifecycle is not None and prefiltered_region_count:
+        prefilter_removed_mask = np.where(
+            (binary < 128) & (working_binary >= 128),
+            255,
+            0,
+        ).astype(np.uint8)
+        if cv2.countNonZero(prefilter_removed_mask):
+            source_support_lifecycle.observe_artifact_root(
+                root_id="artifact-prefilter-edge-or-corner",
+                root_mask=prefilter_removed_mask,
+                decision="OTHER_REJECTION",
+                reason="prefilter_edge_band_or_corner_damage_cluster",
+            )
     working_paths = (
         trace_binary(working_binary)
         if prefiltered_region_count
@@ -460,6 +482,26 @@ def suppress_scan_artifact_traces(
         if item.long_sparse_flight:
             sparse_roots.add(index)
 
+    component_labels: np.ndarray | None = None
+    structurally_supported_roots: set[int] = set()
+    structural_signals: dict[int, StructuralEvidenceSignal] = {}
+    if source_support_lifecycle is not None:
+        _component_count, component_labels = cv2.connectedComponents(
+            np.where(working_binary < 128, 1, 0).astype(np.uint8),
+            connectivity=8,
+        )
+        for index in metrics:
+            if index in damage_roots or index in sparse_roots:
+                continue
+            signal = source_support_lifecycle.structural_evidence_for_artifact_path(
+                path=working_paths[index],
+                binary=working_binary,
+                component_labels=component_labels,
+            )
+            structural_signals[index] = signal
+            if signal.credible:
+                structurally_supported_roots.add(index)
+
     # A tear is commonly split at every surviving grid rule. Grow only from
     # direct paper-damage roots; a long sparse flight is removed but must not
     # cause nearby legitimate symbols to be swept into the same cluster.
@@ -469,7 +511,11 @@ def suppress_scan_artifact_traces(
     for _iteration in range(6):
         additions: set[int] = set()
         for index, item in metrics.items():
-            if index in clustered_damage or index in sparse_roots:
+            if (
+                index in clustered_damage
+                or index in sparse_roots
+                or index in structurally_supported_roots
+            ):
                 continue
             _x, _y, width, height = item.box
             if (
@@ -488,6 +534,60 @@ def suppress_scan_artifact_traces(
         clustered_damage.update(additions)
 
     removed_roots = clustered_damage | sparse_roots
+    if source_support_lifecycle is not None:
+        assert component_labels is not None
+        for index, path in enumerate(working_paths):
+            if path.depth != 0:
+                continue
+            item = metrics.get(index)
+            if index in damage_roots:
+                decision = "REJECTED_DIRECT_DAMAGE_ROOT"
+                reason = "edge_damage" if item is not None and item.edge_damage else "local_damage"
+            elif index in clustered_damage:
+                decision = "REJECTED_DAMAGE_CLUSTER_PROPAGATION"
+                reason = "damage_root_proximity_propagation"
+            elif index in sparse_roots:
+                decision = "OTHER_REJECTION"
+                reason = "long_sparse_flight"
+            elif index in structurally_supported_roots:
+                decision = "ACCEPTED"
+                reason = "credible_structural_provenance_vetoed_damage_cluster_propagation"
+            else:
+                decision = "ACCEPTED"
+                reason = "artifact_suppression_acceptance"
+            metrics_payload = (
+                {}
+                if item is None
+                else {
+                    "median_tone": float(item.median_tone),
+                    "defect_overlap": float(item.defect_overlap),
+                    "solidity": float(item.solidity),
+                    "occupancy": float(item.occupancy),
+                    "aspect_ratio": float(item.aspect_ratio),
+                    "edge_damage": bool(item.edge_damage),
+                    "local_damage": bool(item.local_damage),
+                    "long_sparse_flight": bool(item.long_sparse_flight),
+                    "bbox": [int(value) for value in item.box],
+                }
+            )
+            observed_signal = structural_signals.get(index)
+            if observed_signal is not None and observed_signal.credible:
+                metrics_payload["structural_provenance"] = {
+                    "support_ids": list(observed_signal.support_ids),
+                    "overlap_pixels": int(observed_signal.overlap_pixels),
+                    "maximum_support_fraction": float(
+                        observed_signal.maximum_support_fraction
+                    ),
+                }
+            source_support_lifecycle.observe_artifact_path(
+                root_id=f"artifact-root-{index:06d}",
+                path=path,
+                binary=working_binary,
+                decision=decision,
+                reason=reason,
+                metrics=metrics_payload,
+                component_labels=component_labels,
+            )
     if not removed_roots:
         return ScanArtifactSuppressionResult(
             binary=working_binary,
@@ -503,12 +603,36 @@ def suppress_scan_artifact_traces(
         working_paths,
         clustered_damage,
     )
+    _unused, structural_protection_mask = _remove_roots_from_binary(
+        np.full_like(working_binary, 255),
+        working_paths,
+        structurally_supported_roots,
+    )
+    structural_protection_mask &= np.where(
+        working_binary < 128,
+        255,
+        0,
+    ).astype(np.uint8)
+    before_nearby_cleanup = np.ascontiguousarray(cleaned.copy())
     cleaned = _remove_nearby_damage_fragments(
         gray,
         cleaned,
         damage_removed_mask,
         scale,
+        protected_mask=structural_protection_mask,
     )
+    nearby_removed_mask = np.where(
+        (before_nearby_cleanup < 128) & (cleaned >= 128),
+        255,
+        0,
+    ).astype(np.uint8)
+    if source_support_lifecycle is not None and cv2.countNonZero(nearby_removed_mask):
+        source_support_lifecycle.observe_artifact_root(
+            root_id="near-damage-fragments",
+            root_mask=nearby_removed_mask,
+            decision="REJECTED_NEAR_DAMAGE_FRAGMENT",
+            reason="nearby_damage_corridor_high_tone_component",
+        )
     return ScanArtifactSuppressionResult(
         binary=cleaned,
         removed_root_count=len(removed_roots) + prefiltered_region_count,

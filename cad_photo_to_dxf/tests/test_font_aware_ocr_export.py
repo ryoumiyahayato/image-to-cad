@@ -41,7 +41,7 @@ def test_selected_cjk_font_is_used_for_one_editable_line() -> None:
     assert [entity.dxf.text for entity in entities] == ["火灾"]
     assert all(entity.dxftype() == "TEXT" for entity in entities)
     assert all(entity.dxf.style == "wqy-unicode" for entity in entities)
-    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in entities)
+    assert all(0.72 <= float(entity.dxf.width) <= 4.0 for entity in entities)
     assert all(float(entity.dxf.oblique) == 0.0 for entity in entities)
     style = document.styles.get("wqy-unicode")
     assert style.dxf.font == "wqy-unicode.lff"

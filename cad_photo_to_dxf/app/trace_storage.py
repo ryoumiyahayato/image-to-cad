@@ -185,6 +185,48 @@ def _unpack_binary(packed: np.ndarray, shape: np.ndarray) -> np.ndarray:
     return np.where(foreground > 0, 0, 255).astype(np.uint8)
 
 
+def _packed_foreground(
+    mask: np.ndarray | None,
+    *,
+    shape: tuple[int, int],
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    present = np.asarray([mask is not None], dtype=np.uint8)
+    normalized = (
+        np.zeros(shape, dtype=np.uint8)
+        if mask is None
+        else np.ascontiguousarray(mask, dtype=np.uint8)
+    )
+    if normalized.shape != shape:
+        raise ValueError("Text semantic mask shape does not match trace cache")
+    return (
+        present,
+        np.packbits(
+            np.ravel(normalized > 0),
+            bitorder="little",
+        ),
+        np.asarray(shape, dtype=np.int64),
+    )
+
+
+def _unpack_foreground(
+    present: np.ndarray,
+    packed: np.ndarray,
+    shape: np.ndarray,
+) -> np.ndarray | None:
+    if not bool(np.asarray(present).reshape(-1)[0]):
+        return None
+    values = tuple(int(value) for value in np.asarray(shape).reshape(-1))
+    if len(values) != 2 or values[0] <= 0 or values[1] <= 0:
+        raise ValueError("Text semantic mask shape is invalid")
+    pixel_count = values[0] * values[1]
+    foreground = np.unpackbits(
+        np.asarray(packed, dtype=np.uint8),
+        bitorder="little",
+        count=pixel_count,
+    ).reshape(values)
+    return np.where(foreground > 0, 255, 0).astype(np.uint8)
+
+
 def _packed_signatures(
     signatures: tuple[SignatureRegion, ...],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -337,6 +379,30 @@ def save_trace_cache(
         else structure.contour_binary
     )
     preview_packed, preview_shape = _packed_binary(preview_source)
+    (
+        editable_text_source_present,
+        editable_text_source_packed,
+        editable_text_source_shape,
+    ) = _packed_foreground(
+        structure.editable_text_source_mask,
+        shape=structure.contour_binary.shape,
+    )
+    (
+        source_text_outline_present,
+        source_text_outline_packed,
+        source_text_outline_shape,
+    ) = _packed_foreground(
+        structure.source_text_outline_mask,
+        shape=structure.contour_binary.shape,
+    )
+    (
+        uncertain_text_outline_present,
+        uncertain_text_outline_packed,
+        uncertain_text_outline_shape,
+    ) = _packed_foreground(
+        structure.uncertain_text_outline_mask,
+        shape=structure.contour_binary.shape,
+    )
     signature_bboxes, signature_shapes, signature_offsets, signature_packed = (
         _packed_signatures(structure.signatures)
     )
@@ -382,7 +448,7 @@ def save_trace_cache(
             temporary_path = Path(handle.name)
             np.savez(
                 handle,
-                cache_version=np.asarray([8], dtype=np.int32),
+                cache_version=np.asarray([9], dtype=np.int32),
                 binary_packed=binary_packed,
                 binary_shape=binary_shape,
                 preview_present=np.asarray(
@@ -391,6 +457,33 @@ def save_trace_cache(
                 ),
                 preview_packed=preview_packed,
                 preview_shape=preview_shape,
+                editable_text_source_present=(
+                    editable_text_source_present
+                ),
+                editable_text_source_packed=(
+                    editable_text_source_packed
+                ),
+                editable_text_source_shape=(
+                    editable_text_source_shape
+                ),
+                source_text_outline_present=(
+                    source_text_outline_present
+                ),
+                source_text_outline_packed=(
+                    source_text_outline_packed
+                ),
+                source_text_outline_shape=(
+                    source_text_outline_shape
+                ),
+                uncertain_text_outline_present=(
+                    uncertain_text_outline_present
+                ),
+                uncertain_text_outline_packed=(
+                    uncertain_text_outline_packed
+                ),
+                uncertain_text_outline_shape=(
+                    uncertain_text_outline_shape
+                ),
                 points=all_points,
                 offsets=offsets,
                 parent=parent,
@@ -470,6 +563,45 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 preview_present
                 and {"preview_packed", "preview_shape"}.issubset(archive.files)
             )
+            else None
+        )
+        editable_text_source_mask = (
+            _unpack_foreground(
+                archive["editable_text_source_present"],
+                archive["editable_text_source_packed"],
+                archive["editable_text_source_shape"],
+            )
+            if {
+                "editable_text_source_present",
+                "editable_text_source_packed",
+                "editable_text_source_shape",
+            }.issubset(archive.files)
+            else None
+        )
+        source_text_outline_mask = (
+            _unpack_foreground(
+                archive["source_text_outline_present"],
+                archive["source_text_outline_packed"],
+                archive["source_text_outline_shape"],
+            )
+            if {
+                "source_text_outline_present",
+                "source_text_outline_packed",
+                "source_text_outline_shape",
+            }.issubset(archive.files)
+            else None
+        )
+        uncertain_text_outline_mask = (
+            _unpack_foreground(
+                archive["uncertain_text_outline_present"],
+                archive["uncertain_text_outline_packed"],
+                archive["uncertain_text_outline_shape"],
+            )
+            if {
+                "uncertain_text_outline_present",
+                "uncertain_text_outline_packed",
+                "uncertain_text_outline_shape",
+            }.issubset(archive.files)
             else None
         )
         points = np.asarray(archive["points"], dtype=np.float32)
@@ -597,6 +729,9 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         texts=texts,
         logos=logos,
         signatures=signatures,
+        editable_text_source_mask=editable_text_source_mask,
+        source_text_outline_mask=source_text_outline_mask,
+        uncertain_text_outline_mask=uncertain_text_outline_mask,
         preview_binary=preview_binary,
         threshold=threshold,
         warnings=warnings,

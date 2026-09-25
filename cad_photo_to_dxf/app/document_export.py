@@ -71,6 +71,7 @@ class DocumentExportResult:
     structure_ids: tuple[str, ...] = field(default_factory=tuple)
     ocr_candidate_count: int = 0
     fallback_text_count: int = 0
+    source_text_outline_count: int = 0
     residual_graphic_count: int = 0
     logo_count: int = 0
     signature_count: int = 0

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Sequence
-from typing import Any, Mapping
+from collections.abc import Mapping, Sequence
+from typing import Any
 
 import cv2
 import numpy as np
@@ -38,8 +38,13 @@ from .performance_observability import (
     record_performance,
 )
 from .resolution import image_resolution_scale
+from .source_support_lifecycle import SourceSupportLifecycle
 from .structural_roi import StructuralRoiSet, detect_structural_rois
-from .text_protection import detect_text_region_mask, filter_text_like_lines
+from .text_protection import (
+    TEXT_MASK_RESTORATION,
+    detect_text_region_mask,
+    filter_text_like_lines,
+)
 
 MAX_CONNECTION_DISTANCE_MM = 0.4
 PROTECTION_EXPANSION_MM = 0.0
@@ -152,7 +157,7 @@ def _axis_distance(angle: float) -> float:
 
 
 def _line_mask_coverage(line: LineSegment, mask: np.ndarray) -> float:
-    sample_count = max(12, min(512, int(math.ceil(line.length))))
+    sample_count = max(12, min(512, math.ceil(line.length)))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(np.int32), 0, mask.shape[1] - 1)
@@ -174,21 +179,19 @@ def _scan_support_mask(
         raise ValueError("Scan support image must be an 8-bit grayscale image")
     foreground_tones = gray[binary < 128]
     if foreground_tones.size:
-        dark_threshold = int(
-            round(
-                float(
-                    np.clip(
-                        np.percentile(foreground_tones, 50.0),
-                        110.0,
-                        135.0,
-                    )
+        dark_threshold = round(
+            float(
+                np.clip(
+                    np.percentile(foreground_tones, 50.0),
+                    110.0,
+                    135.0,
                 )
             )
         )
     else:
         dark_threshold = 125
     deep_ink = np.where(gray <= dark_threshold, 255, 0).astype(np.uint8)
-    radius = max(2, int(round(3.0 * scale)))
+    radius = max(2, round(3.0 * scale))
     return cv2.dilate(
         deep_ink,
         cv2.getStructuringElement(
@@ -203,7 +206,7 @@ def _binary_support_mask(binary: np.ndarray, *, scale: float) -> np.ndarray:
     """Return a narrow corridor around source ink for all page types."""
 
     foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
-    radius = max(1, int(round(1.5 * scale)))
+    radius = max(1, round(1.5 * scale))
     return cv2.dilate(
         foreground,
         cv2.getStructuringElement(
@@ -242,7 +245,7 @@ def _trim_endpoints_to_source_support(
 
     trimmed: list[LineSegment] = []
     for line in lines:
-        sample_count = max(2, min(4096, int(math.ceil(line.length)) + 1))
+        sample_count = max(2, min(4096, math.ceil(line.length) + 1))
         parameters = np.linspace(0.0, 1.0, sample_count)
         xs = line.x1 + (line.x2 - line.x1) * parameters
         ys = line.y1 + (line.y2 - line.y1) * parameters
@@ -277,7 +280,7 @@ def _line_support_quality(
 ) -> tuple[float, float]:
     """Return total ink support and the longest unsupported fraction."""
 
-    sample_count = max(12, min(2048, int(math.ceil(line.length))))
+    sample_count = max(12, min(2048, math.ceil(line.length)))
     xs = np.linspace(line.x1, line.x2, sample_count)
     ys = np.linspace(line.y1, line.y2, sample_count)
     xi = np.clip(np.rint(xs).astype(np.int32), 0, support_mask.shape[1] - 1)
@@ -295,6 +298,136 @@ def _line_support_quality(
         float(np.mean(supported)),
         float(longest_gap) / float(sample_count),
     )
+
+
+def consolidate_source_supported_thick_fragments(
+    lines: Sequence[LineSegment],
+    *,
+    binary: np.ndarray,
+    scale: float,
+) -> list[LineSegment]:
+    """Collapse overlapping centered fragments only when source ink is continuous.
+
+    Thick strokes commonly yield two edge detections plus several overlapping
+    centerline fragments.  This pass interprets those fragments before the
+    length/width eligibility gate.  It never spans a gap unless the proposed
+    centerline itself is continuously foreground-supported in the source binary.
+    """
+
+    if not lines:
+        return []
+    foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
+    minimum_width = max(4.0, 3.5 * scale)
+    eligible_indices = {
+        index
+        for index, line in enumerate(lines)
+        if line.width >= minimum_width
+        and "recenter_thick_stroke" in line.history
+        and _axis_orientation(line) is not None
+    }
+    remaining = set(eligible_indices)
+    groups: list[list[int]] = []
+    while remaining:
+        seed = remaining.pop()
+        group = [seed]
+        changed = True
+        while changed:
+            changed = False
+            for candidate_index in tuple(remaining):
+                candidate = lines[candidate_index]
+                orientation = _axis_orientation(candidate)
+                if orientation is None:
+                    continue
+                compatible = False
+                for member_index in group:
+                    member = lines[member_index]
+                    if _axis_orientation(member) != orientation:
+                        continue
+                    coordinate_tolerance = max(
+                        2.5 * scale,
+                        0.35 * min(member.width, candidate.width),
+                    )
+                    if (
+                        abs(
+                            _axis_coordinate(member, orientation)
+                            - _axis_coordinate(candidate, orientation)
+                        )
+                        > coordinate_tolerance
+                    ):
+                        continue
+                    member_start, member_end = _axis_interval(member, orientation)
+                    candidate_start, candidate_end = _axis_interval(
+                        candidate, orientation
+                    )
+                    gap = max(
+                        member_start - candidate_end,
+                        candidate_start - member_end,
+                        0.0,
+                    )
+                    gap_limit = max(
+                        2.0 * scale,
+                        0.75 * min(member.width, candidate.width),
+                    )
+                    if gap <= gap_limit:
+                        compatible = True
+                        break
+                if compatible:
+                    group.append(candidate_index)
+                    remaining.remove(candidate_index)
+                    changed = True
+        groups.append(group)
+
+    grouped_indices = {index for group in groups if len(group) > 1 for index in group}
+    output = [line for index, line in enumerate(lines) if index not in grouped_indices]
+    for group_indices in groups:
+        if len(group_indices) == 1:
+            if group_indices[0] in grouped_indices:
+                raise AssertionError("Invalid thick-fragment grouping")
+            continue
+        group = [lines[index] for index in group_indices]
+        orientation = _axis_orientation(group[0])
+        if orientation is None:
+            output.extend(group)
+            continue
+        coordinate = float(
+            np.median([_axis_coordinate(line, orientation) for line in group])
+        )
+        intervals = [_axis_interval(line, orientation) for line in group]
+        start = min(item[0] for item in intervals)
+        end = max(item[1] for item in intervals)
+        longest = max(group, key=lambda line: line.length)
+        if orientation == "horizontal":
+            merged = longest.copy(x1=start, y1=coordinate, x2=end, y2=coordinate)
+        else:
+            merged = longest.copy(x1=coordinate, y1=start, x2=coordinate, y2=end)
+        support_fraction, longest_gap_fraction = _line_support_quality(
+            merged,
+            foreground,
+        )
+        if support_fraction < 0.90 or longest_gap_fraction > 0.02:
+            output.extend(group)
+            continue
+        merged = merged.copy(
+            width=float(np.median([line.width for line in group])),
+            confidence=max(line.confidence for line in group),
+            source_ids=tuple(
+                sorted({source for line in group for source in line.source_ids})
+            ),
+            history=tuple(
+                dict.fromkeys(item for line in group for item in line.history)
+            )
+            + ("consolidate_source_supported_thick_fragments",),
+            classification_confidence=max(
+                line.classification_confidence for line in group
+            ),
+            classification_reasons=tuple(
+                dict.fromkeys(
+                    reason for line in group for reason in line.classification_reasons
+                )
+            ),
+        )
+        output.append(merged)
+    return sorted(output, key=lambda line: line.length, reverse=True)
 
 
 def _line_lies_on_crop_edge(
@@ -391,11 +524,11 @@ def _parallel_band_ink_support(
     # Sample only between the two detections. Padding with surrounding paper
     # made the decision unstable for anti-aliased coordinates (for example,
     # 2191.0 versus 2191.03 could add a complete white row).
-    cross_start = int(math.ceil(low))
-    cross_end = int(math.floor(high))
+    cross_start = math.ceil(low)
+    cross_end = math.floor(high)
     along_samples = max(
         12,
-        min(384, int(math.ceil((overlap_end - overlap_start) / max(1.0, scale)))),
+        min(384, math.ceil((overlap_end - overlap_start) / max(1.0, scale))),
     )
     along = np.linspace(overlap_start, overlap_end, along_samples)
     cross = np.arange(cross_start, cross_end + 1, dtype=np.int32)
@@ -624,13 +757,77 @@ def suppress_parallel_duplicate_detections(
             base = base.copy(
                 history=tuple(
                     dict.fromkeys(
-                        base.history
-                        + ("suppress_parallel_duplicate_detection",)
+                        base.history + ("suppress_parallel_duplicate_detection",)
                     )
                 )
             )
         output.append(base)
     return output
+
+
+def _line_interval_coverage(
+    line: LineSegment,
+    existing: Sequence[LineSegment],
+    *,
+    scale: float,
+) -> float:
+    """Measure how much of a proposed line already exists in base geometry."""
+
+    orientation = _axis_orientation(line)
+    if orientation is None:
+        return 0.0
+    tolerance = max(3.0, 3.0 * scale)
+    start, end = _axis_interval(line, orientation)
+    length = max(end - start, 1e-9)
+    coordinate = _axis_coordinate(line, orientation)
+    spans: list[tuple[float, float]] = []
+    for other in existing:
+        if _axis_orientation(other) != orientation:
+            continue
+        if abs(_axis_coordinate(other, orientation) - coordinate) > tolerance:
+            continue
+        other_start, other_end = _axis_interval(other, orientation)
+        if other_end < start - tolerance or end < other_start - tolerance:
+            continue
+        spans.append((max(start, other_start), min(end, other_end)))
+    if not spans:
+        return 0.0
+    spans.sort()
+    covered = 0.0
+    current_start, current_end = spans[0]
+    for span_start, span_end in spans[1:]:
+        if span_start <= current_end + tolerance:
+            current_end = max(current_end, span_end)
+            continue
+        covered += max(0.0, current_end - current_start)
+        current_start, current_end = span_start, span_end
+    covered += max(0.0, current_end - current_start)
+    return min(1.0, covered / length)
+
+
+def _prepare_late_restorations(
+    candidates: Sequence[LineSegment],
+    existing: Sequence[LineSegment],
+    *,
+    gray: np.ndarray,
+    scale: float,
+) -> tuple[LineSegment, ...]:
+    """Keep only thin, additive candidates not already represented by base lines."""
+
+    width_limit = max(3.0, 6.0 * scale)
+    uncovered = [
+        line
+        for line in candidates
+        if line.width <= width_limit
+        and _line_interval_coverage(line, existing, scale=scale) < 0.95
+    ]
+    return tuple(
+        suppress_parallel_duplicate_detections(
+            uncovered,
+            gray=gray,
+            scale=scale,
+        )
+    )
 
 
 def _structural_intersection_pair(
@@ -699,9 +896,7 @@ def extend_lines_to_first_intersection(
                     "role": "connection-protection",
                     "protected_categories": sorted(guard_payload),
                     "protection_guards": guard_payload,
-                    "protected_pixels": int(
-                        cv2.countNonZero(observed_protection)
-                    ),
+                    "protected_pixels": int(cv2.countNonZero(observed_protection)),
                     "structural_roi_ids": [],
                 },
             )
@@ -807,9 +1002,7 @@ def extend_lines_to_first_intersection(
                             "attempt_id": attempt_id,
                             "line_index": line_index,
                             "other_line_index": (
-                                right_index
-                                if line_index == left_index
-                                else left_index
+                                right_index if line_index == left_index else left_index
                             ),
                             "endpoint_index": endpoint_index,
                             "start": list(source_point),
@@ -877,9 +1070,7 @@ def extend_lines_to_first_intersection(
                             "attempt_id": attempt_id,
                             "line_index": line_index,
                             "other_line_index": (
-                                right_index
-                                if line_index == left_index
-                                else left_index
+                                right_index if line_index == left_index else left_index
                             ),
                             "endpoint_index": endpoint_index,
                             "start": list(source_point),
@@ -924,9 +1115,7 @@ def extend_lines_to_first_intersection(
                     "attempt_id": attempt_id,
                     "line_index": line_index,
                     "other_line_index": (
-                        right_index
-                        if line_index == left_index
-                        else left_index
+                        right_index if line_index == left_index else left_index
                     ),
                     "endpoint_index": endpoint_index,
                     "start": list(source_point),
@@ -938,16 +1127,10 @@ def extend_lines_to_first_intersection(
                     "bridge_pixels": int(decision.bridge_pixels),
                     "bridge_thickness": int(context.thickness),
                     "confidence": float(decision.confidence),
-                    "confidence_threshold": float(
-                        decision.confidence_threshold
-                    ),
+                    "confidence_threshold": float(decision.confidence_threshold),
                     "evidence": decision.evidence.payload(),
-                    "component_count_before": int(
-                        decision.component_count_before
-                    ),
-                    "component_count_after": int(
-                        decision.component_count_after
-                    ),
+                    "component_count_before": int(decision.component_count_before),
+                    "component_count_after": int(decision.component_count_after),
                 }
             if not decision.allowed:
                 if observation_sink is not None and record is not None:
@@ -1021,9 +1204,7 @@ def extend_lines_to_first_intersection(
                 "role": "connection-protection",
                 "protected_categories": sorted(guard_payload),
                 "protection_guards": guard_payload,
-                "protected_pixels": int(
-                    cv2.countNonZero(observed_protection)
-                ),
+                "protected_pixels": int(cv2.countNonZero(observed_protection)),
                 "structural_roi_ids": sorted(protected_roi_ids),
             },
         )
@@ -1098,6 +1279,8 @@ def reconstruct_straight_lines(
     progress_callback: ProgressCallback | None = None,
     observation_sink: ObservationSink | None = None,
     performance_callback: PerformanceCallback | None = None,
+    late_restoration_output: list[LineSegment] | None = None,
+    source_support_lifecycle: SourceSupportLifecycle | None = None,
 ) -> tuple[LineSegment, ...]:
     """Detect table/frame rules without turning text or logos into blue lines.
 
@@ -1121,6 +1304,7 @@ def reconstruct_straight_lines(
     )
     minimum_length = max(28.0 * scale, min(binary.shape[:2]) * 0.012)
     line_detection_started = performance_clock()
+    edge_proposals: list[LineSegment] = []
     raw = detect_lines(
         binary,
         LineDetectionParams(
@@ -1142,6 +1326,7 @@ def reconstruct_straight_lines(
                 stage, 0.55 * max(0.0, min(1.0, fraction))
             )
         ),
+        preparation_trace=edge_proposals,
     )
     record_performance(
         performance_callback,
@@ -1155,7 +1340,35 @@ def reconstruct_straight_lines(
             image=rasterize_lines(raw, binary.shape),
             payload={"lines": lines_payload(raw), "count": len(raw)},
         )
+        observe(
+            observation_sink,
+            "raw_line_candidates",
+            image=rasterize_lines(edge_proposals, binary.shape),
+            payload={
+                "role": "edge-proposals-before-recenter",
+                "lines": lines_payload(edge_proposals),
+                "count": len(edge_proposals),
+            },
+        )
     checkpoint(cancellation_token)
+    raw = consolidate_source_supported_thick_fragments(
+        raw,
+        binary=binary,
+        scale=scale,
+    )
+    if source_support_lifecycle is not None:
+        source_support_lifecycle.observe_detection("RAW", raw)
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "raw_line_candidates",
+            image=rasterize_lines(raw, binary.shape),
+            payload={
+                "role": "after-thick-stroke-consolidation",
+                "lines": lines_payload(raw),
+                "count": len(raw),
+            },
+        )
     candidates = [
         line
         for line in raw
@@ -1167,12 +1380,71 @@ def reconstruct_straight_lines(
         candidates,
         support_mask=source_support,
     )
+    if source_support_lifecycle is not None:
+        source_support_lifecycle.observe_detection(
+            "ELIGIBLE",
+            candidates,
+            eligible=True,
+        )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "line_candidates_text_filtered",
+            image=rasterize_lines(candidates, binary.shape),
+            payload={
+                "role": "before-text-filter",
+                "lines": lines_payload(candidates),
+                "count": len(candidates),
+            },
+        )
     text_protection = detect_text_region_mask(binary)
-    candidates, _text_protection = filter_text_like_lines(
+    candidates, text_protection = filter_text_like_lines(
         candidates,
         text_protection,
         binary.shape,
     )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "text_candidate_mask",
+            image=text_protection.mask,
+            payload={
+                "role": "line-filter-protection",
+                "candidate_component_count": (
+                    text_protection.candidate_component_count
+                ),
+                "text_region_count": text_protection.text_region_count,
+                "rejected_line_count": text_protection.rejected_line_count,
+                "restored_line_count": len(text_protection.restored_lines),
+            },
+        )
+    restoration_ids = {id(line) for line in text_protection.restored_lines}
+    restoration_candidates = tuple(
+        line for line in candidates if id(line) in restoration_ids
+    )
+    if late_restoration_output is not None:
+        candidates = [line for line in candidates if id(line) not in restoration_ids]
+        if support_mask is not None:
+            restoration_candidates = tuple(
+                _filter_scan_artifact_lines(
+                    restoration_candidates,
+                    support_mask=support_mask,
+                    image_shape=binary.shape,
+                    scale=scale,
+                )
+            )
+        restoration_candidates = tuple(
+            _filter_source_supported_lines(
+                restoration_candidates,
+                support_mask=source_support,
+            )
+        )
+        restoration_candidates = tuple(
+            _trim_endpoints_to_source_support(
+                restoration_candidates,
+                support_mask=source_support,
+            )
+        )
     if support_mask is not None:
         candidates = _filter_scan_artifact_lines(
             candidates,
@@ -1186,10 +1458,18 @@ def reconstruct_straight_lines(
             "line_candidates_text_filtered",
             image=rasterize_lines(candidates, binary.shape),
             payload={
+                "role": "after-text-filter",
                 "lines": lines_payload(candidates),
                 "count": len(candidates),
             },
         )
+    if source_support_lifecycle is not None:
+        source_support_lifecycle.observe_detection(
+            "POST_TEXT_FILTER_CANDIDATE",
+            (*candidates, *restoration_candidates),
+            eligible=True,
+        )
+    if observation_sink is not None:
         observe(
             observation_sink,
             "candidate_endpoints",
@@ -1252,9 +1532,7 @@ def reconstruct_straight_lines(
             )
             guard_payload = {
                 str(category): str(mechanism)
-                for category, mechanism in dict(
-                    protection_guards or {}
-                ).items()
+                for category, mechanism in dict(protection_guards or {}).items()
             }
             observe(
                 observation_sink,
@@ -1264,9 +1542,7 @@ def reconstruct_straight_lines(
                     "role": "connection-protection",
                     "protected_categories": sorted(guard_payload),
                     "protection_guards": guard_payload,
-                    "protected_pixels": int(
-                        cv2.countNonZero(observed_protection)
-                    ),
+                    "protected_pixels": int(cv2.countNonZero(observed_protection)),
                     "structural_roi_ids": [],
                 },
             )
@@ -1286,6 +1562,22 @@ def reconstruct_straight_lines(
                 "structural_line_candidate_mask",
                 image=blank,
                 payload={"lines": [], "count": 0},
+            )
+        if late_restoration_output is not None:
+            restoration_gray = (
+                binary if scan_support_gray is None else scan_support_gray
+            )
+            late_restorations = _prepare_late_restorations(
+                restoration_candidates,
+                (),
+                gray=restoration_gray,
+                scale=scale,
+            )
+            late_restoration_output.extend(
+                line.copy(
+                    history=tuple(dict.fromkeys((*line.history, TEXT_MASK_RESTORATION)))
+                )
+                for line in late_restorations
             )
         return ()
 
@@ -1318,9 +1610,7 @@ def reconstruct_straight_lines(
         scale=scale,
     )
     report_progress(progress_callback, "line-cleaning", 0.86)
-    normalized_source_dpi = (
-        None if source_dpi is None else float(source_dpi)
-    )
+    normalized_source_dpi = None if source_dpi is None else float(source_dpi)
     extension_budget = (
         max(2.0, 3.0 * scale)
         if normalized_source_dpi is None
@@ -1358,16 +1648,10 @@ def reconstruct_straight_lines(
                 "rois": rois_payload(structural_rois.rois, cleaned),
                 "count": len(structural_rois.rois),
                 "extension_budget": float(extension_budget),
-                "maximum_connection_distance_mm": float(
-                    MAX_CONNECTION_DISTANCE_MM
-                ),
+                "maximum_connection_distance_mm": float(MAX_CONNECTION_DISTANCE_MM),
                 "source_dpi": normalized_source_dpi,
-                "roi_intersection_tolerance_pixels": float(
-                    max(2.0, 3.0 * scale)
-                ),
-                "protection_expansion_mm": float(
-                    PROTECTION_EXPANSION_MM
-                ),
+                "roi_intersection_tolerance_pixels": float(max(2.0, 3.0 * scale)),
+                "protection_expansion_mm": float(PROTECTION_EXPANSION_MM),
             },
         )
     connectivity_started = performance_clock()
@@ -1417,6 +1701,26 @@ def reconstruct_straight_lines(
                 "count": len(extended),
             },
         )
+    if source_support_lifecycle is not None:
+        source_support_lifecycle.observe_detection(
+            "POST_FILTER_CANDIDATE",
+            (*extended, *restoration_candidates),
+            eligible=True,
+        )
+    if late_restoration_output is not None:
+        restoration_gray = binary if scan_support_gray is None else scan_support_gray
+        late_restorations = _prepare_late_restorations(
+            restoration_candidates,
+            extended,
+            gray=restoration_gray,
+            scale=scale,
+        )
+        late_restoration_output.extend(
+            line.copy(
+                history=tuple(dict.fromkeys((*line.history, TEXT_MASK_RESTORATION)))
+            )
+            for line in late_restorations
+        )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "line-reconstruction", 1.0)
     return tuple(
@@ -1441,19 +1745,19 @@ def suppress_reconstructed_lines(
     if not lines:
         return result
     scale = image_resolution_scale(binary.shape)
-    maximum_thickness = max(5, int(round(20.0 * scale)))
+    maximum_thickness = max(5, round(20.0 * scale))
     for line in lines:
         thickness = max(
             2,
             min(
                 maximum_thickness,
-                int(math.ceil(max(1.0, line.width) * 1.35)) + 2,
+                math.ceil(max(1.0, line.width) * 1.35) + 2,
             ),
         )
         cv2.line(
             result,
-            (int(round(line.x1)), int(round(line.y1))),
-            (int(round(line.x2)), int(round(line.y2))),
+            (round(line.x1), round(line.y1)),
+            (round(line.x2), round(line.y2)),
             255,
             thickness,
             cv2.LINE_8,

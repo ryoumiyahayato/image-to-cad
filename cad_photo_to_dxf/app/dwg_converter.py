@@ -39,6 +39,7 @@ _VERSION_MAP = {
     "AC1032": "ACAD2018",
 }
 _VALID_VERSIONS = set(_VERSION_MAP.values())
+_ODA_TIMEOUT_SECONDS = 1800
 
 
 def _settings_path() -> Path:
@@ -192,13 +193,18 @@ def _run_converter(
     source_path: Path,
     output_dir: Path,
     version: str,
+    *,
+    output_type: str = "DWG",
 ) -> subprocess.CompletedProcess[str]:
+    normalized_output_type = str(output_type).upper()
+    if normalized_output_type not in {"DWG", "DXF"}:
+        raise ValueError(f"不支持的 ODA 输出类型：{output_type}")
     arguments = [
         str(executable),
         str(source_path.parent),
         str(output_dir),
         _mapped_version(version),
-        "DWG",
+        normalized_output_type,
         "0",
         "1",
         source_path.name,
@@ -208,7 +214,7 @@ def _run_converter(
         "text": True,
         "encoding": locale.getpreferredencoding(False) or "utf-8",
         "errors": "replace",
-        "timeout": 1800,
+        "timeout": _ODA_TIMEOUT_SECONDS,
         "check": False,
     }
     if os.name == "nt":
@@ -218,6 +224,21 @@ def _run_converter(
         kwargs["startupinfo"] = startupinfo
         kwargs["creationflags"] = subprocess.CREATE_NO_WINDOW
     return subprocess.run(arguments, **kwargs)  # type: ignore[arg-type]
+
+
+def _converter_failure_detail(
+    completed: subprocess.CompletedProcess[str],
+    *,
+    fallback: str,
+) -> str:
+    details = [f"exit status {completed.returncode}"]
+    for stream in (completed.stderr, completed.stdout):
+        text = str(stream or "").strip()
+        if text:
+            details.append(text)
+    if len(details) == 1:
+        details.append(fallback)
+    return "; ".join(details)
 
 
 def convert_dxf_to_dwg(
@@ -277,4 +298,87 @@ def convert_dxf_to_dwg(
 
     if not destination_path.is_file() or destination_path.stat().st_size <= 0:
         raise DwgConversionUnavailable("ODA 未生成有效的 DWG 文件")
+    return destination_path
+
+
+def convert_dwg_to_dxf(
+    source: str | Path,
+    destination: str | Path,
+    *,
+    version: str = "R2018",
+    converter_executable: str | Path | None = None,
+) -> Path:
+    """Convert one DWG to an explicit DXF path through the existing ODA CLI."""
+
+    source_path = Path(source).expanduser().resolve()
+    destination_path = Path(destination).expanduser().resolve()
+    if source_path.suffix.lower() != ".dwg":
+        raise ValueError(f"DWG 源文件必须使用 .dwg 后缀：{source_path}")
+    if not source_path.is_file():
+        raise FileNotFoundError(source_path)
+    if destination_path.suffix.lower() != ".dxf":
+        destination_path = destination_path.with_suffix(".dxf")
+    if destination_path == source_path:
+        raise ValueError("DWG 源文件与 DXF 输出文件不能相同")
+    destination_path.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        executable = find_oda_converter(converter_executable)
+    except Exception as exc:
+        raise DwgConversionUnavailable(str(exc)) from exc
+    if executable is None:
+        raise DwgConversionUnavailable(
+            "未找到 ODA File Converter。安装后程序会自动调用；"
+            "也可以只选择一次 ODAFileConverter.exe。"
+        )
+    configure_oda_converter(executable)
+
+    try:
+        with TemporaryDirectory(prefix="cadphoto_oda_") as temp_dir:
+            output_dir = Path(temp_dir)
+            completed = _run_converter(
+                executable,
+                source_path,
+                output_dir,
+                version,
+                output_type="DXF",
+            )
+            candidates = sorted(output_dir.glob("*.dxf"))
+            expected = output_dir / source_path.with_suffix(".dxf").name
+            generated = expected if expected.is_file() else (
+                candidates[0] if candidates else None
+            )
+            if completed.returncode != 0:
+                detail = _converter_failure_detail(
+                    completed,
+                    fallback="ODA 转换器返回失败状态",
+                )
+                raise DwgConversionUnavailable(
+                    f"DWG 转 DXF 失败（当前使用：{executable}）：{detail}"
+                )
+            if generated is None or generated.stat().st_size <= 0:
+                detail = _converter_failure_detail(
+                    completed,
+                    fallback="ODA 未生成输出文件",
+                )
+                raise DwgConversionUnavailable(
+                    f"DWG 转 DXF 失败（当前使用：{executable}）：{detail}"
+                )
+            if destination_path.exists():
+                destination_path.unlink()
+            try:
+                shutil.move(str(generated), str(destination_path))
+            except OSError:
+                shutil.copy2(generated, destination_path)
+    except subprocess.TimeoutExpired as exc:
+        raise DwgConversionUnavailable("ODA DWG 转 DXF 转换超过 30 分钟，已终止。") from exc
+    except DwgConversionUnavailable:
+        raise
+    except Exception as exc:
+        raise DwgConversionUnavailable(
+            f"DWG 转 DXF 失败（当前使用：{executable}）：{exc}"
+        ) from exc
+
+    if not destination_path.is_file() or destination_path.stat().st_size <= 0:
+        raise DwgConversionUnavailable("ODA 未生成有效的 DXF 文件")
     return destination_path
