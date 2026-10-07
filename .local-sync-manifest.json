@@ -1,5 +1,5 @@
 {
-  "content_sha256": "5964978cbefc8645bc0c1c42aa92b19e255b56cd4095b0a7ace2fe997ebf78e6",
+  "content_sha256": "b69860a881ba35f3db94032930d7faa5e12c994546008a528836c7e40c4f7cb3",
   "excluded": [
     {
       "path": ".git/",
@@ -23,11 +23,11 @@
     },
     {
       "path": "architecture-audit-v1/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "cad_photo_to_dxf/.gitignore",
-      "reason": "binary/unapproved file type"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
       "path": "cad_photo_to_dxf/.pytest_cache/",
@@ -43,15 +43,15 @@
     },
     {
       "path": "cad_photo_to_dxf/cad_photo_to_dxf.spec",
-      "reason": "binary/unapproved file type"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
-      "path": "cad_photo_to_dxf/docs/validation/",
-      "reason": "data/material/secret/cache/nested-worktree path"
+      "path": "cad_photo_to_dxf/docs/",
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
-      "path": "cad_photo_to_dxf/installer/cad_photo_to_dxf.iss",
-      "reason": "binary/unapproved file type"
+      "path": "cad_photo_to_dxf/installer/",
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "cad_photo_to_dxf/local-artifacts/",
@@ -59,27 +59,43 @@
     },
     {
       "path": "cad_photo_to_dxf/repository-hygiene.json",
-      "reason": "content excluded: local profile path"
+      "reason": "non-code JSON/labels/frozen evidence excluded before reading"
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/librecad-font.json",
+      "reason": "non-code JSON/labels/frozen evidence excluded before reading"
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/librecad-font.lock.json",
+      "reason": "non-code JSON/labels/frozen evidence excluded before reading"
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/manifest.json",
+      "reason": "non-code JSON/labels/frozen evidence excluded before reading"
     },
     {
       "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
-      "reason": "binary/unapproved file type"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
       "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.zip",
-      "reason": "binary/unapproved file type"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
-      "path": "cad_photo_to_dxf/samples/test.jpg",
-      "reason": "binary/unapproved file type"
+      "path": "cad_photo_to_dxf/samples/",
+      "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
-      "path": "cad_photo_to_dxf/tests/real_regression/assets/",
+      "path": "cad_photo_to_dxf/tests/fixtures/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/real_regression/",
       "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
       "path": "cad_photo_to_dxf/tests/test_font_aware_ocr_export.py",
-      "reason": "content excluded: binary content"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
       "path": "cad_photo_to_dxf/tmp/",
@@ -95,11 +111,11 @@
     },
     {
       "path": "historical-verification-20261005/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "instrumented-e03/",
-      "reason": "nested Git repository/worktree"
+      "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
       "path": "local-artifacts/",
@@ -107,27 +123,27 @@
     },
     {
       "path": "maintenance/HISTORY_CLEANUP.md",
-      "reason": "content excluded: personal email"
+      "reason": "file outside reviewed exact file allowlist"
     },
     {
       "path": "p1-preservation-census-20261005/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "product-uat-20261005/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "storage-audit-2026-10-03/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     },
     {
       "path": "storage-cleanup-20261006/",
-      "reason": "outside code scope"
+      "reason": "directory outside reviewed exact file allowlist"
     }
   ],
-  "included_bytes": 1736168,
-  "included_files": 190,
+  "included_bytes": 1647340,
+  "included_files": 181,
   "owner_id": "7ed35d2d-c560-4b08-8c28-78af6d1cae6b",
   "remote": "https://github.com/ryoumiyahayato/image-to-cad.git",
   "schema": 1,
