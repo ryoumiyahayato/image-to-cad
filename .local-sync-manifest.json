@@ -1,0 +1,140 @@
+{
+  "content_sha256": "5964978cbefc8645bc0c1c42aa92b19e255b56cd4095b0a7ace2fe997ebf78e6",
+  "excluded": [
+    {
+      "path": ".git/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": ".github/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": ".pytest_cache/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": ".ruff_cache/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": ".venv/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "architecture-audit-v1/",
+      "reason": "outside code scope"
+    },
+    {
+      "path": "cad_photo_to_dxf/.gitignore",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/.pytest_cache/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/.ruff_cache/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/build/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/cad_photo_to_dxf.spec",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/docs/validation/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/installer/cad_photo_to_dxf.iss",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/local-artifacts/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/repository-hygiene.json",
+      "reason": "content excluded: local profile path"
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.zip",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/samples/test.jpg",
+      "reason": "binary/unapproved file type"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/real_regression/assets/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_font_aware_ocr_export.py",
+      "reason": "content excluded: binary content"
+    },
+    {
+      "path": "cad_photo_to_dxf/tmp/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "external-scan/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "historical-verification-20261005/",
+      "reason": "outside code scope"
+    },
+    {
+      "path": "instrumented-e03/",
+      "reason": "nested Git repository/worktree"
+    },
+    {
+      "path": "local-artifacts/",
+      "reason": "data/material/secret/cache/nested-worktree path"
+    },
+    {
+      "path": "maintenance/HISTORY_CLEANUP.md",
+      "reason": "content excluded: personal email"
+    },
+    {
+      "path": "p1-preservation-census-20261005/",
+      "reason": "outside code scope"
+    },
+    {
+      "path": "product-uat-20261005/",
+      "reason": "outside code scope"
+    },
+    {
+      "path": "storage-audit-2026-10-03/",
+      "reason": "outside code scope"
+    },
+    {
+      "path": "storage-cleanup-20261006/",
+      "reason": "outside code scope"
+    }
+  ],
+  "included_bytes": 1736168,
+  "included_files": 190,
+  "owner_id": "7ed35d2d-c560-4b08-8c28-78af6d1cae6b",
+  "remote": "https://github.com/ryoumiyahayato/image-to-cad.git",
+  "schema": 1,
+  "scope": "sanitized code snapshot; exclusions are incomplete folders/files, not deleted source data",
+  "source_branch": "main",
+  "source_head": "c566d5f59391b851b0bd9e9ad6d999359bfe8282",
+  "source_id": "CAD",
+  "target_branch": "local-sync/main",
+  "tracked_code_deletions": []
+}

@@ -1,0 +1,549 @@
+from __future__ import annotations
+
+from collections.abc import Sequence
+from dataclasses import replace
+from math import ceil
+from unicodedata import east_asian_width
+
+import cv2
+import numpy as np
+
+from .auxiliary_recognition import TextCandidate
+from .structural_roi import verified_structural_rule_masks
+
+
+_TILE_SIZE = 3072
+_TILE_OVERLAP = 384
+
+
+def tile_regions(
+    image_shape: tuple[int, int],
+    *,
+    tile_size: int = _TILE_SIZE,
+    overlap: int = _TILE_OVERLAP,
+) -> tuple[tuple[int, int, int, int], ...]:
+    """Return overlapping native-resolution OCR tiles for large engineering pages."""
+
+    height, width = (int(image_shape[0]), int(image_shape[1]))
+    size = max(512, int(tile_size))
+    overlap_value = min(size // 3, max(0, int(overlap)))
+    if max(height, width) <= size:
+        return ()
+    step = max(256, size - overlap_value)
+
+    def starts(length: int) -> list[int]:
+        if length <= size:
+            return [0]
+        values = list(range(0, max(1, length - size + 1), step))
+        final = max(0, length - size)
+        if not values or values[-1] != final:
+            values.append(final)
+        return values
+
+    regions: list[tuple[int, int, int, int]] = []
+    for top in starts(height):
+        for left in starts(width):
+            right = min(width, left + size)
+            bottom = min(height, top + size)
+            regions.append((left, top, right, bottom))
+    return tuple(regions)
+
+
+def candidate_touches_internal_tile_edge(
+    candidate: TextCandidate,
+    *,
+    tile_region: tuple[int, int, int, int],
+    page_shape: tuple[int, int],
+    margin: int = 18,
+) -> bool:
+    """Reject partial lines cut by an internal tile edge before deduplication."""
+
+    left, top, right, bottom = tile_region
+    page_height, page_width = page_shape
+    x, y, width, height = candidate.bbox
+    local_right = x + width
+    local_bottom = y + height
+    tile_width = right - left
+    tile_height = bottom - top
+    return bool(
+        (left > 0 and x <= margin)
+        or (right < page_width and local_right >= tile_width - margin)
+        or (top > 0 and y <= margin)
+        or (bottom < page_height and local_bottom >= tile_height - margin)
+    )
+
+
+def offset_candidate(
+    candidate: TextCandidate,
+    *,
+    offset_x: int,
+    offset_y: int,
+    source: str | None = None,
+) -> TextCandidate:
+    x, y, width, height = candidate.bbox
+    quad = None
+    if candidate.quad:
+        quad = tuple(
+            (float(px) + float(offset_x), float(py) + float(offset_y))
+            for px, py in candidate.quad
+        )
+    character_boxes = tuple(
+        (cx + int(offset_x), cy + int(offset_y), cw, ch)
+        for cx, cy, cw, ch in candidate.character_boxes
+    )
+    return replace(
+        candidate,
+        bbox=(x + int(offset_x), y + int(offset_y), width, height),
+        quad=quad,
+        character_boxes=character_boxes,
+        source=source or candidate.source,
+    )
+
+
+def _gray(image: np.ndarray) -> np.ndarray:
+    if image.ndim == 2:
+        return np.ascontiguousarray(image, dtype=np.uint8)
+    if image.ndim == 3 and image.shape[2] == 4:
+        return cv2.cvtColor(image, cv2.COLOR_BGRA2GRAY)
+    if image.ndim == 3 and image.shape[2] == 3:
+        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    raise ValueError("Unsupported OCR layout image")
+
+
+def _remove_long_rules(mask: np.ndarray) -> np.ndarray:
+    h, w = mask.shape
+    horizontal = cv2.morphologyEx(
+        mask,
+        cv2.MORPH_OPEN,
+        cv2.getStructuringElement(cv2.MORPH_RECT, (max(9, int(w * 0.55)), 1)),
+    )
+    vertical = cv2.morphologyEx(
+        mask,
+        cv2.MORPH_OPEN,
+        cv2.getStructuringElement(cv2.MORPH_RECT, (1, max(9, int(h * 0.75)))),
+    )
+    cleaned = cv2.subtract(mask, cv2.max(horizontal, vertical))
+    return cleaned if cv2.countNonZero(cleaned) else mask
+
+
+def _binary_crop(image: np.ndarray, bounds: tuple[int, int, int, int]) -> np.ndarray:
+    left, top, right, bottom = bounds
+    crop = _gray(image[top:bottom, left:right])
+    _threshold, mask = cv2.threshold(
+        crop,
+        0,
+        255,
+        cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU,
+    )
+    return _remove_long_rules(mask)
+
+
+def _text_mask(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    x, y, width, height = bbox
+    image_height, image_width = image.shape[:2]
+    left = max(0, int(x))
+    top = max(0, int(y))
+    right = min(image_width, int(x + width))
+    bottom = min(image_height, int(y + height))
+    if right <= left or bottom <= top:
+        return np.zeros((1, 1), dtype=np.uint8)
+    return _binary_crop(image, (left, top, right, bottom))
+
+
+def _crosses_candidate_boundary(
+    image: np.ndarray,
+    bbox: tuple[int, int, int, int],
+) -> bool:
+    """Detect a text box that captures only part of a larger connected stroke."""
+
+    x, y, width, height = bbox
+    image_height, image_width = image.shape[:2]
+    margin_x = max(6, int(round(max(width * 0.08, height * 0.40))))
+    margin_y = max(6, int(round(height * 0.45)))
+    left = max(0, int(x) - margin_x)
+    top = max(0, int(y) - margin_y)
+    right = min(image_width, int(x + width) + margin_x)
+    bottom = min(image_height, int(y + height) + margin_y)
+    if right <= left or bottom <= top:
+        return False
+
+    expanded = _binary_crop(image, (left, top, right, bottom))
+    inner_left = max(0, int(x) - left)
+    inner_top = max(0, int(y) - top)
+    inner_right = min(expanded.shape[1], int(x + width) - left)
+    inner_bottom = min(expanded.shape[0], int(y + height) - top)
+    if inner_right <= inner_left or inner_bottom <= inner_top:
+        return False
+
+    foreground = np.where(expanded > 0, 255, 0).astype(np.uint8)
+    component_count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+        foreground,
+        connectivity=8,
+    )
+    if component_count <= 1:
+        return False
+
+    inner_labels = labels[inner_top:inner_bottom, inner_left:inner_right]
+    minimum_extension_x = max(3, int(round(height * 0.16)))
+    minimum_extension_y = max(3, int(round(height * 0.14)))
+    for label_value in np.unique(inner_labels):
+        if label_value <= 0:
+            continue
+        inside_count = int(np.count_nonzero(inner_labels == label_value))
+        if inside_count < max(5, int(height * 0.12)):
+            continue
+        component_left = int(stats[label_value, cv2.CC_STAT_LEFT])
+        component_top = int(stats[label_value, cv2.CC_STAT_TOP])
+        component_right = component_left + int(stats[label_value, cv2.CC_STAT_WIDTH])
+        component_bottom = component_top + int(stats[label_value, cv2.CC_STAT_HEIGHT])
+        extends = bool(
+            component_left < inner_left - minimum_extension_x
+            or component_right > inner_right + minimum_extension_x
+            or component_top < inner_top - minimum_extension_y
+            or component_bottom > inner_bottom + minimum_extension_y
+        )
+        if not extends:
+            continue
+        total_count = int(stats[label_value, cv2.CC_STAT_AREA])
+        outside_count = max(0, total_count - inside_count)
+        if outside_count >= max(5, int(round(inside_count * 0.12))):
+            return True
+    return False
+
+
+def _character_units(character: str) -> float:
+    if character.isspace():
+        return 0.35
+    if east_asian_width(character) in {"W", "F", "A"}:
+        return 1.0
+    if character in ".,;:'`|!ijlI1()[]{}":
+        return 0.34
+    return 0.60
+
+
+def _valley_boundary(
+    projection: np.ndarray,
+    target: float,
+    radius: int,
+    minimum: int,
+    maximum: int,
+) -> int:
+    if maximum <= minimum:
+        return minimum
+    center = int(round(target))
+    left = max(minimum, center - radius)
+    right = min(maximum, center + radius)
+    if right <= left:
+        return max(minimum, min(center, maximum))
+    values = projection[left : right + 1]
+    return int(left + int(np.argmin(values)))
+
+
+def _horizontal_character_boxes(
+    mask: np.ndarray,
+    candidate: TextCandidate,
+) -> tuple[tuple[tuple[int, int, int, int], ...], bool, str]:
+    content = " ".join(candidate.text.replace("\r", " ").replace("\n", " ").split())
+    characters = list(content)
+    non_space_count = sum(1 for character in characters if not character.isspace())
+    if not characters or non_space_count == 0:
+        return (), False, "OCR 内容为空"
+    if abs(float(candidate.rotation_deg)) > 8.0:
+        return (), False, "倾斜或竖排候选需人工确认"
+
+    ink_count = int(cv2.countNonZero(mask))
+    if ink_count <= max(4, mask.size // 1000):
+        return (), False, "识别框内没有足够原始笔画"
+
+    rows = np.flatnonzero(np.count_nonzero(mask, axis=1))
+    columns = np.flatnonzero(np.count_nonzero(mask, axis=0))
+    if rows.size == 0 or columns.size == 0:
+        return (), False, "识别框内没有可分割笔画"
+    ink_top = int(rows[0])
+    ink_bottom = int(rows[-1]) + 1
+    ink_left = int(columns[0])
+    ink_right = int(columns[-1]) + 1
+    ink_width = max(1, ink_right - ink_left)
+
+    units = [_character_units(character) for character in characters]
+    total_units = max(sum(units), 0.01)
+    average_cell = ink_width / max(total_units, 0.01)
+    projection = np.count_nonzero(mask, axis=0).astype(np.int32)
+    radius = max(2, int(round(average_cell * 0.28)))
+
+    boundaries = [ink_left]
+    cumulative = 0.0
+    for unit in units[:-1]:
+        cumulative += unit
+        target = ink_left + ink_width * cumulative / total_units
+        boundary = _valley_boundary(
+            projection,
+            target,
+            radius,
+            boundaries[-1] + 1,
+            ink_right - 1,
+        )
+        boundaries.append(boundary)
+    boundaries.append(ink_right)
+
+    boxes: list[tuple[int, int, int, int]] = []
+    visible_segments = 0
+    suspicious_wide_component = False
+    x0, y0, _bbox_width, _bbox_height = candidate.bbox
+
+    connected = np.ascontiguousarray(mask)
+    component_count, _labels, stats, _centroids = cv2.connectedComponentsWithStats(
+        np.where(connected > 0, 255, 0).astype(np.uint8),
+        connectivity=8,
+    )
+    if component_count > 1:
+        maximum_component_width = int(stats[1:, cv2.CC_STAT_WIDTH].max())
+        suspicious_wide_component = bool(
+            non_space_count >= 2 and maximum_component_width > average_cell * 2.25
+        )
+
+    for index, character in enumerate(characters):
+        left = int(boundaries[index])
+        right = int(boundaries[index + 1])
+        if right <= left:
+            right = left + 1
+        if character.isspace():
+            continue
+        segment = mask[ink_top:ink_bottom, left:right]
+        segment_columns = np.flatnonzero(np.count_nonzero(segment, axis=0))
+        segment_rows = np.flatnonzero(np.count_nonzero(segment, axis=1))
+        if segment_columns.size and segment_rows.size:
+            visible_segments += 1
+            local_left = left + int(segment_columns[0])
+            local_right = left + int(segment_columns[-1]) + 1
+            local_top = ink_top + int(segment_rows[0])
+            local_bottom = ink_top + int(segment_rows[-1]) + 1
+        else:
+            local_left, local_right = left, right
+            local_top, local_bottom = ink_top, ink_bottom
+        pad_x = max(1, int(ceil((local_right - local_left) * 0.05)))
+        pad_y = max(1, int(ceil((local_bottom - local_top) * 0.06)))
+        local_left = max(0, local_left - pad_x)
+        local_right = min(mask.shape[1], local_right + pad_x)
+        local_top = max(0, local_top - pad_y)
+        local_bottom = min(mask.shape[0], local_bottom + pad_y)
+        boxes.append(
+            (
+                x0 + local_left,
+                y0 + local_top,
+                max(1, local_right - local_left),
+                max(1, local_bottom - local_top),
+            )
+        )
+
+    visible_ratio = visible_segments / max(non_space_count, 1)
+    safe = bool(
+        len(boxes) == non_space_count
+        and visible_ratio >= 0.72
+        and not suspicious_wide_component
+    )
+    if suspicious_wide_component:
+        note = "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认"
+    elif visible_ratio < 0.72:
+        note = "逐字分割覆盖不足，保留原轮廓等待人工确认"
+    else:
+        note = "已按原始笔画间隔生成逐字定位框"
+    return tuple(boxes), safe, note
+
+
+def prepare_candidate_layout(
+    image: np.ndarray, candidate: TextCandidate
+) -> TextCandidate:
+    """Attach per-character positions and prevent unsafe partial OCR replacement."""
+
+    try:
+        mask = _text_mask(image, candidate.bbox)
+        character_boxes, safe, note = _horizontal_character_boxes(mask, candidate)
+        if _crosses_candidate_boundary(image, candidate.bbox):
+            safe = False
+            note = "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认"
+    except (ValueError, cv2.error):
+        character_boxes, safe, note = (), False, "无法验证原始笔画覆盖，等待人工确认"
+    return replace(
+        candidate,
+        character_boxes=character_boxes,
+        replacement_safe=bool(safe),
+        review_note=note,
+    )
+
+
+def _projection_centers(values: np.ndarray) -> tuple[int, ...]:
+    positions = np.flatnonzero(values)
+    if not positions.size:
+        return ()
+    runs: list[list[int]] = [[int(positions[0])]]
+    for raw_value in positions[1:]:
+        value = int(raw_value)
+        if value <= runs[-1][-1] + 1:
+            runs[-1].append(value)
+        else:
+            runs.append([value])
+    return tuple(int(round(sum(run) / len(run))) for run in runs)
+
+
+def _supporting_rule_centers(
+    mask: np.ndarray,
+    centers: Sequence[int],
+    *,
+    orientation: str,
+    candidate_bbox: tuple[int, int, int, int],
+) -> tuple[int, ...]:
+    """Reject glyph strokes that survived morphology as apparent cell rules."""
+
+    x, y, width, height = candidate_bbox
+    anchor = y + height * 0.5 if orientation == "vertical" else x + width * 0.5
+    candidate_start = y if orientation == "vertical" else x
+    candidate_end = y + height if orientation == "vertical" else x + width
+    ratio = 1.55 if orientation == "vertical" else 1.25
+    minimum_span = max(
+        25,
+        int(round((height if orientation == "vertical" else width) * ratio)),
+    )
+    supported: list[int] = []
+    for center in centers:
+        if orientation == "vertical":
+            left = max(0, int(center) - 2)
+            right = min(mask.shape[1], int(center) + 3)
+            values = np.flatnonzero(np.any(mask[:, left:right] > 0, axis=1))
+        else:
+            top = max(0, int(center) - 2)
+            bottom = min(mask.shape[0], int(center) + 3)
+            values = np.flatnonzero(np.any(mask[top:bottom, :] > 0, axis=0))
+        if not values.size:
+            continue
+        runs: list[list[int]] = [[int(values[0])]]
+        for raw_value in values[1:]:
+            value = int(raw_value)
+            if value <= runs[-1][-1] + 3:
+                runs[-1].append(value)
+            else:
+                runs.append([value])
+        relevant = [
+            run
+            for run in runs
+            if run[-1] >= candidate_start and run[0] <= candidate_end
+        ]
+        if not relevant:
+            relevant = [
+                min(runs, key=lambda run: abs((run[0] + run[-1]) * 0.5 - anchor))
+            ]
+        span = max(run[-1] - run[0] + 1 for run in relevant)
+        if span >= minimum_span:
+            supported.append(int(center))
+    return tuple(supported)
+
+
+def constrain_texts_to_table_cells(
+    binary: np.ndarray,
+    texts: Sequence[TextCandidate],
+) -> tuple[TextCandidate, ...]:
+    """Clip OCR placement boxes to enclosing ruled cells when all sides exist."""
+
+    if binary.ndim != 2 or binary.size == 0 or not texts:
+        return tuple(texts)
+    page_height, page_width = binary.shape
+    foreground = np.where(binary < 128, 255, 0).astype(np.uint8)
+    horizontal, vertical = verified_structural_rule_masks(foreground)
+
+    constrained: list[TextCandidate] = []
+    for item in texts:
+        if item.kind not in {"text_candidate", "dimension_text_candidate"}:
+            constrained.append(item)
+            continue
+        x, y, width, height = item.bbox
+        center_x = x + width * 0.5
+        center_y = y + height * 0.5
+        band_top = max(0, int(round(y - height * 0.30)))
+        band_bottom = min(page_height, int(round(y + height * 1.30)))
+        band_left = max(0, int(round(x - height * 0.80)))
+        band_right = min(page_width, int(round(x + width + height * 0.80)))
+        if band_bottom <= band_top or band_right <= band_left:
+            constrained.append(item)
+            continue
+
+        vertical_projection = np.count_nonzero(
+            vertical[band_top:band_bottom] > 0,
+            axis=0,
+        )
+        vertical_centers = _projection_centers(
+            vertical_projection >= max(4, int(round((band_bottom - band_top) * 0.45)))
+        )
+        vertical_centers = _supporting_rule_centers(
+            vertical,
+            vertical_centers,
+            orientation="vertical",
+            candidate_bbox=item.bbox,
+        )
+        horizontal_projection = np.count_nonzero(
+            horizontal[:, band_left:band_right] > 0,
+            axis=1,
+        )
+        horizontal_centers = _projection_centers(
+            horizontal_projection >= max(4, int(round((band_right - band_left) * 0.45)))
+        )
+        horizontal_centers = _supporting_rule_centers(
+            horizontal,
+            horizontal_centers,
+            orientation="horizontal",
+            candidate_bbox=item.bbox,
+        )
+        lefts = [value for value in vertical_centers if value < center_x]
+        rights = [value for value in vertical_centers if value > center_x]
+        tops = [value for value in horizontal_centers if value < center_y]
+        bottoms = [value for value in horizontal_centers if value > center_y]
+        if not lefts or not rights or not tops or not bottoms:
+            constrained.append(item)
+            continue
+
+        cell_left = max(lefts) + 2
+        cell_right = min(rights) - 1
+        cell_top = max(tops) + 2
+        cell_bottom = min(bottoms) - 1
+        new_left = max(x, cell_left)
+        new_top = max(y, cell_top)
+        new_right = min(x + width, cell_right)
+        new_bottom = min(y + height, cell_bottom)
+        new_width = new_right - new_left
+        new_height = new_bottom - new_top
+        if new_width <= 1 or new_height <= 1:
+            constrained.append(item)
+            continue
+        if (new_left, new_top, new_width, new_height) == item.bbox:
+            constrained.append(item)
+            continue
+        clipped_character_boxes: list[tuple[int, int, int, int]] = []
+        for box_x, box_y, box_width, box_height in item.character_boxes:
+            clipped_left = max(box_x, cell_left)
+            clipped_top = max(box_y, cell_top)
+            clipped_right = min(box_x + box_width, cell_right)
+            clipped_bottom = min(box_y + box_height, cell_bottom)
+            if clipped_right > clipped_left and clipped_bottom > clipped_top:
+                clipped_character_boxes.append(
+                    (
+                        clipped_left,
+                        clipped_top,
+                        clipped_right - clipped_left,
+                        clipped_bottom - clipped_top,
+                    )
+                )
+        constrained.append(
+            replace(
+                item,
+                bbox=(new_left, new_top, new_width, new_height),
+                quad=(
+                    (float(new_left), float(new_top)),
+                    (float(new_right), float(new_top)),
+                    (float(new_right), float(new_bottom)),
+                    (float(new_left), float(new_bottom)),
+                ),
+                character_boxes=tuple(clipped_character_boxes),
+                review_note=(f"{item.review_note}；" if item.review_note else "")
+                + "文字位置已限制在检测到的表格单元格内",
+            )
+        )
+    return tuple(constrained)

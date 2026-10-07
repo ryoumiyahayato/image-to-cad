@@ -1,0 +1,18 @@
+# Storage hygiene 2026-10-06. Product app/, tests/, docs/, resources/ stay searchable.
+# Explicit file paths remain accessible for evidence review and reproduction.
+/.venv/
+/.mypy_cache/
+/.pytest_cache/
+/.ruff_cache/
+/local-artifacts/
+/instrumented-e03/local-artifacts/
+/product-uat-20261005/
+/historical-verification-20261005/modern-*/
+/historical-verification-20261005/pytest-*-temp/
+/external-scan/proposal-engine-benchmark-v1/raw-to-final-loss-audit/replay/
+/external-scan/proposal-engine-benchmark-v1/raw-to-final-loss-audit/replay-check/
+/storage-cleanup-20261006/*-tmp/
+/storage-cleanup-20261006/tooling/
+/storage-cleanup-20261006/inventory-*.json
+/storage-cleanup-20261006/project-plan*.json
+/storage-cleanup-20261006/*-classification.csv
