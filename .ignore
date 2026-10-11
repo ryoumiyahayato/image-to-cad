@@ -16,3 +16,6 @@
 /storage-cleanup-20261006/inventory-*.json
 /storage-cleanup-20261006/project-plan*.json
 /storage-cleanup-20261006/*-classification.csv
+
+# Confirmed historical entries retained outside the active checkout.
+/history-archive/

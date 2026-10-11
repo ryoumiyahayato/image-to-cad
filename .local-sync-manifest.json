@@ -1,5 +1,5 @@
 {
-  "content_sha256": "b69860a881ba35f3db94032930d7faa5e12c994546008a528836c7e40c4f7cb3",
+  "content_sha256": "eca7b8b8471b137a21585069801fdc0480d956f5c0016e2ec667f0816ae43aab",
   "excluded": [
     {
       "path": ".git/",
@@ -114,6 +114,10 @@
       "reason": "directory outside reviewed exact file allowlist"
     },
     {
+      "path": "history-archive/",
+      "reason": "directory outside reviewed exact file allowlist"
+    },
+    {
       "path": "instrumented-e03/",
       "reason": "data/material/secret/cache/nested-worktree path"
     },
@@ -142,7 +146,7 @@
       "reason": "directory outside reviewed exact file allowlist"
     }
   ],
-  "included_bytes": 1647340,
+  "included_bytes": 1647429,
   "included_files": 181,
   "owner_id": "7ed35d2d-c560-4b08-8c28-78af6d1cae6b",
   "remote": "https://github.com/ryoumiyahayato/image-to-cad.git",
