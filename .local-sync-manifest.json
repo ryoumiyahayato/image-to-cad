@@ -10,14 +10,6 @@
       "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
-      "path": ".pytest_cache/",
-      "reason": "data/material/secret/cache/nested-worktree path"
-    },
-    {
-      "path": ".ruff_cache/",
-      "reason": "data/material/secret/cache/nested-worktree path"
-    },
-    {
       "path": ".venv/",
       "reason": "data/material/secret/cache/nested-worktree path"
     },
@@ -28,14 +20,6 @@
     {
       "path": "cad_photo_to_dxf/.gitignore",
       "reason": "file outside reviewed exact file allowlist"
-    },
-    {
-      "path": "cad_photo_to_dxf/.pytest_cache/",
-      "reason": "data/material/secret/cache/nested-worktree path"
-    },
-    {
-      "path": "cad_photo_to_dxf/.ruff_cache/",
-      "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
       "path": "cad_photo_to_dxf/build/",
