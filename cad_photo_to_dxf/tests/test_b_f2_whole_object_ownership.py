@@ -202,7 +202,7 @@ def test_missing_stale_binding_and_lossy_float32_cache_are_rejected(tmp_path: Pa
         load_trace_cache(cache)
 
 
-def test_schema_and_cache_versions_remain_frozen() -> None:
-    assert FINAL_STRUCTURE_SCHEMA_VERSION == 3
-    assert TRACE_CACHE_VERSION == 10
+def test_schema_and_cache_versions_follow_d011_arc_contract() -> None:
+    assert FINAL_STRUCTURE_SCHEMA_VERSION == 4
+    assert TRACE_CACHE_VERSION == 11
 

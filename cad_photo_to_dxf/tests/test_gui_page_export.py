@@ -91,6 +91,7 @@ def test_partial_pdf_export_skips_unprocessed_and_keeps_page_numbers(
             structure_ids=(f"structure-{page}",),
             trace_path_count=1,
             trace_vertex_count=2,
+            arc_count=2,
             text_count=3,
             signature_paths=(),
             graphic_paths=(),
@@ -173,4 +174,5 @@ def test_partial_pdf_export_skips_unprocessed_and_keeps_page_numbers(
     ]
     assert reports[0]["exported_pages"] == [1, 3]
     assert reports[0]["skipped_pages"] == [2, 4]
+    assert [page["arc_count"] for page in reports[0]["pages"]] == [2, 2]
     assert status_messages

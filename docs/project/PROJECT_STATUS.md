@@ -38,10 +38,12 @@ P9-D retained 76 related passing checks and Tiny's saved real ARC. The engineeri
 
 USDA has no original design CAD truth. Its changes are supported by the scan and known object relationships. Only USDA establishes a scan-positive source; Quanzhou/Tiny provide boundary and ARC guards, not independent scan-positive generalization. No all-page quality or release acceptance is asserted.
 
-Raw PDFs and `local-artifacts` are not distributed. Small tracked region fixtures support portable regression tests. The current engineering index has 47 retained entries through P10-A. Historical DXF inventory records and their Git recovery references remain nonempty and auditable. Font licensing and exact approved-asset checks remain in force.
+Raw PDFs and `local-artifacts` are not distributed. Small tracked region fixtures support portable regression tests. The engineering index retains P1–P10-A records and the synchronization follow-up. Historical DXF inventory records and their Git recovery references remain nonempty and auditable. Font licensing and exact approved-asset checks remain in force.
+
+Synchronization follow-up (2026-10-14): PR #34 remains pending. Linux exposed a PDFium `FPDF_BOOL` pointer mismatch; use the binding's declared type rather than platform-dependent C long. RapidOCR 3.10 independently reproduces three reading-direction failures on Windows as well, so the dependency stays in the verified 3.9 series. Four older version assertions now follow D-011's schema 4/cache 11; two test doubles carry the current interfaces. Geometry thresholds, ownership vetoes and the 94/50 split are unchanged. The 77 directly affected local checks pass. The existing compact preservation check still fails against its historical snapshot (processing-contract-page: current 14 LINE versus baseline 21); that snapshot and its rule have not been rewritten. This remains a main-sync blocker pending cloud verification.
 
 ## Current work
 
-New feature work is paused for GitHub main synchronization. The existing CURRENT_TASK and NEXT_TASK records govern this pause. After synchronization, P10-A need not be restarted: its documented scope is complete. Further P10 or other feature work needs a new user instruction.
+P10-B is authorized but waits for GitHub main synchronization. No independent-source P10-B material processing has started. The existing CURRENT_TASK and NEXT_TASK records govern this pause. P10-A need not be restarted: its documented scope is complete.
 
 [Engineering evidence](ENGINEERING_EVIDENCE_INDEX.jsonl) · [Decisions](DECISIONS.md) · [Historical UAT](REAL_WORLD_UAT.md) · [Refactor closeout](../refactor/closeout-report.md)

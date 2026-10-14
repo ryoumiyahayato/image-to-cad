@@ -394,7 +394,7 @@ class PdfGeometryEvidence:
 def _screen_curve(index, obj, inverse, origin, raw, mapping=None):
     """Cheap support checks only. These never grant final member eligibility."""
     reasons = []
-    fill, stroke = ct.c_int(), ct.c_long()
+    fill, stroke = ct.c_int(), raw.FPDF_BOOL()
     if not raw.FPDFPath_GetDrawMode(obj, ct.byref(fill), ct.byref(stroke)):
         raise ValueError("PATH_STYLE_UNREADABLE")
     if fill.value or not stroke.value:
@@ -732,7 +732,7 @@ def extract_pdf_arc_evidence(
         for obj in objects:
             if expired("visibility-context"):
                 raise TimeoutError
-            active = ct.c_long()
+            active = raw.FPDF_BOOL()
             counts["visibility_state_reads"] += 1
             if not raw.FPDFPageObj_GetIsActive(obj, ct.byref(active)):
                 raise ValueError("VISIBILITY_STATE_UNREADABLE")

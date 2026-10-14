@@ -14,7 +14,10 @@ def test_new_committed_piece_still_must_pass_semantic_ownership():
     rejected_restore = LineSegment(25,50,130,50)
     # Exercise the boundary against a faulty reconciliation admission, rather
     # than trusting that one implementation can never violate another's veto.
-    ledger = SimpleNamespace(reconcile=lambda **kwargs: SimpleNamespace(lines=(rejected_restore,)))
+    ledger = SimpleNamespace(
+        consolidate_detector_aliases=lambda lines: tuple(lines),
+        reconcile=lambda **kwargs: SimpleNamespace(lines=(rejected_restore,)),
+    )
     with pytest.raises(AssertionError, match='Ownership rejected'):
         _assign_and_reconcile(binary,line_candidates=[],texts=(text,),logos=(),signatures=(),
                               graphic_mask=np.zeros_like(binary),signature_mask=np.zeros_like(binary),

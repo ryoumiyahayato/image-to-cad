@@ -369,7 +369,7 @@ class _Layout:
         return {"start": start, "end": end, "attrs": dxfattribs}
 
 
-def test_cache10_preview_and_dxf_consume_exact_committed_payload(tmp_path) -> None:
+def test_cache11_preview_and_dxf_consume_exact_committed_payload(tmp_path) -> None:
     line = _line((40, 100), (200, 100))
     page, result = _gapped_result(line, left_end=70.0, right_start=84.0)
     committed = result.commit()
@@ -406,8 +406,10 @@ def test_cache10_preview_and_dxf_consume_exact_committed_payload(tmp_path) -> No
         transform=lambda x, y: (x, y),
     )
 
-    assert FINAL_STRUCTURE_SCHEMA_VERSION == 3
-    assert TRACE_CACHE_VERSION == 10
+    # D-011 changed storage versions, not the committed source-gap payload.
+    assert FINAL_STRUCTURE_SCHEMA_VERSION == 4
+    assert TRACE_CACHE_VERSION == 11
+    assert structure.arcs == ()
     assert structure.straight_lines == committed
     assert structure.preview_binary is not None
     assert stored.final_structure is not None

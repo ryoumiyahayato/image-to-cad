@@ -252,8 +252,10 @@ def test_finalstructure_cache_and_export_consume_exact_junction_geometry(
         observations=(result.ledger_payload(),),
     )
 
-    assert FINAL_STRUCTURE_SCHEMA_VERSION == 3
-    assert TRACE_CACHE_VERSION == 10
+    # D-011 extended the container; the committed junction geometry is unchanged.
+    assert FINAL_STRUCTURE_SCHEMA_VERSION == 4
+    assert TRACE_CACHE_VERSION == 11
+    assert after.arcs == ()
     assert after.straight_lines is result.lines
     assert after.texts == before.texts == (text,)
     assert after.structure_id != before.structure_id

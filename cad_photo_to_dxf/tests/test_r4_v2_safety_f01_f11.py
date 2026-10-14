@@ -729,8 +729,8 @@ def test_f11_signed_zero_is_normalized_and_ids_are_deterministic() -> None:
 
     assert _structure(positive).structure_id == _structure(negative).structure_id
     assert _structure(positive).structure_id == _structure(positive).structure_id
-    assert FINAL_STRUCTURE_SCHEMA_VERSION == 3
-    assert TRACE_CACHE_VERSION == 10
+    assert FINAL_STRUCTURE_SCHEMA_VERSION == 4
+    assert TRACE_CACHE_VERSION == 11
 
 
 @pytest.mark.parametrize("value", (float("nan"), float("inf"), float("-inf")))
