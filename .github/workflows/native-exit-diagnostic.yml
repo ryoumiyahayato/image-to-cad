@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        group: [imports, pdf, ocr, qt, processing]
+        group: [probes, combined, full]
     env:
       QT_QPA_PLATFORM: offscreen
       QT_OPENGL: software
@@ -32,7 +32,13 @@ jobs:
       - name: Install existing runtime
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0 gdb
           python -m pip install -r cad_photo_to_dxf/requirements.txt -r cad_photo_to_dxf/requirements-test.txt
       - name: Run isolated process and retain its real exit status
-        run: python -X dev -X faulthandler maintenance/native_exit_diagnostic.py ${{ matrix.group }}
+        shell: bash
+        run: |
+          if [ "${{ matrix.group }}" = full ]; then
+            gdb -batch --return-child-result -ex run -ex 'bt 40' --args python -X dev -X faulthandler maintenance/native_exit_diagnostic.py full
+          else
+            python -X dev -X faulthandler maintenance/native_exit_diagnostic.py ${{ matrix.group }}
+          fi
