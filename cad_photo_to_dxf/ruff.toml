@@ -1,2 +1,6 @@
+[lint]
+# Preserve the project's Ruff 0.12 rule set across Ruff default changes.
+select = ["E4", "E7", "E9", "F"]
+
 [lint.per-file-ignores]
 "app/librecad_lff.py" = ["F401"]
