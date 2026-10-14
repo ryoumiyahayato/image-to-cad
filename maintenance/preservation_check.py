@@ -1,8 +1,8 @@
-"""Compare current fixtures to the retained compact baseline.
+"""Compare current fixtures to the reviewed, versioned compact baseline.
 
-The baseline's historical generation provenance is unproven. This is a current
-regression check, not proof of independent PRE execution; that evidence is
-documented separately under docs/refactor.
+The original preservation-baseline.json is immutable historical evidence.
+The P10-A transition records each removed duplicate and requires complete
+source coverage in addition to the current exact structure/cache/DXF check.
 """
 
 import argparse
@@ -21,6 +21,45 @@ import numpy as np
 from app.core.processing import ProductionProcessingConfig, ProductionProcessingService
 from app.export.trace_single_export import export_final_structure_dxf
 from app.core.cache import save_trace_cache, load_trace_cache
+from app.core.cache import TRACE_CACHE_VERSION
+from app.core.structure import FINAL_STRUCTURE_SCHEMA_VERSION
+from app.geometry.line_detect import LineSegment
+from app.geometry.scan_cleanup import prepare_scan_page
+from app.geometry.source_stroke_reconciliation import _measurement_claim_window
+
+
+def load_current_baseline():
+    baseline = json.loads((ROOT / "docs/refactor/preservation-current-p10a.json").read_text())
+    assert baseline["format"] == "compact-preservation-p10a-v1"
+    assert baseline["algorithm_version"] == ProductionProcessingConfig().algorithm_version
+    assert baseline["final_structure_schema_version"] == FINAL_STRUCTURE_SCHEMA_VERSION
+    assert baseline["trace_cache_version"] == TRACE_CACHE_VERSION
+    return baseline
+
+
+def verify_transition(name, image, structure, baseline, historical):
+    """Account for every old LINE; a count-only or source-losing update fails."""
+    old = {tuple(line) for line in historical[name]["lines"]}
+    current = {(line.x1, line.y1, line.x2, line.y2): line
+               for line in structure.straight_lines}
+    approved = baseline["transition"].get(name, [])
+    assert not set(current) - old, f"{name}: unreviewed added geometry"
+    assert old - set(current) == {tuple(row["removed"]) for row in approved}, (
+        f"{name}: unaccounted historical LINE change"
+    )
+    if not approved:
+        return
+    prepared = prepare_scan_page(image)
+    for row in approved:
+        keeper = current[tuple(row["keeper"])]
+        assert keeper.width == row["width"]
+        assert set(row["source_ids"]).issubset(keeper.source_ids)
+        removed = LineSegment(*row["removed"], width=row["width"])
+        window, (kept, previous) = _measurement_claim_window(
+            (keeper, removed), shape=prepared.binary.shape)
+        assert not np.any((previous > 0) & (kept == 0) & (prepared.binary[window] < 128)), (
+            f"{name}: removed LINE has unique source ink"
+        )
 
 
 def inputs():
@@ -41,7 +80,7 @@ def inputs():
     yield "reconciliation-gap-junction", page
 
 
-def measure():
+def measure(*, baseline=None, historical=None):
     output = {}
     with TemporaryDirectory() as directory:
         tmp = Path(directory)
@@ -51,6 +90,8 @@ def measure():
             )
             structure = result.final_structure
             assert structure is not None
+            if baseline is not None:
+                verify_transition(name, image, structure, baseline, historical)
             exported = export_final_structure_dxf(structure, tmp / f"{name}.dxf")
             assert not ezdxf.readfile(exported.path).audit().errors
             saved = load_trace_cache(save_trace_cache(tmp / f"{name}.npz", result))
@@ -66,6 +107,7 @@ def measure():
                         "texts",
                         "logos",
                         "signatures",
+                        "arcs",
                     )
                 },
                 "lines": [[x.x1, x.y1, x.x2, x.y2] for x in structure.straight_lines],
@@ -85,20 +127,18 @@ if __name__ == "__main__":
     parser.add_argument("--baseline", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    measured = measure()
-    path = ROOT / "docs/refactor/preservation-baseline.json"
     if args.baseline:
-        path.write_text(json.dumps(measured, indent=2) + "\n")
-    else:
-        expected = json.loads(path.read_text())
-        for name, value in measured.items():
-            assert value == {
-                k: v for k, v in expected[name].items() if k != "legacy"
-            }, name
-        print("EXACT current compact baseline match (historical baseline provenance UNPROVEN)")
-        if args.output:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            args.output.write_text(
-                json.dumps({"passed": True, "inputs": measured}, indent=2) + "\n",
-                encoding="utf-8",
-            )
+        parser.error("Historical baseline is immutable; changes require a reviewed new version")
+    baseline = load_current_baseline()
+    historical = json.loads((ROOT / "docs/refactor/preservation-baseline.json").read_text())
+    measured = measure(baseline=baseline, historical=historical)
+    assert set(measured) == set(baseline["cases"])
+    for name, value in measured.items():
+        assert value == baseline["cases"][name], name
+    print("EXACT versioned P10-A baseline match; historical LINE transitions preserve source ink")
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(
+            json.dumps({"passed": True, "inputs": measured}, indent=2) + "\n",
+            encoding="utf-8",
+        )
