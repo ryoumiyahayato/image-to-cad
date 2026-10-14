@@ -1,0 +1,54 @@
+[
+  {
+    "drawing": "warehouse-electrical",
+    "label": null,
+    "sample_id": "real-b612a083770152f7d503ee1f",
+    "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+    "source_bbox": [
+      1342,
+      253,
+      256,
+      256
+    ],
+    "source_page": 3
+  },
+  {
+    "drawing": "warehouse-electrical",
+    "label": null,
+    "sample_id": "real-4f7f0bf7d23182b485e64110",
+    "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+    "source_bbox": [
+      4312,
+      1959,
+      256,
+      256
+    ],
+    "source_page": 3
+  },
+  {
+    "drawing": "warehouse-electrical",
+    "label": null,
+    "sample_id": "real-c8537863d88b8bbd2f978040",
+    "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+    "source_bbox": [
+      4141,
+      326,
+      256,
+      256
+    ],
+    "source_page": 3
+  },
+  {
+    "drawing": "A2-SG-009",
+    "label": null,
+    "sample_id": "real-dbe406bba7f2cdf53bb10ca5",
+    "sha256": "25b448cbfca0375352afe2a6bc91fdd9a5eb826d744b5075cd26d89182f2297a",
+    "source_bbox": [
+      1115,
+      413,
+      256,
+      256
+    ],
+    "source_page": 1
+  }
+]

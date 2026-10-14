@@ -1,0 +1,56 @@
+{
+  "details": [
+    {
+      "duplicate_of": "real-v2-20b92a9db9eff90c2f2b9b4a",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-776e0e2067f87abc6c7ecd39"
+    },
+    {
+      "duplicate_of": "real-v2-3084fb0533c13126c2bd3934",
+      "reason": "SAME_STRUCTURE_REPETITION",
+      "sample_id": "real-v2-6915fd57e19fb2d42ab44fea"
+    },
+    {
+      "duplicate_of": "real-v2-1a66e9b20e2aa361c330cbcd",
+      "reason": "SAME_STRUCTURE_REPETITION",
+      "sample_id": "real-v2-6cca64f2f82e46ef03ae910a"
+    },
+    {
+      "duplicate_of": "real-4f059811e62c8e6885466649",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-5cf7ad1eab5d5d64b06bb7c3"
+    },
+    {
+      "duplicate_of": "real-v2-09b7dfce230ff7917a0f9750",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-41189e772e4aacddeb6da2ac"
+    },
+    {
+      "duplicate_of": "real-v2-09b7dfce230ff7917a0f9750",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-ce54afdb7336e9ef1ab5ea6c"
+    },
+    {
+      "duplicate_of": "real-v2-1524a88384b8cbedce7aaa54",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-7e4e9df5da29f151c94f6b72"
+    },
+    {
+      "duplicate_of": "real-v2-633d83c0857b551490bcc39d",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-c6468526300752e221abaf98"
+    },
+    {
+      "duplicate_of": "real-v2-1524a88384b8cbedce7aaa54",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-e3c61527691ef61cb1cf2fa0"
+    },
+    {
+      "duplicate_of": "real-24de2e82a878a07076f11e9b",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-53a9b25de92e875c6444a35a"
+    }
+  ],
+  "exact_raster_suppressed": [],
+  "scope": "Train-only transient pool + acceptance anchors; no class-based selection"
+}

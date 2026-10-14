@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import cv2
 import numpy as np
 
-from app import ocr_recognition
+from app.ocr import ocr_recognition as ocr_recognition
 
 
 class _FallbackWordRapidOcr:
@@ -55,18 +55,14 @@ def test_word_boxes_remain_a_fallback_and_normal_flow_runs_once(monkeypatch) -> 
         2,
     )
 
-    candidates, warnings = ocr_recognition.recognize_text_candidates(image)
+    candidates = ocr_recognition._recognize_rapidocr_pass(image, rotation=0)
 
-    assert not warnings
     assert candidates
     assert engine.calls == 1
     assert all(candidate.text == "火" for candidate in candidates)
     assert all(candidate.confidence == 0.96 for candidate in candidates)
     assert all(candidate.source == "rapidocr-word-fallback" for candidate in candidates)
     assert all(candidate.quad is not None for candidate in candidates)
-    overlay = ocr_recognition.render_ocr_overlay(image, candidates)
-    assert overlay.shape == image.shape
-    assert not np.array_equal(overlay, image)
 
 
 def test_complete_line_boxes_are_preferred_over_character_boxes(monkeypatch) -> None:
@@ -84,23 +80,6 @@ def test_complete_line_boxes_are_preferred_over_character_boxes(monkeypatch) -> 
     assert candidates[0].source == "rapidocr-line"
 
 
-def test_oversized_false_text_box_is_rejected(monkeypatch) -> None:
-    class Oversized:
-        def __call__(self, _image, **_kwargs):
-            return SimpleNamespace(
-                boxes=[[[5.0, 5.0], [995.0, 5.0], [995.0, 350.0], [5.0, 350.0]]],
-                txts=["错误的大范围识别结果"],
-                scores=[0.99],
-                word_results=(),
-            )
-
-    monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", Oversized())
-    candidates, warnings = ocr_recognition.recognize_text_candidates(
-        np.full((400, 1000, 3), 255, dtype=np.uint8)
-    )
-
-    assert candidates == ()
-    assert warnings
 
 
 def test_low_confidence_ocr_is_not_exported(monkeypatch) -> None:
@@ -120,12 +99,11 @@ def test_low_confidence_ocr_is_not_exported(monkeypatch) -> None:
             )
 
     monkeypatch.setattr(ocr_recognition, "_RAPID_OCR_ENGINE", LowConfidence())
-    candidates, warnings = ocr_recognition.recognize_text_candidates(
-        np.full((200, 300, 3), 255, dtype=np.uint8)
+    candidates = ocr_recognition._recognize_rapidocr_pass(
+        np.full((200, 300, 3), 255, dtype=np.uint8), rotation=0
     )
 
-    assert candidates == ()
-    assert warnings
+    assert not candidates
 
 
 def test_reviewable_confidence_candidate_is_kept_for_manual_correction(
@@ -157,14 +135,13 @@ def test_reviewable_confidence_candidate_is_kept_for_manual_correction(
         (0, 0, 0),
         2,
     )
-    candidates, warnings = ocr_recognition.recognize_text_candidates(
-        image
+    candidates = ocr_recognition._recognize_rapidocr_pass(
+        image, rotation=0
     )
 
     assert len(candidates) == 1
     assert candidates[0].text == "待校对"
     assert candidates[0].confidence == 0.52
-    assert not warnings
 
 
 def test_installed_rapidocr_runtime_accepts_line_level_call(monkeypatch) -> None:

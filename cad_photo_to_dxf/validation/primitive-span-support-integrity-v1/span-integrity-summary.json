@@ -1,0 +1,98 @@
+{
+  "a2_sg_022": "NOT_APPLICABLE",
+  "audited_hough_path_scope": "DEV_ONLY",
+  "candidate_specific_exceptions": false,
+  "consolidation_semantics_changed": false,
+  "d2_002": "NOT_APPLICABLE",
+  "d2_003": "NOT_APPLICABLE",
+  "endpoint_only_support": false,
+  "frozen_cases": 24,
+  "full_span_support_used": true,
+  "h1_h2_opened": "NO",
+  "hough_behavior_changed": true,
+  "insufficient_case_preserved_uncertain": true,
+  "locked_blind": "0 / 8",
+  "lsd_behavior_changed": false,
+  "model_assisted_labeling": "NO",
+  "model_bakeoff_should_resume": "NO",
+  "model_run": "NO",
+  "new_candidate_mining": "NO",
+  "new_geometry_manufactured": false,
+  "next_target": "FRESH_DEV_CANDIDATE_REMINING",
+  "noise_dropout_safety": "PASS",
+  "patterned_overspan_qualified_uncertain": 2,
+  "periodic_pattern_safety": "PASS",
+  "previous_pairing_family_rejections_preserved": 13,
+  "production_overspan_equivalence": "UNPROVEN",
+  "production_regression": "NOT_APPLICABLE",
+  "production_semantic_delta": "NONE",
+  "production_span_integrity_already_present": "PARTIAL",
+  "raw_hough_overspan_audited": 3,
+  "raw_hough_overspan_detected": 3,
+  "raw_hough_overspan_root_cause_remediated": 3,
+  "raw_hough_overspan_still_unsafe": 0,
+  "rejected_overspan": 1,
+  "schema_version": 1,
+  "span_integrity_fix": "SAFE",
+  "task_id": "PRIMITIVE_SPAN_SUPPORT_INTEGRITY_V1",
+  "threshold_sensitivity": [
+    {
+      "result": {
+        "overspan_detected": 3,
+        "pairing_rejections_preserved": 13,
+        "valid_annotations_preserved": 6,
+        "valid_object_preserved": 1
+      },
+      "thresholds": {
+        "material_gap_min_px": 2.5,
+        "material_gap_min_span_fraction": 0.06,
+        "material_gap_min_stroke_widths": 0.75,
+        "noisy_max_support_fraction": 0.72,
+        "patterned_max_support_fraction": 0.85,
+        "short_pattern_max_span_stroke_widths": 16.0,
+        "short_pattern_max_support_fraction": 0.92
+      },
+      "variant": "nominal"
+    },
+    {
+      "result": {
+        "overspan_detected": 3,
+        "pairing_rejections_preserved": 13,
+        "valid_annotations_preserved": 6,
+        "valid_object_preserved": 1
+      },
+      "thresholds": {
+        "material_gap_min_px": 2.5,
+        "material_gap_min_span_fraction": 0.065,
+        "material_gap_min_stroke_widths": 0.75,
+        "noisy_max_support_fraction": 0.72,
+        "patterned_max_support_fraction": 0.83,
+        "short_pattern_max_span_stroke_widths": 14.0,
+        "short_pattern_max_support_fraction": 0.9
+      },
+      "variant": "conservative_perturbation"
+    },
+    {
+      "result": {
+        "overspan_detected": 3,
+        "pairing_rejections_preserved": 13,
+        "valid_annotations_preserved": 6,
+        "valid_object_preserved": 1
+      },
+      "thresholds": {
+        "material_gap_min_px": 2.5,
+        "material_gap_min_span_fraction": 0.055,
+        "material_gap_min_stroke_widths": 0.75,
+        "noisy_max_support_fraction": 0.72,
+        "patterned_max_support_fraction": 0.87,
+        "short_pattern_max_span_stroke_widths": 18.0,
+        "short_pattern_max_support_fraction": 0.94
+      },
+      "variant": "strict_perturbation"
+    }
+  ],
+  "threshold_sensitivity_stable": true,
+  "valid_annotation_hard_negatives_preserved": 6,
+  "valid_direct_object_continuation_preserved": 1,
+  "validation": "NO"
+}

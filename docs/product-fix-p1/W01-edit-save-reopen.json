@@ -1,0 +1,24 @@
+{
+  "method": "ezdxf native entity edit/save/reopen; not CAD GUI",
+  "line_selected": true,
+  "text_selected": true,
+  "line_handle": "93",
+  "original_start": [
+    210.05403562214144,
+    298.72071189343967,
+    0.0
+  ],
+  "edited_start": [
+    210.17903562214144,
+    298.72071189343967,
+    0.0
+  ],
+  "text_handle": "58E",
+  "original_text": "图纸目录",
+  "edited_text": "图纸目录 UAT",
+  "line_persisted": true,
+  "text_persisted": true,
+  "reopen_audit_errors": 0,
+  "reopen_audit_fixes": 0,
+  "PASS": true
+}

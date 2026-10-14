@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "application": {
+    "name": "LibreCAD",
+    "executable": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+    "platform": "Windows"
+  },
+  "font": {
+    "style": "wqy-unicode",
+    "project_path": "resources/fonts/wqy-unicode.lff",
+    "installed_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\wqy-unicode.lff",
+    "project_size_bytes": 43436980,
+    "installed_size_bytes": 43436980,
+    "sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+    "files_match": true
+  },
+  "original": {
+    "path": "commit4-librecad-editability-original.dxf",
+    "entity_types": [
+      "TEXT"
+    ],
+    "text": "EDITABLE TEXT 中文 123，。",
+    "style": "wqy-unicode",
+    "source_layer_off": true,
+    "source_layer_frozen": true,
+    "dxf_audit_errors": 0
+  },
+  "gui_edit": {
+    "opened_text_properties_dialog": true,
+    "dialog_entity_layer": "OCR_TEXT",
+    "dialog_font": "wqy-unicode",
+    "changed_text": "GUI EDITED 42 中文，。",
+    "saved_as": "commit4-librecad-editability-edited.dxf"
+  },
+  "edited": {
+    "path": "commit4-librecad-editability-edited.dxf",
+    "entity_types": [
+      "TEXT"
+    ],
+    "text": "GUI EDITED 42 中文，。",
+    "style": "wqy-unicode",
+    "source_layer_frozen": true,
+    "dxf_audit_errors": 0
+  },
+  "read_save_read": {
+    "path": "commit4-librecad-editability-roundtrip.dxf",
+    "entity_types": [
+      "TEXT"
+    ],
+    "text": "GUI EDITED 42 中文，。",
+    "content_matches_gui_edit": true,
+    "source_layer_frozen": true,
+    "dxf_audit_errors": 0
+  },
+  "notes": [
+    "LibreCAD renders and edits the bundled LFF as a native TEXT entity.",
+    "LibreCAD rewrites the negative layer color when saving, but preserves the frozen flag; combining off and frozen therefore keeps SOURCE_TEXT_OUTLINE hidden in the target environment."
+  ],
+  "passed": true
+}

@@ -1,0 +1,431 @@
+{
+  "manifest_sha256": "de5e3b1d8e3f869d79ed67d5248398c6ff2d005b50b58ccbb7f183fa5d743ed2",
+  "samples": [
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 107.50485206635098,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.7469809220009721,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.2830710611377796,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.9950804730872812,
+          "SAMPLES": 217,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "B": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 87.50002884217196,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.7170343753772078,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.046520837543077335,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.8923723022971152,
+          "SAMPLES": 177,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "PAIR": {
+          "PAIR_LENGTH_RATIO": 0.813917020118941,
+          "PAIR_OVERLAP_LENGTH": 79.03375003174556,
+          "PAIR_SEPARATION_STABILITY": {
+            "mean_px": 57.5001895238102,
+            "range_px": 0.3262990332560918,
+            "std_px": 0.09928963389247585
+          }
+        }
+      },
+      "nomination_quality": "NOMINATION_BORDERLINE",
+      "original_rank": 16,
+      "original_sample_sha256": "371bd0db701094de13ae0370357721f401d538da4e9d826f9768c3da1e3ceae6",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "371bd0db701094de13ae0370357721f401d538da4e9d826f9768c3da1e3ceae6",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:21:11.482211+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "TRUE_PARALLEL_STRUCTURE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "371bd0db701094de13ae0370357721f401d538da4e9d826f9768c3da1e3ceae6",
+        "timestamp_utc": "2026-10-07T09:21:11.496414+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "val-v2-261d3cffb584f26f925431dd"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 49.4900057216621,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.8019430793141713,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.09140897979176162,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.8658891577137987,
+          "SAMPLES": 100,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "B": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 49.49000806028867,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.30077344377810994,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.07379492594808117,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.41645643287856593,
+          "SAMPLES": 100,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "PAIR": {
+          "PAIR_LENGTH_RATIO": 0.99999995274548,
+          "PAIR_OVERLAP_LENGTH": 49.49000572166199,
+          "PAIR_SEPARATION_STABILITY": {
+            "mean_px": 4.885988740197252,
+            "range_px": 0.015214378101739534,
+            "std_px": 0.004629587824852361
+          }
+        }
+      },
+      "nomination_quality": "NOMINATION_STRONG",
+      "original_rank": 41,
+      "original_sample_sha256": "cb5c53cd13f8b7d7097d96077b44a8e20ecc57f5e10c435ef94d9f8cb9437658",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "cb5c53cd13f8b7d7097d96077b44a8e20ecc57f5e10c435ef94d9f8cb9437658",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:24:13.250934+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "TRUE_PARALLEL_STRUCTURE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "cb5c53cd13f8b7d7097d96077b44a8e20ecc57f5e10c435ef94d9f8cb9437658",
+        "timestamp_utc": "2026-10-07T09:24:13.264254+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "NARROW_PAIR_SINGLE_VS_PARALLEL_BOUNDARY: 4.886px separation; heterogeneous archival ink/white gap can be interpreted as boundaries or a stroked run. Confirm the intended source objects with context; do not infer truth from gap alone."
+      ],
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 84.99975804757295,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.9755790721430059,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.013000860225802761,
+          "P95_DISTANCE_TO_SOURCE_INK": 1.0791226028126468,
+          "SAMPLES": 171,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "B": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 61.26637482044428,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.8099707508435932,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.2593703425280175,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.9587584066781357,
+          "SAMPLES": 124,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "PAIR": {
+          "PAIR_LENGTH_RATIO": 0.7207829319485181,
+          "PAIR_OVERLAP_LENGTH": 61.265808424577244,
+          "PAIR_SEPARATION_STABILITY": {
+            "mean_px": 2.7568584951463633,
+            "range_px": 0.2634420660574661,
+            "std_px": 0.08016286787525909
+          }
+        }
+      },
+      "nomination_quality": "NOMINATION_BORDERLINE",
+      "original_rank": 30,
+      "original_sample_sha256": "c277cebf2af4fc66b7248004fc37d12d405bd4a485c6d49f50a51cdb0971f5e1",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "c277cebf2af4fc66b7248004fc37d12d405bd4a485c6d49f50a51cdb0971f5e1",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:23:23.266613+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "SINGLE_PHYSICAL_STROKE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "c277cebf2af4fc66b7248004fc37d12d405bd4a485c6d49f50a51cdb0971f5e1",
+        "timestamp_utc": "2026-10-07T09:23:23.279382+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 180.00000000000017,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.9410651198618981,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.09750922650871761,
+          "P95_DISTANCE_TO_SOURCE_INK": 1.1818952756999166,
+          "SAMPLES": 362,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        }
+      },
+      "nomination_quality": "NOMINATION_STRONG",
+      "original_rank": 6,
+      "original_sample_sha256": "d19ff3a7ca26dea8108c0f58397f51392bdd47c36c127835b9c4734e36d11fe9",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "d19ff3a7ca26dea8108c0f58397f51392bdd47c36c127835b9c4734e36d11fe9",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:18:12.250362+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "AMBIGUOUS",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "d19ff3a7ca26dea8108c0f58397f51392bdd47c36c127835b9c4734e36d11fe9",
+        "timestamp_utc": "2026-10-07T09:18:12.260007+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 57.499880176949304,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.831482361826081,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.1191435407369311,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.9560180493936952,
+          "SAMPLES": 116,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "B": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 58.749376055399985,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.6016974526560326,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.2647681609004727,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.7358866218027917,
+          "SAMPLES": 119,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "PAIR": {
+          "PAIR_LENGTH_RATIO": 0.978731759171835,
+          "PAIR_OVERLAP_LENGTH": 57.499880176949304,
+          "PAIR_SEPARATION_STABILITY": {
+            "mean_px": 40.70213324009143,
+            "range_px": 0.14614368303820413,
+            "std_px": 0.04447010657605823
+          }
+        }
+      },
+      "nomination_quality": "NOMINATION_STRONG",
+      "original_rank": 17,
+      "original_sample_sha256": "220c65d6aecb0bb583fdccfb112c97ecf0244d54f54739cf868867a7e2ca2efc",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "220c65d6aecb0bb583fdccfb112c97ecf0244d54f54739cf868867a7e2ca2efc",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:22:37.024673+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "AMBIGUOUS",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "220c65d6aecb0bb583fdccfb112c97ecf0244d54f54739cf868867a7e2ca2efc",
+        "timestamp_utc": "2026-10-07T09:22:37.034076+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 54.508046246526554,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.5896958000736259,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.2394696524393537,
+          "P95_DISTANCE_TO_SOURCE_INK": 1.0427988753830524,
+          "SAMPLES": 111,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "B": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 54.51131599846112,
+          "LOCAL_TANGENT_ALIGNMENT": 1.0,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.5404860987369726,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.8670276527008243,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.8798437402302808,
+          "SAMPLES": 111,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        },
+        "PAIR": {
+          "PAIR_LENGTH_RATIO": 0.9999400170061082,
+          "PAIR_OVERLAP_LENGTH": 54.50804624652644,
+          "PAIR_SEPARATION_STABILITY": {
+            "mean_px": 35.895159658244026,
+            "range_px": 0.5970479634146386,
+            "std_px": 0.18167590970818606
+          }
+        }
+      },
+      "nomination_quality": "NOMINATION_STRONG",
+      "original_rank": 33,
+      "original_sample_sha256": "7c1ae7ba6585904c44e062a02de3c43fcb4ef1e4f438a0dc4d7206e981abeb52",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "7c1ae7ba6585904c44e062a02de3c43fcb4ef1e4f438a0dc4d7206e981abeb52",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:23:29.401534+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "AMBIGUOUS",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "7c1ae7ba6585904c44e062a02de3c43fcb4ef1e4f438a0dc4d7206e981abeb52",
+        "timestamp_utc": "2026-10-07T09:23:29.415137+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 57.50942202384601,
+          "LOCAL_TANGENT_ALIGNMENT": 0.9401709401709402,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 0.5979119782879708,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.5560408835172526,
+          "P95_DISTANCE_TO_SOURCE_INK": 0.8079282649507713,
+          "SAMPLES": 117,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        }
+      },
+      "nomination_quality": "NOMINATION_BORDERLINE",
+      "original_rank": 13,
+      "original_sample_sha256": "5bc30604f6ce413de7bbdcf71f214e5d1a47b6daef47aa995b8a00ba1968f764",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "5bc30604f6ce413de7bbdcf71f214e5d1a47b6daef47aa995b8a00ba1968f764",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:21:02.780627+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "SINGLE_PHYSICAL_STROKE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "5bc30604f6ce413de7bbdcf71f214e5d1a47b6daef47aa995b8a00ba1968f764",
+        "timestamp_utc": "2026-10-07T09:21:02.789139+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "val-v2-115c58721d68b21e3a19687f"
+    },
+    {
+      "independent_metrics": {
+        "A": {
+          "DISPLAY_ENDPOINTS_IN_BOUNDS": true,
+          "ENDPOINT_SUPPORT": 1.0,
+          "LENGTH_PX": 61.25232085725802,
+          "LOCAL_TANGENT_ALIGNMENT": 0.9435483870967742,
+          "MEAN_DISTANCE_TO_SOURCE_INK": 1.0014630606012747,
+          "MEDIAN_TANGENT_ERROR_DEG": 0.1150988446289402,
+          "P95_DISTANCE_TO_SOURCE_INK": 1.078089133918024,
+          "SAMPLES": 124,
+          "SOURCE_IN_BOUNDS_RATIO": 1.0,
+          "SOURCE_SUPPORT_RATIO": 1.0
+        }
+      },
+      "nomination_quality": "NOMINATION_BORDERLINE",
+      "original_rank": 36,
+      "original_sample_sha256": "7caf8dc0cad7a2cbd221d09ea276ca8734c4d4e65a61aa3609c8713c2627d775",
+      "original_stage0": {
+        "annotator": "local-reviewer-validation",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "7caf8dc0cad7a2cbd221d09ea276ca8734c4d4e65a61aa3609c8713c2627d775",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T09:23:35.321243+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer-validation",
+        "label": "SINGLE_PHYSICAL_STROKE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "7caf8dc0cad7a2cbd221d09ea276ca8734c4d4e65a61aa3609c8713c2627d775",
+        "timestamp_utc": "2026-10-07T09:23:35.331778+00:00",
+        "training_authorized": false
+      },
+      "review_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "val-v2-3d055195c7ff5a95add31627"
+    }
+  ],
+  "state_sha256": "006d8e3f61c5e1f0909605e534b78aebb12432f8501ed83b06410dc7d6df8c25"
+}

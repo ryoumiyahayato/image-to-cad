@@ -7,11 +7,11 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import numpy as np
 from PySide6.QtWidgets import QApplication, QGroupBox, QLabel, QPushButton, QSplitter
 
-from app.auxiliary_recognition import TextCandidate
-from app.gui_exact_release import MainWindow
-from app.gui_librecad_release import LibreCadOcrReviewDialog
-from app.gui_public_release import MainWindow as PublicMainWindow
-from app.ocr_outline_export import accepted_ocr_texts
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.gui import MainWindow
+from app.gui.review_actions import LibreCadOcrReviewDialog
+from app.gui import MainWindow as PublicMainWindow
+from app.export.ocr_outline_export import accepted_ocr_texts
 
 
 def _application() -> QApplication:
@@ -23,41 +23,12 @@ def test_normal_exact_ui_hides_unused_panels_and_groups_generation() -> None:
     window = MainWindow()
     try:
         assert window.tabs.indexOf(window.preprocess_tabs) == -1
-        assert [window.tabs.tabText(index) for index in range(window.tabs.count())] == [
-            "原图",
-            "CAD 轮廓预览",
-        ]
-
+        assert [window.tabs.tabText(index) for index in range(window.tabs.count())] == ['SOURCE REFERENCE / 原图', 'FINAL OUTPUT PREVIEW / CAD 预览', '视觉验收']
         groups = {group.title(): group for group in window.findChildren(QGroupBox)}
-        assert groups["视图"].isHidden()
-        assert groups["纸张与坐标（照片可选）"].isHidden()
-        assert groups["高级识别参数"].isHidden()
-        assert not groups["CAD 轮廓生成"].isHidden()
-        assert not groups["检查与修改"].isHidden()
-
-        buttons = {
-            button.text(): button for button in window.findChildren(QPushButton)
-        }
-        assert "生成当前 PDF 全部页 CAD 轮廓" in buttons
-        assert "生成当前 PDF 全部页 CAD 轮廓（可取消）" not in buttons
-        assert "按已知尺寸校准（可选）" in buttons
-        assert buttons["按已知尺寸校准（可选）"].isHidden()
-        assert buttons["生成当前页 CAD 轮廓"].parentWidget().title() == "CAD 轮廓生成"
-        assert (
-            buttons["生成当前 PDF 全部页 CAD 轮廓"].parentWidget().title()
-            == "CAD 轮廓生成"
-        )
-        assert (
-            buttons["检查并修正当前页 CAD 轮廓"].parentWidget().title()
-            == "检查与修改"
-        )
-        verify_buttons = [
-            button
-            for label, button in buttons.items()
-            if label.startswith("验证当前页")
-        ]
-        assert not verify_buttons or all(button.isHidden() for button in verify_buttons)
-        assert window.show_advanced_checkbox.isHidden()
+        assert {'生成 CAD', '检查与修改', '文字识别', '输出设置'} <= groups.keys()
+        assert not {'视图', '高级识别参数', '跨文件合并队列'} & groups.keys()
+        buttons = {button.text(): button for button in window.findChildren(QPushButton)}
+        assert {'处理当前页', '处理全部页面', '导出当前页 CAD', '导出已处理页面（每页独立文件）'} <= buttons.keys()
     finally:
         window.close()
 

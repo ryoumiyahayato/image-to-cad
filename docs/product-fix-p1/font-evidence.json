@@ -1,0 +1,39 @@
+{
+  "M": {
+    "stroke_count": 1,
+    "point_counts": [
+      29
+    ],
+    "closed": [
+      true
+    ]
+  },
+  "S": {
+    "stroke_count": 1,
+    "point_counts": [
+      111
+    ],
+    "closed": [
+      true
+    ]
+  },
+  "L": {
+    "stroke_count": 1,
+    "point_counts": [
+      7
+    ],
+    "closed": [
+      true
+    ]
+  },
+  "2": {
+    "stroke_count": 1,
+    "point_counts": [
+      69
+    ],
+    "closed": [
+      true
+    ]
+  },
+  "installed_font_matches_product": true
+}

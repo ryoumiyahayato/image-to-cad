@@ -1,0 +1,128 @@
+{
+  "PRIMARY_TARGET": "AutoCAD Desktop",
+  "PRIMARY_LOCAL_DEVELOPMENT_VALIDATOR": "Bentley View",
+  "BENTLEY_VIEW_RENDER": "NOT_RUN",
+  "FONT_MATRIX": [
+    {
+      "CANDIDATE": "A",
+      "FONT_FILE": "NotoSansSC[wght].ttf",
+      "FONT_FAMILY": "Noto Sans SC",
+      "INTERNAL_LEGACY_FAMILY": "Noto Sans SC Thin",
+      "FONT_WEIGHT": {
+        "requested": "Regular 400",
+        "metadata": 100,
+        "renderer_observed": null
+      },
+      "VARIABLE_OR_STATIC": "VARIABLE",
+      "FONT_FOUND": "NOT_TESTED",
+      "FONT_SUBSTITUTION": "NOT_TESTED",
+      "CHINESE": "NOT_TESTED",
+      "LATIN": "NOT_TESTED",
+      "DIGITS": "NOT_TESTED",
+      "REGISTERED_SYMBOL": "NOT_TESTED",
+      "FILLED_APPEARANCE": "NOT_TESTED",
+      "TEXT_WIDTH": null,
+      "TEXT_HEIGHT": null,
+      "DXF_NATIVE_TEXT_PRESERVED": true,
+      "font_sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+    },
+    {
+      "CANDIDATE": "B",
+      "FONT_FILE": "ITCCADSC-Regular.ttf",
+      "FONT_FAMILY": "ITC CAD SC",
+      "INTERNAL_LEGACY_FAMILY": "ITC CAD SC",
+      "FONT_WEIGHT": {
+        "requested": "Regular 400",
+        "metadata": 400,
+        "renderer_observed": null
+      },
+      "VARIABLE_OR_STATIC": "STATIC",
+      "FONT_FOUND": "NOT_TESTED",
+      "FONT_SUBSTITUTION": "NOT_TESTED",
+      "CHINESE": "NOT_TESTED",
+      "LATIN": "NOT_TESTED",
+      "DIGITS": "NOT_TESTED",
+      "REGISTERED_SYMBOL": "NOT_TESTED",
+      "FILLED_APPEARANCE": "NOT_TESTED",
+      "TEXT_WIDTH": null,
+      "TEXT_HEIGHT": null,
+      "DXF_NATIVE_TEXT_PRESERVED": true,
+      "font_sha256": "5ae93fa926c7941d9d333d86aad1db8f61ad289b660714537fd1cfface214632"
+    }
+  ],
+  "REAL_DRAWING_LOAD": [
+    {
+      "drawing": "W03",
+      "FILE_SIZE": 3748617,
+      "ENTITY_COUNT": 6072,
+      "IMAGE_ASSETS": [
+        "drawing.signature-001.png",
+        "drawing.signature-002.png",
+        "drawing.signature-003.png",
+        "drawing.signature-004.png",
+        "drawing.signature-005.png",
+        "drawing.signature-006.png",
+        "drawing.signature-007.png",
+        "drawing.logo-001.png"
+      ],
+      "SOURCE_DXF_SHA256": "aa2f2e58fb5f124b5065cf9abaec94bb51025c694a55d005d7ff9420338f43eb",
+      "COPIED_DXF_SHA256": "aa2f2e58fb5f124b5065cf9abaec94bb51025c694a55d005d7ff9420338f43eb",
+      "OPEN_TIME": null,
+      "PEAK_MEMORY_IF_AVAILABLE": null,
+      "PAN_ZOOM_RESPONSIVENESS": "NOT_TESTED",
+      "TEXT_VISIBLE": "NOT_TESTED",
+      "IMAGE_ASSETS_VISIBLE": "NOT_TESTED",
+      "STRUCTURAL_GEOMETRY_VISIBLE": "NOT_TESTED",
+      "MISSING_REFERENCES": "NOT_TESTED",
+      "FONT_SUBSTITUTION": "NOT_TESTED",
+      "CRASH_OR_HANG": "NOT_TESTED",
+      "existing_LFF_style": true,
+      "test_order": "after comparison passes; stop after W03 if suitability is established"
+    },
+    {
+      "drawing": "E01",
+      "FILE_SIZE": 5721036,
+      "ENTITY_COUNT": 5571,
+      "IMAGE_ASSETS": [
+        "drawing.logo-001.png",
+        "drawing.logo-002.png"
+      ],
+      "SOURCE_DXF_SHA256": "632da81511ec74014032e6eaafafd292526c5f3be09bf4921ebc5766632309fd",
+      "COPIED_DXF_SHA256": "632da81511ec74014032e6eaafafd292526c5f3be09bf4921ebc5766632309fd",
+      "OPEN_TIME": null,
+      "PEAK_MEMORY_IF_AVAILABLE": null,
+      "PAN_ZOOM_RESPONSIVENESS": "NOT_TESTED",
+      "TEXT_VISIBLE": "NOT_TESTED",
+      "IMAGE_ASSETS_VISIBLE": "NOT_TESTED",
+      "STRUCTURAL_GEOMETRY_VISIBLE": "NOT_TESTED",
+      "MISSING_REFERENCES": "NOT_TESTED",
+      "FONT_SUBSTITUTION": "NOT_TESTED",
+      "CRASH_OR_HANG": "NOT_TESTED",
+      "existing_LFF_style": true,
+      "test_order": "after comparison passes; stop after W03 if suitability is established"
+    },
+    {
+      "drawing": "W01",
+      "FILE_SIZE": 1109085,
+      "ENTITY_COUNT": 1326,
+      "IMAGE_ASSETS": [
+        "drawing.logo-001.png"
+      ],
+      "SOURCE_DXF_SHA256": "604fca62f46bf6344e5345e4cce6e1a687461ce3a80579d79f780591779b38a7",
+      "COPIED_DXF_SHA256": "604fca62f46bf6344e5345e4cce6e1a687461ce3a80579d79f780591779b38a7",
+      "OPEN_TIME": null,
+      "PEAK_MEMORY_IF_AVAILABLE": null,
+      "PAN_ZOOM_RESPONSIVENESS": "NOT_TESTED",
+      "TEXT_VISIBLE": "NOT_TESTED",
+      "IMAGE_ASSETS_VISIBLE": "NOT_TESTED",
+      "STRUCTURAL_GEOMETRY_VISIBLE": "NOT_TESTED",
+      "MISSING_REFERENCES": "NOT_TESTED",
+      "FONT_SUBSTITUTION": "NOT_TESTED",
+      "CRASH_OR_HANG": "NOT_TESTED",
+      "existing_LFF_style": true,
+      "test_order": "after comparison passes; stop after W03 if suitability is established"
+    }
+  ],
+  "AUTOCAD_DESKTOP_RC_ACCEPTANCE": "MANDATORY_NOT_RUN",
+  "PRODUCTION_FONT_STRATEGY_CHANGED": false
+}

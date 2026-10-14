@@ -1,0 +1,242 @@
+{
+  "schema_version": "structural-stroke-dataset-d11-batch-review-v1",
+  "batch": 1,
+  "review_limit": 24,
+  "reviewed": 24,
+  "source_groups_represented": 7,
+  "artifact_policy": "EXISTING_REVIEW_PAIRS_ONLY",
+  "candidates": [
+    {
+      "candidate_id": "D11-F5F9A10A3791",
+      "source_group": "G0R2-15EE2398726E8037",
+      "page": 10,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "Gap lies on a title-block row labeled ORIGINAL NO., not drawing structure.",
+      "hard_negative_subtype": "title_block_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-0E014B501394",
+      "source_group": "G0R2-15EE2398726E8037",
+      "page": 10,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "Context shows one continuous routed electrical/building line across the detector gap.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-E1779C0CEAC5",
+      "source_group": "G0R2-15EE2398726E8037",
+      "page": 20,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "Fragments are the same revision-table row across a column divider.",
+      "hard_negative_subtype": "revision_table_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-42EF42BE7849",
+      "source_group": "G0R2-3B970FD759C6026F",
+      "page": 91,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The apparent horizontal span is formed by aligned Japanese text glyph strokes.",
+      "hard_negative_subtype": "aligned_text_glyphs",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-6D58556BAFBA",
+      "source_group": "G0R2-3B970FD759C6026F",
+      "page": 112,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The highlighted fragments follow one exterior building edge in the elevation.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-6BABD547AC72",
+      "source_group": "G0R2-3B970FD759C6026F",
+      "page": 112,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "Broader context identifies a continuous exterior wall return, not a dimension line.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-56D479381BC0",
+      "source_group": "G0R2-3B970FD759C6026F",
+      "page": 130,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The line carries the 20,800 measurement and terminates at dimension markers.",
+      "hard_negative_subtype": "dimension_chain",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-7C09D2DB7956",
+      "source_group": "G0R2-4A34D1B8D93B1B06",
+      "page": 8,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments trace the exterior wall along the lower floor-plan perimeter.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-13AD3A7F47D8",
+      "source_group": "G0R2-4A34D1B8D93B1B06",
+      "page": 35,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "Context shows a single interior wall separating meeting and office areas.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-C927594BB91D",
+      "source_group": "G0R2-4A34D1B8D93B1B06",
+      "page": 65,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments belong to one electrical distribution riser/conductor line.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-9B2BD40CD568",
+      "source_group": "G0R2-4A34D1B8D93B1B06",
+      "page": 65,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The apparent continuation is a legend-table row extending into the title layout.",
+      "hard_negative_subtype": "legend_table_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-6ACEC3A3AA35",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 9,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The proposal follows the outer sheet frame rather than a drawing primitive.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-1841F26D1B37",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 9,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The highlighted fragments visibly form one long exterior wall edge.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-2828FDE7CCC6",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 11,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments align along the continuous side wall of the room block.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-8BC3F40BB446",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 15,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The line is the continuous lower building boundary between structural supports.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-7C67CD02D60C",
+      "source_group": "G0R2-7E30C7F445081F40",
+      "page": 4,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The fragments are a row in the REVISIONS / AMENDMENTS table.",
+      "hard_negative_subtype": "revision_table_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-A40F1AFC1626",
+      "source_group": "G0R2-7E30C7F445081F40",
+      "page": 4,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The highlighted vertical span follows the building's exterior linework.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-4882EF15EB4D",
+      "source_group": "G0R2-7E30C7F445081F40",
+      "page": 9,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "Context shows one electrical single-line conductor interrupted by symbols.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-1F8BD71FD23F",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 51,
+      "label": "AMBIGUOUS",
+      "reason": "The degraded embedded drawing does not resolve whether the span is structure or sheet/grid layout.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-CCA20800CAA4",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 63,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The proposal joins unrelated rotated text and drawing-border fragments.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-FA9F56CC24D4",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 69,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The detected span is the border of an embedded report figure.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-3DCBB1695F22",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 2,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The highlighted rule divides stacked detail panels rather than continuing civil geometry.",
+      "hard_negative_subtype": "drawing_layout_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-E788923A0B61",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 2,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The fragments are the SCALE row of the drawing title block.",
+      "hard_negative_subtype": "title_block_rule",
+      "near_duplicate_cluster_id": null
+    },
+    {
+      "candidate_id": "D11-045266CD541A",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 6,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments follow one continuous civil roadway boundary in the key plan.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null
+    }
+  ],
+  "summary": {
+    "STRUCTURAL_CONTINUATION": 12,
+    "ANNOTATION_OR_GLYPH": 8,
+    "AMBIGUOUS": 1,
+    "INVALID_FOR_TASK": 3,
+    "hard_negative_subtypes": [
+      "aligned_text_glyphs",
+      "dimension_chain",
+      "drawing_layout_rule",
+      "legend_table_rule",
+      "revision_table_rule",
+      "title_block_rule"
+    ],
+    "near_duplicate_cases_removed": 0,
+    "more_review_needed": true
+  }
+}

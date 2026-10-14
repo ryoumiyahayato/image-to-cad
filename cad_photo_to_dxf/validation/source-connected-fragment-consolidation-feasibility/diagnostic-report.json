@@ -1,0 +1,1710 @@
+{
+  "schema_version": "source-connected-fragment-feasibility-v1",
+  "production_semantic_delta": "NONE",
+  "validation": "NO",
+  "locked_blind": "0 / 8",
+  "counterfactual_only": true,
+  "candidate_status": "CANDIDATE_NOT_SAFE",
+  "method": "Diagnostic replay of captured DEV binaries and existing detector/consolidation output. No production detector, consolidation, eligibility, ownership, fallback, artifact, or FinalStructure behavior is modified.",
+  "positives": [
+    {
+      "case_id": "D2-001",
+      "target": [
+        1322,
+        481,
+        1322,
+        998
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 3,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            1323.573,
+            865.625
+          ],
+          "second_inner": [
+            1320.244,
+            886.871
+          ]
+        },
+        "gap_px": 21.246,
+        "orientation_delta_deg": 0.644578,
+        "transverse_offset_px": 3.959351,
+        "fragment_widths_px": [
+          1.91,
+          3.82
+        ],
+        "transverse_offset_width_normalized": 1.036479,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 7,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 7,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_basis": "conservative source-visible mask plus captured binary",
+        "corridor_required": {
+          "half_width_px": 8,
+          "full_width_px": 17,
+          "half_width_scale_normalized": 6.026365
+        },
+        "topology": {
+          "off_corridor_fraction": 0.340426,
+          "branch_columns_fraction": 0.173913,
+          "maximum_transverse_ink_px": 22
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1323.573,
+              865.625
+            ],
+            "second_inner": [
+              1320.244,
+              886.871
+            ]
+          },
+          "gap_px": 21.246,
+          "orientation_delta_deg": 0.644578,
+          "transverse_offset_px": 3.959351,
+          "fragment_widths_px": [
+            1.91,
+            3.82
+          ],
+          "transverse_offset_width_normalized": 1.036479,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 7,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 7,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_basis": "conservative source-visible mask plus captured binary",
+          "corridor_required": {
+            "half_width_px": 8,
+            "full_width_px": 17,
+            "half_width_scale_normalized": 6.026365
+          },
+          "topology": {
+            "off_corridor_fraction": 0.340426,
+            "branch_columns_fraction": 0.173913,
+            "maximum_transverse_ink_px": 22
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        },
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1321.49,
+              591.881
+            ],
+            "second_inner": [
+              1321.0,
+              613.0
+            ]
+          },
+          "gap_px": 21.119,
+          "orientation_delta_deg": 0.409739,
+          "transverse_offset_px": 0.88385,
+          "fragment_widths_px": [
+            1.91,
+            3.82
+          ],
+          "transverse_offset_width_normalized": 0.231374,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 6,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 6,
+            "continuous_path": true
+          },
+          "source_basis": "conservative source-visible mask plus captured binary",
+          "corridor_required": {
+            "half_width_px": 6,
+            "full_width_px": 13,
+            "half_width_scale_normalized": 4.519774
+          },
+          "topology": {
+            "off_corridor_fraction": 0.320755,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 13
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        },
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1321.072,
+              730.625
+            ],
+            "second_inner": [
+              1320.203,
+              750.606
+            ]
+          },
+          "gap_px": 19.98,
+          "orientation_delta_deg": 1.277863,
+          "transverse_offset_px": 0.391968,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.205219,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_basis": "conservative source-visible mask plus captured binary",
+          "corridor_required": {
+            "half_width_px": 7,
+            "full_width_px": 15,
+            "half_width_scale_normalized": 5.27307
+          },
+          "topology": {
+            "off_corridor_fraction": 0.201183,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 12
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D5-UL-01",
+      "target": [
+        1405,
+        578,
+        1405,
+        736
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 2,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            1404.0,
+            625.0
+          ],
+          "second_inner": [
+            1406.574,
+            645.615
+          ]
+        },
+        "gap_px": 20.615,
+        "orientation_delta_deg": 0.380702,
+        "transverse_offset_px": 2.453125,
+        "fragment_widths_px": [
+          1.91,
+          2.7386
+        ],
+        "transverse_offset_width_normalized": 0.895759,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 5,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 5,
+          "continuous_path": true
+        },
+        "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+        "corridor_required": {
+          "half_width_px": 5,
+          "full_width_px": 11,
+          "half_width_scale_normalized": 3.766478
+        },
+        "topology": {
+          "off_corridor_fraction": 0.357143,
+          "branch_columns_fraction": 0.272727,
+          "maximum_transverse_ink_px": 14
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1404.0,
+              625.0
+            ],
+            "second_inner": [
+              1406.574,
+              645.615
+            ]
+          },
+          "gap_px": 20.615,
+          "orientation_delta_deg": 0.380702,
+          "transverse_offset_px": 2.453125,
+          "fragment_widths_px": [
+            1.91,
+            2.7386
+          ],
+          "transverse_offset_width_normalized": 0.895759,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 5,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 5,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 5,
+            "full_width_px": 11,
+            "half_width_scale_normalized": 3.766478
+          },
+          "topology": {
+            "off_corridor_fraction": 0.357143,
+            "branch_columns_fraction": 0.272727,
+            "maximum_transverse_ink_px": 14
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        },
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1406.333,
+              681.88
+            ],
+            "second_inner": [
+              1405.864,
+              701.876
+            ]
+          },
+          "gap_px": 19.996,
+          "orientation_delta_deg": 0.183001,
+          "transverse_offset_px": 0.647827,
+          "fragment_widths_px": [
+            2.7386,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.236554,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 2,
+            "minimum_connected_half_width_px": 2,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 2,
+            "minimum_connected_half_width_px": 2,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 2,
+            "full_width_px": 5,
+            "half_width_scale_normalized": 1.506591
+          },
+          "topology": {
+            "off_corridor_fraction": 0.587912,
+            "branch_columns_fraction": 0.818182,
+            "maximum_transverse_ink_px": 15
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D5-UL-02",
+      "target": [
+        1475,
+        649,
+        1475,
+        737
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            1474.0,
+            683.0
+          ],
+          "second_inner": [
+            1474.043,
+            703.125
+          ]
+        },
+        "gap_px": 20.125,
+        "orientation_delta_deg": 0.008704,
+        "transverse_offset_px": 0.040039,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 0.020963,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 1,
+          "minimum_connected_half_width_px": 1,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 1,
+          "minimum_connected_half_width_px": 1,
+          "continuous_path": true
+        },
+        "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+        "corridor_required": {
+          "half_width_px": 1,
+          "full_width_px": 3,
+          "half_width_scale_normalized": 0.753296
+        },
+        "topology": {
+          "off_corridor_fraction": 0.752941,
+          "branch_columns_fraction": 0.863636,
+          "maximum_transverse_ink_px": 13
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1474.0,
+              683.0
+            ],
+            "second_inner": [
+              1474.043,
+              703.125
+            ]
+          },
+          "gap_px": 20.125,
+          "orientation_delta_deg": 0.008704,
+          "transverse_offset_px": 0.040039,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.020963,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 1,
+            "minimum_connected_half_width_px": 1,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 1,
+            "minimum_connected_half_width_px": 1,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 1,
+            "full_width_px": 3,
+            "half_width_scale_normalized": 0.753296
+          },
+          "topology": {
+            "off_corridor_fraction": 0.752941,
+            "branch_columns_fraction": 0.863636,
+            "maximum_transverse_ink_px": 13
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D5-UR-01",
+      "target": [
+        2217,
+        1152,
+        2329,
+        1152
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            2264.406,
+            1151.867
+          ],
+          "second_inner": [
+            2288.105,
+            1151.253
+          ]
+        },
+        "gap_px": 23.699,
+        "orientation_delta_deg": 0.43292,
+        "transverse_offset_px": 1.859558,
+        "fragment_widths_px": [
+          1.91,
+          3.82
+        ],
+        "transverse_offset_width_normalized": 0.486795,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+        "corridor_required": {
+          "half_width_px": 7,
+          "full_width_px": 15,
+          "half_width_scale_normalized": 5.27307
+        },
+        "topology": {
+          "off_corridor_fraction": 0.184783,
+          "branch_columns_fraction": 0.0,
+          "maximum_transverse_ink_px": 15
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              2264.406,
+              1151.867
+            ],
+            "second_inner": [
+              2288.105,
+              1151.253
+            ]
+          },
+          "gap_px": 23.699,
+          "orientation_delta_deg": 0.43292,
+          "transverse_offset_px": 1.859558,
+          "fragment_widths_px": [
+            1.91,
+            3.82
+          ],
+          "transverse_offset_width_normalized": 0.486795,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 7,
+            "full_width_px": 15,
+            "half_width_scale_normalized": 5.27307
+          },
+          "topology": {
+            "off_corridor_fraction": 0.184783,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 15
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D5-UR-02",
+      "target": [
+        2282,
+        1083,
+        2392,
+        1083
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            2325.65,
+            1080.304
+          ],
+          "second_inner": [
+            2348.122,
+            1082.673
+          ]
+        },
+        "gap_px": 22.472,
+        "orientation_delta_deg": 1.42743,
+        "transverse_offset_px": 1.736023,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 0.908913,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+        "corridor_required": {
+          "half_width_px": 8,
+          "full_width_px": 17,
+          "half_width_scale_normalized": 6.026365
+        },
+        "topology": {
+          "off_corridor_fraction": 0.044199,
+          "branch_columns_fraction": 0.0,
+          "maximum_transverse_ink_px": 12
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              2325.65,
+              1080.304
+            ],
+            "second_inner": [
+              2348.122,
+              1082.673
+            ]
+          },
+          "gap_px": 22.472,
+          "orientation_delta_deg": 1.42743,
+          "transverse_offset_px": 1.736023,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.908913,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 8,
+            "full_width_px": 17,
+            "half_width_scale_normalized": 6.026365
+          },
+          "topology": {
+            "off_corridor_fraction": 0.044199,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 12
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D5-UR-03",
+      "target": [
+        2814,
+        693,
+        2814,
+        824
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            2816.641,
+            726.873
+          ],
+          "second_inner": [
+            2814.0,
+            748.0
+          ]
+        },
+        "gap_px": 21.127,
+        "orientation_delta_deg": 0.553222,
+        "transverse_offset_px": 2.821655,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 1.477306,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 7,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 7,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+        "corridor_required": {
+          "half_width_px": 8,
+          "full_width_px": 17,
+          "half_width_scale_normalized": 6.026365
+        },
+        "topology": {
+          "off_corridor_fraction": 0.119318,
+          "branch_columns_fraction": 0.0,
+          "maximum_transverse_ink_px": 13
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              2816.641,
+              726.873
+            ],
+            "second_inner": [
+              2814.0,
+              748.0
+            ]
+          },
+          "gap_px": 21.127,
+          "orientation_delta_deg": 0.553222,
+          "transverse_offset_px": 2.821655,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 1.477306,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 7,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 7,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_basis": "D5 visually qualified source plus conservative source-visible mask",
+          "corridor_required": {
+            "half_width_px": 8,
+            "full_width_px": 17,
+            "half_width_scale_normalized": 6.026365
+          },
+          "topology": {
+            "off_corridor_fraction": 0.119318,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 13
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    },
+    {
+      "case_id": "D2-006",
+      "target": [
+        2860,
+        1586,
+        5500,
+        1586
+      ],
+      "expected_kind": "positive",
+      "visual_qualification": null,
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            5366.873,
+            1600.049
+          ],
+          "second_inner": [
+            5498.124,
+            1581.315
+          ]
+        },
+        "gap_px": 131.251,
+        "orientation_delta_deg": 0.095493,
+        "transverse_offset_px": 18.483973,
+        "fragment_widths_px": [
+          78.310028,
+          3.82
+        ],
+        "transverse_offset_width_normalized": 0.236036,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 0,
+          "minimum_connected_half_width_px": 0,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 15,
+          "minimum_connected_half_width_px": 15,
+          "continuous_path": true
+        },
+        "source_basis": "prior high-confidence D2 source qualification; conservative source-visible mask is damage-confounded and binary connectivity is measured independently",
+        "corridor_required": {
+          "half_width_px": 0,
+          "full_width_px": 1,
+          "half_width_scale_normalized": 0.0
+        },
+        "topology": {
+          "off_corridor_fraction": 0.959916,
+          "branch_columns_fraction": 1.0,
+          "maximum_transverse_ink_px": 25
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              5366.873,
+              1600.049
+            ],
+            "second_inner": [
+              5498.124,
+              1581.315
+            ]
+          },
+          "gap_px": 131.251,
+          "orientation_delta_deg": 0.095493,
+          "transverse_offset_px": 18.483973,
+          "fragment_widths_px": [
+            78.310028,
+            3.82
+          ],
+          "transverse_offset_width_normalized": 0.236036,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 0,
+            "minimum_connected_half_width_px": 0,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 15,
+            "minimum_connected_half_width_px": 15,
+            "continuous_path": true
+          },
+          "source_basis": "prior high-confidence D2 source qualification; conservative source-visible mask is damage-confounded and binary connectivity is measured independently",
+          "corridor_required": {
+            "half_width_px": 0,
+            "full_width_px": 1,
+            "half_width_scale_normalized": 0.0
+          },
+          "topology": {
+            "off_corridor_fraction": 0.959916,
+            "branch_columns_fraction": 1.0,
+            "maximum_transverse_ink_px": 25
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "MERGE",
+      "result_reason": "passes the observed positive geometry, extent, binary-connectivity, and corridor envelope"
+    }
+  ],
+  "negative_controls": [
+    {
+      "case_id": "D2-R01",
+      "target": [
+        1285,
+        545,
+        1285,
+        915
+      ],
+      "expected_kind": "qualification_negative",
+      "binary_axis_measurements": {
+        "corridor_half_width_0_px": {
+          "target_length_px": 371,
+          "covered_length_px": 9,
+          "largest_gap_px": 174
+        },
+        "corridor_half_width_1_px": {
+          "target_length_px": 371,
+          "covered_length_px": 28,
+          "largest_gap_px": 102
+        },
+        "corridor_half_width_2_px": {
+          "target_length_px": 371,
+          "covered_length_px": 79,
+          "largest_gap_px": 100
+        },
+        "corridor_half_width_4_px": {
+          "target_length_px": 371,
+          "covered_length_px": 114,
+          "largest_gap_px": 96
+        }
+      },
+      "counterfactual_result": "REJECT",
+      "result_reason": "TARGET_MISMATCH",
+      "qualification": {
+        "source_continuous": "NO",
+        "processing_input_continuous": "NO",
+        "coordinate_mapping_verified": true,
+        "same_source_structure_endpoints": "NO",
+        "target_type": "unknown",
+        "allowed_as_false_break_case": "REJECTED"
+      },
+      "plain_conclusion": "The old target coordinate does not follow the nearby physical rule and cannot support a false-break diagnosis."
+    },
+    {
+      "case_id": "D2-R02",
+      "target": [
+        270,
+        1500,
+        270,
+        2300
+      ],
+      "expected_kind": "qualification_negative",
+      "binary_axis_measurements": {
+        "corridor_half_width_0_px": {
+          "target_length_px": 801,
+          "covered_length_px": 5,
+          "largest_gap_px": 573
+        },
+        "corridor_half_width_1_px": {
+          "target_length_px": 801,
+          "covered_length_px": 14,
+          "largest_gap_px": 564
+        },
+        "corridor_half_width_2_px": {
+          "target_length_px": 801,
+          "covered_length_px": 29,
+          "largest_gap_px": 560
+        },
+        "corridor_half_width_4_px": {
+          "target_length_px": 801,
+          "covered_length_px": 79,
+          "largest_gap_px": 547
+        }
+      },
+      "counterfactual_result": "REJECT",
+      "result_reason": "SOURCE_AMBIGUOUS",
+      "qualification": {
+        "source_continuous": "UNCERTAIN",
+        "processing_input_continuous": "UNCERTAIN",
+        "coordinate_mapping_verified": true,
+        "same_source_structure_endpoints": "UNCERTAIN",
+        "target_type": "unknown",
+        "allowed_as_false_break_case": "REJECTED"
+      },
+      "plain_conclusion": "Physical source damage makes continuity and endpoint identity ambiguous."
+    },
+    {
+      "case_id": "D2-R04",
+      "target": [
+        650,
+        800,
+        650,
+        1450
+      ],
+      "expected_kind": "qualification_negative",
+      "binary_axis_measurements": {
+        "corridor_half_width_0_px": {
+          "target_length_px": 651,
+          "covered_length_px": 78,
+          "largest_gap_px": 183
+        },
+        "corridor_half_width_1_px": {
+          "target_length_px": 651,
+          "covered_length_px": 162,
+          "largest_gap_px": 145
+        },
+        "corridor_half_width_2_px": {
+          "target_length_px": 651,
+          "covered_length_px": 193,
+          "largest_gap_px": 143
+        },
+        "corridor_half_width_4_px": {
+          "target_length_px": 651,
+          "covered_length_px": 500,
+          "largest_gap_px": 80
+        }
+      },
+      "counterfactual_result": "REJECT",
+      "result_reason": "TARGET_NOT_CONTINUOUS",
+      "qualification": {
+        "source_continuous": "NO",
+        "processing_input_continuous": "NO",
+        "coordinate_mapping_verified": true,
+        "same_source_structure_endpoints": "UNCERTAIN",
+        "target_type": "symbol boundary",
+        "allowed_as_false_break_case": "REJECTED"
+      },
+      "plain_conclusion": "Intentional wall openings and door geometry mean this is not one continuous solid source target."
+    },
+    {
+      "case_id": "D5-TEXT-UL-01",
+      "target": [
+        807,
+        1000,
+        914,
+        1000
+      ],
+      "expected_kind": "dimension_text",
+      "visual_qualification": "dimension chain with numeral/glyph intersections",
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            848.129,
+            1000.254
+          ],
+          "second_inner": [
+            882.0,
+            999.0
+          ]
+        },
+        "gap_px": 33.871,
+        "orientation_delta_deg": 0.260318,
+        "transverse_offset_px": 1.347504,
+        "fragment_widths_px": [
+          3.82,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 0.35275,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 5,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 5,
+          "continuous_path": true
+        },
+        "source_basis": "D5 rejected discovery on captured source and binary",
+        "corridor_required": {
+          "half_width_px": 5,
+          "full_width_px": 11,
+          "half_width_scale_normalized": 3.766478
+        },
+        "topology": {
+          "off_corridor_fraction": 0.278317,
+          "branch_columns_fraction": 0.4,
+          "maximum_transverse_ink_px": 18
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              848.129,
+              1000.254
+            ],
+            "second_inner": [
+              882.0,
+              999.0
+            ]
+          },
+          "gap_px": 33.871,
+          "orientation_delta_deg": 0.260318,
+          "transverse_offset_px": 1.347504,
+          "fragment_widths_px": [
+            3.82,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.35275,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 5,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 5,
+            "continuous_path": true
+          },
+          "source_basis": "D5 rejected discovery on captured source and binary",
+          "corridor_required": {
+            "half_width_px": 5,
+            "full_width_px": 11,
+            "half_width_scale_normalized": 3.766478
+          },
+          "topology": {
+            "off_corridor_fraction": 0.278317,
+            "branch_columns_fraction": 0.4,
+            "maximum_transverse_ink_px": 18
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "AMBIGUOUS",
+      "result_reason": "passes every non-semantic guard needed by the positives; measured topology density does not prove that the connected ink is structural rather than a dimension/text glyph"
+    },
+    {
+      "case_id": "D5-TEXT-UL-02",
+      "target": [
+        1108,
+        1007,
+        1242,
+        1007
+      ],
+      "expected_kind": "dimension_text",
+      "visual_qualification": "dimension chain crossing repeated dimension glyphs",
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            1156.874,
+            1006.931
+          ],
+          "second_inner": [
+            1179.36,
+            1007.357
+          ]
+        },
+        "gap_px": 22.486,
+        "orientation_delta_deg": 0.743326,
+        "transverse_offset_px": 1.780731,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 0.93232,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 5,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_basis": "D5 rejected discovery on captured source and binary",
+        "corridor_required": {
+          "half_width_px": 7,
+          "full_width_px": 15,
+          "half_width_scale_normalized": 5.27307
+        },
+        "topology": {
+          "off_corridor_fraction": 0.176471,
+          "branch_columns_fraction": 0.04,
+          "maximum_transverse_ink_px": 16
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              1156.874,
+              1006.931
+            ],
+            "second_inner": [
+              1179.36,
+              1007.357
+            ]
+          },
+          "gap_px": 22.486,
+          "orientation_delta_deg": 0.743326,
+          "transverse_offset_px": 1.780731,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.93232,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 5,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_basis": "D5 rejected discovery on captured source and binary",
+          "corridor_required": {
+            "half_width_px": 7,
+            "full_width_px": 15,
+            "half_width_scale_normalized": 5.27307
+          },
+          "topology": {
+            "off_corridor_fraction": 0.176471,
+            "branch_columns_fraction": 0.04,
+            "maximum_transverse_ink_px": 16
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "AMBIGUOUS",
+      "result_reason": "passes every non-semantic guard needed by the positives; measured topology density does not prove that the connected ink is structural rather than a dimension/text glyph"
+    },
+    {
+      "case_id": "D5-TEXT-UL-03",
+      "target": [
+        872,
+        887,
+        976,
+        887
+      ],
+      "expected_kind": "dimension_text",
+      "visual_qualification": "dimension rule with circular label and adjacent glyph strokes",
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            918.145,
+            889.086
+          ],
+          "second_inner": [
+            941.859,
+            886.62
+          ]
+        },
+        "gap_px": 23.714,
+        "orientation_delta_deg": 0.254592,
+        "transverse_offset_px": 2.670593,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 1.398216,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 8,
+          "continuous_path": true
+        },
+        "source_basis": "D5 rejected discovery on captured source and binary",
+        "corridor_required": {
+          "half_width_px": 8,
+          "full_width_px": 17,
+          "half_width_scale_normalized": 6.026365
+        },
+        "topology": {
+          "off_corridor_fraction": 0.178947,
+          "branch_columns_fraction": 0.0,
+          "maximum_transverse_ink_px": 12
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              918.145,
+              889.086
+            ],
+            "second_inner": [
+              941.859,
+              886.62
+            ]
+          },
+          "gap_px": 23.714,
+          "orientation_delta_deg": 0.254592,
+          "transverse_offset_px": 2.670593,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 1.398216,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 8,
+            "continuous_path": true
+          },
+          "source_basis": "D5 rejected discovery on captured source and binary",
+          "corridor_required": {
+            "half_width_px": 8,
+            "full_width_px": 17,
+            "half_width_scale_normalized": 6.026365
+          },
+          "topology": {
+            "off_corridor_fraction": 0.178947,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 12
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "AMBIGUOUS",
+      "result_reason": "passes every non-semantic guard needed by the positives; measured topology density does not prove that the connected ink is structural rather than a dimension/text glyph"
+    },
+    {
+      "case_id": "D5-TEXT-UR-01",
+      "target": [
+        2601,
+        1000,
+        2732,
+        1000
+      ],
+      "expected_kind": "dimension_text",
+      "visual_qualification": "dimension chain interrupted by numeric annotation",
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            2661.907,
+            1002.307
+          ],
+          "second_inner": [
+            2681.88,
+            999.204
+          ]
+        },
+        "gap_px": 19.973,
+        "orientation_delta_deg": 0.685722,
+        "transverse_offset_px": 1.240234,
+        "fragment_widths_px": [
+          3.82,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 0.324669,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 6,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_basis": "D5 rejected discovery on captured source and binary",
+        "corridor_required": {
+          "half_width_px": 7,
+          "full_width_px": 15,
+          "half_width_scale_normalized": 5.27307
+        },
+        "topology": {
+          "off_corridor_fraction": 0.40678,
+          "branch_columns_fraction": 0.363636,
+          "maximum_transverse_ink_px": 21
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              2661.907,
+              1002.307
+            ],
+            "second_inner": [
+              2681.88,
+              999.204
+            ]
+          },
+          "gap_px": 19.973,
+          "orientation_delta_deg": 0.685722,
+          "transverse_offset_px": 1.240234,
+          "fragment_widths_px": [
+            3.82,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 0.324669,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 6,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_basis": "D5 rejected discovery on captured source and binary",
+          "corridor_required": {
+            "half_width_px": 7,
+            "full_width_px": 15,
+            "half_width_scale_normalized": 5.27307
+          },
+          "topology": {
+            "off_corridor_fraction": 0.40678,
+            "branch_columns_fraction": 0.363636,
+            "maximum_transverse_ink_px": 21
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "AMBIGUOUS",
+      "result_reason": "passes every non-semantic guard needed by the positives; measured topology density does not prove that the connected ink is structural rather than a dimension/text glyph"
+    },
+    {
+      "case_id": "D5-TEXT-UR-02",
+      "target": [
+        2148,
+        1084,
+        2249,
+        1084
+      ],
+      "expected_kind": "dimension_text",
+      "visual_qualification": "dimension chain with inline number and node glyph",
+      "candidate_gap_count": 1,
+      "hardest_gap": {
+        "fragment_endpoints": {
+          "first_inner": [
+            2196.888,
+            1085.346
+          ],
+          "second_inner": [
+            2216.851,
+            1082.272
+          ]
+        },
+        "gap_px": 19.963,
+        "orientation_delta_deg": 0.82888,
+        "transverse_offset_px": 4.018372,
+        "fragment_widths_px": [
+          1.91,
+          1.91
+        ],
+        "transverse_offset_width_normalized": 2.10386,
+        "binary_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 4,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_path": {
+          "coverage_fraction": 1.0,
+          "minimum_full_coverage_half_width_px": 4,
+          "minimum_connected_half_width_px": 7,
+          "continuous_path": true
+        },
+        "source_basis": "D5 rejected discovery on captured source and binary",
+        "corridor_required": {
+          "half_width_px": 7,
+          "full_width_px": 15,
+          "half_width_scale_normalized": 5.27307
+        },
+        "topology": {
+          "off_corridor_fraction": 0.185567,
+          "branch_columns_fraction": 0.0,
+          "maximum_transverse_ink_px": 15
+        },
+        "parallel_conflicts": [],
+        "observed_extent_extension_px": 0
+      },
+      "all_internal_gaps": [
+        {
+          "fragment_endpoints": {
+            "first_inner": [
+              2196.888,
+              1085.346
+            ],
+            "second_inner": [
+              2216.851,
+              1082.272
+            ]
+          },
+          "gap_px": 19.963,
+          "orientation_delta_deg": 0.82888,
+          "transverse_offset_px": 4.018372,
+          "fragment_widths_px": [
+            1.91,
+            1.91
+          ],
+          "transverse_offset_width_normalized": 2.10386,
+          "binary_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 4,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_path": {
+            "coverage_fraction": 1.0,
+            "minimum_full_coverage_half_width_px": 4,
+            "minimum_connected_half_width_px": 7,
+            "continuous_path": true
+          },
+          "source_basis": "D5 rejected discovery on captured source and binary",
+          "corridor_required": {
+            "half_width_px": 7,
+            "full_width_px": 15,
+            "half_width_scale_normalized": 5.27307
+          },
+          "topology": {
+            "off_corridor_fraction": 0.185567,
+            "branch_columns_fraction": 0.0,
+            "maximum_transverse_ink_px": 15
+          },
+          "parallel_conflicts": [],
+          "observed_extent_extension_px": 0
+        }
+      ],
+      "counterfactual_result": "REJECT",
+      "result_reason": "falls outside the envelope required to recover all qualified positives"
+    },
+    {
+      "case_id": "EXISTING-NO-GAP-INVENTION-BLANK",
+      "expected_kind": "unsupported_blank",
+      "fragment_endpoints": [
+        [
+          70.0,
+          105.0
+        ],
+        [
+          70.0,
+          135.0
+        ]
+      ],
+      "gap_px": 30.0,
+      "orientation_delta_deg": 0.0,
+      "transverse_offset_px": 0.0,
+      "binary_path": {
+        "coverage_fraction": 0.516129,
+        "minimum_full_coverage_half_width_px": null,
+        "minimum_connected_half_width_px": null,
+        "continuous_path": false
+      },
+      "source_path": {
+        "coverage_fraction": 0.516129,
+        "minimum_full_coverage_half_width_px": null,
+        "minimum_connected_half_width_px": null,
+        "continuous_path": false
+      },
+      "corridor_half_width_tested_px": 8,
+      "parallel_rule_at_x": 105,
+      "counterfactual_result": "REJECT",
+      "result_reason": "no connected support crosses the blank gap inside the positive corridor envelope"
+    },
+    {
+      "case_id": "EXISTING-NO-GAP-INVENTION-DOUBLE-RULE",
+      "expected_kind": "double_rule",
+      "fragment_endpoints": [
+        [
+          70.0,
+          105.0
+        ],
+        [
+          70.0,
+          135.0
+        ]
+      ],
+      "gap_px": 30.0,
+      "orientation_delta_deg": 0.0,
+      "transverse_offset_px": 0.0,
+      "binary_path": {
+        "coverage_fraction": 0.516129,
+        "minimum_full_coverage_half_width_px": null,
+        "minimum_connected_half_width_px": null,
+        "continuous_path": false
+      },
+      "source_path": {
+        "coverage_fraction": 0.516129,
+        "minimum_full_coverage_half_width_px": null,
+        "minimum_connected_half_width_px": null,
+        "continuous_path": false
+      },
+      "corridor_half_width_tested_px": 8,
+      "parallel_rule_at_x": 105,
+      "counterfactual_result": "REJECT",
+      "result_reason": "parallel evidence plus unsupported gap forbids reassociation or traversal to the neighboring rule"
+    },
+    {
+      "case_id": "EXISTING-SCANNED-DOUBLE-RULE-PAIR",
+      "expected_kind": "double_rule",
+      "source_lines": [
+        [
+          [
+            30.0,
+            150.0
+          ],
+          [
+            390.0,
+            150.0
+          ]
+        ],
+        [
+          [
+            30.0,
+            158.0
+          ],
+          [
+            390.0,
+            158.0
+          ]
+        ]
+      ],
+      "transverse_separation_px": 8.0,
+      "counterfactual_result": "REJECT",
+      "result_reason": "two independently continuous parallel source components are distinct rules; the existing focused double-rule control requires both to remain"
+    }
+  ],
+  "separation_analysis": {
+    "observed_positive_envelope_not_a_production_threshold": {
+      "orientation_delta_deg_max": 1.42743,
+      "transverse_offset_width_normalized_max": 1.477306,
+      "corridor_half_width_scale_normalized_max": 6.026365
+    },
+    "positive_metric_ranges": {
+      "corridor_half_width_scale_normalized": [
+        0.0,
+        6.026365
+      ],
+      "off_corridor_fraction": [
+        0.044199,
+        0.959916
+      ],
+      "branch_columns_fraction": [
+        0.0,
+        1.0
+      ],
+      "maximum_transverse_ink_px": [
+        12.0,
+        25.0
+      ]
+    },
+    "dimension_text_metric_ranges": {
+      "corridor_half_width_scale_normalized": [
+        3.766478,
+        6.026365
+      ],
+      "off_corridor_fraction": [
+        0.176471,
+        0.40678
+      ],
+      "branch_columns_fraction": [
+        0.0,
+        0.4
+      ],
+      "maximum_transverse_ink_px": [
+        12.0,
+        21.0
+      ]
+    },
+    "range_overlap": {
+      "corridor_half_width_scale_normalized": true,
+      "off_corridor_fraction": true,
+      "branch_columns_fraction": true,
+      "maximum_transverse_ink_px": true
+    },
+    "conclusion": "The source-connected geometry/corridor measurements do not provide a clean text/glyph guard: qualified structural nodes and rejected dimension chains occupy overlapping topology-density ranges. A semantic label can reject the controls, but that is not an operational consolidation guard at this handoff."
+  },
+  "summary": {
+    "positive_cases_accepted": 7,
+    "positive_cases_total": 7,
+    "negative_controls_rejected": 7,
+    "negative_controls_total": 11,
+    "dimension_text_false_merges_or_ambiguities": 4,
+    "dimension_text_false_merges": 0,
+    "dimension_text_ambiguities": 4,
+    "double_rule_false_merges": 0,
+    "unsupported_blank_false_merges": 0,
+    "d2_005": "unchanged",
+    "d2_006": "MERGE",
+    "cross_source_support": "YES",
+    "safe_guard_found": "NO",
+    "ready_to_implement": "NO"
+  }
+}

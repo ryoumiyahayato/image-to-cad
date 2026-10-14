@@ -1,0 +1,164 @@
+{
+  "ACTUAL_CROP_ZERO_SUPPORT_TARGETS": [],
+  "DIRECT_SKIP_WITHOUT_STAGE0": 0,
+  "DUPLICATE_AUDIT": {
+    "counts": {
+      "EXACT_DUPLICATES_REMOVED": 0,
+      "NEAR_DUPLICATES_REMOVED": 0,
+      "SAME_STRUCTURE_REPETITIONS_REMOVED": 0,
+      "UNIQUE_CANDIDATES_REMAINING": 30
+    },
+    "details": []
+  },
+  "FINAL_STATE_INTERNALLY_CONSISTENT": true,
+  "INCONSISTENT_X_U_OVERWRITES": 0,
+  "INTERNAL_ERRORS": [],
+  "INVALID_NOMINATION": 0,
+  "MISSING_PRESENTATIONS": [],
+  "PRESENTATIONS_PERSISTED": 30,
+  "PRESENTATION_LOG_ENTRIES": 111,
+  "SCHEMA_VALID": true,
+  "SESSION_COUNT": 2,
+  "STAGE1_CLASSES_PRESENT": {
+    "AMBIGUOUS": 0,
+    "OTHER": 12,
+    "SINGLE_PHYSICAL_STROKE": 7,
+    "TRUE_PARALLEL_STRUCTURE": 6
+  },
+  "STAGE1_CLASS_COUNT": 25,
+  "STAGE1_WITHOUT_PRIOR_V": [],
+  "TOTAL_REVIEWED": 30,
+  "TRACEABLE_TARGET_RATE": 0.9666666666666667,
+  "UNCLEAR_TARGET": 1,
+  "UNDO_LOG_ENTRIES": 48,
+  "V2_UI_ACCEPTANCE": "PASS",
+  "VALID_TARGET": 29,
+  "V_WITH_STAGE1_SKIPPED": 4,
+  "X_U_LATER_CHANGED_TO_V": [
+    {
+      "earlier_status": "UNCLEAR_TARGET",
+      "later_status": "VALID_TARGET",
+      "log_index": 73,
+      "sample_id": "real-0703ca23033ad66044b7ac44"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 181,
+      "sample_id": "real-v2-06f44feeb4f23a6ade8c6389"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 184,
+      "sample_id": "real-v2-200fe191becfb38e5c171017"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 187,
+      "sample_id": "real-v2-09b7dfce230ff7917a0f9750"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 190,
+      "sample_id": "real-v2-0679bf07b146ac6589db9f29"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 193,
+      "sample_id": "real-v2-11ee66b5c2670fda83c4d097"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 196,
+      "sample_id": "real-v2-0cdab32110f63e34111b699f"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 199,
+      "sample_id": "real-v2-17e7035055c6ab11a6adad02"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 202,
+      "sample_id": "real-v2-0e5ed7bef7c9fb1924accbab"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 205,
+      "sample_id": "real-v2-17891a0bfd994537f8e66e52"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 208,
+      "sample_id": "real-v2-030c245fca5937e9eb430bf4"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 225,
+      "sample_id": "real-106c16571154ddfc5e7ff278"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 240,
+      "sample_id": "real-126cb89de9a09c270b3fc11e"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 245,
+      "sample_id": "real-73e107b2b87e315cd43346e1"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 248,
+      "sample_id": "real-v2-25da405dccccbd39180d6acb"
+    },
+    {
+      "earlier_status": "INVALID_NOMINATION",
+      "later_status": "VALID_TARGET",
+      "log_index": 272,
+      "sample_id": "real-5bb839e41268104ef712c43a"
+    }
+  ],
+  "ZERO_SOURCE_SUPPORT_STAGE1": [],
+  "blind_sources_accessed": 0,
+  "by_drawing": {
+    "A2-SG-009": 3,
+    "A2-SG-022": 3,
+    "G0R2-15EE2398726E8037": 3,
+    "G0R2-3560D9BEBEAA3543": 3,
+    "G0R2-3B970FD759C6026F": 2,
+    "G0R2-4A34D1B8D93B1B06": 2,
+    "G0R2-6C9464FA73A2A027": 2,
+    "G0R2-7E30C7F445081F40": 2,
+    "G0R2-B441E5911528F402": 2,
+    "G0R2-C2D095E069663C17": 2,
+    "environment-building": 2,
+    "sample-plan-photo": 2,
+    "warehouse-electrical": 2
+  },
+  "by_target_type": {
+    "CONTROL": 14,
+    "PAIR": 12,
+    "SINGLE": 4
+  },
+  "label_version": "b9b5ea6094dd931bf6b7f9ebd086a24d2f42b2135bab1ba3476671b2131eb6c4",
+  "manifest_sha256": "435a779017e88bef35897b84e0496dbb14f98d99f58f2cbe4c19b7cad53e3d72",
+  "revision": 273,
+  "split_manifest_sha256": "d354b6604e92a1e6c8a01d10bb61032c2872167188bff4d4b7943b3955b25444",
+  "state_sha256": "03d210a578ce45a6fc302e9c9000e5cf8d11a271c2614aa90ca649f3a8e31a2c",
+  "training_authorized": false,
+  "validation_sources_accessed": 0
+}

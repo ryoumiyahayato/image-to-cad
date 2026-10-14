@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-from app.auxiliary_recognition import TextCandidate
-from app.ocr_overlap import collapse_overlapping_candidates
-from app.ocr_outline_export import accepted_ocr_texts
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.ocr.ocr_overlap import collapse_overlapping_candidates
+from app.export.ocr_outline_export import accepted_ocr_texts
 
 
 def _candidate(

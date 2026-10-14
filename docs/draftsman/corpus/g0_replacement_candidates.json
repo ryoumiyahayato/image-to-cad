@@ -1,0 +1,300 @@
+{
+  "schema_version": "draftsman-g0-replacement-candidates-v1",
+  "discovery_phase": "G0-R3",
+  "candidate_registry_sha256": "07e25d6d876c0d0416556aefe01267d688da495111eec69e521bb2c70803e780",
+  "authoritative_split_sha256": "05283c960096941ecac34f73e109fe9d850e8d2354b144387c00370755d288cd",
+  "registry_record_count": 99,
+  "replacement_target": 7,
+  "candidates": [
+    {
+      "source_group_id": "G0R3-29B859C52FC45AD1",
+      "canonical_source_url": "https://www.farmington-ct.org/home/showpublisheddocument/33419/638836117810070000",
+      "organization": "Town of Farmington, Connecticut",
+      "project_or_package": "Renovations to the 1928 Building: Farmington Town Hall",
+      "country_or_area": "USA",
+      "region": "North America",
+      "drawing_family": "municipal town hall renovation / electrical site plan",
+      "vector_raster_status": "CONFIRMED_MIXED",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "Page 114 is drawing E300, ELECTRICAL SITE PLAN, for Renovations to the 1928 Building: Farmington Town Hall, project 22.189.",
+        "The official municipal meeting packet identifies the 1928 Building Committee and Town Hall context; the electrical sheet title block identifies Silver Petrucelli + Associates."
+      ],
+      "source_provenance": {
+        "method": "USER_BROWSER_DOWNLOAD_TO_DESKTOP",
+        "host_url_observed": "https://www.farmington-ct.org/home/showpublisheddocument/33419/638836117810070000?utm_source=chatgpt.com",
+        "referrer_url_observed": "https://www.farmington-ct.org/home/showpublisheddocument/33419/638836117810070000?utm_source=chatgpt.com",
+        "downloaded_at_local": "2026-09-09T17:19:36+08:00",
+        "identity_evidence": "Windows Zone.Identifier records the official farmington-ct.org document URL; packet page 1 and electrical drawing page 114 establish municipal, project, and drawing identity."
+      },
+      "governance_access_notes": "Official Town of Farmington public meeting document; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "Independent Farmington Town Hall renovation project. Existing SGC-008 is the Senior Community Center HVAC and Roof Replacement, a different facility, project, package, and URL.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-29B859C52FC45AD1/52725.pdf",
+          "local_source_filename": "52725.pdf",
+          "original_download_filename": "52725.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 24353824,
+          "sha256": "1dce366346b4048a478a01c65185e6672284419cf723863a47c200cdd1440df2",
+          "page_count": 145,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-2EEB6C7BB30F78D1",
+      "canonical_source_url": "https://www.city.hamamatsu.shizuoka.jp/documents/151209/dennkisetubi.pdf",
+      "organization": "Hamamatsu City / 浜松市",
+      "project_or_package": "令和5年度 古橋廣之進記念浜松市総合水泳場（トビオ）吊り天井落下防止対策工事",
+      "country_or_area": "Japan",
+      "region": "East Asia",
+      "drawing_family": "municipal swimming facility / lighting plan",
+      "vector_raster_status": "CONFIRMED_VECTOR",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "The single sheet title block states 電気設備工事 and メインプール 電灯設備図 for Hamamatsu City ToBiO.",
+        "The sheet contains a full lighting layout with electrical symbols, circuit annotations, and fixtures; title-block date is 2023-01-18."
+      ],
+      "source_provenance": {
+        "method": "USER_BROWSER_DOWNLOAD_TO_DESKTOP",
+        "host_url_observed": "https://www.city.hamamatsu.shizuoka.jp/documents/151209/dennkisetubi.pdf?utm_source=chatgpt.com",
+        "referrer_url_observed": "https://www.city.hamamatsu.shizuoka.jp/documents/151209/dennkisetubi.pdf?utm_source=chatgpt.com",
+        "downloaded_at_local": "2026-09-09T17:23:14+08:00",
+        "identity_evidence": "Windows Zone.Identifier records the official city.hamamatsu.shizuoka.jp PDF URL; the sole page title block names Hamamatsu City, the ToBiO project, electrical discipline, and lighting sheet."
+      },
+      "governance_access_notes": "Official Hamamatsu City public document; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct municipal swimming-facility ceiling-safety project and electrical lighting package; no registry URL or organization-plus-project identity match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-2EEB6C7BB30F78D1/dennkisetubi.pdf",
+          "local_source_filename": "dennkisetubi.pdf",
+          "original_download_filename": "dennkisetubi.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 241803,
+          "sha256": "d4de6ab58ade7444dcfd5405350ad3965e8f762606bd21a53d817b1464bc6364",
+          "page_count": 1,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-428190EE2F469FB0",
+      "canonical_source_url": "https://www.city.kadoma.osaka.jp/material/files/group/50/2026dennkisetsubi.pdf",
+      "organization": "Kadoma City / 門真市",
+      "project_or_package": "（仮称）門真市立総合体育館建設工事",
+      "country_or_area": "Japan",
+      "region": "East Asia",
+      "drawing_family": "municipal sports arena / lighting and electrical plans",
+      "vector_raster_status": "CONFIRMED_RASTER",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "Page 1 is sheet E-26, 電灯設備 1階平面図, for the proposed Kadoma Municipal General Gymnasium construction project.",
+        "The seven-page package contains full electrical-plan linework and a project title block naming the facility and completed drawing set."
+      ],
+      "source_provenance": {
+        "method": "USER_BROWSER_DOWNLOAD_TO_DESKTOP",
+        "host_url_observed": "https://www.city.kadoma.osaka.jp/material/files/group/50/2026dennkisetsubi.pdf?utm_source=chatgpt.com",
+        "referrer_url_observed": "https://www.city.kadoma.osaka.jp/material/files/group/50/2026dennkisetsubi.pdf?utm_source=chatgpt.com",
+        "downloaded_at_local": "2026-09-09T17:22:44+08:00",
+        "identity_evidence": "Windows Zone.Identifier records the official city.kadoma.osaka.jp PDF URL; rendered title block and E-26 sheet title establish project and electrical-plan identity."
+      },
+      "governance_access_notes": "Official Kadoma City public document; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct municipal sports-arena construction package; no registry URL or organization-plus-project identity match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-428190EE2F469FB0/2026dennkisetsubi.pdf",
+          "local_source_filename": "2026dennkisetsubi.pdf",
+          "original_download_filename": "2026dennkisetsubi.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 5401143,
+          "sha256": "427c05ee4298999ecb8cc2bb2b73002b9592f9905bc74cc5e64098f58741327a",
+          "page_count": 7,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-4ABF9A7441A705A2",
+      "canonical_source_url": "https://www.pref.nagano.lg.jp/gijukan/kensei/nyusatsu/kokyokoji/bukyoku/documents/20210416zumen.pdf",
+      "organization": "Nagano Prefecture Construction Department / 長野県建設部",
+      "project_or_package": "御岳県立公園御嶽山ビジターセンター（仮称）建設工事",
+      "country_or_area": "Japan",
+      "region": "East Asia",
+      "drawing_family": "prefectural visitor center / distribution and electrical plans",
+      "vector_raster_status": "CONFIRMED_RASTER",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "Page 1 is electrical-equipment special specification sheet E-01 for the Ontake Visitor Center construction project and names 長野県建設部.",
+        "Page 2 is sheet E-02 and contains a distribution-board connection diagram and associated electrical schedules."
+      ],
+      "source_provenance": {
+        "method": "USER_BROWSER_DOWNLOAD_TO_DESKTOP",
+        "host_url_observed": "https://www.pref.nagano.lg.jp/gijukan/kensei/nyusatsu/kokyokoji/bukyoku/documents/20210416zumen.pdf?utm_source=chatgpt.com",
+        "referrer_url_observed": "https://www.pref.nagano.lg.jp/gijukan/kensei/nyusatsu/kokyokoji/bukyoku/documents/20210416zumen.pdf?utm_source=chatgpt.com",
+        "downloaded_at_local": "2026-09-09T17:23:30+08:00",
+        "identity_evidence": "Windows Zone.Identifier records the official pref.nagano.lg.jp PDF URL; pages E-01 and E-02 identify the issuing department, project, and electrical diagrams."
+      },
+      "governance_access_notes": "Official Nagano Prefecture public-works document; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct prefectural mountain visitor-center construction package; no registry URL or organization-plus-project identity match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-4ABF9A7441A705A2/20210416zumen.pdf",
+          "local_source_filename": "20210416zumen.pdf",
+          "original_download_filename": "20210416zumen.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 7017662,
+          "sha256": "b005e4158f8e56ae973444a479dba6e5d288f19c83d6da4c0d8855c516327527",
+          "page_count": 16,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-746CDDBA829DD3FE",
+      "canonical_source_url": "https://www.acnj.gov/_Content/pdf/Pop-Lloyd-Updated-Addendum-%233-040124-DRAWINGS.pdf",
+      "organization": "City of Atlantic City, New Jersey",
+      "project_or_package": "Pop Lloyd Stadium Renovation",
+      "country_or_area": "USA",
+      "region": "North America",
+      "drawing_family": "municipal stadium renovation / power, lighting, single-line, and panel schedules",
+      "vector_raster_status": "CONFIRMED_MIXED",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "The City of Atlantic City drawing package cover identifies Pop Lloyd Stadium Renovation at 1200 North MLK Boulevard and lists the electrical drawing series.",
+        "Page 9 is E-000 electrical notes, scope, legend, and drawing schedule; page 10 is E-102 electrical new-work locker-room and restroom plan.",
+        "Page 11 is E-300 electrical schedules and diagrams, including a single-line diagram and branch panel schedules."
+      ],
+      "source_provenance": {
+        "method": "BROWSER_VERIFIED_DIRECT_OFFICIAL_URL_LOCAL_BYTE_SAVE",
+        "host_url_observed": "https://www.acnj.gov/_Content/pdf/Pop-Lloyd-Updated-Addendum-%233-040124-DRAWINGS.pdf",
+        "referrer_url_observed": "https://www.google.com/search?q=site%3A.gov+filetype%3Apdf+%22ELECTRICAL+DRAWINGS%22+%22E-101%22+renovation",
+        "downloaded_at_local": "2026-09-09T18:36:57+08:00",
+        "identity_evidence": "The browser opened the anonymous official acnj.gov PDF directly; the rendered cover, electrical legend, new-work plan, single-line diagram, and panel schedules establish municipal, project, and electrical identity."
+      },
+      "governance_access_notes": "Official City of Atlantic City public construction drawing package; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct New Jersey municipal stadium-renovation drawing package; no registry or existing replacement URL, organization-plus-project, facility, or source-family match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-746CDDBA829DD3FE/Pop-Lloyd-Updated-Addendum-#3-040124-DRAWINGS.pdf",
+          "local_source_filename": "Pop-Lloyd-Updated-Addendum-#3-040124-DRAWINGS.pdf",
+          "original_download_filename": "Pop-Lloyd-Updated-Addendum-#3-040124-DRAWINGS.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 15498504,
+          "sha256": "78f56a1bb333896837eccfcdd8a7c78ea3d53e58be645a3f1603d9bd6c927d6a",
+          "page_count": 17,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-829E8827D01F110E",
+      "canonical_source_url": "https://www.city.yokohama.lg.jp/seya/kusei/shiteikanrisha/chiku_center/bunkacenter/kubun2.files/0026_20260601.pdf",
+      "organization": "Yokohama City / 横浜市",
+      "project_or_package": "瀬谷区民文化センター 電気設備図",
+      "country_or_area": "Japan",
+      "region": "East Asia",
+      "drawing_family": "municipal cultural center / power, lighting, low-voltage, and grounding",
+      "vector_raster_status": "CONFIRMED_RASTER",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "Page 1 cover identifies 瀬谷区民文化センター 電気設備図.",
+        "Page 3 drawing list enumerates E-000 through E-025, including single-line, panel, lighting, outlet, fire-alarm, and ITV plans.",
+        "Page 10 is sheet E-007, 幹線設備・接地幹線系統図, with electrical riser and feeder linework."
+      ],
+      "source_provenance": {
+        "method": "USER_BROWSER_DOWNLOAD_TO_DESKTOP",
+        "host_url_observed": "https://www.city.yokohama.lg.jp/seya/kusei/shiteikanrisha/chiku_center/bunkacenter/kubun2.files/0026_20260601.pdf?utm_source=chatgpt.com",
+        "referrer_url_observed": "https://www.city.yokohama.lg.jp/seya/kusei/shiteikanrisha/chiku_center/bunkacenter/kubun2.files/0026_20260601.pdf?utm_source=chatgpt.com",
+        "downloaded_at_local": "2026-09-09T17:22:22+08:00",
+        "identity_evidence": "Windows Zone.Identifier records the official city.yokohama.lg.jp PDF URL; cover, drawing index, and E-007 title block establish the cultural-center electrical package."
+      },
+      "governance_access_notes": "Official Yokohama City public document; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct municipal cultural-center electrical package; no registry URL or organization-plus-project identity match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-829E8827D01F110E/0026_20260601.pdf",
+          "local_source_filename": "0026_20260601.pdf",
+          "original_download_filename": "0026_20260601.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 5905211,
+          "sha256": "478862c1f5a9041acddf78b4322df89b1682d88adf91507632c2e41ea7d984f3",
+          "page_count": 39,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    },
+    {
+      "source_group_id": "G0R3-BE39EAEE97CA4210",
+      "canonical_source_url": "https://www.worcestermd.gov/sites/default/files/2025-09/Bid%20Set%20-%200085B005.A01_Agency%20Review-Bid%20Set_07-29-25_R_reduced%20size.pdf",
+      "organization": "Worcester County, Maryland / Worcester County Health Department",
+      "project_or_package": "Isle of Wight Facility Renovation",
+      "country_or_area": "USA",
+      "region": "North America",
+      "drawing_family": "county health facility renovation / lighting, power, fire alarm, and panel schedules",
+      "vector_raster_status": "CONFIRMED_MIXED",
+      "historical_archival": false,
+      "degraded_status": "NOT_CONFIRMED_DEGRADED",
+      "native_image": false,
+      "electrical_drawing_evidence": [
+        "Page 1 identifies the Isle of Wight Facility Renovation for the Worcester County Health Department, agency review/bid set DBF 0085B055.A01 dated July 29, 2025.",
+        "Page 23 is E-101 electrical demolition plan; page 24 is E-201 electrical lighting plan; page 25 is E-301 electrical power plan.",
+        "Page 26 is E-401 electrical schedules with lighting fixtures and branch-panel data."
+      ],
+      "source_provenance": {
+        "method": "BROWSER_VERIFIED_DIRECT_OFFICIAL_URL_LOCAL_BYTE_SAVE",
+        "host_url_observed": "https://www.worcestermd.gov/sites/default/files/2025-09/Bid%20Set%20-%200085B005.A01_Agency%20Review-Bid%20Set_07-29-25_R_reduced%20size.pdf",
+        "referrer_url_observed": "https://www.google.com/search?q=site%3A.gov+filetype%3Apdf+%22ELECTRICAL+DRAWINGS%22+%22E-101%22+renovation",
+        "downloaded_at_local": "2026-09-09T18:32:46+08:00",
+        "identity_evidence": "The browser opened the anonymous official worcestermd.gov PDF directly; the rendered cover and E-101, E-201, E-301, and E-401 sheets establish county, project, and electrical identity."
+      },
+      "governance_access_notes": "Official Worcester County public bid-set drawing package; retained locally for evaluation design, with no redistribution grant inferred.",
+      "source_group_independence_notes": "A distinct Maryland county health-facility renovation drawing package; no registry or existing replacement URL, organization-plus-project, facility, or source-family match was found.",
+      "existing_registry_dedup_result": "DISTINCT_FROM_99_RECORD_REGISTRY",
+      "acquisition_verified": true,
+      "files": [
+        {
+          "local_relative_path": "local-artifacts/draftsman/replacement-candidates/G0R3-BE39EAEE97CA4210/Bid Set - 0085B005.A01_Agency Review-Bid Set_07-29-25_R_reduced size.pdf",
+          "local_source_filename": "Bid Set - 0085B005.A01_Agency Review-Bid Set_07-29-25_R_reduced size.pdf",
+          "original_download_filename": "Bid Set - 0085B005.A01_Agency Review-Bid Set_07-29-25_R_reduced size.pdf",
+          "source_format": "PDF",
+          "detected_mime": "application/pdf",
+          "byte_size": 9737961,
+          "sha256": "95733f340125a567804d810c2d23f645cd3ea1ec42483261b2ef1427c4dbbfed",
+          "page_count": 26,
+          "integrity_check": "PDFINFO_PARSE_PASS"
+        }
+      ]
+    }
+  ]
+}

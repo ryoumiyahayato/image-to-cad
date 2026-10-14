@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PIL import Image, ImageDraw
 
-from app.image_loader import bounded_pdf_dpi, load_image, pdf_page_count, pdf_page_size_mm
+from app.core.image_loader import bounded_pdf_dpi, load_image, pdf_page_count, pdf_page_size_mm
 
 
 def test_load_image_renders_image_only_pdf(tmp_path) -> None:

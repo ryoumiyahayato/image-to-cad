@@ -1,0 +1,17 @@
+{
+  "class_distribution": {
+    "OTHER": 17,
+    "SINGLE_PHYSICAL_STROKE": 44,
+    "TRUE_PARALLEL_STRUCTURE": 84
+  },
+  "label_count": 145,
+  "manifest_sha256": "a33a88cdeff760fcb5a360997e723cdf708d5500fb52ce829e9068cf3cf79678",
+  "path": "docs\\product-fix-p3b\\labels\\local-labels.json",
+  "sha256": "1ea4314aa4bd6f58266205e750a92076dc866cbbc2b04bd59b2d9e379868a624",
+  "snapshot": "docs\\product-fix-p3b\\labels\\PILOT_LABELS_V1.json",
+  "snapshot_sha256": "1ea4314aa4bd6f58266205e750a92076dc866cbbc2b04bd59b2d9e379868a624",
+  "status": "PILOT_V1_UNVERIFIED",
+  "training_authorized": 0,
+  "unverified_snapshot": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\PILOT_V1_UNVERIFIED.json",
+  "unverified_snapshot_sha256": "1ea4314aa4bd6f58266205e750a92076dc866cbbc2b04bd59b2d9e379868a624"
+}

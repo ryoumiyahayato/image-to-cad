@@ -1,0 +1,631 @@
+{
+  "all_dxf_audits_passed": true,
+  "documents": [
+    {
+      "all_TEXT_entity_count": 0,
+      "bytes": 268338,
+      "downgrade_reasons": {
+        "replacement_unsafe": 2
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 2,
+      "fallback_outline_entity_count": 26,
+      "id": "perspective-sample-plan",
+      "layer_entity_types": {
+        "RESIDUAL_GRAPHIC": {},
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 26
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 85
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 172
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 99
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 382,
+      "native_TEXT_count": 0,
+      "native_text_candidate_count": 0,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 2,
+      "page": {
+        "dpi": 96,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "raster_photo"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\perspective-sample-plan.dxf",
+      "residual_candidate_count": 0,
+      "residual_entity_count": 0,
+      "sha256": "4df98a54b7f6116c096f280fa878c880fe9008789b76681ec708d9feb873b758",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 99,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 23,
+      "bytes": 1951803,
+      "downgrade_reasons": {
+        "replacement_unsafe": 131
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 131,
+      "fallback_outline_entity_count": 1153,
+      "id": "environment-plan-page-003-150dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 23
+        },
+        "RESIDUAL_GRAPHIC": {},
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1153
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 891
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 590
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1189
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3846,
+      "native_TEXT_count": 23,
+      "native_text_candidate_count": 23,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 154,
+      "page": {
+        "dpi": 150,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-plan-page-003-150dpi.dxf",
+      "residual_candidate_count": 0,
+      "residual_entity_count": 0,
+      "sha256": "3d8abd9aa5747a36b4f2a274e286792ed458488a0a239cfe63568b79427db177",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 1189,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 36,
+      "bytes": 571044,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 53
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 53,
+      "fallback_outline_entity_count": 852,
+      "id": "warehouse-index-page-001-150dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 36
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 2
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 852
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 503
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 3
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 1396,
+      "native_TEXT_count": 36,
+      "native_text_candidate_count": 36,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 91,
+      "page": {
+        "dpi": 150,
+        "number": 1,
+        "orientation": "portrait",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\warehouse-index-page-001-150dpi.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 2,
+      "sha256": "e4b4a62ede0412466a5c310527d11ff6ab9807b0afbc4fee77f93273b3fe7715",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 3,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 10,
+      "bytes": 1735834,
+      "downgrade_reasons": {
+        "confidence_below_contract": 1,
+        "replacement_unsafe": 129
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 129,
+      "fallback_outline_entity_count": 1098,
+      "id": "environment-scan-page-001-120dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 10
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 14
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1098
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 925
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 513
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1164
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3724,
+      "native_TEXT_count": 10,
+      "native_text_candidate_count": 10,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 140,
+      "page": {
+        "dpi": 120,
+        "number": 1,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-scan-page-001-120dpi.dxf",
+      "residual_candidate_count": 1,
+      "residual_entity_count": 14,
+      "sha256": "b9c95d5d51cdd6c7af4bd494c7e9ef71636f12c0f508b93902733d28f80109f7",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 1164,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 5,
+      "bytes": 1489502,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 92
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 92,
+      "fallback_outline_entity_count": 572,
+      "id": "environment-scan-page-002-120dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 5
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 272
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 572
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 795
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 360
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1201
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3205,
+      "native_TEXT_count": 5,
+      "native_text_candidate_count": 5,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 99,
+      "page": {
+        "dpi": 120,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-scan-page-002-120dpi.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 272,
+      "sha256": "3ed6202d106eeac6f5cea864c5416e9d55bf2aca04423e842bb856937a9e35c2",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 1201,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 22,
+      "bytes": 1709392,
+      "downgrade_reasons": {
+        "replacement_unsafe": 135
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 135,
+      "fallback_outline_entity_count": 911,
+      "id": "environment-scan-page-004-120dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 22
+        },
+        "RESIDUAL_GRAPHIC": {},
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 911
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1140
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 589
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1149
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3811,
+      "native_TEXT_count": 22,
+      "native_text_candidate_count": 22,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 157,
+      "page": {
+        "dpi": 120,
+        "number": 4,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-scan-page-004-120dpi.dxf",
+      "residual_candidate_count": 0,
+      "residual_entity_count": 0,
+      "sha256": "72d556215eb428d7517525eb86f00da75d41c9f958a7edf54007ef6c2b436c15",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 1149,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 12,
+      "bytes": 1251244,
+      "downgrade_reasons": {
+        "confidence_below_contract": 6,
+        "replacement_unsafe": 65
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 65,
+      "fallback_outline_entity_count": 476,
+      "id": "environment-scan-page-008-120dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 12
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 401
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 476
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 739
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 309
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 753
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 2690,
+      "native_TEXT_count": 12,
+      "native_text_candidate_count": 12,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 83,
+      "page": {
+        "dpi": 120,
+        "number": 8,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-scan-page-008-120dpi.dxf",
+      "residual_candidate_count": 6,
+      "residual_entity_count": 401,
+      "sha256": "ad3d22505fa8a95edf92ec8778e83539245ab3a9b392e29d56c306d671389e12",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 753,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 12,
+      "bytes": 1795135,
+      "downgrade_reasons": {
+        "replacement_unsafe": 138
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 138,
+      "fallback_outline_entity_count": 1117,
+      "id": "environment-scan-page-014-120dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 12
+        },
+        "RESIDUAL_GRAPHIC": {},
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 1117
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 1144
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 511
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 1105
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 3889,
+      "native_TEXT_count": 12,
+      "native_text_candidate_count": 12,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 150,
+      "page": {
+        "dpi": 120,
+        "number": 14,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\environment-scan-page-014-120dpi.dxf",
+      "residual_candidate_count": 0,
+      "residual_entity_count": 0,
+      "sha256": "112f51c95ccc732d0d8d09aa2a91b3b5cff21fdda12768c9fc45abd52ca2fb43",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 1105,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 41,
+      "bytes": 794781,
+      "downgrade_reasons": {
+        "confidence_below_contract": 2,
+        "replacement_unsafe": 102
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 102,
+      "fallback_outline_entity_count": 818,
+      "id": "warehouse-system-page-002-72dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 41
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 40
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 818
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 120
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 117
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 567
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 1703,
+      "native_TEXT_count": 41,
+      "native_text_candidate_count": 41,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 145,
+      "page": {
+        "dpi": 72,
+        "number": 2,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\warehouse-system-page-002-72dpi.dxf",
+      "residual_candidate_count": 2,
+      "residual_entity_count": 40,
+      "sha256": "5a4ba0e2f745913ff875e442b3f7d1cbee33102d218f2742f0cabb3241bd4451",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 567,
+      "uncertain_text_outline_entity_count": 0
+    },
+    {
+      "all_TEXT_entity_count": 36,
+      "bytes": 1118604,
+      "downgrade_reasons": {
+        "confidence_below_contract": 1,
+        "replacement_unsafe": 130
+      },
+      "dxf_audit_error_count": 0,
+      "fallback_candidate_count": 130,
+      "fallback_outline_entity_count": 644,
+      "id": "warehouse-plan-page-003-72dpi",
+      "layer_entity_types": {
+        "OCR_TEXT": {
+          "TEXT": 36
+        },
+        "RESIDUAL_GRAPHIC": {
+          "LWPOLYLINE": 125
+        },
+        "SOURCE_TEXT_OUTLINE": {},
+        "TEXT_FALLBACK_OUTLINE": {
+          "LWPOLYLINE": 644
+        },
+        "TRACE_CURVE": {
+          "LWPOLYLINE": 303
+        },
+        "TRACE_STRAIGHT": {
+          "LINE": 416
+        },
+        "TRACE_TEXT_SYMBOL": {
+          "LWPOLYLINE": 730
+        },
+        "UNCERTAIN_TEXT_OUTLINE": {}
+      },
+      "layer_visible": {
+        "0": true,
+        "Defpoints": true,
+        "OCR_TEXT": true,
+        "RESIDUAL_GRAPHIC": true,
+        "SCAN_UNDERLAY": true,
+        "SIGNATURE_OVERLAY": true,
+        "TEXT_FALLBACK_OUTLINE": true,
+        "TRACE_CURVE": true,
+        "TRACE_STRAIGHT": true,
+        "TRACE_TEXT_SYMBOL": true
+      },
+      "modelspace_entity_count": 2254,
+      "native_TEXT_count": 36,
+      "native_text_candidate_count": 36,
+      "native_text_entity_type_check": true,
+      "ocr_candidate_count": 167,
+      "page": {
+        "dpi": 72,
+        "number": 3,
+        "orientation": "landscape",
+        "source_kind": "pdf_render"
+      },
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\dxf\\warehouse-plan-page-003-72dpi.dxf",
+      "residual_candidate_count": 1,
+      "residual_entity_count": 125,
+      "sha256": "a237b4a06b503366f428da16049f02c0a9331f8a08ebd267e15b46071f0a59a0",
+      "source_text_outline_entity_count": 0,
+      "text_symbol_entity_count": 730,
+      "uncertain_text_outline_entity_count": 0
+    }
+  ],
+  "dxf_count": 10,
+  "report_kind": "text-contract",
+  "schema_version": 1,
+  "source_report": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\before\\text-contract.json"
+}

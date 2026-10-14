@@ -1,0 +1,787 @@
+{
+  "schema_version": 1,
+  "contract_id": "frozen-junction-v2-eight-node-remap-d2cecc",
+  "base_head": "d2cecc05b8022612127162683b6c31bc7866cb46",
+  "nodes": [
+    {
+      "node_id": "ENV-3",
+      "canonical_point": [
+        1003.5287407728019,
+        1003.5796456112868
+      ],
+      "expected_arms": 2
+    },
+    {
+      "node_id": "WH-1",
+      "canonical_point": [
+        1239.483642578125,
+        1761.0
+      ],
+      "expected_arms": 2
+    },
+    {
+      "node_id": "WH-2",
+      "canonical_point": [
+        206.30609104524916,
+        127.3700487041283
+      ],
+      "expected_arms": 2
+    },
+    {
+      "node_id": "WH-3",
+      "canonical_point": [
+        206.30522202308066,
+        1761.0
+      ],
+      "expected_arms": 2
+    },
+    {
+      "node_id": "WH-4",
+      "canonical_point": [
+        972.7832665337456,
+        686.0
+      ],
+      "expected_arms": 4
+    },
+    {
+      "node_id": "WH-5",
+      "canonical_point": [
+        972.7832665337456,
+        781.0
+      ],
+      "expected_arms": 4
+    },
+    {
+      "node_id": "WH-6",
+      "canonical_point": [
+        972.7832665337456,
+        1111.0
+      ],
+      "expected_arms": 4
+    },
+    {
+      "node_id": "WH-7",
+      "canonical_point": [
+        972.7832665337456,
+        1206.0
+      ],
+      "expected_arms": 4
+    }
+  ],
+  "obligations": [
+    {
+      "obligation_id": "ENV-3::ENV-3-VERTICAL-RETURN::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "ENV-3",
+      "participant_id": "ENV-3-VERTICAL-RETURN",
+      "input_member_id": "MAIN:LSD-001280:REP:observation-1e4486b6afe84ba6b0ca:piece-000:0.000000000-43.749942375",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        1003.5287407728019,
+        1003.5796456112868
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-001280"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/0",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/environment-page-003-crossing-3.png",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/env-crossing3-context.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          1003.5126342773438,
+          1044.3751220703125
+        ],
+        "end": [
+          1003.5299072265625,
+          1000.6251831054688
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4fa68759e01b7657852d436e942f18058ee5b5f77e40a7aa7d0ca2ce902b21d8",
+      "old_final_structure_line_identity": "straight-line-000359"
+    },
+    {
+      "obligation_id": "ENV-3::ENV-3-HORIZONTAL-BOUNDARY::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "ENV-3",
+      "participant_id": "ENV-3-HORIZONTAL-BOUNDARY",
+      "input_member_id": "MAIN:LSD-000208:REP:observation-28830e7088dfa5812da4:piece-000:0.000000000-226.250310432",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        1003.5287407728019,
+        1003.5796456112868
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000208"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/0",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/environment-page-003-crossing-3.png",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/env-crossing3-context.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          995.6240767854327,
+          1003.577941801612
+        ],
+        "end": [
+          1221.874381961214,
+          1003.6267088914558
+        ],
+        "width": 7.639999866485596
+      },
+      "old_final_structure_identity": "4fa68759e01b7657852d436e942f18058ee5b5f77e40a7aa7d0ca2ce902b21d8",
+      "old_final_structure_line_identity": "straight-line-000367"
+    },
+    {
+      "obligation_id": "WH-1::WH-1-RIGHT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-1",
+      "participant_id": "WH-1-RIGHT-FRAME",
+      "input_member_id": "MAIN:LSD-000569:REP:observation-90dd31094a97bc222e9f:piece-000:0.000000000-1636.250000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        1239.483642578125,
+        1761.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000569"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/1",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-1.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          1239.483642578125,
+          125.625
+        ],
+        "end": [
+          1239.483642578125,
+          1761.875
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000006"
+    },
+    {
+      "obligation_id": "WH-1::WH-1-BOTTOM-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-1",
+      "participant_id": "WH-1-BOTTOM-FRAME",
+      "input_member_id": "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73:piece-000:0.000000000-1035.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        1239.483642578125,
+        1761.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "HOUGH-000016"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/1",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-1.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          205.0,
+          1761.0
+        ],
+        "end": [
+          1240.0,
+          1761.0
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000494"
+    },
+    {
+      "obligation_id": "WH-2::WH-2-LEFT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-2",
+      "participant_id": "WH-2-LEFT-FRAME",
+      "input_member_id": "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0:piece-000:0.000000000-1635.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        206.30609104524916,
+        127.3700487041283
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000079"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/2",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-2.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          206.30522155761676,
+          1761.8750015958733
+        ],
+        "end": [
+          206.30609130859332,
+          126.8750015958733
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000009"
+    },
+    {
+      "obligation_id": "WH-2::WH-2-TOP-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-2",
+      "participant_id": "WH-2-TOP-FRAME",
+      "input_member_id": "MAIN:LSD-000001:REP:observation-8ec6a1833c397d544aa7:piece-000:0.000000000-1032.500000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        206.30609104524916,
+        127.3700487041283
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000001"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/2",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-2.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          205.62499920196163,
+          127.37004852294912
+        ],
+        "end": [
+          1238.1249992019616,
+          127.37032318115224
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000010"
+    },
+    {
+      "obligation_id": "WH-3::WH-3-LEFT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-3",
+      "participant_id": "WH-3-LEFT-FRAME",
+      "input_member_id": "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0:piece-000:0.000000000-1635.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        206.30522202308066,
+        1761.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000079"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/3",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-3.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          206.30522155761676,
+          1761.8750015958733
+        ],
+        "end": [
+          206.30609130859332,
+          126.8750015958733
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000009"
+    },
+    {
+      "obligation_id": "WH-3::WH-3-BOTTOM-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-3",
+      "participant_id": "WH-3-BOTTOM-FRAME",
+      "input_member_id": "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73:piece-000:0.000000000-1035.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        206.30522202308066,
+        1761.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "HOUGH-000016"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/3",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-3.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          205.0,
+          1761.0
+        ],
+        "end": [
+          1240.0,
+          1761.0
+        ],
+        "width": 3.819999933242798
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000494"
+    },
+    {
+      "obligation_id": "WH-4::WH-4-ROW::SPLIT_AT_CANONICAL_NODE",
+      "node_id": "WH-4",
+      "participant_id": "WH-4-ROW",
+      "input_member_id": "MAIN:HOUGH-000063:REP:observation-21f14ae5a13f3c2a95b2:piece-000:0.000000000-1028.000000000",
+      "action": "SPLIT_AT_CANONICAL_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        686.0
+      ],
+      "endpoint_selector": "NONE",
+      "source_ids": [
+        "HOUGH-000063"
+      ],
+      "frozen_role": "THROUGH_INTERIOR",
+      "source_support_to_node": "NOT_REQUIRED_THROUGH_INTERIOR",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/4",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-4.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          208.0,
+          686.0
+        ],
+        "end": [
+          1236.0,
+          686.0
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000118"
+    },
+    {
+      "obligation_id": "WH-4::WH-4-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-4",
+      "participant_id": "WH-4-UPPER-COLUMN",
+      "input_member_id": "MAIN:LSD-000909:REP:observation-b24262200b405fdacf9c:piece-000:0.000000000-45.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        686.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000909"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/4",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-4.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7832641601562,
+          686.875
+        ],
+        "end": [
+          972.7833862304688,
+          641.875
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000114"
+    },
+    {
+      "obligation_id": "WH-4::WH-4-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "node_id": "WH-4",
+      "participant_id": "WH-4-LOWER-COLUMN",
+      "input_member_id": "MAIN:LSD-000912:REP:observation-d7a47697732d5e592733:piece-000:0.000000000-45.000000011",
+      "action": "SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        686.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000912"
+      ],
+      "frozen_role": "SOURCE_SUPPORTED_SHORT_OF_NODE",
+      "source_support_to_node": "YES_SAVED_RASTER_CONTINUOUS",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/4",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-4.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7825927734375,
+          733.125
+        ],
+        "end": [
+          972.7835693359375,
+          688.125
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000122"
+    },
+    {
+      "obligation_id": "WH-5::WH-5-ROW::SPLIT_AT_CANONICAL_NODE",
+      "node_id": "WH-5",
+      "participant_id": "WH-5-ROW",
+      "input_member_id": "MAIN:HOUGH-000041:REP:observation-efa6bce9484dd4e6e6c5:piece-000:0.000000000-1028.000000000",
+      "action": "SPLIT_AT_CANONICAL_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        781.0
+      ],
+      "endpoint_selector": "NONE",
+      "source_ids": [
+        "HOUGH-000041"
+      ],
+      "frozen_role": "THROUGH_INTERIOR",
+      "source_support_to_node": "NOT_REQUIRED_THROUGH_INTERIOR",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/5",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-5.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          208.0,
+          781.0
+        ],
+        "end": [
+          1236.0,
+          781.0
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000143"
+    },
+    {
+      "obligation_id": "WH-5::WH-5-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-5",
+      "participant_id": "WH-5-UPPER-COLUMN",
+      "input_member_id": "MAIN:LSD-000917:REP:observation-1e90b0cbe04400821192:piece-000:0.000000000-45.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        781.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000917"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/5",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-5.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7832641601562,
+          781.875
+        ],
+        "end": [
+          972.7833862304688,
+          736.875
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000141"
+    },
+    {
+      "obligation_id": "WH-5::WH-5-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "node_id": "WH-5",
+      "participant_id": "WH-5-LOWER-COLUMN",
+      "input_member_id": "MAIN:LSD-000920:REP:observation-dab2b7759e9739fbcf50:piece-000:0.000000000-43.750000010",
+      "action": "SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        781.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000920"
+      ],
+      "frozen_role": "SOURCE_SUPPORTED_SHORT_OF_NODE",
+      "source_support_to_node": "YES_SAVED_RASTER_CONTINUOUS",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/5",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-5.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7830200195312,
+          826.875
+        ],
+        "end": [
+          972.783935546875,
+          783.125
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000147"
+    },
+    {
+      "obligation_id": "WH-6::WH-6-ROW::SPLIT_AT_CANONICAL_NODE",
+      "node_id": "WH-6",
+      "participant_id": "WH-6-ROW",
+      "input_member_id": "MAIN:HOUGH-000058:REP:observation-f8c4d23a789f0e05166d:piece-000:0.000000000-941.000000000",
+      "action": "SPLIT_AT_CANONICAL_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1111.0
+      ],
+      "endpoint_selector": "NONE",
+      "source_ids": [
+        "HOUGH-000058"
+      ],
+      "frozen_role": "THROUGH_INTERIOR",
+      "source_support_to_node": "NOT_REQUIRED_THROUGH_INTERIOR",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/6",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-6.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          295.0,
+          1111.0
+        ],
+        "end": [
+          1236.0,
+          1111.0
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000269"
+    },
+    {
+      "obligation_id": "WH-6::WH-6-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-6",
+      "participant_id": "WH-6-UPPER-COLUMN",
+      "input_member_id": "MAIN:LSD-000927:REP:observation-5a0a6ba1692b3fbe1488:piece-000:0.000000000-45.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1111.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000927"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/6",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-6.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7832641601562,
+          1111.875
+        ],
+        "end": [
+          972.7833862304688,
+          1066.875
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000261"
+    },
+    {
+      "obligation_id": "WH-6::WH-6-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "node_id": "WH-6",
+      "participant_id": "WH-6-LOWER-COLUMN",
+      "input_member_id": "MAIN:LSD-000930:REP:observation-608e184f20272bc59a68:piece-000:0.000000000-45.000000011",
+      "action": "SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1111.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000930"
+      ],
+      "frozen_role": "SOURCE_SUPPORTED_SHORT_OF_NODE",
+      "source_support_to_node": "YES_SAVED_RASTER_CONTINUOUS",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/6",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-6.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7825927734375,
+          1158.125
+        ],
+        "end": [
+          972.7835693359375,
+          1113.125
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000273"
+    },
+    {
+      "obligation_id": "WH-7::WH-7-ROW::SPLIT_AT_CANONICAL_NODE",
+      "node_id": "WH-7",
+      "participant_id": "WH-7-ROW",
+      "input_member_id": "MAIN:HOUGH-000059:REP:observation-845806bf75b9b34ea516:piece-000:0.000000000-941.000000000",
+      "action": "SPLIT_AT_CANONICAL_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1206.0
+      ],
+      "endpoint_selector": "NONE",
+      "source_ids": [
+        "HOUGH-000059"
+      ],
+      "frozen_role": "THROUGH_INTERIOR",
+      "source_support_to_node": "NOT_REQUIRED_THROUGH_INTERIOR",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/7",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-7.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          295.0,
+          1206.0
+        ],
+        "end": [
+          1236.0,
+          1206.0
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000305"
+    },
+    {
+      "obligation_id": "WH-7::WH-7-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+      "node_id": "WH-7",
+      "participant_id": "WH-7-UPPER-COLUMN",
+      "input_member_id": "MAIN:LSD-000935:REP:observation-24972e9769f49fbfd8e1:piece-000:0.000000000-45.000000000",
+      "action": "CANONICALIZE_ENDPOINT_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1206.0
+      ],
+      "endpoint_selector": "START",
+      "source_ids": [
+        "LSD-000935"
+      ],
+      "frozen_role": "TERMINATES_AT_NODE_WITH_FITTED_OVERSHOOT",
+      "source_support_to_node": "YES_DIRECT_SOURCE_CONTACT",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/7",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-7.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7832641601562,
+          1206.875
+        ],
+        "end": [
+          972.7833862304688,
+          1161.875
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000296"
+    },
+    {
+      "obligation_id": "WH-7::WH-7-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "node_id": "WH-7",
+      "participant_id": "WH-7-LOWER-COLUMN",
+      "input_member_id": "MAIN:LSD-000938:REP:observation-06d37eb0cc4bb7a35974:piece-000:0.000000000-43.750000010",
+      "action": "SOURCE_SUPPORTED_EXTEND_TO_NODE",
+      "canonical_point": [
+        972.7832665337456,
+        1206.0
+      ],
+      "endpoint_selector": "END",
+      "source_ids": [
+        "LSD-000938"
+      ],
+      "frozen_role": "SOURCE_SUPPORTED_SHORT_OF_NODE",
+      "source_support_to_node": "YES_SAVED_RASTER_CONTINUOUS",
+      "source_evidence_refs": [
+        "local-artifacts/junction-representation-independent-review-v1/review-evidence.json#/nodes/7",
+        "local-artifacts/astra-independent-two-page-uat-review-cb2e07dc7606/warehouse-page-001-crossing-7.png",
+        "local-artifacts/two-page-real-uat-cb2e07dc7606/warehouse-page-001/logs/observability/artifacts/04-binary-foreground/artifact-001.png"
+      ],
+      "protection_clear": true,
+      "input_geometry": {
+        "start": [
+          972.7830200195312,
+          1251.875
+        ],
+        "end": [
+          972.783935546875,
+          1208.125
+        ],
+        "width": 1.909999966621399
+      },
+      "old_final_structure_identity": "4a00476f91d2f61cf0415b8d6a6f9167acb31c614053e387974c0f2626e1a97a",
+      "old_final_structure_line_identity": "straight-line-000310"
+    }
+  ]
+}

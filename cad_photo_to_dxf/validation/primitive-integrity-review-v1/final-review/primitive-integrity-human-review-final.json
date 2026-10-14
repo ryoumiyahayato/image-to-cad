@@ -1,0 +1,164 @@
+[
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-316D125FE4861584BE02",
+    "review_index": 1,
+    "primary_class": "MULTIPLE_OR_OFFSET_SEGMENTS",
+    "secondary_flags": [
+      "MULTIPLE_OR_OFFSET_SEGMENTS",
+      "FOREIGN_STROKE_CAPTURE",
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": "几乎犯了所有能犯的问题。"
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+    "review_index": 2,
+    "primary_class": "MULTIPLE_OR_OFFSET_SEGMENTS",
+    "secondary_flags": [
+      "MULTIPLE_OR_OFFSET_SEGMENTS",
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+    "review_index": 3,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-33163D6DB78308987FD9",
+    "review_index": 4,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-9EA3C91753BCB75F3C3B",
+    "review_index": 5,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-9FC98ED192F6BC59B8A7",
+    "review_index": 6,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-A5AC051A1FE6345BF242",
+    "review_index": 7,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-AB2943863A535D1044B9",
+    "review_index": 8,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-C657B684CE259ECAFB9C",
+    "review_index": 9,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-91B55E0A36DB80262006",
+    "review_index": 10,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-8E7790E578C3E072DFF7",
+    "review_index": 11,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-4EEE2937A498A9FE051F",
+    "review_index": 12,
+    "primary_class": "ENDPOINT_OVERSHOOT",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-9BB32E8680E08F3ED86C",
+    "review_index": 13,
+    "primary_class": "MULTIPLE_OR_OFFSET_SEGMENTS",
+    "secondary_flags": [
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-F18CEDA77DCF47A4DB08",
+    "review_index": 14,
+    "primary_class": "VALID_SINGLE_STRAIGHT_PRIMITIVE",
+    "secondary_flags": [],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-83DFE0F6BE9016CC7844",
+    "review_index": 15,
+    "primary_class": "OTHER_PRIMITIVE_MISMATCH",
+    "secondary_flags": [
+      "MULTIPLE_OR_OFFSET_SEGMENTS",
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  },
+  {
+    "protocol": "PRIMITIVE_INTEGRITY_REVIEW_V1",
+    "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-PRIMITIVE-INTEGRITY-748C5A4B61CD",
+    "candidate_id": "FRESH1-585E8520AB511B998A25",
+    "review_index": 16,
+    "primary_class": "MULTIPLE_OR_OFFSET_SEGMENTS",
+    "secondary_flags": [
+      "CROSSES_LOCAL_STRUCTURE"
+    ],
+    "optional_note": ""
+  }
+]

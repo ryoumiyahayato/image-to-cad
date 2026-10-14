@@ -1,0 +1,29 @@
+[
+  {
+    "disposition": "RETAINED",
+    "intervals": [],
+    "reason": "Accepted input retained because source relation is unresolved",
+    "replacement_piece_ids": [
+      "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:piece-000:0.000000000-186.000000000"
+    ],
+    "representation_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da"
+  },
+  {
+    "disposition": "RETAINED",
+    "intervals": [],
+    "reason": "Accepted input retained because source relation is unresolved",
+    "replacement_piece_ids": [
+      "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:piece-000:0.000000000-183.750030689"
+    ],
+    "representation_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961"
+  },
+  {
+    "disposition": "RETAINED",
+    "intervals": [],
+    "reason": "Accepted input retained because source relation is unresolved",
+    "replacement_piece_ids": [
+      "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:piece-000:0.000000000-183.750030694"
+    ],
+    "representation_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07"
+  }
+]

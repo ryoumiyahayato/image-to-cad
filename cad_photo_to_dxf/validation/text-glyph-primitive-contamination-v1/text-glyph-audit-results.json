@@ -1,0 +1,2101 @@
+{
+  "cases": [
+    {
+      "audit_class": "LEGITIMATE_STRUCTURAL_LINE_NEAR_TEXT",
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "case": "SOURCE_GAP_01",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "NONE",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 57.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 91
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 96.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 91
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          615,
+          715
+        ],
+        "claimed_start_px": [
+          615,
+          524
+        ],
+        "fragment_a": {
+          "end": [
+            615,
+            580
+          ],
+          "start": [
+            615,
+            524
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            615,
+            715
+          ],
+          "start": [
+            615,
+            620
+          ]
+        },
+        "gap_endpoint_a_px": [
+          615,
+          580
+        ],
+        "gap_endpoint_b_px": [
+          615,
+          620
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000400"
+          ],
+          "fragment_b": [
+            "raw-hough-000569"
+          ]
+        }
+      },
+      "review_index": 1,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "AMBIGUOUS_MIXED_TEXT_LINE_CASE",
+      "candidate_id": "FRESH1-9BB32E8680E08F3ED86C",
+      "case": "SOURCE_GAP_02",
+      "confidence": "CONSERVATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "TEXT_MASK_AMBIGUITY",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 214
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 214
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          336,
+          837
+        ],
+        "claimed_start_px": [
+          336,
+          738
+        ],
+        "fragment_a": {
+          "end": [
+            336,
+            788
+          ],
+          "start": [
+            336,
+            738
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            336,
+            837
+          ],
+          "start": [
+            336,
+            793
+          ]
+        },
+        "gap_endpoint_a_px": [
+          336,
+          788
+        ],
+        "gap_endpoint_b_px": [
+          336,
+          793
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001309"
+          ],
+          "fragment_b": [
+            "raw-hough-001387"
+          ]
+        }
+      },
+      "review_index": 2,
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "text_component_count": 2,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_UNCERTAIN"
+    },
+    {
+      "audit_class": "LEGITIMATE_STRUCTURAL_LINE_NEAR_TEXT",
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "case": "SOURCE_GAP_03",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "NONE",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 57.0,
+          "non_text_support_fraction": 0.961165,
+          "non_text_support_run_count": 2,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 0.961165,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 2,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 65
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 32.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 65
+        }
+      ],
+      "human_observation": {
+        "note": null,
+        "source": "frozen_batch02_axis_audit",
+        "stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": null
+      },
+      "non_text_support": 0.961165,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2212,
+          952
+        ],
+        "claimed_start_px": [
+          2212,
+          814
+        ],
+        "fragment_a": {
+          "end": [
+            2212,
+            916
+          ],
+          "start": [
+            2212,
+            814
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2212,
+            952
+          ],
+          "start": [
+            2212,
+            921
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2212,
+          916
+        ],
+        "gap_endpoint_b_px": [
+          2212,
+          921
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001184"
+          ],
+          "fragment_b": [
+            "raw-hough-000950"
+          ]
+        }
+      },
+      "review_index": 3,
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_STRUCTURAL_LINE_NEAR_TEXT",
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "case": "SOURCE_GAP_04",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 49.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 204
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 60.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 2,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 204
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1419,
+          1198
+        ],
+        "claimed_start_px": [
+          1282,
+          1198
+        ],
+        "fragment_a": {
+          "end": [
+            1330,
+            1198
+          ],
+          "start": [
+            1282,
+            1198
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1419,
+            1198
+          ],
+          "start": [
+            1360,
+            1198
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1330,
+          1198
+        ],
+        "gap_endpoint_b_px": [
+          1360,
+          1198
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000303"
+          ],
+          "fragment_b": [
+            "raw-hough-000455"
+          ]
+        }
+      },
+      "review_index": 4,
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_ANNOTATION_LAYOUT_LINE",
+      "candidate_id": "FRESH1-847714DB8B47800A7342",
+      "case": "SOURCE_GAP_05",
+      "confidence": "CONSERVATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "TEXT_MASK_AMBIGUITY",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 14
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 14
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2202,
+          136
+        ],
+        "claimed_start_px": [
+          2106,
+          136
+        ],
+        "fragment_a": {
+          "end": [
+            2166,
+            136
+          ],
+          "start": [
+            2106,
+            136
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2202,
+            136
+          ],
+          "start": [
+            2172,
+            136
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2166,
+          136
+        ],
+        "gap_endpoint_b_px": [
+          2172,
+          136
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000443"
+          ],
+          "fragment_b": [
+            "raw-hough-001128"
+          ]
+        }
+      },
+      "review_index": 5,
+      "source_family": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "text_component_count": 2,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_UNCERTAIN"
+    },
+    {
+      "audit_class": "AMBIGUOUS_MIXED_TEXT_LINE_CASE",
+      "candidate_id": "FRESH1-6E1D7A515EF8BC7293A3",
+      "case": "SOURCE_GAP_06",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "NONE",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 47.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 56.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2445,
+          658
+        ],
+        "claimed_start_px": [
+          2313,
+          658
+        ],
+        "fragment_a": {
+          "end": [
+            2359,
+            658
+          ],
+          "start": [
+            2313,
+            658
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2445,
+            658
+          ],
+          "start": [
+            2390,
+            658
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2359,
+          658
+        ],
+        "gap_endpoint_b_px": [
+          2390,
+          658
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000372"
+          ],
+          "fragment_b": [
+            "raw-hough-000415"
+          ]
+        }
+      },
+      "review_index": 6,
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_STRUCTURAL_LINE_NEAR_TEXT",
+      "candidate_id": "FRESH1-B7300C5B8E706C736EB1",
+      "case": "SOURCE_GAP_07",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 45.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 58
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 46.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 58
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          634,
+          430
+        ],
+        "claimed_start_px": [
+          501,
+          430
+        ],
+        "fragment_a": {
+          "end": [
+            545,
+            430
+          ],
+          "start": [
+            501,
+            430
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            634,
+            430
+          ],
+          "start": [
+            589,
+            430
+          ]
+        },
+        "gap_endpoint_a_px": [
+          545,
+          430
+        ],
+        "gap_endpoint_b_px": [
+          589,
+          430
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000162"
+          ],
+          "fragment_b": [
+            "raw-hough-000142"
+          ]
+        }
+      },
+      "review_index": 7,
+      "source_family": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P1.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_ANNOTATION_LAYOUT_LINE",
+      "candidate_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "case": "SOURCE_GAP_08",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "NONE",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 29.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 25
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 57.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 25
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2285,
+          1109
+        ],
+        "claimed_start_px": [
+          2285,
+          992
+        ],
+        "fragment_a": {
+          "end": [
+            2285,
+            1020
+          ],
+          "start": [
+            2285,
+            992
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2285,
+            1109
+          ],
+          "start": [
+            2285,
+            1053
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2285,
+          1020
+        ],
+        "gap_endpoint_b_px": [
+          2285,
+          1053
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000675"
+          ],
+          "fragment_b": [
+            "raw-hough-000902"
+          ]
+        }
+      },
+      "review_index": 8,
+      "source_family": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "SOURCE_GAP_VALIDITY_CONTROL",
+      "candidate_id": "FRESH1-BD17A756658C48E6DE5F",
+      "case": "SOURCE_GAP_09",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "NONE",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 57.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 127
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 39.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 127
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          616,
+          590
+        ],
+        "claimed_start_px": [
+          616,
+          462
+        ],
+        "fragment_a": {
+          "end": [
+            616,
+            518
+          ],
+          "start": [
+            616,
+            462
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            616,
+            590
+          ],
+          "start": [
+            616,
+            552
+          ]
+        },
+        "gap_endpoint_a_px": [
+          616,
+          518
+        ],
+        "gap_endpoint_b_px": [
+          616,
+          552
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001587"
+          ],
+          "fragment_b": [
+            "raw-hough-001795"
+          ]
+        }
+      },
+      "review_index": 9,
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "SOURCE_GAP_VALIDITY_CONTROL",
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "case": "SOURCE_GAP_10",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 19.0,
+          "non_text_support_fraction": 0.875,
+          "non_text_support_run_count": 3,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 0.875,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 3,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 214
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 50.0,
+          "non_text_support_fraction": 0.951613,
+          "non_text_support_run_count": 3,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.951613,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 3,
+          "support_run_count": 3,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 214
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.875,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1851,
+          1445
+        ],
+        "claimed_start_px": [
+          1851,
+          1346
+        ],
+        "fragment_a": {
+          "end": [
+            1851,
+            1377
+          ],
+          "start": [
+            1851,
+            1346
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1851,
+            1445
+          ],
+          "start": [
+            1851,
+            1384
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1851,
+          1377
+        ],
+        "gap_endpoint_b_px": [
+          1851,
+          1384
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000633"
+          ],
+          "fragment_b": [
+            "raw-hough-000326"
+          ]
+        }
+      },
+      "review_index": 10,
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_ANNOTATION_LAYOUT_LINE",
+      "candidate_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "case": "SOURCE_GAP_11",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 54.0,
+          "non_text_support_fraction": 0.818182,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 0.870968,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.939394,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 3,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.129032,
+          "text_region_count": 91
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 66.0,
+          "non_text_support_fraction": 0.929577,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 0.970588,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.957746,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 2,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.029412,
+          "text_region_count": 91
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.818182,
+      "post_text_removal_support": 0.870968,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          754,
+          1544
+        ],
+        "claimed_start_px": [
+          614,
+          1544
+        ],
+        "fragment_a": {
+          "end": [
+            679,
+            1544
+          ],
+          "start": [
+            614,
+            1544
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            754,
+            1544
+          ],
+          "start": [
+            684,
+            1544
+          ]
+        },
+        "gap_endpoint_a_px": [
+          679,
+          1544
+        ],
+        "gap_endpoint_b_px": [
+          684,
+          1544
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000262"
+          ],
+          "fragment_b": [
+            "raw-hough-000287"
+          ]
+        }
+      },
+      "review_index": 11,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "text_component_count": 2,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "SOURCE_GAP_VALIDITY_CONTROL",
+      "candidate_id": "FRESH1-82EE2790BE71525F9762",
+      "case": "SOURCE_GAP_12",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 44.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.113636,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 58.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1324,
+          1479
+        ],
+        "claimed_start_px": [
+          1324,
+          1348
+        ],
+        "fragment_a": {
+          "end": [
+            1324,
+            1391
+          ],
+          "start": [
+            1324,
+            1348
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1324,
+            1479
+          ],
+          "start": [
+            1324,
+            1422
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1324,
+          1391
+        ],
+        "gap_endpoint_b_px": [
+          1324,
+          1422
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002078"
+          ],
+          "fragment_b": [
+            "raw-hough-002057"
+          ]
+        }
+      },
+      "review_index": 12,
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.113636,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "SOURCE_GAP_VALIDITY_CONTROL",
+      "candidate_id": "FRESH1-DAF59F989A2B0C8E453B",
+      "case": "SOURCE_GAP_13",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 44.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.113636,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 35.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1324,
+          1456
+        ],
+        "claimed_start_px": [
+          1324,
+          1348
+        ],
+        "fragment_a": {
+          "end": [
+            1324,
+            1391
+          ],
+          "start": [
+            1324,
+            1348
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1324,
+            1456
+          ],
+          "start": [
+            1324,
+            1422
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1324,
+          1391
+        ],
+        "gap_endpoint_b_px": [
+          1324,
+          1422
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002078"
+          ],
+          "fragment_b": [
+            "raw-hough-001912"
+          ]
+        }
+      },
+      "review_index": 13,
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.113636,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "LEGITIMATE_ANNOTATION_LAYOUT_LINE",
+      "candidate_id": "FRESH1-4F58534C04C2C40E9E25",
+      "case": "SOURCE_GAP_14",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 32.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 131
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 152.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 5,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 131
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 1.0,
+      "post_text_removal_support": 1.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2076,
+          325
+        ],
+        "claimed_start_px": [
+          2075,
+          128
+        ],
+        "fragment_a": {
+          "end": [
+            2075,
+            159
+          ],
+          "start": [
+            2075,
+            128
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2076,
+            325
+          ],
+          "start": [
+            2076,
+            174
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2075,
+          159
+        ],
+        "gap_endpoint_b_px": [
+          2076,
+          174
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002585"
+          ],
+          "fragment_b": [
+            "raw-hough-002237"
+          ]
+        }
+      },
+      "review_index": 14,
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "text_component_count": 0,
+      "text_mask_overlap": 0.0,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "AMBIGUOUS_MIXED_TEXT_LINE_CASE",
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "case": "SOURCE_GAP_15",
+      "confidence": "STRONGLY_SUPPORTED",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "failure_family": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 38.0,
+          "non_text_support_fraction": 0.641026,
+          "non_text_support_run_count": 3,
+          "post_text_removal_support_fraction": 0.980392,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.653846,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 3,
+          "text_component_count": 1,
+          "text_mask_overlap_fraction": 0.358974,
+          "text_owned_support_fraction": 0.019608,
+          "text_region_count": 91
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 25.0,
+          "non_text_support_fraction": 0.439394,
+          "non_text_support_run_count": 2,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "TEXT_ADJACENT",
+          "source_support_fraction": 0.439394,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 2,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 91
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.439394,
+      "post_text_removal_support": 0.980392,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1122,
+          600
+        ],
+        "claimed_start_px": [
+          1120,
+          451
+        ],
+        "fragment_a": {
+          "end": [
+            1120,
+            528
+          ],
+          "start": [
+            1120,
+            451
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1122,
+            600
+          ],
+          "start": [
+            1122,
+            535
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1120,
+          528
+        ],
+        "gap_endpoint_b_px": [
+          1122,
+          535
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000662"
+          ],
+          "fragment_b": [
+            "raw-hough-000456"
+          ]
+        }
+      },
+      "review_index": 15,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "text_component_count": 1,
+      "text_mask_overlap": 0.358974,
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "audit_class": "CONFIRMED_TEXT_GLYPH_CONTAMINATION",
+      "candidate_id": "FRESH1-EDC71A4759AD64EDCE78",
+      "case": "SOURCE_GAP_16",
+      "confidence": "PROVEN",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "INELIGIBLE_TEXT_REJECTED",
+      "failure_family": "GLYPH_ONLY_SUPPORT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.875,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 3,
+          "text_component_count": 3,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 22
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.839286,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 5,
+          "text_component_count": 5,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 22
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1548,
+          1068
+        ],
+        "claimed_start_px": [
+          1457,
+          1068
+        ],
+        "fragment_a": {
+          "end": [
+            1488,
+            1068
+          ],
+          "start": [
+            1457,
+            1068
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1548,
+            1068
+          ],
+          "start": [
+            1493,
+            1068
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1488,
+          1068
+        ],
+        "gap_endpoint_b_px": [
+          1493,
+          1068
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001269"
+          ],
+          "fragment_b": [
+            "raw-hough-000120"
+          ]
+        }
+      },
+      "review_index": 16,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "text_component_count": 8,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_REJECTED"
+    },
+    {
+      "audit_class": "CONFIRMED_TEXT_GLYPH_CONTAMINATION",
+      "candidate_id": "FRESH1-3896FDF95885929AF0BE",
+      "case": "FROZEN147_TEXT_CONTROL_01",
+      "confidence": "PROVEN",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "INELIGIBLE_TEXT_REJECTED",
+      "failure_family": "GLYPH_ONLY_SUPPORT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 0.972222,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 3,
+          "text_component_count": 2,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 190
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.957447,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 3,
+          "text_component_count": 3,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 190
+        }
+      ],
+      "human_observation": {
+        "note": null,
+        "source": "frozen_batch02_axis_audit",
+        "stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": null
+      },
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            2081,
+            1724
+          ],
+          "start": [
+            2010,
+            1724
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2132,
+            1724
+          ],
+          "start": [
+            2086,
+            1724
+          ]
+        }
+      },
+      "review_index": null,
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "text_component_count": 5,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_REJECTED"
+    },
+    {
+      "audit_class": "CONFIRMED_TEXT_GLYPH_CONTAMINATION",
+      "candidate_id": "FRESH1-43C5461340B4AE31E3E7",
+      "case": "FROZEN147_TEXT_CONTROL_02",
+      "confidence": "PROVEN",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "INELIGIBLE_TEXT_REJECTED",
+      "failure_family": "GLYPH_ONLY_SUPPORT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "TEXT_CONTAMINATED_SUPPORT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_UNCERTAIN",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 2,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 204
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.978723,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 2,
+          "text_component_count": 3,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 204
+        }
+      ],
+      "human_observation": {
+        "note": null,
+        "source": "frozen_batch02_axis_audit",
+        "stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": null
+      },
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            2082,
+            1738
+          ],
+          "start": [
+            2035,
+            1738
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2133,
+            1738
+          ],
+          "start": [
+            2087,
+            1738
+          ]
+        }
+      },
+      "review_index": null,
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "text_component_count": 5,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_REJECTED"
+    },
+    {
+      "audit_class": "CONFIRMED_TEXT_GLYPH_CONTAMINATION",
+      "candidate_id": "FRESH1-F958CAC7F42997D179E6",
+      "case": "FROZEN147_TEXT_CONTROL_03",
+      "confidence": "PROVEN",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "INELIGIBLE_TEXT_REJECTED",
+      "failure_family": "GLYPH_ONLY_SUPPORT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 2.0,
+          "non_text_support_fraction": 0.039216,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 0.047619,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.823529,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 7,
+          "text_component_count": 6,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.952381,
+          "text_region_count": 214
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.841463,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 10,
+          "text_component_count": 9,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 214
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1052,
+            910
+          ],
+          "start": [
+            1002,
+            910
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1138,
+            910
+          ],
+          "start": [
+            1057,
+            910
+          ]
+        }
+      },
+      "review_index": null,
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "text_component_count": 15,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_REJECTED"
+    },
+    {
+      "audit_class": "CONFIRMED_TEXT_GLYPH_CONTAMINATION",
+      "candidate_id": "FRESH1-46A7C918A98FDBD54AA7",
+      "case": "FROZEN147_TEXT_CONTROL_04",
+      "confidence": "PROVEN",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "INELIGIBLE_TEXT_REJECTED",
+      "failure_family": "GLYPH_ONLY_SUPPORT",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.884615,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 5,
+          "text_component_count": 4,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 65
+        },
+        {
+          "endpoint_non_text_support": [
+            false,
+            false
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 0.0,
+          "non_text_support_fraction": 0.0,
+          "non_text_support_run_count": 0,
+          "post_text_removal_support_fraction": 0.0,
+          "reason": "GLYPH_ONLY_SUPPORT",
+          "source_support_fraction": 0.894737,
+          "status": "TEXT_REJECTED",
+          "structural_connection_count": 0,
+          "support_run_count": 4,
+          "text_component_count": 4,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 1.0,
+          "text_region_count": 65
+        }
+      ],
+      "human_observation": null,
+      "non_text_support": 0.0,
+      "post_text_removal_support": 0.0,
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1976,
+            626
+          ],
+          "start": [
+            1925,
+            626
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2019,
+            626
+          ],
+          "start": [
+            1982,
+            626
+          ]
+        }
+      },
+      "review_index": null,
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "text_component_count": 8,
+      "text_mask_overlap": 1.0,
+      "text_support_status": "TEXT_REJECTED"
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "TEXT_GLYPH_PRIMITIVE_CONTAMINATION_V1"
+}

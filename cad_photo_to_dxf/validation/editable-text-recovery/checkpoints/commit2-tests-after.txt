@@ -1,0 +1,16 @@
+focused_tests=50 passed, 66 warnings in 2.33s
+ruff=passed
+page001_ocr_candidate_count=208
+page001_text_emit_eligible_count=206
+page001_native_TEXT_count=206
+page001_source_outline_backup_candidate_count=169
+page001_SOURCE_TEXT_OUTLINE_entity_count=1393
+page001_SOURCE_TEXT_OUTLINE_default_visible=false
+page001_fallback_candidate_count=2
+page001_TEXT_FALLBACK_OUTLINE_entity_count=535
+page001_TEXT_FALLBACK_OUTLINE_default_visible=true
+page001_residual_candidate_count=0
+page001_RESIDUAL_GRAPHIC_entity_count=0
+page001_TRACE_TEXT_SYMBOL_entity_count=1406
+page001_dxf_audit_error_count=0
+page001_native_TEXT_matches_eligible=true

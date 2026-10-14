@@ -1,0 +1,1550 @@
+{
+  "ab_geometry_digest": "97627f5715e2e52fa946901b36a4b769bdea82bf19a590daf213f6debccff84c",
+  "batch_id": "batch-01",
+  "candidate_count": 24,
+  "candidate_set_digest": "5ea8aae98504f6a1c49ac90737f52fc08589d17e175f396163d0e7e4ea281486",
+  "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504",
+  "protocol": "DIRECT_CONTINUATION_REVIEW_V1",
+  "records": [
+    {
+      "candidate_id": "FRESH1-012B61A286913239D6AA",
+      "context_crop_box_px": [
+        348,
+        57,
+        669,
+        502
+      ],
+      "exact_geometry_digest": "f053385716d6f497043c157ff2481409ac6042109cff65e0bbb0fd6f42a2dfc6",
+      "fragment_a_geometry": {
+        "end": [
+          508,
+          268
+        ],
+        "start": [
+          508,
+          217
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          508,
+          341
+        ],
+        "start": [
+          508,
+          306
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        508,
+        268
+      ],
+      "gap_endpoint_b": [
+        508,
+        306
+      ],
+      "gap_length_px": 38,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        466,
+        175,
+        551,
+        384
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_features": {},
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "context_crop_box_px": [
+        178,
+        1914,
+        598,
+        2235
+      ],
+      "exact_geometry_digest": "d45aeea7535c3a8a2bd6ca1e5e9c89e3e2ac1107805a475c7a031cb93a0574bb",
+      "fragment_a_geometry": {
+        "end": [
+          394,
+          2074
+        ],
+        "start": [
+          338,
+          2074
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          437,
+          2074
+        ],
+        "start": [
+          400,
+          2074
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        394,
+        2074
+      ],
+      "gap_endpoint_b": [
+        400,
+        2074
+      ],
+      "gap_length_px": 6,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        296,
+        2032,
+        480,
+        2117
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "4#能源中心-暖施",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 2,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "selection_features": {},
+      "source_document_id": "DOC-F03-HVAC4-DWG",
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-C59F3C65FA8754A53827",
+      "context_crop_box_px": [
+        1440,
+        73,
+        1761,
+        498
+      ],
+      "exact_geometry_digest": "16d656ba99411443146470e3ed7ac975ac053e0c5edd9d5b5d5719accfbe8ca2",
+      "fragment_a_geometry": {
+        "end": [
+          1600,
+          289
+        ],
+        "start": [
+          1600,
+          233
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1600,
+          337
+        ],
+        "start": [
+          1600,
+          307
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1600,
+        289
+      ],
+      "gap_endpoint_b": [
+        1600,
+        307
+      ],
+      "gap_length_px": 18,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1558,
+        191,
+        1643,
+        380
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 3,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_features": {},
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-0AC56610C56820F45E40",
+      "context_crop_box_px": [
+        1222,
+        1447,
+        1544,
+        1839
+      ],
+      "exact_geometry_digest": "269fdea69faac09313e55aa5a6ea11d03307d9aea784bf11b4a2c4ec546d3bee",
+      "fragment_a_geometry": {
+        "end": [
+          1382,
+          1693
+        ],
+        "start": [
+          1382,
+          1607
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1383,
+          1753
+        ],
+        "start": [
+          1383,
+          1698
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1382,
+        1693
+      ],
+      "gap_endpoint_b": [
+        1383,
+        1698
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1340,
+        1565,
+        1426,
+        1796
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; site/facility electrical plan page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 3,
+        "pdf_page_number": 4,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 4,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "selection_features": {},
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-0C7F8CD1D4C55ADB2F28",
+      "context_crop_box_px": [
+        488,
+        1212,
+        932,
+        1533
+      ],
+      "exact_geometry_digest": "a368b476911d713d2c4a21409278cd156febf48d356de1ff70b604122c89fc72",
+      "fragment_a_geometry": {
+        "end": [
+          709,
+          1372
+        ],
+        "start": [
+          648,
+          1372
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          771,
+          1372
+        ],
+        "start": [
+          714,
+          1372
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        709,
+        1372
+      ],
+      "gap_endpoint_b": [
+        714,
+        1372
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        606,
+        1330,
+        814,
+        1415
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; scanned main-building plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 5,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-104B3B6799BFCFEDE2F4",
+      "context_crop_box_px": [
+        2129,
+        547,
+        2450,
+        988
+      ],
+      "exact_geometry_digest": "1cbbf4b3754e511ece2f6bb7ef1840a29682cb054ceb3a55506712979abde184",
+      "fragment_a_geometry": {
+        "end": [
+          2289,
+          763
+        ],
+        "start": [
+          2289,
+          707
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2289,
+          827
+        ],
+        "start": [
+          2289,
+          771
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2289,
+        763
+      ],
+      "gap_endpoint_b": [
+        2289,
+        771
+      ],
+      "gap_length_px": 8,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        2247,
+        665,
+        2332,
+        870
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "10#-暖通施工图2019.05.25",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 6,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "selection_features": {},
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-18240A41260D4E7B3813",
+      "context_crop_box_px": [
+        2099,
+        1193,
+        2582,
+        1514
+      ],
+      "exact_geometry_digest": "4e4abc2282771e63306cde4c3dda0822b3ca79576b6da6c00fe6371da92b07d7",
+      "fragment_a_geometry": {
+        "end": [
+          2305,
+          1353
+        ],
+        "start": [
+          2259,
+          1353
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2421,
+          1353
+        ],
+        "start": [
+          2318,
+          1353
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2305,
+        1353
+      ],
+      "gap_endpoint_b": [
+        2318,
+        1353
+      ],
+      "gap_length_px": 13,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        2217,
+        1311,
+        2464,
+        1396
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; single-sheet electrical equipment plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 7,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "context_crop_box_px": [
+        1840,
+        1432,
+        2161,
+        1984
+      ],
+      "exact_geometry_digest": "6f1b09b8839ba342bf95bcaf73a20fe88129b8a082cd3befa988488148a7d89d",
+      "fragment_a_geometry": {
+        "end": [
+          2000,
+          1763
+        ],
+        "start": [
+          2000,
+          1592
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2000,
+          1823
+        ],
+        "start": [
+          2000,
+          1794
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2000,
+        1763
+      ],
+      "gap_endpoint_b": [
+        2000,
+        1794
+      ],
+      "gap_length_px": 31,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1958,
+        1550,
+        2043,
+        1866
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "海阳捻织车间暖通施工图2022.1.10",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 8,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "selection_features": {},
+      "source_document_id": "DOC-F01-HVAC20220110-DWG",
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-271CB1FCE5005CB1D4FF",
+      "context_crop_box_px": [
+        366,
+        491,
+        689,
+        926
+      ],
+      "exact_geometry_digest": "2029f4578bfce9f13e18bd393812725cad4fb6266fae35b52397dcb0ce476e45",
+      "fragment_a_geometry": {
+        "end": [
+          526,
+          715
+        ],
+        "start": [
+          526,
+          651
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          528,
+          765
+        ],
+        "start": [
+          528,
+          724
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        526,
+        715
+      ],
+      "gap_endpoint_b": [
+        528,
+        724
+      ],
+      "gap_length_px": 9,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        484,
+        609,
+        571,
+        808
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "建施-10B",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 9,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F04-ARCH10B-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "context_crop_box_px": [
+        749,
+        132,
+        1327,
+        453
+      ],
+      "exact_geometry_digest": "db7897fa32cafc6b4418db22f2b96b65aff0094216372f1b74c36735dbafcb03",
+      "fragment_a_geometry": {
+        "end": [
+          1022,
+          292
+        ],
+        "start": [
+          909,
+          292
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1166,
+          292
+        ],
+        "start": [
+          1053,
+          292
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1022,
+        292
+      ],
+      "gap_endpoint_b": [
+        1053,
+        292
+      ],
+      "gap_length_px": 31,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        867,
+        250,
+        1209,
+        335
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; warehouse electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 5,
+        "pdf_page_number": 6,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 10,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "selection_features": {},
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-0F0295A3421B504E08D7",
+      "context_crop_box_px": [
+        2,
+        1016,
+        323,
+        1450
+      ],
+      "exact_geometry_digest": "3ede443e405ba1664edb3ae8bd130b162bd739a2a8d2d711b121f95ce215f539",
+      "fragment_a_geometry": {
+        "end": [
+          162,
+          1256
+        ],
+        "start": [
+          162,
+          1176
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          162,
+          1289
+        ],
+        "start": [
+          162,
+          1261
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        162,
+        1256
+      ],
+      "gap_endpoint_b": [
+        162,
+        1261
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        120,
+        1134,
+        205,
+        1332
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical specification/title page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 11,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F06-2026-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-327EC6EE68B5900F4BB9",
+      "context_crop_box_px": [
+        1857,
+        1350,
+        2178,
+        1772
+      ],
+      "exact_geometry_digest": "4c1858684ee17a8b6b8af5262b6bfa60ed35d48eb8a2e7a4d6547768b9459a83",
+      "fragment_a_geometry": {
+        "end": [
+          2017,
+          1544
+        ],
+        "start": [
+          2017,
+          1510
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2017,
+          1611
+        ],
+        "start": [
+          2017,
+          1582
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2017,
+        1544
+      ],
+      "gap_endpoint_b": [
+        2017,
+        1582
+      ],
+      "gap_length_px": 38,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1975,
+        1468,
+        2060,
+        1654
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 12,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-10E03730E943F89EE9E3",
+      "context_crop_box_px": [
+        2434,
+        1401,
+        2600,
+        1824
+      ],
+      "exact_geometry_digest": "987e895a2d8e5c7d2d7281af81cf6126d6b5f4fd10ee6f31ae2e8cba04a512c1",
+      "fragment_a_geometry": {
+        "end": [
+          2594,
+          1597
+        ],
+        "start": [
+          2594,
+          1561
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2594,
+          1663
+        ],
+        "start": [
+          2594,
+          1627
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2594,
+        1597
+      ],
+      "gap_endpoint_b": [
+        2594,
+        1627
+      ],
+      "gap_length_px": 30,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        2552,
+        1519,
+        2600,
+        1706
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate scanned building view",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 13,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+      "selection_features": {},
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-11408EC0AA5522BF70E4",
+      "context_crop_box_px": [
+        2262,
+        581,
+        2583,
+        1032
+      ],
+      "exact_geometry_digest": "8cc31b3ca5b496c86ff2d1a51d4ae6e9e9d727620973a6b48840710bd5725179",
+      "fragment_a_geometry": {
+        "end": [
+          2422,
+          796
+        ],
+        "start": [
+          2422,
+          741
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2422,
+          871
+        ],
+        "start": [
+          2422,
+          832
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        2422,
+        796
+      ],
+      "gap_endpoint_b": [
+        2422,
+        832
+      ],
+      "gap_length_px": 36,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        2380,
+        699,
+        2465,
+        914
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 11,
+        "pdf_page_number": 12,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 14,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "selection_features": {},
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-4222A881E5905728A386",
+      "context_crop_box_px": [
+        429,
+        270,
+        885,
+        591
+      ],
+      "exact_geometry_digest": "6b0451006ad0e358d7fd01963e98a4ee9183323a4feef272765d62f4aef54612",
+      "fragment_a_geometry": {
+        "end": [
+          634,
+          430
+        ],
+        "start": [
+          589,
+          430
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          724,
+          430
+        ],
+        "start": [
+          676,
+          430
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        634,
+        430
+      ],
+      "gap_endpoint_b": [
+        676,
+        430
+      ],
+      "gap_length_px": 42,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        547,
+        388,
+        767,
+        473
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "综合仓库 electrical drawing directory/title sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 15,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-70F618B82D91A3FA0003",
+      "context_crop_box_px": [
+        539,
+        1438,
+        951,
+        1759
+      ],
+      "exact_geometry_digest": "16038ad0193ee4fdae473568a6f3559ed2f7f611bc248f80aefc4f790b7d7214",
+      "fragment_a_geometry": {
+        "end": [
+          755,
+          1598
+        ],
+        "start": [
+          699,
+          1598
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          790,
+          1598
+        ],
+        "start": [
+          760,
+          1598
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        755,
+        1598
+      ],
+      "gap_endpoint_b": [
+        760,
+        1598
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        657,
+        1556,
+        833,
+        1641
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "ZS(TZ)-JZ-2026-023; formal title/specification sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 16,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-0E395A99BB4E5907269F",
+      "context_crop_box_px": [
+        511,
+        1132,
+        1008,
+        1453
+      ],
+      "exact_geometry_digest": "96267fa5161b7b946585568145e7e485decda4417be3822a7bacfd41ec08dd7d",
+      "fragment_a_geometry": {
+        "end": [
+          781,
+          1292
+        ],
+        "start": [
+          671,
+          1292
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          847,
+          1292
+        ],
+        "start": [
+          786,
+          1292
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        781,
+        1292
+      ],
+      "gap_endpoint_b": [
+        786,
+        1292
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        629,
+        1250,
+        890,
+        1335
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; scanned main-building plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 17,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-11426124B2C592AACA1C",
+      "context_crop_box_px": [
+        339,
+        673,
+        660,
+        1121
+      ],
+      "exact_geometry_digest": "796c19b228d16176ef8c96635ddac78b326c46d40dd0fd9f149c23ea4c90faac",
+      "fragment_a_geometry": {
+        "end": [
+          499,
+          889
+        ],
+        "start": [
+          499,
+          833
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          499,
+          960
+        ],
+        "start": [
+          499,
+          904
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        499,
+        889
+      ],
+      "gap_endpoint_b": [
+        499,
+        904
+      ],
+      "gap_length_px": 15,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        457,
+        791,
+        542,
+        1003
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 18,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_features": {},
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-157CA24773B232C3F119",
+      "context_crop_box_px": [
+        1103,
+        1073,
+        1518,
+        1394
+      ],
+      "exact_geometry_digest": "03e822ff3ac261102a1acc918d58fe277cd80930a7409249af83376a57a851b8",
+      "fragment_a_geometry": {
+        "end": [
+          1304,
+          1233
+        ],
+        "start": [
+          1263,
+          1233
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1357,
+          1233
+        ],
+        "start": [
+          1317,
+          1233
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1304,
+        1233
+      ],
+      "gap_endpoint_b": [
+        1317,
+        1233
+      ],
+      "gap_length_px": 13,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1221,
+        1191,
+        1400,
+        1276
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical specification/title page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 19,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F06-2026-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-1B86C715C689C282195D",
+      "context_crop_box_px": [
+        1653,
+        986,
+        2107,
+        1307
+      ],
+      "exact_geometry_digest": "198b645909aa56f47353a62d90778a494d813f95b8a6593cbbd692d652af518c",
+      "fragment_a_geometry": {
+        "end": [
+          1873,
+          1146
+        ],
+        "start": [
+          1813,
+          1146
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1946,
+          1146
+        ],
+        "start": [
+          1886,
+          1146
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1873,
+        1146
+      ],
+      "gap_endpoint_b": [
+        1886,
+        1146
+      ],
+      "gap_length_px": 13,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1771,
+        1104,
+        1989,
+        1189
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 20,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_features": {},
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-1F75C3EC494394BF704F",
+      "context_crop_box_px": [
+        348,
+        146,
+        669,
+        575
+      ],
+      "exact_geometry_digest": "f5c9a1252877eac98ad7a0c7199e83389288865154847318b6a8473ee73e663a",
+      "fragment_a_geometry": {
+        "end": [
+          508,
+          341
+        ],
+        "start": [
+          508,
+          306
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          508,
+          414
+        ],
+        "start": [
+          508,
+          386
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        508,
+        341
+      ],
+      "gap_endpoint_b": [
+        508,
+        386
+      ],
+      "gap_length_px": 45,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        466,
+        264,
+        551,
+        457
+      ],
+      "local_density_fraction": null,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 21,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_features": {},
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-1F77544D36F540B89A5C",
+      "context_crop_box_px": [
+        517,
+        480,
+        938,
+        801
+      ],
+      "exact_geometry_digest": "ac89f3399d9b80fbfd23ddb3d73464291678185bfbdc5a2b670b218ac4664f8c",
+      "fragment_a_geometry": {
+        "end": [
+          712,
+          640
+        ],
+        "start": [
+          677,
+          640
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          777,
+          640
+        ],
+        "start": [
+          743,
+          640
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        712,
+        640
+      ],
+      "gap_endpoint_b": [
+        743,
+        640
+      ],
+      "gap_length_px": 31,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        635,
+        598,
+        820,
+        683
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; site/facility electrical plan page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 3,
+        "pdf_page_number": 4,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 22,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "selection_features": {},
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-1FE6B4BB34BF273FAB2A",
+      "context_crop_box_px": [
+        507,
+        0,
+        933,
+        266
+      ],
+      "exact_geometry_digest": "c4ed2c251d77756ac8549558c0b2aea3caa0e86a702d500715b751589d022916",
+      "fragment_a_geometry": {
+        "end": [
+          714,
+          105
+        ],
+        "start": [
+          667,
+          105
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          772,
+          105
+        ],
+        "start": [
+          719,
+          105
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        714,
+        105
+      ],
+      "gap_endpoint_b": [
+        719,
+        105
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        625,
+        63,
+        815,
+        148
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; single-sheet electrical equipment plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 23,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "selection_features": {},
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-23149338DECC4A487E9D",
+      "context_crop_box_px": [
+        901,
+        274,
+        1333,
+        595
+      ],
+      "exact_geometry_digest": "9602e34ed19b58e63dc260961769b5c2714762c0fd47e6f3ec5e8a6e87a1f05f",
+      "fragment_a_geometry": {
+        "end": [
+          1103,
+          434
+        ],
+        "start": [
+          1061,
+          434
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1172,
+          434
+        ],
+        "start": [
+          1133,
+          434
+        ]
+      },
+      "gap_bin": null,
+      "gap_endpoint_a": [
+        1103,
+        434
+      ],
+      "gap_endpoint_b": [
+        1133,
+        434
+      ],
+      "gap_length_px": 30,
+      "geometry_signature": null,
+      "local_crop_box_px": [
+        1019,
+        392,
+        1215,
+        477
+      ],
+      "local_density_fraction": null,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 24,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_features": {},
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF"
+    }
+  ],
+  "review_order": [
+    "FRESH1-012B61A286913239D6AA",
+    "FRESH1-40D2634D889EA8089032",
+    "FRESH1-C59F3C65FA8754A53827",
+    "FRESH1-0AC56610C56820F45E40",
+    "FRESH1-0C7F8CD1D4C55ADB2F28",
+    "FRESH1-104B3B6799BFCFEDE2F4",
+    "FRESH1-18240A41260D4E7B3813",
+    "FRESH1-1E63CE1A4D512007DBF9",
+    "FRESH1-271CB1FCE5005CB1D4FF",
+    "FRESH1-34AD2AEED917ED80B2A5",
+    "FRESH1-0F0295A3421B504E08D7",
+    "FRESH1-327EC6EE68B5900F4BB9",
+    "FRESH1-10E03730E943F89EE9E3",
+    "FRESH1-11408EC0AA5522BF70E4",
+    "FRESH1-4222A881E5905728A386",
+    "FRESH1-70F618B82D91A3FA0003",
+    "FRESH1-0E395A99BB4E5907269F",
+    "FRESH1-11426124B2C592AACA1C",
+    "FRESH1-157CA24773B232C3F119",
+    "FRESH1-1B86C715C689C282195D",
+    "FRESH1-1F75C3EC494394BF704F",
+    "FRESH1-1F77544D36F540B89A5C",
+    "FRESH1-1FE6B4BB34BF273FAB2A",
+    "FRESH1-23149338DECC4A487E9D"
+  ],
+  "schema_version": 1,
+  "source_mapping_digest": "41ffff12d27cf9d9aa9836c3c32f2f4683e276c974f85b53d56f3fe9deccb19b"
+}

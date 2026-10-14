@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:draftsman:source-visible-reconciliation:v1",
+  "title": "Source-visible representation reconciliation v1 — design only",
+  "description": "An immutable evidence/proposal record. FinalStructure remains the sole output authority. No physical instance identity is asserted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "record_id", "source_image_sha256", "producer_head", "policy_version", "input_set_digest", "final_main_set_digest", "route_ledger_digest", "basis", "representations", "evidence", "cells", "endpoints", "pieces", "supersession_ledger", "transaction", "physical_instance_assertion"],
+  "properties": {
+    "schema_version": {"const": "source-visible-reconciliation-v1"},
+    "record_id": {"type": "string", "minLength": 1},
+    "source_image_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "producer_head": {"type": "string"},
+    "policy_version": {"type": "string"},
+    "input_set_digest": {"type": "string"},
+    "final_main_set_digest": {"type": "string"},
+    "route_ledger_digest": {"type": "string"},
+    "physical_instance_assertion": {"const": false},
+    "basis": {
+      "type": "object", "additionalProperties": false,
+      "required": ["origin_px", "unit_tangent", "unit_normal", "basis_source_representation_id", "units"],
+      "properties": {
+        "origin_px": {"$ref": "#/$defs/point"},
+        "unit_tangent": {"$ref": "#/$defs/point"},
+        "unit_normal": {"$ref": "#/$defs/point"},
+        "basis_source_representation_id": {"type": "string"},
+        "units": {"const": "source_pixels"}
+      }
+    },
+    "representations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/representation"}},
+    "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}},
+    "cells": {"type": "array", "items": {"$ref": "#/$defs/cell"}},
+    "endpoints": {"type": "array", "items": {"$ref": "#/$defs/endpoint"}},
+    "pieces": {"type": "array", "items": {"$ref": "#/$defs/piece"}},
+    "supersession_ledger": {"type": "array", "items": {"$ref": "#/$defs/supersession"}},
+    "transaction": {
+      "type": "object", "additionalProperties": false,
+      "required": ["state", "operation", "lossless_supported_extent", "lossless_endpoint_obligations", "no_new_protected_source_claim", "final_set_digest_validated", "reason", "failure_action"],
+      "properties": {
+        "state": {"enum": ["PROPOSED", "VALIDATED", "ABSTAINED", "BLOCKED"]},
+        "operation": {"$ref": "#/$defs/operation"},
+        "lossless_supported_extent": {"type": "boolean"},
+        "lossless_endpoint_obligations": {"type": "boolean"},
+        "no_new_protected_source_claim": {"type": "boolean"},
+        "final_set_digest_validated": {"type": "boolean"},
+        "reason": {"type": "string"},
+        "failure_action": {"const": "RETAIN_ACCEPTED_INPUTS_AND_BLOCK_NEW_DISPUTED_ADMISSIONS"}
+      },
+      "allOf": [{"if": {"properties": {"state": {"const": "VALIDATED"}}}, "then": {"properties": {"lossless_supported_extent": {"const": true}, "lossless_endpoint_obligations": {"const": true}, "no_new_protected_source_claim": {"const": true}, "final_set_digest_validated": {"const": true}}}}]
+    }
+  },
+  "$defs": {
+    "point": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "geometry": {"type": "object", "additionalProperties": false, "required": ["start", "end", "width"], "properties": {"start": {"$ref": "#/$defs/point"}, "end": {"$ref": "#/$defs/point"}, "width": {"type": "number", "exclusiveMinimum": 0}}},
+    "interval": {
+      "type": "object", "additionalProperties": false,
+      "required": ["start", "end", "endpoint_convention", "evidence_refs"],
+      "properties": {
+        "start": {"type": "number"}, "end": {"type": "number"},
+        "endpoint_convention": {"const": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS"},
+        "evidence_refs": {"$ref": "#/$defs/ids"}
+      }
+    },
+    "operation": {"enum": ["KEEP_BOTH", "KEEP_ONE_EQUIVALENT_REPRESENTATION", "KEEP_NOVEL_INTERVAL_ONLY", "BLOCK_AND_REVIEW"]},
+    "representation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["representation_id", "route_origin", "route_producer", "parent_ids", "source_ids", "history", "geometry_px", "observation_interval", "source_support_intervals", "trajectory_evidence_refs", "endpoint_ids", "structural_obligation_ids", "ownership_state", "ownership_evidence_refs", "terminal_reason"],
+      "properties": {
+        "representation_id": {"type": "string"},
+        "route_origin": {"enum": ["MAIN", "RESTORATION"]},
+        "route_producer": {"type": "string"},
+        "parent_ids": {"$ref": "#/$defs/ids"},
+        "source_ids": {"$ref": "#/$defs/ids"},
+        "history": {"type": "array", "items": {"type": "string"}},
+        "geometry_px": {"$ref": "#/$defs/geometry"},
+        "observation_interval": {"$ref": "#/$defs/interval"},
+        "source_support_intervals": {"type": "array", "items": {"$ref": "#/$defs/interval"}},
+        "trajectory_evidence_refs": {"$ref": "#/$defs/ids"},
+        "endpoint_ids": {"$ref": "#/$defs/ids"},
+        "structural_obligation_ids": {"$ref": "#/$defs/ids"},
+        "ownership_state": {"enum": ["MAIN_ACCEPTED", "MAIN_REJECTED", "RESTORATION_PROPOSED", "LEGACY_RESTORATION_ACCEPTED"]},
+        "ownership_evidence_refs": {"$ref": "#/$defs/ids"},
+        "terminal_reason": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_id", "kind", "artifact", "sha256", "roi_px", "producer_version", "intervals", "result", "measurements", "limitations"],
+      "properties": {
+        "evidence_id": {"type": "string"},
+        "kind": {"enum": ["RAW_SOURCE_CROP", "SOURCE_BAND_RUNS", "TRAJECTORY_BINDING", "LIGHT_GAP", "INDEPENDENT_TERMINATION", "STRUCTURAL_ATTACHMENT", "PROTECTED_SOURCE", "OWNERSHIP_DECISION", "ROUTE_DECISION", "INHERITED_SOURCE_CLAIM", "OBSERVATION_FRONTIER", "UNCERTAINTY"]},
+        "artifact": {"type": "string"}, "sha256": {"type": "string"},
+        "roi_px": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+        "producer_version": {"type": "string"},
+        "intervals": {"type": "array", "items": {"$ref": "#/$defs/interval"}},
+        "result": {"enum": ["SUPPORTED", "CONTRADICTED", "UNKNOWN"]},
+        "measurements": {"type": "object"},
+        "limitations": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "cell": {
+      "type": "object", "additionalProperties": false,
+      "required": ["cell_id", "members", "interval", "relation", "positive_evidence_refs", "negative_evidence_refs", "endpoint_obligations_clear", "operation", "retained_ids", "novel_intervals", "reason"],
+      "properties": {
+        "cell_id": {"type": "string"}, "members": {"$ref": "#/$defs/ids"},
+        "interval": {"$ref": "#/$defs/interval"},
+        "relation": {"enum": ["SAME_VISIBLE_STROKE_SUPPORTED", "DISTINCT_VISIBLE_STROKES_SUPPORTED", "RELATION_UNRESOLVED"]},
+        "positive_evidence_refs": {"$ref": "#/$defs/ids"},
+        "negative_evidence_refs": {"$ref": "#/$defs/ids"},
+        "endpoint_obligations_clear": {"type": "boolean"},
+        "operation": {"$ref": "#/$defs/operation"},
+        "retained_ids": {"$ref": "#/$defs/ids"},
+        "novel_intervals": {"type": "array", "items": {"$ref": "#/$defs/interval"}},
+        "reason": {"type": "string"}
+      },
+      "allOf": [
+        {"if": {"properties": {"relation": {"enum": ["DISTINCT_VISIBLE_STROKES_SUPPORTED", "RELATION_UNRESOLVED"]}}}, "then": {"properties": {"operation": {"enum": ["KEEP_BOTH", "BLOCK_AND_REVIEW"]}}}},
+        {"if": {"properties": {"operation": {"enum": ["KEEP_ONE_EQUIVALENT_REPRESENTATION", "KEEP_NOVEL_INTERVAL_ONLY"]}}}, "then": {"properties": {"relation": {"const": "SAME_VISIBLE_STROKE_SUPPORTED"}, "positive_evidence_refs": {"minItems": 1}, "endpoint_obligations_clear": {"const": true}}}}
+      ]
+    },
+    "endpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_id", "representation_id", "point_px", "parameter", "kind", "independent_editable_obligation", "evidence_refs", "disposition"],
+      "properties": {
+        "endpoint_id": {"type": "string"}, "representation_id": {"type": "string"},
+        "point_px": {"$ref": "#/$defs/point"}, "parameter": {"type": "number"},
+        "kind": {"enum": ["OBSERVED_DETECTOR_ENDPOINT", "SOURCE_TERMINATION_SUPPORTED", "STRUCTURAL_ATTACHMENT_SUPPORTED", "DERIVED_COVERAGE_CUT", "UNRESOLVED"]},
+        "independent_editable_obligation": {"enum": ["YES", "NO_WITH_EVIDENCE", "UNKNOWN"]},
+        "evidence_refs": {"$ref": "#/$defs/ids"},
+        "disposition": {"enum": ["RETAIN_AS_GEOMETRY", "RETAIN_AS_OBSERVATION_EVIDENCE", "RETAIN_INDEPENDENT_ENTITY", "REVIEW_REQUIRED"]}
+      }
+    },
+    "piece": {
+      "type": "object", "additionalProperties": false,
+      "required": ["piece_id", "parent_id", "parent_parameter_interval", "interval", "geometry_px", "source_ids", "history", "start_endpoint_id", "end_endpoint_id", "support_evidence_refs", "claim_mode", "new_source_claim_pixels", "new_protected_source_claim_pixels", "inherited_protected_source_claim_pixels", "inherited_contact_evidence_refs", "action"],
+      "properties": {
+        "piece_id": {"type": "string"}, "parent_id": {"type": "string"},
+        "parent_parameter_interval": {"$ref": "#/$defs/point"},
+        "interval": {"$ref": "#/$defs/interval"}, "geometry_px": {"$ref": "#/$defs/geometry"},
+        "source_ids": {"$ref": "#/$defs/ids"}, "history": {"type": "array", "items": {"type": "string"}},
+        "start_endpoint_id": {"type": "string"}, "end_endpoint_id": {"type": "string"},
+        "support_evidence_refs": {"$ref": "#/$defs/ids"},
+        "claim_mode": {"enum": ["UNCHANGED_ALREADY_ACCEPTED_SUBSEGMENT", "NEW_RESTORATION_ADMISSION"]},
+        "new_source_claim_pixels": {"type": "integer", "minimum": 0},
+        "new_protected_source_claim_pixels": {"const": 0},
+        "inherited_protected_source_claim_pixels": {"type": "integer", "minimum": 0},
+        "inherited_contact_evidence_refs": {"$ref": "#/$defs/ids"},
+        "action": {"enum": ["EMIT", "PRESERVE_EXISTING_WITH_REVIEW_MARKER", "BLOCK_AND_REVIEW"]}
+      }
+    },
+    "supersession": {
+      "type": "object", "additionalProperties": false,
+      "required": ["representation_id", "disposition", "replacement_piece_ids", "intervals", "reason"],
+      "properties": {
+        "representation_id": {"type": "string"},
+        "disposition": {"enum": ["RETAINED", "EQUIVALENT_INTERVAL_SUPERSEDED", "SPLIT", "BLOCKED", "OWNERSHIP_REJECTED"]},
+        "replacement_piece_ids": {"$ref": "#/$defs/ids"},
+        "intervals": {"type": "array", "items": {"$ref": "#/$defs/interval"}}, "reason": {"type": "string"}
+      }
+    }
+  },
+  "x-semantic-invariants": [
+    "Every reference resolves. IDs are scoped by source image, run, route and parent. Detector IDs are never physical instances.",
+    "Intervals are finite with start < end. Basis is orthonormal. Every piece is an exact original-parent subsegment; no averaging, extension or union.",
+    "SAME(A,B,I) plus SAME(B,C,J) does not imply global transitive identity. Non-overlap is not DISTINCT and cannot veto another interval.",
+    "Removal requires source-band binding, a still-accepted covering keeper, and no independent or unresolved endpoint/structural obligation. Geometry or a positive token alone is insufficient.",
+    "Independent editable obligations override local visual equivalence: KEEP_BOTH may be required on one rendered locus.",
+    "Novel support is candidate supported domain minus certified same-visible intervals of retained accepted pieces. Preserve holes and unknown cells; no tolerance dilation or scalar coverage decision.",
+    "Retain all original endpoints in evidence. Keep independent endpoints editable. Audit-only detector frontiers need positive evidence, not an assumption.",
+    "New restoration admission requires protection and ownership authorization. Inherited accepted subsegments add no source/protected-source claim and retain contact markers; they cannot override an explicit ownership rejection.",
+    "A failed reduction retains accepted inputs. A disputed new admission is blocked with source-preserving fallback. Never silently delete a unique tail.",
+    "Recheck final-main and route-ledger digests before append. Changed/rejected keepers invalidate dependent decisions. Include empty-main and no-late-output modes.",
+    "Stable ranking only after evidence/obligation checks: accepted MAIN, then stable representation ID. Length is never deletion authority.",
+    "Preserve parents, all source IDs/history and interval supersession links. Never reconstruct lost member observations from an aggregated source ID set.",
+    "FinalStructure owns output geometry; this record owns evidence/proposals only. Cache, preview and both DXF paths consume the same committed structure.",
+    "Every EMIT piece requires semantic validation beyond JSON Schema: support, endpoint obligations, claim deltas, keeper existence and route-terminal constraints. No destructive default."
+  ]
+}
+

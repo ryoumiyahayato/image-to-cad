@@ -3,8 +3,8 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from app.raster_trace import trace_binary
-from app.trace_verification import verify_trace_paths
+from app.geometry.raster_trace import trace_binary
+from app.diagnostics.trace_verification import verify_trace_paths
 
 
 def test_verification_rasterizes_the_same_geometry_used_for_cad() -> None:

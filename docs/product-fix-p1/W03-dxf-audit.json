@@ -1,0 +1,63 @@
+{
+  "errors": [],
+  "fixes": [],
+  "entity_types": {
+    "LINE": 842,
+    "LWPOLYLINE": 5202,
+    "TEXT": 204
+  },
+  "layers": {
+    "TRACE_STRAIGHT": 842,
+    "TRACE_TEXT_SYMBOL": 769,
+    "TRACE_CURVE": 2872,
+    "SOURCE_TEXT_OUTLINE": 1557,
+    "TEXT_FALLBACK_OUTLINE": 4,
+    "OCR_TEXT": 204
+  },
+  "layer_states": {
+    "0": {
+      "off": false,
+      "frozen": false
+    },
+    "Defpoints": {
+      "off": false,
+      "frozen": false
+    },
+    "SCAN_UNDERLAY": {
+      "off": false,
+      "frozen": false
+    },
+    "TRACE_STRAIGHT": {
+      "off": false,
+      "frozen": false
+    },
+    "TRACE_CURVE": {
+      "off": false,
+      "frozen": false
+    },
+    "TRACE_TEXT_SYMBOL": {
+      "off": false,
+      "frozen": false
+    },
+    "SOURCE_TEXT_OUTLINE": {
+      "off": true,
+      "frozen": true
+    },
+    "TEXT_FALLBACK_OUTLINE": {
+      "off": false,
+      "frozen": false
+    },
+    "RESIDUAL_GRAPHIC": {
+      "off": false,
+      "frozen": false
+    },
+    "OCR_TEXT": {
+      "off": false,
+      "frozen": false
+    },
+    "SIGNATURE_OVERLAY": {
+      "off": false,
+      "frozen": false
+    }
+  }
+}

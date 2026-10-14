@@ -1,0 +1,35 @@
+usage: main.py [-h] [--version] [--headless] [--input INPUT] [--output OUTPUT]
+               [--preview PREVIEW] [--min-line-length MIN_LINE_LENGTH]
+               [--threshold-strength THRESHOLD_STRENGTH] [--no-hatch]
+               [--paper-size {UNKNOWN,A0,A1,A2,A3,A4,LETTER,LEGAL}]
+               [--paper-orientation {auto,portrait,landscape}]
+               [--paper-width-mm PAPER_WIDTH_MM]
+               [--paper-height-mm PAPER_HEIGHT_MM] [--allow-uncorrected]
+               [--allow-empty] [--report REPORT] [--debug-dir DEBUG_DIR]
+               [--auxiliary] [--ocr] [--verbose]
+
+Convert a photographed printed CAD drawing into an editable DXF.
+
+options:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --headless            Run without the GUI
+  --input INPUT         Input JPG/PNG for headless mode
+  --output OUTPUT
+  --preview PREVIEW
+  --min-line-length MIN_LINE_LENGTH
+  --threshold-strength THRESHOLD_STRENGTH
+  --no-hatch            Drop only high-confidence hatch lines; uncertain
+                        candidates are retained
+  --paper-size {UNKNOWN,A0,A1,A2,A3,A4,LETTER,LEGAL}
+  --paper-orientation {auto,portrait,landscape}
+  --paper-width-mm PAPER_WIDTH_MM
+  --paper-height-mm PAPER_HEIGHT_MM
+  --allow-uncorrected   Continue when the paper boundary cannot be detected
+  --allow-empty         Allow a successful empty DXF when no lines are
+                        detected
+  --report REPORT
+  --debug-dir DEBUG_DIR
+  --auxiliary           Detect review-only circles and symbols
+  --ocr                 Run optional review-only OCR
+  --verbose

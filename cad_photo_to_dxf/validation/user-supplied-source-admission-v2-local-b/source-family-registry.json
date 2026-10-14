@@ -1,0 +1,581 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-SOURCE-ADMISSION-V2-LOCAL-B",
+  "base_checkpoint": "db74a722b711f42f0d90b942d5b5c3530e146fbd",
+  "source_directory": "C:/Users/agcrf/Desktop/新建文件夹",
+  "source_origin": "USER_SUPPLIED_LOCAL",
+  "local_analysis_permission": "YES",
+  "public_domain": "NOT_ASSUMED",
+  "public_redistribution": "NOT_AUTHORIZED",
+  "training_permission": "TRAINING_PERMISSION_NOT_CONFIRMED",
+  "collection_counts": {
+    "total_files": 198,
+    "dwg": 93,
+    "pdf": 89,
+    "raster": 3,
+    "other": 13,
+    "exact_duplicate_files": 6,
+    "exact_duplicate_groups": 3
+  },
+  "family_count": 14,
+  "selected_representative_family_count": 10,
+  "summary_counts": {
+    "v2_usefulness": {
+      "HIGH_VALUE": 9,
+      "USEFUL": 1,
+      "LOW_VALUE_OR_NOT_SUITABLE": 4,
+      "UNKNOWN": 0
+    },
+    "discipline": {
+      "MULTIDISCIPLINE": 5,
+      "ELECTRICAL_INSTALLATION": 5,
+      "OTHER_ENGINEERING": 2,
+      "UNKNOWN": 2,
+      "MECHANICAL": 0,
+      "ELECTRICAL_SCHEMATIC": 0,
+      "ARCHITECTURAL": 0,
+      "CIVIL_SITE_PROFILE": 0,
+      "PID_PROCESS_INSTRUMENTATION": 0,
+      "STRUCTURAL": 0
+    }
+  },
+  "families": [
+    {
+      "id": "F01-HAIYANG-2022-ROOT-DWG",
+      "label": "Haiyang NianZhi industrial facility 2021-2022 DWG package",
+      "confidence": "HIGH",
+      "membership": {
+        "root_files": [
+          "海阳捻织立体库暖通施工图（初审回复）2022.2.22(2)_t3.dwg",
+          "海阳捻织车间暖通施工图2022.1.10_t3.dwg",
+          "海阳立体库2022.2.22_t3.dwg",
+          "海阳车间2022.2.22_t3.dwg",
+          "海阳门卫20210830_t3.dwg",
+          "立体库_结构0301(1).dwg",
+          "立体库电气出图.dwg",
+          "给排水海阳立体库20220113（审图版）_t3.dwg",
+          "给排水海阳车间20220316（审图版）_t3.dwg",
+          "车间_结构0310.dwg",
+          "车间电气出图.dwg",
+          "门卫2021.11.12_t3.dwg",
+          "门卫_结构1224(1).dwg",
+          "门卫电气出图.dwg"
+        ],
+        "counts": {"total": 14, "dwg": 14}
+      },
+      "discipline": "MULTIDISCIPLINE",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "UNKNOWN; no author field was used for grouping",
+        "project_package": "Repeated 海阳/捻织 facility, 车间, 立体库, 门卫 naming across one root package",
+        "discipline": "Structural, electrical, plumbing, and HVAC names occur in the same package",
+        "era_date": "2021-2022 dates in filenames; review/initial-review suffixes present",
+        "cad_generation_process": "Native DWG; new HVAC sample AC1032, ODA-normalized DXF, populated modelspace",
+        "vector_raster_mixed": "VECTOR_CAD; prior structural sample also contained embedded IMAGE entities",
+        "title_block_layout_style": "Engineering CAD sheets; selected Local-A samples had modelspace populated and empty paperspace layouts",
+        "typography": "Dense Chinese CAD text with discipline-specific layer names; new HVAC sample had 558 TEXT entities",
+        "line_weight_convention": "Native CAD line/layer convention; exact plotted weights not normalized",
+        "dimensioning_convention": "STRONG source-level evidence; new HVAC sample had 25 DIMENSION entities and prior structural sample had many more",
+        "annotation_style": "Review-response,审图版, discipline labels, equipment and plan annotations",
+        "scan_degradation_style": "LOW for CAD source; embedded-image risk exists in one reused structural sample"
+      },
+      "independence_axes": [
+        {"axis": "project/package", "evidence": "Distinct repeated Haiyang facility/building naming and one root package"},
+        {"axis": "discipline spread", "evidence": "Structural, electrical, plumbing, and HVAC variants"},
+        {"axis": "revision/date convention", "evidence": "2021/2022 dates, _t3, 初审回复, and 审图版 suffixes"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "STRONG",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "PRESENT"
+      }
+    },
+    {
+      "id": "F02-HUIHONG-2019-HASHED-DWG",
+      "label": "HUIHONG 2019 residential/commercial engineering DWG package",
+      "confidence": "HIGH",
+      "membership": {
+        "prefixes": ["b34518c5c2c0f4b265ed8c4c4d8eefd9/"],
+        "counts": {"total": 64, "dwg": 50, "raster": 3, "other": 11}
+      },
+      "discipline": "MULTIDISCIPLINE",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "UNKNOWN; 汇鸿2019 is treated as a package/project label, not an ownership claim",
+        "project_package": "One hashed source tree containing 汇鸿2019, building ranges, commercial, plumbing, electrical, HVAC, and site photos",
+        "discipline": "HVAC, electrical, plumbing, and civil/building drawing folders",
+        "era_date": "2019 dates and repeated t3 revision suffixes",
+        "cad_generation_process": "Native DWG; new HVAC sample AC1032, ODA-normalized DXF, modelspace populated",
+        "vector_raster_mixed": "VECTOR_CAD plus three JPG site-photo files and CAD sidecars",
+        "title_block_layout_style": "PUB_TITLE/PUB_TEXT and discipline layer conventions; paperspace was limited in sampled files",
+        "typography": "Mixed Chinese/English CAD layer names and dense text; new HVAC sample had 1,213 text-like entities",
+        "line_weight_convention": "Native CAD layer-based linework; plotted weights not normalized",
+        "dimensioning_convention": "STRONG source-level evidence; new HVAC sample had 480 dimensions",
+        "annotation_style": "Dense engineering labels, leaders, title/public text, equipment and building annotations",
+        "scan_degradation_style": "LOW in DWG; separate JPG site photos provide a small mixed-media branch"
+      },
+      "independence_axes": [
+        {"axis": "directory/package provenance", "evidence": "Single hashed root and 汇鸿2019 tree with coherent discipline subfolders"},
+        {"axis": "drafting process", "evidence": "Native DWG, CAD layers, dimensions, leaders, and repeated t3 export/revision naming"},
+        {"axis": "representation mix", "evidence": "DWG engineering set plus JPG site-photo sidecars and exact copy groups"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "STRONG",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "STRONG",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "label": "2020 as-built installation DWG package",
+      "confidence": "HIGH",
+      "membership": {
+        "prefixes": ["竣工图（安装）2020年11月版本 (1)/"],
+        "counts": {"total": 31, "dwg": 29, "other": 2}
+      },
+      "discipline": "MULTIDISCIPLINE",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "UNKNOWN; package naming is used without asserting a vendor",
+        "project_package": "One as-built installation tree covering energy center, inspection building, warehouse, production workshop, fire-water pool, gatehouse, and site elements",
+        "discipline": "Electrical, plumbing, and HVAC installation drawings",
+        "era_date": "Package named 2020年11月; filenames retain 2018/2019 drawing dates and review modifications",
+        "cad_generation_process": "Native DWG; new HVAC sample AC1032, ODA-normalized DXF, populated modelspace with proxy entities",
+        "vector_raster_mixed": "VECTOR_CAD with custom/proxy entity risk; no raster sidecars counted",
+        "title_block_layout_style": "As-built/revision layer names including 图框 and 标注; sampled paperspace layout empty",
+        "typography": "Chinese CAD annotations and installation equipment labels",
+        "line_weight_convention": "Native CAD layer convention; exact print weights unresolved",
+        "dimensioning_convention": "STRONG; new HVAC sample had 81 dimensions and Local-A electrical evidence established dense installation dimensions",
+        "annotation_style": "As-built, review-modification, equipment, duct, pipe, and room annotations",
+        "scan_degradation_style": "LOW; fidelity risk is proxy/custom entities rather than scanning"
+      },
+      "independence_axes": [
+        {"axis": "package/intent", "evidence": "Explicit 竣工图（安装） tree and building-by-building installation organization"},
+        {"axis": "generation stage", "evidence": "As-built label, dated source drawings, review-modification and response names"},
+        {"axis": "discipline spread", "evidence": "Electrical, plumbing, and HVAC directories within one package"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "STRONG",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "WEAK",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "label": "XDF Wanxiangcheng fire-renovation stamped review PDF package",
+      "confidence": "HIGH",
+      "membership": {
+        "prefixes": ["审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/"],
+        "counts": {"total": 76, "pdf": 76}
+      },
+      "discipline": "MULTIDISCIPLINE",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "Client/project name is explicit; design organization is not normalized",
+        "project_package": "Single stamped review tree with architecture, structure, electrical, plumbing, HVAC, review responses, and calculations",
+        "discipline": "Architecture, structural, electrical, plumbing, HVAC/fire renovation",
+        "era_date": "PDF metadata and exports are mostly 2024; project/review chronology is represented by response folders and suffixes",
+        "cad_generation_process": "AutoCAD 2014 plotted PDF metadata appears on the duplicate directory sheet; other sheets include mixed plot/scan evidence",
+        "vector_raster_mixed": "MIXED PDF set; Local-A observed one raster first page and one mixed/vector-heavy page",
+        "title_block_layout_style": "Strong stamped/review title, legend, drawing-number, directory, response, and revision-block conventions",
+        "typography": "Chinese engineering typography with discipline sheet codes and review text",
+        "line_weight_convention": "Printed/PDF line weights visible; exact source CAD weights unavailable",
+        "dimensioning_convention": "PRESENT in architectural/engineering sheets; no case-level labels assigned",
+        "annotation_style": "Dense notes, leaders, review comments, calculations, and drawing indexes",
+        "scan_degradation_style": "PRESENT; stamped and scanned/reproduced pages vary within the package"
+      },
+      "independence_axes": [
+        {"axis": "project/package", "evidence": "One full client/project tree and all disciplines under the same stamped review package"},
+        {"axis": "review/generation workflow", "evidence": "First/second/third review responses, stamped sheets, void material, and AutoCAD PDF metadata"},
+        {"axis": "representation quality", "evidence": "Mixed raster/vector and stamped/reproduced sheet variants"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "PRESENT",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "label": "Japanese standalone electrical equipment drawing",
+      "confidence": "MEDIUM",
+      "membership": {"root_files": ["dennkisetubi.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "Japanese title-block/company fields are visible; normalized author not asserted",
+        "project_package": "Standalone PDF; bounded render shows a formal Japanese electrical plan with a named project",
+        "discipline": "Electrical equipment/installation plan",
+        "era_date": "2023 PDF metadata/title-sheet date family",
+        "cad_generation_process": "eDocument Library PDF export; rendered content is clean plot/vector-like engineering linework",
+        "vector_raster_mixed": "VECTOR_LIKE_PDF",
+        "title_block_layout_style": "Long horizontal plan with grid bubbles, bottom title block, central legend/table, and equipment schedule",
+        "typography": "Japanese glyphs with small technical labels and formal title-block text",
+        "line_weight_convention": "Clear multi-weight plotted linework; no source CAD weights available",
+        "dimensioning_convention": "STRONG visual evidence from grid dimensions and plan dimensions",
+        "annotation_style": "Leaders, equipment labels, grid references, and schedule annotations",
+        "scan_degradation_style": "LOW; clean plot-like page"
+      },
+      "independence_axes": [
+        {"axis": "language/office convention", "evidence": "Japanese typography, grid/title-block structure, and plot style"},
+        {"axis": "discipline", "evidence": "Electrical equipment plan and schedule content"},
+        {"axis": "representation", "evidence": "Single clean PDF plot with no DWG counterpart established"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "STRONG",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "STRONG",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "label": "Ontake visitor-center Japanese electrical PDF set",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["20210416zumen.pdf", "2026dennkisetsubi.pdf"], "counts": {"total": 2, "pdf": 2}},
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "Government/designer fields are visible in title blocks; normalized author not asserted",
+        "project_package": "Both PDFs visibly name 御岳県立公園御嶽山ビジターセンター（仮称）建設工事; one is a plan set and one a specification/title sheet",
+        "discipline": "Electrical installation/equipment",
+        "era_date": "Visible project dates and PDF metadata span older plan dates and 2021/2026 exports; chronology not normalized",
+        "cad_generation_process": "CubePDF and Microsoft Print to PDF exports; plot-like PDF sheets",
+        "vector_raster_mixed": "VECTOR_LIKE_PDF with different export histories",
+        "title_block_layout_style": "Japanese public-project title blocks, sheet codes, specification tables, and plan layouts",
+        "typography": "Japanese technical typography with formal bilingual/structured title fields",
+        "line_weight_convention": "Printed plot line weights visible on plan sheet",
+        "dimensioning_convention": "PRESENT on plan sheet; specification sheet is table/text dominant",
+        "annotation_style": "Electrical symbols, room labels, equipment notes, and specification tables",
+        "scan_degradation_style": "LOW to WEAK; plan is clean, alternate PDF has different export texture"
+      },
+      "independence_axes": [
+        {"axis": "shared project identity", "evidence": "Exact visible visitor-center title on both PDFs"},
+        {"axis": "document role", "evidence": "Plan drawing versus electrical specification/title sheet"},
+        {"axis": "export history", "evidence": "CubePDF versus Microsoft Print to PDF metadata and different page sets"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "PRESENT",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "STRONG",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "label": "Seya cultural-center electrical drawing PDF alternatives",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["0026_20260601.pdf", "32581.pdf"], "counts": {"total": 2, "pdf": 2}},
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "PDF metadata authors/generators differ; no single author asserted",
+        "project_package": "Both bounded first pages name 瀬谷区民文化センター 電気設備図",
+        "discipline": "Electrical equipment drawings",
+        "era_date": "2020 DocuCentre metadata and 2025 PowerPoint metadata; revision/scan chronology unresolved",
+        "cad_generation_process": "One DocuCentre scan/plot PDF and one PowerPoint export; alternate PDF representations",
+        "vector_raster_mixed": "MIXED; scanned/dirty 0026 page versus clean alternate export",
+        "title_block_layout_style": "Electrical drawing cover/title conventions; page sets differ in count and geometry",
+        "typography": "Japanese technical title typography",
+        "line_weight_convention": "Printed linework visible on the scanned/plot set; exact source weights unavailable",
+        "dimensioning_convention": "PRESENT at family level from drawing-set identity; bounded first pages are cover/title pages",
+        "annotation_style": "Electrical sheet/package convention; detailed page-level annotation not expanded",
+        "scan_degradation_style": "STRONG diversity signal from the visibly speckled DocuCentre representation"
+      },
+      "independence_axes": [
+        {"axis": "shared project identity", "evidence": "Same visible project title on both PDFs"},
+        {"axis": "representation lineage", "evidence": "39-page DocuCentre set versus 20-page PowerPoint export with distinct geometry"},
+        {"axis": "degradation", "evidence": "Clean and visibly speckled alternatives"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "PRESENT",
+        "dimension_chain": "PRESENT",
+        "leader_marker": "PRESENT",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "PRESENT"
+      }
+    },
+    {
+      "id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "label": "Yangzijiang pharmaceutical comprehensive-warehouse electrical PDF",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["图纸-综合仓库-电专业+815.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "中部设计集团 and 扬子江药业集团有限公司 visible on bounded title/directory sheet",
+        "project_package": "Comprehensive warehouse electrical package; seven-page PDF with directory and drawing sheets",
+        "discipline": "Electrical installation",
+        "era_date": "2024-08-15 title/metadata date",
+        "cad_generation_process": "pdfFactory PDF export with mixed page sizes typical of a plotted drawing set",
+        "vector_raster_mixed": "VECTOR_LIKE_PDF; first sheet is a clean drawing directory",
+        "title_block_layout_style": "Bilingual title block, project/discipline/revision fields, sheet table, and drawing index",
+        "typography": "Chinese/English bilingual engineering typography",
+        "line_weight_convention": "Formal plot/table line weights; detailed plan weights not expanded",
+        "dimensioning_convention": "PRESENT at package level; first inspected page is a directory",
+        "annotation_style": "Formal sheet-index/table convention and title-block fields",
+        "scan_degradation_style": "LOW; clean PDF"
+      },
+      "independence_axes": [
+        {"axis": "organization/project", "evidence": "Named design group and pharmaceutical client in title block"},
+        {"axis": "discipline", "evidence": "Explicit electrical discipline and warehouse package"},
+        {"axis": "layout convention", "evidence": "Bilingual title block and structured drawing index"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "PRESENT",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "label": "Jiulong street-house fire/electrical modification PDF",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["九龙镇九龙路126号沿街房消防电改2.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "v2_usefulness": "HIGH_VALUE",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "中述设计集团有限公司 and 泰州市九龙镇人民政府 visible on bounded title block",
+        "project_package": "Named street-house fire/electrical modification package; 11-page PDF",
+        "discipline": "Fire/electrical installation",
+        "era_date": "2026-07 title block and 2026 PDF metadata",
+        "cad_generation_process": "iTextSharp PDF generation; clean text/title-block sheet with drawing-set pages",
+        "vector_raster_mixed": "VECTOR_LIKE_PDF",
+        "title_block_layout_style": "Heavy formal border, signature/approval table, project number, sheet number, and standards text",
+        "typography": "Dense Chinese standards/specification typography",
+        "line_weight_convention": "Formal plot/title-block line weights visible; detailed plan weights not expanded",
+        "dimensioning_convention": "WEAK on inspected specification sheet; likely present in later drawing pages but not asserted strongly",
+        "annotation_style": "Dense numbered design notes and formal approval/signature fields",
+        "scan_degradation_style": "LOW; clean PDF"
+      },
+      "independence_axes": [
+        {"axis": "organization/project", "evidence": "Client, design group, project name, and project number visible"},
+        {"axis": "discipline", "evidence": "Explicit fire/electrical modification title"},
+        {"axis": "document convention", "evidence": "Formal Chinese design-note/title-block/signature layout"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "WEAK",
+        "dimension_chain": "WEAK",
+        "leader_marker": "WEAK",
+        "drawing_layout_rule": "STRONG",
+        "aligned_text_glyph_stroke": "STRONG",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "label": "Environmental bureau main-building raster PDF",
+      "confidence": "MEDIUM",
+      "membership": {"root_files": ["环保局主大楼.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "UNKNOWN",
+      "v2_usefulness": "USEFUL",
+      "selected_for_representative_pool": true,
+      "axes": {
+        "organization_author": "UNKNOWN",
+        "project_package": "Standalone main-building PDF; project identity is carried by filename only",
+        "discipline": "UNKNOWN; Local-A evidence established engineering-document utility but not a reliable discipline split",
+        "era_date": "2026 scan metadata; project date UNKNOWN",
+        "cad_generation_process": "Canon scan/PDF reproduction",
+        "vector_raster_mixed": "RASTER_PDF",
+        "title_block_layout_style": "Engineering page/layout visible in Local-A bounded render; exact title-block lineage unresolved",
+        "typography": "Rasterized technical text; glyph fidelity depends on scan",
+        "line_weight_convention": "Visible printed linework with scan degradation",
+        "dimensioning_convention": "PRESENT at family level from Local-A engineering-page inspection",
+        "annotation_style": "Rasterized engineering annotation; details not expanded in this task",
+        "scan_degradation_style": "STRONG; raster/scan family retained for degradation diversity"
+      },
+      "independence_axes": [
+        {"axis": "representation", "evidence": "Rasterized PDF differs from native DWG and vector-like PDF families"},
+        {"axis": "scan/degradation", "evidence": "Local-A bounded render showed scan characteristics"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "PRESENT",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "PRESENT",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "PRESENT"
+      }
+    },
+    {
+      "id": "F11-FEMS-ENGINE-HOUSE-ADDENDUM",
+      "label": "FEMS Engine House No. 14 English addendum package",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["Addendum_2-Major_Renovation_&_Modernization_of_FEMS_Dept_Engine_House_No14.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "MULTIDISCIPLINE",
+      "v2_usefulness": "LOW_VALUE",
+      "selected_for_representative_pool": false,
+      "axes": {
+        "organization_author": "Government of the District of Columbia Department of General Services visible",
+        "project_package": "Major renovation/modernization of Fire and Emergency Medical Services Engine House No. 14; Addendum No. 2",
+        "discipline": "MULTIDISCIPLINE drawing list references architecture, structure, mechanical, plumbing, electrical, and fire alarm",
+        "era_date": "Issued October 22, 2013",
+        "cad_generation_process": "Canon scan PDF; administrative addendum rather than a native drawing set",
+        "vector_raster_mixed": "RASTER_OR_SCANNED_TEXT_PDF",
+        "title_block_layout_style": "Formal government addendum cover, drawing revision list, and document headings",
+        "typography": "English serif administrative/specification typography",
+        "line_weight_convention": "Document rules visible; drawing line weights not present on inspected first page",
+        "dimensioning_convention": "UNKNOWN",
+        "annotation_style": "Revision/addendum list and scope text, not drawing annotation",
+        "scan_degradation_style": "PRESENT; scanned Canon PDF"
+      },
+      "independence_axes": [
+        {"axis": "organization/project", "evidence": "Named government agency and Engine House project"},
+        {"axis": "document role", "evidence": "Addendum/revision administration rather than drawing geometry"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "UNKNOWN",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "PRESENT",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "STRONG"
+      }
+    },
+    {
+      "id": "F12-JICHUAN-PHARMA-SCHEDULE",
+      "label": "Jichuan pharmaceutical solid-building construction schedule",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["-+济川药业集团有限公司+儿科新药东二区2号固体楼-颗粒剂车间.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "OTHER_ENGINEERING",
+      "v2_usefulness": "LOW_VALUE",
+      "selected_for_representative_pool": false,
+      "axes": {
+        "organization_author": "济川药业集团有限公司 visible in title",
+        "project_package": "Pediatric new-drug east zone No. 2 solid building/granule workshop construction progress plan",
+        "discipline": "Construction planning/schedule, not a drafting discipline",
+        "era_date": "2023 schedule dates",
+        "cad_generation_process": "Acrobat Distiller/PScript PDF export",
+        "vector_raster_mixed": "VECTOR_LIKE_SCHEDULE_PDF",
+        "title_block_layout_style": "Project schedule table and Gantt chart, not engineering title block",
+        "typography": "Chinese schedule/table typography",
+        "line_weight_convention": "Table/grid and Gantt bars only",
+        "dimensioning_convention": "NOT_OBSERVED",
+        "annotation_style": "Task labels, dates, quantities, and progress bars",
+        "scan_degradation_style": "LOW"
+      },
+      "independence_axes": [
+        {"axis": "document role", "evidence": "Construction schedule/Gantt chart rather than drawing sheet"},
+        {"axis": "project identity", "evidence": "Explicit pharmaceutical client and workshop title"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "UNKNOWN",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "WEAK",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "PRESENT"
+      }
+    },
+    {
+      "id": "F13-SAKADO-SCHOOL-DEMOLITION-MEETING",
+      "label": "Sakado school-demolition meeting material",
+      "confidence": "HIGH",
+      "membership": {"root_files": ["32579.pdf", "32580.pdf"], "counts": {"total": 2, "pdf": 2}},
+      "discipline": "OTHER_ENGINEERING",
+      "v2_usefulness": "LOW_VALUE",
+      "selected_for_representative_pool": false,
+      "axes": {
+        "organization_author": "坂戸市 and 株式会社内山商事 visible in bounded pages",
+        "project_package": "Both pages name 旧坂戸市立北坂戸小学校校舎解体等工事; one is an agenda and one explanatory material",
+        "discipline": "Construction meeting/administrative material",
+        "era_date": "2025-07-15",
+        "cad_generation_process": "Word/Aspose-style PDF document exports",
+        "vector_raster_mixed": "VECTOR_TEXT_DOCUMENT",
+        "title_block_layout_style": "Meeting-document headings and page footer, not drawing title block",
+        "typography": "Japanese document typography",
+        "line_weight_convention": "Text/document rules only",
+        "dimensioning_convention": "NOT_OBSERVED",
+        "annotation_style": "Meeting agenda and explanatory text",
+        "scan_degradation_style": "LOW"
+      },
+      "independence_axes": [
+        {"axis": "shared project identity", "evidence": "Same school-demolition project title on both PDFs"},
+        {"axis": "document role", "evidence": "Meeting agenda versus explanatory handout"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "UNKNOWN",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "WEAK",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "WEAK"
+      }
+    },
+    {
+      "id": "F14-52725-BUILDING-COMMITTEE-AGENDA",
+      "label": "1928 Building Committee municipal agenda",
+      "confidence": "MEDIUM",
+      "membership": {"root_files": ["52725.pdf"], "counts": {"total": 1, "pdf": 1}},
+      "discipline": "UNKNOWN",
+      "v2_usefulness": "LOW_VALUE",
+      "selected_for_representative_pool": false,
+      "axes": {
+        "organization_author": "1928 Building Committee context; PDF author Kathy Blonski",
+        "project_package": "Municipal committee agenda and invoice/administrative material",
+        "discipline": "Administrative building-committee document",
+        "era_date": "2025-05-27",
+        "cad_generation_process": "Microsoft Word PDF export",
+        "vector_raster_mixed": "VECTOR_TEXT_DOCUMENT",
+        "title_block_layout_style": "Agenda heading and invoice table, not engineering title block",
+        "typography": "English administrative typography",
+        "line_weight_convention": "Table/grid rules only",
+        "dimensioning_convention": "NOT_OBSERVED",
+        "annotation_style": "Agenda items and invoice descriptions",
+        "scan_degradation_style": "LOW"
+      },
+      "independence_axes": [
+        {"axis": "document role", "evidence": "Administrative agenda rather than drawing material"},
+        {"axis": "language/organization", "evidence": "English municipal committee/Word document convention"}
+      ],
+      "opportunity_tags": {
+        "dimension_extension_witness_line": "UNKNOWN",
+        "dimension_chain": "UNKNOWN",
+        "leader_marker": "UNKNOWN",
+        "drawing_layout_rule": "WEAK",
+        "aligned_text_glyph_stroke": "PRESENT",
+        "table_legend_revision_title_rule": "WEAK"
+      }
+    }
+  ],
+  "governance": {
+    "wave_1_b3a_modified": false,
+    "h1_h2_inspected": false,
+    "model_run": false,
+    "candidate_mining": false,
+    "human_case_labeling": false,
+    "production_semantic_delta": "NONE",
+    "production_dwg_input_integration": false,
+    "source_files_modified": false,
+    "source_binaries_git_tracked": false
+  }
+}

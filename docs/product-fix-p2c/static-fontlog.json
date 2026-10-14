@@ -1,0 +1,28 @@
+{
+  "source_sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+  "source_url": "https://raw.githubusercontent.com/google/fonts/a85815a42757630ce188fdad368c2dfc444d4773/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+  "license": "SIL Open Font License 1.1",
+  "reserved_font_names": [
+    "Source"
+  ],
+  "license_review": "OFL-DERIVATION-REVIEW.md",
+  "fontTools_version": "4.63.0",
+  "modified_version": true,
+  "coordinates": {
+    "wght": 400
+  },
+  "name_changes": {
+    "1": "ITC CAD SC",
+    "2": "Regular",
+    "3": "ITCCADSC-Regular-P2C-400",
+    "4": "ITC CAD SC Regular",
+    "6": "ITCCADSC-Regular",
+    "16": "ITC CAD SC",
+    "17": "Regular",
+    "18": "ITC CAD SC Regular",
+    "21": "ITC CAD SC",
+    "22": "Regular"
+  },
+  "output_sha256": "5ae93fa926c7941d9d333d86aad1db8f61ad289b660714537fd1cfface214632",
+  "production_bundling": "NOT_APPROVED_PENDING_CAD_VALIDATION"
+}

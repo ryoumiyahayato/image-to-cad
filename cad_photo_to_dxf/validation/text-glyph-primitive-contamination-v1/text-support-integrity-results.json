@@ -1,0 +1,684 @@
+{
+  "existing_mechanisms": [
+    {
+      "bypass_fallback": "fresh_dev_candidate_remining_v1 called _raw_hough directly",
+      "current_consumer": "PipelineService production vectorization",
+      "dev_candidate_admission_sees_it_before_fix": false,
+      "evidence_source": "deterministic compact-component text-region mask",
+      "failure_mode": "DEV miner bypassed existing text evidence entirely",
+      "path": "cad_photo_to_dxf/app/text_protection.py",
+      "raw_primitives_see_it": true,
+      "stage": "production post-detection line filtering"
+    },
+    {
+      "bypass_fallback": "Local-D DEV mining has no FinalStructure path",
+      "current_consumer": "FinalStructure",
+      "dev_candidate_admission_sees_it_before_fix": false,
+      "evidence_source": "OCR text candidates and exclusive source ownership",
+      "failure_mode": "ownership exists too late and is absent from offline mining",
+      "path": "cad_photo_to_dxf/app/content_ownership.py",
+      "raw_primitives_see_it": false,
+      "stage": "late content ownership/final arbitration"
+    },
+    {
+      "bypass_fallback": "standalone DEV miner does not instantiate lifecycle",
+      "current_consumer": "production diagnostics and fallback",
+      "dev_candidate_admission_sees_it_before_fix": false,
+      "evidence_source": "stage observations/ownership claims",
+      "failure_mode": "provenance lifecycle was not composed into the frozen pool",
+      "path": "cad_photo_to_dxf/app/source_support_lifecycle.py",
+      "raw_primitives_see_it": "PARTIAL",
+      "stage": "source-support provenance and terminal ownership"
+    },
+    {
+      "bypass_fallback": "direct detector replay",
+      "current_consumer": "frozen 147 DEV candidate pool",
+      "dev_candidate_admission_sees_it_before_fix": false,
+      "evidence_source": "source grayscale only before fix",
+      "failure_mode": "earliest actionable omission: no text/glyph integrity stage after axis support",
+      "path": "cad_photo_to_dxf/app/fresh_dev_candidate_remining_v1.py",
+      "raw_primitives_see_it": true,
+      "stage": "raw Hough -> span -> axis -> pair -> admissibility"
+    }
+  ],
+  "guard": {
+    "candidate_specific_exceptions": false,
+    "composition_order": [
+      "SPAN_SUPPORT",
+      "AXIS_SUPPORT",
+      "TEXT_GLYPH_SUPPORT_INTEGRITY",
+      "CANDIDATE_ADMISSIBILITY"
+    ],
+    "non_text_support_profile": true,
+    "post_text_removal_support": true,
+    "scope": "DEV_ONLY",
+    "statuses": [
+      "TEXT_INDEPENDENT",
+      "TEXT_UNCERTAIN",
+      "TEXT_REJECTED"
+    ],
+    "text_mask_overlap_profile": true
+  },
+  "old_control_records": [
+    {
+      "candidate_id": "LOCALD-F03-AS-BUILT-LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW-7CC3C6CC3A31",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 63.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 2,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.174603,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 20
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 705.0,
+          "non_text_support_fraction": 0.997171,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.997171,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 19,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.571429,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 20
+        }
+      ],
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            790,
+            1844
+          ],
+          "length_px": 62,
+          "start": [
+            790,
+            1782
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            796,
+            2556
+          ],
+          "length_px": 706,
+          "start": [
+            796,
+            1850
+          ]
+        }
+      },
+      "source_family": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "source_unit": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ARCH10B-P1-E23A10324891",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 640.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.96875,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 204
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 96.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 2,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.083333,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 204
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1286,
+            1389
+          ],
+          "length_px": 639,
+          "start": [
+            647,
+            1389
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1443,
+            1386
+          ],
+          "length_px": 95,
+          "start": [
+            1348,
+            1386
+          ]
+        }
+      },
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "source_unit": "LOCALC-F04-PDF-ARCH10B-P1",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-567F6C8B5736",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 27.0,
+          "non_text_support_fraction": 0.931507,
+          "non_text_support_run_count": 4,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 0.931507,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 4,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 190
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 176.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 190
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1782,
+            666
+          ],
+          "length_px": 72,
+          "start": [
+            1710,
+            666
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1968,
+            665
+          ],
+          "length_px": 175,
+          "start": [
+            1793,
+            665
+          ]
+        }
+      },
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_unit": "LOCALC-F04-PDF-ELEC06-P1",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-2026DENNKISETSUBI-P1-FD1646128CF2",
+      "control_family": "VALID_DIRECT_OBJECT_CONTINUATION",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 565.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 5,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.732743,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 159
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 262.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 2,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.549618,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 159
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1619,
+            623
+          ],
+          "length_px": 564,
+          "start": [
+            1055,
+            623
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1886,
+            619
+          ],
+          "length_px": 261,
+          "start": [
+            1625,
+            619
+          ]
+        }
+      },
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.png",
+      "source_unit": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-3C8A7D8EDECB",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 54.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 799.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 6,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.768461,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 151
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1289,
+            162
+          ],
+          "length_px": 53,
+          "start": [
+            1236,
+            162
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2096,
+            163
+          ],
+          "length_px": 798,
+          "start": [
+            1298,
+            163
+          ]
+        }
+      },
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_unit": "LOCALC-F07-PDF-0026-P12",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P1-FA2913866300",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 98.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 22
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 115.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 1,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 1.0,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 22
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            2337,
+            1086
+          ],
+          "length_px": 97,
+          "start": [
+            2240,
+            1086
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2476,
+            1086
+          ],
+          "length_px": 114,
+          "start": [
+            2362,
+            1086
+          ]
+        }
+      },
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P1",
+      "text_support_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P1-9BC941C1ED6B",
+      "control_family": "VALID_ANNOTATION_HARD_NEGATIVE",
+      "current_eligibility": "ELIGIBLE_IN_FROZEN_147",
+      "eligibility_after_guard": "ELIGIBLE_UNCHANGED",
+      "fragment_profiles": [
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_a",
+          "longest_non_text_supported_run_px": 226.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 0,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.623894,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 127
+        },
+        {
+          "endpoint_non_text_support": [
+            true,
+            true
+          ],
+          "evidence_source": "existing_text_protection_mask_plus_component_ink",
+          "fragment": "fragment_b",
+          "longest_non_text_supported_run_px": 573.0,
+          "non_text_support_fraction": 1.0,
+          "non_text_support_run_count": 1,
+          "post_text_removal_support_fraction": 1.0,
+          "reason": "INDEPENDENT_LINE_SUPPORT_THROUGH_TEXT",
+          "source_support_fraction": 1.0,
+          "status": "TEXT_INDEPENDENT",
+          "structural_connection_count": 5,
+          "support_run_count": 1,
+          "text_component_count": 0,
+          "text_mask_overlap_fraction": 0.38918,
+          "text_owned_support_fraction": 0.0,
+          "text_region_count": 127
+        }
+      ],
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "fragment_a": {
+          "end": [
+            1350,
+            269
+          ],
+          "length_px": 225,
+          "start": [
+            1125,
+            269
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1933,
+            268
+          ],
+          "length_px": 572,
+          "start": [
+            1361,
+            268
+          ]
+        }
+      },
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "source_unit": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "text_support_status": "TEXT_INDEPENDENT"
+    }
+  ],
+  "review_protocol_defect": "SOURCE_GAP_REVIEW_V1 assumes a valid primitive",
+  "schema_version": 1,
+  "source_gap_review_v1_status": "PAUSED_UPSTREAM_CONTAMINATION",
+  "summary": {
+    "admissibility_guard_changed": true,
+    "axis_guard_changed": false,
+    "base_checkpoint": "90026129f2f321531fe6f5b70a083680e261dc9b",
+    "candidate_specific_exceptions": false,
+    "dimension_line_safety": "PASS",
+    "fresh_human_direct_annotation_preserved": 6,
+    "fresh_human_direct_annotation_total": 6,
+    "fresh_human_direct_preserved": 9,
+    "fresh_human_direct_total": 9,
+    "frozen147_re_evaluated": true,
+    "frozen147_text_independent": 125,
+    "frozen147_text_rejected": 9,
+    "frozen147_text_uncertain": 13,
+    "grid_line_safety": "PASS",
+    "h1_h2_opened": "NO",
+    "invalid_primitives_in_source_gap_16": 1,
+    "invalid_source_gap_candidate_ids": [
+      "FRESH1-EDC71A4759AD64EDCE78"
+    ],
+    "legitimate_text_adjacent_controls": 13,
+    "locked_blind": "0 / 8",
+    "model_assisted_labeling": "NO",
+    "model_run": "NO",
+    "new_candidate_mining": "NO",
+    "newly_ineligible_candidate_ids": [
+      "FRESH1-3896FDF95885929AF0BE",
+      "FRESH1-43C5461340B4AE31E3E7",
+      "FRESH1-46A7C918A98FDBD54AA7",
+      "FRESH1-70F618B82D91A3FA0003",
+      "FRESH1-859781346221E86E039A",
+      "FRESH1-87D91B379FF32B74BC1E",
+      "FRESH1-E58D20009B3095CC5C21",
+      "FRESH1-EDC71A4759AD64EDCE78",
+      "FRESH1-F958CAC7F42997D179E6"
+    ],
+    "newly_ineligible_candidates": 9,
+    "old_valid_annotation_controls_preserved": 6,
+    "old_valid_annotation_controls_total": 6,
+    "old_valid_direct_control_preserved": 1,
+    "old_valid_direct_control_total": 1,
+    "previously_human_reviewed_among_newly_ineligible": 4,
+    "production_semantic_delta": "NONE",
+    "production_text_glyph_equivalence": "UNPROVEN",
+    "real_line_through_text_safety": "PASS",
+    "rejected_source_family_distribution": {
+      "F04-XDF-RENOVATION-REVIEW-PDF": 2,
+      "F05-DENNKISETSUBI-STANDALONE-PDF": 1,
+      "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL": 2,
+      "F09-JIULONG-FIRE-ELECTRICAL": 4
+    },
+    "schema_version": 1,
+    "source_gap_16_audited": 16,
+    "source_gap_review_frozen": "NO",
+    "source_gap_review_v1_status": "PAUSED_UPSTREAM_CONTAMINATION",
+    "span_guard_changed": false,
+    "table_border_safety": "PASS",
+    "task_id": "TEXT_GLYPH_PRIMITIVE_CONTAMINATION_V1",
+    "text_contaminated_cases_in_bounded_audit": 2,
+    "text_derived_cases_confirmed_in_bounded_audit": 5,
+    "title_block_border_safety": "PASS",
+    "validation": "NO"
+  },
+  "task_id": "TEXT_GLYPH_PRIMITIVE_CONTAMINATION_V1"
+}

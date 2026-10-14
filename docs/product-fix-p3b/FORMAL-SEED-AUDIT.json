@@ -1,0 +1,147 @@
+{
+  "AMBIGUOUS": 0,
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "EXCLUDED": 5,
+  "FORMAL_SEED_HEALTH": "PASS_WITH_REVIEW_SUBSET",
+  "HEARTBEAT_STATUS": "NOT_PRESENT",
+  "INVALID_NOMINATION": 4,
+  "NOMINATION_BORDERLINE": 13,
+  "NOMINATION_POOR": 0,
+  "NOMINATION_STRONG": 82,
+  "NO_STAGE0_STATUS": 0,
+  "OTHER": 36,
+  "OTHER_BREAKDOWN": {
+    "ARTIFACT_OR_NOISE": 0,
+    "COMPOUND_SYMBOL": 2,
+    "FILL_OR_HATCH": 0,
+    "GRAPHIC_OBJECT": 1,
+    "OTHER_OTHER": 0,
+    "TEXT_OR_DIGIT": 33
+  },
+  "PAIR_CLASS_COUNTS": {
+    "AMBIGUOUS": 0,
+    "OTHER": 16,
+    "SINGLE_PHYSICAL_STROKE": 22,
+    "TRUE_PARALLEL_STRUCTURE": 21
+  },
+  "QUALITY_BY_CLASS": {
+    "AMBIGUOUS": {},
+    "OTHER": {
+      "READY": 26,
+      "REVIEW_RECOMMENDED": 10
+    },
+    "SINGLE_PHYSICAL_STROKE": {
+      "READY": 38
+    },
+    "TRUE_PARALLEL_STRUCTURE": {
+      "READY": 18,
+      "REVIEW_RECOMMENDED": 3
+    }
+  },
+  "RECOMMENDED_NEXT_ACTION": "B. REVIEW SMALL SUSPECT SUBSET",
+  "REVIEW_RECOMMENDED": 13,
+  "SIMPLIFIED_FUTURE_UI_JUSTIFIED": "YES",
+  "SINGLE_PHYSICAL_STROKE": 38,
+  "SKIPPED": 0,
+  "SOURCE_DIVERSITY": {
+    "drawings": 13,
+    "largest_drawing_count": 10,
+    "largest_family_count": 18,
+    "source_families": 12
+  },
+  "SUSPECT_REVIEW_QUEUE": 13,
+  "TOTAL_REVIEWED": 100,
+  "TRAINING_READY_LABELS": 82,
+  "TRUE_PARALLEL_STRUCTURE": 21,
+  "UNCLEAR_TARGET": 1,
+  "VALID_BUT_UNCLASSIFIED": 0,
+  "VALID_TARGET": 95,
+  "WHY": "82 source-supported labels remain nominally ready (38 SINGLE, 18 TRUE_PARALLEL, 26 OTHER). Thirteen bounded PAIR nominations have imperfect endpoint/tangent support or unequal extents, including three TRUE_PARALLEL decisions. Recheck that subset before training; do not redo the 100 or treat slight overlay defects as human class errors.",
+  "audit_formal_seed_manual_runs_this_task": 1,
+  "blind_sources_opened": 0,
+  "date": "2026-10-07 Asia/Taipei",
+  "independent_correspondence_recomputed_in_foreground": true,
+  "label_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+  "manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+  "next_action_started": false,
+  "report": "FORMAL-SEED-V2-001 FINAL REPORT",
+  "source_pages_opened": [
+    [
+      "A2-SG-009",
+      1
+    ],
+    [
+      "A2-SG-022",
+      1
+    ],
+    [
+      "G0R2-15EE2398726E8037",
+      1
+    ],
+    [
+      "G0R2-3560D9BEBEAA3543",
+      1
+    ],
+    [
+      "G0R2-3B970FD759C6026F",
+      1
+    ],
+    [
+      "G0R2-4A34D1B8D93B1B06",
+      1
+    ],
+    [
+      "G0R2-6C9464FA73A2A027",
+      1
+    ],
+    [
+      "G0R2-7E30C7F445081F40",
+      1
+    ],
+    [
+      "G0R2-B441E5911528F402",
+      1
+    ],
+    [
+      "G0R2-C2D095E069663C17",
+      1
+    ],
+    [
+      "environment-building",
+      1
+    ],
+    [
+      "environment-building",
+      3
+    ],
+    [
+      "environment-building",
+      4
+    ],
+    [
+      "sample-plan-photo",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      2
+    ],
+    [
+      "warehouse-electrical",
+      3
+    ]
+  ],
+  "suspect_review_is_recommendation_only": true,
+  "training_authorized": false,
+  "validation_sources_opened": 0,
+  "visual_quality_review": {
+    "class_predictions_displayed": false,
+    "contact_sheets": 10,
+    "human_answers_changed": false,
+    "presentations_inspected": 100
+  }
+}

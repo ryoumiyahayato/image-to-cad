@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-SOURCE-AUTHORIZATION-V2",
+  "effective_from_checkpoint": "74067df2ebc545cf0ce5b82ae14d96d43ba88d57",
+  "source_root": "C:/Users/agcrf/Desktop/新建文件夹",
+  "source_origin": "USER_SUPPLIED_LOCAL",
+  "acquisition": "COMPLIANTLY_OBTAINED_BY_USER",
+  "authorization": {
+    "internal_project_development": "AUTHORIZED",
+    "internal_model_training": "AUTHORIZED",
+    "internal_model_evaluation": "AUTHORIZED",
+    "internal_derived_crops": "AUTHORIZED",
+    "internal_human_labels": "AUTHORIZED",
+    "internal_source_retention": "AUTHORIZED",
+    "training_permission": "CONFIRMED",
+    "public_redistribution": "NOT_AUTHORIZED",
+    "public_release_of_raw_source_files": "NO",
+    "public_release_of_source_derived_binaries": "NO unless separately authorized later"
+  },
+  "existing_local_c_eligibility_snapshot": {
+    "candidate_eligible_units": 16,
+    "candidate_eligible_families": 10,
+    "high_value_families_with_eligible_units": 9,
+    "fidelity_blocked_units": 3,
+    "total_diagnostic_selected_units": 19,
+    "fidelity_blocked_unit_ids": [
+      "LOCALC-F01-DWG-STRUCT0310-MODEL-OVERVIEW",
+      "LOCALC-F02-DWG-PLUMB11-MODEL-OVERVIEW",
+      "LOCALC-F03-DWG-ELECENERGY-MODEL-OVERVIEW"
+    ],
+    "fidelity_blocked_units_remain_excluded_from_candidate_mining": true,
+    "source_families_with_eligible_unit": "10/10",
+    "high_value_families_with_eligible_unit": "9/9"
+  },
+  "project_priority": "Complete the already planned Draftsman / Perception V2 development path and reach the intended first-domain production capability before dedicated expansion into unrelated engineering disciplines.",
+  "current_coverage_is_acceptable": [
+    "ELECTRICAL_INSTALLATION",
+    "MULTIDISCIPLINE"
+  ],
+  "future_discipline_expansion": [
+    "MECHANICAL",
+    "ARCHITECTURAL",
+    "CIVIL_SITE_PROFILE",
+    "PID_PROCESS_INSTRUMENTATION",
+    "STRUCTURAL",
+    "OTHER_DISCIPLINES"
+  ],
+  "future_source_wave": {
+    "additional_compliant_pdfs_may_arrive": true,
+    "wait_for_them": false,
+    "search_for_them": false,
+    "admission_rule": "Treat later files as a new bounded source-admission wave and judge value primarily by source-family diversity, not raw file count."
+  },
+  "sequence_constraints": {
+    "candidate_mining": "NOT_RUN",
+    "human_labeling": "NOT_RUN",
+    "dataset_freeze": "REQUIRED_BEFORE_MODEL_ACTION",
+    "split_governance_verification": "REQUIRED_BEFORE_MODEL_ACTION",
+    "model_training": "NOT_RUN",
+    "model_evaluation": "NOT_RUN",
+    "ready_for_model_training": "NO",
+    "ready_for_model_evaluation": "NO"
+  },
+  "historical_reports_immutable": true,
+  "production_semantic_delta": "NONE",
+  "wave1_b3a_modified": "NO",
+  "h1_h2_holdout_contamination": "NO",
+  "locked_blind": "0 / 8",
+  "validation": "NO"
+}

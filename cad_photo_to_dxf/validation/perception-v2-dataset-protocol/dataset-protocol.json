@@ -1,0 +1,118 @@
+{
+  "protocol_id": "PERCEPTION-V2-A",
+  "version": "1.0.0",
+  "status": "FROZEN_FOR_V2_B",
+  "scope": "DEV_ONLY",
+  "production_semantic_delta": "NONE",
+  "reference_baseline": {
+    "name": "STRUCTURAL-STROKE REFERENCE BASELINE V1",
+    "encoder": "OpenCV Zoo MobileNetV2 image_classification_mobilenetv2_2022apr.onnx",
+    "upstream_commit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+    "sha256": "C0C3F76D93FA3FD6580652A45618618A220FCED18BABF65774ED169DE0432AD5",
+    "feature_layer": "onnx_node!GlobalAveragePool_97",
+    "feature": {"local_dimensions": 1280, "context_dimensions": 1280, "concatenated_dimensions": 2560},
+    "classifier": "cosine nearest class centroid",
+    "abstention": "NONE",
+    "immutable": true,
+    "rerun_in_v2_a": false,
+    "future_deviations_must_be_declared": true
+  },
+  "units": {
+    "SOURCE_FAMILY": "A materially independent combination of organization/publisher/drafting vendor, discipline, drafting convention, visual generation process, vector/raster/scan origin, typography, dimensioning style, line-weight hierarchy, title/revision/layout convention, and degradation characteristics. A filename or project change alone is insufficient.",
+    "DOCUMENT": "One acquired drawing file or inseparable drawing set with one document identity and complete source and rights provenance; multiple documents may belong to one SOURCE_FAMILY.",
+    "CANDIDATE": "A frozen, uniquely identified proposed continuation ambiguity produced by diagnostic non-learned mechanisms; proposal is not a semantic label.",
+    "INDEPENDENT_QUALIFIED_CASE": "A human-reviewed, task-valid candidate whose evidence supports a non-invalid label and whose independence cluster is not already counted. AMBIGUOUS is qualified for review/uncertainty analysis but does not contribute to either class floor."
+  },
+  "labels": {
+    "STRUCTURAL_CONTINUATION": "A competent human can establish from source and context that detector fragments belong to one genuine engineering structural/object/profile stroke.",
+    "ANNOTATION_OR_GLYPH": "The apparent continuation belongs to annotation-derived content.",
+    "AMBIGUOUS": "Existing source/context evidence is insufficient to decide safely.",
+    "INVALID_FOR_TASK": "The candidate does not actually test the target continuation ambiguity."
+  },
+  "independence": {
+    "required_field": "INDEPENDENCE_CLUSTER_ID",
+    "non_independent_examples": ["another gap on the same physical line", "another segment of the same dimension chain", "another copy of the same title border", "another repeated grid line", "another duplicate symbol/detail", "another sheet from a near-identical repeated template", "another rendering of the same original drawing"],
+    "count_stages": ["RAW_CANDIDATES", "HUMAN_REVIEWED", "QUALIFIED", "INDEPENDENT_QUALIFIED", "NEAR_DUPLICATE_EXCLUDED"],
+    "target_count_uses": "INDEPENDENT_QUALIFIED_ONLY",
+    "near_duplicate_policy": "Retain exclusion accounting and cluster linkage; never fill quotas with near-duplicates."
+  },
+  "hard_negative_taxonomy": {
+    "frozen_initial_subtypes": ["dimension_extension_witness_line", "dimension_chain", "leader_marker", "drawing_layout_rule", "aligned_text_glyph_stroke", "table_legend_revision_title_rule"],
+    "conditional_subtype": "OTHER_LINE_DOMINANT_ANNOTATION",
+    "conditional_rule": "Use only for a genuinely new reusable subtype; document rationale and do not create one-off labels.",
+    "required_metrics_per_subtype": ["independent_case_count", "source_family_count", "discipline_coverage", "dangerous_false_structural_count"],
+    "priority_subtypes": ["dimension_extension_witness_line", "dimension_chain", "leader_marker", "drawing_layout_rule"],
+    "priority_target": {"minimum_independent_cases": 5, "minimum_source_families": 2, "status": "DEVELOPMENT_TARGET_NOT_STATISTICAL_REQUIREMENT"}
+  },
+  "scale": {
+    "additional_source_families": {"minimum": 8, "target": 9, "maximum": 10},
+    "independent_qualified_cases": {"minimum": 80, "planned": 92, "maximum": 120},
+    "structural_floor": 35,
+    "annotation_glyph_floor": 35,
+    "hard_negative_subtype_floor": 6,
+    "per_family_class_target_where_available": {"STRUCTURAL_CONTINUATION": 3, "ANNOTATION_OR_GLYPH": 3},
+    "single_family_dominance_limit": {"maximum_fraction_of_independent_qualified": 0.2, "maximum_cases_when_total_is_80": 16},
+    "maximum_initial_document_budget": 24,
+    "normal_document_budget_range": {"minimum": 18, "maximum": 24},
+    "per_family_document_cap": 3,
+    "preferred_useful_documents_per_family": {"minimum": 1, "maximum": 3},
+    "early_stop_required": true
+  },
+  "candidate_proposal": {
+    "allowed_diagnostic_mechanisms": ["Hough/LSD gaps", "collinearity", "source/binary support", "geometric context", "existing text/dimension proximity"],
+    "semantic_label_assignment_allowed": false,
+    "production_detect_lines_redesign_allowed": false
+  },
+  "prediction_blind_labeling_order": ["acquire_and_admit_source", "select_pages", "generate_candidate_proposals", "freeze_candidate_ids", "generate_review_crops", "human_label_prediction_blind", "freeze_human_registry", "allow_model_evaluation"],
+  "prediction_blind_hidden_fields": ["Reference Baseline V1 predictions", "model scores", "embedding distances", "margins", "uncertainty", "model-error rankings"],
+  "review_artifacts": {
+    "required": ["local_source_crop", "broader_context_crop", "fragment_gap_overlay"],
+    "optional": ["source_support_or_binary_overlay_when_genuinely_needed"],
+    "insufficient_context_result": "AMBIGUOUS",
+    "routine_full_pdf_reopen_required": false
+  },
+  "split_governance": {
+    "split_unit": "SOURCE_FAMILY",
+    "random_crop_split_allowed": false,
+    "related_template_vendor_documents_stay_together": true,
+    "new_family_policy": {"development_families": 7, "internal_source_family_holdout_families": 2},
+    "reference_holdouts": {"H1": "PRESERVED_REFERENCE_HOLDOUT", "H2": "PRESERVED_REFERENCE_HOLDOUT"},
+    "forbidden_h1_h2_uses": ["fitting", "classifier_selection", "representation_selection", "calibration", "thresholding", "uncertainty_development", "hyperparameter_tuning"],
+    "validation_use": false,
+    "locked_blind_runtime_exposure": "0 / 8",
+    "locked_blind_manual_inspection": false
+  },
+  "c1_governance": {"recommendation": "ELIGIBLE_FOR_LATER_DEV_ADAPTATION", "effective_now": false, "reason": "Its untouched baseline is durably recorded and its civil/vector-mixed style can add adaptation evidence, but admission requires a separate explicit governance-change task and family-leakage review."},
+  "rights_gate": {
+    "preferred_dispositions": ["PUBLIC_DOMAIN", "CC0", "CC_BY", "EXPLICIT_PERMISSION"],
+    "quarantine_disposition": "RIGHTS_REVIEW_REQUIRED",
+    "rejected_disposition": "REJECTED",
+    "quarantine_forbidden_uses": ["labeling", "model_development", "retained_derived_crop_dataset"],
+    "public_download_is_approval": false
+  },
+  "model_comparison": {
+    "dataset_must_be_frozen_first": true,
+    "same_source_family_splits_required": true,
+    "winner_preselected": false,
+    "candidate_methods": ["Reference Baseline V1", "stronger pretrained encoder", "learned lightweight classifier", "small domain-adapted representation", "explicit text/dimension context evidence", "hybrid visual/context evidence", "later domain-knowledge evidence"]
+  },
+  "uncertainty": {
+    "governing_result": "COSINE_MARGIN_NOT_VALID_UNCERTAINTY_PROXY",
+    "single_hand_tuned_cosine_threshold_allowed": false,
+    "separate_from_raw_classification": true,
+    "required_reports": ["accepted_structural_precision", "accepted_structural_recall", "dangerous_false_structural_count", "annotation_recall", "abstention_rejection_rate", "per_source_family_behavior", "ambiguous_case_behavior"]
+  },
+  "stop_criteria": ["8-10 independent source families or documented equivalent diversity", "80-120 independent qualified cases", "at least 35 STRUCTURAL_CONTINUATION", "at least 35 ANNOTATION_OR_GLYPH", "both classes broadly represented across families", "at least 6 hard-negative subtypes", "priority hard negatives span multiple families and aim for 5 independent cases each", "no single family exceeds 20% of independent qualified cases", "rights provenance complete", "source provenance complete", "near-duplicate accounting complete", "prediction-blind label registry frozen", "internal source-family holdout preserved"],
+  "failure_states": ["INSUFFICIENT_SOURCE_DIVERSITY", "HARD_NEGATIVE_COVERAGE_GAP", "RIGHTS_BLOCKED", "CLASS_COVERAGE_GAP", "NEAR_DUPLICATE_DOMINANCE", "SOURCE_FAMILY_LEAKAGE_RISK", "PROVENANCE_INCOMPLETE", "LABEL_QUALITY_INSUFFICIENT"],
+  "knowledge_boundary": {
+    "general_perception_question": "What does the visual evidence resemble?",
+    "domain_knowledge_question": "What does that evidence mean in this discipline?",
+    "knowledge_may": ["contribute evidence", "reject hypotheses", "qualify hypotheses", "raise HUMAN REVIEW"],
+    "knowledge_must_not": ["manufacture unsupported geometry", "bypass source support", "directly mutate FinalStructure"],
+    "knowledge_pack_build_in_v2_a": false
+  },
+  "eventual_production_shape": ["source evidence", "detector fragments", "continuation hypothesis", "visual semantic evidence", "optional domain evidence", "evidence arbitration", "ACCEPT / REJECT / AMBIGUOUS", "source-supported accepted result", "normal reconstruction", "FinalStructure"],
+  "acquisition_in_v2_a": false,
+  "model_inference_in_v2_a": false,
+  "production_integration_in_v2_a": false
+}

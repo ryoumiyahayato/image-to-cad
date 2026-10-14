@@ -1,0 +1,1031 @@
+{
+  "authoritative": true,
+  "candidate_registry": {
+    "path": "docs/draftsman/corpus/g0_candidate_registry.jsonl",
+    "records": 99,
+    "sha256": "07e25d6d876c0d0416556aefe01267d688da495111eec69e521bb2c70803e780"
+  },
+  "corpus_v1_source_group_ids": [
+    "A2-SG-008",
+    "A2-SG-009",
+    "A2-SG-010",
+    "A2-SG-022",
+    "G0R2-12366099AAD5F10E",
+    "G0R2-15EE2398726E8037",
+    "G0R2-2279F661AA38A9F4",
+    "G0R2-22E85E2DB7746A00",
+    "G0R2-2E9BDFFDD8C89AE7",
+    "G0R2-345AA483FD068A11",
+    "G0R2-3560D9BEBEAA3543",
+    "G0R2-3B970FD759C6026F",
+    "G0R2-420BF9693D881A41",
+    "G0R2-4A34D1B8D93B1B06",
+    "G0R2-4CF3C6EBEFDD1EBE",
+    "G0R2-4DC97797ABE2CB18",
+    "G0R2-53C88494D6CE893C",
+    "G0R2-5FB6FE7CB6D476E1",
+    "G0R2-6C9464FA73A2A027",
+    "G0R2-6DFEC5FDC69FC0CD",
+    "G0R2-7E30C7F445081F40",
+    "G0R2-99D5B85436EBB965",
+    "G0R2-AEA044C8E75CB3AB",
+    "G0R2-AFE53C2A00EB7D8F",
+    "G0R2-B441E5911528F402",
+    "G0R2-C2D095E069663C17",
+    "G0R2-F519B357241CAC3A",
+    "SGC-007",
+    "SGC-008",
+    "SGC-024"
+  ],
+  "corpus_version": "DRAFTSMAN_GENERALIZATION_CORPUS_V1",
+  "counts": {
+    "CORPUS_V1": 30,
+    "DEV": 15,
+    "LOCKED_BLIND": 8,
+    "RESERVE": 15,
+    "VALIDATION": 7
+  },
+  "deterministic_replay": {
+    "policy_version": "draftsman-g0-b3-selection-v1",
+    "registry_sha256": "07e25d6d876c0d0416556aefe01267d688da495111eec69e521bb2c70803e780",
+    "serialization": "UTF-8 JSON, sorted keys, indent=2, LF, final LF"
+  },
+  "freeze_status": "FROZEN",
+  "gates": {
+    "candidate_registry_digest_matches": true,
+    "exact_split_counts": true,
+    "fabricated_records": 0,
+    "ineligible_selected": [],
+    "previously_exposed_locked_blind": 0,
+    "source_family_leakage": [],
+    "split_overlap_count": 0
+  },
+  "schema_version": "draftsman-corpus-v1-split-v1",
+  "selected_source_group_ids": [
+    "A2-SG-008",
+    "A2-SG-009",
+    "A2-SG-010",
+    "A2-SG-011",
+    "A2-SG-012",
+    "A2-SG-022",
+    "G0R2-12366099AAD5F10E",
+    "G0R2-15EE2398726E8037",
+    "G0R2-2279F661AA38A9F4",
+    "G0R2-22E85E2DB7746A00",
+    "G0R2-2E9BDFFDD8C89AE7",
+    "G0R2-345AA483FD068A11",
+    "G0R2-3560D9BEBEAA3543",
+    "G0R2-3B970FD759C6026F",
+    "G0R2-420BF9693D881A41",
+    "G0R2-49F2FE2F2DDF3FEF",
+    "G0R2-4A34D1B8D93B1B06",
+    "G0R2-4BF33D8ECCAE6097",
+    "G0R2-4CF3C6EBEFDD1EBE",
+    "G0R2-4DC97797ABE2CB18",
+    "G0R2-4E33D8D7099FFD99",
+    "G0R2-53C88494D6CE893C",
+    "G0R2-5FB6FE7CB6D476E1",
+    "G0R2-6C9464FA73A2A027",
+    "G0R2-6DFEC5FDC69FC0CD",
+    "G0R2-7568A9C69D3F025A",
+    "G0R2-7AC7A0A46D6D1829",
+    "G0R2-7E30C7F445081F40",
+    "G0R2-83053D198E1B3EEB",
+    "G0R2-99D5B85436EBB965",
+    "G0R2-9A35586E279F963C",
+    "G0R2-9ED083269D740D71",
+    "G0R2-AEA044C8E75CB3AB",
+    "G0R2-AFE53C2A00EB7D8F",
+    "G0R2-B441E5911528F402",
+    "G0R2-C2D095E069663C17",
+    "G0R2-E5D21A3F643B7F2A",
+    "G0R2-F519B357241CAC3A",
+    "G0R2-FCB5912CBA25CC2C",
+    "SGC-002",
+    "SGC-007",
+    "SGC-008",
+    "SGC-024",
+    "SGC-051",
+    "SGC-064"
+  ],
+  "selection_policy": {
+    "algorithm": "greedy marginal diversity score; SOURCE_GROUP ID ascending tie-break",
+    "configuration": {
+      "drawing_family_score": 8,
+      "feature_score": 12,
+      "feature_targets": {
+        "DEV": {
+          "degraded_scan": 2,
+          "historical_archival": 4,
+          "native_image": 2
+        },
+        "LOCKED_BLIND": {
+          "degraded_scan": 2,
+          "historical_archival": 4,
+          "native_image": 2
+        },
+        "RESERVE": {
+          "degraded_scan": 1,
+          "historical_archival": 4,
+          "native_image": 2
+        },
+        "VALIDATION": {
+          "degraded_scan": 1,
+          "historical_archival": 2,
+          "native_image": 1
+        }
+      },
+      "governance_score": {
+        "PUBLIC_ACCESS_REUSE_UNCLEAR": 12,
+        "PUBLIC_ARCHIVE_RIGHTS_ADVISORY": 10,
+        "PUBLIC_DOWNLOAD_CLEAR": 20
+      },
+      "locked_blind_filter": "G0-R2 + STRONG + PROVISIONAL_PENDING_ACQUISITION",
+      "policy_dedup_unresolved": {
+        "G0R2-3811E2A2F0494CEC": "Fort McPherson WWII Station Hospital standardized mess-hall drawing family",
+        "G0R2-D93E7F1D84FE931F": "Fort McPherson WWII Station Hospital standardized mess-hall drawing family"
+      },
+      "region_score": 30,
+      "region_targets": {
+        "DEV": {
+          "East Asia": 5,
+          "Europe": 2,
+          "North America": 4,
+          "Oceania": 4
+        },
+        "LOCKED_BLIND": {
+          "East Asia": 2,
+          "Europe": 1,
+          "North America": 2,
+          "Oceania": 3
+        },
+        "RESERVE": {
+          "East Asia": 5,
+          "Europe": 3,
+          "North America": 4,
+          "Oceania": 3
+        },
+        "VALIDATION": {
+          "East Asia": 2,
+          "Europe": 1,
+          "North America": 2,
+          "Oceania": 2
+        }
+      },
+      "render_score": 26,
+      "render_targets": {
+        "DEV": {
+          "CONFIRMED_MIXED": 2,
+          "CONFIRMED_RASTER": 3,
+          "CONFIRMED_VECTOR": 2,
+          "UNKNOWN": 8
+        },
+        "LOCKED_BLIND": {
+          "CONFIRMED_MIXED": 2,
+          "CONFIRMED_RASTER": 3,
+          "CONFIRMED_VECTOR": 0,
+          "UNKNOWN": 3
+        },
+        "RESERVE": {
+          "CONFIRMED_MIXED": 2,
+          "CONFIRMED_RASTER": 3,
+          "CONFIRMED_VECTOR": 1,
+          "UNKNOWN": 9
+        },
+        "VALIDATION": {
+          "CONFIRMED_MIXED": 1,
+          "CONFIRMED_RASTER": 2,
+          "CONFIRMED_VECTOR": 1,
+          "UNKNOWN": 3
+        }
+      },
+      "split_counts": {
+        "DEV": 15,
+        "LOCKED_BLIND": 8,
+        "RESERVE": 15,
+        "VALIDATION": 7
+      },
+      "tier_score": {
+        "SECONDARY": 4,
+        "STRONG": 40,
+        "UNKNOWN": 16
+      }
+    },
+    "split_order": [
+      "LOCKED_BLIND",
+      "VALIDATION",
+      "DEV",
+      "RESERVE"
+    ],
+    "version": "draftsman-g0-b3-selection-v1"
+  },
+  "splits": {
+    "DEV": [
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": true,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE",
+        "governance_status": "PUBLIC_DOWNLOAD_CLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": true,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+        "source_group_id": "A2-SG-009",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_FL0790",
+        "source_group_id": "G0R2-B441E5911528F402",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_MIXED"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "panel_schedule"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": true,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_OREGON_HISTORICAL_RESIDENCE",
+        "source_group_id": "A2-SG-010",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "single_line"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+        "source_group_id": "G0R2-3560D9BEBEAA3543",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "low_voltage",
+          "panel_schedule"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+        "source_group_id": "G0R2-3B970FD759C6026F",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+        "source_group_id": "G0R2-4A34D1B8D93B1B06",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "fire_alarm",
+          "lighting",
+          "low_voltage",
+          "panel_schedule"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2020000378",
+        "source_group_id": "G0R2-6C9464FA73A2A027",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_4291000114",
+        "source_group_id": "G0R2-15EE2398726E8037",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_ARGYLE_STORES_301350511",
+        "source_group_id": "G0R2-53C88494D6CE893C",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_NSW_P5_2023_61",
+        "source_group_id": "G0R2-7E30C7F445081F40",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_SYDNEY_BRICK_KILN_212710",
+        "source_group_id": "G0R2-AFE53C2A00EB7D8F",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "panel_schedule",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_FARMINGTON_SENIOR_CENTER",
+        "source_group_id": "SGC-008",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_VECTOR"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_NSW_P5_2024_93",
+        "source_group_id": "G0R2-C2D095E069663C17",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Europe",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "UK_BANBURY_TRAMWAY_ASBUILT",
+        "source_group_id": "A2-SG-022",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_SOUTH_SEATTLE_COLLEGE",
+        "source_group_id": "SGC-024",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_VECTOR"
+      }
+    ],
+    "LOCKED_BLIND": [
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": true,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": true,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HAER_CA1868",
+        "source_group_id": "G0R2-4CF3C6EBEFDD1EBE",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "panel_schedule",
+          "wiring_control"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "Oceania",
+        "native_image": true,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HAER_HI0822",
+        "source_group_id": "G0R2-AEA044C8E75CB3AB",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": true,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_FL0572",
+        "source_group_id": "G0R2-5FB6FE7CB6D476E1",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "panel_schedule"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_HI0583",
+        "source_group_id": "G0R2-2279F661AA38A9F4",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_MIXED"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "fire_alarm",
+          "lighting",
+          "power",
+          "wiring_control"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_ISHINOMAKI_EAST_SCHOOL_MEAL_CENTER",
+        "source_group_id": "G0R2-12366099AAD5F10E",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "low_voltage",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "CN_HUNAN_HUAYUAN_PUBLIC_DRAWING_2023",
+        "source_group_id": "G0R2-345AA483FD068A11",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "NZ_WESTLAND_MILK_STAFF_CARPARK_150080",
+        "source_group_id": "G0R2-420BF9693D881A41",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NEVER_EXECUTED",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_CA4439",
+        "source_group_id": "G0R2-6DFEC5FDC69FC0CD",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_MIXED"
+      }
+    ],
+    "RESERVE": [
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2020000600",
+        "source_group_id": "G0R2-49F2FE2F2DDF3FEF",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "low_voltage"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_NABARI_MINAMI_JHS_GYM_R5",
+        "source_group_id": "G0R2-4BF33D8ECCAE6097",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "power",
+          "single_line"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2019000897",
+        "source_group_id": "G0R2-4E33D8D7099FFD99",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "fire_alarm",
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2019001677",
+        "source_group_id": "G0R2-7568A9C69D3F025A",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "panel_schedule",
+          "single_line"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "TW_NHRM_B5_DETAILED_DESIGN",
+        "source_group_id": "G0R2-9ED083269D740D71",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_GOLDCOAST_OPW_2012_887",
+        "source_group_id": "G0R2-E5D21A3F643B7F2A",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_NSW_WESTMEAD_WCEOL",
+        "source_group_id": "G0R2-FCB5912CBA25CC2C",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "wiring_control"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": true,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "A2-SG-011",
+        "source_group_id": "A2-SG-011",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "A2-SG-012",
+        "source_group_id": "A2-SG-012",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "CAN_PARKGATE_LIBRARY_1993",
+        "source_group_id": "SGC-051",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "SGC-064",
+        "source_group_id": "SGC-064",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_WILDWOOD_PUBLIC_WORKS",
+        "source_group_id": "SGC-002",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2022000195",
+        "source_group_id": "G0R2-7AC7A0A46D6D1829",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "low_voltage",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2021001993",
+        "source_group_id": "G0R2-83053D198E1B3EEB",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "fire_alarm",
+          "lighting",
+          "low_voltage",
+          "single_line"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_IGA_2022000271",
+        "source_group_id": "G0R2-9A35586E279F963C",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      }
+    ],
+    "VALIDATION": [
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": true,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_GU0014",
+        "source_group_id": "G0R2-99D5B85436EBB965",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": true,
+        "drawing_families": [
+          "panel_schedule"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ARCHIVE_RIGHTS_ADVISORY",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "US_LOC_HABS_UT0288",
+        "source_group_id": "G0R2-F519B357241CAC3A",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_MIXED"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "panel_schedule",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+        "source_group_id": "G0R2-22E85E2DB7746A00",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "fire_alarm",
+          "wiring_control"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "East Asia",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "JP_SAKADO_KITASAKADO_SCHOOL_DEMOLITION",
+        "source_group_id": "G0R2-2E9BDFFDD8C89AE7",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "Oceania",
+        "native_image": false,
+        "quality_tier": "STRONG",
+        "source_family_id": "AU_GOLDCOAST_OPW_2014_2240",
+        "source_group_id": "G0R2-4DC97797ABE2CB18",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "UNKNOWN"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": true,
+        "drawing_families": [
+          "other_electrical"
+        ],
+        "eligibility": "ELIGIBLE",
+        "governance_status": "PUBLIC_DOWNLOAD_CLEAR",
+        "historical_archival": true,
+        "macro_region": "North America",
+        "native_image": true,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_NARA_BUILDING9",
+        "source_group_id": "A2-SG-008",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_RASTER"
+      },
+      {
+        "blind_exposure_status": "NOT_APPLICABLE",
+        "degraded_scan": null,
+        "drawing_families": [
+          "lighting",
+          "low_voltage",
+          "panel_schedule",
+          "power"
+        ],
+        "eligibility": "ELIGIBLE_WITH_ADVISORY",
+        "governance_status": "PUBLIC_ACCESS_REUSE_UNCLEAR",
+        "historical_archival": false,
+        "macro_region": "North America",
+        "native_image": false,
+        "quality_tier": "UNKNOWN",
+        "source_family_id": "US_TITUSVILLE_SCHOOL",
+        "source_group_id": "SGC-007",
+        "split_eligibility": "PROVISIONAL_PENDING_ACQUISITION",
+        "vector_raster_status": "CONFIRMED_VECTOR"
+      }
+    ]
+  }
+}

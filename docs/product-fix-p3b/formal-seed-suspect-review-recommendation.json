@@ -1,0 +1,133 @@
+{
+  "human_answers_modified": false,
+  "manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+  "purpose": "For a future explicitly requested bounded review; not training authorization",
+  "queue_prepared_or_launched": false,
+  "recommended_sample_count": 13,
+  "samples": [
+    {
+      "human_class": "TRUE_PARALLEL_STRUCTURE",
+      "queue_rank": 1,
+      "reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-40651c8f7456a8fcd456ef80",
+      "source_drawing_id": "A2-SG-009"
+    },
+    {
+      "human_class": "TRUE_PARALLEL_STRUCTURE",
+      "queue_rank": 40,
+      "reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-48f0cee35570a79663988685",
+      "source_drawing_id": "A2-SG-009"
+    },
+    {
+      "human_class": "TRUE_PARALLEL_STRUCTURE",
+      "queue_rank": 65,
+      "reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-9d5e486edda4bc3978792245",
+      "source_drawing_id": "A2-SG-022"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 4,
+      "reasons": [
+        "B_ENDPOINT_SUPPORT",
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-602f15f56aa19daaa5968f38",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 46,
+      "reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-35237b3af343941bd896f3f6",
+      "source_drawing_id": "G0R2-6C9464FA73A2A027"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 66,
+      "reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "real-6b47221a7d0b06d16aba5e46",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 68,
+      "reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-b5d026c19f431084528841a6",
+      "source_drawing_id": "G0R2-6C9464FA73A2A027"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 72,
+      "reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-4f65fa426b2669dde99dad93",
+      "source_drawing_id": "warehouse-electrical"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 75,
+      "reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "real-8f5fb67c351941da87125e40",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 81,
+      "reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "real-67ee997bf7c474f2493f123b",
+      "source_drawing_id": "warehouse-electrical"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 84,
+      "reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-9753827163aa0491a3566080",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 93,
+      "reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "real-b6e833e0e89bef821a51d5b3",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    },
+    {
+      "human_class": "OTHER",
+      "queue_rank": 100,
+      "reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "real-c7d4e7b292d5f55400eca8ea",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543"
+    }
+  ],
+  "state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d"
+}

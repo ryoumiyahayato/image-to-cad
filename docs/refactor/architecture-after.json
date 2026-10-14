@@ -1,0 +1,184 @@
+{
+  "metrics": {
+    "PROJECT_MODULES": 148,
+    "PRODUCTION_REACHABLE_MODULES": 74,
+    "TEST_ONLY_PRODUCTION_MODULES": 0,
+    "OPTIONAL_PRODUCTION_DIAGNOSTICS": 6,
+    "UNREACHABLE_DEAD_CANDIDATES": 0,
+    "EXPERIMENTAL_SHADOW_MODULES": 0,
+    "IMPORT_CYCLE_COUNT": 0,
+    "MAX_PRODUCTION_CALL_DEPTH": 16,
+    "MAX_THIN_WRAPPER_CHAIN": 1,
+    "STRAIGHT_LINE_REPRESENTATION_TRANSFORM_COUNT": 14,
+    "GOD_MODULE_CANDIDATES": 4,
+    "DUPLICATE_INVARIANT_FAMILIES": 6,
+    "PARALLEL_IMPLEMENTATION_FAMILIES": 0,
+    "OBSOLETE_OR_DEAD_TEST_GROUPS": 0
+  },
+  "cycles": [],
+  "live_modules": [
+    "app",
+    "app.core",
+    "app.core.cache",
+    "app.core.cancellation",
+    "app.core.image_loader",
+    "app.core.member_binding",
+    "app.core.perspective",
+    "app.core.preview",
+    "app.core.processing",
+    "app.core.reporting",
+    "app.core.resolution",
+    "app.core.scale_calibrator",
+    "app.core.structure",
+    "app.core.structure_build",
+    "app.core.trace_types",
+    "app.diagnostics",
+    "app.diagnostics.observability",
+    "app.diagnostics.performance_observability",
+    "app.diagnostics.source_support_lifecycle",
+    "app.diagnostics.trace_verification",
+    "app.diagnostics.visual_acceptance",
+    "app.export",
+    "app.export.document_export",
+    "app.export.dwg_converter",
+    "app.export.ocr_outline_export",
+    "app.export.trace_document_export",
+    "app.export.trace_dxf_entities",
+    "app.export.trace_entity_writer",
+    "app.export.trace_single_export",
+    "app.geometry",
+    "app.geometry.connectivity_safety",
+    "app.geometry.content_ownership",
+    "app.geometry.junction_v2_consumer",
+    "app.geometry.line_detect",
+    "app.geometry.optimized_trace",
+    "app.geometry.preprocess",
+    "app.geometry.raster_trace",
+    "app.geometry.reconciliation_geometry",
+    "app.geometry.scan_artifact_filter",
+    "app.geometry.scan_cleanup",
+    "app.geometry.source_stroke_reconciliation",
+    "app.geometry.straight_line_reconstruction",
+    "app.geometry.structural_roi",
+    "app.gui",
+    "app.gui.controls",
+    "app.gui.document",
+    "app.gui.export_dialogs",
+    "app.gui.export_worker",
+    "app.gui.image_canvas",
+    "app.gui.librecad_ocr_review",
+    "app.gui.ocr_review",
+    "app.gui.page_export",
+    "app.gui.processing",
+    "app.gui.review_actions",
+    "app.gui.trace_paint",
+    "app.gui.visual_acceptance_widget",
+    "app.gui.window",
+    "app.gui.worker",
+    "app.ocr",
+    "app.ocr.auxiliary_recognition",
+    "app.ocr.font_library",
+    "app.ocr.librecad_lff",
+    "app.ocr.logo_detection",
+    "app.ocr.ocr_fast",
+    "app.ocr.ocr_layout",
+    "app.ocr.ocr_overlap",
+    "app.ocr.ocr_pipeline",
+    "app.ocr.ocr_recognition",
+    "app.ocr.ocr_tile_filter",
+    "app.ocr.signature_overlay",
+    "app.ocr.text_output_contract",
+    "app.ocr.text_protection",
+    "app.version",
+    "main"
+  ],
+  "optional_command_modules": [
+    "app.diagnostics.debug_bundle",
+    "app.export.dxf_validator",
+    "scripts",
+    "scripts.capture_debug_bundle",
+    "scripts.generate_trace_smoke",
+    "scripts.run_visual_acceptance",
+    "scripts.validate_dxf",
+    "validation.freecad_import_check"
+  ],
+  "detached_app_modules": [],
+  "test_only_production_modules": [],
+  "optional_production_diagnostics": [
+    "app.diagnostics.debug_bundle",
+    "app.diagnostics.observability",
+    "app.diagnostics.performance_observability",
+    "app.diagnostics.source_support_lifecycle",
+    "app.diagnostics.trace_verification",
+    "app.diagnostics.visual_acceptance"
+  ],
+  "thin_wrappers": [
+    "app.core.member_binding._digest",
+    "app.core.processing.ProcessingCacheKey.from_payload",
+    "app.core.processing._json_sha256",
+    "app.geometry.junction_v2_consumer._digest",
+    "app.geometry.reconciliation_geometry._line_identity_key",
+    "app.geometry.source_stroke_reconciliation._normal_source_profile",
+    "app.geometry.source_stroke_reconciliation._source_claim_id",
+    "app.geometry.source_stroke_reconciliation._source_scope_digest",
+    "app.geometry.straight_line_reconstruction._standalone_restoration_is_fully_certified",
+    "app.gui.document._processing_pdf_dpi",
+    "app.gui.image_canvas.ImageCanvas.set_image",
+    "app.gui.image_canvas.ImageCanvas.zoom_in",
+    "app.gui.image_canvas.ImageCanvas.zoom_out",
+    "app.ocr.font_library._system_font_faces",
+    "app.ocr.text_output_contract.accepted_ocr_texts",
+    "app.ocr.text_output_contract.suppressible_ocr_texts"
+  ],
+  "largest_modules": [
+    [
+      "app.geometry.source_stroke_reconciliation",
+      5802
+    ],
+    [
+      "app.geometry.straight_line_reconstruction",
+      2024
+    ],
+    [
+      "app.geometry.content_ownership",
+      1367
+    ],
+    [
+      "app.geometry.junction_v2_consumer",
+      1105
+    ],
+    [
+      "app.core.cache",
+      831
+    ],
+    [
+      "app.geometry.optimized_trace",
+      820
+    ],
+    [
+      "app.diagnostics.source_support_lifecycle",
+      739
+    ],
+    [
+      "app.gui.window",
+      732
+    ],
+    [
+      "app.diagnostics.visual_acceptance",
+      617
+    ],
+    [
+      "app.geometry.scan_artifact_filter",
+      605
+    ],
+    [
+      "app.ocr.librecad_lff",
+      589
+    ],
+    [
+      "app.geometry.connectivity_safety",
+      575
+    ]
+  ],
+  "methodology": "Imports include optional/type-only edges. TEST_ONLY_PRODUCTION_MODULES counts app implementation modules unreachable from supported production entries but used by tests; package initializers and tests/ files are excluded. OPTIONAL_PRODUCTION_DIAGNOSTICS counts supported app.diagnostics implementation modules (GUI, explicit command or runtime opt-in). Call depth is resolved static SCC path (not the original audit sequential stage count). God threshold is 1000 LOC; overlaps/policy checks distinguished from duplicated invariants; representational table is manually reviewed."
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from app.scan_cleanup import prepare_scan_page
+from app.geometry.scan_cleanup import prepare_scan_page
 
 
 def test_damaged_scan_cleanup_removes_paper_shading_but_keeps_ink() -> None:

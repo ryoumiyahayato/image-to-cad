@@ -1,0 +1,427 @@
+[
+  {
+    "style": "wqy-unicode",
+    "filename": "wqy-unicode.lff",
+    "source_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\wqy-unicode.lff",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "",
+    "sample_glyphs": {
+      "电": {
+        "strokes": 5,
+        "closed": 5
+      },
+      "施": {
+        "strokes": 3,
+        "closed": 3
+      },
+      "M": {
+        "strokes": 1,
+        "closed": 1
+      },
+      "1": {
+        "strokes": 1,
+        "closed": 1
+      },
+      "7": {
+        "strokes": 1,
+        "closed": 1
+      },
+      "®": {
+        "strokes": 4,
+        "closed": 4
+      }
+    },
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\wqy-unicode.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\wqy-unicode.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "251f0fd97c80069770f45768292ed1d05b963fd62e8eff49e6d334cc60416aef",
+    "native_render_black_pixels": 10142
+  },
+  {
+    "style": "unicode",
+    "filename": "unicode.lff",
+    "source_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\unicode.lff",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "电图纸录项编",
+    "sample_glyphs": {
+      "施": {
+        "strokes": 60,
+        "closed": 0
+      },
+      "M": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "1": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "7": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "®": {
+        "strokes": 3,
+        "closed": 0
+      }
+    },
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\unicode.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\unicode.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "4fee33831ad3031b63d9c4b84fab7dc006beb88d66a66c3cb21e1203f9b04941",
+    "native_render_black_pixels": 3276
+  },
+  {
+    "style": "kst32b",
+    "filename": "kst32b.lff",
+    "source_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\kst32b.lff",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "电图纸录项编",
+    "sample_glyphs": {
+      "施": {
+        "strokes": 23,
+        "closed": 0
+      },
+      "M": {
+        "strokes": 4,
+        "closed": 0
+      },
+      "1": {
+        "strokes": 3,
+        "closed": 0
+      },
+      "7": {
+        "strokes": 6,
+        "closed": 0
+      },
+      "®": {
+        "strokes": 19,
+        "closed": 0
+      }
+    },
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\kst32b.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\kst32b.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "5c95f3075a87ffb2cccdc6ec12aa4cc285ce9c5144f62d9e41a9e4cac36c2a5e",
+    "native_render_black_pixels": 3437
+  },
+  {
+    "style": "iso3098",
+    "filename": "iso3098.lff",
+    "source_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\iso3098.lff",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "电施图纸目录项编号",
+    "sample_glyphs": {
+      "M": {
+        "strokes": 4,
+        "closed": 0
+      },
+      "1": {
+        "strokes": 2,
+        "closed": 0
+      },
+      "7": {
+        "strokes": 3,
+        "closed": 0
+      },
+      "®": {
+        "strokes": 32,
+        "closed": 1
+      }
+    },
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\iso3098.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\iso3098.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "183793ee89502bac0109ca6025deb007bf7de169b15567ddca7c09c44304a940",
+    "native_render_black_pixels": 2791
+  },
+  {
+    "style": "simhei",
+    "filename": "simhei.ttf",
+    "source_path": "C:\\Windows\\Fonts\\simhei.ttf",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "®",
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\simhei.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\simhei.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  },
+  {
+    "style": "simhei.ttf",
+    "filename": "simhei.ttf",
+    "source_path": "C:\\Windows\\Fonts\\simhei.ttf",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "®",
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\simhei.ttf.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\simhei.ttf.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  },
+  {
+    "style": "arial",
+    "filename": "arial.ttf",
+    "source_path": "C:\\Windows\\Fonts\\arial.ttf",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "电施图纸目录项编号",
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\arial.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\arial.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  },
+  {
+    "style": "NotoSansSC-VF",
+    "filename": "NotoSansSC-VF.ttf",
+    "source_path": "C:\\Windows\\Fonts\\NotoSansSC-VF.ttf",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "",
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\NotoSansSC-VF.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\NotoSansSC-VF.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  },
+  {
+    "style": "standard",
+    "filename": "standard.lff",
+    "source_path": "C:\\Users\\agcrf\\Desktop\\LibreCAD\\resources\\fonts\\standard.lff",
+    "resource_available": true,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "missing_glyphs": "电施图纸目录项编号",
+    "sample_glyphs": {
+      "M": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "1": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "7": {
+        "strokes": 1,
+        "closed": 0
+      },
+      "®": {
+        "strokes": 3,
+        "closed": 0
+      }
+    },
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\standard.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\standard.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  },
+  {
+    "style": "p2_missing_font",
+    "filename": "p2_missing_font.ttf",
+    "source_path": "None",
+    "resource_available": false,
+    "native_text_count": 10,
+    "audit_errors": 0,
+    "audit_fixes": 0,
+    "native_edit_save_reopen": "PASS (ezdxf; not GUI)",
+    "render_command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\p2_missing_font.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2\\font-experiment\\p2_missing_font.dxf"
+    ],
+    "render_exit_code": 0,
+    "pdf_exists": true,
+    "native_render_body_shape": [
+      843,
+      795
+    ],
+    "native_render_body_sha256": "2d69ceabccf70b9cf81423a742cf5515ed75ebd763364f39d18d515c335d332c",
+    "native_render_black_pixels": 2816
+  }
+]

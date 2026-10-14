@@ -1,0 +1,911 @@
+{
+  "schema_version": 1,
+  "audit_head": "242d7a487f5936477a90c63c478492d42d73b6c7",
+  "sample_count": 50,
+  "primary_cause_counts": {
+    "rotation_wrong": 2,
+    "unknown": 1,
+    "width_too_large": 47
+  },
+  "primary_causes_mutually_exclusive": true,
+  "samples": [
+    {
+      "sample_id": "S001",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-066",
+      "text": "地下室，电费口.200",
+      "text_kind": "mixed",
+      "rotation_class": "arbitrary",
+      "main_cause": "rotation_wrong",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing",
+        "non_cardinal_rotation"
+      ],
+      "width_ratio": 2.186015784475495,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.32936633171326996,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S002",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-088",
+      "text": "符合规范要求。",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp"
+      ],
+      "width_ratio": 3.1210017526058476,
+      "height_ratio": 0.9999999999999998,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2306951604236824,
+      "boundary_crossing": false
+    },
+    {
+      "sample_id": "S003",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-045",
+      "text": "25900",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp"
+      ],
+      "width_ratio": 8.091605206073753,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.08898110840350326,
+      "boundary_crossing": false
+    },
+    {
+      "sample_id": "S004",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-004",
+      "text": "DESGI NO RESENCH INSTIVE CLM",
+      "text_kind": "english",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 3.017999164162471,
+      "height_ratio": 0.9999999999999998,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2385686545409658,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S005",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-057",
+      "text": "NI-BV-≈x2.5-G20.WC消火检启系拉",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 6.456239015817223,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.11152003484320556,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S006",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-061",
+      "text": "③",
+      "text_kind": "symbol",
+      "rotation_class": "0",
+      "main_cause": "unknown",
+      "secondary_causes": [],
+      "width_ratio": 1.0,
+      "height_ratio": 1.0,
+      "width_factor": 0.8622939791456442,
+      "raw_width_factor": 0.8622939791456442,
+      "boundary_crossing": false
+    },
+    {
+      "sample_id": "S007",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-026",
+      "text": "5400",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 5.271149674620392,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.13659259259259254,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S008",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-031",
+      "text": "5500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.885379609544469,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1473785166240409,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S009",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-030",
+      "text": "5500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.697480393792759,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15327365728900252,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S010",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-051",
+      "text": "2100",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.579262472885033,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15723055934515687,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S011",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-060",
+      "text": "3800",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.426092345832043,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1626717076244486,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S012",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-035",
+      "text": "2100",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.403136993158685,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.16351978171896317,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S013",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-036",
+      "text": "2100",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.403136993158685,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.16351978171896317,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S014",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-065",
+      "text": "2500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.258360086767897,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.16907917257567603,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S015",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-049",
+      "text": "NH-BV-4x2.5-G20.WC消火栓启系线路",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.9284619422572185,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.24586285025955773,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S016",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-003",
+      "text": "WUON ARCHITECIURAL",
+      "text_kind": "english",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.9229368726791427,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.24632759151587605,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S017",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-092",
+      "text": "3. 非消防电源切换设在本层配电箱内。",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.8178432312317545,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2555145694479493,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S018",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-100",
+      "text": "8400",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.7163210412147505,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.26506439742410304,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S019",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-033",
+      "text": "波律报警主机及广错主机",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.585101767939385,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2785190157422392,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S020",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-040",
+      "text": "100×100防火线缠，只机水泵等应急控健营",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.4885927648347717,
+      "height_ratio": 1.0000000000000002,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2893201371369428,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S021",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-125",
+      "text": "汇苏省苏中环独齐主中心其江苏省",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.2830537487161933,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.31536708253358925,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S022",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-005",
+      "text": "国泉平级工表设计证卡前号：100107-",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.255042497831743,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.3192844483828091,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S023",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-029",
+      "text": "速价控制室与安保业独室",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.2458850177974328,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.32058631421216427,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S024",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-127",
+      "text": "环境质家局非中分员业务用鲁—主#",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.1093203085771672,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.34134218358029883,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S025",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-039",
+      "text": "100x100防火线糖，凤机水采等应急控制线",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.0099787785944243,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.35821273720287483,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S026",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-001",
+      "text": "无锡市建筑设计研究院",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 1.9815106372123865,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.3633591394759832,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S027",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-121",
+      "text": "泰州市环境保护局",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 1.840069384215091,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.39128959276018094,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S028",
+      "page_id": "environment-scan-page-001-120dpi",
+      "candidate_id": "ocr-120",
+      "text": "建批非位",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 1.7950147609337432,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.40111090764817187,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S029",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-034",
+      "text": "寻室",
+      "text_kind": "chinese",
+      "rotation_class": "arbitrary",
+      "main_cause": "rotation_wrong",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "non_cardinal_rotation"
+      ],
+      "width_ratio": 1.198446604996999,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.600777704236396,
+      "boundary_crossing": false
+    },
+    {
+      "sample_id": "S030",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-077",
+      "text": "家设讨施工）",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 3.036826271948222,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.23708962433932604,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S031",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-054",
+      "text": "25900",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 7.439056399132321,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.0967864687897755,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S032",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-003",
+      "text": "WLDI ARCHITECIURAL",
+      "text_kind": "english",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.789981512457082,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.2580662261686136,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S033",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-067",
+      "text": "NH-BV-4x2.5-G20.WC消火检层系线路",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 5.010381312263826,
+      "height_ratio": 0.9999999999999999,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1437016376852732,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S034",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-058",
+      "text": "③",
+      "text_kind": "symbol",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp"
+      ],
+      "width_ratio": 1.6282150101419874,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.4422020405875099,
+      "boundary_crossing": false
+    },
+    {
+      "sample_id": "S035",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-030",
+      "text": "5400",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 5.218438177874188,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.13797231575009347,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S036",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-039",
+      "text": "5500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 5.038047722342734,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.14291250096876693,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S037",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-068",
+      "text": "3800",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.957223427331888,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.14524259609325768,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S038",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-069",
+      "text": "3800",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.802310195227766,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1499278411285241,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S039",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-075",
+      "text": "2500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.749709327548808,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15158822368853714,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S040",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-064",
+      "text": "3800",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.626741865509762,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1556170672427761,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S041",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-040",
+      "text": "5500",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.598004338394794,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15658967391304346,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S042",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-045",
+      "text": "2100",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.579262472885033,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15723055934515687,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S043",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-049",
+      "text": "8200",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.509853260176088,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.15965042728948733,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S044",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-046",
+      "text": "2100",
+      "text_kind": "numeric",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.175209901748118,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.17244641992694626,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S045",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-043",
+      "text": "NH-BV-4x2.5-G20.WC消火检启系线路",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.097826288039959,
+      "height_ratio": 1.0000000000000002,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1757029091500081,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S046",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-056",
+      "text": "NH-BV-4x2.5-G20.WC消火检启系载路",
+      "text_kind": "mixed",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 4.026096737907762,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.1788332588287885,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S047",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-133",
+      "text": "汇苏省苏中环境督宣中心及汇非省",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.282816798092793,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.315399816840989,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S048",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-129",
+      "text": "CLUBIT",
+      "text_kind": "english",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.156351791530945,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.3338972809667673,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S049",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-004",
+      "text": "DESGH AND RESEARCH NSTIUTE Ca,LM.",
+      "text_kind": "english",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.137770555736107,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.33679947460595444,
+      "boundary_crossing": true
+    },
+    {
+      "sample_id": "S050",
+      "page_id": "environment-plan-page-003-150dpi",
+      "candidate_id": "ocr-136",
+      "text": "环境重东局苏中分局业务用房-主楼",
+      "text_kind": "chinese",
+      "rotation_class": "0",
+      "main_cause": "width_too_large",
+      "secondary_causes": [
+        "minimum_width_factor_clamp",
+        "nearby_boundary_crossing"
+      ],
+      "width_ratio": 2.09619007569386,
+      "height_ratio": 1.0,
+      "width_factor": 0.72,
+      "raw_width_factor": 0.3434803018813419,
+      "boundary_crossing": true
+    }
+  ],
+  "limitations": [
+    "No native OCR_TEXT near 90 or 270 degrees exists in the three selected pages or the 12 current CI DXFs."
+  ]
+}

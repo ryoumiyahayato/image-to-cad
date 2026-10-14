@@ -1,0 +1,54 @@
+{
+  "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
+  "git_blob_sha": "b4b4a17f3b3d18dd007655973618c9802f18740f",
+  "canonical_git_blob_sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+  "canonical_git_blob_size_bytes": 43436980,
+  "current_worktree_sha256": "dead7199fba22075c5e263f8e61c72accef7c6a28dc542afb21913c62a9a13e1",
+  "current_worktree_size_bytes": 43717474,
+  "current_worktree_crlf_count": 280494,
+  "line_ending_note": "Windows checkout is CRLF; hygiene validates Git clean-filter canonical LF bytes.",
+  "lock_manifest": {
+    "path": "cad_photo_to_dxf/resources/fonts/librecad-font.lock.json",
+    "sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+    "size_bytes": 43436980,
+    "license": "Apache-2.0 OR GPL-3.0-or-later",
+    "source": "https://downloads.sourceforge.net/project/librecad/Resources/fonts/wqy-unicode.zip"
+  },
+  "approved_runtime_asset": {
+    "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
+    "sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+    "max_size_bytes": 43436980,
+    "purpose": "DXF native editable Unicode TEXT style and LibreCAD read-save-read metric source",
+    "license_file": "cad_photo_to_dxf/resources/fonts/WQY-LICENSE-Apache-2.0.txt",
+    "license": "Apache-2.0 OR GPL-3.0-or-later",
+    "required_by": [
+      "cad_photo_to_dxf/app/librecad_lff.py",
+      "cad_photo_to_dxf/app/ocr_outline_export.py",
+      "cad_photo_to_dxf/app/librecad_ocr_review.py",
+      "cad_photo_to_dxf/tests/test_librecad_lff_export.py",
+      "cad_photo_to_dxf/tests/test_font_aware_ocr_export.py",
+      "cad_photo_to_dxf/scripts/prepare_librecad_font.py",
+      "cad_photo_to_dxf/cad_photo_to_dxf.spec"
+    ]
+  },
+  "style_reference": {
+    "dxf_style_name": "wqy-unicode",
+    "dxf_font": "wqy-unicode.lff",
+    "required_by": [
+      "cad_photo_to_dxf/app/librecad_lff.py",
+      "cad_photo_to_dxf/app/ocr_outline_export.py",
+      "cad_photo_to_dxf/app/librecad_ocr_review.py",
+      "cad_photo_to_dxf/tests/test_librecad_lff_export.py",
+      "cad_photo_to_dxf/tests/test_font_aware_ocr_export.py",
+      "cad_photo_to_dxf/scripts/prepare_librecad_font.py",
+      "cad_photo_to_dxf/cad_photo_to_dxf.spec"
+    ]
+  },
+  "verification": {
+    "hash_matches_lock": true,
+    "size_matches_lock": true,
+    "hash_matches_allowlist": true,
+    "style_tests": "tests/test_librecad_lff_export.py and tests/test_font_aware_ocr_export.py passed",
+    "read_save_read": "validation/repository-hygiene/dxf-read-save-read.json"
+  }
+}

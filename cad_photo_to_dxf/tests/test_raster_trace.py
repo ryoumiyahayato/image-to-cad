@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+from tests.trace_fixtures import contour_result
+
 import cv2
 import numpy as np
 
-from app.raster_trace import make_black_white, trace_binary, trace_image
-from app.trace_verification import verify_trace_paths
+from app.geometry.raster_trace import trace_binary
+from app.geometry.scan_cleanup import prepare_scan_page
+from app.diagnostics.trace_verification import verify_trace_paths
 
 
 def test_trace_preserves_text_curves_and_small_marks_as_boundaries() -> None:
@@ -23,9 +26,8 @@ def test_trace_preserves_text_curves_and_small_marks_as_boundaries() -> None:
     )
     cv2.rectangle(image, (320, 210), (323, 213), (80, 80, 80), -1)
 
-    result = trace_image(image)
+    result = contour_result(image)
 
-    assert set(result.stages) == {"灰度原图", "CAD 轮廓来源"}
     assert result.foreground_pixels > 0
     assert result.paths
     assert result.vertex_count >= sum(3 for _path in result.paths)
@@ -91,9 +93,10 @@ def test_foreground_conversion_has_no_morphological_detail_loss() -> None:
     gray[10, 10:70] = 190
     gray[20:22, 20:22] = 50
 
-    binary, threshold, stages = make_black_white(gray)
+    prepared = prepare_scan_page(gray)
+    binary, threshold = prepared.binary, prepared.threshold
 
     assert 1 <= threshold <= 254
     assert binary[10, 30] == 0
     assert binary[20, 20] == 0
-    assert np.array_equal(stages["CAD 轮廓来源"], binary)
+    assert np.array_equal(prepared.binary, binary)

@@ -1,0 +1,1063 @@
+{
+  "schema_version": 1,
+  "base_head": "30572edfdd0e642d8466c9ef2da6704ffc5dd6c1",
+  "scope": {
+    "pair_count": 3,
+    "member_slot_count": 6
+  },
+  "pairs": [
+    {
+      "role": "CASE15",
+      "pair_id": "FRESH1-6DA3382199DB993085B8",
+      "geometry": {
+        "A": {
+          "end": [
+            2157,
+            276
+          ],
+          "start": [
+            2121,
+            276
+          ]
+        },
+        "B": {
+          "end": [
+            2209,
+            276
+          ],
+          "start": [
+            2164,
+            276
+          ]
+        },
+        "gap_a": [
+          2157,
+          276
+        ],
+        "gap_b": [
+          2164,
+          276
+        ]
+      },
+      "members": [
+        {
+          "slot": "A",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_a_geometry",
+              "evidence": {
+                "end": [
+                  2157,
+                  276
+                ],
+                "start": [
+                  2121,
+                  276
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-001150",
+              "evidence": {
+                "raw_hough_id": "raw-hough-001150",
+                "raw_geometry": {
+                  "end": [
+                    2157,
+                    275
+                  ],
+                  "start": [
+                    2121,
+                    276
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 276,
+                  "end": 2157,
+                  "orientation": "horizontal",
+                  "start": 2121
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-6DA3382199DB993085B8:OBSERVATION_A",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-6DA3382199DB993085B8:OBSERVATION_A",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    2157,
+                    276
+                  ],
+                  "start": [
+                    2121,
+                    276
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.A",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-6DA3382199DB993085B8:OBSERVATION_A"
+                ],
+                "observation_ids": [
+                  "FRESH1-6DA3382199DB993085B8:OBSERVATION_A"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-001150"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_a",
+              "evidence": {
+                "position": [
+                  2157,
+                  276
+                ],
+                "component_id": 16,
+                "continuing_ridge": 0.285714,
+                "termination": 0.714286,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_REJECTED",
+                "positive": [],
+                "negative": [
+                  "JUNCTION_TERMINATION"
+                ]
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        },
+        {
+          "slot": "B",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_b_geometry",
+              "evidence": {
+                "end": [
+                  2209,
+                  276
+                ],
+                "start": [
+                  2164,
+                  276
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-000801",
+              "evidence": {
+                "raw_hough_id": "raw-hough-000801",
+                "raw_geometry": {
+                  "end": [
+                    2209,
+                    276
+                  ],
+                  "start": [
+                    2164,
+                    277
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 276,
+                  "end": 2209,
+                  "orientation": "horizontal",
+                  "start": 2164
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-6DA3382199DB993085B8:OBSERVATION_B",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-6DA3382199DB993085B8:OBSERVATION_B",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    2209,
+                    276
+                  ],
+                  "start": [
+                    2164,
+                    276
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.B",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-6DA3382199DB993085B8:OBSERVATION_B"
+                ],
+                "observation_ids": [
+                  "FRESH1-6DA3382199DB993085B8:OBSERVATION_B"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-000801"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_b",
+              "evidence": {
+                "position": [
+                  2164,
+                  276
+                ],
+                "component_id": 16,
+                "continuing_ridge": 0.285714,
+                "termination": 0.714286,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_REJECTED",
+                "positive": [],
+                "negative": [
+                  "JUNCTION_TERMINATION"
+                ]
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        }
+      ],
+      "membership": {
+        "A": "UNAVAILABLE_INSTANCE",
+        "B": "UNAVAILABLE_INSTANCE"
+      },
+      "evaluation": {
+        "status": "SOURCE_IDENTITY_REJECTED",
+        "completeness": "PARTIAL",
+        "positive": [],
+        "negative": [
+          "JUNCTION_TERMINATION"
+        ],
+        "gap_ridge": 0,
+        "tangent_delta": 0,
+        "lateral_offset": 0,
+        "action": "CONTINUE_EXISTING_POLICY"
+      }
+    },
+    {
+      "role": "CASE16",
+      "pair_id": "FRESH1-EAF5141532787D12AFE2",
+      "geometry": {
+        "A": {
+          "end": [
+            794,
+            2034
+          ],
+          "start": [
+            794,
+            1969
+          ]
+        },
+        "B": {
+          "end": [
+            794,
+            2108
+          ],
+          "start": [
+            794,
+            2039
+          ]
+        },
+        "gap_a": [
+          794,
+          2034
+        ],
+        "gap_b": [
+          794,
+          2039
+        ]
+      },
+      "members": [
+        {
+          "slot": "A",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_a_geometry",
+              "evidence": {
+                "end": [
+                  794,
+                  2034
+                ],
+                "start": [
+                  794,
+                  1969
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-000425",
+              "evidence": {
+                "raw_hough_id": "raw-hough-000425",
+                "raw_geometry": {
+                  "end": [
+                    794,
+                    1969
+                  ],
+                  "start": [
+                    794,
+                    2034
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 794,
+                  "end": 2034,
+                  "orientation": "vertical",
+                  "start": 1969
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-EAF5141532787D12AFE2:OBSERVATION_A",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-EAF5141532787D12AFE2:OBSERVATION_A",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    794,
+                    2034
+                  ],
+                  "start": [
+                    794,
+                    1969
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.A",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-EAF5141532787D12AFE2:OBSERVATION_A"
+                ],
+                "observation_ids": [
+                  "FRESH1-EAF5141532787D12AFE2:OBSERVATION_A"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-000425"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_a",
+              "evidence": {
+                "position": [
+                  794,
+                  2034
+                ],
+                "component_id": 20,
+                "continuing_ridge": 1,
+                "termination": 0,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_SUPPORTED",
+                "positive": [
+                  "CONTINUATION_TOPOLOGY_SUPPORTED"
+                ],
+                "negative": []
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        },
+        {
+          "slot": "B",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_b_geometry",
+              "evidence": {
+                "end": [
+                  794,
+                  2108
+                ],
+                "start": [
+                  794,
+                  2039
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-000943",
+              "evidence": {
+                "raw_hough_id": "raw-hough-000943",
+                "raw_geometry": {
+                  "end": [
+                    795,
+                    2108
+                  ],
+                  "start": [
+                    794,
+                    2039
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 794,
+                  "end": 2108,
+                  "orientation": "vertical",
+                  "start": 2039
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-EAF5141532787D12AFE2:OBSERVATION_B",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-EAF5141532787D12AFE2:OBSERVATION_B",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    794,
+                    2108
+                  ],
+                  "start": [
+                    794,
+                    2039
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.B",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-EAF5141532787D12AFE2:OBSERVATION_B"
+                ],
+                "observation_ids": [
+                  "FRESH1-EAF5141532787D12AFE2:OBSERVATION_B"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-000943"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_b",
+              "evidence": {
+                "position": [
+                  794,
+                  2039
+                ],
+                "component_id": 20,
+                "continuing_ridge": 1,
+                "termination": 0,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_SUPPORTED",
+                "positive": [
+                  "CONTINUATION_TOPOLOGY_SUPPORTED"
+                ],
+                "negative": []
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        }
+      ],
+      "membership": {
+        "A": "UNAVAILABLE_INSTANCE",
+        "B": "UNAVAILABLE_INSTANCE"
+      },
+      "evaluation": {
+        "status": "SOURCE_IDENTITY_SUPPORTED",
+        "completeness": "PARTIAL",
+        "positive": [
+          "CONTINUATION_TOPOLOGY_SUPPORTED"
+        ],
+        "negative": [],
+        "gap_ridge": 1,
+        "tangent_delta": 0,
+        "lateral_offset": 0,
+        "action": "CONTINUE_EXISTING_POLICY"
+      }
+    },
+    {
+      "role": "KNOWN_VALID_CONTROL",
+      "pair_id": "FRESH1-AB2943863A535D1044B9",
+      "geometry": {
+        "A": {
+          "end": [
+            615,
+            580
+          ],
+          "start": [
+            615,
+            524
+          ]
+        },
+        "B": {
+          "end": [
+            615,
+            715
+          ],
+          "start": [
+            615,
+            620
+          ]
+        },
+        "gap_a": [
+          615,
+          580
+        ],
+        "gap_b": [
+          615,
+          620
+        ]
+      },
+      "members": [
+        {
+          "slot": "A",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_a_geometry",
+              "evidence": {
+                "end": [
+                  615,
+                  580
+                ],
+                "start": [
+                  615,
+                  524
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P8.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-000400",
+              "evidence": {
+                "raw_hough_id": "raw-hough-000400",
+                "raw_geometry": {
+                  "end": [
+                    615,
+                    524
+                  ],
+                  "start": [
+                    615,
+                    580
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 615,
+                  "end": 580,
+                  "orientation": "vertical",
+                  "start": 524
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P8.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-AB2943863A535D1044B9:OBSERVATION_A",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-AB2943863A535D1044B9:OBSERVATION_A",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    615,
+                    580
+                  ],
+                  "start": [
+                    615,
+                    524
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.A",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-AB2943863A535D1044B9:OBSERVATION_A"
+                ],
+                "observation_ids": [
+                  "FRESH1-AB2943863A535D1044B9:OBSERVATION_A"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-000400"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_a",
+              "evidence": {
+                "position": [
+                  615,
+                  580
+                ],
+                "component_id": 321,
+                "continuing_ridge": 1,
+                "termination": 0,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_SUPPORTED",
+                "positive": [
+                  "CROSSING_WITH_AXIAL_CONTINUATION",
+                  "CONTINUATION_TOPOLOGY_SUPPORTED"
+                ],
+                "negative": []
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        },
+        {
+          "slot": "B",
+          "classification": "E",
+          "classification_detail": "Confirmed source-instance mapping and independent equivalence evidence are absent; raster plus detector observation do not uniquely determine a physical instance (D recoverability limit).",
+          "stages": [
+            {
+              "stage": "frozen candidate geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+              "producer": "app.fresh_dev_candidate_remining_v1._pair_geometry / _candidate_from_pair",
+              "key": "deduplicated_admissible_pool[].fragment_b_geometry",
+              "evidence": {
+                "end": [
+                  615,
+                  715
+                ],
+                "start": [
+                  615,
+                  620
+                ]
+              },
+              "exists": true,
+              "survives_to_next": true
+            },
+            {
+              "stage": "raw observation and ancestry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P8.json",
+              "producer": "app.fresh_dev_candidate_remining_v1.run_fresh_remine / app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "records[].raw_hough_id=raw-hough-000569",
+              "evidence": {
+                "raw_hough_id": "raw-hough-000569",
+                "raw_geometry": {
+                  "end": [
+                    616,
+                    620
+                  ],
+                  "start": [
+                    614,
+                    715
+                  ]
+                },
+                "canonical_geometry": {
+                  "axis": 615,
+                  "end": 715,
+                  "orientation": "vertical",
+                  "start": 620
+                }
+              },
+              "exists": true,
+              "survives_to_next": "ID and canonical geometry survive; raw endpoints retained separately"
+            },
+            {
+              "stage": "non-destructive group member geometry",
+              "file": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P8.json",
+              "producer": "app.line_provenance_audit_v1.normalize_hough_records",
+              "key": "source_stroke_group.member_hypotheses",
+              "evidence": {
+                "raw_member_geometry_recoverable": true,
+                "source_stroke_groups_in_frozen_candidate": false,
+                "physical_instance_label_present": false
+              },
+              "exists": "detector member geometry exists",
+              "survives_to_next": "member detail absent from frozen candidate; no physical identity was established"
+            },
+            {
+              "stage": "SourceStrokeInstance producer",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_build_pair_registry -> SourceStrokeRegistry.from_observations",
+              "key": "source_stroke_registry_projection.strokes[].observation_ids contains FRESH1-AB2943863A535D1044B9:OBSERVATION_B",
+              "evidence": {
+                "stroke_id": "HYPOTHESIS:FRESH1-AB2943863A535D1044B9:OBSERVATION_B",
+                "multiplicity_state": "MULTIPLICITY_AMBIGUOUS",
+                "observation_source_instance_id": null,
+                "geometry": {
+                  "confidence": 1,
+                  "end": [
+                    615,
+                    715
+                  ],
+                  "start": [
+                    615,
+                    620
+                  ],
+                  "width": 1
+                }
+              },
+              "exists": "hypothesis instance only",
+              "survives_to_next": "hypothesis ID only"
+            },
+            {
+              "stage": "membership lookup",
+              "file": "cad_photo_to_dxf/scripts/run_frozen_pair_endpoint_evidence_v1.py",
+              "producer": "_membership_hint / _build_pair_registry",
+              "key": "source-instance-membership.records[].members.B",
+              "evidence": {
+                "basis": "no_preserved_confirmed_source_instance_field",
+                "fabricated_identity": false,
+                "hypothesis_stroke_ids": [
+                  "HYPOTHESIS:FRESH1-AB2943863A535D1044B9:OBSERVATION_B"
+                ],
+                "observation_ids": [
+                  "FRESH1-AB2943863A535D1044B9:OBSERVATION_B"
+                ],
+                "possible_source_instance_ids": [],
+                "provenance_ids": [
+                  "raw-hough-000569"
+                ],
+                "raw_ancestor_ids_are_source_instance_authority": false,
+                "source_instance_ids": [],
+                "source_instance_status": "UNAVAILABLE_INSTANCE",
+                "status": "UNAVAILABLE_INSTANCE"
+              },
+              "exists": "unavailable result",
+              "survives_to_next": "no confirmed identity"
+            },
+            {
+              "stage": "endpoint/topology",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "profile_endpoint_topology / _group_context",
+              "key": "pair-identity-evaluation.records[].generic_contract_result.endpoint_b",
+              "evidence": {
+                "position": [
+                  615,
+                  620
+                ],
+                "component_id": 321,
+                "continuing_ridge": 1,
+                "termination": 0,
+                "competing_stroke_ids": []
+              },
+              "exists": true,
+              "survives_to_next": "local raster measures, no instance authority"
+            },
+            {
+              "stage": "identity evaluator",
+              "file": "cad_photo_to_dxf/app/endpoint_topology_source_identity.py",
+              "producer": "assess_source_pair_identity",
+              "key": "pair-identity-evaluation.records[].generic_contract_result",
+              "evidence": {
+                "status": "SOURCE_IDENTITY_SUPPORTED",
+                "positive": [
+                  "CROSSING_WITH_AXIAL_CONTINUATION",
+                  "CONTINUATION_TOPOLOGY_SUPPORTED"
+                ],
+                "negative": []
+              },
+              "exists": true,
+              "survives_to_next": "DEV result only; admission unwired"
+            }
+          ]
+        }
+      ],
+      "membership": {
+        "A": "UNAVAILABLE_INSTANCE",
+        "B": "UNAVAILABLE_INSTANCE"
+      },
+      "evaluation": {
+        "status": "SOURCE_IDENTITY_SUPPORTED",
+        "completeness": "PARTIAL",
+        "positive": [
+          "CROSSING_WITH_AXIAL_CONTINUATION",
+          "CONTINUATION_TOPOLOGY_SUPPORTED"
+        ],
+        "negative": [],
+        "gap_ridge": 1,
+        "tangent_delta": 0,
+        "lateral_offset": 0,
+        "action": "CONTINUE_EXISTING_POLICY"
+      }
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "CONFIRMED_OTHER": 10,
+  "CONFIRMED_SINGLE": 0,
+  "CONFIRMED_TRUE_PARALLEL": 2,
+  "DISPUTED_REMAINING": 0,
+  "DRAWINGS": 13,
+  "EXACT_AGREEMENT": 12,
+  "FINAL_AMBIGUOUS": 0,
+  "FINAL_EXCLUDED": 6,
+  "FINAL_READY_OTHER": 36,
+  "FINAL_READY_SINGLE": 38,
+  "FINAL_READY_TRUE_PARALLEL": 20,
+  "FINAL_TRAINING_READY_TOTAL": 94,
+  "FORMAL_SEED_FINAL_STATUS": "PASS",
+  "REVISED_TO_AMBIGUOUS": 0,
+  "REVISED_TO_OTHER": 0,
+  "REVISED_TO_SINGLE": 0,
+  "REVISED_TO_TRUE_PARALLEL": 0,
+  "REVISED_TO_X_OR_U": 1,
+  "SOURCE_FAMILIES": 12,
+  "STAGE0_DISAGREEMENT": 1,
+  "STAGE1_DISAGREEMENT": 0,
+  "TOTAL_REVIEWED": 13,
+  "adjudication_authority": "Current user explicitly authorizes the complete and internally valid independent re-review to become the current adjudicated decision. Historical disagreement is retained, not unresolved.",
+  "disagreements": [
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "current_resolution": "ADJUDICATED_RE_REVIEW_ACCEPTED",
+      "historical_review_result": "ADJUDICATION_REQUIRED",
+      "new_class": null,
+      "new_stage0": "INVALID_NOMINATION",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 40,
+      "original_stage0": "VALID_TARGET",
+      "sample_id": "real-48f0cee35570a79663988685",
+      "training_authorized": false
+    }
+  ],
+  "glyph_rule": "Character/digit/glyph/symbol ownership is OTHER even when internal strokes are parallel; never reinterpret as structural truth.",
+  "model_trained": false,
+  "original_manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+  "original_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+  "re_review_state_sha256": "e3c9bbedf8282f3abf25ae5f2a9dbe24b74d60536914d0fba3089d2e4402e34b",
+  "training_authorized": false
+}

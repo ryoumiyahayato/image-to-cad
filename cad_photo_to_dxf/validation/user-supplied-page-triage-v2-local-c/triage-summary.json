@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-PAGE-TRIAGE-V2-LOCAL-C",
+  "base_checkpoint": "9ecff0ce775eb7827bed1cf92c5e48e41e0a7aa2",
+  "source_root": "C:/Users/agcrf/Desktop/新建文件夹",
+  "input": {
+    "frozen_source_families": 10,
+    "frozen_representative_documents": 16,
+    "pdf_representative_documents": 10,
+    "dwg_representative_documents": 6,
+    "local_b_registry_reused": true,
+    "cross_format_pairs_in_local_b": 0
+  },
+  "method": {
+    "pdf_page_count_total": 117,
+    "pdf_contact_sheets_generated": 10,
+    "pdf_contact_sheet_review": "All ten frozen PDF representatives were reviewed through bounded contact sheets; page counts, page dimensions, object structure, and extracted text snippets were used for sparse page choice.",
+    "dwg_normalization": "No new conversion. Six existing Local-A/Local-B normalized DXFs were reused for modelspace/layout counts and fidelity checks.",
+    "deep_inspection_file_count": 16,
+    "deep_inspection_cap": 30,
+    "deep_inspection_accounting": "Ten frozen PDF documents received bounded page/contact-sheet inspection; six frozen DWG documents received modelspace/paperspace entity-layout inspection using existing normalized evidence. No non-representative source was opened.",
+    "model_independent": true
+  },
+  "outputs": {
+    "selected_pdf_pages": 13,
+    "selected_dwg_paperspace_layouts": 0,
+    "selected_dwg_modelspace_views": 6,
+    "total_selected_units": 19,
+    "families_represented": 10,
+    "high_value_families_represented": 9,
+    "fidelity_blocked_units": 3,
+    "new_dwg_conversions": 0,
+    "new_previews_contact_sheets": 10,
+    "meaningful_printable_paperspace_layouts": 0
+  },
+  "opportunity_counts": {
+    "dimension_extension_witness_opportunities": 16,
+    "dimension_chain_opportunities": 16,
+    "leader_marker_opportunities": 14,
+    "drawing_layout_rule_opportunities": 19,
+    "aligned_text_glyph_opportunities": 19,
+    "table_legend_revision_title_opportunities": 19,
+    "counting_rule": "Counts include units tagged STRONG or PRESENT; they describe source/page opportunity only and are not case labels."
+  },
+  "family_selected_unit_counts": {
+    "F01-HAIYANG-2022-ROOT-DWG": 2,
+    "F02-HUIHONG-2019-HASHED-DWG": 2,
+    "F03-AS-BUILT-INSTALL-2020-DWG": 2,
+    "F04-XDF-RENOVATION-REVIEW-PDF": 2,
+    "F05-DENNKISETSUBI-STANDALONE-PDF": 1,
+    "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL": 2,
+    "F07-SEYA-CULTURAL-CENTER-ELECTRICAL": 2,
+    "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL": 2,
+    "F09-JIULONG-FIRE-ELECTRICAL": 2,
+    "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING": 2
+  },
+  "discipline_family_counts": {
+    "MULTIDISCIPLINE": 4,
+    "ELECTRICAL_INSTALLATION": 5,
+    "UNKNOWN": 1
+  },
+  "selection_notes": [
+    "Every frozen family is represented; the one unselected document is the F07 alternate whose bounded pages did not expose a qualified electrical drawing sheet.",
+    "DWG paperspace layouts were not selected because all six representative DWGs had empty layouts or only non-printable residual entities; engineering content is primarily in modelspace.",
+    "F01 structural, F02 plumbing, and F03 electrical modelspace views are retained with FIDELITY_BLOCKED status and must be excluded from later candidate mining.",
+    "F06 selects a plan page and a specification/title page from one project because the roles are materially different; F07 selects two non-identical scanned plan pages from one family and does not count the alternate document as a second source family.",
+    "No DWG/PDF cross-format pair was asserted because Local-B recorded zero confirmed or likely pairs."
+  ],
+  "rights": {
+    "source_origin": "USER_SUPPLIED_LOCAL",
+    "local_analysis_permission": "YES",
+    "training_permission": "NOT_CONFIRMED",
+    "public_redistribution": "NOT_AUTHORIZED"
+  },
+  "governance": {
+    "production_semantic_delta": "NONE",
+    "model_run": "NO",
+    "candidate_mining": "NO",
+    "human_case_labeling": "NO",
+    "wave1_b3a_modified": "NO",
+    "h1_h2_holdout_contamination": "NO",
+    "ready_for_user_supplied_candidate_mining": "YES",
+    "ready_for_model_training": "NO",
+    "ready_for_model_bakeoff": "NO",
+    "ready_for_production_dwg_input_integration": "NO",
+    "validation": "NO",
+    "locked_blind": "0 / 8"
+  }
+}

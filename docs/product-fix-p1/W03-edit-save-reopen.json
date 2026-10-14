@@ -1,0 +1,24 @@
+{
+  "method": "ezdxf native entity edit/save/reopen; not CAD GUI",
+  "line_selected": true,
+  "text_selected": true,
+  "line_handle": "93",
+  "original_start": [
+    24.47950404740243,
+    612.4494786199174,
+    0.0
+  ],
+  "edited_start": [
+    24.60450404740243,
+    612.4494786199174,
+    0.0
+  ],
+  "text_handle": "1833",
+  "original_text": "N",
+  "edited_text": "N UAT",
+  "line_persisted": true,
+  "text_persisted": true,
+  "reopen_audit_errors": 0,
+  "reopen_audit_fixes": 0,
+  "PASS": true
+}

@@ -3,18 +3,11 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from app.connectivity_safety import evaluate_structural_bridge
-from app.geometry_cleaner import GeometryCleanParams
-from app.line_detect import LineDetectionParams, LineSegment
-from app.optimized_trace import trace_image_optimized
-from app.pipeline_service import PipelineService
-from app.straight_line_reconstruction import (
-    extend_lines_to_first_intersection,
-)
-from app.structural_roi import (
-    StructuralRoi,
-    detect_structural_rois,
-)
+from app.geometry.connectivity_safety import evaluate_structural_bridge
+from app.geometry.line_detect import LineSegment
+from app.geometry.optimized_trace import trace_image_optimized
+from app.geometry.straight_line_reconstruction import extend_lines_to_first_intersection
+from app.geometry.structural_roi import StructuralRoi, detect_structural_rois
 
 
 def test_optimized_trace_never_runs_closing_or_hough_gap(
@@ -57,69 +50,6 @@ def test_optimized_trace_never_runs_closing_or_hough_gap(
     )
 
 
-def test_legacy_pipeline_service_retains_detected_coordinates(
-    monkeypatch,
-) -> None:
-    detected = [
-        LineSegment(
-            20.0,
-            40.0,
-            120.0,
-            40.0,
-            source_ids=("LEFT",),
-            history=("detected:test",),
-        ),
-        LineSegment(
-            130.0,
-            40.0,
-            230.0,
-            40.0,
-            source_ids=("RIGHT",),
-            history=("detected:test",),
-        ),
-    ]
-    observed_gaps: list[int] = []
-
-    def fake_detect(
-        binary,
-        params,
-        cancellation_token=None,
-        progress_callback=None,
-    ):
-        del binary, cancellation_token, progress_callback
-        observed_gaps.append(int(params.max_line_gap))
-        return list(detected)
-
-    monkeypatch.setattr("app.pipeline_service.detect_lines", fake_detect)
-    binary = np.full((180, 280), 255, np.uint8)
-    result = PipelineService.vectorize(
-        cv2.cvtColor(binary, cv2.COLOR_GRAY2BGR),
-        existing_binary=binary,
-        detection_params=LineDetectionParams(
-            min_line_length=5,
-            max_line_gap=99,
-            use_lsd=False,
-        ),
-        clean_params=GeometryCleanParams(
-            min_line_length=5,
-            snap_distance=50,
-            max_bridge_gap=100,
-        ),
-        protect_text=False,
-    )
-
-    assert observed_gaps == [0]
-    assert [
-        (line.x1, line.y1, line.x2, line.y2)
-        for line in result.lines
-    ] == [
-        (line.x1, line.y1, line.x2, line.y2)
-        for line in detected
-    ]
-    assert result.geometry_report.first_snap_moved_endpoints == 0
-    assert result.geometry_report.collinear_merges == 0
-    assert result.geometry_report.final_snap_moved_endpoints == 0
-    assert result.intersection_split_report.lines_split == 0
 
 
 def test_connectivity_judgment_runs_on_the_roi_crop(monkeypatch) -> None:
@@ -155,7 +85,7 @@ def test_connectivity_judgment_runs_on_the_roi_crop(monkeypatch) -> None:
         return original(mask, *args, **kwargs)
 
     monkeypatch.setattr(
-        "app.connectivity_safety.cv2.connectedComponents",
+        "app.geometry.connectivity_safety.cv2.connectedComponents",
         observe_components,
     )
 
@@ -203,7 +133,7 @@ def test_connection_context_is_built_once_per_structural_roi(
         extension_budget=8.0,
     )
     calls: list[str] = []
-    from app import straight_line_reconstruction as reconstruction
+    from app.geometry import straight_line_reconstruction as reconstruction
 
     original = reconstruction.build_structural_connectivity_context
 

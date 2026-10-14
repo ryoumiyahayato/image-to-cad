@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from app.gui_guard import MainWindow
+from app.gui import MainWindow
 
 
 class _StatusBar:
@@ -30,7 +30,7 @@ class _WindowStub:
 
 def test_gui_blocks_processing_before_perspective_confirmation() -> None:
     window = _WindowStub(corrected=False)
-    with patch("app.gui_guard.QMessageBox.warning") as warning:
+    with patch("app.gui.window.QMessageBox.warning") as warning:
         allowed = MainWindow._require_corrected(window)
     assert allowed is False
     warning.assert_called_once()
@@ -40,7 +40,7 @@ def test_gui_blocks_processing_before_perspective_confirmation() -> None:
 
 def test_gui_allows_processing_after_perspective_confirmation() -> None:
     window = _WindowStub(corrected=True)
-    with patch("app.gui_guard.QMessageBox.warning") as warning:
+    with patch("app.gui.window.QMessageBox.warning") as warning:
         allowed = MainWindow._require_corrected(window)
     assert allowed is True
     warning.assert_not_called()

@@ -1,0 +1,35 @@
+[
+  {
+    "region": "door",
+    "roi": [
+      2150,
+      990,
+      2280,
+      1270
+    ],
+    "native_geometry_symmetric_difference_length_px": 0.0,
+    "geometry_equal": true
+  },
+  {
+    "region": "pattern",
+    "roi": [
+      2147,
+      1120,
+      2178,
+      1390
+    ],
+    "native_geometry_symmetric_difference_length_px": 0.0,
+    "geometry_equal": true
+  },
+  {
+    "region": "walls",
+    "roi": [
+      1380,
+      370,
+      1580,
+      390
+    ],
+    "native_geometry_symmetric_difference_length_px": 0.0,
+    "geometry_equal": true
+  }
+]

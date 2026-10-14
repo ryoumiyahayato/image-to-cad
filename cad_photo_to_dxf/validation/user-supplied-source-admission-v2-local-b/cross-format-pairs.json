@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-SOURCE-ADMISSION-V2-LOCAL-B",
+  "source_directory": "C:/Users/agcrf/Desktop/新建文件夹",
+  "pairing_policy": "Require filename/drawing-number or title/revision evidence, with bounded layout evidence when metadata is insufficient. Do not infer a DWG/PDF pair from discipline or project-name similarity alone.",
+  "confirmed_pairs": [],
+  "likely_pairs": [],
+  "counts": {
+    "confirmed": 0,
+    "likely": 0,
+    "all_recorded_dwgpairs": 0
+  },
+  "negative_evidence": [
+    "No exact DWG/PDF filename-stem matches were found in the 93 DWG and 89 PDF inventory records.",
+    "The two PDFs named dennkisetubi.pdf and 2026dennkisetsubi.pdf were rendered once each. Their title blocks, project names, sheet formats, dates, and drawing content differ; they are not paired.",
+    "The two same-project PDF groups identified during inspection contain no DWG counterpart with matching title, number, or revision evidence.",
+    "The DWG packages are separated from the PDF packages by directory and naming conventions; no bounded comparison produced enough evidence to claim a cross-format identity."
+  ],
+  "handling": "DWG remains preferred only when a future DWG/PDF pair is positively established. The current representative set therefore contains no PAIRED_RENDERED_REPRESENTATION entries."
+}

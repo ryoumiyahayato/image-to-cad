@@ -1,0 +1,762 @@
+{
+  "counts": {
+    "DRAWINGS_AVAILABLE": 18,
+    "DRAWINGS_REGISTERED": 33,
+    "PAGE_COUNT_AVAILABLE_NONBLIND": 722,
+    "PAGE_COUNT_BLIND_RECORDED_ONLY": 130,
+    "RASTER_COUNT_SOURCE_ALIASES": 10,
+    "RASTER_COUNT_UNIQUE_SOURCE_ALIASES": 6,
+    "SOURCE_FORMATS": {
+      "JPEG": 1,
+      "JPG": 1,
+      "PDF": 15,
+      "TIFF": 1
+    },
+    "VECTOR_GROUND_TRUTH_AVAILABLE": "native CAD and vector PDF exist; no aligned real stroke truth qualified"
+  },
+  "native_CAD_refs": [
+    {
+      "exists": true,
+      "family": "user-project-haiyang",
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\user-supplied-ingest\\sample-01\\车间_结构0310.dxf",
+      "qualification": "NATIVE_CAD_AVAILABLE; raster/entity correspondence not qualified",
+      "sha256_recorded": "20738d14f49b2ff0f882208a796f9991af70a0dacbf772a041c7747150c6b6a6",
+      "source_sha256_recorded": "a1fd5bbfa42166d5e11ef04709303776ee6ec9c3e4af957971e14e52adf49b1e",
+      "split": "train"
+    },
+    {
+      "exists": true,
+      "family": "user-project-haiyang",
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\user-supplied-ingest\\sample-02\\TZSW1-能源中心电施-SD-180730审图修改t3.dxf",
+      "qualification": "NATIVE_CAD_AVAILABLE; raster/entity correspondence not qualified",
+      "sha256_recorded": "ece6b9e915b730fbc67870fea918c9c1308c373790a3a4ce70618013db7b8946",
+      "source_sha256_recorded": "42d5447f06a1cd9c8aaec0a1c6df250c14ebe281bcdbdc5bf86c81ea22643aa0",
+      "split": "train"
+    },
+    {
+      "exists": true,
+      "family": "user-project-haiyang",
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\user-supplied-ingest\\sample-03\\11#给排水平面图_t3.dxf",
+      "qualification": "NATIVE_CAD_AVAILABLE; raster/entity correspondence not qualified",
+      "sha256_recorded": "9ad755c2c1c047d6b1d149a3663166dd9c733680002bea87be3c9ec038c98eec",
+      "source_sha256_recorded": "331f195736cace4e715124e8de135cdb00d2b5be3df421984d99dd8932f08083",
+      "split": "train"
+    }
+  ],
+  "raster_aliases": [
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\E03\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "1ee702536cf79e6fc1702d857eb9189415e8f741d9c12993423255f49570bf90"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\E04\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "b51f0a7405278d1cf35b9d9bfc7a5343925cd5d2b39fa529a6667fdb039e05a1"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\W02\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "459bccdb04f1603f44a681323eb275ce264961d15b62a19529c0eb905a964144"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\W03\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "7ec84f59d66bcd34b77101ec49924efdbf012f4f7b782e535ed56ae95039ba06"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W03\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "7ec84f59d66bcd34b77101ec49924efdbf012f4f7b782e535ed56ae95039ba06"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\E01\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "48281276b5fda6763b94cbad10d276be47ae21a7ff97d045504ccf1dcad4d403"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\W01\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "17a89c3da67211f7b732f2ae061f5d57cefd3efd464bad946ebd037d5a2de9fc"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\W02\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "459bccdb04f1603f44a681323eb275ce264961d15b62a19529c0eb905a964144"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\W03\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "7ec84f59d66bcd34b77101ec49924efdbf012f4f7b782e535ed56ae95039ba06"
+    },
+    {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p3a\\W03\\source.png",
+      "role": "source_raster; derived, not independent drawing",
+      "sha256": "7ec84f59d66bcd34b77101ec49924efdbf012f4f7b782e535ed56ae95039ba06"
+    }
+  ],
+  "retained_label_context_refs": [
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W01\\texts.json",
+      "sha256": "85b26557071d18c98e4e93d8548d6d514b4eec403d01cac76b3d582bd017e31e",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W01\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W03\\texts.json",
+      "sha256": "3b3faa1d7759a244fd1f1aa5c7376fa77dc4299bc3a5a0261d1ef2bce5e31b65",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W03\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W01\\texts.json",
+      "sha256": "85b26557071d18c98e4e93d8548d6d514b4eec403d01cac76b3d582bd017e31e",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p1\\W01\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\product-uat-20261005\\E01\\texts.json",
+      "sha256": "74d673ceca266b6e58a2fd7784267fde8a7fe68c5636d1415d2f17debfa31786",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\E01\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\product-uat-20261005\\E03\\texts.json",
+      "sha256": "9540129a3494cd085025f2c8ef89680881f8ddcf57824056fe4a5e47038b8cd7",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\E03\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W01\\texts.json",
+      "sha256": "85b26557071d18c98e4e93d8548d6d514b4eec403d01cac76b3d582bd017e31e",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\W01\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\product-uat-20261005\\W02\\texts.json",
+      "sha256": "ea78f59ee86e0379640616bdc667c6bda686aaebc91e5a3deb174dbabd7d1a1c",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\W02\\texts.json"
+    },
+    {
+      "retained_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W03\\texts.json",
+      "sha256": "3b3faa1d7759a244fd1f1aa5c7376fa77dc4299bc3a5a0261d1ef2bce5e31b65",
+      "source": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\product-uat-20261005\\W03\\texts.json"
+    }
+  ],
+  "sources": [
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "TIFF",
+          "pages": 1,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\validation\\A2-SG-008\\A2-SG-008.tiff",
+          "sha256": "9f6fa325deeff1839d8f6e667215770b19042df617c1f4450a1c6cb0e35cd3cd"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "DOWNLOAD_ALLOWED_FOR_LOCAL_EVALUATION",
+      "source_drawing_id": "A2-SG-008",
+      "source_family_id": "US_NARA_BUILDING9",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "JPEG",
+          "pages": 1,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\dev\\A2-SG-009\\A2-SG-009.jpg",
+          "sha256": "25b448cbfca0375352afe2a6bc91fdd9a5eb826d744b5075cd26d89182f2297a"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "DOWNLOAD_ALLOWED_FOR_LOCAL_EVALUATION",
+      "source_drawing_id": "A2-SG-009",
+      "source_family_id": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "A2-SG-010",
+      "source_family_id": "US_OREGON_HISTORICAL_RESIDENCE",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 1,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\dev\\A2-SG-022\\A2-SG-022.pdf",
+          "sha256": "6209a0171f8617a0246b3da986e9af51c0bfd0a96760345ea0d49a0ba929198f"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "A2-SG-022",
+      "source_family_id": "UK_BANBURY_TRAMWAY_ASBUILT",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 25,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-12366099AAD5F10E/G0R2-12366099AAD5F10E.pdf",
+          "sha256": "1dd7c51e97571a61798b1703da12d6f3a40b93863362b424916f1e6fb6453a6b"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 25,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-12366099AAD5F10E",
+      "source_family_id": "JP_ISHINOMAKI_EAST_SCHOOL_MEAL_CENTER",
+      "source_kind": "UNKNOWN",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 21,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-15EE2398726E8037\\G0R2-15EE2398726E8037.pdf",
+          "sha256": "a50f0ff36426ab1829fa0b43ad4fb73e699e6f197e0ef0692ec0da95a8b18350"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 21,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-15EE2398726E8037",
+      "source_family_id": "JP_IGA_4291000114",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 14,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-2279F661AA38A9F4/G0R2-2279F661AA38A9F4.pdf",
+          "sha256": "aa18769be8a0a9e43f6668eed71f55322afab2dd85541fb7c62cc227297b8537"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 14,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-2279F661AA38A9F4",
+      "source_family_id": "US_LOC_HABS_HI0583",
+      "source_kind": "CONFIRMED_MIXED",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 66,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\validation\\G0R2-22E85E2DB7746A00\\G0R2-22E85E2DB7746A00.pdf",
+          "sha256": "34036769fc2bc9c1434a36b624ef4aea84326e55b1137c33e325a7a732754db1"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 66,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-22E85E2DB7746A00",
+      "source_family_id": "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+      "source_kind": "UNKNOWN",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-2E9BDFFDD8C89AE7",
+      "source_family_id": "JP_SAKADO_KITASAKADO_SCHOOL_DEMOLITION",
+      "source_kind": "UNKNOWN",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 36,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-345AA483FD068A11/G0R2-345AA483FD068A11.pdf",
+          "sha256": "b1732b6afab96a055c500678bd475680ba286be1006260be3089fd71dc63136b"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 36,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-345AA483FD068A11",
+      "source_family_id": "CN_HUNAN_HUAYUAN_PUBLIC_DRAWING_2023",
+      "source_kind": "UNKNOWN",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 47,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-3560D9BEBEAA3543\\G0R2-3560D9BEBEAA3543.pdf",
+          "sha256": "33a353748dc4bfbca9c7f217aea214ba91f65612e75ebaf3da292d4abf91e698"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 47,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543",
+      "source_family_id": "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 133,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-3B970FD759C6026F\\G0R2-3B970FD759C6026F.pdf",
+          "sha256": "ab5ea063a7fec1c6b3761a8839606671d19e75fc7b6319175abff9ad641c3b77"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 133,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-3B970FD759C6026F",
+      "source_family_id": "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 14,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-420BF9693D881A41/G0R2-420BF9693D881A41.pdf",
+          "sha256": "b41518a2a09af41adc1940767d9aa94f75c37030628a6df9db9591d6c3bf7a23"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 14,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-420BF9693D881A41",
+      "source_family_id": "NZ_WESTLAND_MILK_STAFF_CARPARK_150080",
+      "source_kind": "UNKNOWN",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 79,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-4A34D1B8D93B1B06\\G0R2-4A34D1B8D93B1B06.pdf",
+          "sha256": "1c3c71e89aedb022482aeefc62f19d47cdf2c0da2dd4b83c234fc1d0d8620b3e"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 79,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-4A34D1B8D93B1B06",
+      "source_family_id": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "TIFF",
+          "pages": 1,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-4CF3C6EBEFDD1EBE/G0R2-4CF3C6EBEFDD1EBE.tiff",
+          "sha256": "1f77dd22a2b44115bd0ffa2e4e20133484ecfe1bb56fd4fbceff9e60ff41ce9e"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-4CF3C6EBEFDD1EBE",
+      "source_family_id": "US_LOC_HAER_CA1868",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 20,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\validation\\G0R2-4DC97797ABE2CB18\\G0R2-4DC97797ABE2CB18.pdf",
+          "sha256": "da87543c3fff52e6172d61b6df060dfdc8f89eb5b8fff8efb4f50e7552723e76"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 20,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-4DC97797ABE2CB18",
+      "source_family_id": "AU_GOLDCOAST_OPW_2014_2240",
+      "source_kind": "UNKNOWN",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-53C88494D6CE893C",
+      "source_family_id": "AU_ARGYLE_STORES_301350511",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 2,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-5FB6FE7CB6D476E1/G0R2-5FB6FE7CB6D476E1.pdf",
+          "sha256": "4e4f9c92ebb5d8bcec47ea47256c5bdf763064a7a50aab8d9420f564233d108c"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 2,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-5FB6FE7CB6D476E1",
+      "source_family_id": "US_LOC_HABS_FL0572",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 20,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-6C9464FA73A2A027\\G0R2-6C9464FA73A2A027.pdf",
+          "sha256": "6c07c50543f4526d2f8481a65364b9e6878f41031dd19bd67c716ff727fe8a12"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 20,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-6C9464FA73A2A027",
+      "source_family_id": "JP_IGA_2020000378",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "PDF",
+          "pages": 37,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-6DFEC5FDC69FC0CD/G0R2-6DFEC5FDC69FC0CD.pdf",
+          "sha256": "f43898eb177c797a2a2bf1ab3bf60951fcfca937e920c720252486d8ad229be3"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 37,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-6DFEC5FDC69FC0CD",
+      "source_family_id": "US_LOC_HABS_CA4439",
+      "source_kind": "CONFIRMED_MIXED",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 167,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-7E30C7F445081F40\\G0R2-7E30C7F445081F40.pdf",
+          "sha256": "b4e5dc7fe177e21e276555a470777cd27b6c2dbe1516d4bac43833f43898e199"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 167,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-7E30C7F445081F40",
+      "source_family_id": "AU_NSW_P5_2023_61",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 1,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\validation\\G0R2-99D5B85436EBB965\\G0R2-99D5B85436EBB965.pdf",
+          "sha256": "e911ff01ae3cb840443d9ec3967cb711ca4281b1bbf46912f55abd91e9e763d8"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-99D5B85436EBB965",
+      "source_family_id": "US_LOC_HABS_GU0014",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "content_accessed": false,
+      "files": [
+        {
+          "availability": "RECORDED_ONLY",
+          "format": "TIFF",
+          "pages": 1,
+          "path": "local-artifacts/draftsman/corpus-v1/locked-blind/G0R2-AEA044C8E75CB3AB/G0R2-AEA044C8E75CB3AB.tiff",
+          "sha256": "f4bb61750786bbc019334296c2111a7fd68f7c5eebd1abe40b07c535ce08029d"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 1,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-AEA044C8E75CB3AB",
+      "source_family_id": "US_LOC_HAER_HI0822",
+      "source_kind": "CONFIRMED_RASTER",
+      "split": "blind_test",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-AFE53C2A00EB7D8F",
+      "source_family_id": "AU_SYDNEY_BRICK_KILN_212710",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 79,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-B441E5911528F402\\G0R2-B441E5911528F402.pdf",
+          "sha256": "d5d415ed7e7236a18d8d2a6ba41668216e0f1147436e430999f7dc71c95f691c"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 79,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-B441E5911528F402",
+      "source_family_id": "US_LOC_HABS_FL0790",
+      "source_kind": "CONFIRMED_MIXED",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 6,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\corpus-v1\\dev\\G0R2-C2D095E069663C17\\G0R2-C2D095E069663C17.pdf",
+          "sha256": "8cc87c5a2f476a2310abd2ca759e31a3186823e814aa31e73e899a7d425f0cc6"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 6,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "G0R2-C2D095E069663C17",
+      "source_family_id": "AU_NSW_P5_2024_93",
+      "source_kind": "UNKNOWN",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 58,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\local-artifacts\\draftsman\\corpus-v1\\validation\\G0R2-F519B357241CAC3A\\G0R2-F519B357241CAC3A.pdf",
+          "sha256": "1e02c361ffbdcf016e711b0d32996dcddee9cb0e1330058918c3fd5cb6ac0ab1"
+        }
+      ],
+      "origin": "corpus-v1",
+      "pages": 58,
+      "rights": "ARCHIVE_ADVISORY",
+      "source_drawing_id": "G0R2-F519B357241CAC3A",
+      "source_family_id": "US_LOC_HABS_UT0288",
+      "source_kind": "CONFIRMED_MIXED",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "SGC-007",
+      "source_family_id": "US_TITUSVILLE_SCHOOL",
+      "source_kind": "CONFIRMED_VECTOR",
+      "split": "validation",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "SGC-008",
+      "source_family_id": "US_FARMINGTON_SENIOR_CENTER",
+      "source_kind": "CONFIRMED_VECTOR",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "content_accessed": false,
+      "files": [],
+      "origin": "corpus-v1",
+      "pages": null,
+      "rights": "RIGHTS_UNCLEAR",
+      "source_drawing_id": "SGC-024",
+      "source_family_id": "US_SOUTH_SEATTLE_COLLEGE",
+      "source_kind": "CONFIRMED_VECTOR",
+      "split": "train",
+      "vector_ground_truth": "NOT_QUALIFIED"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 7,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\cad_photo_to_dxf\\tests\\real_regression\\assets\\sources\\warehouse-electrical-vector.pdf",
+          "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017"
+        }
+      ],
+      "origin": "P1/P2B/P3A/real-UAT",
+      "pages": 7,
+      "rights": "INTERNAL_TASK_ONLY; no public redistribution",
+      "source_drawing_id": "warehouse-electrical",
+      "source_family_id": "user-project-haiyang",
+      "source_kind": "VECTOR_PDF",
+      "split": "train",
+      "vector_ground_truth": "SOURCE_VECTOR_PATHS_NOT_ENTITY_TRUTH"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "PDF",
+          "pages": 14,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\cad_photo_to_dxf\\tests\\real_regression\\assets\\sources\\environment-building-scan.pdf",
+          "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7"
+        }
+      ],
+      "origin": "P1/P2B/P3A/real-UAT",
+      "pages": 14,
+      "rights": "INTERNAL_TASK_ONLY; no public redistribution",
+      "source_drawing_id": "environment-building",
+      "source_family_id": "user-project-haiyang",
+      "source_kind": "RASTER_PDF",
+      "split": "train",
+      "vector_ground_truth": "NONE"
+    },
+    {
+      "availability": "AVAILABLE",
+      "content_accessed": false,
+      "files": [
+        {
+          "format": "JPG",
+          "pages": 1,
+          "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\cad_photo_to_dxf\\tests\\real_regression\\assets\\test.jpg",
+          "sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af"
+        }
+      ],
+      "origin": "retained-regression-photo",
+      "pages": 1,
+      "rights": "INTERNAL_TASK_ONLY; no public redistribution",
+      "source_drawing_id": "sample-plan-photo",
+      "source_family_id": "sample-plan-photo",
+      "source_kind": "PHOTO",
+      "split": "train",
+      "vector_ground_truth": "NONE"
+    }
+  ],
+  "version": "p3b-inventory-v1"
+}

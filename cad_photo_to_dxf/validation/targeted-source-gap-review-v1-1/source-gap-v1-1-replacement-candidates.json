@@ -1,0 +1,31 @@
+{
+  "new_candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-SOURCE-GAP-06B5674E3BF1-REPAIRED-56758299A192",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_1",
+  "protocol": "SOURCE_GAP_REVIEW_V1",
+  "replacement_candidates": [
+    {
+      "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "axis_status": "AXIS_SUPPORT_SUPPORTED",
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "diagnostic_stratum": "AMBIGUOUS_EDGE_CASES",
+      "orientation": "horizontal",
+      "prior_review_status": "PREVIOUSLY_UNREVIEWED",
+      "reason_selected": "Matched the removed candidate's AMBIGUOUS_EDGE_CASES stratum using the original SOURCE_GAP_REVIEW_V1 deterministic rank after excluding text-rejected, retained, prior-reviewed, and exact-duplicate candidates.",
+      "selection_score": {
+        "base_score": 0.888816,
+        "combined_score": 1.008816,
+        "diversity_bonus": 0.12,
+        "eligible_count": 70,
+        "eligible_rank": 1
+      },
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P1",
+      "span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "text_eligibility": "ELIGIBLE_UNCHANGED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "visible_gap_length_px": 6.0
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "TARGETED_SOURCE_GAP_REVIEW_V1_1_REPAIR"
+}

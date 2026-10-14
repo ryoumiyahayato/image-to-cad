@@ -1,0 +1,105 @@
+{
+  "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+  "contract_version": "non-destructive-editable-text-v1",
+  "evidence_mode": "compact",
+  "passed": true,
+  "results": [
+    {
+      "errors": [],
+      "full_structure_id_expected": "f102cf60cda4f6c1fd38df5a398a2afe3e39b86ad7c7967de02042a1966ca173",
+      "full_structure_id_observed": "f102cf60cda4f6c1fd38df5a398a2afe3e39b86ad7c7967de02042a1966ca173",
+      "page_id": "environment-plan-page-003-150dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "6cfee7631e221619f3dde0b430c86df394667d4c63e2a09ade2a3702364f0a81",
+      "full_structure_id_observed": "6cfee7631e221619f3dde0b430c86df394667d4c63e2a09ade2a3702364f0a81",
+      "page_id": "environment-scan-page-001-120dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "95742be6e0345561130863efdc546f199b60966de366aacf46739c432d86a2f1",
+      "full_structure_id_observed": "95742be6e0345561130863efdc546f199b60966de366aacf46739c432d86a2f1",
+      "page_id": "environment-scan-page-002-120dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "47a7ed550ae08f45dd9dbf78b0f3397951383248db67921eec3c4897f36d4239",
+      "full_structure_id_observed": "47a7ed550ae08f45dd9dbf78b0f3397951383248db67921eec3c4897f36d4239",
+      "page_id": "environment-scan-page-004-120dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "bf4429c38b55955be52f86659ad9793aea2a5e12d2ffd59c290a8ac7e25249da",
+      "full_structure_id_observed": "bf4429c38b55955be52f86659ad9793aea2a5e12d2ffd59c290a8ac7e25249da",
+      "page_id": "environment-scan-page-008-120dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "ef773af1b3f77d1c7ec1b8c5ccfcadf7c8ed01df68956e849ec58493fcad8af7",
+      "full_structure_id_observed": "ef773af1b3f77d1c7ec1b8c5ccfcadf7c8ed01df68956e849ec58493fcad8af7",
+      "page_id": "environment-scan-page-014-120dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+      "full_structure_id_observed": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+      "page_id": "perspective-sample-plan",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "6f29197ea5d469c8e69245472e1ac122e8c86755f526dfa007c79013a31646f2",
+      "full_structure_id_observed": "6f29197ea5d469c8e69245472e1ac122e8c86755f526dfa007c79013a31646f2",
+      "page_id": "warehouse-index-page-001-150dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "d73f9ead44e316f29436221ab983e82f656d8a03b1eff5cbe2cb41fd74b50d6f",
+      "full_structure_id_observed": "d73f9ead44e316f29436221ab983e82f656d8a03b1eff5cbe2cb41fd74b50d6f",
+      "page_id": "warehouse-index-page-001-300dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "6a4fc732a2e92fcf2b9f1e19031b15d2aeab2af127c92ddaa6c9f8ebe59b4499",
+      "full_structure_id_observed": "6a4fc732a2e92fcf2b9f1e19031b15d2aeab2af127c92ddaa6c9f8ebe59b4499",
+      "page_id": "warehouse-index-page-001-600dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "b4ab43947d4daa702721474a4aacee25c638671d02874c8699ecdce8554fa824",
+      "full_structure_id_observed": "b4ab43947d4daa702721474a4aacee25c638671d02874c8699ecdce8554fa824",
+      "page_id": "warehouse-plan-page-003-72dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    },
+    {
+      "errors": [],
+      "full_structure_id_expected": "189a5f3012f5cf0835ff4f1df276d94ace4d48ab8cb1b2c6ef7d012d19e4f774",
+      "full_structure_id_observed": "189a5f3012f5cf0835ff4f1df276d94ace4d48ab8cb1b2c6ef7d012d19e4f774",
+      "page_id": "warehouse-system-page-002-72dpi",
+      "passed": true,
+      "text_geometry_changed": true
+    }
+  ]
+}

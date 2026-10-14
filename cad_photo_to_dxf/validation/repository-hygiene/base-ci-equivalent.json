@@ -1,0 +1,478 @@
+{
+  "finding_count": 94,
+  "findings": [
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/#environment-page-003-full-v2.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2633289
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/#warehouse-page-001-full-v2.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 307506
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/#warehouse-page-001-full.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 443797
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/environment-page-003-full-v2.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2662209
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/warehouse-page-001-full-v2.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 336302
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/actual-pdf-fix-2026-07-27/warehouse-page-001-full.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 471916
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-plan-page-003-150dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1951803
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-scan-page-001-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1735834
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-scan-page-002-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1489502
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-scan-page-004-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1709392
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-scan-page-008-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1251244
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/environment-scan-page-014-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1795135
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/perspective-sample-plan.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 268338
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/warehouse-index-page-001-150dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 571044
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/warehouse-plan-page-003-72dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1118604
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/before/dxf/warehouse-system-page-002-72dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 794781
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit1-page001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3171205
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit2-page001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3176838
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit3-page001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3300010
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit4-librecad-editability-edited.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 22802
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit4-librecad-editability-original.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 46137
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit4-librecad-editability-roundtrip.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 29352
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/checkpoints/commit4-page001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3366214
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-001-120dpi/environment-formal-page-001-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1939410
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-002-120dpi/environment-formal-page-002-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1575684
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-003-150dpi/environment-formal-page-003-150dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2098978
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-004-120dpi/environment-formal-page-004-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1957922
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-008-120dpi/environment-formal-page-008-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1314525
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-formal-page-014-120dpi/environment-formal-page-014-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1983874
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-001-120dpi/environment-source-page-001-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1912489
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-002-120dpi/environment-source-page-002-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1545660
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-003-120dpi/environment-source-page-003-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1751768
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-004-120dpi/environment-source-page-004-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1888484
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-005-120dpi/environment-source-page-005-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1701385
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-006-120dpi/environment-source-page-006-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1761256
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-007-120dpi/environment-source-page-007-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1782894
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-008-120dpi/environment-source-page-008-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1262464
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-009-120dpi/environment-source-page-009-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1660759
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-010-120dpi/environment-source-page-010-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1742956
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-011-120dpi/environment-source-page-011-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1678678
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-012-120dpi/environment-source-page-012-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1856515
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-013-120dpi/environment-source-page-013-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1721272
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/environment-source-page-014-120dpi/environment-source-page-014-120dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1915332
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/page-001-d9fbda7-comparison-300dpi/page-001-d9fbda7-comparison-300dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 4166873
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/page-001-fixed-failure-240dpi/page-001-fixed-failure-240dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3366215
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/perspective-sample-plan-096dpi/perspective-sample-plan-096dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 271345
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-formal-page-001-150dpi/warehouse-formal-page-001-150dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 625626
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-001-072dpi/warehouse-source-page-001-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 414991
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-001-300dpi/warehouse-source-page-001-300dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 802165
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-001-600dpi/warehouse-source-page-001-600dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1407997
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-002-072dpi/warehouse-source-page-002-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 903085
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-003-072dpi/warehouse-source-page-003-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1260535
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-004-072dpi/warehouse-source-page-004-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 876467
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-005-072dpi/warehouse-source-page-005-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 877676
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-006-072dpi/warehouse-source-page-006-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 839639
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/editable-text-recovery/pages/warehouse-source-page-007-072dpi/warehouse-source-page-007-072dpi.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1046631
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/low-quality-blue-line-fix-2026-07-28/environment-page-003-full-v3.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2830343
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/observability/phase3-sample/final/final-structure.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 278582
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v10.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2027024
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v11.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3771736
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v12.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3883298
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v15.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3890688
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v4.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2725796
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v5.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2286707
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v6.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2068604
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-full-v7.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2046075
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#environment-page-003-ownership-v16.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3524009
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/#warehouse-page-002-ownership-v16.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3208741
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v10.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2061712
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v11.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3779033
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v12.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3906202
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v13.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3903276
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v14.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3888395
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v15.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3914903
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v4.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2754390
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v5.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2320605
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v6.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2102034
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v7.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2080647
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v8.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2063413
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-full-v9.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 2065940
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/environment-page-003-ownership-v16.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3545088
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/warehouse-page-001-ownership-v16.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1141610
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/scan-artifact-visual-fix-2026-07-28/warehouse-page-002-ownership-v16.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 3205491
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/current/outputs/environment-page-003.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1192385
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/current/outputs/test.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 234118
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/current/outputs/warehouse-page-001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 671813
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/old/outputs/environment-page-003.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1828570
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/old/outputs/test.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 251956
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/system-refactor-baselines/old/outputs/warehouse-page-001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 728504
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/user-fix-2026-07-27/#titleblock-fixed.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 341953
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/user-fix-2026-07-27/titleblock-fixed.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 368469
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/user-pdf-check/environment-page-001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 1046131
+    },
+    {
+      "path": "cad_photo_to_dxf/validation/user-pdf-check/warehouse-page-001.dxf",
+      "reason": "generated output file is tracked",
+      "size_bytes": 131308
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
+      "reason": "tracked file exceeds repository size limit",
+      "size_bytes": 43717474
+    }
+  ],
+  "maximum_file_size_bytes": 20971520,
+  "passed": false,
+  "repository_root": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p1br2-final"
+}

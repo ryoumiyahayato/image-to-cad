@@ -1,0 +1,215 @@
+{
+  "candidate_primary_semantic_conflict_count": 0,
+  "candidate_source_ownership_violation_count": 0,
+  "checks": {
+    "DXF_audit_error_count_is_zero": true,
+    "DXF_read_save_read_and_edit_passes": true,
+    "OCR_threshold_contract_recorded_unchanged": true,
+    "baseline_was_not_updated": true,
+    "candidate_primary_semantic_conflict_count_is_zero": true,
+    "candidate_source_pixel_ownership_is_conserved": true,
+    "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+    "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+    "fallback_and_text_symbol_conflict_count_is_zero": true,
+    "formal_structure_and_protection_audit_passes": true,
+    "native_TEXT_count_equals_text_emit_eligible_count": true,
+    "native_TEXT_geometry_contract_passes": true,
+    "no_duplicate_visible_text_representation": true,
+    "preview_and_DXF_consumed_same_FinalStructure": true,
+    "replacement_unsafe_does_not_downgrade_eligible_text": true,
+    "unsafe_source_outline_backup_is_default_hidden": true
+  },
+  "duplicate_visible_representation_count": 0,
+  "dxf_audit_error_count": 0,
+  "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\warehouse-source-page-001-300dpi\\warehouse-source-page-001-300dpi.dxf",
+  "dxf_sha256": "02186c83b8f15fdecee9d2ac97b3e8032d54a8d966d4d1b9651c32ce70b8811b",
+  "elapsed_seconds": 62.206,
+  "eligible_candidate_text_symbol_count": 0,
+  "fallback_and_text_symbol_conflict_count": 0,
+  "formal_structural_safety": {
+    "baseline_was_updated": false,
+    "mode": "formal_page_exact_baseline",
+    "passed": true,
+    "records": [
+      {
+        "content_audit": {
+          "object_counts": {
+            "logo": 0,
+            "outline": 167,
+            "signature": 0,
+            "structural_line": 468,
+            "text": 83
+          },
+          "regions": {
+            "forbidden_connection_regions": [
+              {
+                "added_foreground_pixels": 6884,
+                "bbox": [
+                  560,
+                  1840,
+                  1200,
+                  460
+                ],
+                "final_foreground_pixels": 13800,
+                "id": "blank-index-cells-300",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 36,
+                  "preserved_foreground": 13800,
+                  "signature": 0,
+                  "structural_line": 22134,
+                  "text": 0
+                },
+                "source_foreground_pixels": 6916
+              }
+            ],
+            "key_rois": [
+              {
+                "added_foreground_pixels": 123614,
+                "bbox": [
+                  260,
+                  140,
+                  2220,
+                  3360
+                ],
+                "final_foreground_pixels": 408148,
+                "id": "full-index-network-300",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 32680,
+                  "preserved_foreground": 408148,
+                  "signature": 0,
+                  "structural_line": 323143,
+                  "text": 917054
+                },
+                "source_foreground_pixels": 284534
+              }
+            ],
+            "logo_regions": [
+              {
+                "added_foreground_pixels": 6567,
+                "bbox": [
+                  340,
+                  160,
+                  1240,
+                  460
+                ],
+                "final_foreground_pixels": 32346,
+                "id": "wordmark-and-graphic-logo-300",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 12507,
+                  "preserved_foreground": 32346,
+                  "signature": 0,
+                  "structural_line": 20487,
+                  "text": 14828
+                },
+                "source_foreground_pixels": 25779
+              }
+            ],
+            "signature_regions": [],
+            "text_regions_to_preserve": [
+              {
+                "added_foreground_pixels": 75248,
+                "bbox": [
+                  360,
+                  600,
+                  1840,
+                  2100
+                ],
+                "final_foreground_pixels": 225703,
+                "id": "drawing-index-table-300",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 19794,
+                  "preserved_foreground": 225703,
+                  "signature": 0,
+                  "structural_line": 167442,
+                  "text": 623939
+                },
+                "source_foreground_pixels": 150455
+              }
+            ],
+            "true_breaks_to_repair": []
+          },
+          "sha256": "ef44ea325606e362978d5327ce2f8120f7d55220c35bd83a326b6bdd12dc758f",
+          "text_output_contract": {
+            "confidence_hard_reject_count": 0,
+            "downgrade_reasons": {},
+            "fallback_count": 0,
+            "invalid_geometry_count": 0,
+            "ocr_candidate_count": 83,
+            "residual_count": 0,
+            "source_outline_backup_count": 48,
+            "source_outline_suppressible_count": 35,
+            "text_count": 83,
+            "text_emit_eligible_count": 83
+          }
+        },
+        "errors": [],
+        "expected_straight_line_count": 468,
+        "formal_document_id": "warehouse-index-page-001-300dpi",
+        "legacy_content_audit_errors": [],
+        "nonblocking_text_routing_differences": [],
+        "observed_straight_line_count": 468,
+        "passed": true
+      }
+    ]
+  },
+  "layer_entity_counts": {
+    "OCR_TEXT": 83,
+    "SOURCE_TEXT_OUTLINE": 728,
+    "TRACE_CURVE": 25,
+    "TRACE_STRAIGHT": 468,
+    "TRACE_TEXT_SYMBOL": 154
+  },
+  "native_TEXT_count": 83,
+  "passed": true,
+  "replacement_unsafe_fallback_without_hard_reject_count": 0,
+  "residual_OCR_candidate_count": 0,
+  "roundtrip": {
+    "all_reopened_entities_still_TEXT": true,
+    "audit_error_count": 0,
+    "expected_TEXT_count": 83,
+    "initial_TEXT_count": 83,
+    "modified_original": "图纸目录",
+    "modified_value": "图纸目录 [editable-roundtrip]",
+    "modified_value_preserved": true,
+    "passed": true,
+    "reopened_TEXT_count": 83
+  },
+  "run_id": "warehouse-source-page-001-300dpi",
+  "schema_version": 1,
+  "source_text_outline_candidate_count": 48,
+  "source_text_outline_entity_count": 728,
+  "source_text_outline_layer": {
+    "default_visible": false,
+    "frozen": true,
+    "off": true,
+    "present": true
+  },
+  "structure_id": "d73f9ead44e316f29436221ab983e82f656d8a03b1eff5cbe2cb41fd74b50d6f",
+  "text_symbol_entity_count": 154,
+  "text_symbol_ownership": {
+    "eligible_geometric_touch_objects": 1,
+    "eligible_geometric_touch_pixels": 3,
+    "eligible_owned_objects": 0,
+    "eligible_owned_pixels": 0,
+    "uncertain_geometric_touch_objects": 0,
+    "uncertain_geometric_touch_pixels": 0,
+    "uncertain_owned_objects": 0,
+    "uncertain_owned_pixels": 0
+  },
+  "uncertain_text_candidate_count": 0,
+  "uncertain_text_outline_entity_count": 0,
+  "uncertain_text_outline_layer": {
+    "default_visible": true,
+    "frozen": false,
+    "off": false,
+    "present": true
+  }
+}

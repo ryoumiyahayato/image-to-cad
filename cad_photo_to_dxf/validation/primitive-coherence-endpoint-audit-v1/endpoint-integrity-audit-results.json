@@ -1,0 +1,2567 @@
+{
+  "cases": [
+    {
+      "candidate_id": "FRESH1-2329D538A065BFC7E0D8",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.307692,
+        "max_tail_offset_change_widths": 0.5,
+        "max_tail_width_ratio": 13.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 1,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 2,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.307692,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.5,
+                "tail_width_ratio": 13.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.5,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                1933,
+                1156
+              ],
+              "start": [
+                1932,
+                1105
+              ]
+            },
+            "raw_hough_id": "raw-hough-000966"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.1875,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1932,
+                1216
+              ],
+              "start": [
+                1932,
+                1163
+              ]
+            },
+            "raw_hough_id": "raw-hough-000836"
+          }
+        }
+      ],
+      "review_index": 1
+    },
+    {
+      "candidate_id": "FRESH1-24BCF545F595AC67795A",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.0,
+        "max_tail_offset_change_widths": 0.401408,
+        "max_tail_width_ratio": 2.0,
+        "reason_counts": {
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "OBJECT_GEOMETRY",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.401408,
+                "tail_offset_change_widths": 0.401408,
+                "tail_width_ratio": 2.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                131,
+                276
+              ],
+              "start": [
+                131,
+                322
+              ]
+            },
+            "raw_hough_id": "raw-hough-001004"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.334204,
+                "tail_offset_change_widths": 0.167102,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.334204,
+                "tail_offset_change_widths": 0.167102,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                131,
+                352
+              ],
+              "start": [
+                131,
+                407
+              ]
+            },
+            "raw_hough_id": "raw-hough-002053"
+          }
+        }
+      ],
+      "review_index": 4
+    },
+    {
+      "candidate_id": "FRESH1-25AEF7268BE5D867D9D9",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.285714,
+        "max_tail_offset_change_widths": 1.0,
+        "max_tail_width_ratio": 8.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 3,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 1
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.111111,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.5,
+                "tail_width_ratio": 8.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.5,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2247,
+                385
+              ],
+              "start": [
+                2246,
+                352
+              ]
+            },
+            "raw_hough_id": "raw-hough-000773"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.285714,
+                "tail_offset_change_px": 1.0,
+                "tail_offset_change_widths": 1.0,
+                "tail_width_ratio": 8.0
+              },
+              "extension_distance_px": 6.720476,
+              "start": {
+                "beyond_support_fraction": 0.25,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.84006,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.190476,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 7.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2247,
+                417
+              ],
+              "start": [
+                2246,
+                501
+              ]
+            },
+            "raw_hough_id": "raw-hough-000607"
+          }
+        }
+      ],
+      "review_index": 5
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.375,
+        "max_tail_offset_change_widths": 0.491903,
+        "max_tail_width_ratio": 13.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 3,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.25,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 2.55,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 8.16,
+              "start": {
+                "beyond_support_fraction": 0.375,
+                "endpoint": "start",
+                "inside_support_fraction": 0.941176,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.51,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.04,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 10.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2212,
+                814
+              ],
+              "start": [
+                2212,
+                916
+              ]
+            },
+            "raw_hough_id": "raw-hough-001184"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.75,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.125,
+                "tail_offset_change_px": 0.491903,
+                "tail_offset_change_widths": 0.491903,
+                "tail_width_ratio": 13.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.125,
+                "endpoint": "start",
+                "inside_support_fraction": 0.882353,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.375,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 10.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2212,
+                952
+              ],
+              "start": [
+                2212,
+                921
+              ]
+            },
+            "raw_hough_id": "raw-hough-000950"
+          }
+        }
+      ],
+      "review_index": 6
+    },
+    {
+      "candidate_id": "FRESH1-3CF03111AF3D7D733A74",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.0,
+        "max_tail_offset_change_widths": 0.0,
+        "max_tail_width_ratio": 1.0,
+        "reason_counts": {
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.375,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 2.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2023,
+                1375
+              ],
+              "start": [
+                2023,
+                1328
+              ]
+            },
+            "raw_hough_id": "raw-hough-001298"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2023,
+                1428
+              ],
+              "start": [
+                2023,
+                1380
+              ]
+            },
+            "raw_hough_id": "raw-hough-001082"
+          }
+        }
+      ],
+      "review_index": 8
+    },
+    {
+      "candidate_id": "FRESH1-48FEEEE4479EF194E24A",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.142857,
+        "max_tail_junction_fraction": 0.357143,
+        "max_tail_offset_change_widths": 0.973658,
+        "max_tail_width_ratio": 7.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 1,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 2,
+          "OVERSHOOT_BEYOND_SOURCE_TERMINATION": 1
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_REJECTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_REJECTED",
+      "human_note": null,
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.166667,
+                "tail_offset_change_px": 0.973658,
+                "tail_offset_change_widths": 0.973658,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.75,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.083333,
+                "tail_offset_change_px": 0.026342,
+                "tail_offset_change_widths": 0.026342,
+                "tail_width_ratio": 7.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                660,
+                266
+              ],
+              "start": [
+                612,
+                265
+              ]
+            },
+            "raw_hough_id": "raw-hough-000741"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.25,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.142857,
+                "reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+                "source_termination_distance_px": 1.875,
+                "status": "ENDPOINT_OVERSHOOT_REJECTED",
+                "tail_junction_fraction": 0.357143,
+                "tail_offset_change_px": 0.330744,
+                "tail_offset_change_widths": 0.330744,
+                "tail_width_ratio": 2.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.142857,
+                "tail_offset_change_px": 0.235794,
+                "tail_offset_change_widths": 0.235794,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_REJECTED"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                721,
+                265
+              ],
+              "start": [
+                665,
+                266
+              ]
+            },
+            "raw_hough_id": "raw-hough-000609"
+          }
+        }
+      ],
+      "review_index": 9
+    },
+    {
+      "candidate_id": "FRESH1-7ABB59DA99C32EC5A90A",
+      "endpoint_profile": {
+        "endpoint_count": 6,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.25,
+        "max_tail_width_ratio": 6.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 1,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 5
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 6
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "虚线",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 0.882353,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.4375,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                659,
+                1346
+              ],
+              "start": [
+                659,
+                1378
+              ]
+            },
+            "raw_hough_id": "raw-hough-000299"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 0.882353,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.4375,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                661,
+                1346
+              ],
+              "start": [
+                661,
+                1378
+              ]
+            },
+            "raw_hough_id": "raw-hough-000499"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.625,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 1.875,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 0.5
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 0.75,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 5.0,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 6.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                659,
+                1392
+              ],
+              "start": [
+                659,
+                1442
+              ]
+            },
+            "raw_hough_id": "raw-hough-000386"
+          }
+        }
+      ],
+      "review_index": 10
+    },
+    {
+      "candidate_id": "FRESH1-2DBF66108AA424A95F6E",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.833333,
+        "max_tail_offset_change_widths": 0.16516,
+        "max_tail_width_ratio": 1.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 2,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 1,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.833333,
+                "tail_offset_change_px": 0.66064,
+                "tail_offset_change_widths": 0.16516,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 24.0,
+              "start": {
+                "beyond_support_fraction": 0.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.361111,
+                "tail_offset_change_px": 0.105999,
+                "tail_offset_change_widths": 0.0265,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                476,
+                1777
+              ],
+              "start": [
+                79,
+                1777
+              ]
+            },
+            "raw_hough_id": "raw-hough-001863"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.034329,
+                "tail_offset_change_widths": 0.008582,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 20.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.6,
+                "tail_offset_change_px": 0.034329,
+                "tail_offset_change_widths": 0.008582,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                580,
+                1777
+              ],
+              "start": [
+                481,
+                1777
+              ]
+            },
+            "raw_hough_id": "raw-hough-000255"
+          }
+        }
+      ],
+      "review_index": 11
+    },
+    {
+      "candidate_id": "FRESH1-392CD01D96A8D10C5946",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.25,
+        "max_tail_width_ratio": 7.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "这个两个识别的线段中间还有就是相当于本身所处的位置中有一些间断这两个并不应该放在同一个线上",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.8125,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.619469,
+                "tail_offset_change_widths": 0.20649,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 15.0,
+              "start": {
+                "beyond_support_fraction": 0.875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.380531,
+                "tail_offset_change_widths": 0.126844,
+                "tail_width_ratio": 7.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2186,
+                1395
+              ],
+              "start": [
+                2126,
+                1396
+              ]
+            },
+            "raw_hough_id": "raw-hough-000555"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 5.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 0.6875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 1.875,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 6.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2226,
+                1396
+              ],
+              "start": [
+                2191,
+                1397
+              ]
+            },
+            "raw_hough_id": "raw-hough-001986"
+          }
+        }
+      ],
+      "review_index": 12
+    },
+    {
+      "candidate_id": "FRESH1-3025B9264AEDC21BE849",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.236818,
+        "max_tail_width_ratio": 10.5,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 3,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 1
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "这是两个表格中的不能放在一块",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.5625,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.25,
+                "tail_offset_change_px": 0.473637,
+                "tail_offset_change_widths": 0.236818,
+                "tail_width_ratio": 10.5
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.453055,
+                "tail_offset_change_widths": 0.226527,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                786,
+                387
+              ],
+              "start": [
+                740,
+                388
+              ]
+            },
+            "raw_hough_id": "raw-hough-002057"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.334204,
+                "tail_offset_change_widths": 0.167102,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 0.5625,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.25,
+                "tail_offset_change_px": 0.060125,
+                "tail_offset_change_widths": 0.030062,
+                "tail_width_ratio": 10.5
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                838,
+                388
+              ],
+              "start": [
+                791,
+                388
+              ]
+            },
+            "raw_hough_id": "raw-hough-000397"
+          }
+        }
+      ],
+      "review_index": 13
+    },
+    {
+      "candidate_id": "FRESH1-33163D6DB78308987FD9",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.05,
+        "max_tail_junction_fraction": 0.020833,
+        "max_tail_offset_change_widths": 0.024117,
+        "max_tail_width_ratio": 1.0,
+        "reason_counts": {
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 3,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "非常标准的图片的边线因为这个纸张的post而导致了一些的识别问题而且你还能够看到就这个蓝线旁边的这个还有一条黑线实际上也因为这个破损导致了它没有办法把它识别成调完整的直线",
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.75,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 4.5,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.002777,
+                "tail_offset_change_widths": 0.001389,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 24.0,
+              "start": {
+                "beyond_support_fraction": 0.75,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.020833,
+                "tail_offset_change_px": 0.048234,
+                "tail_offset_change_widths": 0.024117,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                29,
+                566
+              ],
+              "start": [
+                29,
+                883
+              ]
+            },
+            "raw_hough_id": "raw-hough-000779"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.5,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.05,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 0.66,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.025479,
+                "tail_offset_change_widths": 0.01274,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.56,
+              "start": {
+                "beyond_support_fraction": 0.25,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.05,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 1.98,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.029762,
+                "tail_offset_change_widths": 0.014881,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                29,
+                889
+              ],
+              "start": [
+                29,
+                1021
+              ]
+            },
+            "raw_hough_id": "raw-hough-000096"
+          }
+        }
+      ],
+      "review_index": 14
+    },
+    {
+      "candidate_id": "FRESH1-49234CBA9EF19ACA2B93",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.727273,
+        "max_tail_offset_change_widths": 0.0,
+        "max_tail_width_ratio": 2.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 1,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 2,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "这个错误太明显了我就不吸收了这个很明显是两个logo中间的空缺它识别成了这地方可以补齐",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.3125,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 1.5,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                460,
+                430
+              ],
+              "start": [
+                429,
+                430
+              ]
+            },
+            "raw_hough_id": "raw-hough-000190"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.8125,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 4.5,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.75,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.727273,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 2.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                545,
+                430
+              ],
+              "start": [
+                501,
+                430
+              ]
+            },
+            "raw_hough_id": "raw-hough-000162"
+          }
+        }
+      ],
+      "review_index": 15
+    },
+    {
+      "candidate_id": "FRESH1-25E38770B7F837BE0915",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.376011,
+        "max_tail_width_ratio": 3.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "OBJECT_GEOMETRY",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.888889,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.668408,
+                "tail_offset_change_widths": 0.334204,
+                "tail_width_ratio": 3.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                684,
+                814
+              ],
+              "start": [
+                684,
+                868
+              ]
+            },
+            "raw_hough_id": "raw-hough-001502"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.5,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 5.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.777778,
+                "tail_offset_change_px": 0.752022,
+                "tail_offset_change_widths": 0.376011,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.512366,
+                "tail_offset_change_widths": 0.256183,
+                "tail_width_ratio": 2.5
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                684,
+                927
+              ],
+              "start": [
+                683,
+                873
+              ]
+            },
+            "raw_hough_id": "raw-hough-001638"
+          }
+        }
+      ],
+      "review_index": 17
+    },
+    {
+      "candidate_id": "FRESH1-2B13FEF419461264C185",
+      "endpoint_profile": {
+        "endpoint_count": 6,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.875,
+        "max_tail_offset_change_widths": 0.151402,
+        "max_tail_width_ratio": 7.5,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 2,
+          "INSUFFICIENT_ENDPOINT_EVIDENCE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 6
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "我必须说明一下他这边的这个蓝线的识别把线段延伸到了旁边这个标点符号的1上这个是有很明显的这个识别上的错误和问题的",
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "ANNOTATION_LAYOUT",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.348064,
+                "tail_offset_change_widths": 0.116021,
+                "tail_width_ratio": 0.666667
+              },
+              "extension_distance_px": 15.0,
+              "start": {
+                "beyond_support_fraction": 0.9375,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": 15.0,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.046149,
+                "tail_offset_change_widths": 0.015383,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                1602,
+                1508
+              ],
+              "start": [
+                1570,
+                1508
+              ]
+            },
+            "raw_hough_id": "raw-hough-001580"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0,
+                "endpoint": "end",
+                "inside_support_fraction": 0.941176,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.875,
+                "tail_offset_change_px": 0.454206,
+                "tail_offset_change_widths": 0.151402,
+                "tail_width_ratio": 7.5
+              },
+              "extension_distance_px": 15.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.017667,
+                "tail_offset_change_widths": 0.005889,
+                "tail_width_ratio": 1.5
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1674,
+                1508
+              ],
+              "start": [
+                1607,
+                1508
+              ]
+            },
+            "raw_hough_id": "raw-hough-000757"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0,
+                "endpoint": "end",
+                "inside_support_fraction": 0.941176,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.875,
+                "tail_offset_change_px": 0.440244,
+                "tail_offset_change_widths": 0.146748,
+                "tail_width_ratio": 7.5
+              },
+              "extension_distance_px": 15.0,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "INSUFFICIENT_ENDPOINT_EVIDENCE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.03163,
+                "tail_offset_change_widths": 0.010543,
+                "tail_width_ratio": 1.5
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1674,
+                1509
+              ],
+              "start": [
+                1607,
+                1509
+              ]
+            },
+            "raw_hough_id": "raw-hough-000936"
+          }
+        }
+      ],
+      "review_index": 18
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.125,
+        "max_tail_junction_fraction": 0.909091,
+        "max_tail_offset_change_widths": 0.4,
+        "max_tail_width_ratio": 9.666667,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 3,
+          "OVERSHOOT_BEYOND_SOURCE_TERMINATION": 1
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_REJECTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_REJECTED",
+      "human_note": "显而易见的问题把多尖段的线段识别成了一条完整的直线这个也是绘图中最容易出现的一个问题也是现在必须得解决的一个问题之一现在的话呢训练一下也差不多了",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.78125,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.875,
+                "tail_offset_change_px": 1.0,
+                "tail_offset_change_widths": 0.4,
+                "tail_width_ratio": 4.666667
+              },
+              "extension_distance_px": 12.5,
+              "start": {
+                "beyond_support_fraction": 0.375,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.125,
+                "reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+                "source_termination_distance_px": 0.78125,
+                "status": "ENDPOINT_OVERSHOOT_REJECTED",
+                "tail_junction_fraction": 0.375,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 4.333333
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "OVERSHOOT_BEYOND_SOURCE_TERMINATION",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_REJECTED"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2152,
+                231
+              ],
+              "start": [
+                2150,
+                361
+              ]
+            },
+            "raw_hough_id": "raw-hough-000070"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.4375,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.818182,
+                "tail_offset_change_px": 0.75,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 5.0
+              },
+              "extension_distance_px": 15.0,
+              "start": {
+                "beyond_support_fraction": 0.125,
+                "endpoint": "start",
+                "inside_support_fraction": 0.882353,
+                "internal_gap_before_supported_tail_fraction": 0.090909,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.9375,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.909091,
+                "tail_offset_change_px": 0.75,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 9.666667
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2151,
+                370
+              ],
+              "start": [
+                2150,
+                468
+              ]
+            },
+            "raw_hough_id": "raw-hough-000304"
+          }
+        }
+      ],
+      "review_index": 19
+    },
+    {
+      "candidate_id": "FRESH1-32A5E8ACFF9E3D6BF8E7",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.625,
+        "max_tail_width_ratio": 13.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 3,
+          "SOURCE_TERMINATION_ALIGNED": 1
+        },
+        "status_counts": {
+          "ENDPOINTS_SUPPORTED": 1,
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "这两个线不相干中间的加了一个零件它们两个不应该连在一块",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 1.25,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 2.0
+              },
+              "extension_distance_px": 20.0,
+              "start": {
+                "beyond_support_fraction": 0.5625,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 1.25,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 2.5,
+                "tail_offset_change_widths": 0.625,
+                "tail_width_ratio": 7.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                1019,
+                964
+              ],
+              "start": [
+                1018,
+                1000
+              ]
+            },
+            "raw_hough_id": "raw-hough-000319"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.93,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.043478,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 13.0
+              },
+              "extension_distance_px": 7.44,
+              "start": {
+                "beyond_support_fraction": 0.1875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "SOURCE_TERMINATION_ALIGNED",
+                "source_termination_distance_px": 1.86,
+                "status": "ENDPOINTS_SUPPORTED",
+                "tail_junction_fraction": 0.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1017,
+                1010
+              ],
+              "start": [
+                1017,
+                1103
+              ]
+            },
+            "raw_hough_id": "raw-hough-000744"
+          }
+        }
+      ],
+      "review_index": 20
+    },
+    {
+      "candidate_id": "FRESH1-403904F4EF20126F9D7D",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.5,
+        "max_tail_width_ratio": 6.5,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "经典案例折线之间有这个符号F",
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.75,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 0.6875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 5.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.5,
+                "tail_offset_change_widths": 0.25,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                2291,
+                1142
+              ],
+              "start": [
+                2290,
+                1174
+              ]
+            },
+            "raw_hough_id": "raw-hough-001861"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.75,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.888889,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 10.0,
+              "start": {
+                "beyond_support_fraction": 0.0625,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 1.0,
+                "tail_offset_change_widths": 0.5,
+                "tail_width_ratio": 6.5
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                2291,
+                1186
+              ],
+              "start": [
+                2291,
+                1239
+              ]
+            },
+            "raw_hough_id": "raw-hough-001152"
+          }
+        }
+      ],
+      "review_index": 21
+    },
+    {
+      "candidate_id": "FRESH1-41E989458A189A3DADA3",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 1.0,
+        "max_tail_width_ratio": 2.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": null,
+      "human_stage1": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": null,
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 0.3125,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 2.805,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 14.96,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 2.0,
+                "tail_offset_change_widths": 1.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                1813,
+                710
+              ],
+              "start": [
+                1813,
+                897
+              ]
+            },
+            "raw_hough_id": "raw-hough-001065"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 2.0
+              },
+              "extension_distance_px": 6.0,
+              "start": {
+                "beyond_support_fraction": 0.6875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 2.625,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1814,
+                922
+              ],
+              "start": [
+                1814,
+                955
+              ]
+            },
+            "raw_hough_id": "raw-hough-001840"
+          }
+        }
+      ],
+      "review_index": 22
+    },
+    {
+      "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+      "endpoint_profile": {
+        "endpoint_count": 4,
+        "max_internal_gap_before_supported_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.571906,
+        "max_tail_width_ratio": 11.0,
+        "reason_counts": {
+          "ENDPOINT_IDENTITY_CHANGE": 4
+        },
+        "status_counts": {
+          "ENDPOINT_OVERSHOOT_UNCERTAIN": 4
+        }
+      },
+      "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+      "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+      "human_note": "还是比较经典的案例但是呢我必须得说它底下这个什么呃选项这个玩意儿它容易遮挡那个备注在最后说明一下马上可能到时候还要把这个呃对应审计的这个内容给调整修改一下",
+      "human_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+      "human_stage2": "OBJECT_GEOMETRY",
+      "raw_primitive_results": [
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.171429,
+                "tail_offset_change_px": 0.571906,
+                "tail_offset_change_widths": 0.571906,
+                "tail_width_ratio": 11.0
+              },
+              "extension_distance_px": 11.36,
+              "start": {
+                "beyond_support_fraction": 0.875,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": 0.71,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.525926,
+                "tail_offset_change_widths": 0.525926,
+                "tail_width_ratio": 2.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_a",
+            "geometry": {
+              "end": [
+                1300,
+                650
+              ],
+              "start": [
+                1158,
+                650
+              ]
+            },
+            "raw_hough_id": "raw-hough-000097"
+          }
+        },
+        {
+          "endpoint": {
+            "evidence": {
+              "end": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "end",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 0.944444,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 1.0
+              },
+              "extension_distance_px": 7.5,
+              "start": {
+                "beyond_support_fraction": 1.0,
+                "endpoint": "start",
+                "inside_support_fraction": 1.0,
+                "internal_gap_before_supported_tail_fraction": 0.0,
+                "reason": "ENDPOINT_IDENTITY_CHANGE",
+                "source_termination_distance_px": null,
+                "status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+                "tail_junction_fraction": 1.0,
+                "tail_offset_change_px": 0.0,
+                "tail_offset_change_widths": 0.0,
+                "tail_width_ratio": 2.0
+              }
+            },
+            "geometry_mutated": false,
+            "model_evidence_used": false,
+            "reason": "ENDPOINT_IDENTITY_CHANGE",
+            "split_points_created": false,
+            "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+          },
+          "identity": {
+            "fragment": "fragment_b",
+            "geometry": {
+              "end": [
+                1395,
+                650
+              ],
+              "start": [
+                1306,
+                651
+              ]
+            },
+            "raw_hough_id": "raw-hough-001223"
+          }
+        }
+      ],
+      "review_index": 24
+    }
+  ],
+  "diagnostic_only": true,
+  "schema_version": 1,
+  "task_id": "PRIMITIVE_COHERENCE_ENDPOINT_AUDIT_V1"
+}

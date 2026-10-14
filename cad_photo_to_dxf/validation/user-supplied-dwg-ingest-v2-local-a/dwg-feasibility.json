@@ -1,0 +1,765 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-DWG-PDF-INGEST-V2-LOCAL-A",
+  "base_checkpoint": "f00e8c32a75a79b9d236f2674459190cecf50733",
+  "source_origin": "USER_SUPPLIED_LOCAL",
+  "authorized_this_task": "LOCAL INGEST / CONVERSION / FEASIBILITY TESTING",
+  "public_domain": "NOT_ASSUMED",
+  "redistribution": "NOT_AUTHORIZED",
+  "public_release": "NO",
+  "source_material_role": "DEV_CANDIDATE_SOURCE_MATERIAL",
+  "wave_1_dataset_changed": false,
+  "production_semantic_delta": "NONE",
+  "current_worktree_findings_before_helper": {
+    "production_dwg_input": false,
+    "dwg_to_dxf_support": false,
+    "dxf_to_dwg_support": true,
+    "dwg_to_pdf_support": false,
+    "dxf_vector_render_path": true
+  },
+  "current_worktree_findings_after_helper": {
+    "production_dwg_input": false,
+    "dwg_to_dxf_support": true,
+    "dwg_to_dxf_scope": "diagnostic/reusable helper only; not GUI or production input",
+    "dxf_to_dwg_support": true,
+    "dwg_to_pdf_support": false,
+    "dxf_vector_render_path": true
+  },
+  "implementation_evidence": {
+    "production_input": [
+      "cad_photo_to_dxf/app/image_loader.py:SUPPORTED_EXTENSIONS and load_image",
+      "cad_photo_to_dxf/app/ui_shell.py:MainWindow.import_image (legacy picker: JPG/JPEG/PNG)",
+      "cad_photo_to_dxf/app/gui_state_guard.py:MainWindow.import_image (active picker: JPG/JPEG/PNG/PDF)"
+    ],
+    "existing_converter": [
+      "cad_photo_to_dxf/app/dwg_converter.py:find_oda_converter",
+      "cad_photo_to_dxf/app/dwg_converter.py:convert_dxf_to_dwg",
+      "cad_photo_to_dxf/app/dwg_converter.py:_run_converter"
+    ],
+    "new_helper": [
+      "cad_photo_to_dxf/app/dwg_converter.py:convert_dwg_to_dxf",
+      "cad_photo_to_dxf/tests/test_dwg_converter_selection.py"
+    ],
+    "dxf_rendering": [
+      "cad_photo_to_dxf/app/debug_bundle.py:_render_dxf_svg (ezdxf Frontend/RenderContext/svg backend; modelspace)"
+    ],
+    "production_service": [
+      "cad_photo_to_dxf/app/processing_contract.py:ProductionProcessingService.process_page (numpy raster input; FinalStructure contract unchanged)"
+    ]
+  },
+  "oda_file_converter": {
+    "found": true,
+    "resolved_path": "C:\\Program Files\\ODA\\ODAFileConverter 27.1.0\\ODAFileConverter.exe",
+    "installed_or_modified": false
+  },
+  "samples_selected": {
+    "dwg_count": 3,
+    "pdf_count": 2,
+    "dwg_selection": [
+      {
+        "sample_id": "sample-01",
+        "source_relative_path": "车间_结构0310.dwg",
+        "reason": "root-level structural drawing; substantially larger than the smallest samples and outside the two nested source trees"
+      },
+      {
+        "sample_id": "sample-02",
+        "source_relative_path": "竣工图（安装）2020年11月版本 (1)\\1、能源中心-竣工图纸\\电施\\TZSW1-能源中心电施-SD-180730审图修改t3.dwg",
+        "reason": "nested as-built electrical drawing; distinct directory family and discipline from sample-01"
+      },
+      {
+        "sample_id": "sample-03",
+        "source_relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9\\汇鸿2019\\给排水\\给排水\\10~14#住宅\\11#给排水平面图_t3.dwg",
+        "reason": "hashed-source-tree plumbing plan; distinct directory family and smaller size than samples 01-02"
+      }
+    ],
+    "pdf_selection": [
+      {
+        "sample_id": "pdf-01",
+        "source_relative_path": "环保局主大楼.pdf",
+        "reason": "root-level engineering-document PDF with a substantially larger file size"
+      },
+      {
+        "sample_id": "pdf-02",
+        "source_relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计\\施工图审查\\建筑\\建筑图纸\\建施-10B_改造二层平面图(2).pdf",
+        "reason": "nested architectural drawing-sheet PDF from a distinct source tree"
+      }
+    ],
+    "hard_maximum_respected": true
+  },
+  "dwg_samples": [
+    {
+      "sample_id": "sample-01",
+      "source_relative_path": "车间_结构0310.dwg",
+      "selection_reason": "root-level structural drawing; substantially larger than the smallest samples and outside the two nested source trees",
+      "source_sha256": "a1fd5bbfa42166d5e11ef04709303776ee6ec9c3e4af957971e14e52adf49b1e",
+      "source_bytes": 23794976,
+      "dwg_version_header": "AC1021",
+      "converter_output_filename": "车间_结构0310.dxf",
+      "converter_exit_status": 0,
+      "converter_stdout": "",
+      "converter_stderr": "",
+      "attempt_elapsed_seconds_end_to_end": 288.658,
+      "conversion_success": true,
+      "output_sha256": "20738d14f49b2ff0f882208a796f9991af70a0dacbf772a041c7747150c6b6a6",
+      "output_bytes": 168266201,
+      "file_opens_successfully": true,
+      "modelspace_entity_count": 207609,
+      "modelspace_entity_counts": {
+        "ARC": 926,
+        "CIRCLE": 5505,
+        "DIMENSION": 9749,
+        "ELLIPSE": 48,
+        "HATCH": 3244,
+        "IMAGE": 29,
+        "INSERT": 4157,
+        "LEADER": 74,
+        "LINE": 124673,
+        "LWPOLYLINE": 32104,
+        "MTEXT": 260,
+        "POINT": 176,
+        "SOLID": 74,
+        "SPLINE": 4,
+        "TEXT": 26586
+      },
+      "modelspace_populated": true,
+      "layouts": [
+        {
+          "name": "Layout1",
+          "entity_count": 0,
+          "entity_counts": {},
+          "extents": null
+        },
+        {
+          "name": "Layout2",
+          "entity_count": 0,
+          "entity_counts": {},
+          "extents": null
+        },
+        {
+          "name": "Model",
+          "entity_count": 207609,
+          "entity_counts": {
+            "ARC": 926,
+            "CIRCLE": 5505,
+            "DIMENSION": 9749,
+            "ELLIPSE": 48,
+            "HATCH": 3244,
+            "IMAGE": 29,
+            "INSERT": 4157,
+            "LEADER": 74,
+            "LINE": 124673,
+            "LWPOLYLINE": 32104,
+            "MTEXT": 260,
+            "POINT": 176,
+            "SOLID": 74,
+            "SPLINE": 4,
+            "TEXT": 26586
+          },
+          "extents": {
+            "min": [
+              -2755960.262989645,
+              -1664028.867044165,
+              -6359.133880535174
+            ],
+            "max": [
+              2986778.979115357,
+              1711840.813906421,
+              156700.9522899625
+            ],
+            "size": [
+              5742739.242105002,
+              3375869.6809505858,
+              163060.08617049767
+            ]
+          }
+        }
+      ],
+      "paperspace_layout_count": 2,
+      "paperspace_entity_count": 0,
+      "populated_paperspace_layouts": [],
+      "named_layouts_appear_important": [],
+      "block_count": 10905,
+      "xref_indication": false,
+      "xref_blocks": [],
+      "entity_counts_all_spaces": {
+        "LINE": 124673,
+        "LWPOLYLINE": 32104,
+        "POLYLINE": 0,
+        "ARC": 926,
+        "CIRCLE": 5505,
+        "ELLIPSE": 48,
+        "SPLINE": 4,
+        "TEXT": 26586,
+        "MTEXT": 260,
+        "INSERT": 4157,
+        "DIMENSION": 9749,
+        "HATCH": 3244,
+        "IMAGE": 29,
+        "LEADER": 74,
+        "MLEADER": 0
+      },
+      "modelspace_extents": {
+        "min": [
+          -2755960.262989645,
+          -1664028.867044165,
+          -6359.133880535174
+        ],
+        "max": [
+          2986778.979115357,
+          1711840.813906421,
+          156700.9522899625
+        ],
+        "size": [
+          5742739.242105002,
+          3375869.6809505858,
+          163060.08617049767
+        ]
+      },
+      "header": {
+        "ACADVER": "AC1032",
+        "DWGCODEPAGE": "ANSI_936",
+        "INSUNITS": 4,
+        "MEASUREMENT": 1,
+        "EXTMIN": [
+          -2755960.262989645,
+          -1664028.867044165,
+          -6359.133880535174
+        ],
+        "EXTMAX": [
+          2986778.979115357,
+          1711840.813906421,
+          156700.9522899625
+        ]
+      },
+      "layer_count": 317,
+      "linetype_count": 33,
+      "style_fonts": [
+        "COMPLEX",
+        "Pkpmeng",
+        "ROMANC",
+        "ROMANS2",
+        "SIMPLEX",
+        "SIMPLEX.SHX",
+        "SIMPLEX.shx",
+        "TXT",
+        "Tssdeng.shx",
+        "bzxw.shx",
+        "gbenor.shx",
+        "romanc.shx",
+        "romans.shx",
+        "romans__.ttf",
+        "romant",
+        "simhei.ttf",
+        "simplex_.ttf",
+        "tssdeng.shx",
+        "txt.shx",
+        "txt_____.ttf",
+        "xd-hzs.shx"
+      ],
+      "shx_font_references": [
+        "SIMPLEX.SHX",
+        "SIMPLEX.shx",
+        "Tssdeng.shx",
+        "bzxw.shx",
+        "gbenor.shx",
+        "romanc.shx",
+        "romans.shx",
+        "tssdeng.shx",
+        "txt.shx",
+        "xd-hzs.shx"
+      ],
+      "proxy_or_ole_types": [],
+      "unsupported_entity_types": [
+        "POINT",
+        "SOLID"
+      ],
+      "preview": {
+        "success": true,
+        "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\user-supplied-ingest\\sample-01\\preview.svg",
+        "view": "Model",
+        "dimensions_px": [
+          2400,
+          1800
+        ]
+      },
+      "fidelity_assessment": {
+        "fidelity_risk": "MINOR_FIDELITY_RISK",
+        "risks": [
+          "Ten SHX font references and 29 IMAGE entities require font/reference availability checks.",
+          "Modelspace extents are very large; unit/scaling and viewport choices need explicit policy.",
+          "POINT and SOLID entities are present outside the requested common entity set."
+        ]
+      }
+    },
+    {
+      "sample_id": "sample-02",
+      "source_relative_path": "竣工图（安装）2020年11月版本 (1)\\1、能源中心-竣工图纸\\电施\\TZSW1-能源中心电施-SD-180730审图修改t3.dwg",
+      "selection_reason": "nested as-built electrical drawing; distinct directory family and discipline from sample-01",
+      "source_sha256": "42d5447f06a1cd9c8aaec0a1c6df250c14ebe281bcdbdc5bf86c81ea22643aa0",
+      "source_bytes": 14424268,
+      "dwg_version_header": "AC1027",
+      "converter_output_filename": "TZSW1-能源中心电施-SD-180730审图修改t3.dxf",
+      "converter_exit_status": 0,
+      "converter_stdout": "",
+      "converter_stderr": "",
+      "attempt_elapsed_seconds_end_to_end": 302.921,
+      "conversion_success": true,
+      "output_sha256": "ece6b9e915b730fbc67870fea918c9c1308c373790a3a4ce70618013db7b8946",
+      "output_bytes": 93764494,
+      "file_opens_successfully": true,
+      "modelspace_entity_count": 20572,
+      "modelspace_entity_counts": {
+        "ACAD_PROXY_ENTITY": 108,
+        "ARC": 158,
+        "ATTDEF": 5,
+        "CIRCLE": 294,
+        "DIMENSION": 646,
+        "ELLIPSE": 33,
+        "HATCH": 256,
+        "INSERT": 4405,
+        "LINE": 6243,
+        "LWPOLYLINE": 2888,
+        "MTEXT": 2,
+        "POINT": 9,
+        "POLYLINE": 147,
+        "SOLID": 3,
+        "TEXT": 5375
+      },
+      "modelspace_populated": true,
+      "layouts": [
+        {
+          "name": "Model",
+          "entity_count": 20572,
+          "entity_counts": {
+            "ACAD_PROXY_ENTITY": 108,
+            "ARC": 158,
+            "ATTDEF": 5,
+            "CIRCLE": 294,
+            "DIMENSION": 646,
+            "ELLIPSE": 33,
+            "HATCH": 256,
+            "INSERT": 4405,
+            "LINE": 6243,
+            "LWPOLYLINE": 2888,
+            "MTEXT": 2,
+            "POINT": 9,
+            "POLYLINE": 147,
+            "SOLID": 3,
+            "TEXT": 5375
+          },
+          "extents": {
+            "min": [
+              0.0,
+              -3887057.520023129,
+              -18531957.00577111
+            ],
+            "max": [
+              9188709.02567207,
+              0.0,
+              19809414.83846283
+            ],
+            "size": [
+              9188709.02567207,
+              3887057.520023129,
+              38341371.844233945
+            ]
+          }
+        },
+        {
+          "name": "布局1",
+          "entity_count": 0,
+          "entity_counts": {},
+          "extents": null
+        },
+        {
+          "name": "布局2",
+          "entity_count": 0,
+          "entity_counts": {},
+          "extents": null
+        }
+      ],
+      "paperspace_layout_count": 2,
+      "paperspace_entity_count": 0,
+      "populated_paperspace_layouts": [],
+      "named_layouts_appear_important": [],
+      "block_count": 960,
+      "xref_indication": false,
+      "xref_blocks": [],
+      "entity_counts_all_spaces": {
+        "LINE": 6243,
+        "LWPOLYLINE": 2888,
+        "POLYLINE": 147,
+        "ARC": 158,
+        "CIRCLE": 294,
+        "ELLIPSE": 33,
+        "SPLINE": 0,
+        "TEXT": 5375,
+        "MTEXT": 2,
+        "INSERT": 4405,
+        "DIMENSION": 646,
+        "HATCH": 256,
+        "IMAGE": 0,
+        "LEADER": 0,
+        "MLEADER": 0
+      },
+      "modelspace_extents": {
+        "min": [
+          0.0,
+          -3887057.520023129,
+          -18531957.00577111
+        ],
+        "max": [
+          9188709.02567207,
+          0.0,
+          19809414.83846283
+        ],
+        "size": [
+          9188709.02567207,
+          3887057.520023129,
+          38341371.844233945
+        ]
+      },
+      "header": {
+        "ACADVER": "AC1032",
+        "DWGCODEPAGE": "ANSI_936",
+        "INSUNITS": 0,
+        "MEASUREMENT": 0,
+        "EXTMIN": [
+          0.0,
+          -4517971.230261087,
+          -18531957.00577112
+        ],
+        "EXTMAX": [
+          9789300.674640194,
+          0.0,
+          19809414.83846283
+        ]
+      },
+      "layer_count": 157,
+      "linetype_count": 30,
+      "style_fonts": [
+        "COMPLEX",
+        "GBENOR",
+        "GBENOR.shx",
+        "SIMPLEX",
+        "SIMPLEX.shx",
+        "TXT",
+        "TXT.shx",
+        "Tssdeng.shx",
+        "arial.ttf",
+        "complex_.ttf",
+        "dytxt.shx",
+        "gbenor.shx",
+        "romanc.shx",
+        "romans",
+        "romans.shx",
+        "romans2.shx",
+        "romans_e.shx",
+        "ros.shx",
+        "simhei.ttf",
+        "simplex.shx",
+        "simplex_.ttf",
+        "tssdeng.shx",
+        "tssdeng2.shx",
+        "txt.shx",
+        "verdana.ttf"
+      ],
+      "shx_font_references": [
+        "GBENOR.shx",
+        "SIMPLEX.shx",
+        "TXT.shx",
+        "Tssdeng.shx",
+        "dytxt.shx",
+        "gbenor.shx",
+        "romanc.shx",
+        "romans.shx",
+        "romans2.shx",
+        "romans_e.shx",
+        "ros.shx",
+        "simplex.shx",
+        "tssdeng.shx",
+        "tssdeng2.shx",
+        "txt.shx"
+      ],
+      "proxy_or_ole_types": [
+        "ACAD_PROXY_ENTITY"
+      ],
+      "unsupported_entity_types": [
+        "ACAD_PROXY_ENTITY",
+        "ATTDEF",
+        "POINT",
+        "SOLID"
+      ],
+      "preview": {
+        "success": true,
+        "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\user-supplied-ingest\\sample-02\\preview.svg",
+        "view": "Model",
+        "dimensions_px": [
+          2400,
+          1800
+        ]
+      },
+      "fidelity_assessment": {
+        "fidelity_risk": "MAJOR_FIDELITY_RISK",
+        "risks": [
+          "108 ACAD_PROXY_ENTITY records remain in modelspace.",
+          "ezdxf emitted repeated DIMASSOC copy-process warnings during structural inspection.",
+          "Fifteen SHX font references and INSUNITS=0 leave text/scaling fidelity unresolved.",
+          "Modelspace extents are extremely large relative to the named electrical drawing."
+        ]
+      }
+    },
+    {
+      "sample_id": "sample-03",
+      "source_relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9\\汇鸿2019\\给排水\\给排水\\10~14#住宅\\11#给排水平面图_t3.dwg",
+      "selection_reason": "hashed-source-tree plumbing plan; distinct directory family and smaller size than samples 01-02",
+      "source_sha256": "331f195736cace4e715124e8de135cdb00d2b5be3df421984d99dd8932f08083",
+      "source_bytes": 2973658,
+      "dwg_version_header": "AC1015",
+      "converter_output_filename": "11#给排水平面图_t3.dxf",
+      "converter_exit_status": 0,
+      "converter_stdout": "",
+      "converter_stderr": "",
+      "attempt_elapsed_seconds_end_to_end": 21.665,
+      "conversion_success": true,
+      "output_sha256": "9ad755c2c1c047d6b1d149a3663166dd9c733680002bea87be3c9ec038c98eec",
+      "output_bytes": 9900270,
+      "file_opens_successfully": true,
+      "modelspace_entity_count": 3374,
+      "modelspace_entity_counts": {
+        "ACAD_PROXY_ENTITY": 474,
+        "CIRCLE": 56,
+        "DIMENSION": 179,
+        "HATCH": 274,
+        "INSERT": 571,
+        "LINE": 589,
+        "LWPOLYLINE": 670,
+        "TEXT": 561
+      },
+      "modelspace_populated": true,
+      "layouts": [
+        {
+          "name": "Model",
+          "entity_count": 3374,
+          "entity_counts": {
+            "ACAD_PROXY_ENTITY": 474,
+            "CIRCLE": 56,
+            "DIMENSION": 179,
+            "HATCH": 274,
+            "INSERT": 571,
+            "LINE": 589,
+            "LWPOLYLINE": 670,
+            "TEXT": 561
+          },
+          "extents": {
+            "min": [
+              914957.1172137614,
+              120315.2343453231,
+              -9329.866468261462
+            ],
+            "max": [
+              1243809.760251552,
+              566299.6205051658,
+              9329.866468261462
+            ],
+            "size": [
+              328852.64303779067,
+              445984.38615984266,
+              18659.732936522923
+            ]
+          }
+        },
+        {
+          "name": "布局1",
+          "entity_count": 0,
+          "entity_counts": {},
+          "extents": null
+        }
+      ],
+      "paperspace_layout_count": 1,
+      "paperspace_entity_count": 0,
+      "populated_paperspace_layouts": [],
+      "named_layouts_appear_important": [],
+      "block_count": 361,
+      "xref_indication": false,
+      "xref_blocks": [],
+      "entity_counts_all_spaces": {
+        "LINE": 589,
+        "LWPOLYLINE": 670,
+        "POLYLINE": 0,
+        "ARC": 0,
+        "CIRCLE": 56,
+        "ELLIPSE": 0,
+        "SPLINE": 0,
+        "TEXT": 561,
+        "MTEXT": 0,
+        "INSERT": 571,
+        "DIMENSION": 179,
+        "HATCH": 274,
+        "IMAGE": 0,
+        "LEADER": 0,
+        "MLEADER": 0
+      },
+      "modelspace_extents": {
+        "min": [
+          914957.1172137614,
+          120315.2343453231,
+          -9329.866468261462
+        ],
+        "max": [
+          1243809.760251552,
+          566299.6205051658,
+          9329.866468261462
+        ],
+        "size": [
+          328852.64303779067,
+          445984.38615984266,
+          18659.732936522923
+        ]
+      },
+      "header": {
+        "ACADVER": "AC1032",
+        "DWGCODEPAGE": "ANSI_936",
+        "INSUNITS": 0,
+        "MEASUREMENT": 0,
+        "EXTMIN": [
+          286251.7511352152,
+          -12144.74066409003,
+          -9329.866468261462
+        ],
+        "EXTMAX": [
+          1243809.760251552,
+          566299.6205051659,
+          9329.866468261462
+        ]
+      },
+      "layer_count": 112,
+      "linetype_count": 30,
+      "style_fonts": [
+        "COMPLEX",
+        "GBENOR",
+        "SIMPLEX",
+        "SIMPLEX.shx",
+        "hs华森字母.shx",
+        "isocp.shx",
+        "romans.shx",
+        "rs.shx",
+        "simhei.ttf",
+        "tssdeng.shx",
+        "txt.shx"
+      ],
+      "shx_font_references": [
+        "SIMPLEX.shx",
+        "hs华森字母.shx",
+        "isocp.shx",
+        "romans.shx",
+        "rs.shx",
+        "tssdeng.shx",
+        "txt.shx"
+      ],
+      "proxy_or_ole_types": [
+        "ACAD_PROXY_ENTITY"
+      ],
+      "unsupported_entity_types": [
+        "ACAD_PROXY_ENTITY"
+      ],
+      "preview": {
+        "success": false,
+        "reason": "bounded preview limit reached"
+      },
+      "fidelity_assessment": {
+        "fidelity_risk": "MAJOR_FIDELITY_RISK",
+        "risks": [
+          "474 ACAD_PROXY_ENTITY records remain in modelspace.",
+          "Several SHX references include a non-ASCII/garbled-looking font name in the normalized DXF.",
+          "INSUNITS=0 and large extents leave unit/scaling fidelity unresolved."
+        ]
+      }
+    }
+  ],
+  "pdf_samples": [
+    {
+      "sample_id": "pdf-01",
+      "source_relative_path": "环保局主大楼.pdf",
+      "selection_reason": "root-level engineering-document PDF with a substantially larger file size",
+      "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "bytes": 18746417,
+      "page_count": 14,
+      "first_page_dimensions_mm": [
+        419.48098449707027,
+        296.54501291910805
+      ],
+      "current_image_loader_render_success": true,
+      "first_page_render_shape": [
+        1168,
+        1652,
+        3
+      ],
+      "first_page_pdfium_object_types": {
+        "PdfImage": 1
+      },
+      "first_page_kind": "raster",
+      "appears_usable_as_dev_engineering_drawing_material": true
+    },
+    {
+      "sample_id": "pdf-02",
+      "source_relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计\\施工图审查\\建筑\\建筑图纸\\建施-10B_改造二层平面图(2).pdf",
+      "selection_reason": "nested architectural drawing-sheet PDF from a distinct source tree",
+      "sha256": "ebc7df8d07925f8dd9864e2e4b77d9890cd3018ddb8c1c5bd85893f43e373e53",
+      "bytes": 1398161,
+      "page_count": 1,
+      "first_page_dimensions_mm": [
+        1188.861111111111,
+        841.0222222222221
+      ],
+      "current_image_loader_render_success": true,
+      "first_page_render_shape": [
+        3312,
+        4681,
+        3
+      ],
+      "first_page_pdfium_object_types": {
+        "PdfImage": 2,
+        "PdfObject": 49082
+      },
+      "first_page_kind": "mixed",
+      "appears_usable_as_dev_engineering_drawing_material": true
+    }
+  ],
+  "aggregate_findings": {
+    "dwg_conversion_attempted": 3,
+    "dwg_conversion_success": 3,
+    "dxf_open_success": 3,
+    "dxf_modelspace_read_success": 3,
+    "dxf_layout_enumeration_success": 3,
+    "dwg_preview_attempted": 2,
+    "dwg_preview_success": 2,
+    "pdf_render_attempted": 2,
+    "pdf_render_success": 2,
+    "major_fidelity_risks": "ACAD_PROXY_ENTITY/custom entity preservation, SHX/missing-font availability, DIMASSOC warnings, and unit/extent/viewport scaling; exact fidelity is not established."
+  },
+  "decisions": {
+    "user_material_useful_for_future_v2": "PARTIAL",
+    "production_dwg_ingest_feasible": "CONDITIONAL",
+    "dwg_to_pdf_required": "NO",
+    "recommended_normalization_path": "DWG -> existing ODA File Converter -> DXF -> ezdxf structural inspection / bounded deterministic vector render -> raster evidence only when the downstream task requires it.",
+    "pdf_intermediate_reasoning": "Selected DWGs opened as DXF with populated modelspace and empty paperspace layouts; PDF is not needed as the default intermediate. Revisit conditionally for files whose intended output is a populated paperspace/plot layout or whose proxy/font fidelity cannot be resolved in DXF."
+  },
+  "governance": {
+    "model_run": "NO",
+    "candidate_mining": "NO",
+    "human_labeling": "NO",
+    "validation": "NO",
+    "locked_blind": "0 / 8",
+    "source_admission": "not performed; separate future task required",
+    "production_gui_integration": "not performed"
+  },
+  "modified_code_files": [
+    "cad_photo_to_dxf/app/dwg_converter.py",
+    "cad_photo_to_dxf/tests/test_dwg_converter_selection.py"
+  ],
+  "helper_tests": {
+    "command": "root .venv python -m pytest -q cad_photo_to_dxf/tests/test_dwg_converter_selection.py",
+    "result": "9 passed with pytest cache provider disabled"
+  }
+}

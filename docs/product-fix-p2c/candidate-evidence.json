@@ -1,0 +1,192 @@
+{
+  "status": "CANDIDATE_NOT_TARGET_VALIDATED",
+  "font": {
+    "filename": "NotoSansSC[wght].ttf",
+    "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "source_url": "https://raw.githubusercontent.com/google/fonts/a85815a42757630ce188fdad368c2dfc444d4773/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+    "license": "SIL Open Font License 1.1",
+    "format": "TTF",
+    "outlines": "glyf",
+    "variant": "VARIABLE",
+    "internal_names": {
+      "1": "Noto Sans SC Thin",
+      "2": "Regular",
+      "4": "Noto Sans SC Thin",
+      "6": "NotoSansSC-Thin",
+      "16": "Noto Sans SC",
+      "17": "Thin"
+    },
+    "axes": [
+      {
+        "tag": "wght",
+        "min": 100.0,
+        "default": 100.0,
+        "max": 900.0
+      }
+    ],
+    "named_instances": [
+      {
+        "name": "Thin",
+        "coordinates": {
+          "wght": 100.0
+        }
+      },
+      {
+        "name": "ExtraLight",
+        "coordinates": {
+          "wght": 200.0
+        }
+      },
+      {
+        "name": "Light",
+        "coordinates": {
+          "wght": 300.0
+        }
+      },
+      {
+        "name": "Regular",
+        "coordinates": {
+          "wght": 400.0
+        }
+      },
+      {
+        "name": "Medium",
+        "coordinates": {
+          "wght": 500.0
+        }
+      },
+      {
+        "name": "SemiBold",
+        "coordinates": {
+          "wght": 600.0
+        }
+      },
+      {
+        "name": "Bold",
+        "coordinates": {
+          "wght": 700.0
+        }
+      },
+      {
+        "name": "ExtraBold",
+        "coordinates": {
+          "wght": 800.0
+        }
+      },
+      {
+        "name": "Black",
+        "coordinates": {
+          "wght": 900.0
+        }
+      }
+    ],
+    "required_characters": "电施图纸目录项目编号ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.®，。；：！？（）【】《》、",
+    "missing_glyphs": [],
+    "cmap_size": 30890,
+    "font_modified": false,
+    "target_render": "NOT_RUN",
+    "default_weight_is_regular": false
+  },
+  "dxf": [
+    {
+      "mode": "comparison",
+      "path": "comparison\\drawing.dxf",
+      "native_text_count": 10,
+      "audit_errors": 0,
+      "audit_fixes": 0,
+      "outline_entities": 0,
+      "actual_font_loading": "NOT_RUN"
+    },
+    {
+      "mode": "deployment-A",
+      "path": "deployment-A\\drawing.dxf",
+      "native_text_count": 10,
+      "audit_errors": 0,
+      "audit_fixes": 0,
+      "outline_entities": 0,
+      "actual_font_loading": "NOT_RUN"
+    },
+    {
+      "mode": "deployment-B",
+      "path": "deployment-B\\drawing.dxf",
+      "native_text_count": 10,
+      "audit_errors": 0,
+      "audit_fixes": 0,
+      "outline_entities": 0,
+      "actual_font_loading": "NOT_RUN"
+    }
+  ],
+  "production_default_changed": false,
+  "web_handoff": {
+    "path": "autocad-web",
+    "zip": "autocad-web-user-test.zip",
+    "validation": {
+      "PRIMARY_TARGET": "AutoCAD Desktop",
+      "PRIMARY_FREE_VALIDATOR": "AutoCAD Web",
+      "TRUEVIEW_STATUS": "ABANDONED_INSTALLATION_BLOCKER",
+      "AUTOCAD_WEB_FONT_LOADED": "PENDING_USER_TEST",
+      "AUTOCAD_WEB_CHINESE": "PENDING_USER_TEST",
+      "AUTOCAD_WEB_LATIN": "PENDING_USER_TEST",
+      "AUTOCAD_WEB_DIGITS": "PENDING_USER_TEST",
+      "AUTOCAD_WEB_FILLED_APPEARANCE": "PENDING_USER_TEST",
+      "AUTOCAD_WEB_FONT_SUBSTITUTION": "PENDING_USER_TEST",
+      "TEXT_SIZE_FIDELITY": "PENDING_USER_TEST",
+      "AUTOCAD_DESKTOP_RC_ACCEPTANCE": "NOT_RUN",
+      "PRODUCTION_FONT_STRATEGY": "UNCHANGED_PENDING_AUTODESK_WEB_RESULT",
+      "STOP_POINT": "MANUAL_AUTODESK_WEB_VISUAL_ACCEPTANCE"
+    },
+    "font_sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "native_text_count": 10,
+    "actual_render": "PENDING_USER_TEST",
+    "status": "SUPERSEDED_AS_PRIMARY"
+  },
+  "evidence_phase": "Original A preflight; Web handoff is historical and superseded",
+  "system_fonts_changed_during_original_preflight": false,
+  "system_fonts_changed_for_current_local_test": true,
+  "current_validation_plan": {
+    "PRIMARY_TARGET": "AutoCAD Desktop",
+    "PRIMARY_LOCAL_DEVELOPMENT_VALIDATOR": "Bentley View",
+    "BENTLEY_VIEW_STATUS": "NOT_INSTALLED",
+    "TRUEVIEW_STATUS": "ABANDONED_INSTALLATION_BLOCKER",
+    "AUTOCAD_WEB_STATUS": "SUPERSEDED_AS_PRIMARY; NO_WEB_RESULT_CLAIMED",
+    "AUTODESK_VIEWER_ROLE": "SMALL_FILE_AUTODESK_CLOUD_SANITY_CHECK",
+    "AUTODESK_VIEWER_DXF_TRANSLATION": "PASS",
+    "AUTODESK_VIEWER_UNICODE_VISIBILITY": "PASS",
+    "AUTODESK_VIEWER_FONT_LOADED": "FAIL",
+    "AUTODESK_VIEWER_FONT_SUBSTITUTION": "YES",
+    "AUTODESK_VIEWER_FONT_FIDELITY": "NOT_VALIDATED",
+    "VIEWER_EVIDENCE_SOURCE": "USER_REPORTED_MANUAL_WARNING: Missing fonts ... were substituted; includes Noto Sans SC",
+    "VARIABLE_WEIGHT_INFERENCE_FROM_VIEWER": "PROHIBITED",
+    "LARGE_DRAWING_CLOUD_ACCEPTANCE": "PROHIBITED",
+    "TEXT_SIZE_FIDELITY": "NOT_RUN",
+    "AUTOCAD_DESKTOP_RC_ACCEPTANCE": "NOT_RUN",
+    "DESKTOP_AUTOCAD_RC_MANDATORY": true,
+    "PRODUCTION_FONT_STRATEGY": "UNCHANGED; A/B NOT_RENDER_VALIDATED",
+    "STOP_POINT": "BENTLEY_COMPARISON_PLUS_ONE_REAL_LARGE_DRAWING",
+    "CURRENT_PREREQUISITE": "BENTLEY_VIEW_ACQUISITION_AND_INSTALLATION"
+  },
+  "current_os_font_installation": [
+    {
+      "font": "NotoSansSC[wght].ttf",
+      "method": "Windows current-user Fonts registry + AddFontResourceExW flags=0",
+      "registry_name": "Noto Sans SC Thin (TrueType)",
+      "prior_registry_value": null,
+      "installed_path": "C:\\Users\\agcrf\\AppData\\Local\\Microsoft\\Windows\\Fonts\\NotoSansSC[wght].ttf",
+      "SHA256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "GDI_resource_count": 18,
+      "OS_REGISTRATION": "PASS",
+      "BENTLEY_FONT_FOUND": "NOT_TESTED"
+    },
+    {
+      "font": "ITCCADSC-Regular.ttf",
+      "method": "Windows current-user Fonts registry + AddFontResourceExW flags=0",
+      "registry_name": "ITC CAD SC Regular (TrueType)",
+      "prior_registry_value": null,
+      "installed_path": "C:\\Users\\agcrf\\AppData\\Local\\Microsoft\\Windows\\Fonts\\ITCCADSC-Regular.ttf",
+      "SHA256": "5ae93fa926c7941d9d333d86aad1db8f61ad289b660714537fd1cfface214632",
+      "GDI_resource_count": 2,
+      "OS_REGISTRATION": "PASS",
+      "BENTLEY_FONT_FOUND": "NOT_TESTED"
+    }
+  ]
+}

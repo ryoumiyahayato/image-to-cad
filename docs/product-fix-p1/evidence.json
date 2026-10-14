@@ -1,0 +1,239 @@
+[
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 186.0,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      471,
+      1021,
+      662,
+      1026
+    ],
+    "sha256": "44ac177604f78b0b176ae82eb3fcd60aa1471dd40698854eba6925feea5ba147"
+  },
+  {
+    "artifact": "runtime-content-ownership",
+    "evidence_id": "ownership:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da",
+    "intervals": [
+      {
+        "end": 186.0,
+        "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+        "evidence_refs": [],
+        "start": 0.0
+      }
+    ],
+    "kind": "OWNERSHIP_DECISION",
+    "limitations": [
+      "Ownership decides semantic eligibility, not same-stroke relation"
+    ],
+    "measurements": {
+      "downgrades": [],
+      "ownership_state": "MAIN_ACCEPTED"
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "SUPPORTED",
+    "roi_px": [
+      473.0,
+      1023.0,
+      659.0,
+      1023.0
+    ],
+    "sha256": "81f1542ed84e446157d26be1cdfcd24f5733b8265511765c9c936a52c7816ba3"
+  },
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 183.75003068889077,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      472,
+      1020,
+      662,
+      1026
+    ],
+    "sha256": "66accdebaee806b10fa3a79f424c2a6a8fbbc2734179ad1182611bb1efd08ec6"
+  },
+  {
+    "artifact": "runtime-content-ownership",
+    "evidence_id": "ownership:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961",
+    "intervals": [
+      {
+        "end": 183.75003068889077,
+        "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+        "evidence_refs": [],
+        "start": 0.0
+      }
+    ],
+    "kind": "OWNERSHIP_DECISION",
+    "limitations": [
+      "Ownership decides semantic eligibility, not same-stroke relation"
+    ],
+    "measurements": {
+      "downgrades": [],
+      "ownership_state": "MAIN_ACCEPTED"
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "SUPPORTED",
+    "roi_px": [
+      474.3749694824219,
+      1022.8549194335938,
+      658.125,
+      1022.8628540039062
+    ],
+    "sha256": "85e8ea0157ae0a6ed43c72b281992e5e0b0b2caf3b184f1eea24d7163f55dd2c"
+  },
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 183.75003069420248,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      472,
+      1023,
+      662,
+      1029
+    ],
+    "sha256": "3901af21c6507cee589ebd0d12e096b366c3904dde336b8cceb20dbd6473fec0"
+  },
+  {
+    "artifact": "runtime-content-ownership",
+    "evidence_id": "ownership:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07",
+    "intervals": [
+      {
+        "end": 183.75003069420248,
+        "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+        "evidence_refs": [],
+        "start": 0.0
+      }
+    ],
+    "kind": "OWNERSHIP_DECISION",
+    "limitations": [
+      "Ownership decides semantic eligibility, not same-stroke relation"
+    ],
+    "measurements": {
+      "downgrades": [],
+      "ownership_state": "MAIN_ACCEPTED"
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "SUPPORTED",
+    "roi_px": [
+      474.3749694824219,
+      1025.8870849609375,
+      658.125,
+      1025.8951416015625
+    ],
+    "sha256": "de6352f888b15aba8f553f228587260179f4e34a186837b8c0760ac7723c93b4"
+  },
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:HOUGH-000029:REP:observation-cb59404976b74a4f8ecf",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 186.0,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      471,
+      1021,
+      662,
+      1026
+    ],
+    "sha256": "44ac177604f78b0b176ae82eb3fcd60aa1471dd40698854eba6925feea5ba147"
+  },
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:LSD-001069:REP:observation-259b6a2c7f9e738bb0f1",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 183.75003069420248,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      472,
+      1023,
+      662,
+      1029
+    ],
+    "sha256": "3901af21c6507cee589ebd0d12e096b366c3904dde336b8cceb20dbd6473fec0"
+  },
+  {
+    "artifact": "runtime-original-unclosed-source",
+    "evidence_id": "support:MAIN:LSD-001063:REP:observation-2a8623eb5f22cce46827",
+    "intervals": [],
+    "kind": "TRAJECTORY_BINDING",
+    "limitations": [
+      "Detector IDs are observations, not physical stroke identities",
+      "Support intervals do not make detector frontiers physical terminations"
+    ],
+    "measurements": {
+      "binary_required": true,
+      "gray_cutoff": 150,
+      "observed_length_px": 183.75003068889077,
+      "supported_length_px": 0.0
+    },
+    "producer_version": "bounded-source-stroke-reconciliation-v1",
+    "result": "UNKNOWN",
+    "roi_px": [
+      472,
+      1020,
+      662,
+      1026
+    ],
+    "sha256": "66accdebaee806b10fa3a79f424c2a6a8fbbc2734179ad1182611bb1efd08ec6"
+  }
+]

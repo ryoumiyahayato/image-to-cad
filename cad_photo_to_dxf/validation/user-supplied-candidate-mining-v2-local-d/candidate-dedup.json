@@ -1,0 +1,1923 @@
+{
+  "caps": {
+    "eligible_units": 16,
+    "max_frozen": 32,
+    "max_raw_per_unit": 30,
+    "max_raw_total": 480,
+    "per_unit_frozen_cap": 3
+  },
+  "dedup_clusters": [
+    {
+      "dedup_cluster_id": "DCLUSTER-E130E7C082",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-52FB58BB37",
+      "member_count": 6,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-260DD1A48A",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-90BF2F25E7",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-59F78390D9",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E63F589B6B",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-ECD74A9687",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E70A6403E1",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F3E9AE1E3E",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0714DD632D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FC2AC61DCE",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-397301CC9F",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1A0072667C",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B445344F41",
+      "member_count": 5,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2642D27BDC",
+      "member_count": 10,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-10986754E6",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-22C29B11D1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B56916F1EA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-347624EAA7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C59438BDBA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7F39531FB0",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F2A9A603ED",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E543DEBD87",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2D2F04CA09",
+      "member_count": 6,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5B81CD5D60",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5B63E43C4A",
+      "member_count": 5,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E2627652E2",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A099227601",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FC5797A804",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-378FE14040",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-81BB08644D",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-546627E613",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E3B6FE9B4C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-241A0AC706",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6ABAEB570D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F5CE892FB6",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A12151B612",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B3DADC162A",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C6DC758194",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4F9BA129B6",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-59BC77F0E3",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6CBEA814E6",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CD5DEF617F",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-165C97EA6D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-795E12445F",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F0D6407125",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-99BBD1DD97",
+      "member_count": 5,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CCEB7185A8",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5FB8E6AE24",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9D9A22932B",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6FDFD8DCF1",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FD5C3DDD72",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-8B711FF638",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-EC43C261C5",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-341DFDCB80",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CDADC95C12",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6AB2D87009",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-21B7789141",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5457A77681",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-DBC32BBAD1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2DBD904FB7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-91D07FA558",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-56F9636F75",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CD0D4251B8",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-53A03076FD",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CC9C37931A",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E9B1EA92CA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0D16432C6E",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-37A6B00F20",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-474F5C290E",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3C7DE63C5D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4A17194F91",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FF35F4CB62",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E9A6725707",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-71198E27CE",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-882BCCDABD",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C5FA2C4A2D",
+      "member_count": 6,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5B6898976D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-38F225F226",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-AD5F1F8DEF",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FD887F3DDA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-76E49BF928",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-81E7CE5FC9",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3905AA0053",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-996E334799",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C9516031F1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-52219D6C55",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-91CB74E52F",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9ED791C8FF",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-55E128B3A8",
+      "member_count": 8,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-ECE2F0A943",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CE23DAB9FF",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B5F4C31EAF",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FBB50A08D4",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-344948FB45",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9F7AF9576C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2AFFDBF186",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-BC3B55DD0E",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-89794D4925",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-629EACCE41",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A290DC6AD0",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-EA88DB9FFC",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-031DE9137C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1DDDE11C11",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-DA98EB994E",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7BADB9C6F7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1ACEC26626",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0ADC8974A6",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-BAB51347C2",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C85F8590AD",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D319ED1790",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F9E8EBF14F",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0017BAC20C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3285D7E988",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5320DB75FD",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-463DC0230A",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-BC37DDE52F",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-46DA3802A4",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1FA5B64284",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-03210C4911",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-19F9068B9B",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-8028483EE1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F51CF8F155",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A14E8FBB05",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B8F227FB64",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9F7A44DEDC",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E6323A2AB7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C7E8D6DBF8",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-BC47CF69E7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-920F36A37A",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C4FA78A1E0",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-14E18A3F53",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CBA1664051",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4760C3E29A",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-5A0C738356",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-855B0E2EB1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7B01DE10BB",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3B7D9A2DDA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6F7F319309",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-28A5E15300",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-29AF3C1547",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9DBA2194F2",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F643BB8D2E",
+      "member_count": 16,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F5E909A385",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3FD2C98F06",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A747075276",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-8C7E1B2596",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D4C548B987",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7D4238EEFC",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B7A9886E42",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-42F994C66F",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D0E2E28293",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D316DF6514",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-06B86C16C1",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2F73EE83B2",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F05AA586BA",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B573695EA3",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-ECF16489BF",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-8D9875D73A",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-207B4B0D43",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-871ABA565E",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0E5827F65D",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A7DEB438DA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-923E0AFBF4",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-AF9DE00389",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A2AF9146DB",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3A35A2644A",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CAE257D296",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D57857D057",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-FF764370E8",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-AD274B81A0",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E26EF5074C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4E042DA287",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C7E6CAE60C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6F77A319ED",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7D257EB725",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1CEED0D2C9",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-83542445D8",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-9D1EF7E257",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2F067527A3",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-DA1CA02AB9",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E744FABDFA",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4A68D53C25",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-56DC7E1E9F",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-31D0935672",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3BFD7344BB",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-3299BFF428",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7398809274",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-960655418A",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7D9841C9E7",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-921981A731",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2683592C71",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A4D48F8441",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-F5EDC04653",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D7B06268C8",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C5F9904E09",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4F53BCDD85",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-E973BF341C",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-A840109788",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-EF4D5AE598",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CF9523F7E4",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-1202C47E50",
+      "member_count": 6,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-94D854FF04",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-28284BBBFE",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-7E1C94F6F1",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B17D93F898",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D4EB276B6A",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-97ADAEBDCC",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-EBE6EE4EDC",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-4F694DEDA5",
+      "member_count": 4,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-26A7E33CF9",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-68FBF72FDE",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-6CDB19A32B",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2980834CDC",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-70217B5FDD",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-D118798138",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-EB59A3227C",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-B20DA99A94",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-0356265A4B",
+      "member_count": 2,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-BCC8A32F61",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-CBCEE2C128",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-C7A6EE41C5",
+      "member_count": 3,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-ABAA421959",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-DEA9CF7A24",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    },
+    {
+      "dedup_cluster_id": "DCLUSTER-2A0521EACA",
+      "member_count": 1,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+    }
+  ],
+  "filter_reason_counts": {
+    "near_zero_or_overlapping_gap": 96
+  },
+  "method": {
+    "blocked_units_excluded": [
+      "LOCALC-F01-DWG-STRUCT0310-MODEL-OVERVIEW",
+      "LOCALC-F02-DWG-PLUMB11-MODEL-OVERVIEW",
+      "LOCALC-F03-DWG-ELECENERGY-MODEL-OVERVIEW"
+    ],
+    "crop_geometry": "reused D11 _crop_box and _annotated_crop",
+    "detector": "reused D11 _canonical_segments plus bounded same-orientation projected pairing",
+    "model_independent": true,
+    "semantic_labels_assigned": false
+  },
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-CANDIDATE-MINING-V2-LOCAL-D",
+  "totals": {
+    "context_crops": 24,
+    "dedup_clusters": 225,
+    "filtered_proposals": 96,
+    "frozen_candidates": 24,
+    "local_crops": 24,
+    "post_dedup_proposals": 225,
+    "raw_proposals": 480,
+    "units_actually_mined": 16
+  },
+  "unit_summaries": [
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-E130E7C082",
+        "DCLUSTER-52FB58BB37",
+        "DCLUSTER-260DD1A48A",
+        "DCLUSTER-90BF2F25E7",
+        "DCLUSTER-59F78390D9",
+        "DCLUSTER-E63F589B6B",
+        "DCLUSTER-ECD74A9687",
+        "DCLUSTER-E70A6403E1",
+        "DCLUSTER-F3E9AE1E3E",
+        "DCLUSTER-0714DD632D",
+        "DCLUSTER-FC2AC61DCE"
+      ],
+      "dedup_clusters": 11,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1292,
+      "pair_attempts": 9773,
+      "pair_pool_count": 9773,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 3695,
+        "near_zero_or_overlapping_gap": 3281
+      },
+      "post_dedup_proposals": 11,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 9773,
+      "raw_proposals": 30,
+      "raw_segment_count": 1385,
+      "render": {
+        "dxf_path": "local-artifacts/draftsman/user-supplied-admission/dxf/haiyang_hvac.dxf",
+        "entity_segment_count": 22281,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped",
+        "raw_extents": [
+          -349833.5772,
+          -907798.8505,
+          404331.0024,
+          -344885.3219
+        ],
+        "render_extents": [
+          -248044.5659,
+          -890531.2321,
+          381402.3064,
+          -353097.5487
+        ],
+        "render_kind": "REUSED_DXF_MODELSPACE_PIL",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+        "render_size_px": [
+          2700,
+          2311
+        ],
+        "robust_extent_clipping": true,
+        "segments_drawn": 22123
+      },
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "source_document_id": "DOC-F01-HVAC20220110-DWG",
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_type": "DWG"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-397301CC9F",
+        "DCLUSTER-1A0072667C",
+        "DCLUSTER-B445344F41",
+        "DCLUSTER-2642D27BDC",
+        "DCLUSTER-10986754E6",
+        "DCLUSTER-22C29B11D1",
+        "DCLUSTER-B56916F1EA",
+        "DCLUSTER-347624EAA7",
+        "DCLUSTER-C59438BDBA",
+        "DCLUSTER-7F39531FB0"
+      ],
+      "dedup_clusters": 10,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 962,
+      "pair_attempts": 8979,
+      "pair_pool_count": 8979,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5595,
+        "near_zero_or_overlapping_gap": 1736
+      },
+      "post_dedup_proposals": 10,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 8979,
+      "raw_proposals": 30,
+      "raw_segment_count": 987,
+      "render": {
+        "dxf_path": "local-artifacts/draftsman/user-supplied-admission/dxf/huihong_hvac.dxf",
+        "entity_segment_count": 2772385,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped",
+        "raw_extents": [
+          -1926990.6642,
+          259409.3461,
+          2100986.5769,
+          862418.9545
+        ],
+        "render_extents": [
+          1479242.5494,
+          424872.4162,
+          2034605.6823,
+          698977.7305
+        ],
+        "render_kind": "REUSED_DXF_MODELSPACE_PIL",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+        "render_size_px": [
+          2700,
+          1351
+        ],
+        "robust_extent_clipping": true,
+        "segments_drawn": 2746032
+      },
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_type": "DWG"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-F2A9A603ED",
+        "DCLUSTER-E543DEBD87",
+        "DCLUSTER-2D2F04CA09",
+        "DCLUSTER-5B81CD5D60",
+        "DCLUSTER-5B63E43C4A",
+        "DCLUSTER-E2627652E2",
+        "DCLUSTER-A099227601",
+        "DCLUSTER-FC5797A804"
+      ],
+      "dedup_clusters": 8,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 916,
+      "pair_attempts": 4478,
+      "pair_pool_count": 4478,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 1609,
+        "near_zero_or_overlapping_gap": 1969
+      },
+      "post_dedup_proposals": 8,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 4478,
+      "raw_proposals": 30,
+      "raw_segment_count": 1123,
+      "render": {
+        "dxf_path": "local-artifacts/draftsman/user-supplied-admission/dxf/asbuilt_hvac.dxf",
+        "entity_segment_count": 6167,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped",
+        "raw_extents": [
+          4261838.8578,
+          -1770186.9462,
+          4360374.5045,
+          -1534112.1552
+        ],
+        "render_extents": [
+          4261838.8578,
+          -1770186.9462,
+          4360374.5045,
+          -1534112.1552
+        ],
+        "render_kind": "REUSED_DXF_MODELSPACE_PIL",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+        "render_size_px": [
+          1148,
+          2700
+        ],
+        "robust_extent_clipping": false,
+        "segments_drawn": 6167
+      },
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "source_document_id": "DOC-F03-HVAC4-DWG",
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_type": "DWG"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-378FE14040",
+        "DCLUSTER-81BB08644D",
+        "DCLUSTER-546627E613",
+        "DCLUSTER-E3B6FE9B4C",
+        "DCLUSTER-241A0AC706",
+        "DCLUSTER-6ABAEB570D",
+        "DCLUSTER-F5CE892FB6",
+        "DCLUSTER-A12151B612",
+        "DCLUSTER-B3DADC162A",
+        "DCLUSTER-C6DC758194",
+        "DCLUSTER-4F9BA129B6",
+        "DCLUSTER-59BC77F0E3",
+        "DCLUSTER-6CBEA814E6",
+        "DCLUSTER-CD5DEF617F",
+        "DCLUSTER-165C97EA6D"
+      ],
+      "dedup_clusters": 15,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1440,
+      "pair_attempts": 12000,
+      "pair_pool_count": 12000,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 7311,
+        "near_zero_or_overlapping_gap": 2317
+      },
+      "post_dedup_proposals": 15,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 12000,
+      "raw_proposals": 30,
+      "raw_segment_count": 2290,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+      "source_document_id": "DOC-F04-ARCH10B-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-795E12445F",
+        "DCLUSTER-F0D6407125",
+        "DCLUSTER-99BBD1DD97",
+        "DCLUSTER-CCEB7185A8",
+        "DCLUSTER-5FB8E6AE24",
+        "DCLUSTER-9D9A22932B",
+        "DCLUSTER-6FDFD8DCF1",
+        "DCLUSTER-FD5C3DDD72",
+        "DCLUSTER-8B711FF638",
+        "DCLUSTER-EC43C261C5",
+        "DCLUSTER-341DFDCB80"
+      ],
+      "dedup_clusters": 11,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1371,
+      "pair_attempts": 12000,
+      "pair_pool_count": 12000,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 7556,
+        "near_zero_or_overlapping_gap": 2046
+      },
+      "post_dedup_proposals": 11,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 12000,
+      "raw_proposals": 30,
+      "raw_segment_count": 1780,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-CDADC95C12",
+        "DCLUSTER-6AB2D87009",
+        "DCLUSTER-21B7789141",
+        "DCLUSTER-5457A77681",
+        "DCLUSTER-DBC32BBAD1",
+        "DCLUSTER-2DBD904FB7",
+        "DCLUSTER-91D07FA558",
+        "DCLUSTER-56F9636F75",
+        "DCLUSTER-CD0D4251B8",
+        "DCLUSTER-53A03076FD",
+        "DCLUSTER-CC9C37931A",
+        "DCLUSTER-E9B1EA92CA",
+        "DCLUSTER-0D16432C6E",
+        "DCLUSTER-37A6B00F20",
+        "DCLUSTER-474F5C290E",
+        "DCLUSTER-3C7DE63C5D",
+        "DCLUSTER-4A17194F91",
+        "DCLUSTER-FF35F4CB62",
+        "DCLUSTER-E9A6725707"
+      ],
+      "dedup_clusters": 19,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1286,
+      "pair_attempts": 11411,
+      "pair_pool_count": 11411,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5766,
+        "grossly_excessive_span": 27,
+        "near_zero_or_overlapping_gap": 3049
+      },
+      "post_dedup_proposals": 19,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 11411,
+      "raw_proposals": 30,
+      "raw_segment_count": 1429,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-71198E27CE",
+        "DCLUSTER-882BCCDABD",
+        "DCLUSTER-C5FA2C4A2D",
+        "DCLUSTER-5B6898976D",
+        "DCLUSTER-38F225F226",
+        "DCLUSTER-AD5F1F8DEF",
+        "DCLUSTER-FD887F3DDA",
+        "DCLUSTER-76E49BF928",
+        "DCLUSTER-81E7CE5FC9",
+        "DCLUSTER-3905AA0053",
+        "DCLUSTER-996E334799",
+        "DCLUSTER-C9516031F1"
+      ],
+      "dedup_clusters": 12,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1144,
+      "pair_attempts": 9020,
+      "pair_pool_count": 9020,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 4015,
+        "grossly_excessive_span": 8,
+        "near_zero_or_overlapping_gap": 2650
+      },
+      "post_dedup_proposals": 12,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 9020,
+      "raw_proposals": 30,
+      "raw_segment_count": 1233,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png"
+      },
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-52219D6C55",
+        "DCLUSTER-91CB74E52F",
+        "DCLUSTER-9ED791C8FF",
+        "DCLUSTER-55E128B3A8",
+        "DCLUSTER-ECE2F0A943",
+        "DCLUSTER-CE23DAB9FF",
+        "DCLUSTER-B5F4C31EAF",
+        "DCLUSTER-FBB50A08D4",
+        "DCLUSTER-344948FB45",
+        "DCLUSTER-9F7AF9576C",
+        "DCLUSTER-2AFFDBF186",
+        "DCLUSTER-BC3B55DD0E"
+      ],
+      "dedup_clusters": 12,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1854,
+      "pair_attempts": 12000,
+      "pair_pool_count": 12000,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 7076,
+        "near_zero_or_overlapping_gap": 2531
+      },
+      "post_dedup_proposals": 12,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 12000,
+      "raw_proposals": 30,
+      "raw_segment_count": 2989,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "source_document_id": "DOC-F06-2026-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-89794D4925",
+        "DCLUSTER-629EACCE41",
+        "DCLUSTER-A290DC6AD0",
+        "DCLUSTER-EA88DB9FFC",
+        "DCLUSTER-031DE9137C",
+        "DCLUSTER-1DDDE11C11",
+        "DCLUSTER-DA98EB994E",
+        "DCLUSTER-7BADB9C6F7",
+        "DCLUSTER-1ACEC26626",
+        "DCLUSTER-0ADC8974A6",
+        "DCLUSTER-BAB51347C2",
+        "DCLUSTER-C85F8590AD",
+        "DCLUSTER-D319ED1790",
+        "DCLUSTER-F9E8EBF14F",
+        "DCLUSTER-0017BAC20C",
+        "DCLUSTER-3285D7E988",
+        "DCLUSTER-5320DB75FD",
+        "DCLUSTER-463DC0230A",
+        "DCLUSTER-BC37DDE52F",
+        "DCLUSTER-46DA3802A4",
+        "DCLUSTER-1FA5B64284",
+        "DCLUSTER-03210C4911",
+        "DCLUSTER-19F9068B9B"
+      ],
+      "dedup_clusters": 23,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1307,
+      "pair_attempts": 8214,
+      "pair_pool_count": 8214,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 4829,
+        "grossly_excessive_span": 9,
+        "near_zero_or_overlapping_gap": 1963
+      },
+      "post_dedup_proposals": 23,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 8214,
+      "raw_proposals": 30,
+      "raw_segment_count": 2653,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png"
+      },
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-8028483EE1",
+        "DCLUSTER-F51CF8F155",
+        "DCLUSTER-A14E8FBB05",
+        "DCLUSTER-B8F227FB64",
+        "DCLUSTER-9F7A44DEDC",
+        "DCLUSTER-E6323A2AB7",
+        "DCLUSTER-C7E8D6DBF8",
+        "DCLUSTER-BC47CF69E7",
+        "DCLUSTER-920F36A37A",
+        "DCLUSTER-C4FA78A1E0",
+        "DCLUSTER-14E18A3F53",
+        "DCLUSTER-CBA1664051",
+        "DCLUSTER-4760C3E29A",
+        "DCLUSTER-5A0C738356",
+        "DCLUSTER-855B0E2EB1",
+        "DCLUSTER-7B01DE10BB",
+        "DCLUSTER-3B7D9A2DDA",
+        "DCLUSTER-6F7F319309",
+        "DCLUSTER-28A5E15300",
+        "DCLUSTER-29AF3C1547",
+        "DCLUSTER-9DBA2194F2"
+      ],
+      "dedup_clusters": 21,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1451,
+      "pair_attempts": 10021,
+      "pair_pool_count": 10021,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5749,
+        "grossly_excessive_span": 2,
+        "near_zero_or_overlapping_gap": 2560
+      },
+      "post_dedup_proposals": 21,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 10021,
+      "raw_proposals": 30,
+      "raw_segment_count": 2099,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png"
+      },
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-F643BB8D2E",
+        "DCLUSTER-F5E909A385",
+        "DCLUSTER-3FD2C98F06",
+        "DCLUSTER-A747075276",
+        "DCLUSTER-8C7E1B2596",
+        "DCLUSTER-D4C548B987"
+      ],
+      "dedup_clusters": 6,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 258,
+      "pair_attempts": 1291,
+      "pair_pool_count": 1291,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 606,
+        "grossly_excessive_span": 1,
+        "near_zero_or_overlapping_gap": 446
+      },
+      "post_dedup_proposals": 6,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 1291,
+      "raw_proposals": 30,
+      "raw_segment_count": 285,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-7D4238EEFC",
+        "DCLUSTER-B7A9886E42",
+        "DCLUSTER-42F994C66F",
+        "DCLUSTER-D0E2E28293",
+        "DCLUSTER-D316DF6514",
+        "DCLUSTER-06B86C16C1",
+        "DCLUSTER-2F73EE83B2",
+        "DCLUSTER-F05AA586BA",
+        "DCLUSTER-B573695EA3",
+        "DCLUSTER-ECF16489BF",
+        "DCLUSTER-8D9875D73A",
+        "DCLUSTER-207B4B0D43",
+        "DCLUSTER-871ABA565E",
+        "DCLUSTER-0E5827F65D"
+      ],
+      "dedup_clusters": 14,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 679,
+      "pair_attempts": 4244,
+      "pair_pool_count": 4244,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 1863,
+        "grossly_excessive_span": 19,
+        "near_zero_or_overlapping_gap": 1246
+      },
+      "post_dedup_proposals": 14,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 4244,
+      "raw_proposals": 30,
+      "raw_segment_count": 762,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png"
+      },
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-A7DEB438DA",
+        "DCLUSTER-923E0AFBF4",
+        "DCLUSTER-AF9DE00389",
+        "DCLUSTER-A2AF9146DB",
+        "DCLUSTER-3A35A2644A",
+        "DCLUSTER-CAE257D296",
+        "DCLUSTER-D57857D057",
+        "DCLUSTER-FF764370E8",
+        "DCLUSTER-AD274B81A0",
+        "DCLUSTER-E26EF5074C",
+        "DCLUSTER-4E042DA287",
+        "DCLUSTER-C7E6CAE60C",
+        "DCLUSTER-6F77A319ED",
+        "DCLUSTER-7D257EB725",
+        "DCLUSTER-1CEED0D2C9",
+        "DCLUSTER-83542445D8",
+        "DCLUSTER-9D1EF7E257",
+        "DCLUSTER-2F067527A3",
+        "DCLUSTER-DA1CA02AB9",
+        "DCLUSTER-E744FABDFA"
+      ],
+      "dedup_clusters": 20,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1218,
+      "pair_attempts": 9764,
+      "pair_pool_count": 9764,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5629,
+        "near_zero_or_overlapping_gap": 1757
+      },
+      "post_dedup_proposals": 20,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 9764,
+      "raw_proposals": 30,
+      "raw_segment_count": 1918,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-4A68D53C25",
+        "DCLUSTER-56DC7E1E9F",
+        "DCLUSTER-31D0935672",
+        "DCLUSTER-3BFD7344BB",
+        "DCLUSTER-3299BFF428",
+        "DCLUSTER-7398809274",
+        "DCLUSTER-960655418A",
+        "DCLUSTER-7D9841C9E7",
+        "DCLUSTER-921981A731",
+        "DCLUSTER-2683592C71",
+        "DCLUSTER-A4D48F8441",
+        "DCLUSTER-F5EDC04653",
+        "DCLUSTER-D7B06268C8",
+        "DCLUSTER-C5F9904E09",
+        "DCLUSTER-4F53BCDD85",
+        "DCLUSTER-E973BF341C",
+        "DCLUSTER-A840109788"
+      ],
+      "dedup_clusters": 17,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 804,
+      "pair_attempts": 3427,
+      "pair_pool_count": 3427,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 1644,
+        "near_zero_or_overlapping_gap": 975
+      },
+      "post_dedup_proposals": 17,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 3427,
+      "raw_proposals": 30,
+      "raw_segment_count": 846,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png"
+      },
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-EF4D5AE598",
+        "DCLUSTER-CF9523F7E4",
+        "DCLUSTER-1202C47E50",
+        "DCLUSTER-94D854FF04",
+        "DCLUSTER-28284BBBFE",
+        "DCLUSTER-7E1C94F6F1",
+        "DCLUSTER-B17D93F898",
+        "DCLUSTER-D4EB276B6A",
+        "DCLUSTER-97ADAEBDCC",
+        "DCLUSTER-EBE6EE4EDC"
+      ],
+      "dedup_clusters": 10,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1861,
+      "pair_attempts": 12000,
+      "pair_pool_count": 12000,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5712,
+        "grossly_excessive_span": 7,
+        "near_zero_or_overlapping_gap": 3431
+      },
+      "post_dedup_proposals": 10,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 12000,
+      "raw_proposals": 30,
+      "raw_segment_count": 2265,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png"
+      },
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_type": "PDF"
+    },
+    {
+      "dedup_cluster_ids": [
+        "DCLUSTER-4F694DEDA5",
+        "DCLUSTER-26A7E33CF9",
+        "DCLUSTER-68FBF72FDE",
+        "DCLUSTER-6CDB19A32B",
+        "DCLUSTER-2980834CDC",
+        "DCLUSTER-70217B5FDD",
+        "DCLUSTER-D118798138",
+        "DCLUSTER-EB59A3227C",
+        "DCLUSTER-B20DA99A94",
+        "DCLUSTER-0356265A4B",
+        "DCLUSTER-BCC8A32F61",
+        "DCLUSTER-CBCEE2C128",
+        "DCLUSTER-C7A6EE41C5",
+        "DCLUSTER-ABAA421959",
+        "DCLUSTER-DEA9CF7A24",
+        "DCLUSTER-2A0521EACA"
+      ],
+      "dedup_clusters": 16,
+      "filter_reason_counts": {
+        "near_zero_or_overlapping_gap": 6
+      },
+      "filtered_proposals": 6,
+      "normalized_segment_count": 1514,
+      "pair_attempts": 12000,
+      "pair_pool_count": 12000,
+      "pair_rejection_counts": {
+        "grossly_excessive_gap": 5819,
+        "near_zero_or_overlapping_gap": 3107
+      },
+      "post_dedup_proposals": 16,
+      "raw_cap_applied": true,
+      "raw_pool_before_cap": 12000,
+      "raw_proposals": 30,
+      "raw_segment_count": 1557,
+      "render": {
+        "render_kind": "PDF_POPPLER",
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png"
+      },
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_type": "PDF"
+    }
+  ]
+}

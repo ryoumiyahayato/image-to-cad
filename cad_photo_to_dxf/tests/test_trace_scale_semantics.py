@@ -7,8 +7,8 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 import numpy as np
 from PySide6.QtWidgets import QApplication
 
-from app.gui_trace_release import MainWindow
-from app.scale_calibrator import ScaleCalibration
+from app.gui import MainWindow
+from app.core.scale_calibrator import ScaleCalibration
 
 
 _APP = QApplication.instance() or QApplication([])

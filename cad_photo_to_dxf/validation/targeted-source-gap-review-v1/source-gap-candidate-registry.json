@@ -1,0 +1,1787 @@
+{
+  "candidate_count": 16,
+  "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-SOURCE-GAP-06B5674E3BF1",
+  "counts": {
+    "frozen_candidates": 16,
+    "human_primary_answers": 0,
+    "previously_reviewed_anchors": 3,
+    "previously_unreviewed": 13
+  },
+  "protocol": "SOURCE_GAP_REVIEW_V1",
+  "records": [
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.271042,
+        "coherence_selection_score": 0.356247,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.033721,
+        "direct_parallel_run_fraction": 1.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 1.0,
+        "endpoint_selection_score": 0.578966,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 40.0,
+        "local_density_fraction": 0.044396,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 191.0,
+        "projected_span_px": 191.0,
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "PRIOR_REVIEWED_CONTROL",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          615,
+          715
+        ],
+        "claimed_start_px": [
+          615,
+          524
+        ],
+        "fragment_a": {
+          "end": [
+            615,
+            580
+          ],
+          "start": [
+            615,
+            524
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            615,
+            715
+          ],
+          "start": [
+            615,
+            620
+          ]
+        },
+        "gap_endpoint_a_px": [
+          615,
+          580
+        ],
+        "gap_endpoint_b_px": [
+          615,
+          620
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000400"
+          ],
+          "fragment_b": [
+            "raw-hough-000569"
+          ]
+        }
+      },
+      "primitive_length_px": 191.0,
+      "projected_span_px": 191.0,
+      "review_index": 1,
+      "selection_rationale": "High visible axis support; includes a reviewed crossing control.",
+      "selection_stratum": "CONTINUOUS_STROKE_CONTROLS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          455,
+          364,
+          776,
+          876
+        ],
+        "local_box_px": [
+          573,
+          482,
+          658,
+          758
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-9BB32E8680E08F3ED86C",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.96,
+        "centerline_support_fraction": 0.333333,
+        "clean_control_score": 0.966821,
+        "coherence_selection_score": 0.005556,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.0,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.152308,
+        "endpoint_selection_score": 0.027778,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 5.0,
+        "local_density_fraction": 0.04472,
+        "longest_unsupported_fraction": 0.04,
+        "primitive_length_px": 99.0,
+        "projected_span_px": 99.0,
+        "source_degradation_context": "Clean plot-like PDF with low scan degradation.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.0625,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "PRIOR_REVIEWED_CONTROL",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          336,
+          837
+        ],
+        "claimed_start_px": [
+          336,
+          738
+        ],
+        "fragment_a": {
+          "end": [
+            336,
+            788
+          ],
+          "start": [
+            336,
+            738
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            336,
+            837
+          ],
+          "start": [
+            336,
+            793
+          ]
+        },
+        "gap_endpoint_a_px": [
+          336,
+          788
+        ],
+        "gap_endpoint_b_px": [
+          336,
+          793
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001309"
+          ],
+          "fragment_b": [
+            "raw-hough-001387"
+          ]
+        }
+      },
+      "primitive_length_px": 99.0,
+      "projected_span_px": 99.0,
+      "review_index": 2,
+      "selection_rationale": "Repeated support-run/cadence evidence; includes a reviewed patterned anchor.",
+      "selection_stratum": "PATTERNED_VISIBLE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          176,
+          578,
+          497,
+          998
+        ],
+        "local_box_px": [
+          294,
+          696,
+          379,
+          880
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.971223,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.14183,
+        "coherence_selection_score": 0.701918,
+        "diagnostic": {
+          "axis_status": "PRIMITIVE_AXIS_UNCERTAIN",
+          "coherence_profile": {
+            "center_offset_range_widths_max": 3.647059,
+            "junction_or_crossing_fraction_max": 0.55814,
+            "local_continuity_fraction_min": 0.904762,
+            "local_tangent_delta_p95_degrees_max": 38.361461,
+            "longest_disjoint_interval_fraction_max": 0.036765,
+            "primitive_count": 2,
+            "width_p95_to_median_ratio_max": 9.65
+          },
+          "coherence_reason": "EXCESSIVE_LOCAL_DIRECTION_CHANGE",
+          "coherence_status": "PRIMITIVE_COHERENCE_UNCERTAIN",
+          "diagnostic_available": true,
+          "diagnostic_coherence_score": 0.701918,
+          "diagnostic_endpoint_score": 0.52419,
+          "endpoint_profile": {
+            "max_internal_gap_before_supported_tail_fraction": 0.0,
+            "max_tail_junction_fraction": 0.375,
+            "max_tail_offset_change_widths": 0.491903,
+            "max_tail_width_ratio": 13.0,
+            "status_counts": {
+              "ENDPOINTS_SUPPORTED": 1,
+              "ENDPOINT_OVERSHOOT_UNCERTAIN": 3
+            }
+          },
+          "endpoint_reason": "ENDPOINT_IDENTITY_CHANGE",
+          "endpoint_status": "ENDPOINT_OVERSHOOT_UNCERTAIN",
+          "span_status": "SPAN_INTEGRITY_SUPPORTED"
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.262821,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 2,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 0.212308,
+        "endpoint_selection_score": 0.52419,
+        "fragment_thickness_ratio": 1.666667,
+        "gap_length_px": 5.0,
+        "local_density_fraction": 0.080912,
+        "longest_unsupported_fraction": 0.028777,
+        "primitive_length_px": 138.0,
+        "projected_span_px": 138.0,
+        "source_degradation_context": "Clean plot-like PDF with weak export-texture variation.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.155556,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "PRIOR_REVIEWED_CONTROL",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2212,
+          952
+        ],
+        "claimed_start_px": [
+          2212,
+          814
+        ],
+        "fragment_a": {
+          "end": [
+            2212,
+            916
+          ],
+          "start": [
+            2212,
+            814
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2212,
+            952
+          ],
+          "start": [
+            2212,
+            921
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2212,
+          916
+        ],
+        "gap_endpoint_b_px": [
+          2212,
+          921
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001184"
+          ],
+          "fragment_b": [
+            "raw-hough-000950"
+          ]
+        }
+      },
+      "primitive_length_px": 138.0,
+      "projected_span_px": 138.0,
+      "review_index": 3,
+      "selection_rationale": "Crossing, enclosure, off-axis, or parallel local-structure evidence.",
+      "selection_stratum": "STRUCTURAL_INTERRUPTION",
+      "source_crop_mapping": {
+        "context_box_px": [
+          2052,
+          654,
+          2373,
+          1113
+        ],
+        "local_box_px": [
+          2170,
+          772,
+          2255,
+          995
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F06-20210416-PDF",
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.299984,
+        "coherence_selection_score": 0.381404,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.21292,
+        "direct_parallel_run_fraction": 0.645161,
+        "direct_transverse_crossing_columns": 8,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.666667,
+        "endpoint_selection_score": 0.515057,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 30.0,
+        "local_density_fraction": 0.376902,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 137.0,
+        "projected_span_px": 137.0,
+        "source_degradation_context": "Large plotted page with mixed PDF objects and review/stamp lineage.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1419,
+          1198
+        ],
+        "claimed_start_px": [
+          1282,
+          1198
+        ],
+        "fragment_a": {
+          "end": [
+            1330,
+            1198
+          ],
+          "start": [
+            1282,
+            1198
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1419,
+            1198
+          ],
+          "start": [
+            1360,
+            1198
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1330,
+          1198
+        ],
+        "gap_endpoint_b_px": [
+          1360,
+          1198
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000303"
+          ],
+          "fragment_b": [
+            "raw-hough-000455"
+          ]
+        }
+      },
+      "primitive_length_px": 137.0,
+      "projected_span_px": 137.0,
+      "review_index": 4,
+      "selection_rationale": "High visible axis support; includes a reviewed crossing control.",
+      "selection_stratum": "CONTINUOUS_STROKE_CONTROLS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1122,
+          1038,
+          1580,
+          1359
+        ],
+        "local_box_px": [
+          1240,
+          1156,
+          1462,
+          1241
+        ],
+        "source_image_size_px": [
+          2600,
+          1840
+        ]
+      },
+      "source_document": "DOC-F04-ARCH10B-PDF",
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F04-PDF-ARCH10B-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-847714DB8B47800A7342",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.579795,
+        "coherence_selection_score": 0.265128,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.538462,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 7,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.35,
+        "endpoint_selection_score": 0.211026,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 6.0,
+        "local_density_fraction": 0.206854,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 96.0,
+        "projected_span_px": 96.0,
+        "source_degradation_context": "Clean normalized vector evidence; no raster or proxy entities in the reused audit.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2202,
+          136
+        ],
+        "claimed_start_px": [
+          2106,
+          136
+        ],
+        "fragment_a": {
+          "end": [
+            2166,
+            136
+          ],
+          "start": [
+            2106,
+            136
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2202,
+            136
+          ],
+          "start": [
+            2172,
+            136
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2166,
+          136
+        ],
+        "gap_endpoint_b_px": [
+          2172,
+          136
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000443"
+          ],
+          "fragment_b": [
+            "raw-hough-001128"
+          ]
+        }
+      },
+      "primitive_length_px": 96.0,
+      "projected_span_px": 96.0,
+      "review_index": 5,
+      "selection_rationale": "High visible axis support; includes a reviewed crossing control.",
+      "selection_stratum": "CONTINUOUS_STROKE_CONTROLS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1946,
+          0,
+          2363,
+          297
+        ],
+        "local_box_px": [
+          2064,
+          94,
+          2245,
+          179
+        ],
+        "source_image_size_px": [
+          2700,
+          2311
+        ]
+      },
+      "source_document": "DOC-F01-HVAC20220110-DWG",
+      "source_family": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "source_unit": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-6E1D7A515EF8BC7293A3",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.857143,
+        "centerline_support_fraction": 0.28125,
+        "clean_control_score": 0.778571,
+        "coherence_selection_score": 0.059444,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.0,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.688889,
+        "endpoint_selection_score": 0.172222,
+        "fragment_thickness_ratio": 2.0,
+        "gap_length_px": 31.0,
+        "local_density_fraction": 0.035253,
+        "longest_unsupported_fraction": 0.075188,
+        "primitive_length_px": 132.0,
+        "projected_span_px": 132.0,
+        "source_degradation_context": "Same strong speckle/scan lineage as page 11; not treated as an independent source family.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 3,
+        "supported_run_cv": 0.548228,
+        "unsupported_interval_count": 2,
+        "unsupported_interval_cv": 0.052632
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2445,
+          658
+        ],
+        "claimed_start_px": [
+          2313,
+          658
+        ],
+        "fragment_a": {
+          "end": [
+            2359,
+            658
+          ],
+          "start": [
+            2313,
+            658
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2445,
+            658
+          ],
+          "start": [
+            2390,
+            658
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2359,
+          658
+        ],
+        "gap_endpoint_b_px": [
+          2390,
+          658
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000372"
+          ],
+          "fragment_b": [
+            "raw-hough-000415"
+          ]
+        }
+      },
+      "primitive_length_px": 132.0,
+      "projected_span_px": 132.0,
+      "review_index": 6,
+      "selection_rationale": "Repeated support-run/cadence evidence; includes a reviewed patterned anchor.",
+      "selection_stratum": "PATTERNED_VISIBLE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          2153,
+          498,
+          2600,
+          819
+        ],
+        "local_box_px": [
+          2271,
+          616,
+          2488,
+          701
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F07-0026-PDF",
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-B7300C5B8E706C736EB1",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.813433,
+        "centerline_support_fraction": 0.311111,
+        "clean_control_score": 0.616663,
+        "coherence_selection_score": 0.107038,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.01376,
+        "direct_parallel_run_fraction": 0.177778,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.977778,
+        "endpoint_selection_score": 0.309419,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 44.0,
+        "local_density_fraction": 0.054781,
+        "longest_unsupported_fraction": 0.186567,
+        "primitive_length_px": 133.0,
+        "projected_span_px": 133.0,
+        "source_degradation_context": "Clean PDF with a small portrait directory sheet and larger drawing sheets.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.137615,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          634,
+          430
+        ],
+        "claimed_start_px": [
+          501,
+          430
+        ],
+        "fragment_a": {
+          "end": [
+            545,
+            430
+          ],
+          "start": [
+            501,
+            430
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            634,
+            430
+          ],
+          "start": [
+            589,
+            430
+          ]
+        },
+        "gap_endpoint_a_px": [
+          545,
+          430
+        ],
+        "gap_endpoint_b_px": [
+          589,
+          430
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000162"
+          ],
+          "fragment_b": [
+            "raw-hough-000142"
+          ]
+        }
+      },
+      "primitive_length_px": 133.0,
+      "projected_span_px": 133.0,
+      "review_index": 7,
+      "selection_rationale": "Repeated support-run/cadence evidence; includes a reviewed patterned anchor.",
+      "selection_stratum": "PATTERNED_VISIBLE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          341,
+          270,
+          795,
+          591
+        ],
+        "local_box_px": [
+          459,
+          388,
+          677,
+          473
+        ],
+        "source_image_size_px": [
+          1870,
+          2600
+        ]
+      },
+      "source_document": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.269105,
+        "coherence_selection_score": 0.385039,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.045349,
+        "direct_parallel_run_fraction": 1.0,
+        "direct_transverse_crossing_columns": 2,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 1.0,
+        "endpoint_selection_score": 0.562403,
+        "fragment_thickness_ratio": 1.5,
+        "gap_length_px": 33.0,
+        "local_density_fraction": 0.040082,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 117.0,
+        "projected_span_px": 117.0,
+        "source_degradation_context": "Clean normalized vector evidence; paperspace has only two non-printable entities in one layout and one empty layout.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2285,
+          1109
+        ],
+        "claimed_start_px": [
+          2285,
+          992
+        ],
+        "fragment_a": {
+          "end": [
+            2285,
+            1020
+          ],
+          "start": [
+            2285,
+            992
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2285,
+            1109
+          ],
+          "start": [
+            2285,
+            1053
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2285,
+          1020
+        ],
+        "gap_endpoint_b_px": [
+          2285,
+          1053
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000675"
+          ],
+          "fragment_b": [
+            "raw-hough-000902"
+          ]
+        }
+      },
+      "primitive_length_px": 117.0,
+      "projected_span_px": 117.0,
+      "review_index": 8,
+      "selection_rationale": "Crossing, enclosure, off-axis, or parallel local-structure evidence.",
+      "selection_stratum": "STRUCTURAL_INTERRUPTION",
+      "source_crop_mapping": {
+        "context_box_px": [
+          2125,
+          832,
+          2446,
+          1270
+        ],
+        "local_box_px": [
+          2243,
+          950,
+          2328,
+          1152
+        ],
+        "source_image_size_px": [
+          2700,
+          1351
+        ]
+      },
+      "source_document": "DOC-F02-HVAC10-DWG",
+      "source_family": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "source_unit": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-BD17A756658C48E6DE5F",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.283841,
+        "coherence_selection_score": 0.366111,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.066667,
+        "direct_parallel_run_fraction": 1.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 1.0,
+        "endpoint_selection_score": 0.552222,
+        "fragment_thickness_ratio": 1.2,
+        "gap_length_px": 34.0,
+        "local_density_fraction": 0.302628,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 128.0,
+        "projected_span_px": 128.0,
+        "source_degradation_context": "Strong raster scan, folds/texture/contrast variation, and uncertain text fidelity.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          616,
+          590
+        ],
+        "claimed_start_px": [
+          616,
+          462
+        ],
+        "fragment_a": {
+          "end": [
+            616,
+            518
+          ],
+          "start": [
+            616,
+            462
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            616,
+            590
+          ],
+          "start": [
+            616,
+            552
+          ]
+        },
+        "gap_endpoint_a_px": [
+          616,
+          518
+        ],
+        "gap_endpoint_b_px": [
+          616,
+          552
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001587"
+          ],
+          "fragment_b": [
+            "raw-hough-001795"
+          ]
+        }
+      },
+      "primitive_length_px": 128.0,
+      "projected_span_px": 128.0,
+      "review_index": 9,
+      "selection_rationale": "Crossing, enclosure, off-axis, or parallel local-structure evidence.",
+      "selection_stratum": "STRUCTURAL_INTERRUPTION",
+      "source_crop_mapping": {
+        "context_box_px": [
+          456,
+          302,
+          777,
+          751
+        ],
+        "local_box_px": [
+          574,
+          420,
+          659,
+          633
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.92,
+        "centerline_support_fraction": 0.5,
+        "clean_control_score": 0.88357,
+        "coherence_selection_score": 0.063547,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.087912,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 0.155556,
+        "endpoint_selection_score": 0.056471,
+        "fragment_thickness_ratio": 2.0,
+        "gap_length_px": 7.0,
+        "local_density_fraction": 0.064763,
+        "longest_unsupported_fraction": 0.02,
+        "primitive_length_px": 99.0,
+        "projected_span_px": 99.0,
+        "source_degradation_context": "Clean plot-like PDF with low scan degradation.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 5,
+        "supported_run_cv": 1.076361,
+        "unsupported_interval_count": 4,
+        "unsupported_interval_cv": 0.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1851,
+          1445
+        ],
+        "claimed_start_px": [
+          1851,
+          1346
+        ],
+        "fragment_a": {
+          "end": [
+            1851,
+            1377
+          ],
+          "start": [
+            1851,
+            1346
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1851,
+            1445
+          ],
+          "start": [
+            1851,
+            1384
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1851,
+          1377
+        ],
+        "gap_endpoint_b_px": [
+          1851,
+          1384
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000633"
+          ],
+          "fragment_b": [
+            "raw-hough-000326"
+          ]
+        }
+      },
+      "primitive_length_px": 99.0,
+      "projected_span_px": 99.0,
+      "review_index": 10,
+      "selection_rationale": "Multiple non-periodic support runs or unstable local support.",
+      "selection_stratum": "IRREGULAR_SEPARATE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1691,
+          1186,
+          2012,
+          1606
+        ],
+        "local_box_px": [
+          1809,
+          1304,
+          1894,
+          1488
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.929078,
+        "centerline_support_fraction": 0.333333,
+        "clean_control_score": 0.781356,
+        "coherence_selection_score": 0.126517,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.288462,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 2,
+        "direct_volumetric_components": 2,
+        "edge_selection_score": 0.215385,
+        "endpoint_selection_score": 0.10547,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 5.0,
+        "local_density_fraction": 0.102206,
+        "longest_unsupported_fraction": 0.028369,
+        "primitive_length_px": 140.0,
+        "projected_span_px": 140.0,
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 4,
+        "supported_run_cv": 0.845469,
+        "unsupported_interval_count": 3,
+        "unsupported_interval_cv": 0.141421
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          754,
+          1544
+        ],
+        "claimed_start_px": [
+          614,
+          1544
+        ],
+        "fragment_a": {
+          "end": [
+            679,
+            1544
+          ],
+          "start": [
+            614,
+            1544
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            754,
+            1544
+          ],
+          "start": [
+            684,
+            1544
+          ]
+        },
+        "gap_endpoint_a_px": [
+          679,
+          1544
+        ],
+        "gap_endpoint_b_px": [
+          684,
+          1544
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000262"
+          ],
+          "fragment_b": [
+            "raw-hough-000287"
+          ]
+        }
+      },
+      "primitive_length_px": 140.0,
+      "projected_span_px": 140.0,
+      "review_index": 11,
+      "selection_rationale": "Multiple non-periodic support runs or unstable local support.",
+      "selection_stratum": "IRREGULAR_SEPARATE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          454,
+          1384,
+          915,
+          1705
+        ],
+        "local_box_px": [
+          572,
+          1502,
+          797,
+          1587
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-82EE2790BE71525F9762",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.80303,
+        "centerline_support_fraction": 0.09375,
+        "clean_control_score": 0.746802,
+        "coherence_selection_score": 0.084015,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.007702,
+        "direct_parallel_run_fraction": 0.03125,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.688889,
+        "endpoint_selection_score": 0.1847,
+        "fragment_thickness_ratio": 2.5,
+        "gap_length_px": 31.0,
+        "local_density_fraction": 0.065366,
+        "longest_unsupported_fraction": 0.19697,
+        "primitive_length_px": 131.0,
+        "projected_span_px": 131.0,
+        "source_degradation_context": "Same strong speckle/scan lineage as page 11; not treated as an independent source family.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.150943,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1324,
+          1479
+        ],
+        "claimed_start_px": [
+          1324,
+          1348
+        ],
+        "fragment_a": {
+          "end": [
+            1324,
+            1391
+          ],
+          "start": [
+            1324,
+            1348
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1324,
+            1479
+          ],
+          "start": [
+            1324,
+            1422
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1324,
+          1391
+        ],
+        "gap_endpoint_b_px": [
+          1324,
+          1422
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002078"
+          ],
+          "fragment_b": [
+            "raw-hough-002057"
+          ]
+        }
+      },
+      "primitive_length_px": 131.0,
+      "projected_span_px": 131.0,
+      "review_index": 12,
+      "selection_rationale": "Degraded-source context plus intermittent visible support; not a degradation verdict.",
+      "selection_stratum": "DEGRADATION_LIKE_GAP",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1164,
+          1188,
+          1485,
+          1640
+        ],
+        "local_box_px": [
+          1282,
+          1306,
+          1367,
+          1522
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F07-0026-PDF",
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-DAF59F989A2B0C8E453B",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.761468,
+        "centerline_support_fraction": 0.09375,
+        "clean_control_score": 0.746802,
+        "coherence_selection_score": 0.084015,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.007702,
+        "direct_parallel_run_fraction": 0.03125,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.688889,
+        "endpoint_selection_score": 0.1847,
+        "fragment_thickness_ratio": 2.5,
+        "gap_length_px": 31.0,
+        "local_density_fraction": 0.0692,
+        "longest_unsupported_fraction": 0.238532,
+        "primitive_length_px": 108.0,
+        "projected_span_px": 108.0,
+        "source_degradation_context": "Same strong speckle/scan lineage as page 11; not treated as an independent source family.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.084337,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1324,
+          1456
+        ],
+        "claimed_start_px": [
+          1324,
+          1348
+        ],
+        "fragment_a": {
+          "end": [
+            1324,
+            1391
+          ],
+          "start": [
+            1324,
+            1348
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1324,
+            1456
+          ],
+          "start": [
+            1324,
+            1422
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1324,
+          1391
+        ],
+        "gap_endpoint_b_px": [
+          1324,
+          1422
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002078"
+          ],
+          "fragment_b": [
+            "raw-hough-001912"
+          ]
+        }
+      },
+      "primitive_length_px": 108.0,
+      "projected_span_px": 108.0,
+      "review_index": 13,
+      "selection_rationale": "Degraded-source context plus intermittent visible support; not a degradation verdict.",
+      "selection_stratum": "DEGRADATION_LIKE_GAP",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1164,
+          1188,
+          1485,
+          1617
+        ],
+        "local_box_px": [
+          1282,
+          1306,
+          1367,
+          1499
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F07-0026-PDF",
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F07-PDF-0026-P12"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-4F58534C04C2C40E9E25",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.901389,
+        "coherence_selection_score": 0.016667,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.0,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 0,
+        "edge_selection_score": 0.333333,
+        "endpoint_selection_score": 0.083333,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 15.0,
+        "local_density_fraction": 0.091386,
+        "longest_unsupported_fraction": 0.0,
+        "primitive_length_px": 197.002538,
+        "projected_span_px": 197.0,
+        "source_degradation_context": "Strong speckle/scan/plot degradation; text is image-only and page was selected from a bounded contact sheet.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2076,
+          325
+        ],
+        "claimed_start_px": [
+          2075,
+          128
+        ],
+        "fragment_a": {
+          "end": [
+            2075,
+            159
+          ],
+          "start": [
+            2075,
+            128
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2076,
+            325
+          ],
+          "start": [
+            2076,
+            174
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2075,
+          159
+        ],
+        "gap_endpoint_b_px": [
+          2076,
+          174
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-002585"
+          ],
+          "fragment_b": [
+            "raw-hough-002237"
+          ]
+        }
+      },
+      "primitive_length_px": 197.002538,
+      "projected_span_px": 197.0,
+      "review_index": 14,
+      "selection_rationale": "Degraded-source context plus intermittent visible support; not a degradation verdict.",
+      "selection_stratum": "DEGRADATION_LIKE_GAP",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1915,
+          0,
+          2237,
+          486
+        ],
+        "local_box_px": [
+          2033,
+          86,
+          2119,
+          368
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F07-0026-PDF",
+      "source_family": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F07-PDF-0026-P11"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.6,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.839471,
+        "coherence_selection_score": 0.084701,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.21978,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 0.229231,
+        "endpoint_selection_score": 0.082845,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 7.0,
+        "local_density_fraction": 0.053909,
+        "longest_unsupported_fraction": 0.093333,
+        "primitive_length_px": 149.013422,
+        "projected_span_px": 149.0,
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 4,
+        "supported_run_cv": 0.375154,
+        "unsupported_interval_count": 3,
+        "unsupported_interval_cv": 0.180021
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1122,
+          600
+        ],
+        "claimed_start_px": [
+          1120,
+          451
+        ],
+        "fragment_a": {
+          "end": [
+            1120,
+            528
+          ],
+          "start": [
+            1120,
+            451
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1122,
+            600
+          ],
+          "start": [
+            1122,
+            535
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1120,
+          528
+        ],
+        "gap_endpoint_b_px": [
+          1122,
+          535
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000662"
+          ],
+          "fragment_b": [
+            "raw-hough-000456"
+          ]
+        }
+      },
+      "primitive_length_px": 149.013422,
+      "projected_span_px": 149.0,
+      "review_index": 15,
+      "selection_rationale": "Mixed non-semantic support evidence near the decision boundary.",
+      "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+      "source_crop_mapping": {
+        "context_box_px": [
+          960,
+          291,
+          1283,
+          761
+        ],
+        "local_box_px": [
+          1078,
+          409,
+          1165,
+          643
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-EDC71A4759AD64EDCE78",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.847826,
+        "centerline_support_fraction": 0.5,
+        "clean_control_score": 0.771992,
+        "coherence_selection_score": 0.136739,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.339744,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 1,
+        "direct_volumetric_components": 2,
+        "edge_selection_score": 0.14,
+        "endpoint_selection_score": 0.105727,
+        "fragment_thickness_ratio": 1.090909,
+        "gap_length_px": 5.0,
+        "local_density_fraction": 0.175466,
+        "longest_unsupported_fraction": 0.032609,
+        "primitive_length_px": 91.0,
+        "projected_span_px": 91.0,
+        "source_degradation_context": "Clean text/vector-like PDF with formal Chinese title-block structure.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 7,
+        "supported_run_cv": 0.301214,
+        "unsupported_interval_count": 6,
+        "unsupported_interval_cv": 0.202031
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1548,
+          1068
+        ],
+        "claimed_start_px": [
+          1457,
+          1068
+        ],
+        "fragment_a": {
+          "end": [
+            1488,
+            1068
+          ],
+          "start": [
+            1457,
+            1068
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1548,
+            1068
+          ],
+          "start": [
+            1493,
+            1068
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1488,
+          1068
+        ],
+        "gap_endpoint_b_px": [
+          1493,
+          1068
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001269"
+          ],
+          "fragment_b": [
+            "raw-hough-000120"
+          ]
+        }
+      },
+      "primitive_length_px": 91.0,
+      "projected_span_px": 91.0,
+      "review_index": 16,
+      "selection_rationale": "Mixed non-semantic support evidence near the decision boundary.",
+      "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1297,
+          908,
+          1709,
+          1229
+        ],
+        "local_box_px": [
+          1415,
+          1026,
+          1591,
+          1111
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P1"
+    }
+  ],
+  "schema_version": 1,
+  "selection_digest": "06b5674e3bf1ef9290661da1549ef1ccbab6ae041fcad8fade2bdea35fd71862",
+  "task_id": "TARGETED-SOURCE-GAP-REVIEW-V1"
+}

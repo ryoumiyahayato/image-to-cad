@@ -1,0 +1,2382 @@
+{
+  "authorization_checkpoint": "74067df2ebc545cf0ce5b82ae14d96d43ba88d57",
+  "base_checkpoint": "1754e2a112531b914332f9181eb2ca616e8c443a",
+  "counts": {
+    "context_crops": 24,
+    "families_represented": 10,
+    "frozen_candidates": 24,
+    "high_value_families_represented": 9,
+    "local_crops": 24
+  },
+  "excluded_fidelity_blocked_units": [
+    "LOCALC-F01-DWG-STRUCT0310-MODEL-OVERVIEW",
+    "LOCALC-F02-DWG-PLUMB11-MODEL-OVERVIEW",
+    "LOCALC-F03-DWG-ELECENERGY-MODEL-OVERVIEW"
+  ],
+  "families_with_qualified_proposals": [
+    "F01-HAIYANG-2022-ROOT-DWG",
+    "F02-HUIHONG-2019-HASHED-DWG",
+    "F03-AS-BUILT-INSTALL-2020-DWG",
+    "F04-XDF-RENOVATION-REVIEW-PDF",
+    "F05-DENNKISETSUBI-STANDALONE-PDF",
+    "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+    "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+    "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+    "F09-JIULONG-FIRE-ELECTRICAL",
+    "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING"
+  ],
+  "families_without_qualified_proposals": [],
+  "frozen_candidates": [
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 506,
+        "fragment_b_length_px": 168,
+        "projected_span_px": 716
+      },
+      "annotation_hard_negative_opportunity": "Dense text, dimensions, equipment labels, and title/list layer conventions.",
+      "candidate_id": "LOCALD-F01-HAIYANG-LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVI-72EBF8E49D52",
+      "context_crop_box_px": [
+        1370,
+        604,
+        2630,
+        1656
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F01-HAIYANG-LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVI-72EBF8E49D52.png",
+      "dedup_cluster_id": "DCLUSTER-E130E7C082",
+      "discipline": "MULTIDISCIPLINE / HVAC VIEW",
+      "fragment_a_geometry": {
+        "end": [
+          2001,
+          1278
+        ],
+        "length_px": 506,
+        "start": [
+          2001,
+          772
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2000,
+          1488
+        ],
+        "length_px": 168,
+        "start": [
+          2000,
+          1320
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2000,
+        1278
+      ],
+      "gap_endpoint_b": [
+        2000,
+        1320
+      ],
+      "gap_length_px": 42,
+      "local_crop_box_px": [
+        1843,
+        730,
+        2157,
+        1530
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F01-HAIYANG-LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVI-72EBF8E49D52.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "海阳捻织车间暖通施工图2022.1.10",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "source_type": "DWG",
+        "space": "modelspace"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F01-HVAC20220110-DWG",
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1370,
+          604,
+          2630,
+          1656
+        ],
+        "context_ink_fraction": 0.0352,
+        "gap_band_dark_fraction": 0.0399,
+        "gap_band_mean_gray": 244.83
+      },
+      "source_type": "DWG",
+      "vector_raster_mixed": "VECTOR_CAD"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 283,
+        "fragment_b_length_px": 285,
+        "projected_span_px": 614
+      },
+      "annotation_hard_negative_opportunity": "Strong dimension and leader density plus dense text/title/public annotation layers.",
+      "candidate_id": "LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-296C1A7AD5FD",
+      "context_crop_box_px": [
+        1346,
+        38,
+        2426,
+        1020
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-296C1A7AD5FD.png",
+      "dedup_cluster_id": "DCLUSTER-397301CC9F",
+      "discipline": "MULTIDISCIPLINE / HVAC VIEW",
+      "fragment_a_geometry": {
+        "end": [
+          1886,
+          505
+        ],
+        "length_px": 283,
+        "start": [
+          1886,
+          222
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1886,
+          836
+        ],
+        "length_px": 285,
+        "start": [
+          1886,
+          551
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1886,
+        505
+      ],
+      "gap_endpoint_b": [
+        1886,
+        551
+      ],
+      "gap_length_px": 46,
+      "local_crop_box_px": [
+        1751,
+        176,
+        2021,
+        882
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-296C1A7AD5FD.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "10#-暖通施工图2019.05.25",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "source_type": "DWG",
+        "space": "modelspace"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1346,
+          38,
+          2426,
+          1020
+        ],
+        "context_ink_fraction": 0.0566,
+        "gap_band_dark_fraction": 0.0274,
+        "gap_band_mean_gray": 248.02
+      },
+      "source_type": "DWG",
+      "vector_raster_mixed": "VECTOR_CAD"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 396,
+        "fragment_b_length_px": 31,
+        "projected_span_px": 449
+      },
+      "annotation_hard_negative_opportunity": "Strong dimension and leader density plus dense text/title/public annotation layers.",
+      "candidate_id": "LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-D3230C9EC8C7",
+      "context_crop_box_px": [
+        2155,
+        253,
+        2700,
+        878
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-D3230C9EC8C7.png",
+      "dedup_cluster_id": "DCLUSTER-B445344F41",
+      "discipline": "MULTIDISCIPLINE / HVAC VIEW",
+      "fragment_a_geometry": {
+        "end": [
+          2550,
+          737
+        ],
+        "length_px": 396,
+        "start": [
+          2550,
+          341
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2550,
+          790
+        ],
+        "length_px": 31,
+        "start": [
+          2550,
+          759
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2550,
+        737
+      ],
+      "gap_endpoint_b": [
+        2550,
+        759
+      ],
+      "gap_length_px": 22,
+      "local_crop_box_px": [
+        2452,
+        317,
+        2648,
+        814
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-D3230C9EC8C7.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "10#-暖通施工图2019.05.25",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "source_type": "DWG",
+        "space": "modelspace"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          2155,
+          253,
+          2700,
+          878
+        ],
+        "context_ink_fraction": 0.0751,
+        "gap_band_dark_fraction": 0.1118,
+        "gap_band_mean_gray": 226.49
+      },
+      "source_type": "DWG",
+      "vector_raster_mixed": "VECTOR_CAD"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 6,
+        "fragment_a_length_px": 62,
+        "fragment_b_length_px": 706,
+        "projected_span_px": 774
+      },
+      "annotation_hard_negative_opportunity": "Dense technical text, dimension strings, equipment labels, and as-built revision layers.",
+      "candidate_id": "LOCALD-F03-AS-BUILT-LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW-7CC3C6CC3A31",
+      "context_crop_box_px": [
+        112,
+        1758,
+        1148,
+        2580
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F03-AS-BUILT-LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW-7CC3C6CC3A31.png",
+      "dedup_cluster_id": "DCLUSTER-F2A9A603ED",
+      "discipline": "MULTIDISCIPLINE / HVAC INSTALLATION VIEW",
+      "fragment_a_geometry": {
+        "end": [
+          790,
+          1844
+        ],
+        "length_px": 62,
+        "start": [
+          790,
+          1782
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          796,
+          2556
+        ],
+        "length_px": 706,
+        "start": [
+          796,
+          1850
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        793,
+        1844
+      ],
+      "gap_endpoint_b": [
+        793,
+        1850
+      ],
+      "gap_length_px": 6,
+      "local_crop_box_px": [
+        623,
+        1758,
+        963,
+        2580
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F03-AS-BUILT-LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW-7CC3C6CC3A31.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "4#能源中心-暖施",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "source_type": "DWG",
+        "space": "modelspace"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F03-HVAC4-DWG",
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          112,
+          1758,
+          1148,
+          2580
+        ],
+        "context_ink_fraction": 0.0386,
+        "gap_band_dark_fraction": 0.0204,
+        "gap_band_mean_gray": 249.8
+      },
+      "source_type": "DWG",
+      "vector_raster_mixed": "VECTOR_CAD"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 3,
+        "fragment_a_length_px": 639,
+        "fragment_b_length_px": 95,
+        "projected_span_px": 796
+      },
+      "annotation_hard_negative_opportunity": "Dimension chains, leaders/callouts, aligned labels, border, and title/revision block.",
+      "candidate_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ARCH10B-P1-E23A10324891",
+      "context_crop_box_px": [
+        399,
+        688,
+        1691,
+        1840
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ARCH10B-P1-E23A10324891.png",
+      "dedup_cluster_id": "DCLUSTER-378FE14040",
+      "discipline": "MULTIDISCIPLINE / ARCHITECTURAL RENOVATION",
+      "fragment_a_geometry": {
+        "end": [
+          1286,
+          1389
+        ],
+        "length_px": 639,
+        "start": [
+          647,
+          1389
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1443,
+          1386
+        ],
+        "length_px": 95,
+        "start": [
+          1348,
+          1386
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1286,
+        1388
+      ],
+      "gap_endpoint_b": [
+        1348,
+        1388
+      ],
+      "gap_length_px": 62,
+      "local_crop_box_px": [
+        585,
+        1213,
+        1505,
+        1563
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ARCH10B-P1-E23A10324891.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "建施-10B",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F04-ARCH10B-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          399,
+          688,
+          1691,
+          1840
+        ],
+        "context_ink_fraction": 0.1859,
+        "gap_band_dark_fraction": 0.4263,
+        "gap_band_mean_gray": 146.36
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "MIXED_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 60,
+        "fragment_b_length_px": 452,
+        "projected_span_px": 544
+      },
+      "annotation_hard_negative_opportunity": "Leaders, callouts, aligned glyphs, drawing border, title/revision fields, and legend structures.",
+      "candidate_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-2ED2C41C18FD",
+      "context_crop_box_px": [
+        1146,
+        398,
+        1946,
+        1354
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-2ED2C41C18FD.png",
+      "dedup_cluster_id": "DCLUSTER-795E12445F",
+      "discipline": "MULTIDISCIPLINE / FIRE-ELECTRICAL INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1334,
+          876
+        ],
+        "length_px": 60,
+        "start": [
+          1274,
+          876
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1818,
+          877
+        ],
+        "length_px": 452,
+        "start": [
+          1366,
+          877
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1334,
+        876
+      ],
+      "gap_endpoint_b": [
+        1366,
+        876
+      ],
+      "gap_length_px": 32,
+      "local_crop_box_px": [
+        1242,
+        757,
+        1850,
+        995
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-2ED2C41C18FD.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1146,
+          398,
+          1946,
+          1354
+        ],
+        "context_ink_fraction": 0.1877,
+        "gap_band_dark_fraction": 0.3896,
+        "gap_band_mean_gray": 160.42
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "MIXED_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 72,
+        "fragment_b_length_px": 175,
+        "projected_span_px": 258
+      },
+      "annotation_hard_negative_opportunity": "Leaders, callouts, aligned glyphs, drawing border, title/revision fields, and legend structures.",
+      "candidate_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-567F6C8B5736",
+      "context_crop_box_px": [
+        1666,
+        439,
+        2012,
+        893
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-567F6C8B5736.png",
+      "dedup_cluster_id": "DCLUSTER-CCEB7185A8",
+      "discipline": "MULTIDISCIPLINE / FIRE-ELECTRICAL INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1782,
+          666
+        ],
+        "length_px": 72,
+        "start": [
+          1710,
+          666
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1968,
+          665
+        ],
+        "length_px": 175,
+        "start": [
+          1793,
+          665
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1782,
+        666
+      ],
+      "gap_endpoint_b": [
+        1793,
+        666
+      ],
+      "gap_length_px": 11,
+      "local_crop_box_px": [
+        1686,
+        610,
+        1992,
+        722
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ELEC06-P1-567F6C8B5736.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1666,
+          439,
+          2012,
+          893
+        ],
+        "context_ink_fraction": 0.1074,
+        "gap_band_dark_fraction": 0.0357,
+        "gap_band_mean_gray": 246.68
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "MIXED_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 2,
+        "fragment_a_length_px": 498,
+        "fragment_b_length_px": 36,
+        "projected_span_px": 557
+      },
+      "annotation_hard_negative_opportunity": "Strong dimension/witness construction, leaders, aligned Japanese technical glyphs, legend/table, and title-block rules.",
+      "candidate_id": "LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-3C6994CE79D1",
+      "context_crop_box_px": [
+        1626,
+        969,
+        2367,
+        1839
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-3C6994CE79D1.png",
+      "dedup_cluster_id": "DCLUSTER-474F5C290E",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          2216,
+          1460
+        ],
+        "length_px": 498,
+        "start": [
+          1718,
+          1460
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2275,
+          1458
+        ],
+        "length_px": 36,
+        "start": [
+          2239,
+          1458
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2216,
+        1459
+      ],
+      "gap_endpoint_b": [
+        2239,
+        1459
+      ],
+      "gap_length_px": 23,
+      "local_crop_box_px": [
+        1694,
+        1337,
+        2299,
+        1581
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-3C6994CE79D1.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; single-sheet electrical equipment plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1626,
+          969,
+          2367,
+          1839
+        ],
+        "context_ink_fraction": 0.0497,
+        "gap_band_dark_fraction": 0.1071,
+        "gap_band_mean_gray": 227.75
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 727,
+        "fragment_b_length_px": 56,
+        "projected_span_px": 820
+      },
+      "annotation_hard_negative_opportunity": "Strong dimension/witness construction, leaders, aligned Japanese technical glyphs, legend/table, and title-block rules.",
+      "candidate_id": "LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-E803B4F95BE7",
+      "context_crop_box_px": [
+        16,
+        464,
+        1132,
+        1839
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-E803B4F95BE7.png",
+      "dedup_cluster_id": "DCLUSTER-CDADC95C12",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          891,
+          1185
+        ],
+        "length_px": 727,
+        "start": [
+          164,
+          1185
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          984,
+          1185
+        ],
+        "length_px": 56,
+        "start": [
+          928,
+          1185
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        891,
+        1185
+      ],
+      "gap_endpoint_b": [
+        928,
+        1185
+      ],
+      "gap_length_px": 37,
+      "local_crop_box_px": [
+        127,
+        1005,
+        1021,
+        1365
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F05-DENNKISE-LOCALC-F05-PDF-DENNKISETSUBI-P1-E803B4F95BE7.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; single-sheet electrical equipment plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          16,
+          464,
+          1132,
+          1839
+        ],
+        "context_ink_fraction": 0.0402,
+        "gap_band_dark_fraction": 0.1278,
+        "gap_band_mean_gray": 224.03
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 552,
+        "fragment_b_length_px": 135,
+        "projected_span_px": 700
+      },
+      "annotation_hard_negative_opportunity": "Dimension chains, leaders, room/equipment labels, aligned glyphs, and title-block conventions.",
+      "candidate_id": "LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-EB69E4B57683",
+      "context_crop_box_px": [
+        1626,
+        752,
+        2600,
+        1556
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-EB69E4B57683.png",
+      "dedup_cluster_id": "DCLUSTER-71198E27CE",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          2242,
+          1356
+        ],
+        "length_px": 552,
+        "start": [
+          2242,
+          804
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2242,
+          1504
+        ],
+        "length_px": 135,
+        "start": [
+          2242,
+          1369
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2242,
+        1356
+      ],
+      "gap_endpoint_b": [
+        2242,
+        1369
+      ],
+      "gap_length_px": 13,
+      "local_crop_box_px": [
+        2088,
+        780,
+        2396,
+        1528
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-EB69E4B57683.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; site/facility electrical plan page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 3,
+        "pdf_page_number": 4,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1626,
+          752,
+          2600,
+          1556
+        ],
+        "context_ink_fraction": 0.0276,
+        "gap_band_dark_fraction": 0.1531,
+        "gap_band_mean_gray": 215.53
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 4,
+        "fragment_a_length_px": 552,
+        "fragment_b_length_px": 109,
+        "projected_span_px": 674
+      },
+      "annotation_hard_negative_opportunity": "Dimension chains, leaders, room/equipment labels, aligned glyphs, and title-block conventions.",
+      "candidate_id": "LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-F1D7431BE281",
+      "context_crop_box_px": [
+        1576,
+        752,
+        2600,
+        1530
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-F1D7431BE281.png",
+      "dedup_cluster_id": "DCLUSTER-C5FA2C4A2D",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          2167,
+          1356
+        ],
+        "length_px": 552,
+        "start": [
+          2167,
+          804
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2171,
+          1478
+        ],
+        "length_px": 109,
+        "start": [
+          2171,
+          1369
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2169,
+        1356
+      ],
+      "gap_endpoint_b": [
+        2169,
+        1369
+      ],
+      "gap_length_px": 13,
+      "local_crop_box_px": [
+        2021,
+        780,
+        2317,
+        1502
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-20210416ZUMEN-P4-F1D7431BE281.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; site/facility electrical plan page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 3,
+        "pdf_page_number": 4,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1576,
+          752,
+          2600,
+          1530
+        ],
+        "context_ink_fraction": 0.0262,
+        "gap_band_dark_fraction": 0.0,
+        "gap_band_mean_gray": 254.78
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 4,
+        "fragment_a_length_px": 564,
+        "fragment_b_length_px": 261,
+        "projected_span_px": 831
+      },
+      "annotation_hard_negative_opportunity": "Strong tables, title/revision fields, aligned glyph strokes, and document-layout rules; dimensions are weak.",
+      "candidate_id": "LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-2026DENNKISETSUBI-P1-FD1646128CF2",
+      "context_crop_box_px": [
+        1031,
+        0,
+        1910,
+        1352
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-2026DENNKISETSUBI-P1-FD1646128CF2.png",
+      "dedup_cluster_id": "DCLUSTER-52219D6C55",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1619,
+          623
+        ],
+        "length_px": 564,
+        "start": [
+          1055,
+          623
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1886,
+          619
+        ],
+        "length_px": 261,
+        "start": [
+          1625,
+          619
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1619,
+        621
+      ],
+      "gap_endpoint_b": [
+        1625,
+        621
+      ],
+      "gap_length_px": 6,
+      "local_crop_box_px": [
+        1031,
+        439,
+        1910,
+        803
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F06-ONTAKE-V-LOCALC-F06-PDF-2026DENNKISETSUBI-P1-FD1646128CF2.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; electrical specification/title page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F06-2026-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1031,
+          0,
+          1910,
+          1352
+        ],
+        "context_ink_fraction": 0.1481,
+        "gap_band_dark_fraction": 0.2245,
+        "gap_band_mean_gray": 227.8
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 3,
+        "fragment_a_length_px": 74,
+        "fragment_b_length_px": 783,
+        "projected_span_px": 888
+      },
+      "annotation_hard_negative_opportunity": "Printed dimensions, leaders/callouts, aligned glyph strokes, title/legend structure under scan noise.",
+      "candidate_id": "LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-2FDE7E3C99FB",
+      "context_crop_box_px": [
+        361,
+        0,
+        1497,
+        1463
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-2FDE7E3C99FB.png",
+      "dedup_cluster_id": "DCLUSTER-89794D4925",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          559,
+          684
+        ],
+        "length_px": 74,
+        "start": [
+          485,
+          684
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1373,
+          681
+        ],
+        "length_px": 783,
+        "start": [
+          590,
+          681
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        559,
+        682
+      ],
+      "gap_endpoint_b": [
+        590,
+        682
+      ],
+      "gap_length_px": 31,
+      "local_crop_box_px": [
+        454,
+        487,
+        1404,
+        877
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-2FDE7E3C99FB.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          361,
+          0,
+          1497,
+          1463
+        ],
+        "context_ink_fraction": 0.1168,
+        "gap_band_dark_fraction": 0.4464,
+        "gap_band_mean_gray": 177.53
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 783,
+        "fragment_b_length_px": 56,
+        "projected_span_px": 856
+      },
+      "annotation_hard_negative_opportunity": "Printed dimensions, leaders/callouts, aligned glyph strokes, title/legend structure under scan noise.",
+      "candidate_id": "LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-730E087EA3B5",
+      "context_crop_box_px": [
+        522,
+        0,
+        1514,
+        1435
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-730E087EA3B5.png",
+      "dedup_cluster_id": "DCLUSTER-629EACCE41",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1373,
+          681
+        ],
+        "length_px": 783,
+        "start": [
+          590,
+          681
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1446,
+          682
+        ],
+        "length_px": 56,
+        "start": [
+          1390,
+          682
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1373,
+        682
+      ],
+      "gap_endpoint_b": [
+        1390,
+        682
+      ],
+      "gap_length_px": 17,
+      "local_crop_box_px": [
+        566,
+        494,
+        1470,
+        870
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P11-730E087EA3B5.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          522,
+          0,
+          1514,
+          1435
+        ],
+        "context_ink_fraction": 0.1175,
+        "gap_band_dark_fraction": 0.4286,
+        "gap_band_mean_gray": 197.66
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 53,
+        "fragment_b_length_px": 798,
+        "projected_span_px": 860
+      },
+      "annotation_hard_negative_opportunity": "Dimension/witness construction, leaders, text glyph strokes, and table/title rules under the same scan lineage.",
+      "candidate_id": "LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-3C8A7D8EDECB",
+      "context_crop_box_px": [
+        1200,
+        0,
+        2132,
+        918
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-3C8A7D8EDECB.png",
+      "dedup_cluster_id": "DCLUSTER-8028483EE1",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1289,
+          162
+        ],
+        "length_px": 53,
+        "start": [
+          1236,
+          162
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2096,
+          163
+        ],
+        "length_px": 798,
+        "start": [
+          1298,
+          163
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1289,
+        162
+      ],
+      "gap_endpoint_b": [
+        1298,
+        162
+      ],
+      "gap_length_px": 9,
+      "local_crop_box_px": [
+        1212,
+        0,
+        2120,
+        351
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-3C8A7D8EDECB.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; alternate electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 11,
+        "pdf_page_number": 12,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1200,
+          0,
+          2132,
+          918
+        ],
+        "context_ink_fraction": 0.115,
+        "gap_band_dark_fraction": 0.1571,
+        "gap_band_mean_gray": 214.21
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 304,
+        "fragment_b_length_px": 486,
+        "projected_span_px": 807
+      },
+      "annotation_hard_negative_opportunity": "Dimension/witness construction, leaders, text glyph strokes, and table/title rules under the same scan lineage.",
+      "candidate_id": "LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-45D73C6A827D",
+      "context_crop_box_px": [
+        1090,
+        0,
+        2033,
+        1300
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-45D73C6A827D.png",
+      "dedup_cluster_id": "DCLUSTER-C7E8D6DBF8",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1462,
+          589
+        ],
+        "length_px": 304,
+        "start": [
+          1158,
+          589
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1965,
+          590
+        ],
+        "length_px": 486,
+        "start": [
+          1479,
+          590
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1462,
+        590
+      ],
+      "gap_endpoint_b": [
+        1479,
+        590
+      ],
+      "gap_length_px": 17,
+      "local_crop_box_px": [
+        1134,
+        413,
+        1989,
+        767
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F07-SEYA-CUL-LOCALC-F07-PDF-0026-P12-45D73C6A827D.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; alternate electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 11,
+        "pdf_page_number": 12,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1090,
+          0,
+          2033,
+          1300
+        ],
+        "context_ink_fraction": 0.1232,
+        "gap_band_dark_fraction": 0.2857,
+        "gap_band_mean_gray": 227.56
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 45,
+        "fragment_b_length_px": 74,
+        "projected_span_px": 151
+      },
+      "annotation_hard_negative_opportunity": "Strong table/legend/title/revision and aligned bilingual glyph opportunities; dimension opportunities are weak.",
+      "candidate_id": "LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P1-A2F0CA58FE95",
+      "context_crop_box_px": [
+        1040,
+        2106,
+        1447,
+        2370
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P1-A2F0CA58FE95.png",
+      "dedup_cluster_id": "DCLUSTER-F643BB8D2E",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1213,
+          2238
+        ],
+        "length_px": 45,
+        "start": [
+          1168,
+          2238
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1319,
+          2238
+        ],
+        "length_px": 74,
+        "start": [
+          1245,
+          2238
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1213,
+        2238
+      ],
+      "gap_endpoint_b": [
+        1245,
+        2238
+      ],
+      "gap_length_px": 32,
+      "local_crop_box_px": [
+        1136,
+        2202,
+        1351,
+        2274
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P1-A2F0CA58FE95.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "综合仓库 electrical drawing directory/title sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1040,
+          2106,
+          1447,
+          2370
+        ],
+        "context_ink_fraction": 0.0829,
+        "gap_band_dark_fraction": 0.2641,
+        "gap_band_mean_gray": 195.75
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 221,
+        "fragment_b_length_px": 102,
+        "projected_span_px": 340
+      },
+      "annotation_hard_negative_opportunity": "Dimensions, leaders/notes, aligned labels, border, title/revision, and plan legends.",
+      "candidate_id": "LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-E77468440094",
+      "context_crop_box_px": [
+        1001,
+        923,
+        1599,
+        1399
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-E77468440094.png",
+      "dedup_cluster_id": "DCLUSTER-871ABA565E",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          1301,
+          1212
+        ],
+        "length_px": 221,
+        "start": [
+          1301,
+          991
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1300,
+          1331
+        ],
+        "length_px": 102,
+        "start": [
+          1300,
+          1229
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1300,
+        1212
+      ],
+      "gap_endpoint_b": [
+        1300,
+        1229
+      ],
+      "gap_length_px": 17,
+      "local_crop_box_px": [
+        1226,
+        967,
+        1374,
+        1355
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-E77468440094.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; warehouse electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 5,
+        "pdf_page_number": 6,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1001,
+          923,
+          1599,
+          1399
+        ],
+        "context_ink_fraction": 0.0358,
+        "gap_band_dark_fraction": 0.1667,
+        "gap_band_mean_gray": 220.63
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 4,
+        "fragment_a_length_px": 554,
+        "fragment_b_length_px": 113,
+        "projected_span_px": 684
+      },
+      "annotation_hard_negative_opportunity": "Dimensions, leaders/notes, aligned labels, border, title/revision, and plan legends.",
+      "candidate_id": "LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-F64B1FAF8535",
+      "context_crop_box_px": [
+        0,
+        590,
+        1190,
+        1410
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-F64B1FAF8535.png",
+      "dedup_cluster_id": "DCLUSTER-7D4238EEFC",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          587,
+          1212
+        ],
+        "length_px": 554,
+        "start": [
+          587,
+          658
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          591,
+          1342
+        ],
+        "length_px": 113,
+        "start": [
+          591,
+          1229
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        589,
+        1212
+      ],
+      "gap_endpoint_b": [
+        589,
+        1229
+      ],
+      "gap_length_px": 17,
+      "local_crop_box_px": [
+        439,
+        634,
+        739,
+        1366
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-F64B1FAF8535.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; warehouse electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 5,
+        "pdf_page_number": 6,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          0,
+          590,
+          1190,
+          1410
+        ],
+        "context_ink_fraction": 0.0209,
+        "gap_band_dark_fraction": 0.1587,
+        "gap_band_mean_gray": 216.94
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 97,
+        "fragment_b_length_px": 114,
+        "projected_span_px": 236
+      },
+      "annotation_hard_negative_opportunity": "Strong title/revision/signature/table/aligned-text opportunities; dimensions and leaders are weak on this page.",
+      "candidate_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P1-FA2913866300",
+      "context_crop_box_px": [
+        2140,
+        879,
+        2576,
+        1293
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P1-FA2913866300.png",
+      "dedup_cluster_id": "DCLUSTER-A7DEB438DA",
+      "discipline": "ELECTRICAL_INSTALLATION",
+      "fragment_a_geometry": {
+        "end": [
+          2337,
+          1086
+        ],
+        "length_px": 97,
+        "start": [
+          2240,
+          1086
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2476,
+          1086
+        ],
+        "length_px": 114,
+        "start": [
+          2362,
+          1086
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        2337,
+        1086
+      ],
+      "gap_endpoint_b": [
+        2362,
+        1086
+      ],
+      "gap_length_px": 25,
+      "local_crop_box_px": [
+        2215,
+        1035,
+        2501,
+        1137
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P1-FA2913866300.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "ZS(TZ)-JZ-2026-023; formal title/specification sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          2140,
+          879,
+          2576,
+          1293
+        ],
+        "context_ink_fraction": 0.1294,
+        "gap_band_dark_fraction": 0.5879,
+        "gap_band_mean_gray": 107.12
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 6,
+        "fragment_a_length_px": 291,
+        "fragment_b_length_px": 41,
+        "projected_span_px": 350
+      },
+      "annotation_hard_negative_opportunity": "Strong leader/marker, dimension/witness, aligned text, legend, and title-block opportunities.",
+      "candidate_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-9570FA0098BC",
+      "context_crop_box_px": [
+        1560,
+        331,
+        2054,
+        947
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-9570FA0098BC.png",
+      "dedup_cluster_id": "DCLUSTER-921981A731",
+      "discipline": "ELECTRICAL_INSTALLATION / FIRE ALARM",
+      "fragment_a_geometry": {
+        "end": [
+          1923,
+          642
+        ],
+        "length_px": 291,
+        "start": [
+          1632,
+          642
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1982,
+          636
+        ],
+        "length_px": 41,
+        "start": [
+          1941,
+          636
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1923,
+        639
+      ],
+      "gap_endpoint_b": [
+        1941,
+        639
+      ],
+      "gap_length_px": 18,
+      "local_crop_box_px": [
+        1608,
+        562,
+        2006,
+        716
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-9570FA0098BC.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1560,
+          331,
+          2054,
+          947
+        ],
+        "context_ink_fraction": 0.0715,
+        "gap_band_dark_fraction": 0.782,
+        "gap_band_mean_gray": 55.6
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 0,
+        "fragment_a_length_px": 52,
+        "fragment_b_length_px": 437,
+        "projected_span_px": 543
+      },
+      "annotation_hard_negative_opportunity": "Strong leader/marker, dimension/witness, aligned text, legend, and title-block opportunities.",
+      "candidate_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-D2E64AFA0093",
+      "context_crop_box_px": [
+        746,
+        523,
+        1721,
+        1477
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-D2E64AFA0093.png",
+      "dedup_cluster_id": "DCLUSTER-4A68D53C25",
+      "discipline": "ELECTRICAL_INSTALLATION / FIRE ALARM",
+      "fragment_a_geometry": {
+        "end": [
+          1014,
+          1000
+        ],
+        "length_px": 52,
+        "start": [
+          962,
+          1000
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1505,
+          1000
+        ],
+        "length_px": 437,
+        "start": [
+          1068,
+          1000
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1014,
+        1000
+      ],
+      "gap_endpoint_b": [
+        1068,
+        1000
+      ],
+      "gap_length_px": 54,
+      "local_crop_box_px": [
+        908,
+        881,
+        1559,
+        1119
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-D2E64AFA0093.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "aligned_text_glyph_stroke",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_confidence": "HIGH",
+      "semantic_class": null,
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          746,
+          523,
+          1721,
+          1477
+        ],
+        "context_ink_fraction": 0.0525,
+        "gap_band_dark_fraction": 0.1377,
+        "gap_band_mean_gray": 220.59
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "VECTOR_LIKE_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 1,
+        "fragment_a_length_px": 225,
+        "fragment_b_length_px": 572,
+        "projected_span_px": 808
+      },
+      "annotation_hard_negative_opportunity": "Printed dimension/witness lines, labels, title/table blocks, and scan-degraded glyph strokes.",
+      "candidate_id": "LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P1-9BC941C1ED6B",
+      "context_crop_box_px": [
+        1081,
+        0,
+        1977,
+        979
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P1-9BC941C1ED6B.png",
+      "dedup_cluster_id": "DCLUSTER-EF4D5AE598",
+      "discipline": "UNKNOWN",
+      "fragment_a_geometry": {
+        "end": [
+          1350,
+          269
+        ],
+        "length_px": 225,
+        "start": [
+          1125,
+          269
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1933,
+          268
+        ],
+        "length_px": 572,
+        "start": [
+          1361,
+          268
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1350,
+        268
+      ],
+      "gap_endpoint_b": [
+        1361,
+        268
+      ],
+      "gap_length_px": 11,
+      "local_crop_box_px": [
+        1101,
+        91,
+        1957,
+        445
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P1-9BC941C1ED6B.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "horizontal",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; scanned main-building plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          1081,
+          0,
+          1977,
+          979
+        ],
+        "context_ink_fraction": 0.1312,
+        "gap_band_dark_fraction": 0.2857,
+        "gap_band_mean_gray": 184.14
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    },
+    {
+      "alignment_metrics": {
+        "axis_delta_px": 6,
+        "fragment_a_length_px": 69,
+        "fragment_b_length_px": 807,
+        "projected_span_px": 900
+      },
+      "annotation_hard_negative_opportunity": "Printed dimensions, title/table rules, aligned glyph strokes, and scan artifacts.",
+      "candidate_id": "LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P8-9EC79D5FF0DF",
+      "context_crop_box_px": [
+        711,
+        347,
+        2295,
+        1439
+      ],
+      "context_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/context-crops/LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P8-9EC79D5FF0DF.png",
+      "dedup_cluster_id": "DCLUSTER-4F694DEDA5",
+      "discipline": "UNKNOWN",
+      "fragment_a_geometry": {
+        "end": [
+          1506,
+          512
+        ],
+        "length_px": 69,
+        "start": [
+          1506,
+          443
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1500,
+          1343
+        ],
+        "length_px": 807,
+        "start": [
+          1500,
+          536
+        ]
+      },
+      "frozen": true,
+      "gap_endpoint_a": [
+        1503,
+        512
+      ],
+      "gap_endpoint_b": [
+        1503,
+        536
+      ],
+      "gap_length_px": 24,
+      "local_crop_box_px": [
+        1305,
+        419,
+        1701,
+        1367
+      ],
+      "local_crop_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/local-crops/LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P8-9EC79D5FF0DF.png",
+      "model_score": null,
+      "opportunity_contexts": [
+        "dimension_extension_witness_line",
+        "dimension_chain",
+        "leader_marker",
+        "drawing_layout_rule",
+        "table_legend_revision_title_rule"
+      ],
+      "orientation": "vertical",
+      "orientation_difference_deg": 0.0,
+      "page_layout_modelspace_identity": {
+        "drawing_sheet_identifier": "unknown; alternate scanned building view",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "source_type": "PDF",
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "prediction": null,
+      "proposal_reason": "D11 canonical same-orientation fragments with bounded projected gap and source-context evidence; retained for prediction-blind review.",
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+      "selection_confidence": "MEDIUM",
+      "semantic_class": null,
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_support_local_pixel_summary": {
+        "context_box_px": [
+          711,
+          347,
+          2295,
+          1439
+        ],
+        "context_ink_fraction": 0.1022,
+        "gap_band_dark_fraction": 0.7257,
+        "gap_band_mean_gray": 103.83
+      },
+      "source_type": "PDF",
+      "vector_raster_mixed": "RASTER_PDF"
+    }
+  ],
+  "schema_version": 1,
+  "selected_units": [
+    "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+    "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+    "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+    "LOCALC-F04-PDF-ARCH10B-P1",
+    "LOCALC-F04-PDF-ELEC06-P1",
+    "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+    "LOCALC-F06-PDF-20210416ZUMEN-P4",
+    "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+    "LOCALC-F07-PDF-0026-P11",
+    "LOCALC-F07-PDF-0026-P12",
+    "LOCALC-F08-PDF-WAREHOUSE815-P1",
+    "LOCALC-F08-PDF-WAREHOUSE815-P6",
+    "LOCALC-F09-PDF-JIULONG-P1",
+    "LOCALC-F09-PDF-JIULONG-P8",
+    "LOCALC-F10-PDF-ENV-BUREAU-P1",
+    "LOCALC-F10-PDF-ENV-BUREAU-P8"
+  ],
+  "selection_policy": {
+    "diversity_axes": [
+      "source_family",
+      "selected_unit",
+      "orientation",
+      "gap_length",
+      "context_density",
+      "vector_raster_context",
+      "annotation_opportunity_context"
+    ],
+    "hard_maximum": 32,
+    "model_independent": true,
+    "per_unit_hard_maximum": 3,
+    "semantic_labels_assigned": false,
+    "target_count": 24
+  },
+  "task_id": "USER-SUPPLIED-CANDIDATE-MINING-V2-LOCAL-D"
+}

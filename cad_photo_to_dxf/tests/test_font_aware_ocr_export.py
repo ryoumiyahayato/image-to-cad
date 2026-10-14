@@ -3,9 +3,9 @@ from __future__ import annotations
 import ezdxf
 from PySide6.QtWidgets import QApplication
 
-from app.auxiliary_recognition import TextCandidate
-from app.font_library import find_font_face, safe_style_name
-from app.ocr_outline_export import add_ocr_outline_blocks
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.ocr.font_library import find_font_face, safe_style_name
+from app.export.ocr_outline_export import add_ocr_outline_blocks
 
 
 def _application() -> QApplication:
@@ -41,7 +41,7 @@ def test_selected_cjk_font_is_used_for_one_editable_line() -> None:
     assert [entity.dxf.text for entity in entities] == ["火灾"]
     assert all(entity.dxftype() == "TEXT" for entity in entities)
     assert all(entity.dxf.style == "wqy-unicode" for entity in entities)
-    assert all(0.25 <= float(entity.dxf.width) <= 4.0 for entity in entities)
+    assert all(0.72 <= float(entity.dxf.width) <= 4.0 for entity in entities)
     assert all(float(entity.dxf.oblique) == 0.0 for entity in entities)
     style = document.styles.get("wqy-unicode")
     assert style.dxf.font == "wqy-unicode.lff"

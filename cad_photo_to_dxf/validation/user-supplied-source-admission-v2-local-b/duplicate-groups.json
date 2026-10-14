@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-SOURCE-ADMISSION-V2-LOCAL-B",
+  "exact_duplicate_files": 6,
+  "exact_duplicate_group_count": 3,
+  "exact_duplicate_groups": [
+    {
+      "group_id": "EDG-01",
+      "sha256": "41deceef998f3e6c34568a1ebfe2d69a6c7933c47f4323eedb51bc992de444e7",
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室-水施_t3.bak",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/泰州景云非人防地下室-水施_t3.dwg"
+      ],
+      "count": 2,
+      "handling": "One source drawing lineage; do not count the BAK and DWG as independent diversity."
+    },
+    {
+      "group_id": "EDG-02",
+      "sha256": "4ef2325a1b60f59140c50ee5d9fd100a0c101a15a52bf4103e18136230423990",
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/给排水设计施工说明_t3.dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水设计施工说明_t3.dwg"
+      ],
+      "count": 2,
+      "handling": "One exact DWG copy in two package locations; retain one representative only."
+    },
+    {
+      "group_id": "EDG-03",
+      "sha256": "a8b5cb297924d00b98d34236bf8d028b97b2ae51ab03140fe8b519f5ca24fe84",
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8 (1).dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8.dwg"
+      ],
+      "count": 2,
+      "handling": "Same SHA-256 despite copy suffix; retain one representative only."
+    }
+  ],
+  "likely_near_duplicate_group_count": 2,
+  "likely_near_duplicate_groups": [
+    {
+      "group_id": "NDP-01",
+      "confidence": "HIGH",
+      "files": [
+        "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-00B_图纸目录(2).pdf",
+        "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/总平面图/建施-00B_图纸目录(2).pdf"
+      ],
+      "evidence": "Same basename, byte size, one-page A3-like geometry, AutoCAD 2014 PDF metadata, creation timestamp, and identical bounded first-page render SHA-256; only package path and PDF metadata modification second differ."
+    },
+    {
+      "group_id": "NDP-02",
+      "confidence": "MEDIUM",
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30.dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30_recover.dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30.bak",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30_recover.bak"
+      ],
+      "evidence": "Same package directory and drawing stem with an explicit recover suffix; sizes are close but SHA-256 values differ. This is a likely recovery/near-duplicate lineage, not an exact duplicate."
+    }
+  ],
+  "revision_group_count": 7,
+  "revision_groups": [
+    {
+      "group_id": "RG-01",
+      "scope": "HUIHONG-2019",
+      "evidence": "Repeated _t3, _t3_t3, and _t3_t3_t3 suffixes across the 2019 plumbing/electrical package."
+    },
+    {
+      "group_id": "RG-02",
+      "scope": "HUIHONG-2019 underground HVAC",
+      "evidence": "2019.05.30 drawing plus recover DWG/BAK variants; tracked separately as likely near duplicates."
+    },
+    {
+      "group_id": "RG-03",
+      "scope": "AS-BUILT-INSTALL-2020",
+      "evidence": "As-built package contains dated 2018/2019 source names, 审图修改t3, review-response material, and installation package structure."
+    },
+    {
+      "group_id": "RG-04",
+      "scope": "HAIYANG-2022",
+      "evidence": "Repeated _t3, 初审回复, 审图版, and date-stamped 2021/2022 drawing names across the same industrial package."
+    },
+    {
+      "group_id": "RG-05",
+      "scope": "XDF-RENOVATION-REVIEW-PDF",
+      "evidence": "Stamped review package includes first/second/third review responses, (0)/(1)/(2)/(3) export suffixes, void material, and discipline-specific drawing sets."
+    },
+    {
+      "group_id": "RG-06",
+      "scope": "ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "evidence": "Two PDFs share the same visitor-center project title but represent different specification/plan documents and export dates."
+    },
+    {
+      "group_id": "RG-07",
+      "scope": "SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "evidence": "32581.pdf and 0026_20260601.pdf share the same electrical-drawing project title but differ in page count, page geometry, and PDF generation/scan metadata."
+    }
+  ],
+  "accounting": "Exact duplicate groups and likely near-duplicates remain in the source directory. They are excluded from diversity and representative-document counts; no source file was discarded."
+}

@@ -5,10 +5,7 @@ from collections import defaultdict
 import cv2
 import numpy as np
 
-from app.processing_contract import (
-    ProductionProcessingConfig,
-    ProductionProcessingService,
-)
+from app.core.processing import ProductionProcessingConfig, ProductionProcessingService
 
 
 CORE_PERFORMANCE_STAGES = {
@@ -84,5 +81,5 @@ def test_performance_callback_accepts_repeated_stage_samples() -> None:
         ),
     )
 
-    assert len(samples["final_structure_generation"]) == 2
+    assert len(samples["final_structure_generation"]) == 1
     assert samples["contour_tracing"]

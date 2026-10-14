@@ -1,0 +1,137 @@
+[
+  {
+    "action": "EMIT",
+    "claim_mode": "UNCHANGED_ALREADY_ACCEPTED_SUBSEGMENT",
+    "end_endpoint_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:end",
+    "geometry_px": {
+      "end": [
+        659.0,
+        1023.0
+      ],
+      "start": [
+        473.0,
+        1023.0
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:hough",
+      "trim_to_source_support"
+    ],
+    "inherited_contact_evidence_refs": [],
+    "inherited_protected_source_claim_pixels": 0,
+    "interval": {
+      "end": 186.0,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [
+        "support:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da"
+      ],
+      "start": 0.0
+    },
+    "new_protected_source_claim_pixels": 0,
+    "new_source_claim_pixels": 0,
+    "parent_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da",
+    "parent_parameter_interval": [
+      0.0,
+      186.0
+    ],
+    "piece_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:piece-000:0.000000000-186.000000000",
+    "source_ids": [
+      "HOUGH-000029"
+    ],
+    "start_endpoint_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:start",
+    "support_evidence_refs": [
+      "support:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da"
+    ]
+  },
+  {
+    "action": "EMIT",
+    "claim_mode": "UNCHANGED_ALREADY_ACCEPTED_SUBSEGMENT",
+    "end_endpoint_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:end",
+    "geometry_px": {
+      "end": [
+        658.125,
+        1022.8628540039062
+      ],
+      "start": [
+        474.3749694824219,
+        1022.8549194335938
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "inherited_contact_evidence_refs": [],
+    "inherited_protected_source_claim_pixels": 0,
+    "interval": {
+      "end": 183.75003068889077,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [
+        "support:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961"
+      ],
+      "start": 0.0
+    },
+    "new_protected_source_claim_pixels": 0,
+    "new_source_claim_pixels": 0,
+    "parent_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961",
+    "parent_parameter_interval": [
+      0.0,
+      183.75003068889077
+    ],
+    "piece_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:piece-000:0.000000000-183.750030689",
+    "source_ids": [
+      "LSD-001063"
+    ],
+    "start_endpoint_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:start",
+    "support_evidence_refs": [
+      "support:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961"
+    ]
+  },
+  {
+    "action": "EMIT",
+    "claim_mode": "UNCHANGED_ALREADY_ACCEPTED_SUBSEGMENT",
+    "end_endpoint_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:end",
+    "geometry_px": {
+      "end": [
+        658.125,
+        1025.8870849609375
+      ],
+      "start": [
+        474.3749694824219,
+        1025.8951416015625
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "inherited_contact_evidence_refs": [],
+    "inherited_protected_source_claim_pixels": 0,
+    "interval": {
+      "end": 183.75003069420248,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [
+        "support:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07"
+      ],
+      "start": 0.0
+    },
+    "new_protected_source_claim_pixels": 0,
+    "new_source_claim_pixels": 0,
+    "parent_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07",
+    "parent_parameter_interval": [
+      0.0,
+      183.75003069420248
+    ],
+    "piece_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:piece-000:0.000000000-183.750030694",
+    "source_ids": [
+      "LSD-001069"
+    ],
+    "start_endpoint_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:start",
+    "support_evidence_refs": [
+      "support:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07"
+    ]
+  }
+]

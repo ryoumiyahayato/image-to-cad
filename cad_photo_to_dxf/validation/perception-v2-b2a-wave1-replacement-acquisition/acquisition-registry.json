@@ -1,0 +1,113 @@
+{
+  "task": "PERCEPTION-V2-B2A",
+  "base_checkpoint": "f2822879ab1380afd836140166255e992a43874e",
+  "frozen_at_utc": "2026-09-19T14:06:42Z",
+  "scope": "Controlled acquisition of the two V2-B2S-approved Wave-1 replacement documents only.",
+  "documents": [
+    {
+      "source_family_id": "SF-V2-01",
+      "intended_role": "TRAIN_POOL",
+      "document_id": "FAA-AC-43.13-1B-CHANGE-1",
+      "title": "Acceptable Methods, Techniques, and Practices - Aircraft Inspection and Repair",
+      "issuing_organization": "U.S. Department of Transportation, Federal Aviation Administration",
+      "publication_date": "1998-09-08",
+      "revision_change": "AC 43.13-1B with Change 1",
+      "official_landing_url": "https://www.faa.gov/regulations_policies/advisory_circulars/index.cfm/go/document.information/documentid/99861",
+      "requested_binary_url": "https://www.faa.gov/documentlibrary/media/advisory_circular/ac_43.13-1b_w-chg1.pdf",
+      "final_official_binary_url": "https://www.faa.gov/documentlibrary/media/advisory_circular/ac_43.13-1b_w-chg1.pdf",
+      "redirect_chain": [],
+      "access_timestamp_utc": "2026-09-19T13:53:40Z",
+      "filename": "ac_43.13-1b_w-chg1.pdf",
+      "mime": "application/pdf",
+      "byte_size": 21101662,
+      "sha256": "8DC99DD41334381B287AE02D03DC29928D9EACB1035B67AA24C5A0525324EE73",
+      "page_count": 646,
+      "pdf_version": "1.6",
+      "document_metadata": {
+        "title": "AC 43.13-1B - Acceptable Methods, Techniques, and Practices Aircraft Inspection and Repair (w/Change 1)",
+        "creator": "Microsoft Word 8.0",
+        "producer": "Acrobat Distiller 4.05 for Windows",
+        "creation_date": "2002-03-20",
+        "modification_date": "2014-07-17"
+      },
+      "vector_raster_mixed": "MIXED",
+      "generation_reproduction_characterization": "Digitally composed text and vector content with raster technical illustrations; fonts occur on 644 pages and direct image XObjects on 275 pages.",
+      "style_independence_rationale": "FAA aircraft-repair manual conventions, typography, line hierarchy, section/detail figures, inch dimensions, leaders, and repair-note layouts are organizationally and visually independent of the H2 NIST source family.",
+      "identity_check": "PASS",
+      "integrity_checks": {
+        "non_zero": true,
+        "not_html": true,
+        "not_redirect_stub": true,
+        "not_truncated": true,
+        "mime_plausible": true,
+        "extension_plausible": true,
+        "pdf_opens": true,
+        "page_count_readable": true,
+        "duplicate_of_admitted_source": false
+      },
+      "family_suitability_check": "PASS",
+      "family_suitability_evidence": "The actual bytes contain dense aircraft sheet-metal repair and structural-detail drawings with mechanical edges, sections/details, dimensions and witness-like marks, leaders, callouts, notes, and line hierarchy. This was a source-level preservation check only; no labeling page was selected.",
+      "local_git_ignored_path": "local-artifacts/draftsman/perception-v2/wave1/SF-V2-01/ac_43.13-1b_w-chg1.pdf",
+      "admission_status": "ACQUIRED_AND_ADMITTED"
+    },
+    {
+      "source_family_id": "SF-V2-03",
+      "intended_role": "TRAIN_POOL",
+      "document_id": "FAA-AC-150-5340-30J",
+      "title": "Design and Installation Details for Airport Visual Aids",
+      "issuing_organization": "U.S. Department of Transportation, Federal Aviation Administration",
+      "publication_date": "2018-02-12",
+      "revision_change": "Revision J; no change number shown",
+      "official_landing_url": "https://www.faa.gov/airports/resources/advisory_circulars/index.cfm/go/document.current/documentnumber/150_5340-30",
+      "requested_binary_url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/150-5340-30J.pdf",
+      "final_official_binary_url": "https://www.faa.gov/documentLibrary/media/Advisory_Circular/150-5340-30J.pdf",
+      "redirect_chain": [],
+      "access_timestamp_utc": "2026-09-19T13:52:58Z",
+      "filename": "150-5340-30J.pdf",
+      "mime": "application/pdf",
+      "byte_size": 12484227,
+      "sha256": "65D10B7CA60CAF4515574D995CA5AF3ACA34DE2D59FA07FC6E46C002E9AE54C5",
+      "page_count": 396,
+      "pdf_version": "1.6",
+      "document_metadata": {
+        "title": "AC 150/5340-30J, Design and Installation Details for Airport Visual Aids, 2/12/2018",
+        "author": "",
+        "company": "",
+        "creator": "Acrobat PDFMaker 15 for Word",
+        "producer": "Adobe PDF Library 15.0",
+        "creation_date": "2018-02-10",
+        "modification_date": "2020-11-14"
+      },
+      "vector_raster_mixed": "PREDOMINANTLY_VECTOR",
+      "generation_reproduction_characterization": "Digitally generated, font-bearing technical document; fonts occur on all 396 pages and direct image XObjects on only 10 pages.",
+      "style_independence_rationale": "FAA airport-engineering detail sheets use installation-detail layouts, cable/conduit and equipment geometry, aligned notes, leaders, foundation details, and FAA drawing conventions materially different from existing electrical material.",
+      "identity_check": "PASS",
+      "integrity_checks": {
+        "non_zero": true,
+        "not_html": true,
+        "not_redirect_stub": true,
+        "not_truncated": true,
+        "mime_plausible": true,
+        "extension_plausible": true,
+        "pdf_opens": true,
+        "page_count_readable": true,
+        "duplicate_of_admitted_source": false
+      },
+      "family_suitability_check": "PASS",
+      "family_suitability_evidence": "The actual bytes contain dense airport visual-aid installation details with cable/conduit paths, connectors, light and support placement, underground junction boxes, grounding and foundation details, dimensions, leaders, and annotation-heavy layout rules. This was a source-level preservation check only; no labeling page was selected.",
+      "local_git_ignored_path": "local-artifacts/draftsman/perception-v2/wave1/SF-V2-03/150-5340-30J.pdf",
+      "admission_status": "ACQUIRED_AND_ADMITTED"
+    }
+  ],
+  "duplicate_check": {
+    "new_documents_are_distinct": true,
+    "distinct_from_frozen_sf_v2_08_sha256": "C79593F34938052BEB5E90349F32A2A577ED1EAA66CAA99BA4CBB128E94842B6"
+  },
+  "frozen_reference": {
+    "source_family_id": "SF-V2-08",
+    "document_id": "NASA-CR-161594",
+    "status": "ACQUIRED_AND_ADMITTED",
+    "inspected_or_modified": false
+  },
+  "source_binaries_git_tracked": false
+}

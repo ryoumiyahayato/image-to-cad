@@ -1,0 +1,12 @@
+## fix/non-destructive-editable-text
+
+HEAD:
+fc6cd80 fix: fit native text geometry to OCR bounds
+
+Working tree:
+clean
+
+Only redundant probe logs, duplicate frozen outputs and LibreCAD temporary
+backup/lock files created during this task were removed after their canonical
+evidence files had been committed. No user tmp/ or unrelated untracked path
+was modified.

@@ -1,0 +1,104 @@
+[
+  {
+    "source_ids": [
+      "HOUGH-000106"
+    ],
+    "target_ids": [
+      "HOUGH-000029"
+    ],
+    "start": [
+      659.0,
+      1022.0
+    ],
+    "end": [
+      659.0,
+      1023.0
+    ],
+    "reason": "unresolved_structural_gap",
+    "evidence": {
+      "source_line_index": 81,
+      "target_line_index": 23,
+      "direction_error_degrees": 0.0,
+      "maximum_direction_error_degrees": 1.0,
+      "source_line_width_mm": 0.20214166313409804,
+      "target_line_width_mm": 0.20214166313409804,
+      "line_width_difference_mm": 0.0,
+      "maximum_line_width_difference_mm": 0.35,
+      "start_source_supported": true,
+      "peer_source_supported": true,
+      "gap_length_mm": 0.10583333333333332,
+      "minimum_resolvable_gap_mm": 0.3079749964674314,
+      "maximum_gap_mm": 0.4,
+      "source_dpi": 240.0,
+      "same_structural_network": true,
+      "corridor_contained": true,
+      "protection_clear": true,
+      "non_structural_ink_clear": true,
+      "topology_compatible": true,
+      "checks": {
+        "direction_aligned": true,
+        "line_width_compatible": true,
+        "gap_within_physical_budget": true,
+        "gap_has_resolvable_separation": false,
+        "same_structural_network": true,
+        "corridor_contained": true,
+        "protection_clear": true,
+        "non_structural_ink_clear": true,
+        "start_source_supported": true,
+        "peer_source_supported": true,
+        "topology_compatible": true
+      }
+    }
+  },
+  {
+    "source_ids": [
+      "HOUGH-000029"
+    ],
+    "target_ids": [
+      "HOUGH-000244"
+    ],
+    "start": [
+      473.0,
+      1023.0
+    ],
+    "end": [
+      470.0,
+      1023.0
+    ],
+    "reason": "non_structural_component_merge",
+    "evidence": {
+      "source_line_index": 23,
+      "target_line_index": 173,
+      "direction_error_degrees": 0.0,
+      "maximum_direction_error_degrees": 1.0,
+      "source_line_width_mm": 0.20214166313409804,
+      "target_line_width_mm": 0.20214166313409804,
+      "line_width_difference_mm": 0.0,
+      "maximum_line_width_difference_mm": 0.35,
+      "start_source_supported": true,
+      "peer_source_supported": true,
+      "gap_length_mm": 0.31749999999999995,
+      "minimum_resolvable_gap_mm": 0.3079749964674314,
+      "maximum_gap_mm": 0.4,
+      "source_dpi": 240.0,
+      "same_structural_network": true,
+      "corridor_contained": true,
+      "protection_clear": true,
+      "non_structural_ink_clear": false,
+      "topology_compatible": true,
+      "checks": {
+        "direction_aligned": true,
+        "line_width_compatible": true,
+        "gap_within_physical_budget": true,
+        "gap_has_resolvable_separation": true,
+        "same_structural_network": true,
+        "corridor_contained": true,
+        "protection_clear": true,
+        "non_structural_ink_clear": false,
+        "start_source_supported": true,
+        "peer_source_supported": true,
+        "topology_compatible": true
+      }
+    }
+  }
+]

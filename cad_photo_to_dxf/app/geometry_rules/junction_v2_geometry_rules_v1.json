@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "authority_id": "junction-v2-eight-node-r4-d2cecc",
+  "authority_version": "1",
+  "authority_kind": "BOUNDED_REVIEWED_JUNCTION_V2",
+  "canonical_head": "d2cecc05b8022612127162683b6c31bc7866cb46",
+  "contract_id": "frozen-junction-v2-eight-node-remap-d2cecc",
+  "contract_schema_version": 1,
+  "trusted_contract_digest": "670c5c9b9e03d311079941bd474c26d12f46108a442d1de3e6d6aadfbb6eee32",
+  "required_node_count": 8,
+  "required_obligation_count": 20,
+  "required_member_count": 18,
+  "node_ids": [
+    "ENV-3",
+    "WH-1",
+    "WH-2",
+    "WH-3",
+    "WH-4",
+    "WH-5",
+    "WH-6",
+    "WH-7"
+  ],
+  "obligation_ids": [
+    "ENV-3::ENV-3-VERTICAL-RETURN::CANONICALIZE_ENDPOINT_TO_NODE",
+    "ENV-3::ENV-3-HORIZONTAL-BOUNDARY::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-1::WH-1-RIGHT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-1::WH-1-BOTTOM-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-2::WH-2-LEFT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-2::WH-2-TOP-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-3::WH-3-LEFT-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-3::WH-3-BOTTOM-FRAME::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-4::WH-4-ROW::SPLIT_AT_CANONICAL_NODE",
+    "WH-4::WH-4-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-4::WH-4-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+    "WH-5::WH-5-ROW::SPLIT_AT_CANONICAL_NODE",
+    "WH-5::WH-5-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-5::WH-5-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+    "WH-6::WH-6-ROW::SPLIT_AT_CANONICAL_NODE",
+    "WH-6::WH-6-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-6::WH-6-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE",
+    "WH-7::WH-7-ROW::SPLIT_AT_CANONICAL_NODE",
+    "WH-7::WH-7-UPPER-COLUMN::CANONICALIZE_ENDPOINT_TO_NODE",
+    "WH-7::WH-7-LOWER-COLUMN::SOURCE_SUPPORTED_EXTEND_TO_NODE"
+  ],
+  "r4_member_binding_digest": "2941b42df7a41d189e2b75b864e79e66635d8fc211c7b174f7ee5befb2b705a2",
+  "r4_member_identity_digest": "e29a00a85d79b965d6604aa17e2af4773ff83badcea699176da8cab78395af89",
+  "r4_transaction_binding_digest": "200db50409186a8908becb9c56ad5f4021592b10d2210d72baa8a3a6093ddbdb",
+  "trusted_r4_replay_id": "junction-v2-r4-reviewed-saved-replay-d2cecc",
+  "trusted_r4_replay_resource_sha256": "56d4c536940fc6d6dce8d4634debd31fdec7aff157e6a3ac6919527572b5ec96",
+  "page_scopes": [
+    {
+      "page_id": "environment-page-003",
+      "source_scope_digest": "04671f7e973e97ad577f6278e23f36f3ac18e30371db80c80a71bf47549d5128",
+      "source_gray_sha256": "c2576180f40b8d6131c108c708efc3a7ac2970f364f73198f98a0fdc28f14699",
+      "source_binary_sha256": "1874d9b3c3fd45c7f30b5f6b3fbc7d6bd388a7682afd3c96d03eb90eaeba31ba",
+      "saved_cache_sha256": "231cffe2f79805fdd6e9b389556a973070baeabfed37569dc0af86a57cb02e4c",
+      "promoted_final_structure_id": "cc29502b41eccee06147cd73a68dc7c7c4ac76ecfdd1e81e9eff3a704ed37929"
+    },
+    {
+      "page_id": "warehouse-page-001",
+      "source_scope_digest": "f06842b7e2a0495245a816614033cb7241a02f3cbdf5c5008c5e7baf69405f7c",
+      "source_gray_sha256": "9263a361f9f4f62dcdb0c78477df9b3a480508fe3aaca56aca46c1973573ccf3",
+      "source_binary_sha256": "c1c12c55b280b2cd27aebc470db034e0420e47f76db154863402bc395ee813c9",
+      "saved_cache_sha256": "4a6dadb2c7caf20f11532bb2349d681007d7f1925dcab0032c1a3df7e9fe484e",
+      "promoted_final_structure_id": "eda8031c70bb4974194c5aa159d145c87ea0e343fc323f4231068f96ae77602c"
+    }
+  ],
+  "r4_node_transactions": [
+    {"node_id": "ENV-3", "ledger_digest": "991713e4d9bd85ff14804211dc56465c2ae8d1924afde0e6d0dff1cec9af92ea", "final_set_digest": "ab9dd38a514e52dd3c5ac6ee294665c489134bbc878840f9e17dc7743e3c2bb0"},
+    {"node_id": "WH-1", "ledger_digest": "ec5e03b11248f40ecc5f70147caab60b4a1fbdeffd47568760ddb8af629b81e5", "final_set_digest": "026e187af8a560f49be46c9705076ae6d0fe0cd8567c71a5ab1ff8cf1c677b2b"},
+    {"node_id": "WH-2", "ledger_digest": "56b61cb1b9dccf6ee29223b4ea1eb970c66342142ec79a9e27298a9012b6face", "final_set_digest": "bd3dc8a02887a74e2b405719e75039036be093e76befb696f3c2cf8250675003"},
+    {"node_id": "WH-3", "ledger_digest": "5e4c0b1ee470bc6cfe5bd90800d38b61a41a4abb0ea716b0fd31bfefd3fd7f49", "final_set_digest": "65c09230d4c645da9aaf9d6a8ba51e39dd510574949137baa2e107e1b90b45da"},
+    {"node_id": "WH-4", "ledger_digest": "9050887a5f30d17c9ce1de90cd5952322062fb11a0c9c7dd35a388b86320b8f2", "final_set_digest": "4b4a5dc6d2971d778faeebb01394d86daa5e3a97e824080e5e1be121d57fe086"},
+    {"node_id": "WH-5", "ledger_digest": "584f2d7e54571b5cf396e8b13aa3ac2c8e175a3b6bd20ce132e2a86afd120279", "final_set_digest": "bb8c92edd0c634ca95a6c179257fc3e2f62fee133742011228365362e4696ca5"},
+    {"node_id": "WH-6", "ledger_digest": "cc605c9b010bc80467c4749ea1368318a7e9a6eacf15fc5eb43ed1246011c5f0", "final_set_digest": "5263e5b3fac89768a7db123e9116ff67f48db76d6f706665f5f504f6186477e3"},
+    {"node_id": "WH-7", "ledger_digest": "053b8192d5ba1f6219e95498161f27394c988e8809e87e2c838ba36f239b8440", "final_set_digest": "cbbec625b6d4654cb3693571592de999ead3e08932492b3ab06a164bdb37ad83"}
+  ],
+  "reviewed_origin": {
+    "remap_result": "JUNCTION_V2_R4_PARTICIPANT_REMAP=PASS",
+    "participant_remap_matrix_sha256": "882a202c3d996fc0558de8bfd6bf5d6589f491f2ce0ffb245157d95dfe3fb078",
+    "bounded_replay_ledgers_sha256": "9e946ebc5825cfb65750966c7a7e4d35fe8d7682d83a58c712e5910f40330af2",
+    "remap_evidence_manifest_sha256": "1ca9b4e48c89163c6d307ada678ece3da95ab8ae95a4dac75128959ab1de0abb",
+    "consumer_contract_fixture_sha256": "8796ccbd26cf1bc9f211843b90d731a71e658ac79d30dce84f1be012bcc6d9f5"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "affected_test_count": 6,
+  "patterned_stroke_reinterpretation": {
+    "equivalent": false,
+    "intentional_patterned_geometry": "KEEP AS UNCERTAIN: test_periodic_pattern_is_uncertain_not_rejected does not authorize one continuous low-level primitive.",
+    "minor_scan_dropout_safety": "KEEP: test_short_isolated_dropout_does_not_automatically_reject protects a genuinely continuous degraded stroke."
+  },
+  "records": [
+    {
+      "action": "REWRITE",
+      "assessment": "Implementation behavior is not established as production-wrong by this test alone, but the test fixture/interpretation is semantically outdated because it supplies no positive degradation evidence.",
+      "current_assertion": "A synthetic pair of separate collinear strokes with a 20 px blank gap is DIRECT_CONTINUATION_ADMISSIBLE / CLEAR_DIRECT_TRAJECTORY.",
+      "original_intended_safety_property": "The admissibility decision is deterministic for a simple clear pair.",
+      "required_future_meaning": "Use a continuous or positively degradation-supported fixture while retaining determinism; do not treat collinearity and a blank gap as restoration authority.",
+      "test_name": "test_admissibility_decision_and_reason_are_deterministic",
+      "test_path": "cad_photo_to_dxf/tests/test_direct_continuation_admissibility_v1.py"
+    },
+    {
+      "action": "RENAME",
+      "assessment": "The no-semantic-filter safety property is correct; the test name and annotation-fixture interpretation conflate semantic neutrality with source continuity.",
+      "current_assertion": "Object and annotation-tagged synthetic pairs remain admissible even though the annotation fixture contains a clear blank gap.",
+      "original_intended_safety_property": "Candidate admissibility must not depend on object/annotation semantics or model evidence.",
+      "required_future_meaning": "Retain semantic neutrality while avoiding any claim that a blank-gap source is one low-level continuous primitive.",
+      "test_name": "test_valid_object_and_continuous_annotation_are_not_semantically_filtered",
+      "test_path": "cad_photo_to_dxf/tests/test_direct_continuation_admissibility_v1.py"
+    },
+    {
+      "action": "REWRITE",
+      "assessment": "The observability/no-model property is correct, but CLEAR_DIRECT_TRAJECTORY on a blank-gap fixture repeats the outdated restoration interpretation without positive degradation evidence.",
+      "current_assertion": "The same 20 px blank-gap fixture reports CLEAR_DIRECT_TRAJECTORY and retains its gap measurement without model calls.",
+      "original_intended_safety_property": "Decision reason and source measurements remain observable and model-independent.",
+      "required_future_meaning": "Keep reason/evidence retention and model independence using a source-supported fixture or assert neutral serialization without treating the blank gap as continuous geometry.",
+      "test_name": "test_reason_and_source_evidence_are_retained_without_model_calls",
+      "test_path": "cad_photo_to_dxf/tests/test_direct_continuation_admissibility_v1.py"
+    },
+    {
+      "action": "KEEP",
+      "assessment": "Implementation and test semantics are compatible with the source-fidelity contract. PASS means preserved uncertainty, not permission to merge dashes.",
+      "current_assertion": "A synthetic repeated dashed pattern is SPAN_INTEGRITY_UNCERTAIN, never supported as continuous geometry.",
+      "original_intended_safety_property": "Patterned evidence stays conservative and does not become a destructive support/rejection decision.",
+      "required_future_meaning": "Keep the explicit distinction from short scan-dropout tolerance.",
+      "test_name": "test_periodic_pattern_is_uncertain_not_rejected",
+      "test_path": "cad_photo_to_dxf/tests/test_primitive_span_integrity_v1.py"
+    },
+    {
+      "action": "KEEP",
+      "assessment": "Implementation and assertion are compatible; the old patterned-stroke safety summary must be read as preserved uncertainty, not destructive merge authority.",
+      "current_assertion": "A dashed synthetic axis is PRIMITIVE_AXIS_UNCERTAIN (patterned or noisy/degraded), not axis-supported continuous geometry.",
+      "original_intended_safety_property": "Do not misclassify patterned axis evidence as a hollow-center hard rejection or as confident continuous support.",
+      "required_future_meaning": "Keep uncertainty and preserve visible component segments at low level.",
+      "test_name": "test_dashed_pattern_is_uncertain_not_center_void_rejected",
+      "test_path": "cad_photo_to_dxf/tests/test_primitive_axis_support_integrity_v1.py"
+    },
+    {
+      "action": "KEEP",
+      "assessment": "This is the correct degradation-restoration safety meaning and is distinct from accepting intentional dashed geometry as one low-level primitive.",
+      "current_assertion": "A two-pixel removal inside an otherwise solid synthetic stroke remains SPAN_INTEGRITY_SUPPORTED.",
+      "original_intended_safety_property": "Minor scan/raster dropout must not automatically destroy a genuinely continuous source stroke.",
+      "required_future_meaning": "Retain positive surrounding continuity evidence; do not generalize the result to arbitrary blank gaps.",
+      "test_name": "test_short_isolated_dropout_does_not_automatically_reject",
+      "test_path": "cad_photo_to_dxf/tests/test_primitive_span_integrity_v1.py"
+    }
+  ],
+  "scan_degradation_safety_weakened": false,
+  "schema_version": 1,
+  "summary": {
+    "DEPRECATE": 0,
+    "KEEP": 3,
+    "RENAME": 1,
+    "REWRITE": 2
+  },
+  "task_id": "TARGETED-SOURCE-GAP-REVIEW-V1"
+}

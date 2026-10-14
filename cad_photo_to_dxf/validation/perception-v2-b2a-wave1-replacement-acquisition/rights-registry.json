@@ -1,0 +1,66 @@
+{
+  "task": "PERCEPTION-V2-B2A",
+  "base_checkpoint": "f2822879ab1380afd836140166255e992a43874e",
+  "reviewer": "Codex",
+  "review_date": "2026-09-19",
+  "rights_basis_urls": [
+    "https://rosap.ntl.bts.gov/view/dot/71377",
+    "https://rosap.ntl.bts.gov/cbrowse/?parentId=dot%3A65448&pid=dot%3A65448",
+    "https://www.transportation.gov/sites/dot.gov/files/docs/mission/128511/policy-data-management-s10-160926-001-d5-071317.pdf",
+    "https://usc-cdn.house.gov/view.xhtml?edition=prelim&num=0&req=granuleid%3AUSC-prelim-title17-section105"
+  ],
+  "documents": [
+    {
+      "source_family_id": "SF-V2-01",
+      "document_id": "FAA-AC-43.13-1B-CHANGE-1",
+      "copyright_owner": "No U.S. copyright in the FAA-authored federal work under 17 U.S.C. 105",
+      "publisher": "U.S. Department of Transportation, Federal Aviation Administration",
+      "rights_basis": "The official National Transportation Library record identifies FAA as corporate creator/publisher and marks the document Public Domain; DOT policy and 17 U.S.C. 105 supply the federal-work basis.",
+      "rights_evidence_url": "https://rosap.ntl.bts.gov/view/dot/71377",
+      "actual_byte_notices": {
+        "copyright_notice": "NONE_FOUND",
+        "reproduction_restriction": "NONE_FOUND",
+        "third_party_attribution": "NONE_FOUND",
+        "acknowledgments": "The opening page thanks named aviation contributors, an SAE division, and commenters for assistance; it does not assign copyright or identify any page or figure as third-party-owned.",
+        "standards_and_manufacturer_references": "References to SAE/ASTM/MIL specifications and manufacturer instructions or products are citations and operational references. No copied standard, proprietary legend, or externally attributed figure was identified."
+      },
+      "commercial_use_status": "ALLOWED_ON_PUBLIC_DOMAIN_BASIS",
+      "raw_retention_permission": "ALLOWED",
+      "derived_crop_retention_permission": "ALLOWED",
+      "human_label_retention_permission": "ALLOWED",
+      "ml_training_evaluation_status": "ALLOWED",
+      "redistribution_status": "ALLOWED",
+      "attribution_requirements": "No copyright attribution required; preserve FAA/DOT source provenance and do not imply endorsement.",
+      "third_party_exclusions": [],
+      "usable_page_allowlist": "NOT_APPLICABLE",
+      "separability_finding": "No actual-byte evidence requiring a mixed-rights split was found.",
+      "final_disposition": "PUBLIC_DOMAIN"
+    },
+    {
+      "source_family_id": "SF-V2-03",
+      "document_id": "FAA-AC-150-5340-30J",
+      "copyright_owner": "No U.S. copyright in the FAA-authored federal work under 17 U.S.C. 105",
+      "publisher": "U.S. Department of Transportation, Federal Aviation Administration",
+      "rights_basis": "The official document identifies the issuing office as FAA Airport Engineering (AAS-100); the NTL FAA Advisory Circular collection, DOT policy, and 17 U.S.C. 105 support federal authorship and public-domain status.",
+      "rights_evidence_url": "https://rosap.ntl.bts.gov/cbrowse/?parentId=dot%3A65448&pid=dot%3A65448",
+      "actual_byte_notices": {
+        "copyright_notice": "NONE_FOUND",
+        "reproduction_restriction": "NONE_FOUND",
+        "third_party_attribution": "NONE_FOUND",
+        "metadata_authorship": "PDF Author and Company metadata fields are blank; the title page identifies U.S. DOT/FAA and AAS-100.",
+        "vendor_and_contractor_references": "Manufacturer instructions and installation-contractor duties are operational references; no vendor, airport, operator, or contractor is credited as drawing author or rights owner."
+      },
+      "commercial_use_status": "ALLOWED_ON_PUBLIC_DOMAIN_BASIS",
+      "raw_retention_permission": "ALLOWED",
+      "derived_crop_retention_permission": "ALLOWED",
+      "human_label_retention_permission": "ALLOWED",
+      "ml_training_evaluation_status": "ALLOWED",
+      "redistribution_status": "ALLOWED",
+      "attribution_requirements": "No copyright attribution required; preserve FAA/DOT source provenance and do not imply endorsement.",
+      "third_party_exclusions": [],
+      "usable_page_allowlist": "NOT_APPLICABLE",
+      "separability_finding": "No actual-byte evidence requiring a mixed-rights split was found.",
+      "final_disposition": "PUBLIC_DOMAIN"
+    }
+  ]
+}

@@ -3,12 +3,14 @@ from __future__ import annotations
 from dataclasses import replace
 from pathlib import Path
 
+from tests.trace_fixtures import contour_result
+
 import cv2
 import numpy as np
 
-from app.auxiliary_recognition import TextCandidate
-from app.raster_trace import trace_image
-from app.trace_storage import load_trace_cache, save_trace_cache
+from app.ocr.auxiliary_recognition import TextCandidate
+
+from app.core.cache import load_trace_cache, save_trace_cache
 
 
 def test_trace_cache_roundtrip_preserves_binary_hierarchy_vertices_and_ocr(
@@ -27,7 +29,7 @@ def test_trace_cache_roundtrip_preserves_binary_hierarchy_vertices_and_ocr(
         2,
         cv2.LINE_8,
     )
-    result = trace_image(image)
+    result = contour_result(image)
     text = TextCandidate(
         "A1",
         (72, 65, 50, 34),

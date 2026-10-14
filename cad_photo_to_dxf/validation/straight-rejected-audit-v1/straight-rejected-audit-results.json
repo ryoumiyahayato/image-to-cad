@@ -1,0 +1,2553 @@
+{
+  "schema_version": 1,
+  "task_id": "FROZEN147_NEWLY_INELIGIBLE_STRAIGHT_REJECTED_AUDIT_V1",
+  "base_checkpoint": "0de2ce025373406813c5fed9938781e0ebec2d08",
+  "frozen_pool": 147,
+  "recovered_newly_ineligible_count": 18,
+  "recovered_candidate_ids": [
+    "FRESH1-2FF08EDFC754E290D7A4",
+    "FRESH1-316D125FE4861584BE02",
+    "FRESH1-4694F629CD0F75FF0AB7",
+    "FRESH1-4966D4412392002C19C2",
+    "FRESH1-5BF4B6744E8C47B6DCD2",
+    "FRESH1-624D754C52D4723051AF",
+    "FRESH1-74CFEA76FF37C64DE059",
+    "FRESH1-778AAC63B06DA9E1A5BB",
+    "FRESH1-7BD0B466999194C62E5F",
+    "FRESH1-91191386DC95E23BEDAC",
+    "FRESH1-ACE2F5BAEAFA699A90AC",
+    "FRESH1-C35D8D4055B82991DCFC",
+    "FRESH1-C8E58C04849244A581BA",
+    "FRESH1-DA204D3E75998A08D07B",
+    "FRESH1-E0F87F9DB039E5A48AAB",
+    "FRESH1-EAF5141532787D12AFE2",
+    "FRESH1-FC529FBBABD1C203BAD8",
+    "FRESH1-FE24B910C4F62319F60E"
+  ],
+  "audit_verdict_counts": {
+    "TRUE_REJECTION": 16,
+    "FALSE_REJECTION": 2,
+    "UNCERTAIN_REJECTION": 0
+  },
+  "audited_rejection_precision": 0.888889,
+  "true_rejection_family_counts": {
+    "CURVED_CONTOUR_STRAIGHT_FIT": 7,
+    "PIECEWISE_OFFSET_COLLAPSE": 2,
+    "SOURCE_BOUNDARY_SWITCH": 6,
+    "DISJOINT_OR_MIXED_SUPPORT": 1,
+    "OTHER_GENERIC_INVALID_STRAIGHT_FIT": 0
+  },
+  "prior_human_evidence_cases": 4,
+  "human_gate_agreement": 4,
+  "human_gate_disagreement": 0,
+  "false_rejection_families": [
+    {
+      "family": "CROSSING_CONTAMINATED_TANGENT_OR_OFFSET_PROFILE",
+      "candidate_ids": [
+        "FRESH1-ACE2F5BAEAFA699A90AC",
+        "FRESH1-EAF5141532787D12AFE2"
+      ],
+      "count": 2,
+      "signal": "JUNCTION_OR_CROSSING_FRACTION and MULTI_PEAK_FRACTION contaminate local tangent/terminal offset evidence on otherwise stable straight trajectories."
+    }
+  ],
+  "current_source_gap_16_rejected": [
+    {
+      "review_index": 10,
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "human_primary_label": "PATTERNED_VISIBLE_SEGMENTS",
+      "straight_rejection_reason": "PIECEWISE_OFFSET_COLLAPSE",
+      "audit_verdict": "TRUE_REJECTION"
+    },
+    {
+      "review_index": 15,
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "human_primary_label": "VISIBLE_SEPARATE_SEGMENTS",
+      "straight_rejection_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+      "audit_verdict": "TRUE_REJECTION"
+    },
+    {
+      "review_index": 16,
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "human_primary_label": null,
+      "straight_rejection_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "audit_verdict": "TRUE_REJECTION"
+    }
+  ],
+  "controls": {
+    "old_valid_direct_control": "1 / 1",
+    "old_valid_annotation_controls": "6 / 6",
+    "fresh_human_direct_controls": "9 / 9",
+    "fresh_human_direct_annotation_controls": "6 / 6",
+    "source_summary_match": true
+  },
+  "decision": {
+    "straight_validity_gate_should_freeze": "NO",
+    "rationale": "Clear false rejections remain; review the generic crossing-contaminated tangent/offset signal before freezing.",
+    "next_target": "REVIEW_CROSSING_CONTAMINATED_TANGENT_OFFSET_PROFILE_BEFORE_GATE_FREEZE"
+  },
+  "governance": {
+    "production_semantic_delta": "NONE",
+    "straight_validity_gate_changed": "NO",
+    "span_guard_changed": "NO",
+    "axis_guard_changed": "NO",
+    "text_glyph_guard_changed": "NO",
+    "admissibility_guard_changed": "NO",
+    "new_candidate_mining": "NO",
+    "new_source_gap_package": "NO",
+    "model_run": "NO",
+    "model_bake_off_should_resume": "NO",
+    "batch03_should_resume": "NO",
+    "validation": "NO",
+    "locked_blind": "0 / 8",
+    "h1_h2_opened": "NO"
+  },
+  "cases": [
+    {
+      "candidate_id": "FRESH1-2FF08EDFC754E290D7A4",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 124.0,
+      "fragment_lengths_px": [
+        47.0,
+        47.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_UNCERTAIN",
+      "prior_human_evidence": {
+        "primary_label": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+        "secondary_flags": [],
+        "observation": "不能识别成一条线；纸张扫描带来的痕迹，是纸的边缘。",
+        "source": "PRIMITIVE-AXIS-SUPPORT-INTEGRITY-V1-FINAL.md"
+      },
+      "human_gate_comparison": "AGREES",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              602,
+              5
+            ],
+            "end": [
+              649,
+              5
+            ]
+          },
+          "primitive_length_px": 47.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 1.0,
+            "center_offset_range_px": 2.0,
+            "center_offset_range_widths": 2.0,
+            "offset_bin_medians_px": [
+              null,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              0.0,
+              -1.0
+            ],
+            "max_sustained_lateral_drift_px": 2.0,
+            "max_sustained_lateral_drift_fraction": 0.042553
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 11.368529
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.857143,
+            "associated_support_fraction": 0.59375,
+            "local_continuity_fraction": 0.492063,
+            "longest_disjoint_interval_fraction": 0.206349,
+            "longest_disjoint_interval_px": 9.698413,
+            "usable_window_count": 7
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 7,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 1.0,
+            "max_sustained_offset_jump_widths": 1.0
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              679,
+              5
+            ],
+            "end": [
+              726,
+              5
+            ]
+          },
+          "primitive_length_px": 47.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 1.495763,
+            "center_offset_range_widths": 0.747881,
+            "offset_bin_medians_px": [
+              -0.480932,
+              -0.478753,
+              -0.48396,
+              0.234042,
+              0.508775,
+              0.515468,
+              1.0,
+              1.0
+            ],
+            "max_sustained_lateral_drift_px": 1.48396,
+            "max_sustained_lateral_drift_fraction": 0.031574
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.178847,
+            "p95_degrees": 9.121911
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.853659,
+            "local_continuity_fraction": 0.825,
+            "longest_disjoint_interval_fraction": 0.1,
+            "longest_disjoint_interval_px": 4.7,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.718002,
+            "max_sustained_offset_jump_widths": 0.359001
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a scan/paper boundary; both claimed segments lack stable full-span support, consistent with the prior paper-edge observation."
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "source_family": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 237.00211,
+      "fragment_lengths_px": [
+        130.0,
+        98.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "PIECEWISE_OFFSET_COLLAPSE"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_evidence": {
+        "primary_label": "NOT_DIRECT_STRAIGHT_CONTINUATION",
+        "secondary_labels": [
+          "MULTIPLE_OR_OFFSET_SEGMENTS"
+        ],
+        "secondary_flags": [
+          "multiple",
+          "foreign",
+          "crossing"
+        ],
+        "observation": "多尖段的线段被识别成一条完整的直线。",
+        "source": "PRIMITIVE-COHERENCE-ENDPOINT-AUDIT-V1-FINAL.md; SOURCE-FIDELITY-PRIMITIVE-CONTRACT-V1-FINAL.md"
+      },
+      "human_gate_comparison": "AGREES",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2151,
+              231
+            ],
+            "end": [
+              2151,
+              361
+            ]
+          },
+          "primitive_length_px": 130.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "PIECEWISE_OFFSET_COLLAPSE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 12.5,
+            "center_offset_range_widths": 5.0,
+            "offset_bin_medians_px": [
+              0.0,
+              -0.5,
+              -0.5,
+              0.0,
+              0.0,
+              -0.5,
+              -3.5,
+              1.0
+            ],
+            "max_sustained_lateral_drift_px": 4.5,
+            "max_sustained_lateral_drift_fraction": 0.034615
+          },
+          "local_tangent_profile": {
+            "median_degrees": 10.229115,
+            "p95_degrees": 33.625221
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.977273,
+            "local_continuity_fraction": 0.735632,
+            "longest_disjoint_interval_fraction": 0.022989,
+            "longest_disjoint_interval_px": 2.988506,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.806818,
+            "multi_peak_fraction": 0.647727,
+            "max_sustained_offset_jump_px": 4.5,
+            "max_sustained_offset_jump_widths": 1.8
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2150,
+              370
+            ],
+            "end": [
+              2150,
+              468
+            ]
+          },
+          "primitive_length_px": 98.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_EVIDENCE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.0,
+            "center_offset_range_px": 14.5,
+            "center_offset_range_widths": 4.833333,
+            "offset_bin_medians_px": [
+              -1.0,
+              -1.5,
+              -1.5,
+              -1.5,
+              -1.0,
+              -1.0,
+              -1.0,
+              0.0
+            ],
+            "max_sustained_lateral_drift_px": 1.5,
+            "max_sustained_lateral_drift_fraction": 0.015306
+          },
+          "local_tangent_profile": {
+            "median_degrees": 12.816343,
+            "p95_degrees": 35.175448
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.982143,
+            "local_continuity_fraction": 0.654545,
+            "longest_disjoint_interval_fraction": 0.018182,
+            "longest_disjoint_interval_px": 1.781818,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.946429,
+            "multi_peak_fraction": 0.857143,
+            "max_sustained_offset_jump_px": 1.0,
+            "max_sustained_offset_jump_widths": 0.333333
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "PIECEWISE_OFFSET_COLLAPSE",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render and prior human observation show multiple/offset segments; the measured offset and tangent profiles are unstable."
+    },
+    {
+      "candidate_id": "FRESH1-4694F629CD0F75FF0AB7",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 150.0,
+      "fragment_lengths_px": [
+        91.0,
+        44.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              490,
+              6
+            ],
+            "end": [
+              581,
+              6
+            ]
+          },
+          "primitive_length_px": 91.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 0.5,
+            "center_offset_range_widths": 0.5,
+            "offset_bin_medians_px": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              null,
+              null,
+              null
+            ],
+            "max_sustained_lateral_drift_px": 0.0,
+            "max_sustained_lateral_drift_fraction": 0.0
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 3.470483
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.512195,
+            "local_continuity_fraction": 0.47541,
+            "longest_disjoint_interval_fraction": 0.401639,
+            "longest_disjoint_interval_px": 36.54918,
+            "usable_window_count": 5
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 5,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.0,
+            "max_sustained_offset_jump_widths": 0.0
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              596,
+              6
+            ],
+            "end": [
+              640,
+              6
+            ]
+          },
+          "primitive_length_px": 44.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 1.0,
+            "center_offset_range_widths": 1.0,
+            "offset_bin_medians_px": [
+              null,
+              null,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              -1.0
+            ],
+            "max_sustained_lateral_drift_px": 1.0,
+            "max_sustained_lateral_drift_fraction": 0.022727
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 12.684538
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.433333,
+            "local_continuity_fraction": 0.322034,
+            "longest_disjoint_interval_fraction": 0.355932,
+            "longest_disjoint_interval_px": 15.661017,
+            "usable_window_count": 6
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 7,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 1.0,
+            "max_sustained_offset_jump_widths": 1.0
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a faint top-page boundary; both fragments have low continuity and material disjoint intervals."
+    },
+    {
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 149.013422,
+      "fragment_lengths_px": [
+        77.0,
+        65.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": {
+        "primary_label": "VISIBLE_SEPARATE_SEGMENTS",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE",
+          "BOUNDARY_POSITION_CHANGES",
+          "ENDPOINT_ANOMALY"
+        ],
+        "observation": null,
+        "source": "source-gap-v1-1-human-state-migration.json"
+      },
+      "human_gate_comparison": "AGREES",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1120,
+              451
+            ],
+            "end": [
+              1120,
+              528
+            ]
+          },
+          "primitive_length_px": 77.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 8.5,
+            "center_offset_range_widths": 3.4,
+            "offset_bin_medians_px": [
+              2.5,
+              -4.25,
+              -3.0,
+              -1.5,
+              0.0,
+              2.0,
+              3.5,
+              -3.5
+            ],
+            "max_sustained_lateral_drift_px": 7.75,
+            "max_sustained_lateral_drift_fraction": 0.100649
+          },
+          "local_tangent_profile": {
+            "median_degrees": 9.582945,
+            "p95_degrees": 52.277252
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.25,
+            "associated_support_fraction": 0.886792,
+            "local_continuity_fraction": 0.807692,
+            "longest_disjoint_interval_fraction": 0.096154,
+            "longest_disjoint_interval_px": 7.403846,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 2,
+            "support_run_count": 3,
+            "junction_or_crossing_fraction": 0.264151,
+            "multi_peak_fraction": 0.188679,
+            "max_sustained_offset_jump_px": 7.0,
+            "max_sustained_offset_jump_widths": 2.8
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1122,
+              535
+            ],
+            "end": [
+              1122,
+              600
+            ]
+          },
+          "primitive_length_px": 65.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 10.5,
+            "center_offset_range_widths": 3.5,
+            "offset_bin_medians_px": [
+              2.25,
+              4.25,
+              2.25,
+              0.5,
+              -2.0,
+              -4.25,
+              null,
+              null
+            ],
+            "max_sustained_lateral_drift_px": 8.5,
+            "max_sustained_lateral_drift_fraction": 0.130769
+          },
+          "local_tangent_profile": {
+            "median_degrees": 14.80398,
+            "p95_degrees": 15.887169
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.5,
+            "associated_support_fraction": 0.631579,
+            "local_continuity_fraction": 0.567568,
+            "longest_disjoint_interval_fraction": 0.27027,
+            "longest_disjoint_interval_px": 17.567568,
+            "usable_window_count": 6
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.052632,
+            "multi_peak_fraction": 0.026316,
+            "max_sustained_offset_jump_px": 2.5,
+            "max_sustained_offset_jump_widths": 0.833333
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render and human label show separate segments with a boundary-position change; drift, tangent, and support-run evidence agree."
+    },
+    {
+      "candidate_id": "FRESH1-5BF4B6744E8C47B6DCD2",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 116.0,
+      "fragment_lengths_px": [
+        77.0,
+        34.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1078,
+              1014
+            ],
+            "end": [
+              1078,
+              1091
+            ]
+          },
+          "primitive_length_px": 77.0,
+          "straight_validity_status": "STRAIGHT_SUPPORTED",
+          "straight_validity_reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -3.128333,
+            "center_offset_range_px": 5.27427,
+            "center_offset_range_widths": 0.479479,
+            "offset_bin_medians_px": [
+              -3.024361,
+              -3.929187,
+              -3.411954,
+              -3.4863,
+              -3.099786,
+              -2.901325,
+              -3.21958,
+              -2.430267
+            ],
+            "max_sustained_lateral_drift_px": 1.49892,
+            "max_sustained_lateral_drift_fraction": 0.019466
+          },
+          "local_tangent_profile": {
+            "median_degrees": 1.467977,
+            "p95_degrees": 4.608942
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.925,
+            "local_continuity_fraction": 0.846154,
+            "longest_disjoint_interval_fraction": 0.025641,
+            "longest_disjoint_interval_px": 1.974359,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 4,
+            "junction_or_crossing_fraction": 0.45,
+            "multi_peak_fraction": 0.475,
+            "max_sustained_offset_jump_px": 0.904826,
+            "max_sustained_offset_jump_widths": 0.082257
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1078,
+              1096
+            ],
+            "end": [
+              1078,
+              1130
+            ]
+          },
+          "primitive_length_px": 34.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -2.508469,
+            "center_offset_range_px": 6.924552,
+            "center_offset_range_widths": 0.769395,
+            "offset_bin_medians_px": [
+              0.065903,
+              -2.886375,
+              -2.886375,
+              -4.082085,
+              -0.19824,
+              -2.508469,
+              -2.824021,
+              -2.534102
+            ],
+            "max_sustained_lateral_drift_px": 4.147988,
+            "max_sustained_lateral_drift_fraction": 0.122
+          },
+          "local_tangent_profile": {
+            "median_degrees": 1.549558,
+            "p95_degrees": 9.147443
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.75,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 2,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.904762,
+            "multi_peak_fraction": 0.761905,
+            "max_sustained_offset_jump_px": 3.883845,
+            "max_sustained_offset_jump_widths": 0.431538
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "One fragment is stable, but the second follows a switched/curved support with 12.2% normalized drift and two support-identity switches."
+    },
+    {
+      "candidate_id": "FRESH1-624D754C52D4723051AF",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 100.0,
+      "fragment_lengths_px": [
+        48.0,
+        47.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              644,
+              1342
+            ],
+            "end": [
+              692,
+              1342
+            ]
+          },
+          "primitive_length_px": 48.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 3.128236,
+            "center_offset_range_px": 6.669705,
+            "center_offset_range_widths": 0.513054,
+            "offset_bin_medians_px": [
+              3.516936,
+              2.789668,
+              1.63576,
+              3.508723,
+              3.51658,
+              3.484996,
+              1.331324,
+              -0.526212
+            ],
+            "max_sustained_lateral_drift_px": 4.043148,
+            "max_sustained_lateral_drift_fraction": 0.084232
+          },
+          "local_tangent_profile": {
+            "median_degrees": 2.781448,
+            "p95_degrees": 16.939925
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.625,
+            "associated_support_fraction": 0.96,
+            "local_continuity_fraction": 0.916667,
+            "longest_disjoint_interval_fraction": 0.041667,
+            "longest_disjoint_interval_px": 2.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.76,
+            "multi_peak_fraction": 0.8,
+            "max_sustained_offset_jump_px": 2.153672,
+            "max_sustained_offset_jump_widths": 0.165667
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              697,
+              1342
+            ],
+            "end": [
+              744,
+              1342
+            ]
+          },
+          "primitive_length_px": 47.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_EVIDENCE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 2.803427,
+            "center_offset_range_px": 7.01698,
+            "center_offset_range_widths": 0.877123,
+            "offset_bin_medians_px": [
+              3.368579,
+              2.191055,
+              2.200127,
+              0.0,
+              3.904927,
+              2.727668,
+              2.49949,
+              2.914897
+            ],
+            "max_sustained_lateral_drift_px": 3.904927,
+            "max_sustained_lateral_drift_fraction": 0.083084
+          },
+          "local_tangent_profile": {
+            "median_degrees": 2.203486,
+            "p95_degrees": 6.96132
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.875,
+            "associated_support_fraction": 0.96,
+            "local_continuity_fraction": 0.916667,
+            "longest_disjoint_interval_fraction": 0.041667,
+            "longest_disjoint_interval_px": 1.958333,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 1,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.84,
+            "multi_peak_fraction": 0.84,
+            "max_sustained_offset_jump_px": 3.904927,
+            "max_sustained_offset_jump_widths": 0.488116
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a thick text/contour region; the rejected fragment has sustained lateral drift and a curved-fit profile rather than a thin straight stroke."
+    },
+    {
+      "candidate_id": "FRESH1-74CFEA76FF37C64DE059",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 118.0,
+      "fragment_lengths_px": [
+        42.0,
+        71.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              911,
+              4
+            ],
+            "end": [
+              953,
+              4
+            ]
+          },
+          "primitive_length_px": 42.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.486842,
+            "center_offset_range_px": 2.517857,
+            "center_offset_range_widths": 1.258929,
+            "offset_bin_medians_px": [
+              null,
+              2.0,
+              1.508989,
+              1.246979,
+              0.491051,
+              0.484305,
+              -0.240175,
+              -0.484581
+            ],
+            "max_sustained_lateral_drift_px": 2.484581,
+            "max_sustained_lateral_drift_fraction": 0.059157
+          },
+          "local_tangent_profile": {
+            "median_degrees": 4.533652,
+            "p95_degrees": 10.413432
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.857143,
+            "associated_support_fraction": 0.75,
+            "local_continuity_fraction": 0.714286,
+            "longest_disjoint_interval_fraction": 0.171429,
+            "longest_disjoint_interval_px": 7.2,
+            "usable_window_count": 7
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.755928,
+            "max_sustained_offset_jump_widths": 0.377964
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              958,
+              4
+            ],
+            "end": [
+              1029,
+              4
+            ]
+          },
+          "primitive_length_px": 71.0,
+          "straight_validity_status": "STRAIGHT_SUPPORTED",
+          "straight_validity_reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -0.484979,
+            "center_offset_range_px": 3.003295,
+            "center_offset_range_widths": 1.501648,
+            "offset_bin_medians_px": [
+              -1.0,
+              -0.481985,
+              -0.48478,
+              -0.488113,
+              -0.492333,
+              -0.497768,
+              0.0,
+              0.493333
+            ],
+            "max_sustained_lateral_drift_px": 1.493333,
+            "max_sustained_lateral_drift_fraction": 0.021033
+          },
+          "local_tangent_profile": {
+            "median_degrees": 2.058316,
+            "p95_degrees": 7.342696
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.032787,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.518015,
+            "max_sustained_offset_jump_widths": 0.259008
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a degraded page-edge band; fragment A lacks continuity while only fragment B has a confirmed straight trajectory."
+    },
+    {
+      "candidate_id": "FRESH1-778AAC63B06DA9E1A5BB",
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 97.0,
+      "fragment_lengths_px": [
+        47.0,
+        43.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              448,
+              1070
+            ],
+            "end": [
+              495,
+              1070
+            ]
+          },
+          "primitive_length_px": 47.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -0.5,
+            "center_offset_range_px": 10.584231,
+            "center_offset_range_widths": 0.882019,
+            "offset_bin_medians_px": [
+              6.5,
+              5.972046,
+              -0.64506,
+              -0.856986,
+              -0.856986,
+              -0.856986,
+              6.148642,
+              2.567359
+            ],
+            "max_sustained_lateral_drift_px": 7.356986,
+            "max_sustained_lateral_drift_fraction": 0.156532
+          },
+          "local_tangent_profile": {
+            "median_degrees": 11.360896,
+            "p95_degrees": 23.027252
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 3,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.96,
+            "multi_peak_fraction": 0.96,
+            "max_sustained_offset_jump_px": 7.005628,
+            "max_sustained_offset_jump_widths": 0.583802
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              502,
+              1070
+            ],
+            "end": [
+              545,
+              1070
+            ]
+          },
+          "primitive_length_px": 43.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.335241,
+            "center_offset_range_px": 9.494492,
+            "center_offset_range_widths": 0.791208,
+            "offset_bin_medians_px": [
+              -1.922921,
+              6.0,
+              6.0,
+              0.335241,
+              0.335241,
+              0.335241,
+              0.335241,
+              0.335241
+            ],
+            "max_sustained_lateral_drift_px": 7.922921,
+            "max_sustained_lateral_drift_fraction": 0.184254
+          },
+          "local_tangent_profile": {
+            "median_degrees": 3.099394,
+            "p95_degrees": 11.541968
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.625,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 2,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.913043,
+            "multi_peak_fraction": 0.913043,
+            "max_sustained_offset_jump_px": 7.922921,
+            "max_sustained_offset_jump_widths": 0.660243
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a curved/filled contour; both fragments show 15.7%/18.4% normalized drift and support-identity switches."
+    },
+    {
+      "candidate_id": "FRESH1-7BD0B466999194C62E5F",
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 243.0,
+      "fragment_lengths_px": [
+        29.0,
+        209.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "PIECEWISE_OFFSET_COLLAPSE"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2440,
+              996
+            ],
+            "end": [
+              2440,
+              1025
+            ]
+          },
+          "primitive_length_px": 29.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "PIECEWISE_OFFSET_COLLAPSE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 6.081814,
+            "center_offset_range_widths": 3.040907,
+            "offset_bin_medians_px": [
+              -3.271878,
+              0.0,
+              0.330709,
+              0.0,
+              0.0,
+              0.423077,
+              0.0,
+              -0.006188
+            ],
+            "max_sustained_lateral_drift_px": 3.694955,
+            "max_sustained_lateral_drift_fraction": 0.127412
+          },
+          "local_tangent_profile": {
+            "median_degrees": 3.85987,
+            "p95_degrees": 48.205785
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.875,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 0.88,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 1,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 0.846154,
+            "max_sustained_offset_jump_px": 3.271878,
+            "max_sustained_offset_jump_widths": 1.635939
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2440,
+              1030
+            ],
+            "end": [
+              2440,
+              1239
+            ]
+          },
+          "primitive_length_px": 209.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_EVIDENCE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.0,
+            "center_offset_range_px": 12.805413,
+            "center_offset_range_widths": 4.268471,
+            "offset_bin_medians_px": [
+              -1.0,
+              -1.0,
+              -1.0,
+              0.0,
+              4.0,
+              0.0,
+              -1.0,
+              -1.0
+            ],
+            "max_sustained_lateral_drift_px": 5.0,
+            "max_sustained_lateral_drift_fraction": 0.023923
+          },
+          "local_tangent_profile": {
+            "median_degrees": 1.453622,
+            "p95_degrees": 23.922969
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 0.931624,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 0.966102,
+            "max_sustained_offset_jump_px": 4.0,
+            "max_sustained_offset_jump_widths": 1.333333
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "PIECEWISE_OFFSET_COLLAPSE",
+      "false_rejection_signal": null,
+      "audit_basis": "The short upper fragment shows offset/tangent collapse against a different structural support; the long lower fragment alone is insufficient."
+    },
+    {
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 102.0,
+      "fragment_lengths_px": [
+        45.0,
+        51.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "AXIS_SUPPORT_SUPPORTED",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2346,
+              164
+            ],
+            "end": [
+              2391,
+              164
+            ]
+          },
+          "primitive_length_px": 45.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.5,
+            "center_offset_range_px": 6.758969,
+            "center_offset_range_widths": 0.675897,
+            "offset_bin_medians_px": [
+              -4.393416,
+              -2.0,
+              -0.5,
+              0.5,
+              1.0,
+              0.757062,
+              -5.5,
+              -5.0
+            ],
+            "max_sustained_lateral_drift_px": 6.5,
+            "max_sustained_lateral_drift_fraction": 0.144444
+          },
+          "local_tangent_profile": {
+            "median_degrees": 15.079859,
+            "p95_degrees": 20.970218
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.25,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 1,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.291667,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 6.257062,
+            "max_sustained_offset_jump_widths": 0.625706
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2397,
+              164
+            ],
+            "end": [
+              2448,
+              164
+            ]
+          },
+          "primitive_length_px": 51.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -6.5,
+            "center_offset_range_px": 6.5,
+            "center_offset_range_widths": 0.361111,
+            "offset_bin_medians_px": [
+              -5.335123,
+              -5.5,
+              -5.5,
+              -6.5,
+              -7.0,
+              -8.0,
+              -9.0,
+              -10.25
+            ],
+            "max_sustained_lateral_drift_px": 4.914877,
+            "max_sustained_lateral_drift_fraction": 0.09637
+          },
+          "local_tangent_profile": {
+            "median_degrees": 6.628345,
+            "p95_degrees": 10.874237
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.75,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 1.25,
+            "max_sustained_offset_jump_widths": 0.069444
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a curved logo contour; both fragments have sustained lateral drift and the curved-fit reason."
+    },
+    {
+      "candidate_id": "FRESH1-ACE2F5BAEAFA699A90AC",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 187.0,
+      "fragment_lengths_px": [
+        42.0,
+        139.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "PIECEWISE_OFFSET_COLLAPSE"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1636,
+              804
+            ],
+            "end": [
+              1678,
+              804
+            ]
+          },
+          "primitive_length_px": 42.0,
+          "straight_validity_status": "STRAIGHT_SUPPORTED",
+          "straight_validity_reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 0.880282,
+            "center_offset_range_widths": 0.880282,
+            "offset_bin_medians_px": [
+              0.0,
+              0.0,
+              0.0,
+              0.165354,
+              0.0,
+              0.0,
+              0.0,
+              0.165354
+            ],
+            "max_sustained_lateral_drift_px": 0.165354,
+            "max_sustained_lateral_drift_fraction": 0.003937
+          },
+          "local_tangent_profile": {
+            "median_degrees": 1.120667,
+            "p95_degrees": 3.528842
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 1.0,
+            "max_sustained_offset_jump_px": 0.165354,
+            "max_sustained_offset_jump_widths": 0.165354
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1684,
+              804
+            ],
+            "end": [
+              1823,
+              804
+            ]
+          },
+          "primitive_length_px": 139.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "PIECEWISE_OFFSET_COLLAPSE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 4.5,
+            "center_offset_range_widths": 4.5,
+            "offset_bin_medians_px": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              3.0
+            ],
+            "max_sustained_lateral_drift_px": 3.0,
+            "max_sustained_lateral_drift_fraction": 0.021583
+          },
+          "local_tangent_profile": {
+            "median_degrees": 1.695909,
+            "p95_degrees": 21.133719
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 0.983871,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 0.962567,
+            "max_sustained_offset_jump_px": 3.0,
+            "max_sustained_offset_jump_widths": 3.0
+          }
+        }
+      ],
+      "audit_verdict": "FALSE_REJECTION",
+      "failure_family": null,
+      "false_rejection_signal": "CROSSING_CONTAMINATED_TANGENT_OR_OFFSET_PROFILE",
+      "audit_basis": "The source render shows a horizontal straight source line through a junction/filled structure; support and continuity are full with near-zero drift, but the terminal offset/tangent profile rejects it."
+    },
+    {
+      "candidate_id": "FRESH1-C35D8D4055B82991DCFC",
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 88.0,
+      "fragment_lengths_px": [
+        42.0,
+        41.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1004,
+              1128
+            ],
+            "end": [
+              1046,
+              1128
+            ]
+          },
+          "primitive_length_px": 42.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 13.585523,
+            "center_offset_range_widths": 0.679276,
+            "offset_bin_medians_px": [
+              0.0,
+              0.0,
+              -9.851093,
+              -6.5,
+              0.934297,
+              1.663771,
+              2.0,
+              -1.0
+            ],
+            "max_sustained_lateral_drift_px": 11.851093,
+            "max_sustained_lateral_drift_fraction": 0.282169
+          },
+          "local_tangent_profile": {
+            "median_degrees": 11.284374,
+            "p95_degrees": 29.60803
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.5,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 4,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.590909,
+            "multi_peak_fraction": 0.590909,
+            "max_sustained_offset_jump_px": 9.851093,
+            "max_sustained_offset_jump_widths": 0.492555
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1051,
+              1128
+            ],
+            "end": [
+              1092,
+              1128
+            ]
+          },
+          "primitive_length_px": 41.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 9.706558,
+            "center_offset_range_widths": 0.388262,
+            "offset_bin_medians_px": [
+              0.383152,
+              4.559599,
+              8.226544,
+              3.618193,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_sustained_lateral_drift_px": 8.226544,
+            "max_sustained_lateral_drift_fraction": 0.200647
+          },
+          "local_tangent_profile": {
+            "median_degrees": 6.589136,
+            "p95_degrees": 21.238421
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.625,
+            "associated_support_fraction": 0.954545,
+            "local_continuity_fraction": 0.904762,
+            "longest_disjoint_interval_fraction": 0.047619,
+            "longest_disjoint_interval_px": 1.952381,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 4,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.5,
+            "multi_peak_fraction": 0.545455,
+            "max_sustained_offset_jump_px": 4.608351,
+            "max_sustained_offset_jump_widths": 0.184334
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a curved/filled glyph contour; both fragments have large drift and repeated support-identity switches."
+    },
+    {
+      "candidate_id": "FRESH1-C8E58C04849244A581BA",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 89.0,
+      "fragment_lengths_px": [
+        39.0,
+        44.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2352,
+              166
+            ],
+            "end": [
+              2391,
+              166
+            ]
+          },
+          "primitive_length_px": 39.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -3.0,
+            "center_offset_range_px": 5.5,
+            "center_offset_range_widths": 0.5,
+            "offset_bin_medians_px": [
+              -4.0,
+              -2.5,
+              -1.5,
+              -1.0,
+              -1.242938,
+              -6.5,
+              -6.5,
+              -6.0
+            ],
+            "max_sustained_lateral_drift_px": 5.5,
+            "max_sustained_lateral_drift_fraction": 0.141026
+          },
+          "local_tangent_profile": {
+            "median_degrees": 11.243771,
+            "p95_degrees": 17.788892
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.25,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 1,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.095238,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 5.257062,
+            "max_sustained_offset_jump_widths": 0.477915
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2397,
+              166
+            ],
+            "end": [
+              2441,
+              166
+            ]
+          },
+          "primitive_length_px": 44.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -7.5,
+            "center_offset_range_px": 4.5,
+            "center_offset_range_widths": 0.28125,
+            "offset_bin_medians_px": [
+              -6.169901,
+              -6.5,
+              -6.5,
+              -7.0,
+              -7.5,
+              -8.0,
+              -9.0,
+              -10.0
+            ],
+            "max_sustained_lateral_drift_px": 3.830099,
+            "max_sustained_lateral_drift_fraction": 0.087048
+          },
+          "local_tangent_profile": {
+            "median_degrees": 5.181767,
+            "p95_degrees": 8.912391
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.75,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 1.0,
+            "max_sustained_offset_jump_widths": 0.0625
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a curved logo contour; both fragments drift laterally along the curve."
+    },
+    {
+      "candidate_id": "FRESH1-DA204D3E75998A08D07B",
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 85.0,
+      "fragment_lengths_px": [
+        35.0,
+        44.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "PIECEWISE_OFFSET_COLLAPSE"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1720,
+              1798
+            ],
+            "end": [
+              1755,
+              1798
+            ]
+          },
+          "primitive_length_px": 35.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_EVIDENCE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.5,
+            "center_offset_range_px": 9.5,
+            "center_offset_range_widths": 4.75,
+            "offset_bin_medians_px": [
+              -1.5,
+              -1.5,
+              -1.5,
+              -1.5,
+              -1.5,
+              -2.25,
+              -1.5,
+              -1.5
+            ],
+            "max_sustained_lateral_drift_px": 0.75,
+            "max_sustained_lateral_drift_fraction": 0.021429
+          },
+          "local_tangent_profile": {
+            "median_degrees": 11.230096,
+            "p95_degrees": 30.803469
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 0.633333,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 0.967742,
+            "max_sustained_offset_jump_px": 0.75,
+            "max_sustained_offset_jump_widths": 0.375
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1761,
+              1798
+            ],
+            "end": [
+              1805,
+              1798
+            ]
+          },
+          "primitive_length_px": 44.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "PIECEWISE_OFFSET_COLLAPSE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.5,
+            "center_offset_range_px": 9.5,
+            "center_offset_range_widths": 4.75,
+            "offset_bin_medians_px": [
+              -1.5,
+              -1.5,
+              -1.5,
+              -1.5,
+              -5.5,
+              -1.5,
+              -1.5,
+              -1.5
+            ],
+            "max_sustained_lateral_drift_px": 4.0,
+            "max_sustained_lateral_drift_fraction": 0.090909
+          },
+          "local_tangent_profile": {
+            "median_degrees": 9.043314,
+            "p95_degrees": 39.266278
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.875,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 0.675676,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 2,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 1.0,
+            "multi_peak_fraction": 0.947368,
+            "max_sustained_offset_jump_px": 4.0,
+            "max_sustained_offset_jump_widths": 2.0
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a thick glyph/contour region; the rejected fragment has support switches, a 2-stroke-width offset jump, and high tangent variation."
+    },
+    {
+      "candidate_id": "FRESH1-E0F87F9DB039E5A48AAB",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "orientation": "horizontal",
+      "claimed_primitive_length_px": 111.0,
+      "fragment_lengths_px": [
+        51.0,
+        54.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "CURVED_CONTOUR_STRAIGHT_FIT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2340,
+              160
+            ],
+            "end": [
+              2391,
+              160
+            ]
+          },
+          "primitive_length_px": 51.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 1.148215,
+            "center_offset_range_px": 14.0,
+            "center_offset_range_widths": 1.272727,
+            "offset_bin_medians_px": [
+              -5.963576,
+              0.693252,
+              3.0,
+              4.25,
+              4.75,
+              4.757062,
+              -3.5,
+              -3.25
+            ],
+            "max_sustained_lateral_drift_px": 10.720638,
+            "max_sustained_lateral_drift_fraction": 0.210209
+          },
+          "local_tangent_profile": {
+            "median_degrees": 23.279252,
+            "p95_degrees": 34.116511
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.25,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 2,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.259259,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 8.257062,
+            "max_sustained_offset_jump_widths": 0.750642
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2397,
+              160
+            ],
+            "end": [
+              2451,
+              160
+            ]
+          },
+          "primitive_length_px": 54.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "CURVED_CONTOUR_STRAIGHT_FIT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -4.75,
+            "center_offset_range_px": 9.5,
+            "center_offset_range_widths": 0.452381,
+            "offset_bin_medians_px": [
+              -3.335401,
+              -3.5,
+              -1.75,
+              -4.331537,
+              -5.0,
+              -6.25,
+              -7.5,
+              -8.753336
+            ],
+            "max_sustained_lateral_drift_px": 7.003336,
+            "max_sustained_lateral_drift_fraction": 0.129691
+          },
+          "local_tangent_profile": {
+            "median_degrees": 9.6644,
+            "p95_degrees": 11.672177
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 0.5,
+            "associated_support_fraction": 1.0,
+            "local_continuity_fraction": 1.0,
+            "longest_disjoint_interval_fraction": 0.0,
+            "longest_disjoint_interval_px": 0.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 2.581537,
+            "max_sustained_offset_jump_widths": 0.12293
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "CURVED_CONTOUR_STRAIGHT_FIT",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a curved logo contour; both fragments have sustained drift and curved-fit tangent/trajectory evidence."
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "source_family": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 139.0,
+      "fragment_lengths_px": [
+        65.0,
+        69.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              794,
+              1969
+            ],
+            "end": [
+              794,
+              2034
+            ]
+          },
+          "primitive_length_px": 65.0,
+          "straight_validity_status": "STRAIGHT_UNCERTAIN",
+          "straight_validity_reason": "INSUFFICIENT_EVIDENCE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 3.0,
+            "center_offset_range_widths": 3.0,
+            "offset_bin_medians_px": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_sustained_lateral_drift_px": 0.0,
+            "max_sustained_lateral_drift_fraction": 0.0
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 34.038459
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.977273,
+            "local_continuity_fraction": 0.942529,
+            "longest_disjoint_interval_fraction": 0.011494,
+            "longest_disjoint_interval_px": 0.747126,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 1,
+            "junction_or_crossing_fraction": 0.977273,
+            "multi_peak_fraction": 0.977273,
+            "max_sustained_offset_jump_px": 0.0,
+            "max_sustained_offset_jump_widths": 0.0
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              794,
+              2039
+            ],
+            "end": [
+              794,
+              2108
+            ]
+          },
+          "primitive_length_px": 69.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 0.0,
+            "center_offset_range_px": 1.5,
+            "center_offset_range_widths": 1.5,
+            "offset_bin_medians_px": [
+              0.0,
+              null,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "max_sustained_lateral_drift_px": 0.0,
+            "max_sustained_lateral_drift_fraction": 0.0
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 30.963757
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.817204,
+            "local_continuity_fraction": 0.804348,
+            "longest_disjoint_interval_fraction": 0.173913,
+            "longest_disjoint_interval_px": 12.0,
+            "usable_window_count": 7
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 2,
+            "junction_or_crossing_fraction": 0.817204,
+            "multi_peak_fraction": 0.817204,
+            "max_sustained_offset_jump_px": 0.0,
+            "max_sustained_offset_jump_widths": 0.0
+          }
+        }
+      ],
+      "audit_verdict": "FALSE_REJECTION",
+      "failure_family": null,
+      "false_rejection_signal": "CROSSING_CONTAMINATED_TANGENT_OR_OFFSET_PROFILE",
+      "audit_basis": "The source render shows a straight vertical grid/source line with repeated orthogonal crossings; drift and offset bins are zero with full credible windows, but crossing-contaminated p95 tangent evidence rejects it."
+    },
+    {
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 99.0,
+      "fragment_lengths_px": [
+        31.0,
+        61.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "PIECEWISE_OFFSET_COLLAPSE"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": {
+        "primary_label": "PATTERNED_VISIBLE_SEGMENTS",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE",
+          "ENDPOINT_ANOMALY"
+        ],
+        "observation": null,
+        "source": "source-gap-v1-1-human-state-migration.json"
+      },
+      "human_gate_comparison": "AGREES",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              1851,
+              1346
+            ],
+            "end": [
+              1851,
+              1377
+            ]
+          },
+          "primitive_length_px": 31.0,
+          "straight_validity_status": "STRAIGHT_SUPPORTED",
+          "straight_validity_reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 1.0,
+            "center_offset_range_px": 1.0,
+            "center_offset_range_widths": 1.0,
+            "offset_bin_medians_px": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "max_sustained_lateral_drift_px": 0.0,
+            "max_sustained_lateral_drift_fraction": 0.0
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 10.954063
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.883721,
+            "local_continuity_fraction": 0.833333,
+            "longest_disjoint_interval_fraction": 0.071429,
+            "longest_disjoint_interval_px": 2.214286,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 3,
+            "junction_or_crossing_fraction": 0.069767,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.0,
+            "max_sustained_offset_jump_widths": 0.0
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              1851,
+              1384
+            ],
+            "end": [
+              1851,
+              1445
+            ]
+          },
+          "primitive_length_px": 61.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "PIECEWISE_OFFSET_COLLAPSE",
+          "lateral_offset_profile": {
+            "center_offset_median_px": -1.0,
+            "center_offset_range_px": 4.760977,
+            "center_offset_range_widths": 4.760977,
+            "offset_bin_medians_px": [
+              1.0,
+              -1.0,
+              -1.0,
+              -1.0,
+              -1.0,
+              1.0,
+              1.0,
+              0.75
+            ],
+            "max_sustained_lateral_drift_px": 2.0,
+            "max_sustained_lateral_drift_fraction": 0.032787
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 25.669598
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.951807,
+            "local_continuity_fraction": 0.890244,
+            "longest_disjoint_interval_fraction": 0.036585,
+            "longest_disjoint_interval_px": 2.231707,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 3,
+            "junction_or_crossing_fraction": 0.60241,
+            "multi_peak_fraction": 0.53012,
+            "max_sustained_offset_jump_px": 2.0,
+            "max_sustained_offset_jump_widths": 2.0
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "DISJOINT_OR_MIXED_SUPPORT",
+      "false_rejection_signal": null,
+      "audit_basis": "The prior human label is patterned visible segments; fragment B has a 4.76-stroke-width offset range and a 25.67-degree tangent p95."
+    },
+    {
+      "candidate_id": "FRESH1-FE24B910C4F62319F60E",
+      "source_family": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "orientation": "vertical",
+      "claimed_primitive_length_px": 182.0,
+      "fragment_lengths_px": [
+        43.0,
+        126.0
+      ],
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "straight_validity_reasons": [
+        "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+      ],
+      "eligibility_before": "ELIGIBLE_AFTER_TEXT_GUARD",
+      "current_eligibility": "INELIGIBLE_STRAIGHT_REJECTED",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_axis_status": "NOT_AVAILABLE_IN_PRIOR_ARTIFACTS",
+      "prior_human_evidence": null,
+      "human_gate_comparison": "NOT_DIRECTLY_COMPARABLE",
+      "fragment_profiles": [
+        {
+          "fragment": "fragment_a",
+          "geometry": {
+            "start": [
+              2595,
+              859
+            ],
+            "end": [
+              2595,
+              902
+            ]
+          },
+          "primitive_length_px": 43.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 1.0,
+            "center_offset_range_px": 1.0,
+            "center_offset_range_widths": 1.0,
+            "offset_bin_medians_px": [
+              0.484444,
+              0.464435,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              null
+            ],
+            "max_sustained_lateral_drift_px": 0.535565,
+            "max_sustained_lateral_drift_fraction": 0.012455
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 11.0335
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.474576,
+            "local_continuity_fraction": 0.396552,
+            "longest_disjoint_interval_fraction": 0.155172,
+            "longest_disjoint_interval_px": 6.672414,
+            "usable_window_count": 7
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 5,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 0.535565,
+            "max_sustained_offset_jump_widths": 0.535565
+          }
+        },
+        {
+          "fragment": "fragment_b",
+          "geometry": {
+            "start": [
+              2595,
+              915
+            ],
+            "end": [
+              2595,
+              1041
+            ]
+          },
+          "primitive_length_px": 126.0,
+          "straight_validity_status": "STRAIGHT_REJECTED",
+          "straight_validity_reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+          "lateral_offset_profile": {
+            "center_offset_median_px": 1.0,
+            "center_offset_range_px": 1.509009,
+            "center_offset_range_widths": 1.509009,
+            "offset_bin_medians_px": [
+              1.0,
+              1.0,
+              1.0,
+              1.492269,
+              1.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            "max_sustained_lateral_drift_px": 1.492269,
+            "max_sustained_lateral_drift_fraction": 0.011843
+          },
+          "local_tangent_profile": {
+            "median_degrees": 0.0,
+            "p95_degrees": 8.148038
+          },
+          "trajectory_stability": {
+            "credible_window_fraction": 1.0,
+            "associated_support_fraction": 0.627219,
+            "local_continuity_fraction": 0.529762,
+            "longest_disjoint_interval_fraction": 0.166667,
+            "longest_disjoint_interval_px": 21.0,
+            "usable_window_count": 8
+          },
+          "support_identity_evidence": {
+            "abrupt_support_identity_switches": 0,
+            "support_run_count": 17,
+            "junction_or_crossing_fraction": 0.0,
+            "multi_peak_fraction": 0.0,
+            "max_sustained_offset_jump_px": 1.0,
+            "max_sustained_offset_jump_widths": 1.0
+          }
+        }
+      ],
+      "audit_verdict": "TRUE_REJECTION",
+      "failure_family": "SOURCE_BOUNDARY_SWITCH",
+      "false_rejection_signal": null,
+      "audit_basis": "The source render is a page-edge band; both fragments have low support/continuity and material disjoint intervals despite low drift and tangent."
+    }
+  ]
+}

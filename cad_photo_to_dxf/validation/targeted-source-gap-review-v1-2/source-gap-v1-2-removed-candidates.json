@@ -1,0 +1,379 @@
+{
+  "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+  "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_2",
+  "removed_candidates": [
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.92,
+        "centerline_support_fraction": 0.5,
+        "clean_control_score": 0.88357,
+        "coherence_selection_score": 0.063547,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.087912,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 0.155556,
+        "endpoint_selection_score": 0.056471,
+        "fragment_thickness_ratio": 2.0,
+        "gap_length_px": 7.0,
+        "local_density_fraction": 0.064763,
+        "longest_unsupported_fraction": 0.02,
+        "primitive_length_px": 99.0,
+        "projected_span_px": 99.0,
+        "source_degradation_context": "Clean plot-like PDF with low scan degradation.",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "supported_run_count": 5,
+        "supported_run_cv": 1.076361,
+        "unsupported_interval_count": 4,
+        "unsupported_interval_cv": 0.0
+      },
+      "historical_human_state": {
+        "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+        "exclusion_reasons": [
+          "STRAIGHT_VALIDITY_REJECTED"
+        ],
+        "final_current_eligible": false,
+        "old_human_primary_class": "PATTERNED_VISIBLE_SEGMENTS",
+        "old_review_index": 10,
+        "optional_note": "",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE",
+          "ENDPOINT_ANOMALY"
+        ]
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "old_review_index": 10,
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1851,
+          1445
+        ],
+        "claimed_start_px": [
+          1851,
+          1346
+        ],
+        "fragment_a": {
+          "end": [
+            1851,
+            1377
+          ],
+          "start": [
+            1851,
+            1346
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1851,
+            1445
+          ],
+          "start": [
+            1851,
+            1384
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1851,
+          1377
+        ],
+        "gap_endpoint_b_px": [
+          1851,
+          1384
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000633"
+          ],
+          "fragment_b": [
+            "raw-hough-000326"
+          ]
+        }
+      },
+      "primitive_length_px": 99.0,
+      "projected_span_px": 99.0,
+      "review_index": 10,
+      "selection_rationale": "Multiple non-periodic support runs or unstable local support.",
+      "selection_stratum": "IRREGULAR_SEPARATE_SEGMENTS",
+      "source_crop_mapping": {
+        "context_box_px": [
+          1691,
+          1186,
+          2012,
+          1606
+        ],
+        "local_box_px": [
+          1809,
+          1304,
+          1894,
+          1488
+        ],
+        "source_image_size_px": [
+          2600,
+          1839
+        ]
+      },
+      "source_document": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.6,
+        "centerline_support_fraction": 1.0,
+        "clean_control_score": 0.839471,
+        "coherence_selection_score": 0.084701,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.21978,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 0,
+        "direct_volumetric_components": 1,
+        "edge_selection_score": 0.229231,
+        "endpoint_selection_score": 0.082845,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 7.0,
+        "local_density_fraction": 0.053909,
+        "longest_unsupported_fraction": 0.093333,
+        "primitive_length_px": 149.013422,
+        "projected_span_px": 149.0,
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 4,
+        "supported_run_cv": 0.375154,
+        "unsupported_interval_count": 3,
+        "unsupported_interval_cv": 0.180021
+      },
+      "historical_human_state": {
+        "candidate_id": "FRESH1-4966D4412392002C19C2",
+        "exclusion_reasons": [
+          "STRAIGHT_VALIDITY_REJECTED"
+        ],
+        "final_current_eligible": false,
+        "old_human_primary_class": "VISIBLE_SEPARATE_SEGMENTS",
+        "old_review_index": 15,
+        "optional_note": "",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE",
+          "BOUNDARY_POSITION_CHANGES",
+          "ENDPOINT_ANOMALY"
+        ]
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "old_review_index": 15,
+      "orientation": "vertical",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1122,
+          600
+        ],
+        "claimed_start_px": [
+          1120,
+          451
+        ],
+        "fragment_a": {
+          "end": [
+            1120,
+            528
+          ],
+          "start": [
+            1120,
+            451
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1122,
+            600
+          ],
+          "start": [
+            1122,
+            535
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1120,
+          528
+        ],
+        "gap_endpoint_b_px": [
+          1122,
+          535
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000662"
+          ],
+          "fragment_b": [
+            "raw-hough-000456"
+          ]
+        }
+      },
+      "primitive_length_px": 149.013422,
+      "projected_span_px": 149.0,
+      "review_index": 15,
+      "selection_rationale": "Mixed non-semantic support evidence near the decision boundary.",
+      "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+      "source_crop_mapping": {
+        "context_box_px": [
+          960,
+          291,
+          1283,
+          761
+        ],
+        "local_box_px": [
+          1078,
+          409,
+          1165,
+          643
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8"
+    },
+    {
+      "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "diagnostic_measurements_used": {
+        "axis_support_fraction": 0.92233,
+        "centerline_support_fraction": 0.285714,
+        "clean_control_score": 0.732266,
+        "coherence_selection_score": 0.159211,
+        "diagnostic": {
+          "diagnostic_available": false
+        },
+        "direct_enclosed_contours": 0,
+        "direct_off_axis_ink_fraction": 0.378698,
+        "direct_parallel_run_fraction": 0.0,
+        "direct_transverse_crossing_columns": 2,
+        "direct_volumetric_components": 2,
+        "edge_selection_score": 0.156923,
+        "endpoint_selection_score": 0.129073,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 6.0,
+        "local_density_fraction": 0.26172,
+        "longest_unsupported_fraction": 0.048544,
+        "primitive_length_px": 102.0,
+        "projected_span_px": 102.0,
+        "source_degradation_context": "Clean text/vector-like PDF with formal Chinese title-block structure.",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "supported_run_count": 2,
+        "supported_run_cv": 0.031579,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "historical_human_state": {
+        "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+        "exclusion_reasons": [
+          "STRAIGHT_VALIDITY_REJECTED"
+        ],
+        "final_current_eligible": false,
+        "old_human_primary_class": null,
+        "old_review_index": 16,
+        "optional_note": "",
+        "secondary_flags": []
+      },
+      "new_or_prior_reviewed": "NEW_UNREVIEWED",
+      "old_review_index": 16,
+      "orientation": "horizontal",
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2448,
+          164
+        ],
+        "claimed_start_px": [
+          2346,
+          164
+        ],
+        "fragment_a": {
+          "end": [
+            2391,
+            164
+          ],
+          "start": [
+            2346,
+            164
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2448,
+            164
+          ],
+          "start": [
+            2397,
+            164
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2391,
+          164
+        ],
+        "gap_endpoint_b_px": [
+          2397,
+          164
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000317"
+          ],
+          "fragment_b": [
+            "raw-hough-001065"
+          ]
+        }
+      },
+      "primitive_length_px": 102.0,
+      "projected_span_px": 102.0,
+      "review_index": 16,
+      "selection_rationale": "Boundary case selected from extreme frozen gap, span, parallel-run, crossing, or direct-support measurements.",
+      "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+      "source_crop_mapping": {
+        "context_box_px": [
+          2186,
+          4,
+          2600,
+          325
+        ],
+        "local_box_px": [
+          2304,
+          122,
+          2491,
+          207
+        ],
+        "source_image_size_px": [
+          2600,
+          1842
+        ]
+      },
+      "source_document": "DOC-F09-JIULONG-PDF",
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "source_type": "PDF",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P1"
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "STRAIGHT_VALIDITY_FREEZE_SOURCE_GAP_V1_2"
+}

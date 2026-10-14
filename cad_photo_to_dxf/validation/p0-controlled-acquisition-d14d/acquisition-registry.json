@@ -1,0 +1,234 @@
+{
+  "task": "P0-CONTROLLED-NEW-SOURCE-ACQUISITION-D14D",
+  "base_checkpoint": "dc38871f0d1bbbe86cb909fdbb29cf9e0051dc6b",
+  "accessed_at_utc": "2026-09-14T09:02:29.8889535Z",
+  "artifact_root": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14",
+  "artifact_storage": "git-ignored DEV-only; binaries are not tracked",
+  "document_set_digest": {
+    "algorithm": "SHA-256 of UTF-8 concatenation of sorted lines: filename<TAB>lowercase_file_sha256<TAB>byte_size<LF>",
+    "purpose": "Stable document-level digest for multi-file HAER measured-drawing sets; every source file also has its own SHA-256 below."
+  },
+  "governance": {
+    "validation": false,
+    "locked_blind_runtime_exposure": "0 / 8",
+    "locked_blind_manual_inspection": false,
+    "model_run": false,
+    "candidate_mining": false,
+    "human_labeling": false
+  },
+  "documents": [
+    {
+      "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS",
+      "source_role": "H1",
+      "governance_role": "NEW-SOURCE HOLDOUT H1",
+      "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+      "official_document_identifier": {
+        "survey": "HAER UT-14",
+        "control": "ut0117",
+        "call_number": "HAER UTAH,25-OLMS,1-"
+      },
+      "revision": "UNKNOWN",
+      "publisher_organization": "Historic American Engineering Record / National Park Service; Library of Congress",
+      "landing_page_url": "https://www.loc.gov/item/ut0117/",
+      "resource_page_url": "https://www.loc.gov/resource/hhh.ut0117.sheet/?st=gallery",
+      "accessed_at_utc": "2026-09-14T09:02:29.8889535Z",
+      "original_format": "TIFF",
+      "mime_type": "image/tiff",
+      "document_set_byte_size": 2492042,
+      "document_set_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+      "sheet_count": 4,
+      "raster_vector_status": "raster; 1-bit Group 4 TIFF master scans",
+      "duplicate_mirror_relationship": "No duplicate bytes among this set or any of the 11 acquired files; official LOC master paths only.",
+      "local_artifact_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ut14",
+      "fallback_status": "preferred; fallback not used",
+      "rights_disposition": "PUBLIC_DOMAIN",
+      "rights_recheck": {
+        "result": "PASS",
+        "actual_bytes_evidence": "All four files decode as single-page TIFFs and carry Artist=Library of Congress. The title sheet visibly identifies Historic American Engineering Record, National Park Service / U.S. Department of the Interior, survey HAER UT-14, sheet 1 of 4, and federal direction; no conflicting copyright or copied-source notice is present.",
+        "restrictions": "Admitted measured-drawing assets only; photographs and data pages were not acquired."
+      },
+      "admission_status": "ACQUIRED_AND_ADMITTED",
+      "acquisition_notes": "Four official LOC master measured-drawing TIFFs acquired without packaging or transformation.",
+      "assets": [
+        {
+          "original_filename": "00001a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ut/ut0100/ut0117/sheet/00001a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ut14\\00001a.tif",
+          "byte_size": 569780,
+          "sha256": "1DC1D746D3C4A355C0A451B0C8E9AF1FE988170947ED7A282501CD4469834909",
+          "pixel_dimensions": [9442, 7616]
+        },
+        {
+          "original_filename": "00002a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ut/ut0100/ut0117/sheet/00002a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ut14\\00002a.tif",
+          "byte_size": 601024,
+          "sha256": "598BE795E8FE98E8791924F9874FDF3729D340E613D3DBBEB46BA47627C45212",
+          "pixel_dimensions": [9638, 7616]
+        },
+        {
+          "original_filename": "00003a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ut/ut0100/ut0117/sheet/00003a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ut14\\00003a.tif",
+          "byte_size": 849550,
+          "sha256": "B80CDD896AF01E4EDE65ED5141ABF8D3245EF134AD9B89EADA55A364E30FBD46",
+          "pixel_dimensions": [9646, 7616]
+        },
+        {
+          "original_filename": "00004a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ut/ut0100/ut0117/sheet/00004a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ut14\\00004a.tif",
+          "byte_size": 471688,
+          "sha256": "1B49C9EE7332A883C4DA2027E5368A43E2F864D76D08704178468DF93098F6AF",
+          "pixel_dimensions": [7616, 9632]
+        }
+      ]
+    },
+    {
+      "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS",
+      "source_role": "H1",
+      "governance_role": "NEW-SOURCE HOLDOUT H1",
+      "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+      "official_document_identifier": {
+        "survey": "HAER NY-4",
+        "control": "ny0017",
+        "call_number": "HAER NY,1-ALB,19-"
+      },
+      "revision": "UNKNOWN",
+      "publisher_organization": "Historic American Engineering Record / National Park Service; Library of Congress",
+      "landing_page_url": "https://www.loc.gov/item/ny0017/",
+      "resource_page_url": "https://www.loc.gov/resource/hhh.ny0017.sheet/?st=gallery",
+      "accessed_at_utc": "2026-09-14T09:02:29.8889535Z",
+      "original_format": "TIFF",
+      "mime_type": "image/tiff",
+      "document_set_byte_size": 2952242,
+      "document_set_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+      "sheet_count": 5,
+      "raster_vector_status": "raster; 1-bit Group 4 TIFF master scans",
+      "duplicate_mirror_relationship": "No duplicate bytes among this set or any of the 11 acquired files; official LOC master paths only.",
+      "local_artifact_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4",
+      "fallback_status": "preferred; fallback not used",
+      "rights_disposition": "PUBLIC_DOMAIN",
+      "rights_recheck": {
+        "result": "PASS",
+        "actual_bytes_evidence": "All five files decode as single-page TIFFs and carry Artist=Library of Congress. The title sheet visibly identifies the Mohawk-Hudson Area Survey under National Park Service / U.S. Department of the Interior direction, Historic American Engineering Record, HAER NY-4, sheet 1 of 5, and the HAER delineator; no conflicting copyright or copied-source notice is present.",
+        "restrictions": "Admitted measured-drawing assets only. The separately cataloged historical photocopy, photographs, and data pages were not acquired."
+      },
+      "admission_status": "ACQUIRED_AND_ADMITTED",
+      "acquisition_notes": "Five official LOC master measured-drawing TIFFs acquired without packaging or transformation.",
+      "assets": [
+        {
+          "original_filename": "00001a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ny/ny0000/ny0017/sheet/00001a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4\\00001a.tif",
+          "byte_size": 622302,
+          "sha256": "EBBCF92661BC61321739BA6FF650B0D217488351F6863A0B22759B6E466FCBF8",
+          "pixel_dimensions": [9288, 7584]
+        },
+        {
+          "original_filename": "00002a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ny/ny0000/ny0017/sheet/00002a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4\\00002a.tif",
+          "byte_size": 621242,
+          "sha256": "9D37266187D20885CABF2FFFAF338DC6EC57A50FC673925C4FB7E5C6EBB135C5",
+          "pixel_dimensions": [9268, 7584]
+        },
+        {
+          "original_filename": "00003a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ny/ny0000/ny0017/sheet/00003a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4\\00003a.tif",
+          "byte_size": 820676,
+          "sha256": "A6E5BCA81F0BFAF083DC54C4CAD8CB8C832BBEB860E6793446C4FB43171ED275",
+          "pixel_dimensions": [9260, 7584]
+        },
+        {
+          "original_filename": "00004a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ny/ny0000/ny0017/sheet/00004a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4\\00004a.tif",
+          "byte_size": 494768,
+          "sha256": "1F065C86D136CED9F6A756DB47E3771785F14BB46BF5808CCE7E629AEB2B1146",
+          "pixel_dimensions": [9248, 7584]
+        },
+        {
+          "original_filename": "00005a.tif",
+          "final_resolved_binary_url": "https://tile.loc.gov/storage-services/master/pnp/habshaer/ny/ny0000/ny0017/sheet/00005a.tif",
+          "local_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H1\\haer-ny4\\00005a.tif",
+          "byte_size": 393254,
+          "sha256": "14BA9571007CC21E09B4ECA65F6DBA2B7DAF333B2B05B798EF700C702F43E5D9",
+          "pixel_dimensions": [9280, 7584]
+        }
+      ]
+    },
+    {
+      "source_family_id": "D14C-H2-NIST-PMI-FTC",
+      "source_role": "H2",
+      "governance_role": "NEW-SOURCE HOLDOUT H2",
+      "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+      "official_document_identifier": "nist_ftc_06_asme1_rd",
+      "revision": "D",
+      "publisher_organization": "National Institute of Standards and Technology",
+      "landing_page_url": "https://pages.nist.gov/CAD-PMI-Testing/models.html",
+      "request_url": "https://www.nist.gov/document/nist-cad-model-ftc-06",
+      "final_resolved_binary_url": "https://www.nist.gov/system/files/documents/noindex/2022/04/06/nist_ftc_06_asme1_rd.pdf",
+      "accessed_at_utc": "2026-09-14T09:02:29.8889535Z",
+      "original_filename": "nist_ftc_06_asme1_rd.pdf",
+      "mime_type": "application/pdf",
+      "byte_size": 167608,
+      "sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+      "page_count": 3,
+      "raster_vector_status": "vector PDF; zero image XObjects",
+      "duplicate_mirror_relationship": "No duplicate bytes among any of the 11 acquired files; official NIST request and resolved system-file URLs recorded as one source.",
+      "local_artifact_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\H2\\nist_ftc_06_asme1_rd.pdf",
+      "fallback_status": "preferred; NIST FTC 8 fallback not used",
+      "rights_disposition": "PUBLIC_DOMAIN",
+      "rights_recheck": {
+        "result": "PASS",
+        "actual_bytes_evidence": "PDF metadata Title=NIST PMI Test Model - FTC 6 and Author=NIST. All three pages contain NIST PMI Test Models - 2014, identifier nist_ftc_06_asme1_rd, and Rev D. No copyright, contractor, consultant, license, all-rights-reserved, or third-party notice appears in extracted document text; no image XObjects are embedded.",
+        "restrictions": "References to ASME Y14.41 and Y14.5M are standards references and do not change the drawing's NIST authorship."
+      },
+      "admission_status": "ACQUIRED_AND_ADMITTED",
+      "acquisition_notes": "HTTP request to the official NIST document endpoint resolved to the official NIST system-file PDF."
+    },
+    {
+      "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE",
+      "source_role": "C1",
+      "governance_role": "untouched DEV baseline until first frozen evaluation is durably recorded",
+      "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+      "official_document_identifier": "wfl-samples-plan-profile",
+      "revision": "January 2026",
+      "publisher_organization": "U.S. Department of Transportation, Federal Highway Administration, Western Federal Lands Highway Division",
+      "landing_page_url": "https://highways.dot.gov/federal-lands/design/plan-prep/wfl/samples/plan-profile-sheets",
+      "final_resolved_binary_url": "https://highways.dot.gov/sites/fhwa.dot.gov/files/wfl-samples-plan-profile.pdf",
+      "accessed_at_utc": "2026-09-14T09:02:29.8889535Z",
+      "original_filename": "wfl-samples-plan-profile.pdf",
+      "mime_type": "application/pdf",
+      "byte_size": 3845659,
+      "sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+      "page_count": 21,
+      "sample_sheet_range": "D.1-D.12",
+      "raster_vector_status": "mixed PDF; extractable text/vector content plus 23 image XObjects",
+      "duplicate_mirror_relationship": "No duplicate bytes among any of the 11 acquired files; official landing page and canonical FHWA file URL recorded as one source.",
+      "local_artifact_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\C1\\wfl-samples-plan-profile.pdf",
+      "fallback_status": "preferred; no C1 fallback authorized or used",
+      "rights_disposition": "PUBLIC_DOMAIN",
+      "rights_recheck": {
+        "result": "PASS",
+        "actual_bytes_evidence": "PDF metadata Title=Plan and Profile Sheets, Subject=WFL Sample Plan Sheets, Author=Vincent, Benjamin (FHWA), and Company=USDOT. The 21-page text contains WFL Internal, D.1 through D.12, and OpenRoads/DGN workflow markers. No copyright, contractor, consultant, all-rights-reserved, license-conflict, or third-party-source notice appears in extracted document text.",
+        "restrictions": "The 23 image XObjects are part of the FHWA-authored sample document and carry no contrary document-level attribution found in the actual bytes. Recheck remains fail-closed if later tooling reveals a hidden conflicting notice."
+      },
+      "admission_status": "ACQUIRED_AND_ADMITTED",
+      "acquisition_notes": "The official landing page resolved to the canonical FHWA file URL. Direct scripted retrieval was rejected by the host, while Windows Background Intelligent Transfer Service successfully acquired the same official URL."
+    }
+  ],
+  "summary": {
+    "preferred_documents_admitted": 4,
+    "acquired_files": 11,
+    "duplicate_sha256_groups": 0,
+    "fallback_used": false,
+    "rights_recheck": "PASS",
+    "source_evidence_provenance": "COMPLETE",
+    "data_rights_provenance": "COMPLETE",
+    "ready_for_d14e_blind_candidate_mining_and_human_labeling": true,
+    "production_semantic_delta": "NONE"
+  }
+}

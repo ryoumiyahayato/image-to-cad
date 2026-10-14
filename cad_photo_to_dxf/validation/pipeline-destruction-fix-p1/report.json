@@ -1,0 +1,110 @@
+{
+  "schema_version": "pipeline-destruction-fix-p1-report-v1",
+  "status": "PARTIAL",
+  "production_semantic_delta": [
+    "THICK_LINE_PRESERVATION_CHANGE"
+  ],
+  "phases": {
+    "P0_FIX_VQA_CJK_RENDERER": {
+      "status": "PASS",
+      "commit": "0413074",
+      "semantic_delta": "NONE",
+      "result": "FinalStructure Unicode is rendered through the deployable bundled WQY LFF path; the reference FinalStructure ID and entity count are unchanged."
+    },
+    "P1_FIX_THICK_STROKE_FILTERING_LOSS": {
+      "status": "PASS",
+      "commit": "c2739e1",
+      "semantic_delta": "THICK_LINE_PRESERVATION_CHANGE",
+      "target": {
+        "source_group_id": "A2-SG-022",
+        "source_supported_rows_before": 461,
+        "source_supported_rows_after": 736,
+        "target_rows": 736,
+        "maximum_output_gap_before_px": 275,
+        "maximum_output_gap_after_px": 0,
+        "source_candidate_ids_consolidated": 9
+      },
+      "guards": [
+        "source support required across the merged centerline",
+        "true source gaps are not bridged",
+        "adjacent double lines remain separate",
+        "no global detector threshold reduction",
+        "no endpoint snapping"
+      ]
+    },
+    "P2_FIX_LOW_CONTRAST_LINE_DETECTION_FRAGMENTATION": {
+      "status": "BLOCKED_NOT_JUSTIFIED",
+      "commit": "af2d6ab",
+      "semantic_delta": "NONE",
+      "result": "The supplied CASE 3 target does not contain the claimed continuous source line, while the actual nearby continuous rule already has raw candidates and contour fallback. No production change was made against a false diagnosis.",
+      "next_required_evidence": "A corrected DEV ROI with continuous binary support and verified end-to-end loss."
+    }
+  },
+  "frozen_dev_rerun": [
+    {
+      "source_group_id": "A2-SG-009",
+      "comparison": "UNCHANGED",
+      "verdict": "FAIL",
+      "before_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+      "after_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+      "before_entity_count": 5842,
+      "after_entity_count": 5842
+    },
+    {
+      "source_group_id": "A2-SG-022",
+      "comparison": "IMPROVED",
+      "verdict": "PARTIAL",
+      "before_structure_id": "193b8193a39b07073eaa9cbd33efd73163f27d2da178e104e5cc3ada98b5dd1e",
+      "after_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059",
+      "before_entity_count": 2221,
+      "after_entity_count": 2194
+    },
+    {
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "comparison": "IMPROVED",
+      "verdict": "PARTIAL",
+      "before_structure_id": "79c37f7d566f3b98475b9fedf0637a1f8f5bce006541560f1dbdb0b1afe9eeee",
+      "after_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890",
+      "before_entity_count": 2944,
+      "after_entity_count": 2934
+    },
+    {
+      "source_group_id": "G0R2-7E30C7F445081F40",
+      "comparison": "UNCHANGED",
+      "verdict": "FAIL",
+      "before_structure_id": "0c5ab51ffcc20604036a3d4c4a53d25cd84a10c9426bf442e5079d67eee51c8d",
+      "after_structure_id": "5fcd38c3d97c02012245a6f66f89623b9e4cba06aa76b5d3aec0afae16d9aee8",
+      "before_entity_count": 3765,
+      "after_entity_count": 3766,
+      "scope_note": "Aerial raster policy remains intentionally unaddressed."
+    },
+    {
+      "source_group_id": "G0R2-B441E5911528F402",
+      "comparison": "NO_VISIBLE_REGRESSION",
+      "verdict": "PARTIAL",
+      "before_structure_id": "a3ed8fbb77c59334db4ac32fee2788005d880ff66ae9f7fe342863694af449ad",
+      "after_structure_id": "4870589caf5accf31dad2f80bef010396c68195bae639b007ee13058d9e56e54",
+      "before_entity_count": 3033,
+      "after_entity_count": 2987
+    }
+  ],
+  "protected_split_guards": {
+    "validation_executed": false,
+    "locked_blind_runtime_executed": "0 / 8",
+    "locked_blind_manually_inspected": false
+  },
+  "source_bytes_committed": 0,
+  "artifacts": {
+    "storage": "local-artifacts (git ignored)",
+    "required_outputs": [
+      "01_vqa_text_before_after.png",
+      "02_thick_line_before_after.png",
+      "03_low_contrast_line_before_after.png",
+      "pipeline_trace_case_1_after.png",
+      "pipeline_trace_case_3_after.png",
+      "pipeline_trace_case_5_after.png",
+      "human_visible_dev_baseline_after_p1.png",
+      "human_visible_dev_baseline_before_vs_after_p1.png"
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "LABELABLE_RATE_quality_gate": 0.19617224880382775,
+  "LABELABLE_RATE_saved_proxy": 0.69377990430622,
+  "PILOT_LABELS_QUARANTINED": 145,
+  "PILOT_LABELS_RETAINED": 0,
+  "PILOT_LABELS_TOTAL": 145,
+  "PILOT_REVIEWED": 209,
+  "PILOT_SAVED": 145,
+  "PILOT_UNLABELED_OR_SKIPPED": 64,
+  "V1_STATUS": "PILOT_V1_UNVERIFIED",
+  "V1_TRAINING_AUTHORIZED": 0,
+  "blind_opened": 0,
+  "confirmed_prior_skipped_or_unlabeled": 63,
+  "current_position_unlabeled": true,
+  "gate_eligible_presented": 41,
+  "historical_presentation_event_count": "not recorded; repeats due undo cannot be enumerated",
+  "opened_sources": [
+    [
+      "A2-SG-009",
+      1
+    ],
+    [
+      "A2-SG-022",
+      1
+    ],
+    [
+      "G0R2-15EE2398726E8037",
+      1
+    ],
+    [
+      "G0R2-3560D9BEBEAA3543",
+      1
+    ],
+    [
+      "G0R2-3B970FD759C6026F",
+      1
+    ],
+    [
+      "G0R2-4A34D1B8D93B1B06",
+      1
+    ],
+    [
+      "G0R2-6C9464FA73A2A027",
+      1
+    ],
+    [
+      "G0R2-7E30C7F445081F40",
+      1
+    ],
+    [
+      "G0R2-B441E5911528F402",
+      1
+    ],
+    [
+      "G0R2-C2D095E069663C17",
+      1
+    ],
+    [
+      "environment-building",
+      1
+    ],
+    [
+      "environment-building",
+      3
+    ],
+    [
+      "environment-building",
+      4
+    ],
+    [
+      "sample-plan-photo",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      2
+    ],
+    [
+      "warehouse-electrical",
+      3
+    ]
+  ],
+  "policy": {
+    "dark_threshold": 180,
+    "display_margin_px": 12,
+    "max_mean_distance_px": 1.0,
+    "max_p95_distance_px": 2.0,
+    "max_separation_range_px": 1.5,
+    "min_endpoint_support": 0.75,
+    "min_length_ratio": 0.7,
+    "min_local_alignment": 0.75,
+    "min_overlap_px": 32.0,
+    "min_support_ratio": 0.9,
+    "support_radius_px": 1.25,
+    "version": "human-queue-quality-v2"
+  },
+  "reason_percent_of_presented": {
+    "CANDIDATE_MISALIGNMENT": 0.22009569377990432,
+    "LOCAL_INK_MISALIGNMENT": 0.23444976076555024,
+    "NO_EXPLICIT_TARGET_OVERLAY": 0.22488038277511962,
+    "PAIR_SEPARATION_UNSTABLE": 0.019138755980861243,
+    "PARTNER_EDGE_MISSING_OR_FLOATING": 0.20574162679425836,
+    "SEVERE_EXTENT_MISMATCH": 0.291866028708134,
+    "TARGET_CLIPPED": 0.35406698564593303,
+    "UNSUPPORTED_ENDPOINT": 0.215311004784689
+  },
+  "reconstruction_provenance": "user confirms Sample 209/769, one continuous session; deterministic V1 round-robin order; labels manifest hash matches",
+  "saved_label_triage": {
+    "PILOT_V1_INVALID_NOMINATION": 60,
+    "PILOT_V1_NEEDS_HUMAN_REVIEW": 48,
+    "PILOT_V1_RETAINABLE_CANDIDATE": 37
+  },
+  "unusable_multiple_reason_counts": {
+    "CANDIDATE_MISALIGNMENT": 46,
+    "LOCAL_INK_MISALIGNMENT": 49,
+    "NO_EXPLICIT_TARGET_OVERLAY": 47,
+    "PAIR_SEPARATION_UNSTABLE": 4,
+    "PARTNER_EDGE_MISSING_OR_FLOATING": 43,
+    "SEVERE_EXTENT_MISMATCH": 61,
+    "TARGET_CLIPPED": 74,
+    "UNSUPPORTED_ENDPOINT": 45
+  },
+  "validation_opened": 0
+}

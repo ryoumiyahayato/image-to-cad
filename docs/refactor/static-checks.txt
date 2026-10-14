@@ -1,0 +1,10 @@
+python -m ruff check app tests scripts validation main.py
+All checks passed!
+EXIT 0
+
+python -m mypy app/core/resolution.py app/core/scale_calibrator.py app/core/reporting.py app/ocr/auxiliary_recognition.py
+Success: no issues found in 4 source files
+EXIT 0
+
+python -m compileall -q app tests scripts validation main.py
+EXIT 0

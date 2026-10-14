@@ -2,15 +2,17 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
+from app.version import PRODUCT_NAME
 
 
-_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+_VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)\.(\d+)(?:-dev)?$")
 
 
 def parse_version(version: str) -> tuple[int, int, int, int]:
+    """Map the human version's three numeric fields to Windows MAJOR.MINOR.PATCH.0."""
     match = _VERSION_PATTERN.fullmatch(version.strip())
     if match is None:
-        raise ValueError("Version must use semantic form MAJOR.MINOR.PATCH")
+        raise ValueError("Version must use MAJOR.MINOR.PATCH with optional -dev suffix")
     major, minor, patch = (int(value) for value in match.groups())
     return major, minor, patch, 0
 
@@ -35,12 +37,12 @@ def write_windows_version_info(path: str | Path, version: str) -> Path:
     StringFileInfo([
       StringTable(
         u'040904B0',
-        [StringStruct(u'CompanyName', u'CAD Photo to DXF'),
-         StringStruct(u'FileDescription', u'CAD Photo to Editable DXF'),
+        [StringStruct(u'CompanyName', u'{PRODUCT_NAME}'),
+         StringStruct(u'FileDescription', u'{PRODUCT_NAME}'),
          StringStruct(u'FileVersion', u'{version}'),
          StringStruct(u'InternalName', u'CADPhotoToDXF'),
          StringStruct(u'OriginalFilename', u'CADPhotoToDXF.exe'),
-         StringStruct(u'ProductName', u'CAD Photo to DXF'),
+         StringStruct(u'ProductName', u'{PRODUCT_NAME}'),
          StringStruct(u'ProductVersion', u'{version}')])
     ]),
     VarFileInfo([VarStruct(u'Translation', [1033, 1200])])

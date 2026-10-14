@@ -1,0 +1,214 @@
+{
+  "AMBIGUOUS": 3,
+  "DPI_DISTRIBUTION": {
+    "110.000000": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 5,
+        "SINGLE_PHYSICAL_STROKE": 16,
+        "TRUE_PARALLEL_STRUCTURE": 14
+      },
+      "excluded": 0,
+      "ready": 37,
+      "total": 37
+    },
+    "UNKNOWN_SOURCE_DPI": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    }
+  },
+  "DRAWINGS": 5,
+  "OTHER": 7,
+  "SINGLE": 22,
+  "SKIPPED": 0,
+  "SOURCE_FAMILIES": 5,
+  "TRUE_PARALLEL": 18,
+  "VALIDATION_EXCLUDED": 0,
+  "VALIDATION_READY": 50,
+  "VALIDATION_REVIEWED": 50,
+  "V_X_U": {
+    "VALID_TARGET": 50
+  },
+  "background_tasks_created": false,
+  "batch": "validation-v2-001",
+  "blind_sources_accessed": 0,
+  "by_drawing": {
+    "A2-SG-008": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    },
+    "G0R2-22E85E2DB7746A00": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "G0R2-4DC97797ABE2CB18": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "G0R2-99D5B85436EBB965": {
+      "classes": {
+        "OTHER": 1
+      },
+      "excluded": 0,
+      "ready": 1,
+      "total": 1
+    },
+    "G0R2-F519B357241CAC3A": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 4,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    }
+  },
+  "by_source_family": {
+    "AU_GOLDCOAST_OPW_2014_2240": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "US_LOC_HABS_GU0014": {
+      "classes": {
+        "OTHER": 1
+      },
+      "excluded": 0,
+      "ready": 1,
+      "total": 1
+    },
+    "US_LOC_HABS_UT0288": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 4,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "US_NARA_BUILDING9": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    }
+  },
+  "by_target_kind": {
+    "CONTROL": {
+      "classes": {
+        "OTHER": 5
+      },
+      "excluded": 0,
+      "ready": 5,
+      "total": 5
+    },
+    "PAIR": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "SINGLE_PHYSICAL_STROKE": 2,
+        "TRUE_PARALLEL_STRUCTURE": 18
+      },
+      "excluded": 0,
+      "ready": 22,
+      "total": 22
+    },
+    "SINGLE": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 20
+      },
+      "excluded": 0,
+      "ready": 23,
+      "total": 23
+    }
+  },
+  "colab_started": false,
+  "dispositions": {
+    "READY": 50
+  },
+  "dpi_definition": "PDF effective rasterization DPI; native TIFF physical DPI unknown. No invented scan DPI.",
+  "history_audit": {
+    "DIRECT_SKIP_WITHOUT_STAGE0": 0,
+    "FINAL_STATE_INTERNALLY_CONSISTENT": true,
+    "INCONSISTENT_X_U_OVERWRITES": 0,
+    "INTERNAL_ERRORS": [],
+    "INVALID_NOMINATION": 0,
+    "MISSING_PRESENTATIONS": [],
+    "PRESENTATIONS_PERSISTED": 50,
+    "PRESENTATION_LOG_ENTRIES": 72,
+    "SCHEMA_VALID": true,
+    "SESSION_COUNT": 1,
+    "STAGE1_CLASSES_PRESENT": {
+      "AMBIGUOUS": 3,
+      "OTHER": 7,
+      "SINGLE_PHYSICAL_STROKE": 22,
+      "TRUE_PARALLEL_STRUCTURE": 18
+    },
+    "STAGE1_CLASS_COUNT": 50,
+    "STAGE1_WITHOUT_PRIOR_V": [],
+    "TOTAL_REVIEWED": 50,
+    "TRACEABLE_TARGET_RATE": 1.0,
+    "UNCLEAR_TARGET": 0,
+    "UNDO_LOG_ENTRIES": 14,
+    "VALID_TARGET": 50,
+    "V_WITH_STAGE1_SKIPPED": 0,
+    "X_U_LATER_CHANGED_TO_V": [],
+    "ZERO_SOURCE_SUPPORT_STAGE1": []
+  },
+  "manifest_sha256": "de5e3b1d8e3f869d79ed67d5248398c6ff2d005b50b58ccbb7f183fa5d743ed2",
+  "model_trained": false,
+  "next_action": "STOP; training requires a later explicit instruction",
+  "state_sha256": "006d8e3f61c5e1f0909605e534b78aebb12432f8501ed83b06410dc7d6df8c25",
+  "training_authorized": false
+}

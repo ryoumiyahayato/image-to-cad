@@ -1,0 +1,26 @@
+{
+  "schema_version": "pipeline-destruction-fix-p1-p2-audit-v1",
+  "source_group_id": "A2-SG-009",
+  "split": "DEV",
+  "page_index": 0,
+  "dpi": 240,
+  "claimed_target": [1285, 545, 1285, 915],
+  "claimed_target_audit": {
+    "row_count": 371,
+    "binary_supported_rows_in_7px_corridor": 54,
+    "longest_unsupported_run": 102,
+    "continuous_binary_foreground": false
+  },
+  "actual_continuous_rule_audit": {
+    "x_coordinates": [1322, 1323],
+    "row_count": 371,
+    "binary_supported_rows_in_7px_corridor": 362,
+    "longest_unsupported_run": 3,
+    "raw_hough_lsd_candidate_count": 12,
+    "contour_fallback_preserved": false,
+    "d2_correction": "The complete 518-row target at x=1322 is absent from FinalStructure and is classified separately as D2-001."
+  },
+  "decision": "NO_PRODUCTION_CHANGE",
+  "reason": "The supplied CASE 3 at x=1285 does not demonstrate the claimed raw-detection loss. D2 later qualified the distinct, corrected x=1322 target without retroactively validating the old coordinate.",
+  "next_required_evidence": "SATISFIED_BY_LINE_INTEGRITY_AUDIT_D2_CASE_D2-001"
+}

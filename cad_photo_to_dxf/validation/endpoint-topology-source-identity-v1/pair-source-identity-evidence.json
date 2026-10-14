@@ -1,0 +1,771 @@
+{
+  "admission_policy": {
+    "SOURCE_IDENTITY_AMBIGUOUS": "CONTINUE_EXISTING_POLICY",
+    "SOURCE_IDENTITY_REJECTED": "REJECTION_AVAILABLE_BUT_NOT_WIRED",
+    "SOURCE_IDENTITY_SUPPORTED": "CONTINUE_EXISTING_POLICY"
+  },
+  "case15_status": "SOURCE_IDENTITY_AMBIGUOUS",
+  "case16_status": "SOURCE_IDENTITY_AMBIGUOUS",
+  "contract_statuses": [
+    "SOURCE_IDENTITY_SUPPORTED",
+    "SOURCE_IDENTITY_REJECTED",
+    "SOURCE_IDENTITY_AMBIGUOUS"
+  ],
+  "false_pair_rejections": 0,
+  "pair_admission_wired": false,
+  "real_pair_evidence": [
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-6DA3382199DB993085B8",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-001150"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000801"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN",
+        "UPSTREAM_MEMBER_GEOMETRY_INCOMPLETE_FOR_PAIR"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-EAF5141532787D12AFE2",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000425"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000943"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-AB2943863A535D1044B9",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000400"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000569"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-51DF39D706DE8C684F10",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000303"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000455"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000675"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000902"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN",
+        "UPSTREAM_MEMBER_GEOMETRY_INCOMPLETE_FOR_PAIR"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-2BF547C27C8497056BA6",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-001184"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000950"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-B7300C5B8E706C736EB1",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000162"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000142"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": [
+        "raw-hough-000262"
+      ],
+      "stroke_b_id": [
+        "raw-hough-000287"
+      ]
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-4497ADEE7DB5D798A893",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": null,
+      "stroke_b_id": null
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-316D125FE4861584BE02",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": null,
+      "stroke_b_id": null
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-83DFE0F6BE9016CC7844",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": null,
+      "stroke_b_id": null
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_CONFIRMED_PAIR_SOURCE_STROKE_IDS",
+        "ENDPOINT_LOCAL_CROSSING_VS_TERMINATION_PROFILE_NOT_FROZEN",
+        "UPSTREAM_MEMBER_GEOMETRY_INCOMPLETE_FOR_PAIR"
+      ],
+      "confidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "FRESH1-585E8520AB511B998A25",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": null,
+      "stroke_b_id": null
+    }
+  ],
+  "reason_not_wired": "frozen records lack the endpoint-local topology and confirmed source-instance membership required for safe rejection",
+  "schema_version": 1,
+  "synthetic_pair_evidence": [
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.428571,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "A-CONTINUOUS:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          58.0,
+          50.0
+        ],
+        "source_stroke_id": "A-CONTINUOUS",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.571429,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.428571,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 2,
+        "endpoint_id": "A-CONTINUOUS:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          64.0,
+          50.0
+        ],
+        "source_stroke_id": "A-CONTINUOUS",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.571429,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "gap_ridge_evidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_SUPPORTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "SYNTH-A",
+      "positive_evidence": [
+        "SHARED_CONFIRMED_SOURCE_STROKE"
+      ],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "A-CONTINUOUS",
+      "stroke_b_id": "A-CONTINUOUS",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "B-LEFT:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          50.0,
+          50.0
+        ],
+        "source_stroke_id": "B-LEFT",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 2,
+        "endpoint_id": "B-RIGHT:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          82.0,
+          50.0
+        ],
+        "source_stroke_id": "B-RIGHT",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "gap_ridge_evidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES",
+        "INDEPENDENT_ENDPOINT_TERMINATION"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-B",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "B-LEFT",
+      "stroke_b_id": "B-RIGHT",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 1.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 1.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "C-CONTINUOUS:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          60.0,
+          50.0
+        ],
+        "source_stroke_id": "C-CONTINUOUS",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 1.0,
+        "transverse_positive_evidence": 1.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 1.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 1.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "C-CONTINUOUS:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          60.0,
+          50.0
+        ],
+        "source_stroke_id": "C-CONTINUOUS",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 1.0,
+        "transverse_positive_evidence": 1.0
+      },
+      "gap_ridge_evidence": 1.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_SUPPORTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "SYNTH-C",
+      "positive_evidence": [
+        "SHARED_CONFIRMED_SOURCE_STROKE",
+        "CROSSING_WITH_AXIAL_CONTINUATION",
+        "CONTINUATION_TOPOLOGY_SUPPORTED"
+      ],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "C-CONTINUOUS",
+      "stroke_b_id": "C-CONTINUOUS",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          55.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+        "t_junction_evidence": 1.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 1.0,
+        "transverse_positive_evidence": 1.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 2,
+        "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          85.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "gap_ridge_evidence": 0.034483,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [
+        "JUNCTION_TERMINATION"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-D",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "HYPOTHESIS:line-observation-000000",
+      "stroke_b_id": "HYPOTHESIS:line-observation-000001",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 1.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          55.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 1.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.0,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 2,
+        "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          85.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 1.0,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "gap_ridge_evidence": 0.034483,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [
+        "CORNER_TERMINATION"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-E",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "HYPOTHESIS:line-observation-000000",
+      "stroke_b_id": "HYPOTHESIS:line-observation-000001",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-F",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "F-LONG",
+      "stroke_b_id": "F-MEDIUM",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-G",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "F-MEDIUM",
+      "stroke_b_id": "F-SHORT",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 1.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-H",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "H-A",
+      "stroke_b_id": "H-B",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 2.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-I",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "I-A",
+      "stroke_b_id": "I-B",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_REJECTED",
+      "lateral_offset_px": 3.0,
+      "negative_evidence": [
+        "DISTINCT_CONFIRMED_SOURCE_INSTANCES"
+      ],
+      "pair_admission_action": "REJECT_IN_DEV_ADMISSION",
+      "pair_id": "SYNTH-J",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "J-A",
+      "stroke_b_id": "J-B",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [
+        "NO_POSITIVE_SOURCE_IDENTITY",
+        "RASTER_TOPOLOGY_INCONCLUSIVE",
+        "SOURCE_MULTIPLICITY_AMBIGUOUS"
+      ],
+      "confidence": 0.0,
+      "endpoint_a": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.142857,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 1,
+        "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          1.0,
+          -0.0
+        ],
+        "position": [
+          50.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.857143,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "endpoint_b": {
+        "competing_stroke_ids": [],
+        "continuing_ridge_evidence": 0.142857,
+        "corner_evidence": 0.0,
+        "crossing_evidence": 0.0,
+        "endpoint_component_id": 2,
+        "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+        "incoming_ridge_evidence": 1.0,
+        "local_multiplicity": 1,
+        "local_tangent": [
+          -1.0,
+          -0.0
+        ],
+        "position": [
+          58.0,
+          50.0
+        ],
+        "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+        "t_junction_evidence": 0.0,
+        "termination_strength": 0.857143,
+        "topology_confidence": 1.0,
+        "transverse_negative_evidence": 0.0,
+        "transverse_positive_evidence": 0.0
+      },
+      "gap_ridge_evidence": 0.0,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "SYNTH-K",
+      "positive_evidence": [],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "HYPOTHESIS:line-observation-000000",
+      "stroke_b_id": "HYPOTHESIS:line-observation-000001",
+      "tangent_delta_degrees": 0.0
+    },
+    {
+      "ambiguity_reasons": [],
+      "confidence": 1.0,
+      "endpoint_a": null,
+      "endpoint_b": null,
+      "gap_ridge_evidence": null,
+      "geometry_mutated": false,
+      "identity_status": "SOURCE_IDENTITY_SUPPORTED",
+      "lateral_offset_px": 0.0,
+      "negative_evidence": [],
+      "pair_admission_action": "CONTINUE_EXISTING_POLICY",
+      "pair_id": "SYNTH-L",
+      "positive_evidence": [
+        "SHARED_CONFIRMED_SOURCE_STROKE"
+      ],
+      "semantic_evidence_used": false,
+      "stroke_a_id": "L-THICK",
+      "stroke_b_id": "L-THICK",
+      "tangent_delta_degrees": 0.0
+    }
+  ],
+  "task_id": "ENDPOINT_TOPOLOGY_SOURCE_IDENTITY_V1"
+}

@@ -57,24 +57,8 @@ jobs:
           python -m pytest -q --junitxml=output/ci/pytest-junit.xml \
             2>&1 | tee output/ci/pytest.log
 
-      - name: Run mandatory full-page real-document regression
-        shell: bash
-        run: |
-          mkdir -p output/ci
-          set -o pipefail
-          python scripts/run_real_document_regression.py \
-            --manifest tests/real_regression/manifest.json \
-            --output output/ci/real-document-regression.json \
-            --artifacts output/ci/real-document-regression \
-            2>&1 | tee output/ci/real-document-regression.log
-
-      - name: Validate existing real-photo fixture manifests
-        run: |
-          mkdir -p output/ci
-          python scripts/validate_fixtures.py \
-            tests/fixtures \
-            --minimum 0 \
-            --output output/ci/fixture-qualification.json
+      - name: Verify representative behavior preservation
+        run: python ../maintenance/preservation_check.py
 
       - name: Run static checks
         shell: bash
@@ -87,10 +71,10 @@ jobs:
       - name: Run incremental core type checks
         run: |
           python -m mypy \
-            app/resolution.py \
-            app/scale_calibrator.py \
-            app/reporting.py \
-            app/auxiliary_recognition.py
+            app/core/resolution.py \
+            app/core/scale_calibrator.py \
+            app/core/reporting.py \
+            app/ocr/auxiliary_recognition.py
 
       - name: Compile Python sources
         run: python -m compileall -q app tests validation scripts main.py

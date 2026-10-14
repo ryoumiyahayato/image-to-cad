@@ -1,0 +1,1227 @@
+{
+  "documents": [
+    {
+      "candidate_contact_sheet": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\candidate-sheets\\H1-UT14.jpg",
+      "candidates": [
+        {
+          "candidate_id": "D14E-B891230016C5",
+          "context_crop_box_px": [
+            1296,
+            604,
+            2200,
+            1628
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-B891230016C5\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-B891230016C5-A",
+            "D14E-B891230016C5-B"
+          ],
+          "gap_size_px": 17,
+          "independence_cluster_id": "H1-UT14:1:vertical:4:3",
+          "local_crop_box_px": [
+            1935,
+            648,
+            2200,
+            1584
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-B891230016C5\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-B891230016C5\\overlay.png",
+          "page": 1,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 1 of 4",
+          "source_coordinates_px": {
+            "axis": 2148,
+            "end": 1560,
+            "gap_end": 1275,
+            "gap_start": 1258,
+            "orientation": "vertical",
+            "start": 672
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-90449C411D67",
+          "context_crop_box_px": [
+            498,
+            226,
+            2174,
+            1331
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-90449C411D67\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-90449C411D67-A",
+            "D14E-90449C411D67-B"
+          ],
+          "gap_size_px": 29,
+          "independence_cluster_id": "H1-UT14:2:vertical:3:3",
+          "local_crop_box_px": [
+            1126,
+            313,
+            1546,
+            1244
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-90449C411D67\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-90449C411D67\\overlay.png",
+          "page": 2,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 2 of 4",
+          "source_coordinates_px": {
+            "axis": 1336,
+            "end": 1215,
+            "gap_end": 1180,
+            "gap_start": 1151,
+            "orientation": "vertical",
+            "start": 342
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-82AF53CB94E1",
+          "context_crop_box_px": [
+            1000,
+            375,
+            1972,
+            1737
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-82AF53CB94E1\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-82AF53CB94E1-A",
+            "D14E-82AF53CB94E1-B"
+          ],
+          "gap_size_px": 9,
+          "independence_cluster_id": "H1-UT14:3:horizontal:2:3",
+          "local_crop_box_px": [
+            1012,
+            1023,
+            1960,
+            1455
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-82AF53CB94E1\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-82AF53CB94E1\\overlay.png",
+          "page": 3,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 3 of 4",
+          "source_coordinates_px": {
+            "axis": 1239,
+            "end": 1936,
+            "gap_end": 1134,
+            "gap_start": 1125,
+            "orientation": "horizontal",
+            "start": 1036
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-96C647FE0845",
+          "context_crop_box_px": [
+            0,
+            852,
+            719,
+            1898
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-96C647FE0845\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-96C647FE0845-A",
+            "D14E-96C647FE0845-B"
+          ],
+          "gap_size_px": 61,
+          "independence_cluster_id": "H1-UT14:4:vertical:0:2",
+          "local_crop_box_px": [
+            49,
+            1035,
+            317,
+            1715
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-96C647FE0845\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-96C647FE0845\\overlay.png",
+          "page": 4,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 4 of 4",
+          "source_coordinates_px": {
+            "axis": 183,
+            "end": 1654,
+            "gap_end": 1209,
+            "gap_start": 1148,
+            "orientation": "vertical",
+            "start": 1096
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-0E1D6D2EC948",
+          "context_crop_box_px": [
+            1009,
+            786,
+            2172,
+            1775
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-0E1D6D2EC948\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-0E1D6D2EC948-A",
+            "D14E-0E1D6D2EC948-B"
+          ],
+          "gap_size_px": 33,
+          "independence_cluster_id": "H1-UT14:1:horizontal:4:4",
+          "local_crop_box_px": [
+            1108,
+            1433,
+            2073,
+            1775
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-0E1D6D2EC948\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-0E1D6D2EC948\\overlay.png",
+          "page": 1,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 1 of 4",
+          "source_coordinates_px": {
+            "axis": 1649,
+            "end": 2040,
+            "gap_end": 2003,
+            "gap_start": 1970,
+            "orientation": "horizontal",
+            "start": 1141
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-5D238D462EBB",
+          "context_crop_box_px": [
+            1104,
+            219,
+            2200,
+            1279
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-5D238D462EBB\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-5D238D462EBB-A",
+            "D14E-5D238D462EBB-B"
+          ],
+          "gap_size_px": 26,
+          "independence_cluster_id": "H1-UT14:2:vertical:4:3",
+          "local_crop_box_px": [
+            1718,
+            297,
+            2126,
+            1201
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-5D238D462EBB\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-5D238D462EBB\\overlay.png",
+          "page": 2,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 2 of 4",
+          "source_coordinates_px": {
+            "axis": 1922,
+            "end": 1175,
+            "gap_end": 1147,
+            "gap_start": 1121,
+            "orientation": "vertical",
+            "start": 323
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-8339DDFB25C3",
+          "context_crop_box_px": [
+            967,
+            0,
+            1919,
+            1232
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8339DDFB25C3\\context.png",
+          "document_key": "H1-UT14",
+          "document_sha256": "A9D5EFBF630A439A77F05A41FACB9DA96478D5AA644ADE0F1877781771600AA6",
+          "document_title": "Denver & Rio Grande Western Railroad, Provo River Bridge, Spanning Provo River, Orem Vicinity, Orem, Utah County, UT",
+          "fragment_ids": [
+            "D14E-8339DDFB25C3-A",
+            "D14E-8339DDFB25C3-B"
+          ],
+          "gap_size_px": 8,
+          "independence_cluster_id": "H1-UT14:3:horizontal:2:1",
+          "local_crop_box_px": [
+            975,
+            167,
+            1911,
+            593
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8339DDFB25C3\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8339DDFB25C3\\overlay.png",
+          "page": 3,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER UT-14 sheet 3 of 4",
+          "source_coordinates_px": {
+            "axis": 380,
+            "end": 1887,
+            "gap_end": 1135,
+            "gap_start": 1127,
+            "orientation": "horizontal",
+            "start": 999
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        }
+      ],
+      "document_key": "H1-UT14",
+      "family": "H1",
+      "raw_proposal_count": 1140,
+      "retained_count": 7
+    },
+    {
+      "candidate_contact_sheet": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\candidate-sheets\\H1-NY4.jpg",
+      "candidates": [
+        {
+          "candidate_id": "D14E-F12FEFEB2245",
+          "context_crop_box_px": [
+            137,
+            0,
+            650,
+            417
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F12FEFEB2245\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-F12FEFEB2245-A",
+            "D14E-F12FEFEB2245-B"
+          ],
+          "gap_size_px": 18,
+          "independence_cluster_id": "H1-NY4:1:horizontal:0:0",
+          "local_crop_box_px": [
+            185,
+            0,
+            602,
+            152
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F12FEFEB2245\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F12FEFEB2245\\overlay.png",
+          "page": 1,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 1 of 5",
+          "source_coordinates_px": {
+            "axis": 63,
+            "end": 578,
+            "gap_end": 275,
+            "gap_start": 257,
+            "orientation": "horizontal",
+            "start": 209
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-4ECE70470938",
+          "context_crop_box_px": [
+            606,
+            0,
+            1604,
+            1658
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-4ECE70470938\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-4ECE70470938-A",
+            "D14E-4ECE70470938-B"
+          ],
+          "gap_size_px": 13,
+          "independence_cluster_id": "H1-NY4:2:horizontal:1:2",
+          "local_crop_box_px": [
+            634,
+            585,
+            1576,
+            1015
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-4ECE70470938\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-4ECE70470938\\overlay.png",
+          "page": 2,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 2 of 5",
+          "source_coordinates_px": {
+            "axis": 800,
+            "end": 1552,
+            "gap_end": 784,
+            "gap_start": 771,
+            "orientation": "horizontal",
+            "start": 658
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-D50E143F0B8D",
+          "context_crop_box_px": [
+            561,
+            473,
+            1528,
+            1802
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-D50E143F0B8D\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-D50E143F0B8D-A",
+            "D14E-D50E143F0B8D-B"
+          ],
+          "gap_size_px": 9,
+          "independence_cluster_id": "H1-NY4:3:horizontal:1:3",
+          "local_crop_box_px": [
+            573,
+            1117,
+            1516,
+            1547
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-D50E143F0B8D\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-D50E143F0B8D\\overlay.png",
+          "page": 3,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 3 of 5",
+          "source_coordinates_px": {
+            "axis": 1332,
+            "end": 1492,
+            "gap_end": 830,
+            "gap_start": 821,
+            "orientation": "horizontal",
+            "start": 597
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-8B1CF7ECAF07",
+          "context_crop_box_px": [
+            1130,
+            283,
+            1886,
+            725
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8B1CF7ECAF07\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-8B1CF7ECAF07-A",
+            "D14E-8B1CF7ECAF07-B"
+          ],
+          "gap_size_px": 5,
+          "independence_cluster_id": "H1-NY4:4:vertical:3:1",
+          "local_crop_box_px": [
+            1413,
+            283,
+            1603,
+            725
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8B1CF7ECAF07\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-8B1CF7ECAF07\\overlay.png",
+          "page": 4,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 4 of 5",
+          "source_coordinates_px": {
+            "axis": 1508,
+            "end": 701,
+            "gap_end": 505,
+            "gap_start": 500,
+            "orientation": "vertical",
+            "start": 307
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-F27CDA793323",
+          "context_crop_box_px": [
+            1122,
+            924,
+            2135,
+            1798
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F27CDA793323\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-F27CDA793323-A",
+            "D14E-F27CDA793323-B"
+          ],
+          "gap_size_px": 36,
+          "independence_cluster_id": "H1-NY4:5:horizontal:4:4",
+          "local_crop_box_px": [
+            1230,
+            1446,
+            2027,
+            1794
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F27CDA793323\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-F27CDA793323\\overlay.png",
+          "page": 5,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 5 of 5",
+          "source_coordinates_px": {
+            "axis": 1620,
+            "end": 1991,
+            "gap_end": 1963,
+            "gap_start": 1927,
+            "orientation": "horizontal",
+            "start": 1266
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-06998764211E",
+          "context_crop_box_px": [
+            94,
+            1183,
+            732,
+            1796
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-06998764211E\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-06998764211E-A",
+            "D14E-06998764211E-B"
+          ],
+          "gap_size_px": 33,
+          "independence_cluster_id": "H1-NY4:1:horizontal:1:4",
+          "local_crop_box_px": [
+            193,
+            1452,
+            633,
+            1632
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-06998764211E\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-06998764211E\\overlay.png",
+          "page": 1,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 1 of 5",
+          "source_coordinates_px": {
+            "axis": 1542,
+            "end": 600,
+            "gap_end": 562,
+            "gap_start": 529,
+            "orientation": "horizontal",
+            "start": 226
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        },
+        {
+          "candidate_id": "D14E-C8BA91C6A0BD",
+          "context_crop_box_px": [
+            786,
+            0,
+            2182,
+            1651
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-C8BA91C6A0BD\\context.png",
+          "document_key": "H1-NY4",
+          "document_sha256": "020DAB1202B63F9B28A9E41E934089440ED842C6FAA2C0CB97952772084D035A",
+          "document_title": "Whipple Cast & Wrought Iron Bowstring Truss Bridge, Normans Kill Vicinity, Albany, Albany County, NY",
+          "fragment_ids": [
+            "D14E-C8BA91C6A0BD-A",
+            "D14E-C8BA91C6A0BD-B"
+          ],
+          "gap_size_px": 63,
+          "independence_cluster_id": "H1-NY4:2:horizontal:2:2",
+          "local_crop_box_px": [
+            975,
+            581,
+            1993,
+            1009
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-C8BA91C6A0BD\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H1\\D14E-C8BA91C6A0BD\\overlay.png",
+          "page": 2,
+          "render_dpi": null,
+          "render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+          "semantic_label": null,
+          "sheet_id": "HAER NY-4 sheet 2 of 5",
+          "source_coordinates_px": {
+            "axis": 795,
+            "end": 1930,
+            "gap_end": 1348,
+            "gap_start": 1285,
+            "orientation": "horizontal",
+            "start": 1038
+          },
+          "source_family": "H1",
+          "source_family_id": "D14C-H1-HAER-HISTORICAL-MEASURED-DRAWINGS"
+        }
+      ],
+      "document_key": "H1-NY4",
+      "family": "H1",
+      "raw_proposal_count": 1038,
+      "retained_count": 7
+    },
+    {
+      "candidate_contact_sheet": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\candidate-sheets\\H2.jpg",
+      "candidates": [
+        {
+          "candidate_id": "D14E-CE792322B81F",
+          "context_crop_box_px": [
+            1021,
+            0,
+            1650,
+            322
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-CE792322B81F\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-CE792322B81F-A",
+            "D14E-CE792322B81F-B"
+          ],
+          "gap_size_px": 64,
+          "independence_cluster_id": "H2:1:horizontal:3:0",
+          "local_crop_box_px": [
+            1213,
+            67,
+            1554,
+            169
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-CE792322B81F\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-CE792322B81F\\overlay.png",
+          "page": 1,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 1 of 3",
+          "source_coordinates_px": {
+            "axis": 118,
+            "end": 1490,
+            "gap_end": 1383,
+            "gap_start": 1319,
+            "orientation": "horizontal",
+            "start": 1277
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-D8266A189086",
+          "context_crop_box_px": [
+            354,
+            0,
+            1280,
+            1275
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-D8266A189086\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-D8266A189086-A",
+            "D14E-D8266A189086-B"
+          ],
+          "gap_size_px": 10,
+          "independence_cluster_id": "H2:2:horizontal:1:2",
+          "local_crop_box_px": [
+            370,
+            405,
+            1264,
+            811
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-D8266A189086\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-D8266A189086\\overlay.png",
+          "page": 2,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 2 of 3",
+          "source_coordinates_px": {
+            "axis": 608,
+            "end": 1240,
+            "gap_end": 457,
+            "gap_start": 447,
+            "orientation": "horizontal",
+            "start": 394
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-210F3F812A66",
+          "context_crop_box_px": [
+            285,
+            0,
+            1415,
+            1275
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-210F3F812A66\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-210F3F812A66-A",
+            "D14E-210F3F812A66-B"
+          ],
+          "gap_size_px": 55,
+          "independence_cluster_id": "H2:3:horizontal:2:2",
+          "local_crop_box_px": [
+            450,
+            474,
+            1250,
+            806
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-210F3F812A66\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-210F3F812A66\\overlay.png",
+          "page": 3,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 3 of 3",
+          "source_coordinates_px": {
+            "axis": 640,
+            "end": 1195,
+            "gap_end": 878,
+            "gap_start": 823,
+            "orientation": "horizontal",
+            "start": 505
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-10740DFB9AE5",
+          "context_crop_box_px": [
+            1249,
+            0,
+            1589,
+            261
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-10740DFB9AE5\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-10740DFB9AE5-A",
+            "D14E-10740DFB9AE5-B"
+          ],
+          "gap_size_px": 23,
+          "independence_cluster_id": "H2:1:horizontal:4:0",
+          "local_crop_box_px": [
+            1317,
+            71,
+            1521,
+            151
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-10740DFB9AE5\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-10740DFB9AE5\\overlay.png",
+          "page": 1,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 1 of 3",
+          "source_coordinates_px": {
+            "axis": 111,
+            "end": 1497,
+            "gap_end": 1396,
+            "gap_start": 1373,
+            "orientation": "horizontal",
+            "start": 1341
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-7EAB23F9DB29",
+          "context_crop_box_px": [
+            301,
+            0,
+            1328,
+            1275
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-7EAB23F9DB29\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-7EAB23F9DB29-A",
+            "D14E-7EAB23F9DB29-B"
+          ],
+          "gap_size_px": 22,
+          "independence_cluster_id": "H2:2:horizontal:2:2",
+          "local_crop_box_px": [
+            365,
+            383,
+            1264,
+            791
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-7EAB23F9DB29\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-7EAB23F9DB29\\overlay.png",
+          "page": 2,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 2 of 3",
+          "source_coordinates_px": {
+            "axis": 587,
+            "end": 1240,
+            "gap_end": 948,
+            "gap_start": 926,
+            "orientation": "horizontal",
+            "start": 389
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-142FAB52579F",
+          "context_crop_box_px": [
+            690,
+            214,
+            1354,
+            648
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-142FAB52579F\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-142FAB52579F-A",
+            "D14E-142FAB52579F-B"
+          ],
+          "gap_size_px": 11,
+          "independence_cluster_id": "H2:3:vertical:3:2",
+          "local_crop_box_px": [
+            939,
+            234,
+            1105,
+            628
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-142FAB52579F\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-142FAB52579F\\overlay.png",
+          "page": 3,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 3 of 3",
+          "source_coordinates_px": {
+            "axis": 1022,
+            "end": 604,
+            "gap_end": 533,
+            "gap_start": 522,
+            "orientation": "vertical",
+            "start": 258
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        },
+        {
+          "candidate_id": "D14E-E3358E708EA3",
+          "context_crop_box_px": [
+            688,
+            1103,
+            902,
+            1275
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-E3358E708EA3\\context.png",
+          "document_key": "H2",
+          "document_sha256": "501A976013CB1E2C13BFC998B5DFA010B064945A1F0A1EAA303A59D96DDC893C",
+          "document_title": "NIST PMI Test Model - Fully-Toleranced Test Case 6",
+          "fragment_ids": [
+            "D14E-E3358E708EA3-A",
+            "D14E-E3358E708EA3-B"
+          ],
+          "gap_size_px": 13,
+          "independence_cluster_id": "H2:1:horizontal:2:4",
+          "local_crop_box_px": [
+            716,
+            1169,
+            874,
+            1249
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-E3358E708EA3\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\H2\\D14E-E3358E708EA3\\overlay.png",
+          "page": 1,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "NIST FTC 6 Rev D page 1 of 3",
+          "source_coordinates_px": {
+            "axis": 1209,
+            "end": 850,
+            "gap_end": 783,
+            "gap_start": 770,
+            "orientation": "horizontal",
+            "start": 740
+          },
+          "source_family": "H2",
+          "source_family_id": "D14C-H2-NIST-PMI-FTC"
+        }
+      ],
+      "document_key": "H2",
+      "family": "H2",
+      "raw_proposal_count": 259,
+      "retained_count": 7
+    },
+    {
+      "candidate_contact_sheet": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\candidate-sheets\\C1.jpg",
+      "candidates": [
+        {
+          "candidate_id": "D14E-FA2DB5B68BA2",
+          "context_crop_box_px": [
+            1128,
+            0,
+            2291,
+            1311
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-FA2DB5B68BA2\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-FA2DB5B68BA2-A",
+            "D14E-FA2DB5B68BA2-B"
+          ],
+          "gap_size_px": 33,
+          "independence_cluster_id": "C1:14:horizontal:4:1",
+          "local_crop_box_px": [
+            1227,
+            232,
+            2192,
+            664
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-FA2DB5B68BA2\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-FA2DB5B68BA2\\overlay.png",
+          "page": 14,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.5",
+          "source_coordinates_px": {
+            "axis": 448,
+            "end": 2159,
+            "gap_end": 2117,
+            "gap_start": 2084,
+            "orientation": "horizontal",
+            "start": 1260
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-101604055F6C",
+          "context_crop_box_px": [
+            1502,
+            0,
+            2550,
+            1126
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-101604055F6C\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-101604055F6C-A",
+            "D14E-101604055F6C-B"
+          ],
+          "gap_size_px": 32,
+          "independence_cluster_id": "C1:15:horizontal:4:1",
+          "local_crop_box_px": [
+            1598,
+            151,
+            2475,
+            541
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-101604055F6C\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-101604055F6C\\overlay.png",
+          "page": 15,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.6",
+          "source_coordinates_px": {
+            "axis": 346,
+            "end": 2443,
+            "gap_end": 2338,
+            "gap_start": 2306,
+            "orientation": "horizontal",
+            "start": 1630
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-502CA91496D5",
+          "context_crop_box_px": [
+            1273,
+            0,
+            1948,
+            697
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-502CA91496D5\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-502CA91496D5-A",
+            "D14E-502CA91496D5-B"
+          ],
+          "gap_size_px": 35,
+          "independence_cluster_id": "C1:16:horizontal:2:0",
+          "local_crop_box_px": [
+            1378,
+            223,
+            1843,
+            413
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-502CA91496D5\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-502CA91496D5\\overlay.png",
+          "page": 16,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.7",
+          "source_coordinates_px": {
+            "axis": 318,
+            "end": 1808,
+            "gap_end": 1516,
+            "gap_start": 1481,
+            "orientation": "horizontal",
+            "start": 1413
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-B93CCEEAA320",
+          "context_crop_box_px": [
+            2180,
+            0,
+            2550,
+            549
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-B93CCEEAA320\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-B93CCEEAA320-A",
+            "D14E-B93CCEEAA320-B"
+          ],
+          "gap_size_px": 38,
+          "independence_cluster_id": "C1:17:vertical:4:0",
+          "local_crop_box_px": [
+            2379,
+            83,
+            2511,
+            435
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-B93CCEEAA320\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-B93CCEEAA320\\overlay.png",
+          "page": 17,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.8",
+          "source_coordinates_px": {
+            "axis": 2445,
+            "end": 397,
+            "gap_end": 329,
+            "gap_start": 291,
+            "orientation": "vertical",
+            "start": 121
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-97391B48B08C",
+          "context_crop_box_px": [
+            1753,
+            687,
+            2424,
+            1469
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-97391B48B08C\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-97391B48B08C-A",
+            "D14E-97391B48B08C-B"
+          ],
+          "gap_size_px": 33,
+          "independence_cluster_id": "C1:18:horizontal:3:3",
+          "local_crop_box_px": [
+            1852,
+            980,
+            2325,
+            1176
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-97391B48B08C\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-97391B48B08C\\overlay.png",
+          "page": 18,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.9",
+          "source_coordinates_px": {
+            "axis": 1078,
+            "end": 2292,
+            "gap_end": 2007,
+            "gap_start": 1974,
+            "orientation": "horizontal",
+            "start": 1885
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-E9E428EBBD2B",
+          "context_crop_box_px": [
+            1600,
+            531,
+            2550,
+            1537
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-E9E428EBBD2B\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-E9E428EBBD2B-A",
+            "D14E-E9E428EBBD2B-B"
+          ],
+          "gap_size_px": 69,
+          "independence_cluster_id": "C1:19:horizontal:3:3",
+          "local_crop_box_px": [
+            1807,
+            908,
+            2469,
+            1160
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-E9E428EBBD2B\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-E9E428EBBD2B\\overlay.png",
+          "page": 19,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.10",
+          "source_coordinates_px": {
+            "axis": 1034,
+            "end": 2400,
+            "gap_end": 1990,
+            "gap_start": 1921,
+            "orientation": "horizontal",
+            "start": 1876
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        },
+        {
+          "candidate_id": "D14E-87D97BA62D66",
+          "context_crop_box_px": [
+            1814,
+            696,
+            2476,
+            1650
+          ],
+          "context_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-87D97BA62D66\\context.png",
+          "document_key": "C1",
+          "document_sha256": "B9598C3689960F31D6C9B6BF4AD9859DED1796FD780B7AA44729FB41ADCD13E7",
+          "document_title": "WFL Sample Plan Sheets - D Sheets - Plan and Profile Sheets",
+          "fragment_ids": [
+            "D14E-87D97BA62D66-A",
+            "D14E-87D97BA62D66-B"
+          ],
+          "gap_size_px": 20,
+          "independence_cluster_id": "C1:14:horizontal:4:3",
+          "local_crop_box_px": [
+            1870,
+            1058,
+            2420,
+            1298
+          ],
+          "local_crop_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-87D97BA62D66\\local.png",
+          "overlay_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\new-source-p0-d14\\D14E\\review-artifacts\\C1\\D14E-87D97BA62D66\\overlay.png",
+          "page": 14,
+          "render_dpi": 150,
+          "render_transform": "Poppler grayscale render at 150 DPI",
+          "semantic_label": null,
+          "sheet_id": "D.5",
+          "source_coordinates_px": {
+            "axis": 1178,
+            "end": 2396,
+            "gap_end": 2320,
+            "gap_start": 2300,
+            "orientation": "horizontal",
+            "start": 1894
+          },
+          "source_family": "C1",
+          "source_family_id": "D14C-C1-FHWA-WFL-ORD-PLAN-PROFILE"
+        }
+      ],
+      "document_key": "C1",
+      "family": "C1",
+      "raw_proposal_count": 506,
+      "retained_count": 7
+    }
+  ],
+  "h1_render_transform": "Master TIFF converted to grayscale and aspect-preserving Lanczos downsampled to maximum dimension 2200 px",
+  "label_policy": "GEOMETRY_PROPOSAL_ONLY_NO_SEMANTIC_AUTOLABEL",
+  "model_run": false,
+  "pdf_render_dpi": 150,
+  "schema_version": "d14e-prediction-blind-candidates-v1",
+  "task": "P0-NEW-SOURCE-BLIND-MINING-AND-LABELING-D14E",
+  "base_checkpoint": "e98a3c8f74d0412ac8e16401f34febb810885686",
+  "acquisition_registry": "cad_photo_to_dxf/validation/p0-controlled-acquisition-d14d/acquisition-registry.json",
+  "page_selection_registry": "cad_photo_to_dxf/validation/p0-new-source-labeling-d14e/page-selection.json",
+  "representative_candidate_total": 28,
+  "source_pages_sheets_mined": 18
+}

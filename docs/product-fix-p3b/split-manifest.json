@@ -1,0 +1,207 @@
+{
+  "authority_sha256": "05283c960096941ecac34f73e109fe9d850e8d2354b144387c00370755d288cd",
+  "blind_access": "PROHIBITED_IN_DEVELOPMENT",
+  "drawings": [
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "A2-SG-008",
+      "source_family_id": "US_NARA_BUILDING9",
+      "split": "validation"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "A2-SG-009",
+      "source_family_id": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+      "split": "train"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "A2-SG-010",
+      "source_family_id": "US_OREGON_HISTORICAL_RESIDENCE",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "A2-SG-022",
+      "source_family_id": "UK_BANBURY_TRAMWAY_ASBUILT",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-12366099AAD5F10E",
+      "source_family_id": "JP_ISHINOMAKI_EAST_SCHOOL_MEAL_CENTER",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-15EE2398726E8037",
+      "source_family_id": "JP_IGA_4291000114",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-2279F661AA38A9F4",
+      "source_family_id": "US_LOC_HABS_HI0583",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-22E85E2DB7746A00",
+      "source_family_id": "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+      "split": "validation"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "G0R2-2E9BDFFDD8C89AE7",
+      "source_family_id": "JP_SAKADO_KITASAKADO_SCHOOL_DEMOLITION",
+      "split": "validation"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-345AA483FD068A11",
+      "source_family_id": "CN_HUNAN_HUAYUAN_PUBLIC_DRAWING_2023",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-3560D9BEBEAA3543",
+      "source_family_id": "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-3B970FD759C6026F",
+      "source_family_id": "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-420BF9693D881A41",
+      "source_family_id": "NZ_WESTLAND_MILK_STAFF_CARPARK_150080",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-4A34D1B8D93B1B06",
+      "source_family_id": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-4CF3C6EBEFDD1EBE",
+      "source_family_id": "US_LOC_HAER_CA1868",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-4DC97797ABE2CB18",
+      "source_family_id": "AU_GOLDCOAST_OPW_2014_2240",
+      "split": "validation"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "G0R2-53C88494D6CE893C",
+      "source_family_id": "AU_ARGYLE_STORES_301350511",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-5FB6FE7CB6D476E1",
+      "source_family_id": "US_LOC_HABS_FL0572",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-6C9464FA73A2A027",
+      "source_family_id": "JP_IGA_2020000378",
+      "split": "train"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-6DFEC5FDC69FC0CD",
+      "source_family_id": "US_LOC_HABS_CA4439",
+      "split": "blind_test"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-7E30C7F445081F40",
+      "source_family_id": "AU_NSW_P5_2023_61",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-99D5B85436EBB965",
+      "source_family_id": "US_LOC_HABS_GU0014",
+      "split": "validation"
+    },
+    {
+      "availability": "RECORDED_ONLY",
+      "source_drawing_id": "G0R2-AEA044C8E75CB3AB",
+      "source_family_id": "US_LOC_HAER_HI0822",
+      "split": "blind_test"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "G0R2-AFE53C2A00EB7D8F",
+      "source_family_id": "AU_SYDNEY_BRICK_KILN_212710",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-B441E5911528F402",
+      "source_family_id": "US_LOC_HABS_FL0790",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-C2D095E069663C17",
+      "source_family_id": "AU_NSW_P5_2024_93",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "G0R2-F519B357241CAC3A",
+      "source_family_id": "US_LOC_HABS_UT0288",
+      "split": "validation"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "SGC-007",
+      "source_family_id": "US_TITUSVILLE_SCHOOL",
+      "split": "validation"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "SGC-008",
+      "source_family_id": "US_FARMINGTON_SENIOR_CENTER",
+      "split": "train"
+    },
+    {
+      "availability": "NOT_MATERIALIZED",
+      "source_drawing_id": "SGC-024",
+      "source_family_id": "US_SOUTH_SEATTLE_COLLEGE",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "warehouse-electrical",
+      "source_family_id": "user-project-haiyang",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "environment-building",
+      "source_family_id": "user-project-haiyang",
+      "split": "train"
+    },
+    {
+      "availability": "AVAILABLE",
+      "source_drawing_id": "sample-plan-photo",
+      "source_family_id": "sample-plan-photo",
+      "split": "train"
+    }
+  ],
+  "policy": "whole source group plus source family; keep established validation and blind allocations",
+  "related_user_CAD": "train only",
+  "version": "p3b-split-v1"
+}

@@ -3,21 +3,13 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-import app.ocr_pipeline as ocr_pipeline
-from app.auxiliary_recognition import TextCandidate
-from app.ocr_fast import (
-    TILE_OVERLAP,
-    TILE_SIZE,
-    deduplicate_candidates,
-    prepare_safe_candidate,
-)
-from app.ocr_layout import tile_regions
-from app.ocr_tile_filter import tile_has_probable_text
-from app.ocr_pipeline import (
-    _recognize_tiles,
-    recognize_text_candidates_optimized,
-)
-from app.optimized_trace import trace_image_optimized
+import app.ocr.ocr_pipeline as ocr_pipeline
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.ocr.ocr_fast import TILE_OVERLAP, TILE_SIZE, deduplicate_candidates, prepare_safe_candidate
+from app.ocr.ocr_layout import tile_regions
+from app.ocr.ocr_tile_filter import tile_has_probable_text
+from app.ocr.ocr_pipeline import _recognize_tiles, recognize_text_candidates_optimized
+from app.geometry.optimized_trace import trace_image_optimized
 
 
 def _candidate(text: str, bbox, confidence: float, source: str) -> TextCandidate:
@@ -112,7 +104,7 @@ def test_bounded_pdf_page_skips_expensive_native_tiles(monkeypatch) -> None:
     def fail_if_called(*_args, **_kwargs):
         raise AssertionError("bounded pages must not invoke native OCR tiles")
 
-    monkeypatch.setattr("app.ocr_pipeline._recognize_rapidocr_pass", fail_if_called)
+    monkeypatch.setattr("app.ocr.ocr_pipeline._recognize_rapidocr_pass", fail_if_called)
     assert _recognize_tiles(image) == []
 
 
@@ -129,10 +121,10 @@ def test_large_page_uses_cleaned_native_tiles_without_repeating_overview(
     def unexpected_overview(*_args, **_kwargs):
         raise AssertionError("large page must not repeat a resized overview pass")
 
-    monkeypatch.setattr("app.ocr_pipeline._recognize_tiles", native_page)
-    monkeypatch.setattr("app.ocr_pipeline._recognize_overview", unexpected_overview)
+    monkeypatch.setattr("app.ocr.ocr_pipeline._recognize_tiles", native_page)
+    monkeypatch.setattr("app.ocr.ocr_pipeline._recognize_overview", unexpected_overview)
     monkeypatch.setattr(
-        "app.ocr_pipeline.prepare_safe_candidate",
+        "app.ocr.ocr_pipeline.prepare_safe_candidate",
         lambda _image, candidate: candidate,
     )
 
@@ -173,7 +165,7 @@ def test_optimized_result_keeps_complete_preview_separate_from_residual(
         replacement_safe=True,
     )
     monkeypatch.setattr(
-        "app.optimized_trace.recognize_text_candidates_optimized",
+        "app.geometry.optimized_trace.recognize_text_candidates_optimized",
         lambda *_args, **_kwargs: ((candidate,), ()),
     )
 

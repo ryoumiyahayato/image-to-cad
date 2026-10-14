@@ -1,0 +1,54 @@
+{
+  "schema_version": "structural-stroke-representation-audit-d14a-summary-v1",
+  "base_checkpoint": "7e63888902643d8a355e7354b2509a0d66d68452",
+  "production_semantic_delta": "NONE",
+  "dataset": {"qualified": 28, "structural": 18, "annotation_or_glyph": 10},
+  "class_separation": {
+    "class_centroid_cosine_distance": 0.06589197078933418,
+    "structural_within_class_distance": {"min": 0.08454532606452503, "median": 0.1156968529280541, "max": 0.19853695090675894},
+    "annotation_within_class_distance": {"min": 0.06918626257802996, "median": 0.1183198339042088, "max": 0.22948168672230018}
+  },
+  "source_group_separation": {
+    "between_group_centroid_distance": {"min": 0.057991748018608624, "median": 0.09000503621479339, "max": 0.1432052886002656},
+    "pooled_within_group_distance": {"min": 0.043871623170388396, "median": 0.09538115043078554, "max": 0.2234853227677419},
+    "same_class_different_source_pair_distance": {"min": 0.11759579970463574, "median": 0.2418493186904297, "max": 0.4678182893664218},
+    "different_class_same_source_pair_distance": {"min": 0.15853357138083557, "median": 0.2646736582953344, "max": 0.4767672617088432}
+  },
+  "class_vs_source_dominance": "MIXED",
+  "whole_source_errors": 5,
+  "dangerous_false_structural": 3,
+  "error_categories": {"CLASS_OVERLAP": 2, "SOURCE_STYLE_SHIFT": 2, "ISOLATED_OUTLIER": 1},
+  "dangerous_error_subtypes": {"drawing_layout_rule": 2, "dimension_chain": 1},
+  "weak_group": {
+    "source_group": "G0R2-C2D095E069663C17",
+    "within_group_class_centroid_distance": 0.11977473038007325,
+    "structural_distance_to_other_sources_same_class": 0.0877662440662782,
+    "structural_distance_to_other_sources_opposite_class": 0.0977176479931261,
+    "mechanism": "mixed class overlap and source-style displacement, plus one isolated civil-line outlier"
+  },
+  "centroid_shift": {
+    "structural_range": [0.0004121078776155862, 0.00585739949691455],
+    "annotation_range": [0.0013459939688831302, 0.006380592101483895],
+    "sensitivity": "LOW"
+  },
+  "source_balance": {
+    "structural_direction_shift": 0.0026664381755016064,
+    "annotation_direction_shift": 0.002686551290517092,
+    "prediction_flips": 1,
+    "dangerous_errors_before": 3,
+    "dangerous_errors_after": 3,
+    "effect": "LOW"
+  },
+  "margin": {
+    "absolute_margin_correctness_correlation": 0.3762335897781182,
+    "correct_structural_range": [0.0011500905480027468, 0.10078888064531566],
+    "correct_annotation_range": [0.0207496515810639, 0.07197358943047227],
+    "dangerous_error_range": [0.005463445447731252, 0.06382700390003904],
+    "other_error_range": [0.008076939667560734, 0.01599281432232602],
+    "ambiguity_reserve_margin": 0.08172158208449698,
+    "valid_uncertainty_proxy": false,
+    "conclusion": "COSINE_MARGIN_NOT_VALID_UNCERTAINTY_PROXY"
+  },
+  "ambiguity_reserve_consistent_with_uncertainty": false,
+  "next_data_need": "NEW_SOURCE_DIVERSITY_EVENTUALLY_REQUIRED"
+}

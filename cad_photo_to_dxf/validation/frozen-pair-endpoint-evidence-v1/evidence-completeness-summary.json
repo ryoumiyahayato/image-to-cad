@@ -1,0 +1,32 @@
+{
+  "ambiguity_breakdown": {
+    "ambiguous_because_evidence_incomplete": 48,
+    "ambiguous_despite_complete_evidence": 0
+  },
+  "base_checkpoint": "441c0202b1b305c52fedfa1ab7b77757630d80fc",
+  "endpoint_local_topology_captured": 147,
+  "evidence_counts": {
+    "COMPLETE": 0,
+    "INSUFFICIENT": 0,
+    "PARTIAL": 147
+  },
+  "frozen_pool_count": 147,
+  "identity_counts": {
+    "SOURCE_IDENTITY_AMBIGUOUS": 48,
+    "SOURCE_IDENTITY_REJECTED": 4,
+    "SOURCE_IDENTITY_SUPPORTED": 95
+  },
+  "interpretation": {
+    "complete": "all required topology and independently confirmed membership evidence are available",
+    "insufficient": "endpoint-local replay could not produce both profiles",
+    "partial": "endpoint-local replay exists, but one or more required identity evidence sources are unavailable"
+  },
+  "membership_counts": {
+    "AMBIGUOUS_INSTANCE": 0,
+    "CONFIRMED_INSTANCE": 0,
+    "UNAVAILABLE_INSTANCE": 294
+  },
+  "schema_version": 1,
+  "source_instance_membership_is_authoritative_only_when_confirmed": true,
+  "task_id": "FROZEN_PAIR_ENDPOINT_EVIDENCE_V1"
+}

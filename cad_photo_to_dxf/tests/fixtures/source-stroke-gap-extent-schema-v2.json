@@ -1,0 +1,1163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:draftsman:source-stroke-gap-extent-v2",
+  "title": "Source-Stroke Gap Extent V2 (design contract)",
+  "description": "Normative record shape plus mandatory semantic invariants. No production implementation is claimed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "record_id",
+    "source",
+    "input_snapshot_digest",
+    "accepted_set_digest",
+    "route_ledger_digest",
+    "ownership_snapshot_digest",
+    "protection_snapshot_digest",
+    "base_ledger_digest",
+    "parents",
+    "evidence",
+    "authorizations",
+    "pieces",
+    "endpoint_obligations",
+    "transaction",
+    "gap_observations"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "source-stroke-gap-extent-v2"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "input_snapshot_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "accepted_set_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "route_ledger_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "ownership_snapshot_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "protection_snapshot_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "base_ledger_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/parent"
+      },
+      "minItems": 1
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      },
+      "minItems": 1
+    },
+    "authorizations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/authority"
+      },
+      "minItems": 1
+    },
+    "pieces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "piece_id",
+          "parent_id",
+          "parent_interval",
+          "geometry",
+          "output_member_id",
+          "claim_measurement",
+          "new_source_claim_pixels",
+          "new_protected_claim_pixels",
+          "inherited_contact_refs"
+        ],
+        "properties": {
+          "piece_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parent_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parent_interval": {
+            "$ref": "#/$defs/interval"
+          },
+          "geometry": {
+            "$ref": "#/$defs/geometry"
+          },
+          "output_member_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "claim_measurement": {
+            "$ref": "#/$defs/artifact"
+          },
+          "new_source_claim_pixels": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "new_protected_claim_pixels": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "inherited_contact_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "minItems": 0
+    },
+    "endpoint_obligations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "obligation_id",
+          "parent_id",
+          "point_px",
+          "kind",
+          "disposition",
+          "evidence_refs",
+          "authorization_refs",
+          "output_member_ids"
+        ],
+        "properties": {
+          "obligation_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parent_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "point_px": {
+            "$ref": "#/$defs/point"
+          },
+          "kind": {
+            "enum": [
+              "ORIGINAL_ENDPOINT",
+              "INDEPENDENT_ATTACHMENT",
+              "DERIVED_COVERAGE_CUT",
+              "OBSERVATION_FRONTIER",
+              "UNRESOLVED"
+            ]
+          },
+          "disposition": {
+            "enum": [
+              "EDITABLE_PRESERVED",
+              "EQUIVALENT_EDITABLE_PRESERVED",
+              "AUDIT_ONLY_AUTHORIZED_FRONTIER",
+              "REVIEW_REQUIRED"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "authorization_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "output_member_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "minItems": 0
+    },
+    "transaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "consumed_payload_digest",
+        "validation_evidence",
+        "failure_action",
+        "final_structure_schema",
+        "trace_cache_version"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "PROPOSED",
+            "VALIDATED",
+            "ABSTAINED",
+            "BLOCKED"
+          ]
+        },
+        "consumed_payload_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "validation_evidence": {
+          "$ref": "#/$defs/artifact"
+        },
+        "failure_action": {
+          "const": "RETAIN_PRIOR_VERSION_AND_BLOCK_INVALID_MUTATION"
+        },
+        "final_structure_schema": {
+          "const": 3
+        },
+        "trace_cache_version": {
+          "const": 10
+        }
+      }
+    },
+    "gap_observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gap_id",
+          "parent_id",
+          "certified_absent_interval",
+          "left_boundary_uncertainty_px",
+          "right_boundary_uncertainty_px",
+          "measurement_convention",
+          "observation",
+          "cause_hypothesis",
+          "actual_trajectory_and_footprint_measurement",
+          "source_evidence_refs",
+          "authorization_ref",
+          "continuation_repair_refs",
+          "downstream_behavior"
+        ],
+        "properties": {
+          "gap_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "parent_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "certified_absent_interval": {
+            "$ref": "#/$defs/interval"
+          },
+          "left_boundary_uncertainty_px": {
+            "type": "number",
+            "minimum": 0
+          },
+          "right_boundary_uncertainty_px": {
+            "type": "number",
+            "minimum": 0
+          },
+          "measurement_convention": {
+            "type": "string",
+            "minLength": 1
+          },
+          "observation": {
+            "const": "SOURCE_VISIBLE_GAP"
+          },
+          "cause_hypothesis": {
+            "enum": [
+              "UNKNOWN_GAP",
+              "TRUE_ENGINEERING_BREAK",
+              "PAPER_DAMAGE_GAP",
+              "SCAN_DROPOUT",
+              "FADED_INK_GAP"
+            ]
+          },
+          "actual_trajectory_and_footprint_measurement": {
+            "$ref": "#/$defs/artifact"
+          },
+          "source_evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true,
+            "minItems": 1
+          },
+          "authorization_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "continuation_repair_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "downstream_behavior": {
+            "const": "NO_FILL_WITHOUT_SEPARATE_REPAIR_AUTHORITY"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "interval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end",
+        "convention"
+      ],
+      "properties": {
+        "start": {
+          "type": "number"
+        },
+        "end": {
+          "type": "number"
+        },
+        "convention": {
+          "const": "HALF_OPEN_INTERIOR_SEPARATE_ENDPOINTS"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uri",
+        "sha256",
+        "role"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "page_id",
+        "source_sha256",
+        "coordinate_frame",
+        "region_px",
+        "support_artifacts",
+        "source_transform"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "coordinate_frame": {
+          "const": "ORIGINAL_SOURCE_PIXELS"
+        },
+        "region_px": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "support_artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "minItems": 1
+        },
+        "source_transform": {
+          "$ref": "#/$defs/artifact"
+        }
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "confidence",
+        "calibration",
+        "limits",
+        "review_required"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "SUPPORTED",
+            "AMBIGUOUS",
+            "UNKNOWN",
+            "CONTRADICTED"
+          ]
+        },
+        "confidence": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "calibration": {
+          "enum": [
+            "CALIBRATED_IN_SCOPE",
+            "UNCALIBRATED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "limits": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "review_required": {
+          "type": "boolean"
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "source_id",
+        "kind",
+        "result",
+        "role",
+        "artifacts",
+        "producer_version",
+        "limitations"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "result": {
+          "enum": [
+            "SUPPORTED",
+            "CONTRADICTED",
+            "UNKNOWN"
+          ]
+        },
+        "role": {
+          "enum": [
+            "OBSERVATION",
+            "RETRIEVAL_ONLY",
+            "MUTATION_SUPPORT",
+            "VETO"
+          ]
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "minItems": 1
+        },
+        "producer_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorization_id",
+        "kind",
+        "policy_id",
+        "policy_version",
+        "policy_sha256",
+        "source_id",
+        "target_ids",
+        "permitted_actions",
+        "evidence_refs",
+        "decision_provenance",
+        "validity",
+        "limitations"
+      ],
+      "properties": {
+        "authorization_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "ACCEPTANCE_SNAPSHOT",
+            "SOURCE_FAITHFUL_GAP_POLICY",
+            "EQUIVALENCE_CERTIFICATE",
+            "OWNERSHIP_DECISION",
+            "PROTECTION_DECISION",
+            "SCOPED_HUMAN_DECISION",
+            "VALIDATED_SCOPED_POLICY",
+            "JUNCTION_V2_AUTHORIZATION",
+            "VERIFIED_ALTERNATE_SOURCE"
+          ]
+        },
+        "policy_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "permitted_actions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "decision_provenance": {
+          "$ref": "#/$defs/artifact"
+        },
+        "validity": {
+          "enum": [
+            "ACTIVE",
+            "REVOKED",
+            "EXPIRED"
+          ]
+        },
+        "limitations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parent_ids",
+        "primitive_member_ids",
+        "transform_records",
+        "producer_head",
+        "producer_version",
+        "run_id"
+      ],
+      "properties": {
+        "parent_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "primitive_member_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "transform_records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          },
+          "minItems": 0
+        },
+        "producer_head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "producer_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "run_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "geometry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_px",
+        "end_px",
+        "width_px"
+      ],
+      "properties": {
+        "start_px": {
+          "$ref": "#/$defs/point"
+        },
+        "end_px": {
+          "$ref": "#/$defs/point"
+        },
+        "width_px": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cell_id",
+        "parent_interval",
+        "source_observation",
+        "disposition",
+        "evidence_refs",
+        "authorization_refs",
+        "direct_piece_ids",
+        "equivalent_cover",
+        "gap_id",
+        "uncertainty",
+        "downstream_behavior"
+      ],
+      "properties": {
+        "cell_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_interval": {
+          "$ref": "#/$defs/interval"
+        },
+        "source_observation": {
+          "enum": [
+            "SOURCE_PRESENT",
+            "SOURCE_VISIBLE_GAP",
+            "COVERED_SOURCE",
+            "UNOBSERVABLE",
+            "UNKNOWN"
+          ]
+        },
+        "disposition": {
+          "enum": [
+            "RETAINED_SOURCE_SUPPORTED_EXTENT",
+            "RETAINED_ACCEPTED_UNRESOLVED_EXTENT",
+            "SUPERSEDED_EQUIVALENT_REPRESENTATION",
+            "SOURCE_VISIBLE_GAP",
+            "DAMAGE_SUPPORTED_GAP",
+            "OCCLUDED_OR_COVERED_SOURCE_INTERVAL",
+            "UNSUPPORTED_DETECTOR_INTERPOLATION",
+            "REJECTED_OWNERSHIP",
+            "REJECTED_PROTECTION",
+            "BLOCKED_UNRESOLVED"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "authorization_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "direct_piece_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "equivalent_cover": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "keeper_piece_id",
+              "parent_interval",
+              "keeper_interval",
+              "certificate_ref"
+            ],
+            "properties": {
+              "keeper_piece_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "parent_interval": {
+                "$ref": "#/$defs/interval"
+              },
+              "keeper_interval": {
+                "$ref": "#/$defs/interval"
+              },
+              "certificate_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "minItems": 0
+        },
+        "gap_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "uncertainty": {
+          "$ref": "#/$defs/uncertainty"
+        },
+        "downstream_behavior": {
+          "enum": [
+            "EMIT_EDITABLE",
+            "USE_SURVIVING_EQUIVALENT",
+            "PRESERVE_GAP",
+            "PRESERVE_SOURCE_FALLBACK",
+            "BLOCK_NEW_ADMISSION"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "RETAINED_SOURCE_SUPPORTED_EXTENT",
+                  "RETAINED_ACCEPTED_UNRESOLVED_EXTENT"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direct_piece_ids": {
+                "minItems": 1
+              },
+              "equivalent_cover": {
+                "maxItems": 0
+              },
+              "downstream_behavior": {
+                "const": "EMIT_EDITABLE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "SUPERSEDED_EQUIVALENT_REPRESENTATION"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direct_piece_ids": {
+                "maxItems": 0
+              },
+              "equivalent_cover": {
+                "minItems": 1
+              },
+              "downstream_behavior": {
+                "const": "USE_SURVIVING_EQUIVALENT"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "SOURCE_VISIBLE_GAP",
+                  "DAMAGE_SUPPORTED_GAP",
+                  "OCCLUDED_OR_COVERED_SOURCE_INTERVAL",
+                  "UNSUPPORTED_DETECTOR_INTERPOLATION",
+                  "REJECTED_OWNERSHIP",
+                  "REJECTED_PROTECTION",
+                  "BLOCKED_UNRESOLVED"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "direct_piece_ids": {
+                "maxItems": 0
+              },
+              "equivalent_cover": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "SOURCE_VISIBLE_GAP",
+                  "DAMAGE_SUPPORTED_GAP"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_observation": {
+                "const": "SOURCE_VISIBLE_GAP"
+              },
+              "gap_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "downstream_behavior": {
+                "const": "PRESERVE_GAP"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "OCCLUDED_OR_COVERED_SOURCE_INTERVAL"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "source_observation": {
+                "const": "COVERED_SOURCE"
+              },
+              "downstream_behavior": {
+                "const": "PRESERVE_SOURCE_FALLBACK"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "REJECTED_OWNERSHIP",
+                  "REJECTED_PROTECTION",
+                  "UNSUPPORTED_DETECTOR_INTERPOLATION"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "downstream_behavior": {
+                "const": "PRESERVE_SOURCE_FALLBACK"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": [
+                  "BLOCKED_UNRESOLVED"
+                ]
+              }
+            },
+            "required": [
+              "disposition"
+            ]
+          },
+          "then": {
+            "properties": {
+              "downstream_behavior": {
+                "const": "BLOCK_NEW_ADMISSION"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "parent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parent_id",
+        "acceptance_status",
+        "acceptance_authorization_ref",
+        "original_geometry",
+        "original_domain",
+        "immutable_observation",
+        "lineage",
+        "partition",
+        "endpoint_obligation_ids",
+        "parameterization"
+      ],
+      "properties": {
+        "parent_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptance_status": {
+          "enum": [
+            "ALREADY_ACCEPTED",
+            "FRESH_PROPOSAL"
+          ]
+        },
+        "acceptance_authorization_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "original_geometry": {
+          "$ref": "#/$defs/geometry"
+        },
+        "original_domain": {
+          "$ref": "#/$defs/interval"
+        },
+        "immutable_observation": {
+          "$ref": "#/$defs/artifact"
+        },
+        "lineage": {
+          "$ref": "#/$defs/lineage"
+        },
+        "partition": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/cell"
+          },
+          "minItems": 1
+        },
+        "endpoint_obligation_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "parameterization": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "origin_px",
+            "unit_tangent",
+            "parameter_units",
+            "geometry_mapping"
+          ],
+          "properties": {
+            "origin_px": {
+              "$ref": "#/$defs/point"
+            },
+            "unit_tangent": {
+              "$ref": "#/$defs/point"
+            },
+            "parameter_units": {
+              "const": "SOURCE_PIXELS_ALONG_ORIGINAL_PARENT"
+            },
+            "geometry_mapping": {
+              "const": "POINT_EQUALS_ORIGIN_PLUS_PARAMETER_TIMES_TANGENT"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "acceptance_status": {
+                "enum": [
+                  "ALREADY_ACCEPTED"
+                ]
+              }
+            },
+            "required": [
+              "acceptance_status"
+            ]
+          },
+          "then": {
+            "properties": {
+              "acceptance_authorization_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "partition": {
+                "items": {
+                  "properties": {
+                    "disposition": {
+                      "not": {
+                        "const": "BLOCKED_UNRESOLVED"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "x-semantic-invariants": [
+    "Strict JSON: reject duplicate keys, nonfinite values and unknown fields. JSON Schema checks shape only; a separate semantic validator MUST enforce the following invariants before mutation.",
+    "All IDs are unique in their declared source/run scope; every reference resolves with type, source, version and digest binding. URI references are data locations, never executable instructions.",
+    "Source frames and invertible transform hashes match actual evidence. Regions/intervals are finite and ordered; masks and vectors lie in the declared source domain.",
+    "Confidence and retrieval evidence alone confer no mutation authority. Authorization must be ACTIVE and cover exact source, target, interval/component and permitted action.",
+    "FinalStructure schema 3 is the sole output authority; trace cache 10 remains unchanged. These records contain evidence/proposals, not an alternate rendering model.",
+    "For every accepted parent: original domain equals disjoint direct-retained plus certified equivalent-retained plus explicitly authorized absent intervals. Verify set equality, not merely length equality.",
+    "BLOCKED_UNRESOLVED cannot discharge any accepted positive interval. Missing evidence defaults to exact accepted preservation, not an absent gap. Fresh proposals do not inherit acceptance from history tokens.",
+    "Every positive cell has exactly one disposition and one effective authorization for that disposition. Overlapping scopes are partitioned explicitly; secondary reasons are evidence, not additional terminal dispositions.",
+    "Every source gap requires an actual trajectory/footprint-bound, observable absence certificate with sampled source addresses and boundary uncertainty. UNKNOWN or occluded source is not proved blank.",
+    "Direct pieces are exact original-parent subsegments. Equivalent covers require local SAME evidence, actual surviving keepers and discharged independent endpoint obligations; no union-find identity or longest-line rule.",
+    "Recompute original raw observation bindings, explicit transformations, inherited tombstones, actual raster claim deltas, ownership continuity and exporter feasibility. A geometric subset is not a raster subset.",
+    "Every required endpoint remains editable unless explicit frontier/retraction authority discharges it. Tiny positive tails cannot be erased by numeric tolerances.",
+    "The immutable validated payload is consumed directly by FinalStructure construction. No output replacement after validation; mutation requires a fresh transaction.",
+    "V1 base_ledger_digest excludes only the named V2 extension slot. Full envelope hash is computed after embedding; final structure identity excludes audit-only metadata. Do not add V1 top-level fields.",
+    "D-authorized repair and Junction changes are separate derived lineage steps; never reinterpret inferred repairs as original source support or erase their authority by an unversioned A rerun.",
+    "A gap disposition references a matching measured gap_observation; certified_absent_interval excludes uncertain boundary bands. Unit tangent and origin map parent domain endpoints to the immutable original geometry. Cause hypothesis never supplies repair authority."
+  ]
+}
+

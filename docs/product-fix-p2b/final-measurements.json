@@ -1,0 +1,567 @@
+{
+  "W01": {
+    "structure_id": "f7a4f2f24801529a6767820966c769d7cb9f51ad8fcb881bfe356e8ba12d7fb4",
+    "lines": 358,
+    "line_tuple_unchanged": true,
+    "evidence_scope": "production P2B run + production source-opacity encode",
+    "logos": [
+      [
+        469,
+        325,
+        447,
+        176
+      ]
+    ],
+    "signatures": [],
+    "images": [
+      {
+        "filename": "drawing.logo-001.png",
+        "object_class": "LOGO",
+        "transparent_pixels": 71456,
+        "partial_ink_pixels": 4343,
+        "insert": [
+          49.62061228661965,
+          266.93561790861696,
+          0.0
+        ],
+        "u_pixel": [
+          0.10580087907594807,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          6.4784353953668074e-18,
+          0.1058008790759482,
+          0.0
+        ]
+      }
+    ],
+    "audit_errors": 0,
+    "graphic_move_scale_delete_save_reopen": "PASS",
+    "preview": "actual DXF entities and relative IMAGE assets"
+  },
+  "W02": {
+    "structure_id": "9af0aa4a065511f988a0b2bc7b75d2157db3e8f43c1f25cd645fd654241812ae",
+    "lines": 183,
+    "line_tuple_unchanged": true,
+    "evidence_scope": "production P2B run + production source-opacity encode",
+    "logos": [
+      [
+        4240,
+        1489,
+        254,
+        100
+      ]
+    ],
+    "signatures": [
+      [
+        4389,
+        2069,
+        64,
+        46
+      ],
+      [
+        4394,
+        2120,
+        68,
+        46
+      ],
+      [
+        4367,
+        2176,
+        106,
+        46
+      ],
+      [
+        4367,
+        2223,
+        99,
+        53
+      ],
+      [
+        4367,
+        2282,
+        106,
+        48
+      ],
+      [
+        4375,
+        2331,
+        94,
+        52
+      ],
+      [
+        4375,
+        2387,
+        94,
+        41
+      ]
+    ],
+    "images": [
+      {
+        "filename": "drawing.signature-001.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2435,
+        "partial_ink_pixels": 250,
+        "insert": [
+          819.6529637012169,
+          235.12031927542313,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651486,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686667e-17,
+          0.18675164358651533,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-002.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2707,
+        "partial_ink_pixels": 229,
+        "insert": [
+          820.5867219191495,
+          225.59598545251083,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651508,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686667e-17,
+          0.18675164358651533,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-003.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 3926,
+        "partial_ink_pixels": 285,
+        "insert": [
+          815.5444275423135,
+          215.13789341166594,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651572,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686704e-17,
+          0.18675164358651594,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-004.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 4006,
+        "partial_ink_pixels": 88,
+        "insert": [
+          815.5444275423135,
+          205.05330465799412,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651525,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686659e-17,
+          0.1867516435865152,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-005.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 4048,
+        "partial_ink_pixels": 263,
+        "insert": [
+          815.5444275423135,
+          194.96871590432227,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651572,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686673e-17,
+          0.18675164358651544,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-006.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 4016,
+        "partial_ink_pixels": 618,
+        "insert": [
+          817.0384406910057,
+          185.07087879423693,
+          0.0
+        ],
+        "u_pixel": [
+          0.1867516435865154,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686688e-17,
+          0.1867516435865157,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-007.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2967,
+        "partial_ink_pixels": 617,
+        "insert": [
+          817.0384406910057,
+          176.66705483284375,
+          0.0
+        ],
+        "u_pixel": [
+          0.1867516435865154,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686685e-17,
+          0.18675164358651564,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.logo-001.png",
+        "object_class": "LOGO",
+        "transparent_pixels": 22387,
+        "partial_ink_pixels": 2322,
+        "insert": [
+          791.826968806826,
+          333.35168380193033,
+          0.0
+        ],
+        "u_pixel": [
+          0.18675164358651594,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.1435240127686682e-17,
+          0.18675164358651558,
+          0.0
+        ]
+      }
+    ],
+    "audit_errors": 0,
+    "graphic_move_scale_delete_save_reopen": "PASS",
+    "preview": "actual DXF entities and relative IMAGE assets"
+  },
+  "W03": {
+    "structure_id": "2db75ed31eb4ccac4085063b88bd53e9f21d58ba674fd57892e785a503a7c8a1",
+    "lines": 842,
+    "line_tuple_unchanged": true,
+    "evidence_scope": "production P2B run + production source-opacity encode",
+    "logos": [
+      [
+        4338,
+        1204,
+        206,
+        82
+      ]
+    ],
+    "signatures": [
+      [
+        4458,
+        1674,
+        53,
+        37
+      ],
+      [
+        4441,
+        1714,
+        77,
+        38
+      ],
+      [
+        4441,
+        1760,
+        86,
+        38
+      ],
+      [
+        4441,
+        1799,
+        86,
+        42
+      ],
+      [
+        4441,
+        1846,
+        86,
+        38
+      ],
+      [
+        4448,
+        1885,
+        76,
+        43
+      ],
+      [
+        4448,
+        1929,
+        76,
+        41
+      ]
+    ],
+    "images": [
+      {
+        "filename": "drawing.signature-001.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 1483,
+        "partial_ink_pixels": 223,
+        "insert": [
+          1029.3086971732437,
+          235.04626597630374,
+          0.0
+        ],
+        "u_pixel": [
+          0.2308902416270167,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.413794976814432e-17,
+          0.23089024162701788,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-002.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2247,
+        "partial_ink_pixels": 262,
+        "insert": [
+          1025.3835630655844,
+          225.57976606959602,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701716,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.4137949768144304e-17,
+          0.23089024162701763,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-003.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2270,
+        "partial_ink_pixels": 241,
+        "insert": [
+          1025.3835630655844,
+          214.95881495475322,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701727,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.4137949768144304e-17,
+          0.23089024162701763,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-004.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2416,
+        "partial_ink_pixels": 70,
+        "insert": [
+          1025.3835630655844,
+          205.03053456479148,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701727,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.4137949768144295e-17,
+          0.23089024162701746,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-005.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2276,
+        "partial_ink_pixels": 224,
+        "insert": [
+          1025.3835630655844,
+          195.10225417482974,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701727,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.413794976814426e-17,
+          0.23089024162701688,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-006.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2291,
+        "partial_ink_pixels": 570,
+        "insert": [
+          1026.9997947569736,
+          184.94308354324096,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701613,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.4137949768144282e-17,
+          0.23089024162701727,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.signature-007.png",
+        "object_class": "SIGNATURE",
+        "transparent_pixels": 2122,
+        "partial_ink_pixels": 584,
+        "insert": [
+          1026.9997947569736,
+          175.24569339490623,
+          0.0
+        ],
+        "u_pixel": [
+          0.23089024162701613,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.413794976814431e-17,
+          0.23089024162701768,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.logo-001.png",
+        "object_class": "LOGO",
+        "transparent_pixels": 14627,
+        "partial_ink_pixels": 1896,
+        "insert": [
+          1001.6018681780016,
+          333.17461866778615,
+          0.0
+        ],
+        "u_pixel": [
+          0.2308902416270172,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          1.413794976814431e-17,
+          0.23089024162701768,
+          0.0
+        ]
+      }
+    ],
+    "audit_errors": 0,
+    "graphic_move_scale_delete_save_reopen": "PASS",
+    "preview": "actual DXF entities and relative IMAGE assets"
+  },
+  "E01": {
+    "structure_id": "185c5cc3e2dcad05ea7302d7399da591f0d7a098e904b7f1a0b390149fb44408",
+    "lines": 1394,
+    "line_tuple_unchanged": true,
+    "evidence_scope": "committed UAT model + production representation stage",
+    "logos": [
+      [
+        3651,
+        83,
+        99,
+        98
+      ]
+    ],
+    "signatures": [],
+    "images": [
+      {
+        "filename": "drawing.logo-001.png",
+        "object_class": "LOGO",
+        "transparent_pixels": 5381,
+        "partial_ink_pixels": 4321,
+        "insert": [
+          386.3584950551977,
+          277.4669882319168,
+          0.0
+        ],
+        "u_pixel": [
+          0.10582264997403361,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          6.4797684783995955e-18,
+          0.10582264997403436,
+          0.0
+        ]
+      },
+      {
+        "filename": "drawing.logo-002.png",
+        "object_class": "GRAPHIC",
+        "transparent_pixels": 858,
+        "partial_ink_pixels": 782,
+        "insert": [
+          116.40491497143726,
+          202.7561973502489,
+          0.0
+        ],
+        "u_pixel": [
+          0.10582264997403357,
+          0.0,
+          0.0
+        ],
+        "v_pixel": [
+          6.479768478399563e-18,
+          0.10582264997403383,
+          0.0
+        ]
+      }
+    ],
+    "audit_errors": 0,
+    "graphic_move_scale_delete_save_reopen": "PASS",
+    "preview": "actual DXF entities and relative IMAGE assets"
+  }
+}

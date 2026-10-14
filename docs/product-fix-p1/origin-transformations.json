@@ -1,0 +1,188 @@
+[
+  {
+    "actual_derived_cut_coordinates": [
+      [
+        473.0,
+        1023.0
+      ],
+      [
+        659.0,
+        1023.0
+      ]
+    ],
+    "child_endpoint_types": [
+      "ORIGINAL_OBSERVED_ENDPOINT",
+      "ORIGINAL_OBSERVED_ENDPOINT"
+    ],
+    "child_geometry_px": {
+      "end": [
+        659.0,
+        1023.0
+      ],
+      "start": [
+        473.0,
+        1023.0
+      ],
+      "width": 1.909999966621399
+    },
+    "child_observation_id": "observation-b62666b41373f76136da",
+    "child_parameter_interval": [
+      0.0,
+      186.0
+    ],
+    "history": [
+      "detected:hough",
+      "trim_to_source_support"
+    ],
+    "operation": "TRIM_TO_SOURCE_SUPPORT",
+    "parent_observation_id": "observation-cb59404976b74a4f8ecf",
+    "parent_parameter_interval": [
+      0.0,
+      186.0
+    ],
+    "parent_trajectory_basis": {
+      "origin_px": [
+        473.0,
+        1023.0
+      ],
+      "unit_normal": [
+        -0.0,
+        1.0
+      ],
+      "unit_tangent": [
+        1.0,
+        0.0
+      ]
+    },
+    "producer": "main-initial-trim-to-source-support",
+    "route_transition": "MAIN->MAIN",
+    "source_ids": [
+      "HOUGH-000029"
+    ],
+    "transformation_id": "transform-000195-2aea91cb9343"
+  },
+  {
+    "actual_derived_cut_coordinates": [
+      [
+        474.3749694824219,
+        1025.8951416015625
+      ],
+      [
+        658.125,
+        1025.8870849609375
+      ]
+    ],
+    "child_endpoint_types": [
+      "ORIGINAL_OBSERVED_ENDPOINT",
+      "ORIGINAL_OBSERVED_ENDPOINT"
+    ],
+    "child_geometry_px": {
+      "end": [
+        658.125,
+        1025.8870849609375
+      ],
+      "start": [
+        474.3749694824219,
+        1025.8951416015625
+      ],
+      "width": 1.909999966621399
+    },
+    "child_observation_id": "observation-518d37e0f76141290c07",
+    "child_parameter_interval": [
+      0.0,
+      183.75003069420248
+    ],
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "operation": "TRIM_TO_SOURCE_SUPPORT",
+    "parent_observation_id": "observation-259b6a2c7f9e738bb0f1",
+    "parent_parameter_interval": [
+      0.0,
+      183.75003069420248
+    ],
+    "parent_trajectory_basis": {
+      "origin_px": [
+        474.3749694824219,
+        1025.8951416015625
+      ],
+      "unit_normal": [
+        4.3845655941183996e-05,
+        0.9999999990387792
+      ],
+      "unit_tangent": [
+        0.9999999990387792,
+        -4.3845655941183996e-05
+      ]
+    },
+    "producer": "main-initial-trim-to-source-support",
+    "route_transition": "MAIN->MAIN",
+    "source_ids": [
+      "LSD-001069"
+    ],
+    "transformation_id": "transform-000234-72ef4f0c011c"
+  },
+  {
+    "actual_derived_cut_coordinates": [
+      [
+        474.3749694824219,
+        1022.8549194335938
+      ],
+      [
+        658.125,
+        1022.8628540039062
+      ]
+    ],
+    "child_endpoint_types": [
+      "ORIGINAL_OBSERVED_ENDPOINT",
+      "ORIGINAL_OBSERVED_ENDPOINT"
+    ],
+    "child_geometry_px": {
+      "end": [
+        658.125,
+        1022.8628540039062
+      ],
+      "start": [
+        474.3749694824219,
+        1022.8549194335938
+      ],
+      "width": 1.909999966621399
+    },
+    "child_observation_id": "observation-fdb89da0f25cdcec8961",
+    "child_parameter_interval": [
+      0.0,
+      183.75003068889077
+    ],
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "operation": "TRIM_TO_SOURCE_SUPPORT",
+    "parent_observation_id": "observation-2a8623eb5f22cce46827",
+    "parent_parameter_interval": [
+      0.0,
+      183.75003068889077
+    ],
+    "parent_trajectory_basis": {
+      "origin_px": [
+        474.3749694824219,
+        1022.8549194335938
+      ],
+      "unit_normal": [
+        -4.318132782211127e-05,
+        0.9999999990676864
+      ],
+      "unit_tangent": [
+        0.9999999990676864,
+        4.318132782211127e-05
+      ]
+    },
+    "producer": "main-initial-trim-to-source-support",
+    "route_transition": "MAIN->MAIN",
+    "source_ids": [
+      "LSD-001063"
+    ],
+    "transformation_id": "transform-000239-82e1258127f6"
+  }
+]

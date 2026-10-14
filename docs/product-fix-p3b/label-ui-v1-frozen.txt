@@ -1,0 +1,250 @@
+"""Small local human labeling app; predictions are never loaded or displayed."""
+
+import argparse
+from collections import defaultdict
+from datetime import datetime, timezone
+from pathlib import Path
+import tkinter as tk
+
+from PIL import Image, ImageTk
+
+from common import LABELS, atomic_json, digest, read, read_rows, sha, validate_samples
+
+
+class LabelStore:
+    def __init__(self, path, manifest, annotator):
+        self.path = Path(path)
+        self.annotator = annotator
+        self.manifest_sha = sha(manifest)
+        self.state = (
+            read(path)
+            if self.path.exists()
+            else {
+                "schema_version": "p3b-label-v1",
+                "manifest_sha256": self.manifest_sha,
+                "labels": {},
+                "events": [],
+                "revision": 0,
+            }
+        )
+        if self.state["manifest_sha256"] != self.manifest_sha:
+            raise ValueError(
+                "Labels belong to a different dataset. Export a new version; do not overwrite."
+            )
+
+    def assign(self, sample, label):
+        if label not in LABELS:
+            raise ValueError("Unknown label")
+        if sample.get("content_role") in ("text", "graphic") and label in LABELS[:2]:
+            raise ValueError(
+                "This candidate is a source-owned text/graphic. Choose Other or Ambiguous."
+            )
+        sid = sample["sample_id"]
+        record = {
+            "label": label,
+            "annotator": self.annotator,
+            "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "provenance": "human_source_review",
+            "sample_sha256": digest(sample),
+            "context_available": True,
+            "rubric_version": "p3b-rubric-v1",
+        }
+        self.state["events"].append(
+            {"sample_id": sid, "previous": self.state["labels"].get(sid), "new": record}
+        )
+        self.state["labels"][sid] = record
+        self.save()
+
+    def undo(self):
+        if not self.state["events"]:
+            return None
+        event = self.state["events"].pop()
+        sid = event["sample_id"]
+        if event["previous"] is None:
+            self.state["labels"].pop(sid, None)
+        else:
+            self.state["labels"][sid] = event["previous"]
+        self.save()
+        return sid
+
+    def save(self):
+        self.state["revision"] += 1
+        self.state["label_version"] = digest(self.state["labels"])
+        atomic_json(self.path, self.state)
+
+
+def diverse_order(rows):
+    groups = defaultdict(list)
+    for row in rows:
+        groups[row["source_drawing_id"]].append(row)
+    ordered = []
+    for i in range(max((len(g) for g in groups.values()), default=0)):
+        for group in sorted(groups):
+            if i < len(groups[group]):
+                ordered.append(groups[group][i])
+    return ordered
+
+
+class LabelApp:
+    def __init__(self, window, manifest, labels, annotator, patch_root=None):
+        all_rows = read_rows(manifest)
+        validate_samples(all_rows)
+        if any(r["split"] == "blind_test" for r in all_rows):
+            raise ValueError("Blind data may not be opened by development labeling UI")
+        self.rows = diverse_order(
+            [r for r in all_rows if r["domain"] == "real" and r["split"] == "train"]
+        )
+        self.base = patch_root or Path(manifest).parent
+        self.store = LabelStore(labels, manifest, annotator)
+        self.window, self.index, self.history = window, 0, []
+        self.skipped = set()
+        window.title("Image to CAD — stroke review")
+        window.geometry("1050x800")
+        self.status = tk.StringVar()
+        tk.Label(window, textvariable=self.status, font=("Segoe UI", 13)).pack(pady=8)
+        tk.Label(
+            window,
+            text="Review the red candidate. For a crop without red lines, review its central ink.\n"
+            "Text, fills, hatching, graphics and scan artifacts belong in Other. When unsure, choose Ambiguous.",
+            font=("Segoe UI", 11),
+        ).pack()
+        panes = tk.Frame(window)
+        panes.pack(pady=8)
+        self.left, self.right = tk.Label(panes), tk.Label(panes)
+        self.left.pack(side="left", padx=8)
+        self.right.pack(side="left", padx=8)
+        self.context = tk.Label(window)
+        self.context.pack()
+        self.note = tk.StringVar()
+        tk.Label(window, textvariable=self.note).pack()
+        buttons = tk.Frame(window)
+        buttons.pack(pady=10)
+        for key, text in enumerate(
+            ("One physical stroke", "Two real structural lines", "Other", "Ambiguous"),
+            1,
+        ):
+            tk.Button(
+                buttons,
+                text=f"{key} — {text}",
+                command=lambda k=key: self.choose(k),
+                padx=9,
+            ).pack(side="left", padx=4)
+            window.bind(str(key), lambda event, k=key: self.choose(k))
+        tk.Button(
+            window, text="C — expand / hide context", command=self.toggle_context
+        ).pack()
+        tk.Label(
+            window,
+            text="SPACE — skip    BACKSPACE — undo    Close window to pause; every label is saved immediately.",
+        ).pack(pady=8)
+        window.bind("<space>", lambda event: self.skip())
+        window.bind("<BackSpace>", lambda event: self.undo())
+        window.bind("c", lambda event: self.toggle_context())
+        self.context_open = False
+        self.advance()
+
+    def advance(self):
+        while self.index < len(self.rows) and (
+            self.rows[self.index]["sample_id"] in self.store.state["labels"]
+            or self.rows[self.index]["sample_id"] in self.skipped
+        ):
+            self.index += 1
+        self.show()
+
+    def show(self):
+        total = len(self.rows)
+        labeled = sum(r["sample_id"] in self.store.state["labels"] for r in self.rows)
+        if self.index >= total:
+            self.status.set(
+                f"Review complete for this pass — {labeled}/{total} saved; {len(self.skipped)} skipped. Close to pause."
+            )
+            return
+        row = self.rows[self.index]
+        self.status.set(
+            f"Sample {self.index + 1}/{total} — {labeled}/{total} saved — {row['source_drawing_id']}, page {row['source_page']}"
+        )
+        folder = self.base / row["patch_dir"]
+        self.images = [
+            ImageTk.PhotoImage(
+                Image.open(folder / name).resize((320, 320), Image.Resampling.NEAREST)
+            )
+            for name in ("gray.png", "overlay.png")
+        ]
+        self.left.configure(image=self.images[0])
+        self.right.configure(image=self.images[1])
+        self.context.configure(image="")
+        self.context_open = False
+        self.note.set("Source crop                         Candidate overlay")
+
+    def choose(self, key):
+        if self.index >= len(self.rows):
+            return
+        row = self.rows[self.index]
+        try:
+            self.store.assign(row, LABELS[key - 1])
+        except ValueError as error:
+            self.note.set(str(error))
+            return
+        self.history.append((self.index, "label"))
+        self.index += 1
+        self.advance()
+
+    def skip(self):
+        if self.index >= len(self.rows):
+            return
+        self.skipped.add(self.rows[self.index]["sample_id"])
+        self.history.append((self.index, "skip"))
+        self.index += 1
+        self.advance()
+
+    def undo(self):
+        if self.history:
+            index, action = self.history.pop()
+            if action == "skip":
+                self.skipped.discard(self.rows[index]["sample_id"])
+            else:
+                self.store.undo()
+            self.index = index
+        else:
+            sid = self.store.undo()
+            if sid:
+                self.index = next(
+                    i for i, r in enumerate(self.rows) if r["sample_id"] == sid
+                )
+        self.show()
+
+    def toggle_context(self):
+        if self.index >= len(self.rows):
+            return
+        if self.context_open:
+            self.context.configure(image="")
+        else:
+            path = self.base / self.rows[self.index]["patch_dir"] / "context.png"
+            im = Image.open(path)
+            im.thumbnail((720, 280))
+            self.context_image = ImageTk.PhotoImage(im)
+            self.context.configure(image=self.context_image)
+        self.context_open = not self.context_open
+
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser(
+        description="Review source strokes. No ML knowledge needed."
+    )
+    ap.add_argument("--manifest", type=Path, required=True)
+    ap.add_argument(
+        "--labels",
+        type=Path,
+        required=True,
+        help="Durable label file, separate from regenerable patch cache",
+    )
+    ap.add_argument("--annotator", default="local-reviewer")
+    ap.add_argument(
+        "--patch-root",
+        type=Path,
+        help="Location of regenerated patches when using the retained manifest",
+    )
+    args = ap.parse_args()
+    root = tk.Tk()
+    app = LabelApp(root, args.manifest, args.labels, args.annotator, args.patch_root)
+    root.mainloop()

@@ -1,0 +1,720 @@
+{
+  "ui_shell": {
+    "__init__": {
+      "lines": 48,
+      "calls_super": true
+    },
+    "_build_menu": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_button": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_build_controls": {
+      "lines": 111,
+      "calls_super": false
+    },
+    "_target_aspect_ratio": {
+      "lines": 11,
+      "calls_super": false
+    },
+    "_apply_paper_calibration": {
+      "lines": 25,
+      "calls_super": false
+    },
+    "_clear_preprocess_tabs": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "_show_preprocess_stages": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "_invalidate_line_results": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_invalidate_preprocess_results": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_paper_setting_changed": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "_is_processing": {
+      "lines": 2,
+      "calls_super": false
+    },
+    "_start_processing": {
+      "lines": 39,
+      "calls_super": false
+    },
+    "_on_processing_succeeded": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "_on_processing_failed": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "_on_processing_cancelled": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_on_processing_progress": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_on_worker_thread_finished": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "cancel_processing": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "closeEvent": {
+      "lines": 11,
+      "calls_super": true
+    },
+    "_require_original": {
+      "lines": 5,
+      "calls_super": false
+    },
+    "_require_corrected": {
+      "lines": 11,
+      "calls_super": false
+    },
+    "import_image": {
+      "lines": 44,
+      "calls_super": false
+    },
+    "start_manual_corners": {
+      "lines": 16,
+      "calls_super": false
+    },
+    "rotate_corrected": {
+      "lines": 18,
+      "calls_super": false
+    },
+    "start_scale_calibration": {
+      "lines": 10,
+      "calls_super": false
+    },
+    "_on_corrected_point": {
+      "lines": 42,
+      "calls_super": false
+    }
+  },
+  "gui_guard": {
+    "__init__": {
+      "lines": 12,
+      "calls_super": true
+    },
+    "import_image": {
+      "lines": 8,
+      "calls_super": true
+    },
+    "_require_corrected": {
+      "lines": 13,
+      "calls_super": false
+    },
+    "auto_perspective": {
+      "lines": 71,
+      "calls_super": false
+    },
+    "_on_original_point": {
+      "lines": 48,
+      "calls_super": false
+    },
+    "rotate_corrected": {
+      "lines": 6,
+      "calls_super": true
+    },
+    "preprocess": {
+      "lines": 36,
+      "calls_super": false
+    },
+    "detect_and_clean": {
+      "lines": 81,
+      "calls_super": false
+    },
+    "_calibration_semantics": {
+      "lines": 26,
+      "calls_super": false
+    },
+    "export_file": {
+      "lines": 112,
+      "calls_super": false
+    }
+  },
+  "gui_review": {
+    "_build_controls": {
+      "lines": 8,
+      "calls_super": true
+    },
+    "_current_visual_circles": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "review_layers": {
+      "lines": 77,
+      "calls_super": false
+    },
+    "export_file": {
+      "lines": 2,
+      "calls_super": false
+    }
+  },
+  "gui_state_guard": {
+    "__init__": {
+      "lines": 15,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 132,
+      "calls_super": true
+    },
+    "_build_menu": {
+      "lines": 28,
+      "calls_super": true
+    },
+    "_toggle_advanced": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "_active_canvas": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "_zoom_in": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_zoom_out": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_fit_view": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_actual_size": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_set_pdf_controls_enabled": {
+      "lines": 10,
+      "calls_super": false
+    },
+    "import_image": {
+      "lines": 64,
+      "calls_super": false
+    },
+    "_set_single_image_state": {
+      "lines": 22,
+      "calls_super": false
+    },
+    "_save_current_pdf_state": {
+      "lines": 24,
+      "calls_super": false
+    },
+    "_load_pdf_page": {
+      "lines": 75,
+      "calls_super": false
+    },
+    "_on_pdf_page_changed": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_previous_pdf_page": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_next_pdf_page": {
+      "lines": 5,
+      "calls_super": false
+    },
+    "_pdf_working_image": {
+      "lines": 13,
+      "calls_super": false
+    },
+    "_rescale_lines": {
+      "lines": 15,
+      "calls_super": false
+    },
+    "batch_vectorize_pdf": {
+      "lines": 82,
+      "calls_super": false
+    },
+    "_state_from_vector_result": {
+      "lines": 25,
+      "calls_super": false
+    },
+    "document_pages_for_export": {
+      "lines": 31,
+      "calls_super": false
+    },
+    "detect_and_clean": {
+      "lines": 79,
+      "calls_super": true
+    },
+    "_apply_paper_calibration": {
+      "lines": 6,
+      "calls_super": true
+    },
+    "auto_perspective": {
+      "lines": 20,
+      "calls_super": true
+    },
+    "rotate_corrected": {
+      "lines": 8,
+      "calls_super": true
+    }
+  },
+  "gui_consolidated": {
+    "__init__": {
+      "lines": 5,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 53,
+      "calls_super": true
+    },
+    "_set_single_image_state": {
+      "lines": 3,
+      "calls_super": true
+    },
+    "_save_current_pdf_state": {
+      "lines": 7,
+      "calls_super": true
+    },
+    "_load_pdf_page": {
+      "lines": 19,
+      "calls_super": true
+    },
+    "detect_and_clean": {
+      "lines": 108,
+      "calls_super": false
+    },
+    "_page_key": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "_document_page_from_pdf_state": {
+      "lines": 30,
+      "calls_super": false
+    },
+    "_current_document_page": {
+      "lines": 37,
+      "calls_super": false
+    },
+    "_enqueue_page": {
+      "lines": 17,
+      "calls_super": false
+    },
+    "add_current_page_to_queue": {
+      "lines": 9,
+      "calls_super": false
+    },
+    "add_current_document_to_queue": {
+      "lines": 13,
+      "calls_super": false
+    },
+    "remove_last_queued_page": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "clear_document_queue": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_refresh_document_queue_status": {
+      "lines": 13,
+      "calls_super": false
+    },
+    "document_pages_for_export": {
+      "lines": 4,
+      "calls_super": true
+    },
+    "export_file": {
+      "lines": 5,
+      "calls_super": false
+    }
+  },
+  "gui_trace_mode": {
+    "__init__": {
+      "lines": 7,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 77,
+      "calls_super": true
+    },
+    "_set_single_image_state": {
+      "lines": 3,
+      "calls_super": true
+    },
+    "_clear_trace_state": {
+      "lines": 5,
+      "calls_super": false
+    },
+    "_drawing_scale": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_trace_color": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_scale_changed": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_trace_color_changed": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_update_scale_label": {
+      "lines": 16,
+      "calls_super": false
+    },
+    "correct_image": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "auto_perspective": {
+      "lines": 75,
+      "calls_super": false
+    },
+    "_apply_trace_result": {
+      "lines": 34,
+      "calls_super": false
+    },
+    "detect_and_clean": {
+      "lines": 30,
+      "calls_super": false
+    },
+    "review_layers": {
+      "lines": 42,
+      "calls_super": false
+    },
+    "_save_current_pdf_state": {
+      "lines": 23,
+      "calls_super": true
+    },
+    "_load_pdf_page": {
+      "lines": 33,
+      "calls_super": true
+    },
+    "batch_vectorize_pdf": {
+      "lines": 65,
+      "calls_super": false
+    },
+    "_document_page_from_pdf_state": {
+      "lines": 12,
+      "calls_super": true
+    },
+    "_current_document_page": {
+      "lines": 10,
+      "calls_super": true
+    },
+    "document_pages_for_export": {
+      "lines": 34,
+      "calls_super": false
+    },
+    "export_file": {
+      "lines": 5,
+      "calls_super": false
+    }
+  },
+  "gui_trace_release": {
+    "__init__": {
+      "lines": 5,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 73,
+      "calls_super": true
+    },
+    "_drawing_scale": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_trace_color": {
+      "lines": 2,
+      "calls_super": false
+    },
+    "_has_explicit_model_calibration": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_export_drawing_multiplier": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "_update_scale_label": {
+      "lines": 27,
+      "calls_super": false
+    },
+    "_on_corrected_point": {
+      "lines": 3,
+      "calls_super": true
+    },
+    "_source_key": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "_current_trace_key": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_cache_path_for_key": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "_store_current_trace": {
+      "lines": 38,
+      "calls_super": false
+    },
+    "_save_current_pdf_state": {
+      "lines": 19,
+      "calls_super": true
+    },
+    "_load_trace_source_for_current_page": {
+      "lines": 20,
+      "calls_super": false
+    },
+    "_restore_cached_trace_for_page": {
+      "lines": 50,
+      "calls_super": false
+    },
+    "_load_pdf_page": {
+      "lines": 11,
+      "calls_super": true
+    },
+    "detect_and_clean": {
+      "lines": 42,
+      "calls_super": false
+    },
+    "batch_vectorize_pdf": {
+      "lines": 71,
+      "calls_super": false
+    },
+    "verify_current_trace": {
+      "lines": 42,
+      "calls_super": false
+    },
+    "_page_with_stored_trace": {
+      "lines": 11,
+      "calls_super": false
+    },
+    "document_pages_for_export": {
+      "lines": 35,
+      "calls_super": false
+    },
+    "export_file": {
+      "lines": 2,
+      "calls_super": false
+    },
+    "closeEvent": {
+      "lines": 4,
+      "calls_super": true
+    }
+  },
+  "gui_exact_release": {
+    "__init__": {
+      "lines": 8,
+      "calls_super": true
+    },
+    "_remove_from_layout": {
+      "lines": 7,
+      "calls_super": false
+    },
+    "_build_controls": {
+      "lines": 124,
+      "calls_super": true
+    },
+    "_ocr_enabled": {
+      "lines": 3,
+      "calls_super": false
+    },
+    "_clear_trace_state": {
+      "lines": 7,
+      "calls_super": true
+    },
+    "_set_single_image_state": {
+      "lines": 8,
+      "calls_super": true
+    },
+    "_apply_trace_result": {
+      "lines": 26,
+      "calls_super": true
+    },
+    "_restore_cached_trace_for_page": {
+      "lines": 22,
+      "calls_super": true
+    },
+    "_load_pdf_page": {
+      "lines": 7,
+      "calls_super": true
+    },
+    "_store_current_trace": {
+      "lines": 63,
+      "calls_super": false
+    },
+    "_replace_final_structure_texts": {
+      "lines": 68,
+      "calls_super": false
+    },
+    "detect_and_clean": {
+      "lines": 46,
+      "calls_super": false
+    },
+    "batch_vectorize_pdf": {
+      "lines": 80,
+      "calls_super": false
+    },
+    "review_ocr_texts": {
+      "lines": 27,
+      "calls_super": false
+    },
+    "review_layers": {
+      "lines": 59,
+      "calls_super": false
+    },
+    "_page_with_stored_trace": {
+      "lines": 15,
+      "calls_super": false
+    }
+  },
+  "gui_librecad_release": {
+    "__init__": {
+      "lines": 13,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 64,
+      "calls_super": true
+    },
+    "_scaled_for_preview": {
+      "lines": 28,
+      "calls_super": false
+    },
+    "_preview_shape": {
+      "lines": 4,
+      "calls_super": false
+    },
+    "_processing_pdf_dpi": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "_processing_config": {
+      "lines": 20,
+      "calls_super": false
+    },
+    "_source_key": {
+      "lines": 31,
+      "calls_super": false
+    },
+    "_cache_file_matches": {
+      "lines": 11,
+      "calls_super": false
+    },
+    "_load_trace_source_for_current_page": {
+      "lines": 19,
+      "calls_super": false
+    },
+    "_apply_trace_result": {
+      "lines": 36,
+      "calls_super": true
+    },
+    "_restore_cached_trace_for_page": {
+      "lines": 68,
+      "calls_super": false
+    },
+    "_stage_text": {
+      "lines": 6,
+      "calls_super": false
+    },
+    "detect_and_clean": {
+      "lines": 46,
+      "calls_super": false
+    },
+    "batch_vectorize_pdf": {
+      "lines": 130,
+      "calls_super": false
+    },
+    "review_ocr_texts": {
+      "lines": 39,
+      "calls_super": false
+    }
+  },
+  "gui_final_release": {
+    "__init__": {
+      "lines": 10,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 5,
+      "calls_super": true
+    }
+  },
+  "gui_public_release": {
+    "__init__": {
+      "lines": 4,
+      "calls_super": true
+    },
+    "_clear_trace_state": {
+      "lines": 5,
+      "calls_super": true
+    },
+    "_set_single_image_state": {
+      "lines": 5,
+      "calls_super": true
+    },
+    "_visual_acceptance_source": {
+      "lines": 8,
+      "calls_super": false
+    },
+    "_refresh_visual_acceptance": {
+      "lines": 23,
+      "calls_super": false
+    },
+    "_apply_trace_result": {
+      "lines": 3,
+      "calls_super": true
+    },
+    "_restore_cached_trace_for_page": {
+      "lines": 4,
+      "calls_super": true
+    },
+    "_replace_final_structure_texts": {
+      "lines": 4,
+      "calls_super": true
+    },
+    "_build_controls": {
+      "lines": 54,
+      "calls_super": true
+    },
+    "export_file": {
+      "lines": 2,
+      "calls_super": false
+    },
+    "export_processed_pages": {
+      "lines": 2,
+      "calls_super": false
+    },
+    "review_layers": {
+      "lines": 42,
+      "calls_super": false
+    },
+    "verify_current_trace": {
+      "lines": 44,
+      "calls_super": false
+    }
+  }
+}

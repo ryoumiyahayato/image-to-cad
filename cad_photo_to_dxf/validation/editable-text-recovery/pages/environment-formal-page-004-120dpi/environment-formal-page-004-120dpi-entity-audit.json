@@ -1,0 +1,235 @@
+{
+  "candidate_primary_semantic_conflict_count": 0,
+  "candidate_source_ownership_violation_count": 0,
+  "checks": {
+    "DXF_audit_error_count_is_zero": true,
+    "DXF_read_save_read_and_edit_passes": true,
+    "OCR_threshold_contract_recorded_unchanged": true,
+    "baseline_was_not_updated": true,
+    "candidate_primary_semantic_conflict_count_is_zero": true,
+    "candidate_source_pixel_ownership_is_conserved": true,
+    "eligible_candidate_enters_TRACE_TEXT_SYMBOL_count_is_zero": true,
+    "every_OCR_TEXT_layer_entity_is_native_TEXT": true,
+    "fallback_and_text_symbol_conflict_count_is_zero": true,
+    "formal_structure_and_protection_audit_passes": true,
+    "native_TEXT_count_equals_text_emit_eligible_count": true,
+    "native_TEXT_geometry_contract_passes": true,
+    "no_duplicate_visible_text_representation": true,
+    "preview_and_DXF_consumed_same_FinalStructure": true,
+    "replacement_unsafe_does_not_downgrade_eligible_text": true,
+    "unsafe_source_outline_backup_is_default_hidden": true
+  },
+  "duplicate_visible_representation_count": 0,
+  "dxf_audit_error_count": 0,
+  "dxf_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\editable-text-recovery\\pages\\environment-formal-page-004-120dpi\\environment-formal-page-004-120dpi.dxf",
+  "dxf_sha256": "d482f4eb898eeaa1766672a4211dd60a9f61a2580bb3e6b6028df55d19f989a3",
+  "elapsed_seconds": 50.847,
+  "eligible_candidate_text_symbol_count": 0,
+  "fallback_and_text_symbol_conflict_count": 0,
+  "formal_structural_safety": {
+    "baseline_was_updated": false,
+    "mode": "formal_page_exact_baseline",
+    "passed": true,
+    "records": [
+      {
+        "content_audit": {
+          "object_counts": {
+            "logo": 0,
+            "outline": 2081,
+            "signature": 0,
+            "structural_line": 589,
+            "text": 157
+          },
+          "regions": {
+            "forbidden_connection_regions": [
+              {
+                "added_foreground_pixels": 1228,
+                "bbox": [
+                  1300,
+                  1070,
+                  430,
+                  190
+                ],
+                "final_foreground_pixels": 5391,
+                "id": "lower-handwriting-gap",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 406,
+                  "preserved_foreground": 5391,
+                  "signature": 0,
+                  "structural_line": 1393,
+                  "text": 23494
+                },
+                "source_foreground_pixels": 4163
+              }
+            ],
+            "key_rois": [
+              {
+                "added_foreground_pixels": 19131,
+                "bbox": [
+                  300,
+                  250,
+                  1420,
+                  760
+                ],
+                "final_foreground_pixels": 144470,
+                "id": "fourth-floor-plan",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 75685,
+                  "preserved_foreground": 144470,
+                  "signature": 0,
+                  "structural_line": 86304,
+                  "text": 33827
+                },
+                "source_foreground_pixels": 125349
+              }
+            ],
+            "logo_regions": [],
+            "signature_regions": [
+              {
+                "added_foreground_pixels": 1687,
+                "bbox": [
+                  1300,
+                  1040,
+                  500,
+                  230
+                ],
+                "final_foreground_pixels": 9503,
+                "id": "lower-approval-marks",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 2508,
+                  "preserved_foreground": 9503,
+                  "signature": 0,
+                  "structural_line": 2459,
+                  "text": 29427
+                },
+                "source_foreground_pixels": 7816
+              }
+            ],
+            "text_regions_to_preserve": [
+              {
+                "added_foreground_pixels": 4488,
+                "bbox": [
+                  1080,
+                  1020,
+                  790,
+                  280
+                ],
+                "final_foreground_pixels": 23202,
+                "id": "lower-title-and-room-list",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 8657,
+                  "preserved_foreground": 23202,
+                  "signature": 0,
+                  "structural_line": 6021,
+                  "text": 54049
+                },
+                "source_foreground_pixels": 18715
+              }
+            ],
+            "true_breaks_to_repair": [
+              {
+                "added_foreground_pixels": 2,
+                "bbox": [
+                  820,
+                  1260,
+                  260,
+                  100
+                ],
+                "final_foreground_pixels": 4,
+                "id": "stain-interrupted-lower-frame",
+                "missing_expected_object_types": [],
+                "object_type_pixels": {
+                  "logo": 0,
+                  "outline": 0,
+                  "preserved_foreground": 4,
+                  "signature": 0,
+                  "structural_line": 85,
+                  "text": 0
+                },
+                "source_foreground_pixels": 2
+              }
+            ]
+          },
+          "sha256": "b0a05df1451051b0cdc8753dac030ccd5a68856687d9d63605e1e1d4380c7494",
+          "text_output_contract": {
+            "confidence_hard_reject_count": 0,
+            "downgrade_reasons": {},
+            "fallback_count": 0,
+            "invalid_geometry_count": 0,
+            "ocr_candidate_count": 157,
+            "residual_count": 0,
+            "source_outline_backup_count": 135,
+            "source_outline_suppressible_count": 22,
+            "text_count": 157,
+            "text_emit_eligible_count": 157
+          }
+        },
+        "errors": [],
+        "expected_straight_line_count": 589,
+        "formal_document_id": "environment-scan-page-004-120dpi",
+        "observed_straight_line_count": 589,
+        "passed": true
+      }
+    ]
+  },
+  "layer_entity_counts": {
+    "OCR_TEXT": 157,
+    "SOURCE_TEXT_OUTLINE": 1284,
+    "TRACE_CURVE": 974,
+    "TRACE_STRAIGHT": 589,
+    "TRACE_TEXT_SYMBOL": 1232
+  },
+  "native_TEXT_count": 157,
+  "passed": true,
+  "replacement_unsafe_fallback_without_hard_reject_count": 0,
+  "residual_OCR_candidate_count": 0,
+  "roundtrip": {
+    "all_reopened_entities_still_TEXT": true,
+    "audit_error_count": 0,
+    "expected_TEXT_count": 157,
+    "initial_TEXT_count": 157,
+    "modified_original": "无锡市建筑设计研究院",
+    "modified_value": "无锡市建筑设计研究院 [editable-roundtrip]",
+    "modified_value_preserved": true,
+    "passed": true,
+    "reopened_TEXT_count": 157
+  },
+  "run_id": "environment-formal-page-004-120dpi",
+  "schema_version": 1,
+  "source_text_outline_candidate_count": 135,
+  "source_text_outline_entity_count": 1284,
+  "source_text_outline_layer": {
+    "default_visible": false,
+    "frozen": true,
+    "off": true,
+    "present": true
+  },
+  "structure_id": "47a7ed550ae08f45dd9dbf78b0f3397951383248db67921eec3c4897f36d4239",
+  "text_symbol_entity_count": 1232,
+  "text_symbol_ownership": {
+    "eligible_geometric_touch_objects": 9,
+    "eligible_geometric_touch_pixels": 16,
+    "eligible_owned_objects": 0,
+    "eligible_owned_pixels": 0,
+    "uncertain_geometric_touch_objects": 0,
+    "uncertain_geometric_touch_pixels": 0,
+    "uncertain_owned_objects": 0,
+    "uncertain_owned_pixels": 0
+  },
+  "uncertain_text_candidate_count": 0,
+  "uncertain_text_outline_entity_count": 0,
+  "uncertain_text_outline_layer": {
+    "default_visible": true,
+    "frozen": false,
+    "off": false,
+    "present": true
+  }
+}

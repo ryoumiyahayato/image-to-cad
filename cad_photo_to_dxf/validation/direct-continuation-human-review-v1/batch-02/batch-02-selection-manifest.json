@@ -1,0 +1,2145 @@
+{
+  "ab_geometry_digest": "f75d782eefd5336d24b862b7b0ecc3ab70354a9f83bfb499b9a7f751be7a73a6",
+  "batch01_candidate_reuse_count": 0,
+  "batch01_geometry_reuse_count": 0,
+  "batch_id": "batch-02",
+  "candidate_count": 24,
+  "candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-BATCH-02",
+  "coverage": {
+    "dwg_derived": 4,
+    "fragment_length_bins": {
+      "LONG": 9,
+      "SHORT": 15
+    },
+    "gap_bins": {
+      "LONG": 4,
+      "MEDIUM": 4,
+      "SHORT": 16
+    },
+    "horizontal": 12,
+    "pdf_derived": 20,
+    "source_families": 10,
+    "source_units": 16,
+    "vertical": 12
+  },
+  "excluded_batch01_count": 24,
+  "human_labels_used_for_selection": false,
+  "model_predictions_used_for_selection": false,
+  "pool_insufficient": false,
+  "protocol": "DIRECT_CONTINUATION_REVIEW_V1",
+  "records": [
+    {
+      "candidate_id": "FRESH1-2329D538A065BFC7E0D8",
+      "context_crop_box_px": [
+        1772,
+        945,
+        2093,
+        1377
+      ],
+      "exact_geometry_digest": "50fc9d77ac89f931853f68398d494c394900dd7fd85e467e8e94e39a6325a76d",
+      "fragment_a_geometry": {
+        "end": [
+          1932,
+          1156
+        ],
+        "start": [
+          1932,
+          1105
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1932,
+          1216
+        ],
+        "start": [
+          1932,
+          1163
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        1932,
+        1156
+      ],
+      "gap_endpoint_b": [
+        1932,
+        1163
+      ],
+      "gap_length_px": 7,
+      "geometry_signature": "2329d538a065bfc7e0d8736cdd3e1947833ae2661103a2d30987b48782f0a08c",
+      "local_crop_box_px": [
+        1890,
+        1063,
+        1975,
+        1259
+      ],
+      "local_density_fraction": 0.020506,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 1,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "SPARSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-460EC32409A8589C1D04",
+      "context_crop_box_px": [
+        217,
+        1825,
+        764,
+        2146
+      ],
+      "exact_geometry_digest": "c92fb69c1c5998a4fd99c33cae460fcbbfba54dbfff7be64186c504b4c69b7b9",
+      "fragment_a_geometry": {
+        "end": [
+          439,
+          1985
+        ],
+        "start": [
+          377,
+          1985
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          603,
+          1985
+        ],
+        "start": [
+          451,
+          1985
+        ]
+      },
+      "gap_bin": "MEDIUM",
+      "gap_endpoint_a": [
+        439,
+        1985
+      ],
+      "gap_endpoint_b": [
+        451,
+        1985
+      ],
+      "gap_length_px": 12,
+      "geometry_signature": "460ec32409a8589c1d047081e344bb4a36f84824e5dc90b682d425b017111242",
+      "local_crop_box_px": [
+        335,
+        1943,
+        646,
+        2028
+      ],
+      "local_density_fraction": 0.045003,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "4#能源中心-暖施",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 2,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "selection_features": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F03-HVAC4-DWG",
+        "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "source_document_id": "DOC-F03-HVAC4-DWG",
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-2FF08EDFC754E290D7A4",
+      "context_crop_box_px": [
+        442,
+        0,
+        887,
+        166
+      ],
+      "exact_geometry_digest": "c186e95fbb0962946114c4f8b7b2a0876e672aef3c0c2a991d1580d567159889",
+      "fragment_a_geometry": {
+        "end": [
+          649,
+          5
+        ],
+        "start": [
+          602,
+          5
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          726,
+          5
+        ],
+        "start": [
+          679,
+          5
+        ]
+      },
+      "gap_bin": "LONG",
+      "gap_endpoint_a": [
+        649,
+        5
+      ],
+      "gap_endpoint_b": [
+        679,
+        5
+      ],
+      "gap_length_px": 30,
+      "geometry_signature": "2ff08edfc754e290d7a45c93fdeb888bc3589adda6f3e3365acfab73d9643988",
+      "local_crop_box_px": [
+        560,
+        0,
+        769,
+        48
+      ],
+      "local_density_fraction": 0.889678,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate scanned building view",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 3,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+      "selection_features": {
+        "gap_bin": "LONG",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-24BCF545F595AC67795A",
+      "context_crop_box_px": [
+        0,
+        116,
+        292,
+        568
+      ],
+      "exact_geometry_digest": "e13f7249f4ab6d510d91a183062593907686c5727f3f9a1f96004f6fdb0b690e",
+      "fragment_a_geometry": {
+        "end": [
+          131,
+          322
+        ],
+        "start": [
+          131,
+          276
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          131,
+          407
+        ],
+        "start": [
+          131,
+          352
+        ]
+      },
+      "gap_bin": "LONG",
+      "gap_endpoint_a": [
+        131,
+        322
+      ],
+      "gap_endpoint_b": [
+        131,
+        352
+      ],
+      "gap_length_px": 30,
+      "geometry_signature": "24bcf545f595ac67795a77c5ea40d40c5febcc9eeb1c44427cba9e6c3e4caa28",
+      "local_crop_box_px": [
+        89,
+        234,
+        174,
+        450
+      ],
+      "local_density_fraction": 0.014635,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 11,
+        "pdf_page_number": 12,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 4,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "selection_features": {
+        "gap_bin": "LONG",
+        "local_density_bin": "SPARSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-25AEF7268BE5D867D9D9",
+      "context_crop_box_px": [
+        2086,
+        192,
+        2407,
+        662
+      ],
+      "exact_geometry_digest": "2167a1096eac8ee7ee51ef0a93351c11dbe5a55b85c072269bc8b62da3c05a1e",
+      "fragment_a_geometry": {
+        "end": [
+          2246,
+          385
+        ],
+        "start": [
+          2246,
+          352
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2246,
+          501
+        ],
+        "start": [
+          2246,
+          417
+        ]
+      },
+      "gap_bin": "LONG",
+      "gap_endpoint_a": [
+        2246,
+        385
+      ],
+      "gap_endpoint_b": [
+        2246,
+        417
+      ],
+      "gap_length_px": 32,
+      "geometry_signature": "25aef7268be5d867d9d9eb0a47a6ea1110e43708305e31b3cb4e78c42a4409cd",
+      "local_crop_box_px": [
+        2204,
+        310,
+        2289,
+        544
+      ],
+      "local_density_fraction": 0.059527,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "10#-暖通施工图2019.05.25",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 5,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "selection_features": {
+        "gap_bin": "LONG",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F02-HVAC10-DWG",
+        "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "context_crop_box_px": [
+        2052,
+        654,
+        2373,
+        1113
+      ],
+      "exact_geometry_digest": "6ae6d0a8f432d877fdc2274ef5422a0a1276a6c3b2edb5472bd0518dcc547d4f",
+      "fragment_a_geometry": {
+        "end": [
+          2212,
+          916
+        ],
+        "start": [
+          2212,
+          814
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2212,
+          952
+        ],
+        "start": [
+          2212,
+          921
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2212,
+        916
+      ],
+      "gap_endpoint_b": [
+        2212,
+        921
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "2bf547c27c8497056ba6c652cab0f7d7ba218c9f355805407b69d0607d34f192",
+      "local_crop_box_px": [
+        2170,
+        772,
+        2255,
+        995
+      ],
+      "local_density_fraction": 0.080912,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; site/facility electrical plan page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 3,
+        "pdf_page_number": 4,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 6,
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+        "source_document_id": "DOC-F06-20210416-PDF",
+        "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F06-20210416-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-3896FDF95885929AF0BE",
+      "context_crop_box_px": [
+        1850,
+        1564,
+        2293,
+        1840
+      ],
+      "exact_geometry_digest": "164a87b35ef7eef2f82b51d1cf2a940b547b36fa125fcdad3a0a04a3c522e35d",
+      "fragment_a_geometry": {
+        "end": [
+          2081,
+          1724
+        ],
+        "start": [
+          2010,
+          1724
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2132,
+          1724
+        ],
+        "start": [
+          2086,
+          1724
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2081,
+        1724
+      ],
+      "gap_endpoint_b": [
+        2086,
+        1724
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "3896fdf95885929af0be06211b4a7e8653dd50cc2c1368fe7176277195dd6071",
+      "local_crop_box_px": [
+        1968,
+        1682,
+        2175,
+        1767
+      ],
+      "local_density_fraction": 0.158813,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 7,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-3CF03111AF3D7D733A74",
+      "context_crop_box_px": [
+        1863,
+        1168,
+        2184,
+        1589
+      ],
+      "exact_geometry_digest": "e5637210728a63d4a948c3840b0886c454e572c52a6e1d510d22131542d29a45",
+      "fragment_a_geometry": {
+        "end": [
+          2023,
+          1375
+        ],
+        "start": [
+          2023,
+          1328
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2023,
+          1428
+        ],
+        "start": [
+          2023,
+          1380
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2023,
+        1375
+      ],
+      "gap_endpoint_b": [
+        2023,
+        1380
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "3cf03111af3d7d733a74b38447568f1bc42de10ae2dad8ace0eea532d30a2553",
+      "local_crop_box_px": [
+        1981,
+        1286,
+        2066,
+        1471
+      ],
+      "local_density_fraction": 0.058352,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "海阳捻织车间暖通施工图2022.1.10",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 8,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F01-HVAC20220110-DWG",
+        "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "source_document_id": "DOC-F01-HVAC20220110-DWG",
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-48FEEEE4479EF194E24A",
+      "context_crop_box_px": [
+        452,
+        106,
+        882,
+        427
+      ],
+      "exact_geometry_digest": "a5dfedf2297b04b8b577e4b52697eface1aedf267d442a019435dcbab220822f",
+      "fragment_a_geometry": {
+        "end": [
+          660,
+          266
+        ],
+        "start": [
+          612,
+          266
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          721,
+          266
+        ],
+        "start": [
+          665,
+          266
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        660,
+        266
+      ],
+      "gap_endpoint_b": [
+        665,
+        266
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "48feeee4479ef194e24ae837e67b20490e581b2cf6e19d05b72324419bdf0e99",
+      "local_crop_box_px": [
+        570,
+        224,
+        764,
+        309
+      ],
+      "local_density_fraction": 0.117368,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; warehouse electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 5,
+        "pdf_page_number": 6,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 9,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+        "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+        "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-7ABB59DA99C32EC5A90A",
+      "context_crop_box_px": [
+        499,
+        1186,
+        820,
+        1603
+      ],
+      "exact_geometry_digest": "219f91b506134ef39f068684e19a3f437a503e39fef8bec7f1dae084b4c1bf22",
+      "fragment_a_geometry": {
+        "end": [
+          659,
+          1378
+        ],
+        "start": [
+          659,
+          1346
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          659,
+          1442
+        ],
+        "start": [
+          659,
+          1392
+        ]
+      },
+      "gap_bin": "MEDIUM",
+      "gap_endpoint_a": [
+        659,
+        1378
+      ],
+      "gap_endpoint_b": [
+        659,
+        1392
+      ],
+      "gap_length_px": 14,
+      "geometry_signature": "7abb59da99c32ec5a90a5b6c0cc190791b076235de3453e4ecdc23b3fbf0e349",
+      "local_crop_box_px": [
+        617,
+        1304,
+        702,
+        1485
+      ],
+      "local_density_fraction": 0.056892,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; single-sheet electrical equipment plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 10,
+      "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+      "selection_features": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+        "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+        "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+      "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F05-PDF-DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-2DBF66108AA424A95F6E",
+      "context_crop_box_px": [
+        0,
+        1607,
+        751,
+        1839
+      ],
+      "exact_geometry_digest": "91b9b9fdf77cf80735ec9a2af14e7141d96fd2a0ec22cfdbce12478a161c422a",
+      "fragment_a_geometry": {
+        "end": [
+          476,
+          1777
+        ],
+        "start": [
+          79,
+          1777
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          580,
+          1777
+        ],
+        "start": [
+          481,
+          1777
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        476,
+        1777
+      ],
+      "gap_endpoint_b": [
+        481,
+        1777
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "2dbf66108aa424a95f6e10b22fded351aed229540396b821d4dfcc69b55388c3",
+      "local_crop_box_px": [
+        29,
+        1727,
+        631,
+        1828
+      ],
+      "local_density_fraction": 0.147887,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical specification/title page",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 11,
+      "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+        "source_document_id": "DOC-F06-2026-PDF",
+        "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F06-2026-PDF",
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-392CD01D96A8D10C5946",
+      "context_crop_box_px": [
+        1966,
+        1236,
+        2387,
+        1557
+      ],
+      "exact_geometry_digest": "a787c5a2e4d303b354c55dd7967b41747a25a4bff276961b13fa2d445925c0fb",
+      "fragment_a_geometry": {
+        "end": [
+          2186,
+          1396
+        ],
+        "start": [
+          2126,
+          1396
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2226,
+          1396
+        ],
+        "start": [
+          2191,
+          1396
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2186,
+        1396
+      ],
+      "gap_endpoint_b": [
+        2191,
+        1396
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "392cd01d96a8d10c5946597ac5a19f6e49b4080f336ea0dda22071715c201688",
+      "local_crop_box_px": [
+        2084,
+        1354,
+        2269,
+        1439
+      ],
+      "local_density_fraction": 0.163918,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "建施-10B",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 12,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+        "source_document_id": "DOC-F04-ARCH10B-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F04-ARCH10B-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-3025B9264AEDC21BE849",
+      "context_crop_box_px": [
+        580,
+        228,
+        999,
+        549
+      ],
+      "exact_geometry_digest": "40236061ce7d8fdb83bd82669d08a46db8a7e17c67ee6aa7f99d7397b397e97a",
+      "fragment_a_geometry": {
+        "end": [
+          786,
+          388
+        ],
+        "start": [
+          740,
+          388
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          838,
+          388
+        ],
+        "start": [
+          791,
+          388
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        786,
+        388
+      ],
+      "gap_endpoint_b": [
+        791,
+        388
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "3025b9264aedc21be849889544672b68404b9ba8390d3a198bebc8cd1310356a",
+      "local_crop_box_px": [
+        698,
+        346,
+        881,
+        431
+      ],
+      "local_density_fraction": 0.130003,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 13,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-33163D6DB78308987FD9",
+      "context_crop_box_px": [
+        0,
+        406,
+        190,
+        1182
+      ],
+      "exact_geometry_digest": "f55b35e6a9491556c1937f62fb4bb1b2af28d898af1a76eb0107514b3f0621c5",
+      "fragment_a_geometry": {
+        "end": [
+          29,
+          883
+        ],
+        "start": [
+          29,
+          566
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          29,
+          1021
+        ],
+        "start": [
+          29,
+          889
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        29,
+        883
+      ],
+      "gap_endpoint_b": [
+        29,
+        889
+      ],
+      "gap_length_px": 6,
+      "geometry_signature": "33163d6db78308987fd92992bf1d7439ad2e1032ca2910c72cd4a4c1e8ecc3e2",
+      "local_crop_box_px": [
+        0,
+        520,
+        76,
+        1068
+      ],
+      "local_density_fraction": 0.641189,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; scanned main-building plan",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 14,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-49234CBA9EF19ACA2B93",
+      "context_crop_box_px": [
+        269,
+        270,
+        706,
+        591
+      ],
+      "exact_geometry_digest": "687517421f0aca34be38149decbbbb7e3681bfc1ce9bad2c62c05aea358e0fa4",
+      "fragment_a_geometry": {
+        "end": [
+          460,
+          430
+        ],
+        "start": [
+          429,
+          430
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          545,
+          430
+        ],
+        "start": [
+          501,
+          430
+        ]
+      },
+      "gap_bin": "LONG",
+      "gap_endpoint_a": [
+        460,
+        430
+      ],
+      "gap_endpoint_b": [
+        501,
+        430
+      ],
+      "gap_length_px": 41,
+      "geometry_signature": "49234cba9ef19aca2b932232e1f03ef63f948cf49cacc8c1a5553dbaa2067584",
+      "local_crop_box_px": [
+        387,
+        388,
+        588,
+        473
+      ],
+      "local_density_fraction": 0.050048,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "综合仓库 electrical drawing directory/title sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 15,
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+      "selection_features": {
+        "gap_bin": "LONG",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+        "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+        "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-859781346221E86E039A",
+      "context_crop_box_px": [
+        1665,
+        756,
+        2103,
+        1077
+      ],
+      "exact_geometry_digest": "d60f205096108bbd3ff795eeeb0cbe56343def2ac3740806e3f2b5e7093db8af",
+      "fragment_a_geometry": {
+        "end": [
+          1882,
+          916
+        ],
+        "start": [
+          1825,
+          916
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1942,
+          916
+        ],
+        "start": [
+          1887,
+          916
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        1882,
+        916
+      ],
+      "gap_endpoint_b": [
+        1887,
+        916
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "859781346221e86e039ab871db2361a0cd390b5fe03a0cb79c06117e0cf5c7c8",
+      "local_crop_box_px": [
+        1783,
+        874,
+        1985,
+        959
+      ],
+      "local_density_fraction": 0.147437,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "ZS(TZ)-JZ-2026-023; formal title/specification sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 16,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-25E38770B7F837BE0915",
+      "context_crop_box_px": [
+        524,
+        654,
+        845,
+        1088
+      ],
+      "exact_geometry_digest": "d0ca414644131d0cfce955ee0c40ffb0b40a6c452b75ac75aa351298e26b7468",
+      "fragment_a_geometry": {
+        "end": [
+          684,
+          868
+        ],
+        "start": [
+          684,
+          814
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          684,
+          927
+        ],
+        "start": [
+          684,
+          873
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        684,
+        868
+      ],
+      "gap_endpoint_b": [
+        684,
+        873
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "25e38770b7f837be0915450aa3de1fd14c03b42fef0d87cfd65b5079a9d5b135",
+      "local_crop_box_px": [
+        642,
+        772,
+        727,
+        970
+      ],
+      "local_density_fraction": 0.181144,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 11,
+        "pdf_page_number": 12,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 17,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P12.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-2B13FEF419461264C185",
+      "context_crop_box_px": [
+        1410,
+        1348,
+        1835,
+        1669
+      ],
+      "exact_geometry_digest": "7b2f316d58f0711762013600970b832e15aa01cf35b17c2ca894a353fcc8fa49",
+      "fragment_a_geometry": {
+        "end": [
+          1602,
+          1508
+        ],
+        "start": [
+          1570,
+          1508
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1674,
+          1508
+        ],
+        "start": [
+          1607,
+          1508
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        1602,
+        1508
+      ],
+      "gap_endpoint_b": [
+        1607,
+        1508
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "2b13fef419461264c18528d4fbb0c292dcb05de6d3abb21dfa3893291a0020da",
+      "local_crop_box_px": [
+        1528,
+        1466,
+        1717,
+        1551
+      ],
+      "local_density_fraction": 0.215563,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; alternate scanned building view",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 18,
+      "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+      "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "context_crop_box_px": [
+        1990,
+        71,
+        2312,
+        629
+      ],
+      "exact_geometry_digest": "1b2e62c9def12f77b06b10ac7c28f21b72dc2fc146cfc832327c9a3a7f0fe7e4",
+      "fragment_a_geometry": {
+        "end": [
+          2151,
+          361
+        ],
+        "start": [
+          2151,
+          231
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2150,
+          468
+        ],
+        "start": [
+          2150,
+          370
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2151,
+        361
+      ],
+      "gap_endpoint_b": [
+        2150,
+        370
+      ],
+      "gap_length_px": 9,
+      "geometry_signature": "316d125fe4861584be02e865ad838e6bf7f4c99a5af8df12fff05735c97038a1",
+      "local_crop_box_px": [
+        2108,
+        189,
+        2194,
+        511
+      ],
+      "local_density_fraction": 0.152351,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "10#-暖通施工图2019.05.25",
+        "dwg_layout_name": null,
+        "pdf_page_index": null,
+        "pdf_page_number": null,
+        "space": "modelspace"
+      },
+      "review_index": 19,
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F02-HVAC10-DWG",
+        "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "source_document_id": "DOC-F02-HVAC10-DWG",
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "source_type": "DWG"
+    },
+    {
+      "candidate_id": "FRESH1-32A5E8ACFF9E3D6BF8E7",
+      "context_crop_box_px": [
+        857,
+        804,
+        1179,
+        1264
+      ],
+      "exact_geometry_digest": "063c58991afb091034cc9796280042e8887d718874fcbecc95176880a4465c35",
+      "fragment_a_geometry": {
+        "end": [
+          1018,
+          1000
+        ],
+        "start": [
+          1018,
+          964
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1017,
+          1103
+        ],
+        "start": [
+          1017,
+          1010
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        1018,
+        1000
+      ],
+      "gap_endpoint_b": [
+        1017,
+        1010
+      ],
+      "gap_length_px": 10,
+      "geometry_signature": "32a5e8acff9e3d6bf8e79fafde26d45522b34cb3fd5b63f27d1aec703cdd7af0",
+      "local_crop_box_px": [
+        975,
+        922,
+        1061,
+        1146
+      ],
+      "local_density_fraction": 0.055391,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "一层火灾报警平面图",
+        "dwg_layout_name": null,
+        "pdf_page_index": 7,
+        "pdf_page_number": 8,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 20,
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F09-JIULONG-PDF",
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-403904F4EF20126F9D7D",
+      "context_crop_box_px": [
+        2130,
+        982,
+        2452,
+        1400
+      ],
+      "exact_geometry_digest": "6120e45d1469a037c3edc98fa34f2591fcf239b1bbd00a470520d7a20350889c",
+      "fragment_a_geometry": {
+        "end": [
+          2290,
+          1174
+        ],
+        "start": [
+          2290,
+          1142
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2291,
+          1239
+        ],
+        "start": [
+          2291,
+          1186
+        ]
+      },
+      "gap_bin": "MEDIUM",
+      "gap_endpoint_a": [
+        2290,
+        1174
+      ],
+      "gap_endpoint_b": [
+        2291,
+        1186
+      ],
+      "gap_length_px": 12,
+      "geometry_signature": "403904f4ef20126f9d7d1ea1120f26cb2e024dd9f36d114ecbfdbe1e4f1eca0f",
+      "local_crop_box_px": [
+        2248,
+        1100,
+        2334,
+        1282
+      ],
+      "local_density_fraction": 0.109915,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 21,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_features": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-41E989458A189A3DADA3",
+      "context_crop_box_px": [
+        1653,
+        550,
+        1975,
+        1116
+      ],
+      "exact_geometry_digest": "cab0ec56e97d1c327b39f78586ad7991358fdbd0768b130d1b8ef36066fde19c",
+      "fragment_a_geometry": {
+        "end": [
+          1813,
+          897
+        ],
+        "start": [
+          1813,
+          710
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1814,
+          955
+        ],
+        "start": [
+          1814,
+          922
+        ]
+      },
+      "gap_bin": "MEDIUM",
+      "gap_endpoint_a": [
+        1813,
+        897
+      ],
+      "gap_endpoint_b": [
+        1814,
+        922
+      ],
+      "gap_length_px": 25,
+      "geometry_signature": "41e989458a189a3dada32f05245d239b9ac0c86bcc3f19876d69d95d415fe7d3",
+      "local_crop_box_px": [
+        1771,
+        668,
+        1857,
+        998
+      ],
+      "local_density_fraction": 0.178039,
+      "orientation": "vertical",
+      "page_or_view": {
+        "drawing_sheet_identifier": "电施-06",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 22,
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "selection_features": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F04-ELEC06-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-43C5461340B4AE31E3E7",
+      "context_crop_box_px": [
+        1875,
+        1578,
+        2294,
+        1840
+      ],
+      "exact_geometry_digest": "b62381a8c276a862e8562c1e282970ff6ab08b08c2d31bd9d58b2c07e7868237",
+      "fragment_a_geometry": {
+        "end": [
+          2082,
+          1738
+        ],
+        "start": [
+          2035,
+          1738
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          2133,
+          1738
+        ],
+        "start": [
+          2087,
+          1738
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        2082,
+        1738
+      ],
+      "gap_endpoint_b": [
+        2087,
+        1738
+      ],
+      "gap_length_px": 5,
+      "geometry_signature": "43c5461340b4ae31e3e7924b1e19848b0515f58328239fc7a324e0bdb4e0ff46",
+      "local_crop_box_px": [
+        1993,
+        1696,
+        2176,
+        1781
+      ],
+      "local_density_fraction": 0.228063,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "建施-10B",
+        "dwg_layout_name": null,
+        "pdf_page_index": 0,
+        "pdf_page_number": 1,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 23,
+      "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+        "source_document_id": "DOC-F04-ARCH10B-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F04-ARCH10B-PDF",
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+      "source_type": "PDF"
+    },
+    {
+      "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+      "context_crop_box_px": [
+        998,
+        490,
+        1556,
+        811
+      ],
+      "exact_geometry_digest": "10b2d30e6cd2771edb0a449d50df6f7a81bee4e25f0a450a17ed5782a52cdf6d",
+      "fragment_a_geometry": {
+        "end": [
+          1300,
+          650
+        ],
+        "start": [
+          1158,
+          650
+        ]
+      },
+      "fragment_b_geometry": {
+        "end": [
+          1395,
+          650
+        ],
+        "start": [
+          1306,
+          650
+        ]
+      },
+      "gap_bin": "SHORT",
+      "gap_endpoint_a": [
+        1300,
+        650
+      ],
+      "gap_endpoint_b": [
+        1306,
+        650
+      ],
+      "gap_length_px": 6,
+      "geometry_signature": "4497adee7db5d798a893bd35c10f27b8d09fc36e1fe51484370491ae2a1e56a4",
+      "local_crop_box_px": [
+        1116,
+        608,
+        1438,
+        693
+      ],
+      "local_density_fraction": 0.160102,
+      "orientation": "horizontal",
+      "page_or_view": {
+        "drawing_sheet_identifier": "unknown; electrical plan sheet",
+        "dwg_layout_name": null,
+        "pdf_page_index": 10,
+        "pdf_page_number": 11,
+        "space": "paperspace-equivalent-PDF-page"
+      },
+      "review_index": 24,
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "selection_features": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "source_document_id": "DOC-F07-0026-PDF",
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF"
+    }
+  ],
+  "remaining_unreviewed_count": 123,
+  "review_order": [
+    "FRESH1-2329D538A065BFC7E0D8",
+    "FRESH1-460EC32409A8589C1D04",
+    "FRESH1-2FF08EDFC754E290D7A4",
+    "FRESH1-24BCF545F595AC67795A",
+    "FRESH1-25AEF7268BE5D867D9D9",
+    "FRESH1-2BF547C27C8497056BA6",
+    "FRESH1-3896FDF95885929AF0BE",
+    "FRESH1-3CF03111AF3D7D733A74",
+    "FRESH1-48FEEEE4479EF194E24A",
+    "FRESH1-7ABB59DA99C32EC5A90A",
+    "FRESH1-2DBF66108AA424A95F6E",
+    "FRESH1-392CD01D96A8D10C5946",
+    "FRESH1-3025B9264AEDC21BE849",
+    "FRESH1-33163D6DB78308987FD9",
+    "FRESH1-49234CBA9EF19ACA2B93",
+    "FRESH1-859781346221E86E039A",
+    "FRESH1-25E38770B7F837BE0915",
+    "FRESH1-2B13FEF419461264C185",
+    "FRESH1-316D125FE4861584BE02",
+    "FRESH1-32A5E8ACFF9E3D6BF8E7",
+    "FRESH1-403904F4EF20126F9D7D",
+    "FRESH1-41E989458A189A3DADA3",
+    "FRESH1-43C5461340B4AE31E3E7",
+    "FRESH1-4497ADEE7DB5D798A893"
+  ],
+  "schema_version": 1,
+  "selection_basis": [
+    "source_family_id",
+    "selected_unit_id",
+    "source_document_id",
+    "source_type",
+    "orientation",
+    "gap_bin",
+    "local_density_bin",
+    "source_quality_bin"
+  ],
+  "selection_code_version": "FRESH_DEV_CANDIDATE_REMINING_V1_CODE_1",
+  "selection_deterministic_replay": "PASS",
+  "selection_digest": "a5f3c9eeb863a91e216128f9e781004ef2022bb019f3cf3c4c44e9b8d11188cb",
+  "selection_trace": [
+    {
+      "candidate_id": "FRESH1-2329D538A065BFC7E0D8",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "SPARSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 1
+    },
+    {
+      "candidate_id": "FRESH1-460EC32409A8589C1D04",
+      "new_feature_values": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F03-HVAC4-DWG",
+        "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "review_index": 2
+    },
+    {
+      "candidate_id": "FRESH1-2FF08EDFC754E290D7A4",
+      "new_feature_values": {
+        "gap_bin": "LONG",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 3
+    },
+    {
+      "candidate_id": "FRESH1-24BCF545F595AC67795A",
+      "new_feature_values": {
+        "gap_bin": "LONG",
+        "local_density_bin": "SPARSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 4
+    },
+    {
+      "candidate_id": "FRESH1-25AEF7268BE5D867D9D9",
+      "new_feature_values": {
+        "gap_bin": "LONG",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F02-HVAC10-DWG",
+        "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "review_index": 5
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+        "source_document_id": "DOC-F06-20210416-PDF",
+        "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 6
+    },
+    {
+      "candidate_id": "FRESH1-3896FDF95885929AF0BE",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 7
+    },
+    {
+      "candidate_id": "FRESH1-3CF03111AF3D7D733A74",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F01-HVAC20220110-DWG",
+        "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "review_index": 8
+    },
+    {
+      "candidate_id": "FRESH1-48FEEEE4479EF194E24A",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+        "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+        "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 9
+    },
+    {
+      "candidate_id": "FRESH1-7ABB59DA99C32EC5A90A",
+      "new_feature_values": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1",
+        "source_document_id": "DOC-F05-DENNKISETSUBI-PDF",
+        "source_family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 10
+    },
+    {
+      "candidate_id": "FRESH1-2DBF66108AA424A95F6E",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1",
+        "source_document_id": "DOC-F06-2026-PDF",
+        "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 11
+    },
+    {
+      "candidate_id": "FRESH1-392CD01D96A8D10C5946",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+        "source_document_id": "DOC-F04-ARCH10B-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 12
+    },
+    {
+      "candidate_id": "FRESH1-3025B9264AEDC21BE849",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 13
+    },
+    {
+      "candidate_id": "FRESH1-33163D6DB78308987FD9",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 14
+    },
+    {
+      "candidate_id": "FRESH1-49234CBA9EF19ACA2B93",
+      "new_feature_values": {
+        "gap_bin": "LONG",
+        "local_density_bin": "MEDIUM",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+        "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+        "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 15
+    },
+    {
+      "candidate_id": "FRESH1-859781346221E86E039A",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 16
+    },
+    {
+      "candidate_id": "FRESH1-25E38770B7F837BE0915",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P12",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 17
+    },
+    {
+      "candidate_id": "FRESH1-2B13FEF419461264C185",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+        "source_document_id": "DOC-F10-ENVIRONMENTAL-PDF",
+        "source_family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 18
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F02-HVAC10-DWG",
+        "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "DWG"
+      },
+      "review_index": 19
+    },
+    {
+      "candidate_id": "FRESH1-32A5E8ACFF9E3D6BF8E7",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 20
+    },
+    {
+      "candidate_id": "FRESH1-403904F4EF20126F9D7D",
+      "new_feature_values": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "MEDIUM",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 21
+    },
+    {
+      "candidate_id": "FRESH1-41E989458A189A3DADA3",
+      "new_feature_values": {
+        "gap_bin": "MEDIUM",
+        "local_density_bin": "DENSE",
+        "orientation": "vertical",
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_type": "PDF"
+      },
+      "review_index": 22
+    },
+    {
+      "candidate_id": "FRESH1-43C5461340B4AE31E3E7",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+        "source_document_id": "DOC-F04-ARCH10B-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 23
+    },
+    {
+      "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+      "new_feature_values": {
+        "gap_bin": "SHORT",
+        "local_density_bin": "DENSE",
+        "orientation": "horizontal",
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_type": "PDF"
+      },
+      "review_index": 24
+    }
+  ],
+  "semantic_target_balancing_used": false,
+  "source_fresh_candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504",
+  "source_fresh_remine_checkpoint": "93438db2978d45d2fdc4022f82f52cac18ded831",
+  "source_frozen_pool_count": 147,
+  "source_mapping_digest": "063022890e6b52f44a3b4a92b8501c377e327c76735ef6efae37bab49909bc6f",
+  "task_id": "DIRECT-CONTINUATION-REVIEW-ACCUMULATION-V1"
+}

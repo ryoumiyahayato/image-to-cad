@@ -71,8 +71,7 @@ jobs:
             --report output/freecad/report.json \
             --debug-dir output/freecad/debug \
             --paper-size A4 \
-            --paper-orientation landscape \
-            --auxiliary
+            --paper-orientation landscape
           python scripts/generate_trace_smoke.py \
             --output output/freecad/trace-sample.dxf \
             --binary output/freecad/trace-binary.png

@@ -1,0 +1,70 @@
+{
+  "schema_version": "line-integrity-audit-d2-report-v1",
+  "status": "COMPLETE",
+  "qualified_cases": 10,
+  "rejected_diagnostic_cases": 4,
+  "success_controls": 7,
+  "root_cause_census": {
+    "SOURCE_DEFECT": 0,
+    "INPUT_RENDER_DEFECT": 0,
+    "PREPROCESSING_DESTRUCTION": 0,
+    "DETECTION_LOSS": 0,
+    "DETECTION_FRAGMENTATION": 2,
+    "FILTERING_LOSS": 0,
+    "OWNERSHIP_MASK_DAMAGE": 1,
+    "GEOMETRY_PROCESSING_DAMAGE": 0,
+    "TOPOLOGY_DAMAGE": 0,
+    "PROMOTION_LOSS": 0,
+    "FINAL_ASSEMBLY_LOSS": 0,
+    "RENDER_ONLY_DEFECT": 0,
+    "NO_END_TO_END_DEFECT": 7,
+    "DIAGNOSTIC_TARGET_INVALID": 4,
+    "UNKNOWN": 0
+  },
+  "repeated_candidate": "DETECTION_FRAGMENTATION",
+  "common_failure_family": null,
+  "dominant_root_cause": null,
+  "architecture_risk": {
+    "LINE_INTEGRITY_IS_NOT_PRESERVED_END_TO_END": "YES",
+    "FRAGMENT_FIRST_RECONSTRUCTION_RISK": "YES",
+    "SOURCE_SUPPORT_DROPPED": "YES"
+  },
+  "a2_sg_009": {
+    "qualified_failure_cases": 2,
+    "first_divergence_stages": [
+      "RAW DETECTION",
+      "TEXT / SYMBOL OWNERSHIP MASK"
+    ],
+    "conclusion": "A2-SG-009 MAIN FAILURE IS NOT YET PROVEN TO BE FALSE-BREAK DOMINATED"
+  },
+  "a2_sg_022_p1_fixed_control": {
+    "still_continuous": true,
+    "gap_bridge_used": false,
+    "duplicate_cad_line": false,
+    "new_noise": false,
+    "regression": false
+  },
+  "sanity_rerun_bindings": [
+    {
+      "source_group_id": "A2-SG-009",
+      "final_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+      "entity_count": 5842
+    },
+    {
+      "source_group_id": "A2-SG-022",
+      "final_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059",
+      "entity_count": 2194
+    },
+    {
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "final_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890",
+      "entity_count": 2934
+    }
+  ],
+  "production_semantic_delta": "NONE",
+  "locked_blind_runtime": "0 / 8",
+  "locked_blind_manual_inspection": "NO",
+  "validation_executed": "NO",
+  "runtime_artifact_root": "local-artifacts/draftsman/line-integrity-audit-d2/20260912-d2",
+  "next_action": "TRACE_BROAD_CONTENT_RECALL_FAILURE"
+}

@@ -1,0 +1,88 @@
+{
+  "W01_revision": {
+    "actual_final_text": "7",
+    "source_bbox": [
+      1618,
+      1117,
+      21,
+      42
+    ],
+    "status": "SHOWS_FINAL_7"
+  },
+  "W01": {
+    "logo_bbox": [
+      469,
+      325,
+      447,
+      176
+    ],
+    "final_logo_image": "PRESERVED",
+    "audit_errors": 0
+  },
+  "W02_symbols": {
+    "contents": [
+      "2",
+      "2",
+      "M",
+      "M",
+      "SL",
+      "2",
+      "2"
+    ],
+    "enclosure_entities": 16,
+    "status": "PASS"
+  },
+  "W02": {
+    "logo_bbox": [
+      4240,
+      1489,
+      254,
+      100
+    ],
+    "final_logo_image": "PRESERVED",
+    "audit_errors": 0
+  },
+  "W03_signature_names": {
+    "printed_names": [
+      "陆岳",
+      "黄震",
+      "马祥胜",
+      "董晓俊",
+      "马祥胜",
+      "唐忠荣",
+      "唐忠荣"
+    ],
+    "signature_images": 7,
+    "status": "PASS"
+  },
+  "W03_revision": {
+    "actual_final_text": "7",
+    "source_bbox": [
+      4563,
+      2141,
+      15,
+      24
+    ],
+    "status": "SHOWS_FINAL_7"
+  },
+  "W03": {
+    "logo_bbox": [
+      4338,
+      1204,
+      206,
+      82
+    ],
+    "final_logo_image": "PRESERVED",
+    "audit_errors": 0
+  },
+  "E01": {
+    "logo_bbox": [
+      3651,
+      83,
+      99,
+      98
+    ],
+    "final_logo_image": "PRESERVED",
+    "audit_errors": 0
+  }
+}

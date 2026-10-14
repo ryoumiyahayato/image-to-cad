@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "P3B local sample v1",
+  "type": "object",
+  "required": ["sample_id", "source_drawing_id", "source_page", "source_bbox", "candidate_geometry_ids", "source_dpi", "current_p3a_measurement", "current_deterministic_decision", "label", "label_provenance", "split", "source_sha256"],
+  "properties": {
+    "sample_id": {"type": "string"},
+    "source_drawing_id": {"type": "string"},
+    "source_family_id": {"type": "string"},
+    "source_page": {"type": "integer", "minimum": 1},
+    "source_bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4, "description": "[left, top, width, height], native source-raster pixels, top-left origin"},
+    "candidate_geometry_ids": {"type": "array", "items": {"type": "string"}},
+    "source_dpi": {"type": ["number", "null"], "description": "Effective render DPI for PDFs; null for uncalibrated raster/photo"},
+    "current_p3a_measurement": {"type": ["array", "null"]},
+    "current_deterministic_decision": {"enum": ["NOT_CAPTURED", "PRESERVE_CAPTURED_W03", "PRESERVE_OFFLINE", "MERGE_PROPOSED_OFFLINE"]},
+    "label": {"enum": [null, "SINGLE_PHYSICAL_STROKE", "TRUE_PARALLEL_STRUCTURE", "OTHER", "AMBIGUOUS"]},
+    "label_provenance": {"type": ["object", "null"]},
+    "split": {"enum": ["train", "validation", "blind_test"]},
+    "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "domain": {"enum": ["real", "synthetic"]},
+    "patch_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "content_role": {"type": "string"}
+  }
+}

@@ -1,0 +1,28 @@
+Ruff:
+All checks passed!
+
+Focused tests:
+.....................................                                    [100%]
+37 passed, 72 warnings in 2.22s
+
+Included:
+- tests/test_content_ownership.py
+- tests/test_text_output_contract.py
+- tests/test_trace_storage.py
+- tests/test_trace_storage_v2.py
+- tests/test_processing_contract.py
+- tests/test_trace_export.py
+- tests/test_document_export.py
+- tests/test_real_document_regression_contract.py
+
+Fixed failure page, 240 DPI:
+- OCR candidates: 208
+- text_emit_eligible: 206
+- native DXF TEXT: 206
+- confidence hard rejects: 2
+- source outline backup candidates: 169
+- eligible candidate-owned text-symbol objects/pixels: 0/0
+- fallback candidate-owned text-symbol objects/pixels: 0/0
+- primary semantic conflicts: 0
+- source ownership violations: 0
+- DXF audit errors: 0

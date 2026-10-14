@@ -1,0 +1,135 @@
+{
+  "all_passed": true,
+  "case_count": 12,
+  "cases": [
+    {
+      "case": "A",
+      "description": "continuous line with a small blank dropout",
+      "evidence": {},
+      "expected": "SOURCE_IDENTITY_SUPPORTED",
+      "observed": "SOURCE_IDENTITY_SUPPORTED",
+      "status": "PASS"
+    },
+    {
+      "case": "B",
+      "description": "two collinear segments ending independently",
+      "evidence": {},
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "C",
+      "description": "straight source continues through a perpendicular crossing",
+      "evidence": {
+        "crossing_evidence": 1.0,
+        "termination_strength": 0.0
+      },
+      "expected": "SOURCE_IDENTITY_SUPPORTED",
+      "observed": "SOURCE_IDENTITY_SUPPORTED",
+      "status": "PASS"
+    },
+    {
+      "case": "D",
+      "description": "termination at a T-junction before a later aligned segment",
+      "evidence": {
+        "t_junction_evidence": 1.0
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "E",
+      "description": "corner termination before a later aligned edge",
+      "evidence": {
+        "corner_evidence": 1.0
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "F",
+      "description": "nested edges sharing an exact axis retain independent identity",
+      "evidence": {
+        "endpoint_count": 6,
+        "member_count": 3
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "G",
+      "description": "exact coincident long/medium/short endpoint sets remain distinguishable",
+      "evidence": {
+        "member_endpoint_ids": [
+          "F-LONG:START",
+          "F-LONG:END",
+          "F-MEDIUM:START",
+          "F-MEDIUM:END",
+          "F-SHORT:START",
+          "F-SHORT:END"
+        ]
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "H",
+      "description": "1 px near-coincident edges retain independent identity",
+      "evidence": {
+        "group_member_count": 2,
+        "offset_px": 1
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "I",
+      "description": "2 px near-coincident edges retain independent identity",
+      "evidence": {
+        "group_member_count": 2,
+        "offset_px": 2
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "J",
+      "description": "3 px near-coincident edges retain independent identity",
+      "evidence": {
+        "group_member_count": 2,
+        "offset_px": 3
+      },
+      "expected": "SOURCE_IDENTITY_REJECTED",
+      "observed": "SOURCE_IDENTITY_REJECTED",
+      "status": "PASS"
+    },
+    {
+      "case": "K",
+      "description": "genuine damaged line is not rejected on weak endpoint ink alone",
+      "evidence": {},
+      "expected": "NOT_REJECTED",
+      "observed": "SOURCE_IDENTITY_AMBIGUOUS",
+      "status": "PASS"
+    },
+    {
+      "case": "L",
+      "description": "true thick stroke retains one source identity",
+      "evidence": {
+        "observation_count": 2,
+        "source_stroke_count": 1
+      },
+      "expected": "SOURCE_IDENTITY_SUPPORTED",
+      "observed": "SOURCE_IDENTITY_SUPPORTED",
+      "status": "PASS"
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "ENDPOINT_TOPOLOGY_SOURCE_IDENTITY_V1"
+}

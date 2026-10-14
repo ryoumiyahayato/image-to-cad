@@ -1,0 +1,134 @@
+[
+  {
+    "endpoint_ids": [
+      "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:start",
+      "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da:end"
+    ],
+    "geometry_px": {
+      "end": [
+        659.0,
+        1023.0
+      ],
+      "start": [
+        473.0,
+        1023.0
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:hough",
+      "trim_to_source_support"
+    ],
+    "observation_interval": {
+      "end": 186.0,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [],
+      "start": 0.0
+    },
+    "ownership_evidence_refs": [
+      "ownership:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da"
+    ],
+    "ownership_state": "MAIN_ACCEPTED",
+    "parent_ids": [],
+    "representation_id": "MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da",
+    "route_origin": "MAIN",
+    "route_producer": "structural-main",
+    "source_ids": [
+      "HOUGH-000029"
+    ],
+    "source_support_intervals": [],
+    "structural_obligation_ids": [],
+    "terminal_reason": "Accepted input retained because source relation is unresolved",
+    "trajectory_evidence_refs": [
+      "support:MAIN:HOUGH-000029:REP:observation-b62666b41373f76136da"
+    ]
+  },
+  {
+    "endpoint_ids": [
+      "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:start",
+      "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961:end"
+    ],
+    "geometry_px": {
+      "end": [
+        658.125,
+        1022.8628540039062
+      ],
+      "start": [
+        474.3749694824219,
+        1022.8549194335938
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "observation_interval": {
+      "end": 183.75003068889077,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [],
+      "start": 0.0
+    },
+    "ownership_evidence_refs": [
+      "ownership:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961"
+    ],
+    "ownership_state": "MAIN_ACCEPTED",
+    "parent_ids": [],
+    "representation_id": "MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961",
+    "route_origin": "MAIN",
+    "route_producer": "structural-main",
+    "source_ids": [
+      "LSD-001063"
+    ],
+    "source_support_intervals": [],
+    "structural_obligation_ids": [],
+    "terminal_reason": "Accepted input retained because source relation is unresolved",
+    "trajectory_evidence_refs": [
+      "support:MAIN:LSD-001063:REP:observation-fdb89da0f25cdcec8961"
+    ]
+  },
+  {
+    "endpoint_ids": [
+      "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:start",
+      "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07:end"
+    ],
+    "geometry_px": {
+      "end": [
+        658.125,
+        1025.8870849609375
+      ],
+      "start": [
+        474.3749694824219,
+        1025.8951416015625
+      ],
+      "width": 1.909999966621399
+    },
+    "history": [
+      "detected:lsd",
+      "trim_to_source_support"
+    ],
+    "observation_interval": {
+      "end": 183.75003069420248,
+      "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+      "evidence_refs": [],
+      "start": 0.0
+    },
+    "ownership_evidence_refs": [
+      "ownership:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07"
+    ],
+    "ownership_state": "MAIN_ACCEPTED",
+    "parent_ids": [],
+    "representation_id": "MAIN:LSD-001069:REP:observation-518d37e0f76141290c07",
+    "route_origin": "MAIN",
+    "route_producer": "structural-main",
+    "source_ids": [
+      "LSD-001069"
+    ],
+    "source_support_intervals": [],
+    "structural_obligation_ids": [],
+    "terminal_reason": "Accepted input retained because source relation is unresolved",
+    "trajectory_evidence_refs": [
+      "support:MAIN:LSD-001069:REP:observation-518d37e0f76141290c07"
+    ]
+  }
+]

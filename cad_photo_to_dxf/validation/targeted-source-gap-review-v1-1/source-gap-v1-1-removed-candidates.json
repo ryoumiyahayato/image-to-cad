@@ -1,0 +1,23 @@
+{
+  "old_candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-SOURCE-GAP-06B5674E3BF1",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_1",
+  "protocol": "SOURCE_GAP_REVIEW_V1",
+  "removed_candidates": [
+    {
+      "candidate_id": "FRESH1-EDC71A4759AD64EDCE78",
+      "eligibility_reason": "INELIGIBLE_TEXT_REJECTED",
+      "old_review_index": 16,
+      "prior_human_answer": {
+        "optional_note": "",
+        "primary_class": "STRUCTURAL_INTERRUPTION",
+        "secondary_flags": [
+          "ENDPOINT_ANOMALY"
+        ]
+      },
+      "reason_removed_from_repaired_package": "Text/glyph guard marks glyph-only support; the source-gap taxonomy requires a valid primitive.",
+      "text_glyph_status": "TEXT_REJECTED"
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "TARGETED_SOURCE_GAP_REVIEW_V1_1_REPAIR"
+}

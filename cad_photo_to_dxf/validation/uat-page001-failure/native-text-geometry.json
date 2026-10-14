@@ -1,0 +1,4824 @@
+{
+  "coordinate_system": {
+    "dxf_units": "millimetres",
+    "header_INSUNITS": 4,
+    "mapping": "dxf_x = source_x * scale_x; dxf_y = page_height_mm - source_y * scale_y",
+    "pdf_page_size_mm": [
+      419.48098449707027,
+      296.54501291910805
+    ],
+    "scale_anisotropy_fraction": 0.00025583047847843273,
+    "scale_x_mm_per_px": 0.10582264997403387,
+    "scale_y_mm_per_px": 0.10579558077741992,
+    "source_size_px": [
+      3964,
+      2803
+    ]
+  },
+  "entities": [
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.5674625999901077,
+      "candidate_bbox_px": [
+        2957,
+        338,
+        59,
+        34
+      ],
+      "candidate_quad_px": [
+        [
+          2957.0,
+          338.0
+        ],
+        [
+          3016.0,
+          338.0
+        ],
+        [
+          3016.0,
+          372.0
+        ],
+        [
+          2957.0,
+          372.0
+        ]
+      ],
+      "confidence": 0.97224,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.8056988022171754,
+      "height_over_target_bbox": 0.78,
+      "index": 1,
+      "insert_mm": [
+        312.98001133670283,
+        257.7530742701484,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 1
+        },
+        {
+          "code": 1000,
+          "value": "附楼3"
+        },
+        {
+          "code": 1040,
+          "value": 0.97224
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.597049746432276,
+      "target_bbox_width_mm": 6.243536348468012,
+      "text": "附楼3",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 312.98001133670283
+        },
+        {
+          "code": 1040,
+          "value": 257.7530742701484
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.97224
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.529320187096798
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.485671215151706,
+      "candidate_bbox_px": [
+        1775,
+        378,
+        63,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          1775.0,
+          378.0
+        ],
+        [
+          1838.0,
+          378.0
+        ],
+        [
+          1838.0,
+          407.0
+        ],
+        [
+          1775.0,
+          407.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.78,
+      "index": 2,
+      "insert_mm": [
+        187.90187197339375,
+        253.96728520760922,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 2
+        },
+        {
+          "code": 1000,
+          "value": "49100"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 6.6668269483641325,
+      "text": "49100",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 187.90187197339375
+        },
+        {
+          "code": 1040,
+          "value": 253.96728520760922
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5862866144999753
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.6651082897195649,
+      "candidate_bbox_px": [
+        3260,
+        405,
+        43,
+        40
+      ],
+      "candidate_quad_px": [
+        [
+          3260.0,
+          405.0
+        ],
+        [
+          3303.0,
+          405.0
+        ],
+        [
+          3303.0,
+          445.0
+        ],
+        [
+          3260.0,
+          445.0
+        ]
+      ],
+      "confidence": 0.60962,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 3.3008221202555017,
+      "height_over_target_bbox": 0.78,
+      "index": 3,
+      "insert_mm": [
+        345.02734265483923,
+        250.12952935579216,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 3
+        },
+        {
+          "code": 1000,
+          "value": "HB"
+        },
+        {
+          "code": 1040,
+          "value": 0.60962
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 4.231823231096797,
+      "target_bbox_width_mm": 4.550373948883475,
+      "text": "HB",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 345.02734265483923
+        },
+        {
+          "code": 1040,
+          "value": 250.12952935579216
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.60962
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6747435873957627
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4515267909368341,
+      "candidate_bbox_px": [
+        2354,
+        426,
+        54,
+        27
+      ],
+      "candidate_quad_px": [
+        [
+          2354.0,
+          426.0
+        ],
+        [
+          2408.0,
+          426.0
+        ],
+        [
+          2408.0,
+          453.0
+        ],
+        [
+          2354.0,
+          453.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.2280549311724576,
+      "height_over_target_bbox": 0.7799999999999923,
+      "index": 4,
+      "insert_mm": [
+        249.16366226986173,
+        249.06751099771608,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 4
+        },
+        {
+          "code": 1000,
+          "value": "7600"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.8564806809903587,
+      "target_bbox_width_mm": 5.71442309859782,
+      "text": "7600",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 249.16366226986173
+        },
+        {
+          "code": 1040,
+          "value": 249.06751099771608
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6487287370297172
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.48510828243231047,
+      "candidate_bbox_px": [
+        2876,
+        426,
+        59,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          2876.0,
+          426.0
+        ],
+        [
+          2935.0,
+          426.0
+        ],
+        [
+          2935.0,
+          455.0
+        ],
+        [
+          2876.0,
+          455.0
+        ]
+      ],
+      "confidence": 0.99996,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.78,
+      "index": 5,
+      "insert_mm": [
+        304.4083766888061,
+        248.88909733029305,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 5
+        },
+        {
+          "code": 1000,
+          "value": "1800"
+        },
+        {
+          "code": 1040,
+          "value": 0.99996
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 6.243536348468012,
+      "text": "1800",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 304.4083766888061
+        },
+        {
+          "code": 1040,
+          "value": 248.88909733029305
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99996
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.7113196677254963
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.46785882358342346,
+      "candidate_bbox_px": [
+        1475,
+        427,
+        53,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          1475.0,
+          427.0
+        ],
+        [
+          1528.0,
+          427.0
+        ],
+        [
+          1528.0,
+          455.0
+        ],
+        [
+          1475.0,
+          455.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3105754841788713,
+      "height_over_target_bbox": 0.7800000000000075,
+      "index": 6,
+      "insert_mm": [
+        156.14449471618622,
+        248.87250858322716,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 6
+        },
+        {
+          "code": 1000,
+          "value": "7600"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 5.6086004486237755,
+      "text": "7600",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 156.14449471618622
+        },
+        {
+          "code": 1040,
+          "value": 248.87250858322716
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6139754118316886
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.468662366228741,
+      "candidate_bbox_px": [
+        1913,
+        428,
+        59,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          1913.0,
+          428.0
+        ],
+        [
+          1972.0,
+          428.0
+        ],
+        [
+          1972.0,
+          456.0
+        ],
+        [
+          1913.0,
+          456.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.310575484178849,
+      "height_over_target_bbox": 0.78,
+      "index": 7,
+      "insert_mm": [
+        202.50116476381146,
+        248.76671300244976,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 7
+        },
+        {
+          "code": 1000,
+          "value": "11400"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 6.243536348468012,
+      "text": "11400",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 202.50116476381146
+        },
+        {
+          "code": 1040,
+          "value": 248.76671300244976
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6029096764452635
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.48458167229925325,
+      "candidate_bbox_px": [
+        1076,
+        466,
+        55,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          1076.0,
+          466.0
+        ],
+        [
+          1131.0,
+          466.0
+        ],
+        [
+          1131.0,
+          495.0
+        ],
+        [
+          1076.0,
+          495.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.78,
+      "index": 8,
+      "insert_mm": [
+        113.92337382954616,
+        244.65727409919626,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 8
+        },
+        {
+          "code": 1000,
+          "value": "2000"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 5.820245748571864,
+      "text": "2000",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 113.92337382954616
+        },
+        {
+          "code": 1040,
+          "value": 244.65727409919626
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6167656839604813
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4681172555706644,
+      "candidate_bbox_px": [
+        2618,
+        467,
+        55,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          2618.0,
+          467.0
+        ],
+        [
+          2673.0,
+          467.0
+        ],
+        [
+          2673.0,
+          495.0
+        ],
+        [
+          2618.0,
+          495.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3105754841788713,
+      "height_over_target_bbox": 0.7800000000000075,
+      "index": 9,
+      "insert_mm": [
+        277.1019000895064,
+        244.64068535213036,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 9
+        },
+        {
+          "code": 1000,
+          "value": "3800"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 5.820245748571892,
+      "text": "3800",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 277.1019000895064
+        },
+        {
+          "code": 1040,
+          "value": 244.64068535213036
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6395285428039094
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4679868609700878,
+      "candidate_bbox_px": [
+        2771,
+        468,
+        54,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          2771.0,
+          468.0
+        ],
+        [
+          2825.0,
+          468.0
+        ],
+        [
+          2825.0,
+          496.0
+        ],
+        [
+          2771.0,
+          496.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.310575484178849,
+      "height_over_target_bbox": 0.78,
+      "index": 10,
+      "insert_mm": [
+        293.2917073090338,
+        244.53488977135297,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 10
+        },
+        {
+          "code": 1000,
+          "value": "2700"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 5.71442309859782,
+      "text": "2700",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 293.2917073090338
+        },
+        {
+          "code": 1040,
+          "value": 244.53488977135297
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6266380951964823
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.5168587799386642,
+      "candidate_bbox_px": [
+        2821,
+        773,
+        49,
+        31
+      ],
+      "candidate_quad_px": [
+        [
+          2821.0,
+          773.0
+        ],
+        [
+          2870.0,
+          773.0
+        ],
+        [
+          2870.0,
+          804.0
+        ],
+        [
+          2821.0,
+          804.0
+        ]
+      ],
+      "confidence": 0.93357,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.5581371431980013,
+      "height_over_target_bbox": 0.78,
+      "index": 11,
+      "insert_mm": [
+        298.57754867523687,
+        211.99961713310532,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 11
+        },
+        {
+          "code": 1000,
+          "value": "肥电间"
+        },
+        {
+          "code": 1040,
+          "value": 0.93357
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.2796630041000014,
+      "target_bbox_width_mm": 5.185309848727627,
+      "text": "肥电间",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 298.57754867523687
+        },
+        {
+          "code": 1040,
+          "value": 211.99961713310532
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.93357
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.43361683942599066
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.879776573660083,
+      "candidate_bbox_px": [
+        429,
+        981,
+        30,
+        53
+      ],
+      "candidate_quad_px": [
+        [
+          429.0,
+          981.0
+        ],
+        [
+          459.0,
+          981.0
+        ],
+        [
+          459.0,
+          1034.0
+        ],
+        [
+          429.0,
+          1034.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 4.373589309338546,
+      "height_over_target_bbox": 0.7800000000000039,
+      "index": 12,
+      "insert_mm": [
+        45.42966363385274,
+        188.03158598974852,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 12
+        },
+        {
+          "code": 1000,
+          "value": "2100"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 5.607165781203236,
+      "target_bbox_width_mm": 3.174679499221014,
+      "text": "2100",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 45.42966363385274
+        },
+        {
+          "code": 1040,
+          "value": 188.03158598974852
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.25
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.5489962468236734,
+      "candidate_bbox_px": [
+        2100,
+        1225,
+        300,
+        27
+      ],
+      "candidate_quad_px": [
+        [
+          2100.0,
+          1225.0
+        ],
+        [
+          2400.0,
+          1225.0
+        ],
+        [
+          2400.0,
+          1252.0
+        ],
+        [
+          2100.0,
+          1252.0
+        ]
+      ],
+      "confidence": 0.9599,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.2280549311724576,
+      "height_over_target_bbox": 0.7799999999999923,
+      "index": 13,
+      "insert_mm": [
+        222.54503289539323,
+        164.53684195655757,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 13
+        },
+        {
+          "code": 1000,
+          "value": "100x100防火线槽，风机水泵等应急控制线"
+        },
+        {
+          "code": 1040,
+          "value": 0.9599
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.8564806809903587,
+      "target_bbox_width_mm": 31.74679499221017,
+      "text": "100x100防火线槽，风机水泵等应急控制线",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 222.54503289539323
+        },
+        {
+          "code": 1040,
+          "value": 164.53684195655757
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.9599
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.4789739025718907
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.668279556359425,
+      "candidate_bbox_px": [
+        1816,
+        1243,
+        75,
+        40
+      ],
+      "candidate_quad_px": [
+        [
+          1816.0,
+          1243.0
+        ],
+        [
+          1891.0,
+          1243.0
+        ],
+        [
+          1891.0,
+          1283.0
+        ],
+        [
+          1816.0,
+          1283.0
+        ]
+      ],
+      "confidence": 0.9989,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 3.3008221202555017,
+      "height_over_target_bbox": 0.78,
+      "index": 14,
+      "insert_mm": [
+        192.25329934032604,
+        161.47283266431427,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 14
+        },
+        {
+          "code": 1000,
+          "value": "±0.000"
+        },
+        {
+          "code": 1040,
+          "value": 0.9989
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 4.231823231096797,
+      "target_bbox_width_mm": 7.936698748052521,
+      "text": "±0.000",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 192.25329934032604
+        },
+        {
+          "code": 1040,
+          "value": 161.47283266431427
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.9989
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.4378065208291087
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.48266441404204535,
+      "candidate_bbox_px": [
+        1226,
+        1440,
+        37,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          1226.0,
+          1440.0
+        ],
+        [
+          1263.0,
+          1440.0
+        ],
+        [
+          1263.0,
+          1469.0
+        ],
+        [
+          1226.0,
+          1469.0
+        ]
+      ],
+      "confidence": 0.99937,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.7800000000000072,
+      "index": 15,
+      "insert_mm": [
+        129.77772324865592,
+        141.61237842198926,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 15
+        },
+        {
+          "code": 1000,
+          "value": "FK1"
+        },
+        {
+          "code": 1040,
+          "value": 0.99937
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.0680718425451516,
+      "target_bbox_width_mm": 3.915438049039267,
+      "text": "FK1",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 129.77772324865592
+        },
+        {
+          "code": 1040,
+          "value": 141.61237842198926
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99937
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6145974044148889
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.946056457966515,
+      "candidate_bbox_px": [
+        3154,
+        1668,
+        29,
+        57
+      ],
+      "candidate_quad_px": [
+        [
+          3154.0,
+          1668.0
+        ],
+        [
+          3183.0,
+          1668.0
+        ],
+        [
+          3183.0,
+          1725.0
+        ],
+        [
+          3154.0,
+          1725.0
+        ]
+      ],
+      "confidence": 0.831,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 4.70367152136409,
+      "height_over_target_bbox": 0.78,
+      "index": 16,
+      "insert_mm": [
+        333.7953265865953,
+        114.99319466081494,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 16
+        },
+        {
+          "code": 1000,
+          "value": "380"
+        },
+        {
+          "code": 1040,
+          "value": 0.831
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 6.030348104312935,
+      "target_bbox_width_mm": 3.06885684924697,
+      "text": "380",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 333.7953265865953
+        },
+        {
+          "code": 1040,
+          "value": 114.99319466081494
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.831
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.25
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.6484143486745328,
+      "candidate_bbox_px": [
+        1402,
+        1682,
+        41,
+        39
+      ],
+      "candidate_quad_px": [
+        [
+          1402.0,
+          1682.0
+        ],
+        [
+          1443.0,
+          1682.0
+        ],
+        [
+          1443.0,
+          1721.0
+        ],
+        [
+          1402.0,
+          1721.0
+        ]
+      ],
+      "confidence": 0.9998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 3.2183015672491107,
+      "height_over_target_bbox": 0.78,
+      "index": 17,
+      "insert_mm": [
+        148.40674255008483,
+        115.11777953673844,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 17
+        },
+        {
+          "code": 1000,
+          "value": "153"
+        },
+        {
+          "code": 1040,
+          "value": 0.9998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 4.126027650319372,
+      "target_bbox_width_mm": 4.338728648935387,
+      "text": "153",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 148.40674255008483
+        },
+        {
+          "code": 1040,
+          "value": 115.11777953673844
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.9998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5094522518122709
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.5015636060443412,
+      "candidate_bbox_px": [
+        2808,
+        1688,
+        59,
+        30
+      ],
+      "candidate_quad_px": [
+        [
+          2808.0,
+          1688.0
+        ],
+        [
+          2867.0,
+          1688.0
+        ],
+        [
+          2867.0,
+          1718.0
+        ],
+        [
+          2808.0,
+          1718.0
+        ]
+      ],
+      "confidence": 0.6955,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.475616590191621,
+      "height_over_target_bbox": 0.7799999999999966,
+      "index": 18,
+      "insert_mm": [
+        297.2124364905718,
+        115.2858675554776,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 18
+        },
+        {
+          "code": 1000,
+          "value": "驿电机房"
+        },
+        {
+          "code": 1040,
+          "value": 0.6955
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.173867423322605,
+      "target_bbox_width_mm": 6.243536348467956,
+      "text": "驿电机房",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 297.2124364905718
+        },
+        {
+          "code": 1040,
+          "value": 115.2858675554776
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.6955
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.39114034715237694
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.6980120248658468,
+      "candidate_bbox_px": [
+        343,
+        1769,
+        40,
+        42
+      ],
+      "candidate_quad_px": [
+        [
+          343.0,
+          1769.0
+        ],
+        [
+          383.0,
+          1769.0
+        ],
+        [
+          383.0,
+          1811.0
+        ],
+        [
+          343.0,
+          1811.0
+        ]
+      ],
+      "confidence": 0.992,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 3.4658632262682736,
+      "height_over_target_bbox": 0.7799999999999975,
+      "index": 19,
+      "insert_mm": [
+        36.33949800108323,
+        105.64594350796834,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 19
+        },
+        {
+          "code": 1000,
+          "value": "A"
+        },
+        {
+          "code": 1040,
+          "value": 0.992
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 4.443414392651647,
+      "target_bbox_width_mm": 4.232905998961357,
+      "text": "A",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 36.33949800108323
+        },
+        {
+          "code": 1040,
+          "value": 105.64594350796834
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.992
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 1.0633747501634114
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.7005033228547349,
+      "candidate_bbox_px": [
+        952,
+        1951,
+        346,
+        36
+      ],
+      "candidate_quad_px": [
+        [
+          952.0,
+          1951.0
+        ],
+        [
+          1298.0,
+          1951.0
+        ],
+        [
+          1298.0,
+          1987.0
+        ],
+        [
+          952.0,
+          1987.0
+        ]
+      ],
+      "confidence": 0.98135,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.9707399082299473,
+      "height_over_target_bbox": 0.7799999999999971,
+      "index": 20,
+      "insert_mm": [
+        101.10930914419039,
+        86.92638880874703,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 20
+        },
+        {
+          "code": 1000,
+          "value": "1. 火灾自动报警系统的设备安装应按照"
+        },
+        {
+          "code": 1040,
+          "value": 0.98135
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.808640907987126,
+      "target_bbox_width_mm": 36.61463689101572,
+      "text": "1. 火灾自动报警系统的设备安装应按照",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 101.10930914419039
+        },
+        {
+          "code": 1040,
+          "value": 86.92638880874703
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.98135
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.4517236412285178
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.515435509018933,
+      "candidate_bbox_px": [
+        200,
+        2001,
+        33,
+        31
+      ],
+      "candidate_quad_px": [
+        [
+          200.0,
+          2001.0
+        ],
+        [
+          233.0,
+          2001.0
+        ],
+        [
+          233.0,
+          2032.0
+        ],
+        [
+          200.0,
+          2032.0
+        ]
+      ],
+      "confidence": 0.99934,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.5581371431980124,
+      "height_over_target_bbox": 0.7799999999999967,
+      "index": 21,
+      "insert_mm": [
+        21.199451469298204,
+        82.08264393843365,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 21
+        },
+        {
+          "code": 1000,
+          "value": "FX"
+        },
+        {
+          "code": 1040,
+          "value": 0.99934
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.27966300410003,
+      "target_bbox_width_mm": 3.4921474491431184,
+      "text": "FX",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 21.199451469298204
+        },
+        {
+          "code": 1040,
+          "value": 82.08264393843365
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99934
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6677926081865937
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.38564143171436127,
+      "candidate_bbox_px": [
+        3566,
+        2056,
+        53,
+        23
+      ],
+      "candidate_quad_px": [
+        [
+          3566.0,
+          2056.0
+        ],
+        [
+          3619.0,
+          2056.0
+        ],
+        [
+          3619.0,
+          2079.0
+        ],
+        [
+          3566.0,
+          2079.0
+        ]
+      ],
+      "confidence": 0.61821,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 1.8979727191469142,
+      "height_over_target_bbox": 0.78,
+      "index": 22,
+      "insert_mm": [
+        377.41965581189106,
+        76.97754166536771,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 22
+        },
+        {
+          "code": 1000,
+          "value": "项久赏"
+        },
+        {
+          "code": 1040,
+          "value": 0.61821
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.433298357880659,
+      "target_bbox_width_mm": 5.608600448623747,
+      "text": "项久赏",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 377.41965581189106
+        },
+        {
+          "code": 1040,
+          "value": 76.97754166536771
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.61821
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6196748259174154
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4331779628642391,
+      "candidate_bbox_px": [
+        3713,
+        2056,
+        38,
+        26
+      ],
+      "candidate_quad_px": [
+        [
+          3713.0,
+          2056.0
+        ],
+        [
+          3751.0,
+          2056.0
+        ],
+        [
+          3751.0,
+          2082.0
+        ],
+        [
+          3713.0,
+          2082.0
+        ]
+      ],
+      "confidence": 0.64105,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.145534378166077,
+      "height_over_target_bbox": 0.780000000000004,
+      "index": 23,
+      "insert_mm": [
+        392.95971196057786,
+        76.70992116423315,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 23
+        },
+        {
+          "code": 1000,
+          "value": "电气"
+        },
+        {
+          "code": 1040,
+          "value": 0.64105
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.7506851002129054,
+      "target_bbox_width_mm": 4.021260699013283,
+      "text": "电气",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 392.95971196057786
+        },
+        {
+          "code": 1040,
+          "value": 76.70992116423315
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.64105
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5920793615609122
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4818005532883372,
+      "candidate_bbox_px": [
+        208,
+        2168,
+        25,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          208.0,
+          2168.0
+        ],
+        [
+          233.0,
+          2168.0
+        ],
+        [
+          233.0,
+          2197.0
+        ],
+        [
+          208.0,
+          2197.0
+        ]
+      ],
+      "confidence": 0.99947,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852295,
+      "height_over_target_bbox": 0.7799999999999964,
+      "index": 24,
+      "insert_mm": [
+        22.037566857092553,
+        64.59319561602756,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 24
+        },
+        {
+          "code": 1000,
+          "value": "G"
+        },
+        {
+          "code": 1040,
+          "value": 0.99947
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 2.6455662493508463,
+      "text": "G",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 22.037566857092553
+        },
+        {
+          "code": 1040,
+          "value": 64.59319561602756
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99947
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 1.0845945236194574
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.46866236622871993,
+      "candidate_bbox_px": [
+        1911,
+        2215,
+        59,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          1911.0,
+          2215.0
+        ],
+        [
+          1970.0,
+          2215.0
+        ],
+        [
+          1970.0,
+          2243.0
+        ],
+        [
+          1911.0,
+          2243.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.310575484178855,
+      "height_over_target_bbox": 0.7800000000000019,
+      "index": 25,
+      "insert_mm": [
+        202.2895194638634,
+        59.710010153200336,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 25
+        },
+        {
+          "code": 1000,
+          "value": "11400"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 6.243536348467984,
+      "text": "11400",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 202.2895194638634
+        },
+        {
+          "code": 1040,
+          "value": 59.710010153200336
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6029096764452593
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.48226402585669864,
+      "candidate_bbox_px": [
+        833,
+        2216,
+        32,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          833.0,
+          2216.0
+        ],
+        [
+          865.0,
+          2216.0
+        ],
+        [
+          865.0,
+          2245.0
+        ],
+        [
+          833.0,
+          2245.0
+        ]
+      ],
+      "confidence": 0.98341,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.393096037185235,
+      "height_over_target_bbox": 0.7800000000000054,
+      "index": 26,
+      "insert_mm": [
+        88.1841306763619,
+        59.515007738711404,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 26
+        },
+        {
+          "code": 1000,
+          "value": "8400"
+        },
+        {
+          "code": 1040,
+          "value": 0.98341
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.0680718425451516,
+      "target_bbox_width_mm": 3.3863247991690884,
+      "text": "8400",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 88.1841306763619
+        },
+        {
+          "code": 1040,
+          "value": 59.515007738711404
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.98341
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.35048149683217666
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4677331453465283,
+      "candidate_bbox_px": [
+        2873,
+        2263,
+        52,
+        28
+      ],
+      "candidate_quad_px": [
+        [
+          2873.0,
+          2263.0
+        ],
+        [
+          2925.0,
+          2263.0
+        ],
+        [
+          2925.0,
+          2291.0
+        ],
+        [
+          2873.0,
+          2291.0
+        ]
+      ],
+      "confidence": 0.99997,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.310575484178849,
+      "height_over_target_bbox": 0.78,
+      "index": 27,
+      "insert_mm": [
+        304.0835011533858,
+        54.63182227588418,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 27
+        },
+        {
+          "code": 1000,
+          "value": "1800"
+        },
+        {
+          "code": 1040,
+          "value": 0.99997
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.962276261767755,
+      "target_bbox_width_mm": 5.502777798649788,
+      "text": "1800",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 304.0835011533858
+        },
+        {
+          "code": 1040,
+          "value": 54.63182227588418
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99997
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6493160163014849
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4842106229948939,
+      "candidate_bbox_px": [
+        1473,
+        2264,
+        52,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          1473.0,
+          2264.0
+        ],
+        [
+          1525.0,
+          2264.0
+        ],
+        [
+          1525.0,
+          2293.0
+        ],
+        [
+          1473.0,
+          2293.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.78,
+      "index": 28,
+      "insert_mm": [
+        155.9317911897384,
+        54.43681986139524,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 28
+        },
+        {
+          "code": 1000,
+          "value": "7600"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 5.502777798649788,
+      "text": "7600",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 155.9317911897384
+        },
+        {
+          "code": 1040,
+          "value": 54.43681986139524
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5816188676818173
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.45222688377869824,
+      "candidate_bbox_px": [
+        1911,
+        2264,
+        59,
+        27
+      ],
+      "candidate_quad_px": [
+        [
+          1911.0,
+          2264.0
+        ],
+        [
+          1970.0,
+          2264.0
+        ],
+        [
+          1970.0,
+          2291.0
+        ],
+        [
+          1911.0,
+          2291.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.2280549311724633,
+      "height_over_target_bbox": 0.780000000000002,
+      "index": 29,
+      "insert_mm": [
+        202.2895194638634,
+        54.61523352881829,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 29
+        },
+        {
+          "code": 1000,
+          "value": "11400"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.8564806809903303,
+      "target_bbox_width_mm": 6.243536348467984,
+      "text": "11400",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 202.2895194638634
+        },
+        {
+          "code": 1040,
+          "value": 54.61523352881829
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6252396644617515
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.4856712151516779,
+      "candidate_bbox_px": [
+        1770,
+        2302,
+        63,
+        29
+      ],
+      "candidate_quad_px": [
+        [
+          1770.0,
+          2302.0
+        ],
+        [
+          1833.0,
+          2302.0
+        ],
+        [
+          1833.0,
+          2331.0
+        ],
+        [
+          1770.0,
+          2331.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.3930960371852406,
+      "height_over_target_bbox": 0.78,
+      "index": 30,
+      "insert_mm": [
+        187.3727587235236,
+        50.41658779185329,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 30
+        },
+        {
+          "code": 1000,
+          "value": "49100"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.06807184254518,
+      "target_bbox_width_mm": 6.6668269483641325,
+      "text": "49100",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 187.3727587235236
+        },
+        {
+          "code": 1040,
+          "value": 50.41658779185329
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5862866144999753
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.35032708638820964,
+      "candidate_bbox_px": [
+        3570,
+        2326,
+        35,
+        21
+      ],
+      "candidate_quad_px": [
+        [
+          3570.0,
+          2326.0
+        ],
+        [
+          3605.0,
+          2326.0
+        ],
+        [
+          3605.0,
+          2347.0
+        ],
+        [
+          3570.0,
+          2347.0
+        ]
+      ],
+      "confidence": 0.68042,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 1.7329316131341423,
+      "height_over_target_bbox": 0.779999999999995,
+      "index": 31,
+      "insert_mm": [
+        377.82389833479186,
+        48.59114852288737,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 31
+        },
+        {
+          "code": 1000,
+          "value": "设计"
+        },
+        {
+          "code": 1040,
+          "value": 0.68042
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.2217071963258377,
+      "target_bbox_width_mm": 3.7037927490911784,
+      "text": "设计",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 377.82389833479186
+        },
+        {
+          "code": 1040,
+          "value": 48.59114852288737
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.68042
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.6635331180401889
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.9247573852174792,
+      "candidate_bbox_px": [
+        2931,
+        2397,
+        217,
+        54
+      ],
+      "candidate_quad_px": [
+        [
+          2931.0,
+          2397.0
+        ],
+        [
+          3148.0,
+          2397.0
+        ],
+        [
+          3148.0,
+          2451.0
+        ],
+        [
+          2931.0,
+          2451.0
+        ]
+      ],
+      "confidence": 0.99998,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 4.456109862344927,
+      "height_over_target_bbox": 0.7799999999999981,
+      "index": 32,
+      "insert_mm": [
+        310.39582222433694,
+        38.13583677521038,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 32
+        },
+        {
+          "code": 1000,
+          "value": "164-165"
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 5.712961361980689,
+      "target_bbox_width_mm": 22.96351504436535,
+      "text": "164-165",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 310.39582222433694
+        },
+        {
+          "code": 1040,
+          "value": 38.13583677521038
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99998
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.8291097666553653
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.3011536169095443,
+      "candidate_bbox_px": [
+        3576,
+        2438,
+        37,
+        18
+      ],
+      "candidate_quad_px": [
+        [
+          3576.0,
+          2438.0
+        ],
+        [
+          3613.0,
+          2438.0
+        ],
+        [
+          3613.0,
+          2456.0
+        ],
+        [
+          3576.0,
+          2456.0
+        ]
+      ],
+      "confidence": 0.9439,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 1.4853699541149736,
+      "height_over_target_bbox": 0.7799999999999855,
+      "index": 33,
+      "insert_mm": [
+        378.46095068763555,
+        37.009663976950904,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 33
+        },
+        {
+          "code": 1000,
+          "value": "CLENT"
+        },
+        {
+          "code": 1040,
+          "value": 0.9439
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 1.9043204539935914,
+      "target_bbox_width_mm": 3.91543804903921,
+      "text": "CLENT",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 378.46095068763555
+        },
+        {
+          "code": 1040,
+          "value": 37.009663976950904
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.9439
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5310538356100971
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.908430718727882,
+      "candidate_bbox_px": [
+        2931,
+        2465,
+        216,
+        53
+      ],
+      "candidate_quad_px": [
+        [
+          2931.0,
+          2465.0
+        ],
+        [
+          3147.0,
+          2465.0
+        ],
+        [
+          3147.0,
+          2518.0
+        ],
+        [
+          2931.0,
+          2518.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 4.3735893093385405,
+      "height_over_target_bbox": 0.779999999999999,
+      "index": 34,
+      "insert_mm": [
+        310.39476399783723,
+        31.03094411605735,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 34
+        },
+        {
+          "code": 1000,
+          "value": "166-170"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 5.607165781203264,
+      "target_bbox_width_mm": 22.85769239439128,
+      "text": "166-170",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 310.39476399783723
+        },
+        {
+          "code": 1040,
+          "value": 31.03094411605735
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.8478199598503707
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.35284968369496994,
+      "candidate_bbox_px": [
+        3564,
+        2480,
+        53,
+        21
+      ],
+      "candidate_quad_px": [
+        [
+          3564.0,
+          2480.0
+        ],
+        [
+          3617.0,
+          2480.0
+        ],
+        [
+          3617.0,
+          2501.0
+        ],
+        [
+          3564.0,
+          2501.0
+        ]
+      ],
+      "confidence": 0.50326,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 1.7329316131341423,
+      "height_over_target_bbox": 0.780000000000015,
+      "index": 35,
+      "insert_mm": [
+        377.208010511943,
+        32.298629083164705,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 35
+        },
+        {
+          "code": 1000,
+          "value": "工程名称"
+        },
+        {
+          "code": 1040,
+          "value": 0.50326
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 2.221707196325781,
+      "target_bbox_width_mm": 5.608600448623804,
+      "text": "工程名称",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 377.208010511943
+        },
+        {
+          "code": 1040,
+          "value": 32.298629083164705
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.50326
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.5072097278031563
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.5296980257216053,
+      "candidate_bbox_px": [
+        3669,
+        2567,
+        120,
+        31
+      ],
+      "candidate_quad_px": [
+        [
+          3669.0,
+          2567.0
+        ],
+        [
+          3789.0,
+          2567.0
+        ],
+        [
+          3789.0,
+          2598.0
+        ],
+        [
+          3669.0,
+          2598.0
+        ]
+      ],
+      "confidence": 0.80584,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 2.5581371431980124,
+      "height_over_target_bbox": 0.7800000000000102,
+      "index": 36,
+      "insert_mm": [
+        388.3902899346991,
+        22.202345218413967,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 36
+        },
+        {
+          "code": 1000,
+          "value": "一层消防平面面"
+        },
+        {
+          "code": 1040,
+          "value": 0.80584
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 3.279663004099973,
+      "target_bbox_width_mm": 12.698717996884056,
+      "text": "一层消防平面面",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 388.3902899346991
+        },
+        {
+          "code": 1040,
+          "value": 22.202345218413967
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.80584
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.44786120836200993
+    },
+    {
+      "baseline_offset_from_bbox_bottom_left_mm": 0.9244951754090424,
+      "candidate_bbox_px": [
+        2930,
+        2600,
+        216,
+        54
+      ],
+      "candidate_quad_px": [
+        [
+          2930.0,
+          2600.0
+        ],
+        [
+          3146.0,
+          2600.0
+        ],
+        [
+          3146.0,
+          2654.0
+        ],
+        [
+          2930.0,
+          2654.0
+        ]
+      ],
+      "confidence": 0.99999,
+      "font_family": "",
+      "font_file": "",
+      "font_match_score": 0.0,
+      "height_mm": 4.456109862344927,
+      "height_over_target_bbox": 0.780000000000002,
+      "index": 37,
+      "insert_mm": [
+        310.28894134786316,
+        16.659333877394136,
+        0.0
+      ],
+      "ocr_text_line_xdata": [
+        {
+          "code": 1070,
+          "value": 37
+        },
+        {
+          "code": 1000,
+          "value": "173-177"
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 0
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        }
+      ],
+      "rotation_deg": 0.0,
+      "source": "rapidocr-tile",
+      "style": "wqy-unicode",
+      "target_bbox_height_mm": 5.7129613619806605,
+      "target_bbox_width_mm": 22.857692394391336,
+      "text": "173-177",
+      "text_output_contract_xdata": [
+        {
+          "code": 1000,
+          "value": "editable_text"
+        },
+        {
+          "code": 1000,
+          "value": "rapidocr-tile"
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": ""
+        },
+        {
+          "code": 1000,
+          "value": "wqy-unicode"
+        },
+        {
+          "code": 1040,
+          "value": 310.28894134786316
+        },
+        {
+          "code": 1040,
+          "value": 16.659333877394136
+        },
+        {
+          "code": 1040,
+          "value": 0.0
+        },
+        {
+          "code": 1040,
+          "value": 0.99999
+        },
+        {
+          "code": 1070,
+          "value": 1
+        }
+      ],
+      "width_factor": 0.8298301929650124
+    }
+  ],
+  "finding": "The millimetre conversion is internally consistent; perceived undersizing is driven by the 0.78 glyph-height factor, compressed width factors, sparse native-TEXT routing, and font/viewer metrics, not by a gross page-scale conversion error.",
+  "historical_normalized_comparison": {
+    "common_text_pair_count": 30,
+    "historical_coordinate_extent": [
+      4781.375,
+      3386.4664699632776
+    ],
+    "historical_dxf": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\cad_photo_to_dxf\\validation\\user-pdf-check\\environment-page-001.dxf",
+    "historical_text_count": 214,
+    "normalized_height_ratio_current_over_historical": {
+      "count": 30,
+      "maximum": 1.3423976176173456,
+      "mean": 1.005370297232547,
+      "median": 0.991723159753134,
+      "minimum": 0.8816287056243646
+    },
+    "pairs": [
+      {
+        "current_normalized_height": 0.00946129147342133,
+        "current_normalized_insert": [
+          0.7461125126135216,
+          0.8691870139136638
+        ],
+        "current_over_historical_normalized_height": 1.0015891320364225,
+        "historical_normalized_height": 0.009446280087109883,
+        "historical_normalized_insert": [
+          0.7472467229614913,
+          0.8697557841262015
+        ],
+        "normalized_position_delta_as_current_mm": 0.5047915481250637,
+        "text": "附楼3"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.44793895055499494,
+          0.8564206921155905
+        ],
+        "current_over_historical_normalized_height": 0.986554441928649,
+        "historical_normalized_height": 0.00817990851523102,
+        "historical_normalized_insert": [
+          0.44880282845944497,
+          0.8562159073559273
+        ],
+        "normalized_position_delta_as_current_mm": 0.367433529489776,
+        "text": "49100"
+      },
+      {
+        "current_normalized_height": 0.007513378523011039,
+        "current_normalized_insert": [
+          0.5939808274470233,
+          0.8398978237602568
+        ],
+        "current_over_historical_normalized_height": 0.9594194737676884,
+        "historical_normalized_height": 0.007831171587028169,
+        "historical_normalized_insert": [
+          0.595146793547881,
+          0.8393206385506666
+        ],
+        "normalized_position_delta_as_current_mm": 0.5181849360158687,
+        "text": "7600"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.7256786074672048,
+          0.8392961826614341
+        ],
+        "current_over_historical_normalized_height": 0.9732382727725762,
+        "historical_normalized_height": 0.008291828739206296,
+        "historical_normalized_insert": [
+          0.7271381140362343,
+          0.8388226563574402
+        ],
+        "normalized_position_delta_as_current_mm": 0.628132393864131,
+        "text": "1800"
+      },
+      {
+        "current_normalized_height": 0.007791651801641167,
+        "current_normalized_insert": [
+          0.3722325933400606,
+          0.8392402425972172
+        ],
+        "current_over_historical_normalized_height": 0.9142816206474974,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.3728299913727746,
+          0.8382783722145589
+        ],
+        "normalized_position_delta_as_current_mm": 0.3796834914179407,
+        "text": "7600"
+      },
+      {
+        "current_normalized_height": 0.007791651801641092,
+        "current_normalized_insert": [
+          0.4827421796165489,
+          0.8388834819835891
+        ],
+        "current_over_historical_normalized_height": 0.939678332332141,
+        "historical_normalized_height": 0.008291828739206296,
+        "historical_normalized_insert": [
+          0.48348435335023915,
+          0.8382320702649041
+        ],
+        "normalized_position_delta_as_current_mm": 0.36638879264981056,
+        "text": "11400"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.27158173562058524,
+          0.825025758116304
+        ],
+        "current_over_historical_normalized_height": 0.9469345356706147,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.27243836762437584,
+          0.8241043059936934
+        ],
+        "normalized_position_delta_as_current_mm": 0.4514338372449597,
+        "text": "2000"
+      },
+      {
+        "current_normalized_height": 0.007791651801641167,
+        "current_normalized_insert": [
+          0.6605827447023209,
+          0.824969818052087
+        ],
+        "current_over_historical_normalized_height": 0.9949535283516883,
+        "historical_normalized_height": 0.007831171587028169,
+        "historical_normalized_insert": [
+          0.6620773313115996,
+          0.8245559862372651
+        ],
+        "normalized_position_delta_as_current_mm": 0.6388483956600578,
+        "text": "3800"
+      },
+      {
+        "current_normalized_height": 0.007791651801641092,
+        "current_normalized_insert": [
+          0.6991775983854692,
+          0.8246130574384588
+        ],
+        "current_over_historical_normalized_height": 0.9949535283516787,
+        "historical_normalized_height": 0.007831171587028169,
+        "historical_normalized_insert": [
+          0.7007649473216386,
+          0.824260693190997
+        ],
+        "normalized_position_delta_as_current_mm": 0.6740116295574617,
+        "text": "2700"
+      },
+      {
+        "current_normalized_height": 0.008626471637531174,
+        "current_normalized_insert": [
+          0.7117785065590314,
+          0.7148986086336069
+        ],
+        "current_over_historical_normalized_height": 0.9856024613558882,
+        "historical_normalized_height": 0.008752485891384424,
+        "historical_normalized_insert": [
+          0.7133052730647564,
+          0.714596887777909
+        ],
+        "normalized_position_delta_as_current_mm": 0.6466692719629895,
+        "text": "肥电间"
+      },
+      {
+        "current_normalized_height": 0.014748483767392101,
+        "current_normalized_insert": [
+          0.1082996972754793,
+          0.6340743489118802
+        ],
+        "current_over_historical_normalized_height": 1.016386767624563,
+        "historical_normalized_height": 0.014510700293611019,
+        "historical_normalized_insert": [
+          0.10841442053802515,
+          0.6342535557493033
+        ],
+        "normalized_position_delta_as_current_mm": 0.07169454937245703,
+        "text": "2100"
+      },
+      {
+        "current_normalized_height": 0.01113093114520157,
+        "current_normalized_insert": [
+          0.45831231079717455,
+          0.5445137352836247
+        ],
+        "current_over_historical_normalized_height": 1.3423976176173456,
+        "historical_normalized_height": 0.008291828739206296,
+        "historical_normalized_insert": [
+          0.46049515045358297,
+          0.5467778335983581
+        ],
+        "normalized_position_delta_as_current_mm": 1.1354383220534612,
+        "text": "±0.000"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.3093768920282543,
+          0.47754092044238317
+        ],
+        "current_over_historical_normalized_height": 1.251306350707598,
+        "historical_normalized_height": 0.0064492001304937855,
+        "historical_normalized_insert": [
+          0.309827194060286,
+          0.47819472431320437
+        ],
+        "normalized_position_delta_as_current_mm": 0.2706860832974301,
+        "text": "FK1"
+      },
+      {
+        "current_normalized_height": 0.015861576881912236,
+        "current_normalized_insert": [
+          0.795734106962664,
+          0.38777652515162325
+        ],
+        "current_over_historical_normalized_height": 1.0434090573298458,
+        "historical_normalized_height": 0.01520168602187821,
+        "historical_normalized_insert": [
+          0.7973375859454654,
+          0.3878227679644623
+        ],
+        "normalized_position_delta_as_current_mm": 0.6727687139686157,
+        "text": "380"
+      },
+      {
+        "current_normalized_height": 0.01085265786657152,
+        "current_normalized_insert": [
+          0.35378657921291623,
+          0.3881966464502319
+        ],
+        "current_over_historical_normalized_height": 0.9816282578826829,
+        "historical_normalized_height": 0.011055771652275061,
+        "historical_normalized_insert": [
+          0.3541889100938537,
+          0.3878752120094795
+        ],
+        "normalized_position_delta_as_current_mm": 0.1938278241734233,
+        "text": "153"
+      },
+      {
+        "current_normalized_height": 0.011687477702461637,
+        "current_normalized_insert": [
+          0.08662966700302724,
+          0.3562560114163396
+        ],
+        "current_over_historical_normalized_height": 1.1493890437307164,
+        "historical_normalized_height": 0.010168426231492623,
+        "historical_normalized_insert": [
+          0.08720043920420381,
+          0.35867840735277434
+        ],
+        "normalized_position_delta_as_current_mm": 0.7571999191331062,
+        "text": "A"
+      },
+      {
+        "current_normalized_height": 0.010017838030681398,
+        "current_normalized_insert": [
+          0.24103430877901108,
+          0.2931305030324652
+        ],
+        "current_over_historical_normalized_height": 1.011480995600045,
+        "historical_normalized_height": 0.009904128771829742,
+        "historical_normalized_insert": [
+          0.24159577527384907,
+          0.2931499274554356
+        ],
+        "normalized_position_delta_as_current_mm": 0.23559494619502352,
+        "text": "1. 火灾自动报警系统的设备安装应按照"
+      },
+      {
+        "current_normalized_height": 0.008626471637531212,
+        "current_normalized_insert": [
+          0.050537336024217956,
+          0.2767965750981092
+        ],
+        "current_over_historical_normalized_height": 1.0122403657168626,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.05028469843925649,
+          0.276926291259033
+        ],
+        "normalized_position_delta_as_current_mm": 0.11274191141167239,
+        "text": "FX"
+      },
+      {
+        "current_normalized_height": 0.008069925080271106,
+        "current_normalized_insert": [
+          0.05253531786074672,
+          0.2178191937210132
+        ],
+        "current_over_historical_normalized_height": 1.0010450805660738,
+        "historical_normalized_height": 0.008061500163117232,
+        "historical_normalized_insert": [
+          0.05255392015895009,
+          0.2180703711523853
+        ],
+        "normalized_position_delta_as_current_mm": 0.07489304804471449,
+        "text": "G"
+      },
+      {
+        "current_normalized_height": 0.007791651801641111,
+        "current_normalized_insert": [
+          0.48223763874873865,
+          0.2013522654298965
+        ],
+        "current_over_historical_normalized_height": 0.9139478803112582,
+        "historical_normalized_height": 0.00852526929543023,
+        "historical_normalized_insert": [
+          0.48288762123866047,
+          0.20102711957676114
+        ],
+        "normalized_position_delta_as_current_mm": 0.2892020049808871,
+        "text": "11400"
+      },
+      {
+        "current_normalized_height": 0.008069925080271125,
+        "current_normalized_insert": [
+          0.21022199798183652,
+          0.20069468426685694
+        ],
+        "current_over_historical_normalized_height": 0.9220152057845438,
+        "historical_normalized_height": 0.008752485891384424,
+        "historical_normalized_insert": [
+          0.21095187053933231,
+          0.19990110813273188
+        ],
+        "normalized_position_delta_as_current_mm": 0.3861597287629161,
+        "text": "8400"
+      },
+      {
+        "current_normalized_height": 0.007791651801641092,
+        "current_normalized_insert": [
+          0.7249041372351159,
+          0.18422775597574026
+        ],
+        "current_over_historical_normalized_height": 0.9142816206474886,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.726075658152728,
+          0.18361368863833538
+        ],
+        "normalized_position_delta_as_current_mm": 0.5240840414012012,
+        "text": "1800"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.3717255297679112,
+          0.18357017481270066
+        ],
+        "current_over_historical_normalized_height": 0.9469345356706147,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.37220464824449034,
+          0.18331839559206736
+        ],
+        "normalized_position_delta_as_current_mm": 0.21440170814088857,
+        "text": "7600"
+      },
+      {
+        "current_normalized_height": 0.007513378523011058,
+        "current_normalized_insert": [
+          0.48223763874873865,
+          0.18417181591152337
+        ],
+        "current_over_historical_normalized_height": 0.8816287056243646,
+        "historical_normalized_height": 0.00852215731529536,
+        "historical_normalized_insert": [
+          0.48306397218373376,
+          0.18331839559206736
+        ],
+        "normalized_position_delta_as_current_mm": 0.4291869104803504,
+        "text": "11400"
+      },
+      {
+        "current_normalized_height": 0.008069925080271144,
+        "current_normalized_insert": [
+          0.4466775983854692,
+          0.17001327149482698
+        ],
+        "current_over_historical_normalized_height": 0.9732382727725762,
+        "historical_normalized_height": 0.008291828739206296,
+        "historical_normalized_insert": [
+          0.4477247653656113,
+          0.1693933204678151
+        ],
+        "normalized_position_delta_as_current_mm": 0.47618648407767916,
+        "text": "49100"
+      },
+      {
+        "current_normalized_height": 0.015026757046022117,
+        "current_normalized_insert": [
+          0.739952068617558,
+          0.12860049946485907
+        ],
+        "current_over_historical_normalized_height": 1.0037003725569689,
+        "historical_normalized_height": 0.014971357445789146,
+        "historical_normalized_insert": [
+          0.7413369585108887,
+          0.12909975748401278
+        ],
+        "normalized_position_delta_as_current_mm": 0.5995039464147648,
+        "text": "164-165"
+      },
+      {
+        "current_normalized_height": 0.005008919015340699,
+        "current_normalized_insert": [
+          0.9022124117053482,
+          0.12480285408490903
+        ],
+        "current_over_historical_normalized_height": 0.9884927911545893,
+        "historical_normalized_height": 0.005067228673959403,
+        "historical_normalized_insert": [
+          0.904020287051319,
+          0.12474642927871096
+        ],
+        "normalized_position_delta_as_current_mm": 0.7585538985681805,
+        "text": "CLENT"
+      },
+      {
+        "current_normalized_height": 0.014748483767392084,
+        "current_normalized_insert": [
+          0.739949545913219,
+          0.10464159828754906
+        ],
+        "current_over_historical_normalized_height": 1.000505724380428,
+        "historical_normalized_height": 0.014741028869700083,
+        "historical_normalized_insert": [
+          0.7413369585108887,
+          0.10454413269411142
+        ],
+        "normalized_position_delta_as_current_mm": 0.5827104489364401,
+        "text": "166-170"
+      },
+      {
+        "current_normalized_height": 0.008626471637531212,
+        "current_normalized_insert": [
+          0.9258829465186681,
+          0.07487006778451659
+        ],
+        "current_over_historical_normalized_height": 1.0403581536534423,
+        "historical_normalized_height": 0.008291828739206296,
+        "historical_normalized_insert": [
+          0.9278586180753443,
+          0.07460425261577731
+        ],
+        "normalized_position_delta_as_current_mm": 0.8324969358718368,
+        "text": "一层消防平面面"
+      },
+      {
+        "current_normalized_height": 0.015026757046022117,
+        "current_normalized_insert": [
+          0.7396972754793139,
+          0.05617809489832322
+        ],
+        "current_over_historical_normalized_height": 1.069516790429557,
+        "historical_normalized_height": 0.01405004314143289,
+        "historical_normalized_insert": [
+          0.7415377375754882,
+          0.056567753349726003
+        ],
+        "normalized_position_delta_as_current_mm": 0.7806382549961717,
+        "text": "173-177"
+      }
+    ],
+    "position_delta_mm": {
+      "count": 30,
+      "maximum": 1.1354383220534612,
+      "mean": 0.4857849168756427,
+      "median": 0.4904890161013714,
+      "minimum": 0.07169454937245703
+    }
+  },
+  "native_text_count": 37,
+  "style_table": [
+    {
+      "bigfont": "",
+      "font": "txt",
+      "last_height": 2.5,
+      "name": "Standard",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-Light.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-Light",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-LightItalic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-Light-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-Regular.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-Italic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-SemiBold.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-SemiBold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-SemiBoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-SemiBoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-Bold.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-Bold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-BoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-BoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-ExtraBold.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-ExtraBold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSans-ExtraBoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSans-ExtraBoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSansCondensed-Bold.ttf",
+      "last_height": 2.5,
+      "name": "OpenSansCondensed-Bold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSansCondensed-Light.ttf",
+      "last_height": 2.5,
+      "name": "OpenSansCondensed-Light",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "OpenSansCondensed-LightItalic.ttf",
+      "last_height": 2.5,
+      "name": "OpenSansCondensed-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSans-Regular.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSans",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSans-Bold.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSans-Bold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSans-BoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSans-BoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSans-Italic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSans-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSerif-Regular.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSerif",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSerif-Bold.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSerif-Bold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSerif-BoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSerif-BoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationSerif-Italic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationSerif-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationMono-Regular.ttf",
+      "last_height": 2.5,
+      "name": "LiberationMono",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationMono-Bold.ttf",
+      "last_height": 2.5,
+      "name": "LiberationMono-Bold",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationMono-BoldItalic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationMono-BoldItalic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "LiberationMono-Italic.ttf",
+      "last_height": 2.5,
+      "name": "LiberationMono-Italic",
+      "oblique": 0.0,
+      "width": 1.0
+    },
+    {
+      "bigfont": "",
+      "font": "wqy-unicode.lff",
+      "last_height": 2.5,
+      "name": "wqy-unicode",
+      "oblique": 0.0,
+      "width": 1.0
+    }
+  ],
+  "summary": {
+    "baseline_offset_mm": {
+      "count": 37,
+      "maximum": 0.946056457966515,
+      "mean": 0.5554525647682264,
+      "median": 0.48510828243231047,
+      "minimum": 0.3011536169095443
+    },
+    "expected_height_factor_from_code": 0.78,
+    "expected_width_fill_factor_from_code": 0.98,
+    "height_mm": {
+      "count": 37,
+      "maximum": 4.70367152136409,
+      "mean": 2.709796537912456,
+      "median": 2.3930960371852406,
+      "minimum": 1.4853699541149736
+    },
+    "height_over_candidate_bbox": {
+      "count": 37,
+      "maximum": 0.780000000000015,
+      "mean": 0.7800000000000004,
+      "median": 0.78,
+      "minimum": 0.7799999999999855
+    },
+    "rotation_deg": {
+      "count": 37,
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "minimum": 0.0
+    },
+    "width_factor": {
+      "count": 37,
+      "maximum": 1.0845945236194574,
+      "mean": 0.598576035848029,
+      "median": 0.6029096764452635,
+      "minimum": 0.25
+    }
+  }
+}

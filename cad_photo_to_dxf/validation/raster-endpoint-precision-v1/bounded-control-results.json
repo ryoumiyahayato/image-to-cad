@@ -1,0 +1,5241 @@
+{
+  "all_bounded_endpoint_observations": [
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-000775:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 1,
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.118,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 2.5,
+        "local_ink_occupancy": 0.082,
+        "nearest_continuing_axial_ridge_px": 6.0,
+        "oblique_support": 1.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 1,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2162.0,
+        279.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2162.0,
+            279.0
+          ],
+          [
+            2209.0,
+            278.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 1.219,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -47.0,
+          1.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000775",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000775"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          47.0,
+          -1.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000801:start",
+          "raw-hough-001280:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001280"
+        ],
+        "raw_observation_id": "raw-hough-000775"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001115:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 2,
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.118,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.118,
+        "local_gap_length_stroke_widths": 12.0,
+        "local_ink_occupancy": 0.1272,
+        "nearest_continuing_axial_ridge_px": 25.0,
+        "oblique_support": 1.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 2,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2123.0,
+        274.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2123.0,
+            274.0
+          ],
+          [
+            2157.0,
+            274.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -34.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001115",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001115"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          34.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-001150:start",
+          "raw-hough-001164:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001150",
+          "STROKE-HYPOTHESIS:raw-hough-001164"
+        ],
+        "raw_observation_id": "raw-hough-001115"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001115:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.6,
+        "branch_orientation_count": 2,
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.1177,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 1.0,
+        "ridge_branch_count": 2,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2157.0,
+        274.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2123.0,
+            274.0
+          ],
+          [
+            2157.0,
+            274.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          34.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001115",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001115"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -34.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-001150:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001150"
+        ],
+        "raw_observation_id": "raw-hough-001115"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001164:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 4,
+        "branch_orientations": [
+          {
+            "angle_from_forward_deg": 65,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 70,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 75,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 80,
+            "support": 1.0
+          }
+        ],
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 1.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "PERSISTENT_TURN_NO_AXIAL_RESUMPTION"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 9.0,
+        "local_ink_occupancy": 0.1219,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 1.0,
+        "orthogonal_support": 1.0,
+        "ridge_branch_count": 4,
+        "status": "SOURCE_CORNER_TERMINATION",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2122.0,
+        275.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2122.0,
+            275.0
+          ],
+          [
+            2152.0,
+            275.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -30.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001164",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001164"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          30.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-001115:start",
+          "raw-hough-001150:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001150"
+        ],
+        "raw_observation_id": "raw-hough-001164"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001164:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 0.235,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "TERMINATION_NOT_INDEPENDENTLY_RESOLVED"
+        ],
+        "forward_support": 0.235,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.097,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        2152.0,
+        275.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2122.0,
+            275.0
+          ],
+          [
+            2152.0,
+            275.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          30.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001164",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001164"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -30.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001115",
+          "STROKE-HYPOTHESIS:raw-hough-001150"
+        ],
+        "raw_observation_id": "raw-hough-001164"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001280:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 0.176,
+        "corner_strength": 0.529,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "TERMINATION_NOT_INDEPENDENTLY_RESOLVED"
+        ],
+        "forward_support": 0.176,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 5.0,
+        "local_ink_occupancy": 0.1108,
+        "nearest_continuing_axial_ridge_px": 6.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.529,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2162.0,
+        278.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2162.0,
+            278.0
+          ],
+          [
+            2192.0,
+            278.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -30.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001280",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001280"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          30.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000775:start",
+          "raw-hough-000801:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000775"
+        ],
+        "raw_observation_id": "raw-hough-001280"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001280:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.0526,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        2192.0,
+        278.0
+      ],
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2162.0,
+            278.0
+          ],
+          [
+            2192.0,
+            278.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          30.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001280",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001280"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -30.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000775",
+          "STROKE-HYPOTHESIS:raw-hough-000801"
+        ],
+        "raw_observation_id": "raw-hough-001280"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000415:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.4,
+        "branch_orientation_count": 0,
+        "confidence": 0.529,
+        "continuation_strength": 0.059,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.235,
+        "incoming_support": 0.059,
+        "local_gap_length_stroke_widths": 2.5,
+        "local_ink_occupancy": 0.1189,
+        "nearest_continuing_axial_ridge_px": 6.0,
+        "oblique_support": 0.471,
+        "orthogonal_support": 0.529,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        793.0,
+        2034.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            793.0,
+            2034.0
+          ],
+          [
+            793.0,
+            1969.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          65.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000415",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000415"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          -65.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000425:start",
+          "raw-hough-000683:start",
+          "raw-hough-000959:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000425",
+          "STROKE-HYPOTHESIS:raw-hough-000683",
+          "STROKE-HYPOTHESIS:raw-hough-000959",
+          "STROKE-HYPOTHESIS:raw-hough-001031"
+        ],
+        "raw_observation_id": "raw-hough-000415"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000601:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.706,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "TERMINATION_NOT_INDEPENDENTLY_RESOLVED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 11.0,
+        "local_ink_occupancy": 0.108,
+        "nearest_continuing_axial_ridge_px": 12.0,
+        "oblique_support": 0.706,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        791.0,
+        2059.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            791.0,
+            2059.0
+          ],
+          [
+            792.0,
+            2138.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.725,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -1.0,
+          -79.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000601",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000601"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          1.0,
+          79.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000624:start",
+          "raw-hough-000693:start",
+          "raw-hough-001078:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000624",
+          "STROKE-HYPOTHESIS:raw-hough-000943",
+          "STROKE-HYPOTHESIS:raw-hough-001078"
+        ],
+        "raw_observation_id": "raw-hough-000601"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000624:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.6,
+        "branch_orientation_count": 0,
+        "confidence": 0.412,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.059,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 5.5,
+        "local_ink_occupancy": 0.0832,
+        "nearest_continuing_axial_ridge_px": 12.0,
+        "oblique_support": 0.412,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        792.0,
+        2059.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            792.0,
+            2059.0
+          ],
+          [
+            793.0,
+            2138.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.725,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -1.0,
+          -79.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000624",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000624"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          1.0,
+          79.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000601:start",
+          "raw-hough-000693:start",
+          "raw-hough-001078:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000601",
+          "STROKE-HYPOTHESIS:raw-hough-000943",
+          "STROKE-HYPOTHESIS:raw-hough-001078"
+        ],
+        "raw_observation_id": "raw-hough-000624"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000683:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.4,
+        "branch_orientation_count": 0,
+        "confidence": 0.235,
+        "continuation_strength": 0.059,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.235,
+        "incoming_support": 0.059,
+        "local_gap_length_stroke_widths": 2.5,
+        "local_ink_occupancy": 0.1213,
+        "nearest_continuing_axial_ridge_px": 6.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        792.0,
+        2034.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            792.0,
+            2034.0
+          ],
+          [
+            792.0,
+            1969.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          65.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000683",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000683"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          -65.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000415:start",
+          "raw-hough-000425:start",
+          "raw-hough-000959:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000415",
+          "STROKE-HYPOTHESIS:raw-hough-000425",
+          "STROKE-HYPOTHESIS:raw-hough-000959",
+          "STROKE-HYPOTHESIS:raw-hough-001031"
+        ],
+        "raw_observation_id": "raw-hough-000683"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000693:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.235,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 13.0,
+        "local_ink_occupancy": 0.0868,
+        "nearest_continuing_axial_ridge_px": 27.0,
+        "oblique_support": 0.235,
+        "orthogonal_support": 0.235,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        790.0,
+        2060.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            790.0,
+            2060.0
+          ],
+          [
+            791.0,
+            2138.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.735,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -1.0,
+          -78.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000693",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000693"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          1.0,
+          78.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000601:start",
+          "raw-hough-000624:start",
+          "raw-hough-001078:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000601",
+          "STROKE-HYPOTHESIS:raw-hough-000624",
+          "STROKE-HYPOTHESIS:raw-hough-000943",
+          "STROKE-HYPOTHESIS:raw-hough-001078"
+        ],
+        "raw_observation_id": "raw-hough-000693"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000959:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.235,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 13.0,
+        "local_ink_occupancy": 0.0868,
+        "nearest_continuing_axial_ridge_px": 27.0,
+        "oblique_support": 0.235,
+        "orthogonal_support": 0.235,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        790.0,
+        1970.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            790.0,
+            1970.0
+          ],
+          [
+            791.0,
+            2034.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.895,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -1.0,
+          -64.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000959",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000959"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          1.0,
+          64.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000415:end",
+          "raw-hough-000425:end",
+          "raw-hough-000683:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000415",
+          "STROKE-HYPOTHESIS:raw-hough-000425",
+          "STROKE-HYPOTHESIS:raw-hough-000683"
+        ],
+        "raw_observation_id": "raw-hough-000959"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-000959:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 0.471,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 1.0,
+        "evidence_reasons": [
+          "SHORT_AXIAL_GAP_WITH_ALIGNED_RESUMPTION"
+        ],
+        "forward_support": 0.471,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 5.0,
+        "local_ink_occupancy": 0.1773,
+        "nearest_continuing_axial_ridge_px": 6.0,
+        "oblique_support": 0.706,
+        "orthogonal_support": 0.529,
+        "ridge_branch_count": 0,
+        "status": "PROBABLE_RASTER_DROPOUT",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        791.0,
+        2034.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            790.0,
+            1970.0
+          ],
+          [
+            791.0,
+            2034.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.895,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          1.0,
+          64.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000959",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000959"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -1.0,
+          -64.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000415:start",
+          "raw-hough-000425:start",
+          "raw-hough-000683:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000415",
+          "STROKE-HYPOTHESIS:raw-hough-000425",
+          "STROKE-HYPOTHESIS:raw-hough-000683",
+          "STROKE-HYPOTHESIS:raw-hough-001031"
+        ],
+        "raw_observation_id": "raw-hough-000959"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-001001:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.294,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0844,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.294,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        797.0,
+        2065.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            797.0,
+            2065.0
+          ],
+          [
+            797.0,
+            2121.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -56.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001001",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001001"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          56.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000601",
+          "STROKE-HYPOTHESIS:raw-hough-000624",
+          "STROKE-HYPOTHESIS:raw-hough-000693",
+          "STROKE-HYPOTHESIS:raw-hough-000943",
+          "STROKE-HYPOTHESIS:raw-hough-001078"
+        ],
+        "raw_observation_id": "raw-hough-001001"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-001031:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.0822,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.471,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 3.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        795.0,
+        2020.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            795.0,
+            2020.0
+          ],
+          [
+            795.0,
+            2051.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -31.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001031",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001031"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          31.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000415",
+          "STROKE-HYPOTHESIS:raw-hough-000425",
+          "STROKE-HYPOTHESIS:raw-hough-000683",
+          "STROKE-HYPOTHESIS:raw-hough-000959"
+        ],
+        "raw_observation_id": "raw-hough-001031"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-001031:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.0627,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 3.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        795.0,
+        2051.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            795.0,
+            2020.0
+          ],
+          [
+            795.0,
+            2051.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          31.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001031",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001031"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          -31.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000943"
+        ],
+        "raw_observation_id": "raw-hough-001031"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-001078:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "branch_orientations": [],
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.235,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_STOPS_FOR_MULTIPLE_STROKE_WIDTHS"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 11.0,
+        "local_ink_occupancy": 0.108,
+        "nearest_continuing_axial_ridge_px": 12.0,
+        "oblique_support": 0.235,
+        "orthogonal_support": 0.176,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_ENDPOINT_TERMINATION",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        794.0,
+        2059.0
+      ],
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            794.0,
+            2125.0
+          ],
+          [
+            794.0,
+            2059.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -66.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001078",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001078"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          66.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000601:start",
+          "raw-hough-000624:start",
+          "raw-hough-000693:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000601",
+          "STROKE-HYPOTHESIS:raw-hough-000624",
+          "STROKE-HYPOTHESIS:raw-hough-000943"
+        ],
+        "raw_observation_id": "raw-hough-001078"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-012B61A286913239D6AA",
+      "endpoint_id": "raw-hough-002339:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 0.588,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "TERMINATION_NOT_INDEPENDENTLY_RESOLVED"
+        ],
+        "forward_support": 0.588,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.2473,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        507.0,
+        269.0
+      ],
+      "role": "ADDITIONAL_01",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1839,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-002520",
+          "raw-hough-002624"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            508.0,
+            217.0
+          ],
+          [
+            508.0,
+            341.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            507.0,
+            269.0
+          ],
+          [
+            507.0,
+            134.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          135.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-002339",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-002339"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          -135.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-002520:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [],
+        "raw_observation_id": "raw-hough-002339"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "endpoint_id": "raw-hough-000744:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.1053,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        380.0,
+        2073.0
+      ],
+      "role": "ADDITIONAL_02",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000645",
+          "raw-hough-000993"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            338.0,
+            2074.0
+          ],
+          [
+            437.0,
+            2074.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            380.0,
+            2073.0
+          ],
+          [
+            431.0,
+            2075.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 2.246,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -51.0,
+          -2.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000744",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000744"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          51.0,
+          2.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000366"
+        ],
+        "raw_observation_id": "raw-hough-000744"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "endpoint_id": "raw-hough-000744:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.059,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.059,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 4.0,
+        "local_ink_occupancy": 0.0595,
+        "nearest_continuing_axial_ridge_px": 9.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        431.0,
+        2075.0
+      ],
+      "role": "ADDITIONAL_02",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000645",
+          "raw-hough-000993"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            338.0,
+            2074.0
+          ],
+          [
+            437.0,
+            2074.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            380.0,
+            2073.0
+          ],
+          [
+            431.0,
+            2075.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 2.246,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          51.0,
+          2.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000744",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000744"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -51.0,
+          -2.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000366"
+        ],
+        "raw_observation_id": "raw-hough-000744"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "endpoint_id": "raw-hough-001081:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.059,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.059,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 4.5,
+        "local_ink_occupancy": 0.0725,
+        "nearest_continuing_axial_ridge_px": 10.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        339.0,
+        2077.0
+      ],
+      "role": "ADDITIONAL_02",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000645",
+          "raw-hough-000993"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            338.0,
+            2074.0
+          ],
+          [
+            437.0,
+            2074.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            339.0,
+            2077.0
+          ],
+          [
+            373.0,
+            2077.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -34.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001081",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001081"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          34.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000366:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000366"
+        ],
+        "raw_observation_id": "raw-hough-001081"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "endpoint_id": "raw-hough-001081:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.069,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        373.0,
+        2077.0
+      ],
+      "role": "ADDITIONAL_02",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000645",
+          "raw-hough-000993"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            338.0,
+            2074.0
+          ],
+          [
+            437.0,
+            2074.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            339.0,
+            2077.0
+          ],
+          [
+            373.0,
+            2077.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          34.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001081",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001081"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -34.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000366"
+        ],
+        "raw_observation_id": "raw-hough-001081"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-0AC56610C56820F45E40",
+      "endpoint_id": "raw-hough-000709:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0666,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        1383.0,
+        1607.0
+      ],
+      "role": "ADDITIONAL_04",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1839,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001034",
+          "raw-hough-001027"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            1382.0,
+            1607.0
+          ],
+          [
+            1383.0,
+            1753.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1381.0,
+            1757.0
+          ],
+          [
+            1383.0,
+            1607.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 1.156,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          2.0,
+          -150.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000709",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000709"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -2.0,
+          150.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-001034:end"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001034"
+        ],
+        "raw_observation_id": "raw-hough-000709"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-0AC56610C56820F45E40",
+      "endpoint_id": "raw-hough-001240:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.1108,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        1382.0,
+        1724.0
+      ],
+      "role": "ADDITIONAL_04",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1839,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001034",
+          "raw-hough-001027"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            1382.0,
+            1607.0
+          ],
+          [
+            1383.0,
+            1753.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1382.0,
+            1757.0
+          ],
+          [
+            1382.0,
+            1724.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.392,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -33.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001240",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001240"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          33.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000709",
+          "STROKE-HYPOTHESIS:raw-hough-001027"
+        ],
+        "raw_observation_id": "raw-hough-001240"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "endpoint_id": "raw-hough-000426:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0345,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2001.0,
+        1701.0
+      ],
+      "role": "ADDITIONAL_06",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000508",
+          "raw-hough-001377"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2000.0,
+            1592.0
+          ],
+          [
+            2000.0,
+            1823.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1999.0,
+            1530.0
+          ],
+          [
+            2001.0,
+            1701.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.67,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          2.0,
+          171.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000426",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000426"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -2.0,
+          -171.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000484",
+          "STROKE-HYPOTHESIS:raw-hough-000508"
+        ],
+        "raw_observation_id": "raw-hough-000426"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "endpoint_id": "raw-hough-000484:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0345,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        1999.0,
+        1680.0
+      ],
+      "role": "ADDITIONAL_06",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000508",
+          "raw-hough-001377"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2000.0,
+            1592.0
+          ],
+          [
+            2000.0,
+            1823.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1999.0,
+            1680.0
+          ],
+          [
+            2001.0,
+            1823.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.801,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -2.0,
+          -143.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000484",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000484"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          2.0,
+          143.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000426",
+          "STROKE-HYPOTHESIS:raw-hough-000508"
+        ],
+        "raw_observation_id": "raw-hough-000484"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "endpoint_id": "raw-hough-000521:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0345,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        1999.0,
+        1777.0
+      ],
+      "role": "ADDITIONAL_06",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000508",
+          "raw-hough-001377"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2000.0,
+            1592.0
+          ],
+          [
+            2000.0,
+            1823.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1999.0,
+            1777.0
+          ],
+          [
+            1999.0,
+            1823.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -46.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000521",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000521"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          46.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000484"
+        ],
+        "raw_observation_id": "raw-hough-000521"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "endpoint_id": "raw-hough-000555:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.0345,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2001.0,
+        1631.0
+      ],
+      "role": "ADDITIONAL_06",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000508",
+          "raw-hough-001377"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2000.0,
+            1592.0
+          ],
+          [
+            2000.0,
+            1823.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1999.0,
+            1460.0
+          ],
+          [
+            2001.0,
+            1631.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.67,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          2.0,
+          171.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000555",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000555"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -2.0,
+          -171.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000426",
+          "STROKE-HYPOTHESIS:raw-hough-000508"
+        ],
+        "raw_observation_id": "raw-hough-000555"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "endpoint_id": "raw-hough-000124:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.1034,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        947.0,
+        291.0
+      ],
+      "role": "ADDITIONAL_07",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000131",
+          "raw-hough-000171"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            909.0,
+            292.0
+          ],
+          [
+            1166.0,
+            292.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            834.0,
+            292.0
+          ],
+          [
+            947.0,
+            291.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.507,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          113.0,
+          -1.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000124",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000124"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -113.0,
+          1.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000131"
+        ],
+        "raw_observation_id": "raw-hough-000124"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "endpoint_id": "raw-hough-000289:start",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.1034,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        1085.0,
+        293.0
+      ],
+      "role": "ADDITIONAL_07",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000131",
+          "raw-hough-000171"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            909.0,
+            292.0
+          ],
+          [
+            1166.0,
+            292.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1085.0,
+            293.0
+          ],
+          [
+            1255.0,
+            293.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -170.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000289",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000289"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          170.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000171"
+        ],
+        "raw_observation_id": "raw-hough-000289"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "endpoint_id": "raw-hough-000580:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 0,
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_AFTER_DETECTOR_ENDPOINT"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.1053,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_RIDGE_CONTINUES",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        1018.0,
+        292.0
+      ],
+      "role": "ADDITIONAL_07",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000131",
+          "raw-hough-000171"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            909.0,
+            292.0
+          ],
+          [
+            1166.0,
+            292.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1018.0,
+            292.0
+          ],
+          [
+            1074.0,
+            291.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 1.023,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -56.0,
+          1.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000580",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000580"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          56.0,
+          -1.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000131"
+        ],
+        "raw_observation_id": "raw-hough-000580"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "endpoint_id": "raw-hough-000580:end",
+      "measured_raster_evidence": {
+        "backward_support": 0.0,
+        "branch_orientation_count": 0,
+        "confidence": 0.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_NOT_ESTABLISHED"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 0.0,
+        "local_gap_length_stroke_widths": 7.0,
+        "local_ink_occupancy": 0.1034,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 0.0,
+        "orthogonal_support": 0.0,
+        "ridge_branch_count": 0,
+        "status": "ENDPOINT_TOPOLOGY_AMBIGUOUS",
+        "stroke_width_px": 2.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        1074.0,
+        291.0
+      ],
+      "role": "ADDITIONAL_07",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000131",
+          "raw-hough-000171"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            909.0,
+            292.0
+          ],
+          [
+            1166.0,
+            292.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1018.0,
+            292.0
+          ],
+          [
+            1074.0,
+            291.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 1.023,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          56.0,
+          -1.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000580",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000580"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          -56.0,
+          1.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000171"
+        ],
+        "raw_observation_id": "raw-hough-000580"
+      }
+    },
+    {
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "endpoint_id": "raw-hough-000622:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientation_count": 1,
+        "branch_orientations": [
+          {
+            "angle_from_forward_deg": 75,
+            "support": 1.0
+          }
+        ],
+        "confidence": 1.0,
+        "continuation_strength": 1.0,
+        "corner_strength": 0.0,
+        "crossing_strength": 1.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "AXIAL_RIDGE_PERSISTS_ACROSS_BRANCH"
+        ],
+        "forward_support": 1.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 0.0,
+        "local_ink_occupancy": 0.1634,
+        "nearest_continuing_axial_ridge_px": 1.0,
+        "oblique_support": 0.706,
+        "orthogonal_support": 1.0,
+        "ridge_branch_count": 1,
+        "status": "SOURCE_CROSSING_WITH_CONTINUATION",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 1.0
+      },
+      "pixel_location_xy": [
+        1138.0,
+        292.0
+      ],
+      "role": "ADDITIONAL_07",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000131",
+          "raw-hough-000171"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            909.0,
+            292.0
+          ],
+          [
+            1166.0,
+            292.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            1138.0,
+            292.0
+          ],
+          [
+            1251.0,
+            291.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.507,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -113.0,
+          1.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-000622",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-000622"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          113.0,
+          -1.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000171",
+          "STROKE-HYPOTHESIS:raw-hough-000289"
+        ],
+        "raw_observation_id": "raw-hough-000622"
+      }
+    }
+  ],
+  "base_head": "11c202b1e75340a199f90bf26a5c5c2f156e0c2c",
+  "baseline": {
+    "authoritative_file": "cad_photo_to_dxf/validation/raster-endpoint-topology-v1/RASTER-ENDPOINT-TOPOLOGY-V1-FINAL.md",
+    "eligible_v1_count": 122,
+    "eligible_v1_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+    "pair_admission_changed": false,
+    "prior_real_case_count": 9,
+    "prior_synthetic_case_count": 15,
+    "producer_input_is_source_pixels": true
+  },
+  "bounded_results": {
+    "additional_controls_evaluated": 8,
+    "additional_controls_with_internal_competitor_endpoints": 5,
+    "additional_controls_without_internal_competitor_endpoints": 3,
+    "additional_endpoint_observations": 16,
+    "additional_strong_termination_endpoints": 0,
+    "case15": {
+      "full_extent_status": "REJECTED",
+      "local_endpoint_status": "REJECTED",
+      "result_preserved": true
+    },
+    "case16": {
+      "full_extent_status": "REJECTED",
+      "local_endpoint_status": "SUPPORTED",
+      "result_preserved": true
+    },
+    "false_terminations_or_vetoes_observed_on_selected_direct_pair_controls": 0,
+    "known_valid_control_full_extent_status": "AMBIGUOUS",
+    "reused_development_control_count": 7,
+    "reused_development_controls_excluding_CASE15_CASE16": [
+      {
+        "candidate_id": "FRESH1-AB2943863A535D1044B9",
+        "case": "KNOWN_VALID_CONTROL",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "SUPPORTED",
+        "local_endpoint_status": "SUPPORTED",
+        "whole_pair_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-585E8520AB511B998A25",
+        "case": "NESTED_COINCIDENT_EXTENTS",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "REJECTED",
+        "local_endpoint_status": "SUPPORTED",
+        "whole_pair_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+        "case": "HOLLOW_DOUBLE_EDGE",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "REJECTED",
+        "local_endpoint_status": "SUPPORTED",
+        "whole_pair_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-316D125FE4861584BE02",
+        "case": "PIECEWISE_OFFSET",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "REJECTED",
+        "local_endpoint_status": "REJECTED",
+        "whole_pair_status": "REJECTED"
+      },
+      {
+        "candidate_id": "FRESH1-83DFE0F6BE9016CC7844",
+        "case": "SOURCE_BOUNDARY_SWITCH",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "REJECTED",
+        "local_endpoint_status": "AMBIGUOUS",
+        "whole_pair_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+        "case": "LEGITIMATE_CROSSING",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "SUPPORTED",
+        "local_endpoint_status": "SUPPORTED",
+        "whole_pair_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+        "case": "LEGITIMATE_DAMAGED_CONTINUATION",
+        "full_extent_status": "AMBIGUOUS",
+        "human_expected_pair_validity": "SUPPORTED",
+        "local_endpoint_status": "SUPPORTED",
+        "whole_pair_status": "AMBIGUOUS"
+      }
+    ],
+    "reused_development_false_full_extent_rejections_on_positive_pair_controls": 0,
+    "reused_development_positive_pair_controls": [
+      {
+        "candidate_id": "FRESH1-AB2943863A535D1044B9",
+        "case": "KNOWN_VALID_CONTROL",
+        "full_extent_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+        "case": "LEGITIMATE_CROSSING",
+        "full_extent_status": "AMBIGUOUS"
+      },
+      {
+        "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+        "case": "LEGITIMATE_DAMAGED_CONTINUATION",
+        "full_extent_status": "AMBIGUOUS"
+      }
+    ],
+    "scope_note": "Bounded negative observation only. Human DIRECT labels are pair-level (B), existing raster evidence is limited to the accepted A/B gap (A), and none verifies the complete primitive extent.",
+    "valid_pair_controls_remaining_full_extent_ambiguous": 11
+  },
+  "branch": "codex/source-support-lifecycle-instrumentation",
+  "case_results": [
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          2157,
+          276
+        ],
+        "start": [
+          2121,
+          276
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          2209,
+          276
+        ],
+        "start": [
+          2164,
+          276
+        ]
+      },
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-001150"
+        ],
+        "fragment_b": [
+          "raw-hough-000801"
+        ]
+      },
+      "case": "CASE15",
+      "competition_status": "SUPPORTED",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_UNCERTAIN",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [
+        "raw-hough-001164:start"
+      ],
+      "endpoint_observation_count": 7,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 5,
+        "SOURCE_CORNER_TERMINATION": 1,
+        "SOURCE_RIDGE_CONTINUES": 1
+      },
+      "evaluation_kind": "existing_invalid_anchor",
+      "full_extent_status": "REJECTED",
+      "local_endpoint_status": "REJECTED",
+      "prior_human_observation": {
+        "expected_pair_validity": "REJECTED",
+        "kind": "existing_human_pair_observation_from_authoritative_baseline",
+        "scope_limit": "Pair-level observation; not endpoint-level ground truth."
+      },
+      "prior_raster_gap_evidence_A": null,
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "whole_pair_status": "REJECTED"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          794,
+          2034
+        ],
+        "start": [
+          794,
+          1969
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          794,
+          2108
+        ],
+        "start": [
+          794,
+          2039
+        ]
+      },
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000425"
+        ],
+        "fragment_b": [
+          "raw-hough-000943"
+        ]
+      },
+      "case": "CASE16",
+      "competition_status": "SUPPORTED",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_UNCERTAIN",
+        "text_glyph_status": "TEXT_UNCERTAIN"
+      },
+      "decisive_termination_endpoint_ids": [
+        "raw-hough-001078:end"
+      ],
+      "endpoint_observation_count": 11,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 7,
+        "PROBABLE_RASTER_DROPOUT": 1,
+        "SOURCE_ENDPOINT_TERMINATION": 1,
+        "SOURCE_RIDGE_CONTINUES": 2
+      },
+      "evaluation_kind": "existing_invalid_anchor",
+      "full_extent_status": "REJECTED",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "expected_pair_validity": "REJECTED",
+        "kind": "existing_human_pair_observation_from_authoritative_baseline",
+        "scope_limit": "Pair-level observation; not endpoint-level ground truth."
+      },
+      "prior_raster_gap_evidence_A": null,
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "whole_pair_status": "REJECTED"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          508,
+          268
+        ],
+        "start": [
+          508,
+          217
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          508,
+          341
+        ],
+        "start": [
+          508,
+          306
+        ]
+      },
+      "candidate_id": "FRESH1-012B61A286913239D6AA",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-002520"
+        ],
+        "fragment_b": [
+          "raw-hough-002624"
+        ]
+      },
+      "case": "ADDITIONAL_01",
+      "competition_status": "AMBIGUOUS",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 1,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 1
+      },
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "ANNOTATION_LAYOUT"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.278867,
+        "parallel_run_fraction": 0.692308,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 24,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "source_raster_size": {
+        "height_px": 1839,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+      "source_type": "PDF",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          394,
+          2074
+        ],
+        "start": [
+          338,
+          2074
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          437,
+          2074
+        ],
+        "start": [
+          400,
+          2074
+        ]
+      },
+      "candidate_id": "FRESH1-40D2634D889EA8089032",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000645"
+        ],
+        "fragment_b": [
+          "raw-hough-000993"
+        ]
+      },
+      "case": "ADDITIONAL_02",
+      "competition_status": "AMBIGUOUS",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 4,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 3,
+        "SOURCE_RIDGE_CONTINUES": 1
+      },
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "ANNOTATION_LAYOUT"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.076923,
+        "parallel_run_fraction": 0.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          1600,
+          289
+        ],
+        "start": [
+          1600,
+          233
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          1600,
+          337
+        ],
+        "start": [
+          1600,
+          307
+        ]
+      },
+      "candidate_id": "FRESH1-C59F3C65FA8754A53827",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000318"
+        ],
+        "fragment_b": [
+          "raw-hough-000277"
+        ]
+      },
+      "case": "ADDITIONAL_03",
+      "competition_status": "NONE_OBSERVED",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 0,
+      "endpoint_topology_counts": {},
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "OBJECT_GEOMETRY"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.0,
+        "parallel_run_fraction": 0.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_raster_size": {
+        "height_px": 1842,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+      "source_type": "PDF",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          1382,
+          1693
+        ],
+        "start": [
+          1382,
+          1607
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          1383,
+          1753
+        ],
+        "start": [
+          1383,
+          1698
+        ]
+      },
+      "candidate_id": "FRESH1-0AC56610C56820F45E40",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-001034"
+        ],
+        "fragment_b": [
+          "raw-hough-001027"
+        ]
+      },
+      "case": "ADDITIONAL_04",
+      "competition_status": "AMBIGUOUS",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 2,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 1,
+        "SOURCE_RIDGE_CONTINUES": 1
+      },
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "OBJECT_GEOMETRY"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.153846,
+        "parallel_run_fraction": 0.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_raster_size": {
+        "height_px": 1839,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+      "source_type": "PDF",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          2289,
+          763
+        ],
+        "start": [
+          2289,
+          707
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          2289,
+          827
+        ],
+        "start": [
+          2289,
+          771
+        ]
+      },
+      "candidate_id": "FRESH1-104B3B6799BFCFEDE2F4",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000759"
+        ],
+        "fragment_b": [
+          "raw-hough-000725"
+        ]
+      },
+      "case": "ADDITIONAL_05",
+      "competition_status": "NONE_OBSERVED",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 0,
+      "endpoint_topology_counts": {},
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "ANNOTATION_LAYOUT"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.164103,
+        "parallel_run_fraction": 0.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_raster_size": {
+        "height_px": 1351,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          2000,
+          1763
+        ],
+        "start": [
+          2000,
+          1592
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          2000,
+          1823
+        ],
+        "start": [
+          2000,
+          1794
+        ]
+      },
+      "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000508"
+        ],
+        "fragment_b": [
+          "raw-hough-001377"
+        ]
+      },
+      "case": "ADDITIONAL_06",
+      "competition_status": "AMBIGUOUS",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 4,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 4
+      },
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "OBJECT_GEOMETRY"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.0,
+        "parallel_run_fraction": 0.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "source_type": "DWG",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          1022,
+          292
+        ],
+        "start": [
+          909,
+          292
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          1166,
+          292
+        ],
+        "start": [
+          1053,
+          292
+        ]
+      },
+      "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-000131"
+        ],
+        "fragment_b": [
+          "raw-hough-000171"
+        ]
+      },
+      "case": "ADDITIONAL_07",
+      "competition_status": "AMBIGUOUS",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 5,
+      "endpoint_topology_counts": {
+        "ENDPOINT_TOPOLOGY_AMBIGUOUS": 3,
+        "SOURCE_CROSSING_WITH_CONTINUATION": 1,
+        "SOURCE_RIDGE_CONTINUES": 1
+      },
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "OBJECT_GEOMETRY"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.11104,
+        "parallel_run_fraction": 0.40625,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_raster_size": {
+        "height_px": 1490,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+      "source_type": "PDF",
+      "whole_pair_status": "AMBIGUOUS"
+    },
+    {
+      "candidate_fragment_a_geometry_xy": {
+        "end": [
+          2017,
+          1544
+        ],
+        "start": [
+          2017,
+          1510
+        ]
+      },
+      "candidate_fragment_b_geometry_xy": {
+        "end": [
+          2017,
+          1611
+        ],
+        "start": [
+          2017,
+          1582
+        ]
+      },
+      "candidate_id": "FRESH1-327EC6EE68B5900F4BB9",
+      "candidate_raw_ancestor_ids": {
+        "fragment_a": [
+          "raw-hough-001818"
+        ],
+        "fragment_b": [
+          "raw-hough-001868"
+        ]
+      },
+      "case": "ADDITIONAL_08",
+      "competition_status": "NONE_OBSERVED",
+      "current_v1": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+        "current_v1_eligible": true,
+        "existing_authoritative_rejection_reasons": [],
+        "span_status": "SPAN_INTEGRITY_SUPPORTED",
+        "straight_validity_status": "STRAIGHT_SUPPORTED",
+        "text_glyph_status": "TEXT_INDEPENDENT"
+      },
+      "decisive_termination_endpoint_ids": [],
+      "endpoint_observation_count": 0,
+      "endpoint_topology_counts": {},
+      "evaluation_kind": "additional_preapproved_control",
+      "full_extent_status": "AMBIGUOUS",
+      "local_endpoint_status": "SUPPORTED",
+      "prior_human_observation": {
+        "kind": "B_pair_level_human_observation",
+        "scope_limit": "A human DIRECT pair label does not verify the complete primitive extent or any particular internal endpoint.",
+        "stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "stage2": "ANNOTATION_LAYOUT"
+      },
+      "prior_raster_gap_evidence_A": {
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_a_ridge_support": 1.0,
+        "endpoint_b_ridge_support": 1.0,
+        "kind": "A_existing_generic_raster_evidence",
+        "off_axis_ink_fraction": 0.073638,
+        "parallel_run_fraction": 1.0,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "scope_limit": "Existing raster evidence supports the reviewed A/B gap only; it does not establish full-extent continuity or physical source-instance identity.",
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render.",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_raster_size": {
+        "height_px": 1840,
+        "width_px": 2600
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+      "source_type": "PDF",
+      "whole_pair_status": "AMBIGUOUS"
+    }
+  ],
+  "control_coverage_assessment": [
+    {
+      "coverage": "partial_model_assisted",
+      "evidence": "The selected F07 electrical-plan control has 24 prior transverse-crossing columns and a degraded drawing context; its new endpoint results are ambiguous, not positive endpoint truth.",
+      "scenario": "continuous line at grid or table intersections"
+    },
+    {
+      "coverage": "not_established",
+      "evidence": "No selected additional control has a prior volumetric-component / filled-node indicator; the existing selected-control metrics do not establish this topology.",
+      "scenario": "continuous line through a filled node"
+    },
+    {
+      "coverage": "partial_model_assisted",
+      "evidence": "The selected F08 control has linework adjacent to hatch-like geometry in the aligned view and one SOURCE_CROSSING_WITH_CONTINUATION endpoint; no independent source-extent truth is available.",
+      "scenario": "line crossing oblique or hatch geometry"
+    },
+    {
+      "coverage": "partial_model_assisted",
+      "evidence": "The existing F07 record describes strong speckle / scan / plot degradation. Its new endpoint observation is ambiguous and does not test a strong termination.",
+      "scenario": "noisy or damaged genuine line"
+    },
+    {
+      "coverage": "partial_unresolved",
+      "evidence": "The selected F08 record has prior parallel-run evidence and aligned views show nearby parallel tracks; CASE16 also has a ridge 2 px away. Physical identity is unresolved.",
+      "scenario": "nearby parallel or hollow edges"
+    },
+    {
+      "coverage": "partial_model_assisted",
+      "evidence": "The selected F08 control has one crossing-with-continuation endpoint; reused development crossing controls remain full-extent ambiguous.",
+      "scenario": "internal attachment on a continuing boundary"
+    }
+  ],
+  "decisive_anchor_endpoint_evidence": [
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "endpoint_id": "raw-hough-001164:start",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientations": [
+          {
+            "angle_from_forward_deg": 65,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 70,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 75,
+            "support": 1.0
+          },
+          {
+            "angle_from_forward_deg": 80,
+            "support": 1.0
+          }
+        ],
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 1.0,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "PERSISTENT_TURN_NO_AXIAL_RESUMPTION"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 9.0,
+        "local_ink_occupancy": 0.1219,
+        "nearest_continuing_axial_ridge_px": null,
+        "oblique_support": 1.0,
+        "orthogonal_support": 1.0,
+        "ridge_branch_count": 4,
+        "status": "SOURCE_CORNER_TERMINATION",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        2122.0,
+        275.0
+      ],
+      "prior_human_observation": "Existing CASE15 pair label is REJECTED and its local gap status is REJECTED; this does not prove the pixel endpoint classification.",
+      "role": "CASE15",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "small_aligned_evidence_view": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\raster-endpoint-precision-v1\\case15-case16-decisive-endpoints.png",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_pixel_fact": {
+        "interpretation": "The producer's corner classification describes raw-hough-001164 on the y=275 neighboring track. It does not by itself establish that the candidate A/B trajectory at y=276 terminates. Pixel continuity and trajectory identity across the 1 px offset remain unresolved.",
+        "measured": "At y=275, source pixels are ink from x=2122 through the sampled rightward run; the horizontal run does not continue to x=2121. The candidate A/B axis is y=276, one pixel lower. Nearby vertical and diagonal linework meets this corner.",
+        "threshold_used_by_existing_producer": 80
+      },
+      "source_raster_size": {
+        "height_px": 2311,
+        "width_px": 2700
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-001150",
+          "raw-hough-000801"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            2121.0,
+            276.0
+          ],
+          [
+            2209.0,
+            276.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            2122.0,
+            275.0
+          ],
+          [
+            2152.0,
+            275.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "start",
+        "forward_vector_from_endpoint_xy": [
+          -30.0,
+          0.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001164",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001164"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          30.0,
+          0.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-001115:start",
+          "raw-hough-001150:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-001150"
+        ],
+        "raw_observation_id": "raw-hough-001164"
+      },
+      "unresolved_disagreement": "A corner is visible on a nearby, almost parallel track. The raster does not establish whether that track and the candidate A/B axis are one source trajectory, a hollow/double edge, or separate geometry. No hidden source identity is inferred.",
+      "visual_audit_status": "model-assisted visual inspection; not independently frozen human ground truth"
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "endpoint_id": "raw-hough-001078:end",
+      "measured_raster_evidence": {
+        "backward_support": 1.0,
+        "branch_orientations": [],
+        "confidence": 1.0,
+        "continuation_strength": 0.0,
+        "corner_strength": 0.235,
+        "crossing_strength": 0.0,
+        "dropout_strength": 0.0,
+        "evidence_reasons": [
+          "INCOMING_RIDGE_STOPS_FOR_MULTIPLE_STROKE_WIDTHS"
+        ],
+        "forward_support": 0.0,
+        "incoming_support": 1.0,
+        "local_gap_length_stroke_widths": 11.0,
+        "local_ink_occupancy": 0.108,
+        "nearest_continuing_axial_ridge_px": 12.0,
+        "oblique_support": 0.235,
+        "orthogonal_support": 0.176,
+        "ridge_branch_count": 0,
+        "status": "SOURCE_ENDPOINT_TERMINATION",
+        "stroke_width_px": 1.0,
+        "t_junction_strength": 0.0,
+        "through_support": 0.0
+      },
+      "pixel_location_xy": [
+        794.0,
+        2059.0
+      ],
+      "prior_human_observation": "Existing CASE16 pair label is REJECTED while the local gap was SUPPORTED; neither observation establishes endpoint-level truth.",
+      "role": "CASE16",
+      "single_stroke_interpretation_under_test": "The frozen candidate fragment A and fragment B form one source trajectory across their proposed axis and full extent.",
+      "small_aligned_evidence_view": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\raster-endpoint-precision-v1\\case15-case16-decisive-endpoints.png",
+      "source_coordinate_transform": {
+        "basis": "the existing runner passes raw geometry coordinates directly to this same source render; no rescale, crop offset, or coordinate transform is applied",
+        "from": "preserved raw detector observation / candidate geometry pixels",
+        "matrix_2d": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0
+          ]
+        ],
+        "origin": "top-left; x increases right; y increases down",
+        "to": "grayscale source-render pixels"
+      },
+      "source_pixel_fact": {
+        "interpretation": "The producer's endpoint termination measures the x=794 trajectory ending upward for 11 local stroke widths. A nearby x=796 ridge continues, but the cached raw detector coverage did not associate it as a competing hypothesis.",
+        "measured": "At (x=794,y=2059) the pixel is white; a vertical ridge at x=796 (2 px to the right) is ink at that row and continues upward. The x=794 ridge starts immediately below, at y=2060, and continues downward.",
+        "threshold_used_by_existing_producer": 80
+      },
+      "source_raster_size": {
+        "height_px": 2700,
+        "width_px": 1148
+      },
+      "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+      "trajectory_association": {
+        "candidate_pair_member_observation_ids": [
+          "raw-hough-000425",
+          "raw-hough-000943"
+        ],
+        "candidate_proposed_axis_xy": [
+          [
+            794.0,
+            1969.0
+          ],
+          [
+            794.0,
+            2108.0
+          ]
+        ],
+        "detector_observation_line_xy": [
+          [
+            794.0,
+            2125.0
+          ],
+          [
+            794.0,
+            2059.0
+          ]
+        ],
+        "endpoint_axis_delta_degrees": 0.0,
+        "endpoint_side": "end",
+        "forward_vector_from_endpoint_xy": [
+          0.0,
+          -66.0
+        ],
+        "hypothesis_id": "STROKE-HYPOTHESIS:raw-hough-001078",
+        "hypothesis_member_observation_ids": [
+          "raw-hough-001078"
+        ],
+        "incoming_vector_into_detector_observation_xy": [
+          0.0,
+          66.0
+        ],
+        "is_nonmember_competing_hypothesis": true,
+        "producer_reported_competing_endpoint_ids": [
+          "raw-hough-000601:start",
+          "raw-hough-000624:start",
+          "raw-hough-000693:start"
+        ],
+        "producer_reported_competing_hypothesis_ids": [
+          "STROKE-HYPOTHESIS:raw-hough-000043",
+          "STROKE-HYPOTHESIS:raw-hough-000601",
+          "STROKE-HYPOTHESIS:raw-hough-000624",
+          "STROKE-HYPOTHESIS:raw-hough-000943"
+        ],
+        "raw_observation_id": "raw-hough-001078"
+      },
+      "unresolved_disagreement": "The x=794 stop is raster-backed, while a parallel x=796 ridge continues. Existing evidence does not establish whether the parallel pixels are another stroke, the edge of a thick/hollow boundary, or an alternate trace of one source trajectory. No physical instance identity is inferred.",
+      "visual_audit_status": "model-assisted visual inspection; not independently frozen human ground truth"
+    }
+  ],
+  "expected_base_head": "11c202b1e75340a199f90bf26a5c5c2f156e0c2c",
+  "invariants": {
+    "current_eligible_count": 122,
+    "current_eligible_set": "V1",
+    "eligible_membership_changed": false,
+    "pair_admission_changed": false,
+    "production_semantic_delta": "NONE",
+    "source_geometry_or_human_labels_changed": false,
+    "thresholds_changed": false
+  },
+  "precision_check": "COVERAGE_INSUFFICIENT",
+  "preflight_passed": true,
+  "schema_version": 1,
+  "selection": {
+    "additional_controls": [
+      {
+        "candidate_id": "FRESH1-012B61A286913239D6AA",
+        "exact_geometry_digest": "f053385716d6f497043c157ff2481409ac6042109cff65e0bbb0fd6f42a2dfc6",
+        "gap_length_px": 38,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "ANNOTATION_LAYOUT",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.278867,
+          "parallel_run_fraction": 0.692308,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 24,
+          "volumetric_components": 0
+        },
+        "review_index": 1,
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11",
+        "source_document_id": "DOC-F07-0026-PDF",
+        "source_family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F07-PDF-0026-P11.png",
+        "source_type": "PDF"
+      },
+      {
+        "candidate_id": "FRESH1-40D2634D889EA8089032",
+        "exact_geometry_digest": "d45aeea7535c3a8a2bd6ca1e5e9c89e3e2ac1107805a475c7a031cb93a0574bb",
+        "gap_length_px": 6,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "horizontal",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "ANNOTATION_LAYOUT",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.076923,
+          "parallel_run_fraction": 0.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 2,
+        "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F03-HVAC4-DWG",
+        "source_family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+        "source_type": "DWG"
+      },
+      {
+        "candidate_id": "FRESH1-C59F3C65FA8754A53827",
+        "exact_geometry_digest": "16d656ba99411443146470e3ed7ac975ac053e0c5edd9d5b5d5719accfbe8ca2",
+        "gap_length_px": 18,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "OBJECT_GEOMETRY",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.0,
+          "parallel_run_fraction": 0.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 3,
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+        "source_document_id": "DOC-F09-JIULONG-PDF",
+        "source_family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+        "source_type": "PDF"
+      },
+      {
+        "candidate_id": "FRESH1-0AC56610C56820F45E40",
+        "exact_geometry_digest": "269fdea69faac09313e55aa5a6ea11d03307d9aea784bf11b4a2c4ec546d3bee",
+        "gap_length_px": 5,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "OBJECT_GEOMETRY",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.153846,
+          "parallel_run_fraction": 0.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 4,
+        "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+        "source_document_id": "DOC-F06-20210416-PDF",
+        "source_family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F06-PDF-20210416ZUMEN-P4.png",
+        "source_type": "PDF"
+      },
+      {
+        "candidate_id": "FRESH1-104B3B6799BFCFEDE2F4",
+        "exact_geometry_digest": "1cbbf4b3754e511ece2f6bb7ef1840a29682cb054ceb3a55506712979abde184",
+        "gap_length_px": 8,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "ANNOTATION_LAYOUT",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.164103,
+          "parallel_run_fraction": 0.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 6,
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F02-HVAC10-DWG",
+        "source_family_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+        "source_type": "DWG"
+      },
+      {
+        "candidate_id": "FRESH1-1E63CE1A4D512007DBF9",
+        "exact_geometry_digest": "6f1b09b8839ba342bf95bcaf73a20fe88129b8a082cd3befa988488148a7d89d",
+        "gap_length_px": 31,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "OBJECT_GEOMETRY",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.0,
+          "parallel_run_fraction": 0.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 8,
+        "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+        "source_document_id": "DOC-F01-HVAC20220110-DWG",
+        "source_family_id": "F01-HAIYANG-2022-ROOT-DWG",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+        "source_type": "DWG"
+      },
+      {
+        "candidate_id": "FRESH1-34AD2AEED917ED80B2A5",
+        "exact_geometry_digest": "db7897fa32cafc6b4418db22f2b96b65aff0094216372f1b74c36735dbafcb03",
+        "gap_length_px": 31,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "horizontal",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "OBJECT_GEOMETRY",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.11104,
+          "parallel_run_fraction": 0.40625,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 10,
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+        "source_document_id": "DOC-F08-WAREHOUSE815-PDF",
+        "source_family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+        "source_type": "PDF"
+      },
+      {
+        "candidate_id": "FRESH1-327EC6EE68B5900F4BB9",
+        "exact_geometry_digest": "4c1858684ee17a8b6b8af5262b6bfa60ed35d48eb8a2e7a4d6547768b9459a83",
+        "gap_length_px": 38,
+        "human_label_scope": "pair-level only; not endpoint-level truth or complete primitive-extent verification",
+        "orientation": "vertical",
+        "prior_human_pair_label_stage1": "DIRECT_STRAIGHT_CONTINUATION",
+        "prior_human_stage2": "ANNOTATION_LAYOUT",
+        "prior_raster_gap_evidence": {
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_a_ridge_support": 1.0,
+          "endpoint_b_ridge_support": 1.0,
+          "off_axis_ink_fraction": 0.073638,
+          "parallel_run_fraction": 1.0,
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "review_index": 12,
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1",
+        "source_document_id": "DOC-F04-ELEC06-PDF",
+        "source_family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "source_render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ELEC06-P1.png",
+        "source_type": "PDF"
+      }
+    ],
+    "development_case_ids": [
+      "FRESH1-6DA3382199DB993085B8",
+      "FRESH1-EAF5141532787D12AFE2",
+      "FRESH1-AB2943863A535D1044B9",
+      "FRESH1-585E8520AB511B998A25",
+      "FRESH1-2BF547C27C8497056BA6",
+      "FRESH1-316D125FE4861584BE02",
+      "FRESH1-83DFE0F6BE9016CC7844",
+      "FRESH1-4497ADEE7DB5D798A893",
+      "FRESH1-51DF39D706DE8C684F10"
+    ],
+    "development_overlap_count": 0,
+    "frozen_at_utc": "2026-09-25T14:04:36Z",
+    "frozen_before_new_endpoint_results": true,
+    "ignored_pre_run_manifest_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\draftsman\\raster-endpoint-precision-v1\\pre-run-control-selection.json",
+    "selection_artifact_sha256": "607f4893e928f33b0f13c9579405bf947bcee42b37bd8e0c3560a976b4f3dc02",
+    "selection_rule": "Select eight existing Batch-01 DIRECT controls outside the nine raster-topology development cases, one per distinct source family; no endpoint results from this check were inspected."
+  },
+  "shadow_replay": {
+    "current_eligible_count": 122,
+    "frozen_pool_count": 147,
+    "overlap_with_existing_rejections": null,
+    "proposed_new_vetoes_among_current_122": null,
+    "reason": "The bounded safety gate is coverage-insufficient: selected direct-pair and gap-raster evidence does not provide complete endpoint-level source-extent truth, the filled-node scenario is unrepresented, and the two anchor terminations leave near-parallel trajectory association unresolved.",
+    "shadow_ambiguous_count": null,
+    "shadow_rejected_count": null,
+    "shadow_supported_count": null,
+    "status": "NOT_RUN"
+  },
+  "task_id": "RASTER_ENDPOINT_PRECISION_V1",
+  "unresolved_decisions": [
+    "CASE15: whether the corner on the y=275 neighboring track belongs to the proposed y=276 candidate trajectory is not established by the raster or detector association.",
+    "CASE16: whether the continuing ridge 2 px away is an independent line, a hollow/thick boundary edge, or the same source trajectory is not established; competitor coverage is absent for that nearby ridge.",
+    "All eight additional controls have full-extent AMBIGUOUS status; three have no internal competitor endpoint observations, and the other five yield 16 observations with no strong termination. None verifies complete primitive extent.",
+    "The selected additional controls do not establish the filled-node scenario or an independently labeled endpoint-level true-extent denominator."
+  ],
+  "worktree": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03"
+}

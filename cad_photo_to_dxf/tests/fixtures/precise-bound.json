@@ -1,0 +1,2698 @@
+{
+  "fixture": "b-f2",
+  "draftsman_output_v1": {
+    "schema_version": "draftsman-output-v1",
+    "binding": {
+      "schema_version": "object-final-member-binding-v1",
+      "binding_id": "binding:caa1a42b2041966cd8b15c398eae4bd510eecabbee8653ddbee3b7c1825d9f06",
+      "source": {
+        "source_id": "source-1",
+        "page_id": "page-1",
+        "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+        "frame_id": "page-px",
+        "transform_digest": "3333333333333333333333333333333333333333333333333333333333333333",
+        "evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222"
+      },
+      "ownership_snapshot": {
+        "id": "b-snapshot-1",
+        "version": "2",
+        "digest": "f7443d10740609ca628a8efdce718b921b28ede58ccad289d95748888d1cf755"
+      },
+      "terminal_member_digest": "40a762bcac5295dbacc6ba4b691ce457db58e897c79ebfd51895cc49987d8089",
+      "compiled_policy": {
+        "representation_policy_id": "draftsman-representation-policy-v1",
+        "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+        "compiler_policy": {
+          "id": "b-f2-compiler",
+          "version": "1",
+          "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+        },
+        "fallback_policy": {
+          "id": "review-required",
+          "version": "1",
+          "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+        },
+        "consumer_policy": {
+          "id": "shared-fs3-member-resolver",
+          "version": "1",
+          "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+        }
+      },
+      "members": [
+        {
+          "member_id": "m-circle-root:g1",
+          "locator": {
+            "collection": "contours",
+            "index": 0,
+            "payload_digest": "a8303e319497c6095a6e740faa1f2703f84503a492929f18ce8f42be1519eb41"
+          },
+          "geometry_kind": "CONTOUR",
+          "contour_role": "ROOT",
+          "root_member_id": "m-circle-root:g1",
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-r"
+          ],
+          "object_ids": [
+            "obj-circle-r"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "PROTECTED_CONTOURS",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-circle-root:g1"
+          ]
+        },
+        {
+          "member_id": "m-circle-hole:g1",
+          "locator": {
+            "collection": "contours",
+            "index": 1,
+            "payload_digest": "516542ebe33a4a69069441fdc339f534e4fb1ea1f1ea2658342151fe0f1a8ccd"
+          },
+          "geometry_kind": "CONTOUR",
+          "contour_role": "HOLE",
+          "root_member_id": "m-circle-root:g1",
+          "parent_member_id": "m-circle-root:g1",
+          "depth": 1,
+          "component_ids": [
+            "cmp-r"
+          ],
+          "object_ids": [
+            "obj-circle-r"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "EMIT_WITH_ROOT",
+          "alias_of": null,
+          "effective_form": "PROTECTED_CONTOURS",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-circle-hole:g1"
+          ]
+        },
+        {
+          "member_id": "m-internal-r:g1",
+          "locator": {
+            "collection": "contours",
+            "index": 2,
+            "payload_digest": "9e088a1b8ba7d4ce4c10e4fde68ee856b93444d4d396849824bed8aa8945a4e9"
+          },
+          "geometry_kind": "CONTOUR",
+          "contour_role": "ROOT",
+          "root_member_id": "m-internal-r:g1",
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-r"
+          ],
+          "object_ids": [
+            "obj-circle-r"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "PROTECTED_CONTOURS",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-internal-r:g1"
+          ]
+        },
+        {
+          "member_id": "m-logo-s:g1",
+          "locator": {
+            "collection": "contours",
+            "index": 3,
+            "payload_digest": "5453c25ad6b9b4b52e0ba0231d6736d060f00df9aed67f0a164e5a52ca3211ec"
+          },
+          "geometry_kind": "CONTOUR",
+          "contour_role": "ROOT",
+          "root_member_id": "m-logo-s:g1",
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-s"
+          ],
+          "object_ids": [
+            "obj-logo"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "PROTECTED_CONTOURS",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-logo-s:g1"
+          ]
+        },
+        {
+          "member_id": "m-signature:g1",
+          "locator": {
+            "collection": "contours",
+            "index": 4,
+            "payload_digest": "0d4bfc0921027a2c354551e585d295947f1727eb63fc30f50ebc3141f4589367"
+          },
+          "geometry_kind": "CONTOUR",
+          "contour_role": "ROOT",
+          "root_member_id": "m-signature:g1",
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-signature"
+          ],
+          "object_ids": [
+            "obj-signature"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "PROTECTED_CONTOURS",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-signature:g1"
+          ]
+        },
+        {
+          "member_id": "m-rule:g1",
+          "locator": {
+            "collection": "straight_lines",
+            "index": 0,
+            "payload_digest": "920019d6476eee846cb0850e9832d7dd15e5efc380e8399288a7cec8afcab0fb"
+          },
+          "geometry_kind": "LINE",
+          "contour_role": "NONE",
+          "root_member_id": null,
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-rule"
+          ],
+          "object_ids": [
+            "obj-rule"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "STRUCTURAL",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "STRUCTURAL_LINE",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "TRACE_STRAIGHT",
+            "preview_category": "structure_lines",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-rule:g1"
+          ]
+        },
+        {
+          "member_id": "m-adjacent-r:g1",
+          "locator": {
+            "collection": "texts",
+            "index": 0,
+            "payload_digest": "4c04ddfa58bb8093ee9b8cbcbb9f59f14a2238f72e017b8dd505229ab4e1922a"
+          },
+          "geometry_kind": "TEXT",
+          "contour_role": "NONE",
+          "root_member_id": null,
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-text"
+          ],
+          "object_ids": [
+            "obj-text"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "COMPONENT_TEXT",
+          "emit_mode": "EMIT_SELF",
+          "alias_of": null,
+          "effective_form": "NATIVE_TEXT",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "OCR_TEXT",
+            "preview_category": "texts",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-adjacent-r:g1"
+          ]
+        },
+        {
+          "member_id": "m-logo-alias:g1",
+          "locator": {
+            "collection": "logos",
+            "index": 0,
+            "payload_digest": "5660237cfb8b3190131d2abfc820a77f658852b7473d9b785b76c2f259aa88ee"
+          },
+          "geometry_kind": "MASK_OBJECT",
+          "contour_role": "NONE",
+          "root_member_id": null,
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-s"
+          ],
+          "object_ids": [
+            "obj-logo"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "ALIAS_NO_EMIT",
+          "alias_of": "m-logo-s:g1",
+          "effective_form": "EXISTING_LOGO_GRAPHIC",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "RESIDUAL_GRAPHIC",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-logo-alias:g1"
+          ]
+        },
+        {
+          "member_id": "m-signature-alias:g1",
+          "locator": {
+            "collection": "signatures",
+            "index": 0,
+            "payload_digest": "f48eab9e5a3328fd32da679d6a606ece0f28cf285f6c549411c8d43a6647bb07"
+          },
+          "geometry_kind": "MASK_OBJECT",
+          "contour_role": "NONE",
+          "root_member_id": null,
+          "parent_member_id": null,
+          "depth": 0,
+          "component_ids": [
+            "cmp-signature"
+          ],
+          "object_ids": [
+            "obj-signature"
+          ],
+          "source_evidence_digest": "2222222222222222222222222222222222222222222222222222222222222222",
+          "provenance_kind": "SOURCE_OBSERVED_MEMBER",
+          "semantic_role": "OBJECT_GRAPHIC",
+          "emit_mode": "ALIAS_NO_EMIT",
+          "alias_of": "m-signature:g1",
+          "effective_form": "EXISTING_SIGNATURE_GRAPHIC",
+          "emission_authority_refs": [],
+          "policy": {
+            "layer": "SIGNATURE",
+            "preview_category": "symbols",
+            "default_visible": true,
+            "ocr_suppression": "EXPLICIT_OBLIGATION_REPLACEMENT_ONLY"
+          },
+          "lineage_refs": [
+            "lineage:m-signature-alias:g1"
+          ]
+        }
+      ],
+      "objects": [
+        {
+          "object_id": "obj-circle-r",
+          "object_class": "UNKNOWN_GRAPHIC",
+          "identity_state": "UNKNOWN",
+          "b_snapshot": {
+            "id": "b-snapshot-1",
+            "version": "2",
+            "digest": "2b91d2b0abcd7610101cf83c935390e18212f9fa7a67007eb2d488a9d05f3871"
+          },
+          "component_ids": [
+            "cmp-r"
+          ],
+          "final_member_ids": [
+            "m-circle-root:g1",
+            "m-circle-hole:g1",
+            "m-internal-r:g1"
+          ],
+          "root_member_ids": [
+            "m-circle-root:g1",
+            "m-internal-r:g1"
+          ],
+          "hole_member_ids": [
+            "m-circle-hole:g1"
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-circle-r",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "obligation_closures": [
+            {
+              "obligation_id": "obl-circle-r",
+              "terminal_disposition": "DISCHARGED",
+              "projection_outcome": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "final_member_ids": [
+                "m-circle-root:g1",
+                "m-circle-hole:g1",
+                "m-internal-r:g1"
+              ],
+              "replacement_coverage": [
+                {
+                  "member_id": "m-circle-root:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-circle-r",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                },
+                {
+                  "member_id": "m-circle-hole:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-circle-r",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                },
+                {
+                  "member_id": "m-internal-r:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-circle-r",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                }
+              ],
+              "unresolved_domain": {
+                "domain_id": "unresolved:obl-circle-r",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": []
+              },
+              "retained_accepted_member_ids": [
+                "m-circle-root:g1",
+                "m-circle-hole:g1",
+                "m-internal-r:g1"
+              ],
+              "source_retention": {
+                "uri": "source://obl-circle-r",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_SUPPORT_RETAINED"
+              },
+              "review_reasons": []
+            }
+          ],
+          "representation_policy": {
+            "representation_policy_id": "draftsman-representation-policy-v1",
+            "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "compiler_policy": {
+              "id": "b-f2-compiler",
+              "version": "1",
+              "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+            },
+            "fallback_policy": {
+              "id": "review-required",
+              "version": "1",
+              "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "consumer_policy": {
+              "id": "shared-fs3-member-resolver",
+              "version": "1",
+              "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          },
+          "source_evidence_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "review_required": true
+        },
+        {
+          "object_id": "obj-logo",
+          "object_class": "LOGO_OR_MARK",
+          "identity_state": "NOT_APPLICABLE",
+          "b_snapshot": {
+            "id": "b-snapshot-1",
+            "version": "2",
+            "digest": "2fcfb2db1d74c19ffe67353d7e24975d38a4f8638e5cffd933f1cd60f24496ac"
+          },
+          "component_ids": [
+            "cmp-s"
+          ],
+          "final_member_ids": [
+            "m-logo-s:g1"
+          ],
+          "root_member_ids": [
+            "m-logo-s:g1"
+          ],
+          "hole_member_ids": [],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-logo",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "obligation_closures": [
+            {
+              "obligation_id": "obl-logo",
+              "terminal_disposition": "DISCHARGED",
+              "projection_outcome": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "final_member_ids": [
+                "m-logo-s:g1"
+              ],
+              "replacement_coverage": [
+                {
+                  "member_id": "m-logo-s:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-logo",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                }
+              ],
+              "unresolved_domain": {
+                "domain_id": "unresolved:obl-logo",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": []
+              },
+              "retained_accepted_member_ids": [
+                "m-logo-s:g1"
+              ],
+              "source_retention": {
+                "uri": "source://obl-logo",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_SUPPORT_RETAINED"
+              },
+              "review_reasons": []
+            }
+          ],
+          "representation_policy": {
+            "representation_policy_id": "draftsman-representation-policy-v1",
+            "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "compiler_policy": {
+              "id": "b-f2-compiler",
+              "version": "1",
+              "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+            },
+            "fallback_policy": {
+              "id": "review-required",
+              "version": "1",
+              "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "consumer_policy": {
+              "id": "shared-fs3-member-resolver",
+              "version": "1",
+              "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          },
+          "source_evidence_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "review_required": false
+        },
+        {
+          "object_id": "obj-signature",
+          "object_class": "SIGNATURE_OR_IDENTITY_MARK",
+          "identity_state": "NOT_APPLICABLE",
+          "b_snapshot": {
+            "id": "b-snapshot-1",
+            "version": "2",
+            "digest": "a1fe347179e1320e7275ef22eb8b877c3cc48ee1fd9d058b3f019811f44ba66a"
+          },
+          "component_ids": [
+            "cmp-signature"
+          ],
+          "final_member_ids": [
+            "m-signature:g1"
+          ],
+          "root_member_ids": [
+            "m-signature:g1"
+          ],
+          "hole_member_ids": [],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-signature",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "obligation_closures": [
+            {
+              "obligation_id": "obl-signature",
+              "terminal_disposition": "DISCHARGED",
+              "projection_outcome": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "final_member_ids": [
+                "m-signature:g1"
+              ],
+              "replacement_coverage": [
+                {
+                  "member_id": "m-signature:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-signature",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                }
+              ],
+              "unresolved_domain": {
+                "domain_id": "unresolved:obl-signature",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": []
+              },
+              "retained_accepted_member_ids": [
+                "m-signature:g1"
+              ],
+              "source_retention": {
+                "uri": "source://obl-signature",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_SUPPORT_RETAINED"
+              },
+              "review_reasons": []
+            }
+          ],
+          "representation_policy": {
+            "representation_policy_id": "draftsman-representation-policy-v1",
+            "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "compiler_policy": {
+              "id": "b-f2-compiler",
+              "version": "1",
+              "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+            },
+            "fallback_policy": {
+              "id": "review-required",
+              "version": "1",
+              "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "consumer_policy": {
+              "id": "shared-fs3-member-resolver",
+              "version": "1",
+              "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          },
+          "source_evidence_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "review_required": false
+        },
+        {
+          "object_id": "obj-rule",
+          "object_class": "STRUCTURAL_LINEWORK",
+          "identity_state": "NOT_APPLICABLE",
+          "b_snapshot": {
+            "id": "b-snapshot-1",
+            "version": "2",
+            "digest": "ebd65e4db7f969a352db8846577d0d9059d614160f7e15f6ee2db7bf02bea08f"
+          },
+          "component_ids": [
+            "cmp-rule"
+          ],
+          "final_member_ids": [
+            "m-rule:g1"
+          ],
+          "root_member_ids": [],
+          "hole_member_ids": [],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-rule",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "obligation_closures": [
+            {
+              "obligation_id": "obl-rule",
+              "terminal_disposition": "DISCHARGED",
+              "projection_outcome": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "final_member_ids": [
+                "m-rule:g1"
+              ],
+              "replacement_coverage": [
+                {
+                  "member_id": "m-rule:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-rule",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                }
+              ],
+              "unresolved_domain": {
+                "domain_id": "unresolved:obl-rule",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": []
+              },
+              "retained_accepted_member_ids": [
+                "m-rule:g1"
+              ],
+              "source_retention": {
+                "uri": "source://obl-rule",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_SUPPORT_RETAINED"
+              },
+              "review_reasons": []
+            }
+          ],
+          "representation_policy": {
+            "representation_policy_id": "draftsman-representation-policy-v1",
+            "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "compiler_policy": {
+              "id": "b-f2-compiler",
+              "version": "1",
+              "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+            },
+            "fallback_policy": {
+              "id": "review-required",
+              "version": "1",
+              "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "consumer_policy": {
+              "id": "shared-fs3-member-resolver",
+              "version": "1",
+              "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          },
+          "source_evidence_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "review_required": false
+        },
+        {
+          "object_id": "obj-text",
+          "object_class": "ORDINARY_TEXT",
+          "identity_state": "NOT_APPLICABLE",
+          "b_snapshot": {
+            "id": "b-snapshot-1",
+            "version": "2",
+            "digest": "08151257a48d26a490e14fe75a62e131a83706d36a97ff849ed27a055dd4ca99"
+          },
+          "component_ids": [
+            "cmp-text"
+          ],
+          "final_member_ids": [
+            "m-adjacent-r:g1"
+          ],
+          "root_member_ids": [],
+          "hole_member_ids": [],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-text",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "obligation_closures": [
+            {
+              "obligation_id": "obl-text",
+              "terminal_disposition": "DISCHARGED",
+              "projection_outcome": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "final_member_ids": [
+                "m-adjacent-r:g1"
+              ],
+              "replacement_coverage": [
+                {
+                  "member_id": "m-adjacent-r:g1",
+                  "domain": {
+                    "domain_id": "unresolved:obl-text",
+                    "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                    "frame_id": "page-px",
+                    "encoding": "SOURCE_PIXEL_RUNS_V1",
+                    "rows": []
+                  },
+                  "role": "PRIMARY",
+                  "certificate_ref": null
+                }
+              ],
+              "unresolved_domain": {
+                "domain_id": "unresolved:obl-text",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": []
+              },
+              "retained_accepted_member_ids": [
+                "m-adjacent-r:g1"
+              ],
+              "source_retention": {
+                "uri": "source://obl-text",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_SUPPORT_RETAINED"
+              },
+              "review_reasons": []
+            }
+          ],
+          "representation_policy": {
+            "representation_policy_id": "draftsman-representation-policy-v1",
+            "representation_policy_digest": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "compiler_policy": {
+              "id": "b-f2-compiler",
+              "version": "1",
+              "digest": "4444444444444444444444444444444444444444444444444444444444444444"
+            },
+            "fallback_policy": {
+              "id": "review-required",
+              "version": "1",
+              "digest": "6666666666666666666666666666666666666666666666666666666666666666"
+            },
+            "consumer_policy": {
+              "id": "shared-fs3-member-resolver",
+              "version": "1",
+              "digest": "7777777777777777777777777777777777777777777777777777777777777777"
+            }
+          },
+          "source_evidence_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+          "review_required": false
+        }
+      ],
+      "suppressed_candidates": [
+        {
+          "candidate_id": "ocr-internal-r",
+          "object_id": "obj-circle-r",
+          "obligation_id": "obl-circle-r",
+          "replacement_member_ids": [
+            "m-circle-root:g1",
+            "m-circle-hole:g1",
+            "m-internal-r:g1"
+          ],
+          "authority": {
+            "id": "b-snapshot",
+            "version": "2",
+            "digest": "8888888888888888888888888888888888888888888888888888888888888888"
+          },
+          "source_domain": {
+            "domain_id": "support-circle",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 3,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          }
+        }
+      ],
+      "consumer_binding": "SHARED_FS3_MEMBER_RESOLVER_V1",
+      "missing_binding_action": "BLOCK_SEMANTIC_OUTPUT_AND_REVIEW"
+    },
+    "ownership_snapshots": {
+      "obj-circle-r": {
+        "schema_version": "whole-object-ownership-v2",
+        "object_id": "obj-circle-r",
+        "source": {
+          "source_id": "source-1",
+          "page_id": "page-1",
+          "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+          "region_px": [
+            2.0,
+            3.0,
+            18.0,
+            4.0
+          ],
+          "support_artifacts": [
+            {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            }
+          ],
+          "source_transform": {
+            "uri": "transform://page-px",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "role": "SOURCE_FRAME_IDENTITY"
+          }
+        },
+        "whole_object_class": "UNKNOWN_GRAPHIC",
+        "identity_status": "UNKNOWN",
+        "symbol_identity_ref": null,
+        "state": "DEFERRED",
+        "candidate_classes": [
+          {
+            "class": "UNKNOWN_GRAPHIC",
+            "evidence_refs": [
+              "evidence:obj-circle-r:source-support"
+            ],
+            "uncertainty": {
+              "status": "UNKNOWN",
+              "confidence": null,
+              "calibration": "NOT_APPLICABLE",
+              "limits": [
+                "UNKNOWN_COMPOUND_OBJECT"
+              ],
+              "review_required": true
+            }
+          }
+        ],
+        "components": [
+          {
+            "component_id": "cmp-r",
+            "role": "INTERNAL_GLYPH",
+            "primitive_member_ids": [
+              "primitive:cmp-r"
+            ],
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                3.0,
+                18.0,
+                4.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "glyph_hypotheses": [
+              {
+                "glyph": "R",
+                "evidence_refs": [
+                  "evidence:obj-circle-r:source-support"
+                ],
+                "uncertainty": {
+                  "status": "UNKNOWN",
+                  "confidence": null,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [
+                    "UNKNOWN_COMPOUND_OBJECT"
+                  ],
+                  "review_required": true
+                }
+              },
+              {
+                "glyph": "S",
+                "evidence_refs": [
+                  "evidence:obj-circle-r:source-support"
+                ],
+                "uncertainty": {
+                  "status": "UNKNOWN",
+                  "confidence": null,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [
+                    "UNKNOWN_COMPOUND_OBJECT"
+                  ],
+                  "review_required": true
+                }
+              }
+            ],
+            "independent_emission": "FORBIDDEN",
+            "emission_authorization_refs": [],
+            "allowed_representation_kinds": []
+          }
+        ],
+        "object_context_evidence_refs": [
+          "evidence:obj-circle-r:source-support"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence:obj-circle-r:source-support",
+            "source_id": "source-1",
+            "kind": "FIXED_OBJECT_EVIDENCE",
+            "result": "SUPPORTED",
+            "role": "OBSERVATION",
+            "artifacts": [
+              {
+                "uri": "source://source-1/page-1",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "ORIGINAL_SOURCE_SUPPORT"
+              }
+            ],
+            "producer_version": "2",
+            "limitations": [
+              "UNKNOWN_COMPOUND_OBJECT"
+            ]
+          }
+        ],
+        "ownership_authority": [
+          {
+            "authorization_id": "authority:obj-circle-r:ownership",
+            "kind": "OWNERSHIP_DECISION",
+            "policy_id": "b-whole-object-v2",
+            "policy_version": "2",
+            "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "source_id": "source-1",
+            "target_ids": [
+              "obj-circle-r"
+            ],
+            "permitted_actions": [
+              "FREEZE_OUTPUT_OBLIGATIONS"
+            ],
+            "evidence_refs": [
+              "evidence:obj-circle-r:source-support"
+            ],
+            "decision_provenance": {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            },
+            "validity": "ACTIVE",
+            "limitations": [
+              "UNKNOWN_COMPOUND_OBJECT"
+            ]
+          }
+        ],
+        "relations": [],
+        "protected_subregions": [
+          {
+            "protection_id": "protection:obj-circle-r",
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                3.0,
+                18.0,
+                4.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "protected_object_ids": [
+              "obj-circle-r"
+            ],
+            "prohibited_actions": [
+              "NO_JUNCTION_AUTHORITY"
+            ],
+            "evidence_refs": [
+              "evidence:obj-circle-r:source-support"
+            ]
+          }
+        ],
+        "representation_policy": {
+          "policy_id": "DRAFTSMAN_REPRESENTATION_POLICY",
+          "policy_version": "draftsman-representation-policy-v1",
+          "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+          "policy_target": "POLICY_JUDGMENT",
+          "allowed_final_representation_kinds": [
+            "PROTECTED_CONTOURS",
+            "REVIEW_REQUIRED"
+          ],
+          "primary_representation": "PROTECTED_CONTOURS",
+          "source_backup": "AUDIT_SOURCE_REFERENCE",
+          "component_suppression_ids": [],
+          "coverage_evidence_refs": [
+            "evidence:obj-circle-r:source-support"
+          ]
+        },
+        "uncertainty": {
+          "status": "UNKNOWN",
+          "confidence": null,
+          "calibration": "NOT_APPLICABLE",
+          "limits": [
+            "UNKNOWN_COMPOUND_OBJECT"
+          ],
+          "review_required": true
+        },
+        "negative_evidence_refs": [],
+        "veto_evidence_refs": [],
+        "lineage": {
+          "parent_ids": [],
+          "primitive_member_ids": [
+            "primitive:cmp-r"
+          ],
+          "transform_records": [],
+          "producer_head": "036fa7966f4e49bdbf0ba94d59f782a49bf6d525",
+          "producer_version": "2",
+          "run_id": "freeze:obj-circle-r"
+        },
+        "review_reason": "UNKNOWN_COMPOUND_OBJECT",
+        "snapshot_revision": 1,
+        "output_obligation_contract": {
+          "contract_version": "b-output-obligations-v2",
+          "source_support_domain": {
+            "domain_id": "support-circle",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 3,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "shared_support_domain": {
+            "domain_id": "exclusions:obj-circle-r",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "exclusive_support_domain": {
+            "domain_id": "support-circle",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 3,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "component_ids": [
+            "cmp-r"
+          ],
+          "required_output_obligations": [
+            {
+              "obligation_id": "obl-circle-r",
+              "component_ids": [
+                "cmp-r"
+              ],
+              "kind": "WHOLE_GRAPHIC",
+              "support_domain": {
+                "domain_id": "support-circle",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 3,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "allowed_output_forms": [
+                "PROTECTED_CONTOURS"
+              ],
+              "prohibited_output_forms": [
+                "NATIVE_TEXT",
+                "STRUCTURAL_LINE"
+              ],
+              "required_projection": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "accepted_representation_ids": [
+                "pending:obl-circle-r"
+              ],
+              "terminal_disposition_policy": "FINAL_BINDING_MUST_DISCHARGE_OR_MARK_REVIEW",
+              "consumer_binding_key": "obj-circle-r",
+              "scoped_authority_refs": [
+                "authority:obj-circle-r:ownership"
+              ]
+            }
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-circle-r",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "shared_intersections": [],
+          "ownership_protection_state": "REVIEW_REQUIRED",
+          "legacy_projection_role": "CATEGORY_EVIDENCE_NOT_OBJECT_TRUTH",
+          "downstream_binding": {
+            "schema": "object-final-member-binding-v1",
+            "binding_key": "obj-circle-r",
+            "consumer_policy": {
+              "id": "SHARED_FS3_MEMBER_RESOLVER_V1",
+              "version": "1",
+              "digest": "a40e507567cd1bd59bd590d464a6569e15c3ff46fd5a3e2b06e95c5712ac3690"
+            }
+          }
+        }
+      },
+      "obj-logo": {
+        "schema_version": "whole-object-ownership-v2",
+        "object_id": "obj-logo",
+        "source": {
+          "source_id": "source-1",
+          "page_id": "page-1",
+          "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+          "region_px": [
+            2.0,
+            4.0,
+            18.0,
+            5.0
+          ],
+          "support_artifacts": [
+            {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            }
+          ],
+          "source_transform": {
+            "uri": "transform://page-px",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "role": "SOURCE_FRAME_IDENTITY"
+          }
+        },
+        "whole_object_class": "LOGO_OR_MARK",
+        "identity_status": "NOT_APPLICABLE",
+        "symbol_identity_ref": null,
+        "state": "AUTHORIZED",
+        "candidate_classes": [
+          {
+            "class": "LOGO_OR_MARK",
+            "evidence_refs": [
+              "evidence:obj-logo:source-support"
+            ],
+            "uncertainty": {
+              "status": "SUPPORTED",
+              "confidence": 1.0,
+              "calibration": "NOT_APPLICABLE",
+              "limits": [],
+              "review_required": false
+            }
+          }
+        ],
+        "components": [
+          {
+            "component_id": "cmp-s",
+            "role": "INTERNAL_GLYPH",
+            "primitive_member_ids": [
+              "primitive:cmp-s"
+            ],
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                4.0,
+                18.0,
+                5.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "glyph_hypotheses": [
+              {
+                "glyph": "R",
+                "evidence_refs": [
+                  "evidence:obj-logo:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              },
+              {
+                "glyph": "S",
+                "evidence_refs": [
+                  "evidence:obj-logo:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              }
+            ],
+            "independent_emission": "FORBIDDEN",
+            "emission_authorization_refs": [],
+            "allowed_representation_kinds": []
+          }
+        ],
+        "object_context_evidence_refs": [
+          "evidence:obj-logo:source-support"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence:obj-logo:source-support",
+            "source_id": "source-1",
+            "kind": "FIXED_OBJECT_EVIDENCE",
+            "result": "SUPPORTED",
+            "role": "OBSERVATION",
+            "artifacts": [
+              {
+                "uri": "source://source-1/page-1",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "ORIGINAL_SOURCE_SUPPORT"
+              }
+            ],
+            "producer_version": "2",
+            "limitations": []
+          }
+        ],
+        "ownership_authority": [
+          {
+            "authorization_id": "authority:obj-logo:ownership",
+            "kind": "OWNERSHIP_DECISION",
+            "policy_id": "b-whole-object-v2",
+            "policy_version": "2",
+            "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "source_id": "source-1",
+            "target_ids": [
+              "obj-logo"
+            ],
+            "permitted_actions": [
+              "FREEZE_OUTPUT_OBLIGATIONS"
+            ],
+            "evidence_refs": [
+              "evidence:obj-logo:source-support"
+            ],
+            "decision_provenance": {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            },
+            "validity": "ACTIVE",
+            "limitations": []
+          }
+        ],
+        "relations": [],
+        "protected_subregions": [
+          {
+            "protection_id": "protection:obj-logo",
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                4.0,
+                18.0,
+                5.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "protected_object_ids": [
+              "obj-logo"
+            ],
+            "prohibited_actions": [
+              "NO_JUNCTION_AUTHORITY"
+            ],
+            "evidence_refs": [
+              "evidence:obj-logo:source-support"
+            ]
+          }
+        ],
+        "representation_policy": {
+          "policy_id": "DRAFTSMAN_REPRESENTATION_POLICY",
+          "policy_version": "draftsman-representation-policy-v1",
+          "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+          "policy_target": "POLICY_JUDGMENT",
+          "allowed_final_representation_kinds": [
+            "PROTECTED_CONTOURS"
+          ],
+          "primary_representation": "PROTECTED_CONTOURS",
+          "source_backup": "AUDIT_SOURCE_REFERENCE",
+          "component_suppression_ids": [],
+          "coverage_evidence_refs": [
+            "evidence:obj-logo:source-support"
+          ]
+        },
+        "uncertainty": {
+          "status": "SUPPORTED",
+          "confidence": 1.0,
+          "calibration": "NOT_APPLICABLE",
+          "limits": [],
+          "review_required": false
+        },
+        "negative_evidence_refs": [],
+        "veto_evidence_refs": [],
+        "lineage": {
+          "parent_ids": [],
+          "primitive_member_ids": [
+            "primitive:cmp-s"
+          ],
+          "transform_records": [],
+          "producer_head": "036fa7966f4e49bdbf0ba94d59f782a49bf6d525",
+          "producer_version": "2",
+          "run_id": "freeze:obj-logo"
+        },
+        "review_reason": null,
+        "snapshot_revision": 1,
+        "output_obligation_contract": {
+          "contract_version": "b-output-obligations-v2",
+          "source_support_domain": {
+            "domain_id": "support-logo",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 4,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "shared_support_domain": {
+            "domain_id": "exclusions:obj-logo",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "exclusive_support_domain": {
+            "domain_id": "support-logo",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 4,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "component_ids": [
+            "cmp-s"
+          ],
+          "required_output_obligations": [
+            {
+              "obligation_id": "obl-logo",
+              "component_ids": [
+                "cmp-s"
+              ],
+              "kind": "WHOLE_GRAPHIC",
+              "support_domain": {
+                "domain_id": "support-logo",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 4,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "allowed_output_forms": [
+                "PROTECTED_CONTOURS"
+              ],
+              "prohibited_output_forms": [
+                "NATIVE_TEXT",
+                "STRUCTURAL_LINE"
+              ],
+              "required_projection": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "accepted_representation_ids": [
+                "pending:obl-logo"
+              ],
+              "terminal_disposition_policy": "FINAL_BINDING_MUST_DISCHARGE_OR_MARK_REVIEW",
+              "consumer_binding_key": "obj-logo",
+              "scoped_authority_refs": [
+                "authority:obj-logo:ownership"
+              ]
+            }
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-logo",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "shared_intersections": [],
+          "ownership_protection_state": "AUTHORIZED",
+          "legacy_projection_role": "CATEGORY_EVIDENCE_NOT_OBJECT_TRUTH",
+          "downstream_binding": {
+            "schema": "object-final-member-binding-v1",
+            "binding_key": "obj-logo",
+            "consumer_policy": {
+              "id": "SHARED_FS3_MEMBER_RESOLVER_V1",
+              "version": "1",
+              "digest": "a40e507567cd1bd59bd590d464a6569e15c3ff46fd5a3e2b06e95c5712ac3690"
+            }
+          }
+        }
+      },
+      "obj-signature": {
+        "schema_version": "whole-object-ownership-v2",
+        "object_id": "obj-signature",
+        "source": {
+          "source_id": "source-1",
+          "page_id": "page-1",
+          "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+          "region_px": [
+            2.0,
+            27.0,
+            18.0,
+            28.0
+          ],
+          "support_artifacts": [
+            {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            }
+          ],
+          "source_transform": {
+            "uri": "transform://page-px",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "role": "SOURCE_FRAME_IDENTITY"
+          }
+        },
+        "whole_object_class": "SIGNATURE_OR_IDENTITY_MARK",
+        "identity_status": "NOT_APPLICABLE",
+        "symbol_identity_ref": null,
+        "state": "AUTHORIZED",
+        "candidate_classes": [
+          {
+            "class": "SIGNATURE_OR_IDENTITY_MARK",
+            "evidence_refs": [
+              "evidence:obj-signature:source-support"
+            ],
+            "uncertainty": {
+              "status": "SUPPORTED",
+              "confidence": 1.0,
+              "calibration": "NOT_APPLICABLE",
+              "limits": [],
+              "review_required": false
+            }
+          }
+        ],
+        "components": [
+          {
+            "component_id": "cmp-signature",
+            "role": "INTERNAL_GLYPH",
+            "primitive_member_ids": [
+              "primitive:cmp-signature"
+            ],
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                27.0,
+                18.0,
+                28.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "glyph_hypotheses": [
+              {
+                "glyph": "R",
+                "evidence_refs": [
+                  "evidence:obj-signature:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              },
+              {
+                "glyph": "S",
+                "evidence_refs": [
+                  "evidence:obj-signature:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              }
+            ],
+            "independent_emission": "AUTHORIZED",
+            "emission_authorization_refs": [
+              "authority:obj-signature:ownership"
+            ],
+            "allowed_representation_kinds": [
+              "PROTECTED_CONTOURS"
+            ]
+          }
+        ],
+        "object_context_evidence_refs": [
+          "evidence:obj-signature:source-support"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence:obj-signature:source-support",
+            "source_id": "source-1",
+            "kind": "FIXED_OBJECT_EVIDENCE",
+            "result": "SUPPORTED",
+            "role": "OBSERVATION",
+            "artifacts": [
+              {
+                "uri": "source://source-1/page-1",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "ORIGINAL_SOURCE_SUPPORT"
+              }
+            ],
+            "producer_version": "2",
+            "limitations": []
+          }
+        ],
+        "ownership_authority": [
+          {
+            "authorization_id": "authority:obj-signature:ownership",
+            "kind": "OWNERSHIP_DECISION",
+            "policy_id": "b-whole-object-v2",
+            "policy_version": "2",
+            "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "source_id": "source-1",
+            "target_ids": [
+              "obj-signature"
+            ],
+            "permitted_actions": [
+              "FREEZE_OUTPUT_OBLIGATIONS"
+            ],
+            "evidence_refs": [
+              "evidence:obj-signature:source-support"
+            ],
+            "decision_provenance": {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            },
+            "validity": "ACTIVE",
+            "limitations": []
+          }
+        ],
+        "relations": [
+          {
+            "relation_id": "shared-signature-rule",
+            "type": "SHARED_EVIDENCE",
+            "other_object_id": "obj-rule",
+            "evidence_refs": [
+              "evidence:obj-signature:source-support"
+            ],
+            "delegated_component_ids": []
+          }
+        ],
+        "protected_subregions": [
+          {
+            "protection_id": "protection:obj-signature",
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                27.0,
+                18.0,
+                28.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "protected_object_ids": [
+              "obj-signature"
+            ],
+            "prohibited_actions": [
+              "NO_JUNCTION_AUTHORITY"
+            ],
+            "evidence_refs": [
+              "evidence:obj-signature:source-support"
+            ]
+          }
+        ],
+        "representation_policy": {
+          "policy_id": "DRAFTSMAN_REPRESENTATION_POLICY",
+          "policy_version": "draftsman-representation-policy-v1",
+          "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+          "policy_target": "POLICY_JUDGMENT",
+          "allowed_final_representation_kinds": [
+            "PROTECTED_CONTOURS"
+          ],
+          "primary_representation": "PROTECTED_CONTOURS",
+          "source_backup": "AUDIT_SOURCE_REFERENCE",
+          "component_suppression_ids": [],
+          "coverage_evidence_refs": [
+            "evidence:obj-signature:source-support"
+          ]
+        },
+        "uncertainty": {
+          "status": "SUPPORTED",
+          "confidence": 1.0,
+          "calibration": "NOT_APPLICABLE",
+          "limits": [],
+          "review_required": false
+        },
+        "negative_evidence_refs": [],
+        "veto_evidence_refs": [],
+        "lineage": {
+          "parent_ids": [],
+          "primitive_member_ids": [
+            "primitive:cmp-signature"
+          ],
+          "transform_records": [],
+          "producer_head": "036fa7966f4e49bdbf0ba94d59f782a49bf6d525",
+          "producer_version": "2",
+          "run_id": "freeze:obj-signature"
+        },
+        "review_reason": null,
+        "snapshot_revision": 1,
+        "output_obligation_contract": {
+          "contract_version": "b-output-obligations-v2",
+          "source_support_domain": {
+            "domain_id": "support-shared",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 27,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "shared_support_domain": {
+            "domain_id": "exclusions:obj-signature",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "exclusive_support_domain": {
+            "domain_id": "support-shared",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 27,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "component_ids": [
+            "cmp-signature"
+          ],
+          "required_output_obligations": [
+            {
+              "obligation_id": "obl-signature",
+              "component_ids": [
+                "cmp-signature"
+              ],
+              "kind": "WHOLE_GRAPHIC",
+              "support_domain": {
+                "domain_id": "support-shared",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 27,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "allowed_output_forms": [
+                "PROTECTED_CONTOURS"
+              ],
+              "prohibited_output_forms": [],
+              "required_projection": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "accepted_representation_ids": [
+                "pending:obl-signature"
+              ],
+              "terminal_disposition_policy": "FINAL_BINDING_MUST_DISCHARGE_OR_MARK_REVIEW",
+              "consumer_binding_key": "obj-signature",
+              "scoped_authority_refs": [
+                "authority:obj-signature:ownership"
+              ]
+            }
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-signature",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "shared_intersections": [
+            {
+              "intersection_id": "shared-signature-rule",
+              "peer_object_id": "obj-rule",
+              "domain": {
+                "domain_id": "support-shared",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 27,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "local_obligation_ids": [
+                "obl-signature"
+              ],
+              "peer_obligation_ids": [
+                "obl-rule"
+              ],
+              "mode": "DISTINCT_SUPPORTED_MEMBERS",
+              "evidence_refs": [
+                "evidence:obj-signature:source-support"
+              ],
+              "authority_refs": [
+                "authority:obj-signature:ownership"
+              ],
+              "duplicate_policy": "DISTINCT_OBJECTS_NO_SAME_OBLIGATION_DUPLICATE"
+            }
+          ],
+          "ownership_protection_state": "AUTHORIZED",
+          "legacy_projection_role": "CATEGORY_EVIDENCE_NOT_OBJECT_TRUTH",
+          "downstream_binding": {
+            "schema": "object-final-member-binding-v1",
+            "binding_key": "obj-signature",
+            "consumer_policy": {
+              "id": "SHARED_FS3_MEMBER_RESOLVER_V1",
+              "version": "1",
+              "digest": "a40e507567cd1bd59bd590d464a6569e15c3ff46fd5a3e2b06e95c5712ac3690"
+            }
+          }
+        }
+      },
+      "obj-rule": {
+        "schema_version": "whole-object-ownership-v2",
+        "object_id": "obj-rule",
+        "source": {
+          "source_id": "source-1",
+          "page_id": "page-1",
+          "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+          "region_px": [
+            2.0,
+            5.0,
+            18.0,
+            28.0
+          ],
+          "support_artifacts": [
+            {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            }
+          ],
+          "source_transform": {
+            "uri": "transform://page-px",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "role": "SOURCE_FRAME_IDENTITY"
+          }
+        },
+        "whole_object_class": "STRUCTURAL_LINEWORK",
+        "identity_status": "NOT_APPLICABLE",
+        "symbol_identity_ref": null,
+        "state": "AUTHORIZED",
+        "candidate_classes": [
+          {
+            "class": "STRUCTURAL_LINEWORK",
+            "evidence_refs": [
+              "evidence:obj-rule:source-support"
+            ],
+            "uncertainty": {
+              "status": "SUPPORTED",
+              "confidence": 1.0,
+              "calibration": "NOT_APPLICABLE",
+              "limits": [],
+              "review_required": false
+            }
+          }
+        ],
+        "components": [
+          {
+            "component_id": "cmp-rule",
+            "role": "STRUCTURAL_STROKE",
+            "primitive_member_ids": [
+              "primitive:cmp-rule"
+            ],
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                5.0,
+                18.0,
+                28.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "glyph_hypotheses": [
+              {
+                "glyph": "R",
+                "evidence_refs": [
+                  "evidence:obj-rule:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              },
+              {
+                "glyph": "S",
+                "evidence_refs": [
+                  "evidence:obj-rule:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              }
+            ],
+            "independent_emission": "AUTHORIZED",
+            "emission_authorization_refs": [
+              "authority:obj-rule:ownership"
+            ],
+            "allowed_representation_kinds": [
+              "STRUCTURAL_LINE"
+            ]
+          }
+        ],
+        "object_context_evidence_refs": [
+          "evidence:obj-rule:source-support"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence:obj-rule:source-support",
+            "source_id": "source-1",
+            "kind": "FIXED_OBJECT_EVIDENCE",
+            "result": "SUPPORTED",
+            "role": "OBSERVATION",
+            "artifacts": [
+              {
+                "uri": "source://source-1/page-1",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "ORIGINAL_SOURCE_SUPPORT"
+              }
+            ],
+            "producer_version": "2",
+            "limitations": []
+          }
+        ],
+        "ownership_authority": [
+          {
+            "authorization_id": "authority:obj-rule:ownership",
+            "kind": "OWNERSHIP_DECISION",
+            "policy_id": "b-whole-object-v2",
+            "policy_version": "2",
+            "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "source_id": "source-1",
+            "target_ids": [
+              "obj-rule"
+            ],
+            "permitted_actions": [
+              "FREEZE_OUTPUT_OBLIGATIONS"
+            ],
+            "evidence_refs": [
+              "evidence:obj-rule:source-support"
+            ],
+            "decision_provenance": {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            },
+            "validity": "ACTIVE",
+            "limitations": []
+          }
+        ],
+        "relations": [
+          {
+            "relation_id": "shared-signature-rule",
+            "type": "SHARED_EVIDENCE",
+            "other_object_id": "obj-signature",
+            "evidence_refs": [
+              "evidence:obj-rule:source-support"
+            ],
+            "delegated_component_ids": []
+          },
+          {
+            "relation_id": "shared-text-rule",
+            "type": "SHARED_EVIDENCE",
+            "other_object_id": "obj-text",
+            "evidence_refs": [
+              "evidence:obj-rule:source-support"
+            ],
+            "delegated_component_ids": []
+          }
+        ],
+        "protected_subregions": [
+          {
+            "protection_id": "protection:obj-rule",
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                5.0,
+                18.0,
+                28.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "protected_object_ids": [
+              "obj-rule"
+            ],
+            "prohibited_actions": [
+              "NO_JUNCTION_AUTHORITY"
+            ],
+            "evidence_refs": [
+              "evidence:obj-rule:source-support"
+            ]
+          }
+        ],
+        "representation_policy": {
+          "policy_id": "DRAFTSMAN_REPRESENTATION_POLICY",
+          "policy_version": "draftsman-representation-policy-v1",
+          "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+          "policy_target": "POLICY_JUDGMENT",
+          "allowed_final_representation_kinds": [
+            "STRUCTURAL_LINE"
+          ],
+          "primary_representation": "STRUCTURAL_LINE",
+          "source_backup": "AUDIT_SOURCE_REFERENCE",
+          "component_suppression_ids": [],
+          "coverage_evidence_refs": [
+            "evidence:obj-rule:source-support"
+          ]
+        },
+        "uncertainty": {
+          "status": "SUPPORTED",
+          "confidence": 1.0,
+          "calibration": "NOT_APPLICABLE",
+          "limits": [],
+          "review_required": false
+        },
+        "negative_evidence_refs": [],
+        "veto_evidence_refs": [],
+        "lineage": {
+          "parent_ids": [],
+          "primitive_member_ids": [
+            "primitive:cmp-rule"
+          ],
+          "transform_records": [],
+          "producer_head": "036fa7966f4e49bdbf0ba94d59f782a49bf6d525",
+          "producer_version": "2",
+          "run_id": "freeze:obj-rule"
+        },
+        "review_reason": null,
+        "snapshot_revision": 1,
+        "output_obligation_contract": {
+          "contract_version": "b-output-obligations-v2",
+          "source_support_domain": {
+            "domain_id": "support-rule",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 27,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "shared_support_domain": {
+            "domain_id": "exclusions:obj-rule",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "exclusive_support_domain": {
+            "domain_id": "support-rule",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 27,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "component_ids": [
+            "cmp-rule"
+          ],
+          "required_output_obligations": [
+            {
+              "obligation_id": "obl-rule",
+              "component_ids": [
+                "cmp-rule"
+              ],
+              "kind": "STRUCTURAL_EXTENT",
+              "support_domain": {
+                "domain_id": "support-rule",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 27,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "allowed_output_forms": [
+                "STRUCTURAL_LINE"
+              ],
+              "prohibited_output_forms": [],
+              "required_projection": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "accepted_representation_ids": [
+                "pending:obl-rule"
+              ],
+              "terminal_disposition_policy": "FINAL_BINDING_MUST_DISCHARGE_OR_MARK_REVIEW",
+              "consumer_binding_key": "obj-rule",
+              "scoped_authority_refs": [
+                "authority:obj-rule:ownership"
+              ]
+            }
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-rule",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "shared_intersections": [
+            {
+              "intersection_id": "shared-signature-rule",
+              "peer_object_id": "obj-signature",
+              "domain": {
+                "domain_id": "support-shared",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 27,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "local_obligation_ids": [
+                "obl-rule"
+              ],
+              "peer_obligation_ids": [
+                "obl-signature"
+              ],
+              "mode": "DISTINCT_SUPPORTED_MEMBERS",
+              "evidence_refs": [
+                "evidence:obj-rule:source-support"
+              ],
+              "authority_refs": [
+                "authority:obj-rule:ownership"
+              ],
+              "duplicate_policy": "DISTINCT_OBJECTS_NO_SAME_OBLIGATION_DUPLICATE"
+            },
+            {
+              "intersection_id": "shared-text-rule",
+              "peer_object_id": "obj-text",
+              "domain": {
+                "domain_id": "support-text",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 5,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "local_obligation_ids": [
+                "obl-rule"
+              ],
+              "peer_obligation_ids": [
+                "obl-text"
+              ],
+              "mode": "DISTINCT_SUPPORTED_MEMBERS",
+              "evidence_refs": [
+                "evidence:obj-rule:source-support"
+              ],
+              "authority_refs": [
+                "authority:obj-rule:ownership"
+              ],
+              "duplicate_policy": "DISTINCT_OBJECTS_NO_SAME_OBLIGATION_DUPLICATE"
+            }
+          ],
+          "ownership_protection_state": "AUTHORIZED",
+          "legacy_projection_role": "CATEGORY_EVIDENCE_NOT_OBJECT_TRUTH",
+          "downstream_binding": {
+            "schema": "object-final-member-binding-v1",
+            "binding_key": "obj-rule",
+            "consumer_policy": {
+              "id": "SHARED_FS3_MEMBER_RESOLVER_V1",
+              "version": "1",
+              "digest": "a40e507567cd1bd59bd590d464a6569e15c3ff46fd5a3e2b06e95c5712ac3690"
+            }
+          }
+        }
+      },
+      "obj-text": {
+        "schema_version": "whole-object-ownership-v2",
+        "object_id": "obj-text",
+        "source": {
+          "source_id": "source-1",
+          "page_id": "page-1",
+          "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+          "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+          "region_px": [
+            2.0,
+            5.0,
+            18.0,
+            6.0
+          ],
+          "support_artifacts": [
+            {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            }
+          ],
+          "source_transform": {
+            "uri": "transform://page-px",
+            "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+            "role": "SOURCE_FRAME_IDENTITY"
+          }
+        },
+        "whole_object_class": "ORDINARY_TEXT",
+        "identity_status": "NOT_APPLICABLE",
+        "symbol_identity_ref": null,
+        "state": "AUTHORIZED",
+        "candidate_classes": [
+          {
+            "class": "ORDINARY_TEXT",
+            "evidence_refs": [
+              "evidence:obj-text:source-support"
+            ],
+            "uncertainty": {
+              "status": "SUPPORTED",
+              "confidence": 1.0,
+              "calibration": "NOT_APPLICABLE",
+              "limits": [],
+              "review_required": false
+            }
+          }
+        ],
+        "components": [
+          {
+            "component_id": "cmp-text",
+            "role": "ANNOTATION_TEXT",
+            "primitive_member_ids": [
+              "primitive:cmp-text"
+            ],
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                5.0,
+                18.0,
+                6.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "glyph_hypotheses": [
+              {
+                "glyph": "R",
+                "evidence_refs": [
+                  "evidence:obj-text:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              },
+              {
+                "glyph": "S",
+                "evidence_refs": [
+                  "evidence:obj-text:source-support"
+                ],
+                "uncertainty": {
+                  "status": "SUPPORTED",
+                  "confidence": 1.0,
+                  "calibration": "NOT_APPLICABLE",
+                  "limits": [],
+                  "review_required": false
+                }
+              }
+            ],
+            "independent_emission": "AUTHORIZED",
+            "emission_authorization_refs": [
+              "authority:obj-text:ownership"
+            ],
+            "allowed_representation_kinds": [
+              "NATIVE_TEXT"
+            ]
+          }
+        ],
+        "object_context_evidence_refs": [
+          "evidence:obj-text:source-support"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "evidence:obj-text:source-support",
+            "source_id": "source-1",
+            "kind": "FIXED_OBJECT_EVIDENCE",
+            "result": "SUPPORTED",
+            "role": "OBSERVATION",
+            "artifacts": [
+              {
+                "uri": "source://source-1/page-1",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "ORIGINAL_SOURCE_SUPPORT"
+              }
+            ],
+            "producer_version": "2",
+            "limitations": []
+          }
+        ],
+        "ownership_authority": [
+          {
+            "authorization_id": "authority:obj-text:ownership",
+            "kind": "OWNERSHIP_DECISION",
+            "policy_id": "b-whole-object-v2",
+            "policy_version": "2",
+            "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+            "source_id": "source-1",
+            "target_ids": [
+              "obj-text"
+            ],
+            "permitted_actions": [
+              "FREEZE_OUTPUT_OBLIGATIONS"
+            ],
+            "evidence_refs": [
+              "evidence:obj-text:source-support"
+            ],
+            "decision_provenance": {
+              "uri": "source://source-1/page-1",
+              "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "role": "ORIGINAL_SOURCE_SUPPORT"
+            },
+            "validity": "ACTIVE",
+            "limitations": []
+          }
+        ],
+        "relations": [
+          {
+            "relation_id": "shared-text-rule",
+            "type": "SHARED_EVIDENCE",
+            "other_object_id": "obj-rule",
+            "evidence_refs": [
+              "evidence:obj-text:source-support"
+            ],
+            "delegated_component_ids": []
+          }
+        ],
+        "protected_subregions": [
+          {
+            "protection_id": "protection:obj-text",
+            "source": {
+              "source_id": "source-1",
+              "page_id": "page-1",
+              "source_sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+              "coordinate_frame": "ORIGINAL_SOURCE_PIXELS",
+              "region_px": [
+                2.0,
+                5.0,
+                18.0,
+                6.0
+              ],
+              "support_artifacts": [
+                {
+                  "uri": "source://source-1/page-1",
+                  "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                  "role": "ORIGINAL_SOURCE_SUPPORT"
+                }
+              ],
+              "source_transform": {
+                "uri": "transform://page-px",
+                "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+                "role": "SOURCE_FRAME_IDENTITY"
+              }
+            },
+            "protected_object_ids": [
+              "obj-text"
+            ],
+            "prohibited_actions": [
+              "NO_JUNCTION_AUTHORITY"
+            ],
+            "evidence_refs": [
+              "evidence:obj-text:source-support"
+            ]
+          }
+        ],
+        "representation_policy": {
+          "policy_id": "DRAFTSMAN_REPRESENTATION_POLICY",
+          "policy_version": "draftsman-representation-policy-v1",
+          "policy_sha256": "ca4c2ffa86c14a1e09810d32b574f2e9275f968aeb3a2515272e6b658b6834a4",
+          "policy_target": "POLICY_JUDGMENT",
+          "allowed_final_representation_kinds": [
+            "NATIVE_TEXT"
+          ],
+          "primary_representation": "NATIVE_TEXT",
+          "source_backup": "AUDIT_SOURCE_REFERENCE",
+          "component_suppression_ids": [],
+          "coverage_evidence_refs": [
+            "evidence:obj-text:source-support"
+          ]
+        },
+        "uncertainty": {
+          "status": "SUPPORTED",
+          "confidence": 1.0,
+          "calibration": "NOT_APPLICABLE",
+          "limits": [],
+          "review_required": false
+        },
+        "negative_evidence_refs": [],
+        "veto_evidence_refs": [],
+        "lineage": {
+          "parent_ids": [],
+          "primitive_member_ids": [
+            "primitive:cmp-text"
+          ],
+          "transform_records": [],
+          "producer_head": "036fa7966f4e49bdbf0ba94d59f782a49bf6d525",
+          "producer_version": "2",
+          "run_id": "freeze:obj-text"
+        },
+        "review_reason": null,
+        "snapshot_revision": 1,
+        "output_obligation_contract": {
+          "contract_version": "b-output-obligations-v2",
+          "source_support_domain": {
+            "domain_id": "support-text",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 5,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "shared_support_domain": {
+            "domain_id": "exclusions:obj-text",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "exclusive_support_domain": {
+            "domain_id": "support-text",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": [
+              {
+                "y": 5,
+                "x_start": 2,
+                "x_end_exclusive": 18
+              }
+            ]
+          },
+          "component_ids": [
+            "cmp-text"
+          ],
+          "required_output_obligations": [
+            {
+              "obligation_id": "obl-text",
+              "component_ids": [
+                "cmp-text"
+              ],
+              "kind": "COMPONENT_TEXT",
+              "support_domain": {
+                "domain_id": "support-text",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 5,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "allowed_output_forms": [
+                "NATIVE_TEXT"
+              ],
+              "prohibited_output_forms": [],
+              "required_projection": "OUTPUT_OBJECT_GRAPHIC_ONLY",
+              "accepted_representation_ids": [
+                "pending:obl-text"
+              ],
+              "terminal_disposition_policy": "FINAL_BINDING_MUST_DISCHARGE_OR_MARK_REVIEW",
+              "consumer_binding_key": "obj-text",
+              "scoped_authority_refs": [
+                "authority:obj-text:ownership"
+              ]
+            }
+          ],
+          "structural_exclusions": {
+            "domain_id": "exclusions:obj-text",
+            "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+            "frame_id": "page-px",
+            "encoding": "SOURCE_PIXEL_RUNS_V1",
+            "rows": []
+          },
+          "shared_intersections": [
+            {
+              "intersection_id": "shared-text-rule",
+              "peer_object_id": "obj-rule",
+              "domain": {
+                "domain_id": "support-text",
+                "source_digest": "1111111111111111111111111111111111111111111111111111111111111111",
+                "frame_id": "page-px",
+                "encoding": "SOURCE_PIXEL_RUNS_V1",
+                "rows": [
+                  {
+                    "y": 5,
+                    "x_start": 2,
+                    "x_end_exclusive": 18
+                  }
+                ]
+              },
+              "local_obligation_ids": [
+                "obl-text"
+              ],
+              "peer_obligation_ids": [
+                "obl-rule"
+              ],
+              "mode": "DISTINCT_SUPPORTED_MEMBERS",
+              "evidence_refs": [
+                "evidence:obj-text:source-support"
+              ],
+              "authority_refs": [
+                "authority:obj-text:ownership"
+              ],
+              "duplicate_policy": "DISTINCT_OBJECTS_NO_SAME_OBLIGATION_DUPLICATE"
+            }
+          ],
+          "ownership_protection_state": "AUTHORIZED",
+          "legacy_projection_role": "CATEGORY_EVIDENCE_NOT_OBJECT_TRUTH",
+          "downstream_binding": {
+            "schema": "object-final-member-binding-v1",
+            "binding_key": "obj-text",
+            "consumer_policy": {
+              "id": "SHARED_FS3_MEMBER_RESOLVER_V1",
+              "version": "1",
+              "digest": "a40e507567cd1bd59bd590d464a6569e15c3ff46fd5a3e2b06e95c5712ac3690"
+            }
+          }
+        }
+      }
+    },
+    "behavior_digest": "caa1a42b2041966cd8b15c398eae4bd510eecabbee8653ddbee3b7c1825d9f06",
+    "output_id": "6f7510cdcb5c2903fdeac86aab17af8fd18d4786bdb15ecc22936b8a3ca65325",
+    "review_required": true,
+    "audit": {
+      "note": "one"
+    }
+  }
+}

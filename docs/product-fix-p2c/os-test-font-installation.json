@@ -1,0 +1,24 @@
+[
+  {
+    "font": "NotoSansSC[wght].ttf",
+    "method": "Windows current-user Fonts registry + AddFontResourceExW flags=0",
+    "registry_name": "Noto Sans SC Thin (TrueType)",
+    "prior_registry_value": null,
+    "installed_path": "C:\\Users\\agcrf\\AppData\\Local\\Microsoft\\Windows\\Fonts\\NotoSansSC[wght].ttf",
+    "SHA256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "GDI_resource_count": 18,
+    "OS_REGISTRATION": "PASS",
+    "BENTLEY_FONT_FOUND": "NOT_TESTED"
+  },
+  {
+    "font": "ITCCADSC-Regular.ttf",
+    "method": "Windows current-user Fonts registry + AddFontResourceExW flags=0",
+    "registry_name": "ITC CAD SC Regular (TrueType)",
+    "prior_registry_value": null,
+    "installed_path": "C:\\Users\\agcrf\\AppData\\Local\\Microsoft\\Windows\\Fonts\\ITCCADSC-Regular.ttf",
+    "SHA256": "5ae93fa926c7941d9d333d86aad1db8f61ad289b660714537fd1cfface214632",
+    "GDI_resource_count": 2,
+    "OS_REGISTRATION": "PASS",
+    "BENTLEY_FONT_FOUND": "NOT_TESTED"
+  }
+]

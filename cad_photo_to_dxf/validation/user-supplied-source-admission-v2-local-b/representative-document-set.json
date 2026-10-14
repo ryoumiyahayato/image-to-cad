@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-SOURCE-ADMISSION-V2-LOCAL-B",
+  "source_directory": "C:/Users/agcrf/Desktop/新建文件夹",
+  "selection_rule": "At most three documents per family; prefer native DWG for vector-origin families; retain PDF sheets where they add a distinct plot, scan, language, or title-block convention. Do not use duplicate copies to fill the pool.",
+  "representative_families_frozen": 10,
+  "representative_documents_frozen": 16,
+  "documents": [
+    {
+      "family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "relative_path": "车间_结构0310.dwg",
+      "representation_role": "VECTOR_ORIGIN_PRIMARY",
+      "local_a_evidence_reused": true,
+      "local_b_content_inspected": false,
+      "reason": "Root-package structural DWG; Local-A conversion showed dense dimensions, linework, text, and leaders."
+    },
+    {
+      "family_id": "F01-HAIYANG-2022-ROOT-DWG",
+      "relative_path": "海阳捻织车间暖通施工图2022.1.10_t3.dwg",
+      "representation_role": "VECTOR_ORIGIN_DISCIPLINE_VARIANT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "New HVAC sample; AC1032, 1,502 modelspace entities, 25 dimensions, 558 text entities, 26 layers, and named HVAC/equipment layers."
+    },
+    {
+      "family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/11#给排水平面图_t3.dwg",
+      "representation_role": "VECTOR_ORIGIN_PRIMARY",
+      "local_a_evidence_reused": true,
+      "local_b_content_inspected": false,
+      "reason": "Local-A plumbing sample from the hashed HUIHONG package; retained as the established family anchor."
+    },
+    {
+      "family_id": "F02-HUIHONG-2019-HASHED-DWG",
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/10#-暖通施工图2019.05.25.dwg",
+      "representation_role": "VECTOR_ORIGIN_DISCIPLINE_VARIANT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "New HVAC sample; 34,296 modelspace entities, 480 dimensions, 26 leaders, 1,213 text-like entities, and 63 layers."
+    },
+    {
+      "family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/电施/TZSW1-能源中心电施-SD-180730审图修改t3.dwg",
+      "representation_role": "VECTOR_ORIGIN_PRIMARY",
+      "local_a_evidence_reused": true,
+      "local_b_content_inspected": false,
+      "reason": "Local-A as-built electrical sample; establishes the installation/as-built family and its revision/title conventions."
+    },
+    {
+      "family_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/暖通/4#能源中心-暖施.dwg",
+      "representation_role": "VECTOR_ORIGIN_DISCIPLINE_VARIANT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "New as-built HVAC sample; 3,540 modelspace entities, 81 dimensions, 455 text entities, as-built/revision layers, and five proxy entities."
+    },
+    {
+      "family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-10B_改造二层平面图(2).pdf",
+      "representation_role": "PDF_DRAWING_SET_PRIMARY",
+      "local_a_evidence_reused": true,
+      "local_b_content_inspected": false,
+      "reason": "Local-A architectural sheet from the 76-PDF stamped review package."
+    },
+    {
+      "family_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-06_一层火灾自动报警平面图(0).pdf",
+      "representation_role": "PDF_DRAWING_SET_DISCIPLINE_VARIANT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": false,
+      "reason": "Electrical plan selected to preserve cross-discipline and review-package diversity without selecting duplicate directory sheets."
+    },
+    {
+      "family_id": "F05-DENNKISETSUBI-STANDALONE-PDF",
+      "relative_path": "dennkisetubi.pdf",
+      "representation_role": "PDF_DRAWING_SET_PRIMARY",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Bounded render showed a Japanese electrical plan with grid dimensions, equipment symbols, a legend/table, leaders, and a formal title block."
+    },
+    {
+      "family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "relative_path": "20210416zumen.pdf",
+      "representation_role": "PDF_DRAWING_SET_PLAN",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Visitor-center electrical plan sheet with Japanese title block and plot-style geometry."
+    },
+    {
+      "family_id": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "relative_path": "2026dennkisetsubi.pdf",
+      "representation_role": "PDF_DRAWING_SET_SPECIFICATION",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Same visitor-center project title as the plan PDF but a distinct electrical specification/title sheet; retained as family diversity, not a duplicate."
+    },
+    {
+      "family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "relative_path": "0026_20260601.pdf",
+      "representation_role": "PDF_DRAWING_SET_SCAN_OR_PLOT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Electrical-drawing project title; 39-page DocuCentre PDF with visible scan/degradation characteristics."
+    },
+    {
+      "family_id": "F07-SEYA-CULTURAL-CENTER-ELECTRICAL",
+      "relative_path": "32581.pdf",
+      "representation_role": "PDF_DRAWING_SET_ALTERNATE_EXPORT",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Same electrical-drawing project title as 0026_20260601.pdf; 20-page PowerPoint export with different page geometry."
+    },
+    {
+      "family_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "relative_path": "图纸-综合仓库-电专业+815.pdf",
+      "representation_role": "PDF_DRAWING_SET_PRIMARY",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Chinese engineering title/directory sheet with bilingual design-group title block, discipline field, revision, and sheet table."
+    },
+    {
+      "family_id": "F09-JIULONG-FIRE-ELECTRICAL",
+      "relative_path": "九龙镇九龙路126号沿街房消防电改2.pdf",
+      "representation_role": "PDF_DRAWING_SET_PRIMARY",
+      "local_a_evidence_reused": false,
+      "local_b_content_inspected": true,
+      "reason": "Chinese fire/electrical design specification with formal title block, signatures, project number, and dense standards text."
+    },
+    {
+      "family_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+      "relative_path": "环保局主大楼.pdf",
+      "representation_role": "PDF_DRAWING_SET_RASTER_PRIMARY",
+      "local_a_evidence_reused": true,
+      "local_b_content_inspected": false,
+      "reason": "Local-A bounded render showed a useful but rasterized engineering-document family; retained for scan/degradation diversity."
+    }
+  ],
+  "excluded_from_representative_pool": [
+    {
+      "family_id": "F11-FEMS-ENGINE-HOUSE-ADDENDUM",
+      "reason": "Administrative/specification addendum; useful for revision text but not a primary geometry source."
+    },
+    {
+      "family_id": "F12-JICHUAN-PHARMA-SCHEDULE",
+      "reason": "Construction progress schedule/Gantt chart; not a drawing source."
+    },
+    {
+      "family_id": "F13-SAKADO-SCHOOL-DEMOLITION-MEETING",
+      "reason": "Meeting agenda and explanatory material; no demonstrated drawing geometry."
+    },
+    {
+      "family_id": "F14-52725-BUILDING-COMMITTEE-AGENDA",
+      "reason": "Municipal committee agenda; non-engineering administrative material."
+    }
+  ],
+  "role": "ADDITIONAL_DEV_SOURCE_POOL_ONLY",
+  "training_permission": "TRAINING_PERMISSION_NOT_CONFIRMED"
+}

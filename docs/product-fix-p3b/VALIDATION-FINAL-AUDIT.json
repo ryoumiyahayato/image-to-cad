@@ -1,0 +1,248 @@
+{
+  "AUDIT_RECOVERED": "YES",
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "BAD_NOMINATION_X": 0,
+  "BLIND_TOUCHED": "NO",
+  "CLASS_DISTRIBUTION": {
+    "AMBIGUOUS": 3,
+    "OTHER": 7,
+    "SINGLE_PHYSICAL_STROKE": 22,
+    "TRUE_PARALLEL_STRUCTURE": 18
+  },
+  "COLAB_STARTED": "NO",
+  "DXF_CHANGED": "NO",
+  "EXCLUDED": 0,
+  "EXISTING_HUMAN_AUDIT_RERUN": "NO",
+  "MODEL_TRAINED": "NO",
+  "NEXT_ACTION": "Independent re-review of the eight recommended validation samples only; preserve originals and valid AMBIGUOUS labels, then resolve disagreements explicitly before final freeze/pre-flight",
+  "NOMINATION_BORDERLINE": 4,
+  "NOMINATION_POOR": 0,
+  "NOMINATION_STRONG": 46,
+  "OCR_CHANGED": "NO",
+  "PRODUCTION_CODE_CHANGED": "NO",
+  "READY": 50,
+  "READY_FOR_COLAB_TRAINING_PREFLIGHT": "NO",
+  "SKIPPED": 0,
+  "SUSPECT_REVIEW_COUNT": 8,
+  "TOTAL_REVIEWED": 50,
+  "TRAINING_DATA_FREEZE": "DEFERRED",
+  "TRAIN_SOURCE_OVERLAP": "NONE",
+  "TRAIN_VALIDATION_LEAKAGE": "NONE",
+  "UNCLEAR_TARGET_U": 0,
+  "VALIDATION_HEALTH": "PASS_WITH_REVIEW_SUBSET",
+  "by_drawing": {
+    "A2-SG-008": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    },
+    "G0R2-22E85E2DB7746A00": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "G0R2-4DC97797ABE2CB18": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "G0R2-99D5B85436EBB965": {
+      "classes": {
+        "OTHER": 1
+      },
+      "excluded": 0,
+      "ready": 1,
+      "total": 1
+    },
+    "G0R2-F519B357241CAC3A": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 4,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    }
+  },
+  "by_source_family": {
+    "AU_GOLDCOAST_OPW_2014_2240": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT": {
+      "classes": {
+        "OTHER": 1,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 5
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "US_LOC_HABS_GU0014": {
+      "classes": {
+        "OTHER": 1
+      },
+      "excluded": 0,
+      "ready": 1,
+      "total": 1
+    },
+    "US_LOC_HABS_UT0288": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 4,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 12,
+      "total": 12
+    },
+    "US_NARA_BUILDING9": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    }
+  },
+  "by_target_kind": {
+    "CONTROL": {
+      "classes": {
+        "OTHER": 5
+      },
+      "excluded": 0,
+      "ready": 5,
+      "total": 5
+    },
+    "PAIR": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "SINGLE_PHYSICAL_STROKE": 2,
+        "TRUE_PARALLEL_STRUCTURE": 18
+      },
+      "excluded": 0,
+      "ready": 22,
+      "total": 22
+    },
+    "SINGLE": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 20
+      },
+      "excluded": 0,
+      "ready": 23,
+      "total": 23
+    }
+  },
+  "correspondence_audit_sha256": "22804523aa8263a354f73611b644d18c0d5fbd7750f1e37e0b4a6aad84b769ef",
+  "dpi_coverage_limit": "37 PDF samples at effective render DPI 110, 13 TIFF samples with unknown physical DPI. This supports a small bounded initial comparison, not known multi-DPI robustness.",
+  "effective_dpi": {
+    "110.000000": {
+      "classes": {
+        "AMBIGUOUS": 2,
+        "OTHER": 5,
+        "SINGLE_PHYSICAL_STROKE": 16,
+        "TRUE_PARALLEL_STRUCTURE": 14
+      },
+      "excluded": 0,
+      "ready": 37,
+      "total": 37
+    },
+    "UNKNOWN_SOURCE_DPI": {
+      "classes": {
+        "AMBIGUOUS": 1,
+        "OTHER": 2,
+        "SINGLE_PHYSICAL_STROKE": 6,
+        "TRUE_PARALLEL_STRUCTURE": 4
+      },
+      "excluded": 0,
+      "ready": 13,
+      "total": 13
+    }
+  },
+  "health_reason": "22 singles/18 parallels, four structurally represented independent families plus a fifth control family, 14% OTHER, no poor source correspondence or leakage; 42 samples outside bounded review (19 singles/16 parallels/7 OTHER), so usable validation needs a small review, not full relabeling or a systemic quality-failure designation.",
+  "human_uncertainty_policy": "No existing class is declared wrong or changed. STRONG measures target correspondence, not guaranteed semantic truth. AMBIGUOUS is a valid label and may stay AMBIGUOUS after independent review.",
+  "leakage_checks": {
+    "patch_sha256": [],
+    "sample_id": [],
+    "source_drawing_id": [],
+    "source_family_id": [],
+    "source_sha256": []
+  },
+  "original_input_identity": {
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\VALIDATION-V2-001-AUDIT.json": "0d8294c97ddcee301cd901140f00b047a293d1113e4ff59a964e66f91efa1383",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\VALIDATION-V2-001-AUDIT.md": "4156714431e5218201e8356e67f96a832edb9e8becd5c21e7cf004dd80edc483",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\formal-seed-adjudicated-decisions.jsonl": "2e4bdfe4e8e1d56beae9b238aba210538dcd215230609079d2d236241813043d",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\formal-seed-v2-001.json": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\suspect-review-v2-001.json": "e3c9bbedf8282f3abf25ae5f2a9dbe24b74d60536914d0fba3089d2e4402e34b",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\validation-v2-001.json": "006d8e3f61c5e1f0909605e534b78aebb12432f8501ed83b06410dc7d6df8c25",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\split-manifest.json": "d354b6604e92a1e6c8a01d10bb61032c2872167188bff4d4b7943b3955b25444",
+    "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\validation-v2-001.jsonl": "de5e3b1d8e3f869d79ed67d5248398c6ff2d005b50b58ccbb7f183fa5d743ed2"
+  },
+  "quality_by_class_reporting_only": {
+    "AMBIGUOUS": {
+      "NOMINATION_STRONG": 3
+    },
+    "OTHER": {
+      "NOMINATION_STRONG": 7
+    },
+    "SINGLE_PHYSICAL_STROKE": {
+      "NOMINATION_BORDERLINE": 3,
+      "NOMINATION_STRONG": 19
+    },
+    "TRUE_PARALLEL_STRUCTURE": {
+      "NOMINATION_BORDERLINE": 1,
+      "NOMINATION_STRONG": 17
+    }
+  },
+  "safety_metric_limit": "18 labeled true parallels are adequate for an initial pilot comparison, not a production false-merge safety estimate. A zero-error run would still leave substantial statistical uncertainty; no model metrics have been measured.",
+  "suspect_recommendation_sha256": "89082427dbffe2de731b7caa7652f098ffc95de7c8aebaf0612d0500a458b605",
+  "target_coverage_limit": "PAIR has 18 parallels, only two singles and two ambiguous cases; report PAIR-only safety/performance separately to detect target-kind shortcuts and do not claim broad paired-stroke recall from two positives.",
+  "train_ambiguity_coverage_limit": "Current adjudicated train seed has zero AMBIGUOUS examples. After review, a separate pre-flight must explicitly address four-class training support or a documented abstention policy; do not silently drop validation class 4.",
+  "train_current_classes": {
+    "OTHER": 36,
+    "SINGLE_PHYSICAL_STROKE": 38,
+    "TRUE_PARALLEL_STRUCTURE": 20
+  },
+  "unsuspected_subset": {
+    "classes": {
+      "OTHER": 7,
+      "SINGLE_PHYSICAL_STROKE": 19,
+      "TRUE_PARALLEL_STRUCTURE": 16
+    },
+    "count": 42,
+    "nomination_quality": {
+      "NOMINATION_STRONG": 42
+    }
+  }
+}

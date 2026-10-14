@@ -1,0 +1,122 @@
+{
+  "E01": {
+    "native_render": "PASS",
+    "image_control_pixel_difference": 9259,
+    "command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\E01-without-image.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\E01-without-image.dxf"
+    ],
+    "failures": [
+      "Native render exit=3221225477; PDF exists=True"
+    ],
+    "without_image_control": "PASS",
+    "diagnostic_native_lines_black": true,
+    "foreground_rgb": [
+      0,
+      0,
+      0
+    ]
+  },
+  "W02": {
+    "native_render": "PASS",
+    "image_control_pixel_difference": 8089,
+    "command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W02-without-image.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W02-without-image.dxf"
+    ],
+    "failures": [
+      "Native render exit=3221225477; PDF exists=True"
+    ],
+    "without_image_control": "PASS",
+    "diagnostic_native_lines_black": true,
+    "foreground_rgb": [
+      0,
+      0,
+      0
+    ]
+  },
+  "W03": {
+    "native_render": "PASS",
+    "image_control_pixel_difference": 6156,
+    "command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W03-without-image.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W03-without-image.dxf"
+    ],
+    "failures": [
+      "Native render exit=3221225477; PDF exists=True"
+    ],
+    "without_image_control": "PASS",
+    "diagnostic_native_lines_black": true,
+    "foreground_rgb": [
+      0,
+      0,
+      0
+    ]
+  },
+  "W03-signature": {
+    "native_render": "PASS",
+    "image_control_pixel_difference": 1227,
+    "command": [
+      "C:\\Users\\agcrf\\Desktop\\LibreCAD\\LibreCAD.exe",
+      "dxf2pdf",
+      "-p",
+      "130x150",
+      "-s",
+      "1",
+      "-c",
+      "-m",
+      "-o",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W03-signature-without-image.pdf",
+      "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\local-artifacts\\product-fix-p2b\\librecad\\W03-signature-without-image.dxf"
+    ],
+    "failures": [
+      "Native render exit=3221225477; PDF exists=True"
+    ],
+    "without_image_control": "PASS",
+    "diagnostic_native_lines_black": true,
+    "foreground_rgb": [
+      0,
+      0,
+      0
+    ]
+  },
+  "W02-engineering": {
+    "native_render": "PASS",
+    "text_contents": [
+      "2",
+      "2",
+      "M",
+      "M",
+      "SL",
+      "2",
+      "2"
+    ]
+  }
+}

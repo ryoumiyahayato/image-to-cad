@@ -1,0 +1,81 @@
+{
+  "availability": "PARTIAL",
+  "consumer": "app.source_stroke_multiplicity.assess_pair_identity",
+  "limitations": [
+    "raw detector IDs identify observations, not physical source strokes",
+    "the frozen 147 records do not contain independently proven shared identity",
+    "the new consumer is DEV-only and does not revise V1 eligibility"
+  ],
+  "policy": "positive shared source identity is required; distance, angle, overlap, and common axis are insufficient",
+  "real_cases": [
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "current_direct_admission": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "dev_identity_consumer_result": "NOT_ADMITTED_WITHOUT_POSITIVE_IDENTITY",
+      "fragment_a_detector_ids": [
+        "raw-hough-001150"
+      ],
+      "fragment_b_detector_ids": [
+        "raw-hough-000801"
+      ],
+      "human_pair_validity": "REJECTED",
+      "physical_source_identity": "MULTIPLICITY_AMBIGUOUS",
+      "primary_failure": "PAIR_IDENTITY_LOSS"
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "current_direct_admission": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "dev_identity_consumer_result": "NOT_ADMITTED_WITHOUT_POSITIVE_IDENTITY",
+      "fragment_a_competing_detector_ids_in_filtered_duplicate": [
+        "raw-hough-000415",
+        "raw-hough-000683"
+      ],
+      "fragment_a_detector_ids_in_survivor": [
+        "raw-hough-000425"
+      ],
+      "fragment_b_detector_ids": [
+        "raw-hough-000943"
+      ],
+      "human_pair_validity": "REJECTED",
+      "physical_source_identity": "MULTIPLICITY_AMBIGUOUS",
+      "primary_failure": "BOTH"
+    }
+  ],
+  "schema_version": 1,
+  "synthetic_decisions": {
+    "detector_only_identity": {
+      "admitted": false,
+      "left_stroke_ids": [
+        "SAME"
+      ],
+      "reason": "detector geometry does not independently prove shared source identity",
+      "right_stroke_ids": [
+        "HYPOTHESIS:line-observation-000000"
+      ],
+      "status": "MULTIPLICITY_AMBIGUOUS"
+    },
+    "distinct_confirmed_identity": {
+      "admitted": false,
+      "left_stroke_ids": [
+        "SAME"
+      ],
+      "reason": "confirmed source-stroke identities are disjoint",
+      "right_stroke_ids": [
+        "DISTINCT"
+      ],
+      "status": "DISTINCT_SOURCE_REJECTED"
+    },
+    "shared_confirmed_identity": {
+      "admitted": true,
+      "left_stroke_ids": [
+        "SAME"
+      ],
+      "reason": "independent source-stroke identity is shared by both fragments",
+      "right_stroke_ids": [
+        "SAME"
+      ],
+      "status": "SAME_SOURCE_SUPPORTED"
+    }
+  },
+  "task_id": "SOURCE_STROKE_MULTIPLICITY_INTEGRITY_V1"
+}

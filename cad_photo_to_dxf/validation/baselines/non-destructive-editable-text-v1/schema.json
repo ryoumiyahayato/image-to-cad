@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "forbidden_properties": [
+    "candidate_ids",
+    "ocr_contents",
+    "partition_payloads",
+    "text_geometry_before",
+    "text_geometry_after"
+  ],
+  "notes": {
+    "full_raw_evidence_sha256": "hash of the complete external raw page record",
+    "full_structure_id": "record-only; never an equality gate",
+    "partition_hashes": "baseline and candidate values are both retained"
+  },
+  "required": [
+    "contract_version",
+    "schema_version",
+    "page_id",
+    "source_relative_path",
+    "source_sha256",
+    "page_number",
+    "dpi",
+    "source_dimensions",
+    "baseline_source_commit",
+    "candidate_commit",
+    "eligible_count",
+    "native_text_count",
+    "fallback_count",
+    "source_text_outline_count",
+    "trace_text_symbol_count",
+    "candidate_id_hash",
+    "ocr_content_hash",
+    "text_semantic_hash",
+    "text_geometry_hash",
+    "non_text_structure_hash",
+    "text_symbol_hash",
+    "source_outline_hash",
+    "protected_content_hash",
+    "page_transform_hash",
+    "full_structure_id",
+    "dxf_audit_error_count",
+    "read_save_read",
+    "changed_partitions",
+    "passed",
+    "failure_reasons",
+    "full_raw_evidence_sha256",
+    "full_raw_evidence_record_count",
+    "regeneration_command",
+    "regeneration_tool_version"
+  ],
+  "title": "non-destructive-editable-text-v1 compact page summary",
+  "type": "object"
+}

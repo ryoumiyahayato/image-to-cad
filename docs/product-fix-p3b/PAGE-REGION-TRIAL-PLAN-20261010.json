@@ -1,0 +1,1503 @@
+{
+  "title": "P3B下一轮页面/区域试用计划（实施前）",
+  "created_date": "2026-10-10",
+  "workspace_root": "D:/programs/Image-to-CAD/image-to-cad/instrumented-e03",
+  "materials_root": "D:/programs/Image-to-CAD/materials/新建文件夹",
+  "source_table": "docs/product-fix-p3b/SOURCE-SUPPLEMENT-20261010.json",
+  "scope": {
+    "PDF_pages": 7,
+    "conditional_original_CAD_views": 3,
+    "total_max_units": 10,
+    "meaning": "后续小范围修复试用候选范围；不是本轮新数据集，也不是强制数量；不合适可跳过，不回填旧目录页",
+    "selection_basis": "内容、来源遗漏、结构/扫描场景及已有CAD证据；未使用首轮模型得分",
+    "unchanged": "当前94训练/50验证、ID/family/标签/划分、冻结18维及首轮Logistic Regression结果"
+  },
+  "coordinate_note": "PDF区域是本轮整页查看所得观察范围约估，不是中心裁框。旧Local-D框为原记录xyxy，P3B旧ROI常为xywh，后续解析须明确字段。不同DPI先映射至同页PDF点坐标；CAD以原生实体/坐标及旧渲染变换核对。不能按像素半径证明独立结构。",
+  "history_scope": [
+    {
+      "round": "V1",
+      "target_manifest": "docs/product-fix-p3b/pilot-review-manifest.jsonl",
+      "state": "docs/product-fix-p3b/labels/PILOT_V1_UNVERIFIED.json",
+      "other_state": "docs/product-fix-p3b/labels/PILOT_LABELS_V1.json",
+      "prior_findings": "209个已看目标位置，145个保存标签；无完整事件日志。不能逐次重建回看/undo，也不能把未保存位置视为未看。V1标签不导入正式监督训练"
+    },
+    {
+      "round": "V2验收",
+      "target_manifest": "docs/product-fix-p3b/real-v2-acceptance.jsonl",
+      "state": "docs/product-fix-p3b/labels/v2-ui-acceptance.json",
+      "prior_findings": "30个目标；仅UI/口径验收，不自动作为新训练标签"
+    },
+    {
+      "round": "正式",
+      "target_manifest": "docs/product-fix-p3b/formal-seed-v2-001.jsonl",
+      "state": "docs/product-fix-p3b/labels/formal-seed-v2-001.json",
+      "prior_findings": "100个目标，复核13后保留94；复核指向原目标，不增目标数"
+    },
+    {
+      "round": "正式复核",
+      "target_manifest": "docs/product-fix-p3b/suspect-review-v2-001.jsonl",
+      "state": "docs/product-fix-p3b/labels/suspect-review-v2-001.json",
+      "mapping": "docs/product-fix-p3b/suspect-review-v2-001-plan.json"
+    },
+    {
+      "round": "验证",
+      "target_manifest": "docs/product-fix-p3b/validation-v2-001.jsonl",
+      "state": "docs/product-fix-p3b/labels/validation-v2-001.json",
+      "prior_findings": "50个目标，复核8，仍为50；不是58"
+    },
+    {
+      "round": "验证复核",
+      "target_manifest": "docs/product-fix-p3b/validation-suspect-v2-001.jsonl",
+      "state": "docs/product-fix-p3b/labels/validation-suspect-v2-001.json",
+      "mapping": "docs/product-fix-p3b/validation-suspect-v2-001-plan.json"
+    },
+    {
+      "round": "其他任务Local-D/E2",
+      "target_manifest": "cad_photo_to_dxf/validation/user-supplied-candidate-mining-v2-local-d/candidate-registry.json",
+      "state": "local-artifacts/draftsman/user-supplied-human-review-v2-local-e2/review-state.json",
+      "prior_findings": "复用已呈现/复核位置与上下文，任务标签不导入P3B"
+    },
+    {
+      "round": "旧冻结/已打包/首轮结果",
+      "freeze": "docs/product-fix-p3b/FINAL-TRAINING-DATA-FREEZE.json",
+      "review": "local-artifacts/product-fix-p3b/colab-drive-20261008-001/FIRST-BASELINE-REVIEW.txt",
+      "prior_findings": "首轮Logistic Regression结果包已取得；早期preflight/冻结MODEL_TRAINED=NO不是本轮状态证据。远端完整执行历史未独立取得"
+    }
+  ],
+  "history_reader_proposal": {
+    "states": [
+      "呈现过（事件日志/已看集合证据分层）",
+      "已经标注",
+      "有意复核（绑定原目标，不新增）",
+      "最终保留",
+      "实际训练输入（以输入包/结果记录为依据）"
+    ],
+    "target_identity": "来源原图/页/版本/格式映射＋父几何/成员实体ID＋原页端点＋原始/复核对应关系。不同sample_id、局部截短/调ROI不能视为新目标",
+    "region_burden": "旧目标框、上下文框、连续长线代理、页面观察区一起记录；跨PAIR/SINGLE/CONTROL比较。目标不同可以仍共享区域名额",
+    "limits": "V1无完整逐次事件记录保留不确定性；页/设计跨格式未配准只标关联风险，不编造坐标对应。blind仅登记信息，不读内容"
+  },
+  "trial_selection_configuration_proposal": {
+    "selection_order": "设计来源→显式文件→页面/Model子图→区域/连续结构代理→候选；来源/页/区轮转",
+    "starting_caps": {
+      "ordinary_targets_per_page_or_CAD_subsheet": 4,
+      "ordinary_targets_per_region": 1,
+      "ordinary_targets_per_shared_longline_proxy": 1,
+      "additional_difficult_difference_per_page": 1,
+      "ordinary_targets_per_design": 8
+    },
+    "caps_meaning": "仅可说明/可调整的选样配置，非验收门禁；不强制用满，不按人工类别均分，也不自动补标签",
+    "history_default": "已看同目标不作新样本；有意复核单独绑定原目标。已看同区默认避开，必要差异可有理由保留",
+    "finite_structure_proxies": [
+      "共享父几何/实体ID",
+      "同页共线连续线段及跨局部段共同名额",
+      "明确页面观察区/相邻对象上下文"
+    ],
+    "proxy_limit": "不建立墙/房间识别系统；代理无法保证找出全部同一物理结构",
+    "valuable_overlap_exceptions": [
+      "间隙不同",
+      "节点关系不同",
+      "开口不同",
+      "对象邻接/归属不同"
+    ],
+    "exception_record": "记录差异及保留理由，按共享结构名额审视；避免相邻呈现，不为零重叠清空困难例",
+    "hard_task": "PAIR中的SINGLE与PAIR中的PARALLEL直接覆盖主要难点；单线候选SINGLE数量不能代替PAIR内部覆盖",
+    "negative_policy": "保留有明确目标归属的OTHER与必要CONTROL；不自动把候选类型当人工类别",
+    "validation_policy": "当前50保留为旧基线比较集；后续独立批次使用页/区域轮转与上限，先核实来源关联/划分，不以页码靠前排序占满名额"
+  },
+  "offline_function_change_proposal": [
+    {
+      "function": "tools/p3b/inventory.py::build",
+      "confirmed_problem": "只拼接corpus/UAT；用户Local登记/新增17未接入，部分旧family混成海阳",
+      "proposed_rule": "读取独立补充表并对接Local-A/B/C；区分原始/转换/项目输出；保留配对等级与分配状态，运行时解析路径映射。新候选family未确认不自动入train",
+      "preserve": "旧inventory/split/family/冻结ID不回写"
+    },
+    {
+      "function": "tools/p3b/extract.py::run + lines_from_source/native_w03/nominations",
+      "confirmed_problem": "files[0]＋默认第一页；lines_from_source/native_w03取前6000，run按固定提名顺序及每类上限截断，并用80像素中心筛选收缩池",
+      "proposed_rule": "消费显式文件/页面/观察区域计划，无第一页回填。先给检测几何分区域/长线代理，按页区轮转提名，再用资源预算截断；PAIR枚举按区域/结构限额，避免在多样性选择前按检测器或固定排序丢区域",
+      "preserve": "历史再现入口、已有裁片/生产几何不改；本轮不运行提取"
+    },
+    {
+      "function": "tools/p3b/prepare_v2.py::build_pool + prepare_seed_v2.py::prepare/select_batch",
+      "confirmed_problem": "新队列继续消费已收缩旧V1 real-candidates；源/类型平衡不能补漏页；未全面排除V1已看209",
+      "proposed_rule": "新计划使用独立候选池入口，不回灌旧池。读全部历史暴露/复核映射，按来源→页→区/结构→候选选择；固定ID只作同层稳定排序",
+      "preserve": "旧V1/V2/100队列及标签不改、不复制旧标签"
+    },
+    {
+      "function": "tools/p3b/queue_dedup.py::deduplicate",
+      "confirmed_problem": "同候选类型限制、比较半径非最小间距；无长线/同结构总名额",
+      "proposed_rule": "同目标身份与区域重复负担分两步判断。跨类型检查框/上下文占用；同长线不同局部段共享限额；有限代理与必要差异例外有解释",
+      "preserve": "不要求完整墙体识别，不删全部重叠/OTHER；历史决策不回改"
+    },
+    {
+      "function": "历史读取入口（供prepare/validation使用）＋tools/p3b/label_ui.py::diverse_order",
+      "confirmed_problem": "历史范围不完整；换ID/ROI后仍可能重复位置，来源轮转不能避免同结构连续显示",
+      "proposed_rule": "聚合上述已有队列/状态/复核映射，状态分层；选样和呈现都轮转来源/页/区，例外不连续呈现。V1事件缺项显式记录",
+      "preserve": "不编造事件、不把复核计新目标、不自动打开标注器"
+    },
+    {
+      "function": "tools/p3b/validation_v2.py::candidates/propose",
+      "confirmed_problem": "固定文件/页入口；排序中source_page靠前优先，区域无共同上限",
+      "proposed_rule": "后续批次读显式页计划，按页/区轮转与明确上限；保持质量规则、来源关联/划分核实和人工类别独立",
+      "preserve": "当前50页/目标/标签及首轮比较集不重选"
+    }
+  ],
+  "separate_profile_acquisition_repair": {
+    "confirmed": "训练46/94有profile，验证0/50；来自首轮结果审查，不在本轮重算",
+    "production_origin": "extract.run调用app.geometry.source_presentation.stroke_profile(gray,LineSegment)；在原页当前灰度/几何上测量。不是训练专用生产profile缓存。旧提取结果字段沿队列继承；W03提名几何另有历史项目生成DXF依赖，不能当原设计真值",
+    "loss_on_train_path": "prepare_v2.make_row对目标截短/local_extent或改ROI的行把current_p3a_measurement清空。unchanged行才继承旧值；原测量也可能因长度/宽度稳定性条件返回None",
+    "validation_path": "validation_v2.candidates构造行时明确current_p3a_measurement=None，未调用stroke_profile；不是50次测量都失败。后续make_row不会补出测量",
+    "feature_consumption": "features.feature_vector取第一个非空profile；PAIR没有对称合并两成员测量，成员选择应留记录",
+    "zero_meanings": [
+      {
+        "features": [
+          "separation_256",
+          "overlap_256"
+        ],
+        "meaning": "缺少PAIR几何特征时默认0，常是无该测量/不适用，不能当实测零间隔"
+      },
+      {
+        "features": [
+          "angle_delta_180"
+        ],
+        "meaning": "实测平行可为0；无特征也默认0"
+      },
+      {
+        "features": [
+          "dpi_600",
+          "dpi_known"
+        ],
+        "meaning": "DPI缺失编码0；dpi_known标示是否取得，有效渲染DPI不是原扫描DPI"
+      },
+      {
+        "features": [
+          "mean_gray",
+          "std_gray",
+          "dark_fraction",
+          "gradient_x",
+          "gradient_y"
+        ],
+        "meaning": "当前gray裁片实际计算；零值可以是真实统计，不是profile缺失占位"
+      },
+      {
+        "features": [
+          "width_px_16",
+          "stable_fraction",
+          "profile_samples_19"
+        ],
+        "meaning": "有效stroke_profile宽度/稳定率/样本数有正值下限，0指无可用profile；width_known标示缺失"
+      },
+      {
+        "features": [
+          "width_known"
+        ],
+        "meaning": "是否存在非空profile的标记；0表示无可用profile，不是实测零宽度"
+      },
+      {
+        "features": [
+          "dark_core_fraction",
+          "center_offset_16",
+          "contrast_separated_fraction"
+        ],
+        "meaning": "0可能是实测值也可能无profile的默认值，需要结合width_known/后续profile_status"
+      },
+      {
+        "features": [
+          "pair_present"
+        ],
+        "meaning": "两成员几何存在标记；不是人工类别，不是profile测量缺失"
+      }
+    ],
+    "future_fix": "另行修改统一目标测量 helper，在最终目标几何确定后，train/validation共用原页灰度/DPI/探针条件/版本及成员顺序。记录measured/not_attempted/no_valid_profile/no_line等状态、失败原因、原页坐标/成员ID；PAIR保留两成员测量并明确进入向量的成员规则。不依赖人工标签或模型分数",
+    "preserve": "本轮不重算全部特征，不改冻结18维，不删pair_present，不fit/消融/调阈值，不改旧模型或标签",
+    "inference_limit": "这是取得路径差异，尚未证明是57.14%准确率的唯一原因；来源、DPI、目标形态/缺失模式混杂",
+    "PAIR_coverage": "旧训练真实SINGLE有22个PAIR；验证PAIR含2个SINGLE和20个PARALLEL。验证另20个SINGLE类单线候选不能补足线对内部的主要难点"
+  },
+  "deferred_items": [
+    "新增红旗16DWG：只补登记/格式头，无新增转换/软件，标题/图号/版本/布局未取得；不能填入已确认页计划凑数",
+    "三份Local-C保真受限CAD保留实体参考；不强行作为候选试用视图",
+    "新东方电施-06第1页本轮已定向看过，先不重复同建筑平面名额；保留原记录",
+    "仓库水PDF10—16页未查看，待后续按目录/附件内容确认；本轮不全量渲染",
+    "旧C盘缓存/保留历史目录现位置未取得，表中不猜迁移路径"
+  ],
+  "rows": [
+    {
+      "plan_unit": "TRIAL-01",
+      "priority": 1,
+      "source_entry_id": "SUPP-092",
+      "existing_source_ids": [],
+      "relative_path": "图纸-综合仓库-水专业+820第九版.pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/图纸-综合仓库-水专业+820第九版.pdf",
+      "design_family": {
+        "legacy_id": null,
+        "plan_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "basis": "第7页与电815第6页客户/设计单位、楼层、轴网和楼梯/电梯一致；只关联工程页。第9页为20S206图集附件，10—16页待确认",
+        "confidence": "B：同建筑底图/不同专业，非同张同版"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 7,
+        "page_size_points": [
+          2982.050048828125,
+          1686.6099853515625
+        ],
+        "title": "四层自动喷淋平面图／水施-07",
+        "old_local_c_unit_id": null
+      },
+      "why_this_page": "新增PDF第1页为目录；第7页为实际工程平面，补此前未接入的给排水内容。标题栏版本1，2024.08。",
+      "regions": [
+        {
+          "region": "水专业分支/交叉",
+          "landmark": "轴2—3、B—C附近；保留支管、柱边、建筑边界的对象关系",
+          "observation_box_pdf_points_approx": [
+            611.3,
+            1028.1,
+            991.5,
+            1318.6
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "柱边、支管连续性、跨越/交接位置；允许有明确对象关系差异的困难例",
+      "history": {
+        "p3b_same_file_previous_pages": [],
+        "same_page_p3b_target_record": "本轮未找到该文件的直接P3B来源映射",
+        "other_task_targets_and_context": [],
+        "proximity_note": "无本文件旧目标记录，但与电815第6页共享建筑轴网/楼梯。按同设计同结构共同名额；不能当作完全独立的新场景。"
+      },
+      "CAD_pair_status": "B：第7页与电815第6页同建筑底图，不同图号/专业；无已确认原CAD",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "10—16页内容未核实；工程比例/原CAD对应未确认；与电专业同底图的坐标映射待确认"
+    },
+    {
+      "plan_unit": "TRIAL-02",
+      "priority": 2,
+      "source_entry_id": "SUPP-152",
+      "existing_source_ids": [],
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-05B_楼梯详图(3).pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-05B_楼梯详图(3).pdf",
+      "design_family": {
+        "legacy_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "plan_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 1,
+        "page_size_points": [
+          1684,
+          1191
+        ],
+        "title": "楼梯详图／标题栏GS-05B",
+        "old_local_c_unit_id": null
+      },
+      "why_this_page": "文件只有1页；这页本身是详图，选择依据为楼梯/节点内容，不是默认第一页。保留文件名结施-05B与标题栏GS-05B差异。",
+      "regions": [
+        {
+          "region": "楼梯平面及开口",
+          "landmark": "上部楼梯平面；轴13—14附近，核实踏步/墙边/开口区别",
+          "observation_box_pdf_points_approx": [
+            294.7,
+            117.8,
+            682.0,
+            361.9
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        },
+        {
+          "region": "梁柱节点备用",
+          "landmark": "中部TL/TZ断面；只作备用，不额外占满名额",
+          "observation_box_pdf_points_approx": [
+            682.0,
+            454.5,
+            1254.6,
+            618.6
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "相邻平面/剖面、踏步、边界、尺寸线、节点关系；防止尺寸/标注线冒作物理结构",
+      "history": {
+        "p3b_same_file_previous_pages": [],
+        "same_page_p3b_target_record": "本轮未找到该文件的直接P3B来源映射",
+        "other_task_targets_and_context": [],
+        "proximity_note": "未取得本页历史呈现目标记录；不等于保证从未看过"
+      },
+      "CAD_pair_status": "D：未找到已确认对应CAD",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "精确节点/线目标待定位；标题栏版本号未取得；CAD对应未确认"
+    },
+    {
+      "plan_unit": "TRIAL-03",
+      "priority": 3,
+      "source_entry_id": "SUPP-091",
+      "existing_source_ids": [
+        "DOC-F09-JIULONG-PDF"
+      ],
+      "relative_path": "九龙镇九龙路126号沿街房消防电改2.pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/九龙镇九龙路126号沿街房消防电改2.pdf",
+      "design_family": {
+        "legacy_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "plan_id": "F09-JIULONG-FIRE-ELECTRICAL",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 8,
+        "page_size_points": [
+          1689,
+          1196
+        ],
+        "title": "一层火灾自动报警平面图／电消施-08/11",
+        "old_local_c_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+      },
+      "why_this_page": "复用Local-C第8页内容记录。第1页偏设计说明；第8页能观察墙、开口、楼梯。实际项目为九龙镇综合养老服务中心（含残疾人之家），2026.07。",
+      "regions": [
+        {
+          "region": "左侧楼梯/门洞",
+          "landmark": "轴1—2、A—B附近；检查开口与墙边的局部关系",
+          "observation_box_pdf_points_approx": [
+            272.1,
+            515.9,
+            417.6,
+            703.5
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "墙两侧、门洞、楼梯转折、电气符号与背景区别",
+      "history": {
+        "p3b_same_file_previous_pages": [],
+        "same_page_p3b_target_record": "本轮未找到该文件的直接P3B来源映射",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-9570FA0098BC",
+            "unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              1608,
+              562,
+              2006,
+              716
+            ],
+            "context_box_xyxy": [
+              1560,
+              331,
+              2054,
+              947
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1842
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1923,
+                  642
+                ],
+                "length_px": 291,
+                "start": [
+                  1632,
+                  642
+                ]
+              },
+              "b": {
+                "end": [
+                  1982,
+                  636
+                ],
+                "length_px": 41,
+                "start": [
+                  1941,
+                  636
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              1044.6,
+              364.9,
+              1303.1,
+              464.9
+            ],
+            "context_box_pdf_points_approx": [
+              1013.4,
+              214.9,
+              1334.3,
+              614.9
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "左侧楼梯/门洞",
+                "old_local_intersects": false,
+                "old_context_intersects": false
+              }
+            ]
+          },
+          {
+            "target_id": "LOCALD-F09-JIULONG-LOCALC-F09-PDF-JIULONG-P8-D2E64AFA0093",
+            "unit_id": "LOCALC-F09-PDF-JIULONG-P8",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              908,
+              881,
+              1559,
+              1119
+            ],
+            "context_box_xyxy": [
+              746,
+              523,
+              1721,
+              1477
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1842
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F09-PDF-JIULONG-P8.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1014,
+                  1000
+                ],
+                "length_px": 52,
+                "start": [
+                  962,
+                  1000
+                ]
+              },
+              "b": {
+                "end": [
+                  1505,
+                  1000
+                ],
+                "length_px": 437,
+                "start": [
+                  1068,
+                  1000
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              589.9,
+              572.0,
+              1012.8,
+              726.6
+            ],
+            "context_box_pdf_points_approx": [
+              484.6,
+              339.6,
+              1118.0,
+              959.0
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "左侧楼梯/门洞",
+                "old_local_intersects": false,
+                "old_context_intersects": false
+              }
+            ]
+          }
+        ],
+        "proximity_note": "本页有其他任务已复核目标；只保留有对象关系差异的目标，不把源图复用记作全新区域"
+      },
+      "CAD_pair_status": "C：红旗DWG资料组用途相近，但项目名不同且DWG内容尚未核实；无确认配套",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "红旗DWG标题/图号/版本/布局未取得；不能将两处养老中心合并"
+    },
+    {
+      "plan_unit": "TRIAL-04",
+      "priority": 4,
+      "source_entry_id": "SUPP-106",
+      "existing_source_ids": [
+        "DOC-F04-ARCH10B-PDF"
+      ],
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-10B_改造二层平面图(2).pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-10B_改造二层平面图(2).pdf",
+      "design_family": {
+        "legacy_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "plan_id": "F04-XDF-RENOVATION-REVIEW-PDF",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 1,
+        "page_size_points": [
+          3370,
+          2384
+        ],
+        "title": "改造二层平面图",
+        "old_local_c_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+      },
+      "why_this_page": "单页工程图。选择右部改造范围，补P3B未接入的新东方建筑平面；76份PDF不作76个设计族。",
+      "regions": [
+        {
+          "region": "改造教室/墙边开口",
+          "landmark": "右部轴12—15、A—C附近；避开阴影未改造部分",
+          "observation_box_pdf_points_approx": [
+            2696.0,
+            1122.8,
+            3145.3,
+            1777.7
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "教室墙边、开口、相邻房间、改造边界；保留尺寸文字以判断对象归属",
+      "history": {
+        "p3b_same_file_previous_pages": [],
+        "same_page_p3b_target_record": "本轮未找到该文件的直接P3B来源映射",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F04-XDF-RENO-LOCALC-F04-PDF-ARCH10B-P1-E23A10324891",
+            "unit_id": "LOCALC-F04-PDF-ARCH10B-P1",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              585,
+              1213,
+              1505,
+              1563
+            ],
+            "context_box_xyxy": [
+              399,
+              688,
+              1691,
+              1840
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1840
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F04-PDF-ARCH10B-P1.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1286,
+                  1389
+                ],
+                "length_px": 639,
+                "start": [
+                  647,
+                  1389
+                ]
+              },
+              "b": {
+                "end": [
+                  1443,
+                  1386
+                ],
+                "length_px": 95,
+                "start": [
+                  1348,
+                  1386
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              758.2,
+              1571.6,
+              1950.7,
+              2025.1
+            ],
+            "context_box_pdf_points_approx": [
+              517.2,
+              891.4,
+              2191.8,
+              2384.0
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "改造教室/墙边开口",
+                "old_local_intersects": false,
+                "old_context_intersects": false
+              }
+            ]
+          }
+        ],
+        "proximity_note": "本页有其他任务已复核目标；只保留有对象关系差异的目标，不把源图复用记作全新区域"
+      },
+      "CAD_pair_status": "D：未找到已确认对应CAD",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "目标端点及范围待定位；文件名(2)不当作已核实版本；CAD对应未确认"
+    },
+    {
+      "plan_unit": "TRIAL-05",
+      "priority": 5,
+      "source_entry_id": "SUPP-093",
+      "existing_source_ids": [
+        "DOC-F08-WAREHOUSE815-PDF",
+        "warehouse-electrical"
+      ],
+      "relative_path": "图纸-综合仓库-电专业+815.pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/图纸-综合仓库-电专业+815.pdf",
+      "design_family": {
+        "legacy_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "plan_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 6,
+        "page_size_points": [
+          3118,
+          1786
+        ],
+        "title": "四层火灾自动报警平面图／电施-05",
+        "old_local_c_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+      },
+      "why_this_page": "旧P3B只取1/2/3页；第6页是四层工程平面。复用Local-C内容核实，观察旧候选以外的东端开口。",
+      "regions": [
+        {
+          "region": "东端楼梯/开口",
+          "landmark": "轴8—9、F—G附近；避开旧左墙和中部长线",
+          "observation_box_pdf_points_approx": [
+            2113.3,
+            225.0,
+            2459.8,
+            571.1
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "楼梯边界、开口、邻接墙和报警符号；不再沿同一长线换段",
+      "history": {
+        "p3b_same_file_previous_pages": [
+          1,
+          2,
+          3
+        ],
+        "same_page_p3b_target_record": "旧P3B未取此页",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-E77468440094",
+            "unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              1226,
+              967,
+              1374,
+              1355
+            ],
+            "context_box_xyxy": [
+              1001,
+              923,
+              1599,
+              1399
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1490
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1301,
+                  1212
+                ],
+                "length_px": 221,
+                "start": [
+                  1301,
+                  991
+                ]
+              },
+              "b": {
+                "end": [
+                  1300,
+                  1331
+                ],
+                "length_px": 102,
+                "start": [
+                  1300,
+                  1229
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              1470.3,
+              1159.1,
+              1647.7,
+              1624.2
+            ],
+            "context_box_pdf_points_approx": [
+              1200.4,
+              1106.4,
+              1917.6,
+              1676.9
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "东端楼梯/开口",
+                "old_local_intersects": false,
+                "old_context_intersects": false
+              }
+            ]
+          },
+          {
+            "target_id": "LOCALD-F08-YANGZIJI-LOCALC-F08-PDF-WAREHOUSE815-P6-F64B1FAF8535",
+            "unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              439,
+              634,
+              739,
+              1366
+            ],
+            "context_box_xyxy": [
+              0,
+              590,
+              1190,
+              1410
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1490
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F08-PDF-WAREHOUSE815-P6.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  587,
+                  1212
+                ],
+                "length_px": 554,
+                "start": [
+                  587,
+                  658
+                ]
+              },
+              "b": {
+                "end": [
+                  591,
+                  1342
+                ],
+                "length_px": 113,
+                "start": [
+                  591,
+                  1229
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              526.5,
+              759.9,
+              886.2,
+              1637.4
+            ],
+            "context_box_pdf_points_approx": [
+              0.0,
+              707.2,
+              1427.1,
+              1690.1
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "东端楼梯/开口",
+                "old_local_intersects": false,
+                "old_context_intersects": false
+              }
+            ]
+          }
+        ],
+        "proximity_note": "本页有其他任务已复核目标；只保留有对象关系差异的目标，不把源图复用记作全新区域"
+      },
+      "CAD_pair_status": "B：水820第7页与此页同建筑底图，不同专业；不是PDF-CAD配对",
+      "current_split": "train",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "与水专业共享底图的区域映射待确认；无已确认原CAD；新目标几何待定位"
+    },
+    {
+      "plan_unit": "TRIAL-06",
+      "priority": 6,
+      "source_entry_id": "SUPP-175",
+      "existing_source_ids": [
+        "DOC-F10-ENVIRONMENTAL-PDF",
+        "environment-building"
+      ],
+      "relative_path": "环保局主大楼.pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/环保局主大楼.pdf",
+      "design_family": {
+        "legacy_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "plan_id": "F10-ENVIRONMENTAL-BUREAU-MAIN-BUILDING",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 8,
+        "page_size_points": [
+          1189.0799560546875,
+          840.6000366210938
+        ],
+        "title": "八层消防平面图（原扫描朝向）",
+        "old_local_c_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+      },
+      "why_this_page": "旧P3B只取1/3/4页；第8页有墙边、手写、折痕和污损，保留历史扫描价值。此页旧E2上下文已覆盖大部分平面，不声称全新场景。",
+      "regions": [
+        {
+          "region": "扫描墙边/开口",
+          "landmark": "显示方向左翼房间；避开旧局部长线，仍保留同页扫描条件",
+          "observation_box_pdf_points_approx": [
+            455.8,
+            330.2,
+            521.9,
+            511.8
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "相邻门洞/节点、房间边界与手写覆盖；文字/污损可以保留明确OTHER例",
+      "history": {
+        "p3b_same_file_previous_pages": [
+          1,
+          3,
+          4
+        ],
+        "same_page_p3b_target_record": "旧P3B未取此页",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F10-ENVIRONM-LOCALC-F10-PDF-ENV-BUREAU-P8-9EC79D5FF0DF",
+            "unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              1305,
+              419,
+              1701,
+              1367
+            ],
+            "context_box_xyxy": [
+              711,
+              347,
+              2295,
+              1439
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2600,
+              1839
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F10-PDF-ENV-BUREAU-P8.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1506,
+                  512
+                ],
+                "length_px": 69,
+                "start": [
+                  1506,
+                  443
+                ]
+              },
+              "b": {
+                "end": [
+                  1500,
+                  1343
+                ],
+                "length_px": 807,
+                "start": [
+                  1500,
+                  536
+                ]
+              }
+            },
+            "local_box_pdf_points_approx": [
+              596.8,
+              191.5,
+              777.9,
+              624.9
+            ],
+            "context_box_pdf_points_approx": [
+              325.2,
+              158.6,
+              1049.6,
+              657.8
+            ],
+            "mapping_note": "同页长宽比例映射至PDF显示点坐标；渲染取整误差未做配准",
+            "planned_region_overlap": [
+              {
+                "region": "扫描墙边/开口",
+                "old_local_intersects": false,
+                "old_context_intersects": true
+              }
+            ]
+          }
+        ],
+        "proximity_note": "拟区不交旧局部目标框，但交旧上下文。只作为扫描条件补充；上限1个有明确差异的目标，否则跳过，不补旧页凑数。"
+      },
+      "CAD_pair_status": "D：未找到已确认对应CAD",
+      "current_split": "train",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "目标位置需最终定位；源工程版本未确认；若没有新增对象关系则不占新目标名额"
+    },
+    {
+      "plan_unit": "TRIAL-07",
+      "priority": 7,
+      "source_entry_id": "SUPP-092",
+      "existing_source_ids": [],
+      "relative_path": "图纸-综合仓库-水专业+820第九版.pdf",
+      "absolute_read_path": "D:/programs/Image-to-CAD/materials/新建文件夹/图纸-综合仓库-水专业+820第九版.pdf",
+      "design_family": {
+        "legacy_id": null,
+        "plan_id": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+        "basis": "第7页与电815第6页客户/设计单位、楼层、轴网和楼梯/电梯一致；只关联工程页。第9页为20S206图集附件，10—16页待确认",
+        "confidence": "B：同建筑底图/不同专业，非同张同版"
+      },
+      "page_or_layout": {
+        "type": "PDF",
+        "page_number": 9,
+        "page_size_points": [
+          728,
+          515
+        ],
+        "title": "20S206图集／预作用装置安装图（一），图集页16",
+        "old_local_c_unit_id": null
+      },
+      "why_this_page": "该页为扫描标准图集附件，提供工程平面之外的部件/规则线与扫描条件；不归为独立仓库设计，不以干净矢量替换全部扫描材料。",
+      "regions": [
+        {
+          "region": "扫描管线/法兰边界",
+          "landmark": "左侧安装图正视图；带相邻侧视图/部件表上下文",
+          "observation_box_pdf_points_approx": [
+            36.4,
+            36.4,
+            327.6,
+            327.6
+          ],
+          "coordinate_basis": "已查看整页上的观察区约估；PDF显示点坐标（1/72英寸），左上原点，xyxy；不是裁框或目标几何",
+          "next_step": "目标端点、开口/节点关系及安全上下文待定位；不得直接按此框生成样本"
+        }
+      ],
+      "required_context": "管线、法兰/部件边界、相邻视图、部件表；若无合格结构目标则保留为不采用",
+      "history": {
+        "p3b_same_file_previous_pages": [],
+        "same_page_p3b_target_record": "本轮未找到该文件的直接P3B来源映射",
+        "other_task_targets_and_context": [],
+        "proximity_note": "未取得本页历史呈现目标记录；不等于保证从未看过"
+      },
+      "CAD_pair_status": "D：标准图集附件；无已确认配套CAD",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：只读来源/选样准备。后续：先核实划分与历史区域，再按配置生成少量候选；不是新增冻结训练/验证集。",
+      "missing": "具体线目标待定位；附件出处标为20S206，不复制仓库项目family；不确认原CAD标签"
+    },
+    {
+      "plan_unit": "TRIAL-08",
+      "priority": 8,
+      "source_entry_id": "SUPP-171",
+      "existing_source_ids": [
+        "DOC-F01-HVAC20220110-DWG"
+      ],
+      "relative_path": "海阳捻织车间暖通施工图2022.1.10_t3.dwg",
+      "absolute_read_path": "D:/programs/Image-to-CAD/image-to-cad/instrumented-e03/local-artifacts/draftsman/user-supplied-admission/dxf/haiyang_hvac.dxf",
+      "original_DWG_path": "D:/programs/Image-to-CAD/materials/新建文件夹/海阳捻织车间暖通施工图2022.1.10_t3.dwg",
+      "design_family": {
+        "legacy_id": "F01-HAIYANG-2022-ROOT-DWG",
+        "plan_id": "F01-HAIYANG-2022-ROOT-DWG",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "原CAD派生对照视图（条件项，不是PDF页）",
+        "space": "Model",
+        "subsheet_title": "地下泵房通风平面图",
+        "title_entity_handle": "1E0E",
+        "title_insert_native": [
+          366564.106,
+          -385789.171
+        ],
+        "coordinate_unit": "CAD原生坐标；INSUNITS=0，未声明，不当作毫米",
+        "old_local_c_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+      },
+      "why_this_page": "多图位于Model空间；已有可读转换DXF和旧渲染。按标题定位具体图纸，不把空布局或整个Model空间当一张图。",
+      "regions": [
+        {
+          "region": "标题对应工程图内的转折/间隙/对象邻接",
+          "observation_box_native": null,
+          "coordinate_basis": "待定位。已有标题插入点只是检索锚点，不是图纸边界/目标中心",
+          "next_step": "用已有实体与旧渲染定位到具体视图区；若旧范围裁限未覆盖，先挂起，不在本轮补渲染"
+        }
+      ],
+      "required_context": "相邻连续线、转折/间隙、对象标注、尺寸/图框；旧稀疏渲染不能当作原印刷线宽真值",
+      "history": {
+        "p3b": "未进入P3B来源候选/标签步骤",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F01-HAIYANG-LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVI-72EBF8E49D52",
+            "unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              1843,
+              730,
+              2157,
+              1530
+            ],
+            "context_box_xyxy": [
+              1370,
+              604,
+              2630,
+              1656
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2700,
+              2311
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  2001,
+                  1278
+                ],
+                "length_px": 506,
+                "start": [
+                  2001,
+                  772
+                ]
+              },
+              "b": {
+                "end": [
+                  2000,
+                  1488
+                ],
+                "length_px": 168,
+                "start": [
+                  2000,
+                  1320
+                ]
+              }
+            },
+            "native_mapping": {
+              "render_extents": [
+                -248044.5659,
+                -890531.2321,
+                381402.3064,
+                -353097.5487
+              ],
+              "raw_extents": [
+                -349833.5772,
+                -907798.8505,
+                404331.0024,
+                -344885.3219
+              ],
+              "render_size_px": [
+                2700,
+                2311
+              ],
+              "robust_extent_clipping": true,
+              "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+            },
+            "mapping_note": "旧CAD渲染映射：px=(x-x0)*s+18，py=(y1-y)*s+18，s=min(2664/(x1-x0),2664/(y1-y0))；不是工程比例或PDF配准"
+          }
+        ],
+        "proximity_note": "整个Model概览已有旧展示/复核；标题锚点不保证是未看区域。须以原生实体身份和旧区域共同排除，不只换ID。"
+      },
+      "existing_render": {
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.png",
+        "render_extents": [
+          -248044.5659,
+          -890531.2321,
+          381402.3064,
+          -353097.5487
+        ],
+        "raw_extents": [
+          -349833.5772,
+          -907798.8505,
+          404331.0024,
+          -344885.3219
+        ],
+        "render_size_px": [
+          2700,
+          2311
+        ],
+        "robust_extent_clipping": true,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+      },
+      "CAD_pair_status": "E：原CAD转换DXF可读，尚无确认对应PDF；尚不具备真实PDF配准标签依据",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：原CAD实体/已有渲染对照准备。后续可作为单独原CAD派生来源；不冒充真实PDF/扫描标签。",
+      "missing": "单位未声明；旧渲染范围裁限、INSERT尺度筛选，文字/字体和线宽未完整保留；具体图号/版本、视图区边界、旧目标映射待确认。"
+    },
+    {
+      "plan_unit": "TRIAL-09",
+      "priority": 9,
+      "source_entry_id": "SUPP-013",
+      "existing_source_ids": [
+        "DOC-F02-HVAC10-DWG"
+      ],
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/10#-暖通施工图2019.05.25.dwg",
+      "absolute_read_path": "D:/programs/Image-to-CAD/image-to-cad/instrumented-e03/local-artifacts/draftsman/user-supplied-admission/dxf/huihong_hvac.dxf",
+      "original_DWG_path": "D:/programs/Image-to-CAD/materials/新建文件夹/b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/10#-暖通施工图2019.05.25.dwg",
+      "design_family": {
+        "legacy_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "plan_id": "F02-HUIHONG-2019-HASHED-DWG",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "原CAD派生对照视图（条件项，不是PDF页）",
+        "space": "Model",
+        "subsheet_title": "10#楼一、二层暖通平面图",
+        "title_entity_handle": "35232",
+        "title_insert_native": [
+          1945297.811,
+          616984.538
+        ],
+        "coordinate_unit": "CAD原生坐标；INSUNITS=0，未声明，不当作毫米",
+        "old_local_c_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+      },
+      "why_this_page": "多图位于Model空间；已有可读转换DXF和旧渲染。按标题定位具体图纸，不把空布局或整个Model空间当一张图。",
+      "regions": [
+        {
+          "region": "标题对应工程图内的转折/间隙/对象邻接",
+          "observation_box_native": null,
+          "coordinate_basis": "待定位。已有标题插入点只是检索锚点，不是图纸边界/目标中心",
+          "next_step": "用已有实体与旧渲染定位到具体视图区；若旧范围裁限未覆盖，先挂起，不在本轮补渲染"
+        }
+      ],
+      "required_context": "相邻连续线、转折/间隙、对象标注、尺寸/图框；旧稀疏渲染不能当作原印刷线宽真值",
+      "history": {
+        "p3b": "未进入P3B来源候选/标签步骤",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-296C1A7AD5FD",
+            "unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              1751,
+              176,
+              2021,
+              882
+            ],
+            "context_box_xyxy": [
+              1346,
+              38,
+              2426,
+              1020
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2700,
+              1351
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  1886,
+                  505
+                ],
+                "length_px": 283,
+                "start": [
+                  1886,
+                  222
+                ]
+              },
+              "b": {
+                "end": [
+                  1886,
+                  836
+                ],
+                "length_px": 285,
+                "start": [
+                  1886,
+                  551
+                ]
+              }
+            },
+            "native_mapping": {
+              "render_extents": [
+                1479242.5494,
+                424872.4162,
+                2034605.6823,
+                698977.7305
+              ],
+              "raw_extents": [
+                -1926990.6642,
+                259409.3461,
+                2100986.5769,
+                862418.9545
+              ],
+              "render_size_px": [
+                2700,
+                1351
+              ],
+              "robust_extent_clipping": true,
+              "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+            },
+            "mapping_note": "旧CAD渲染映射：px=(x-x0)*s+18，py=(y1-y)*s+18，s=min(2664/(x1-x0),2664/(y1-y0))；不是工程比例或PDF配准"
+          },
+          {
+            "target_id": "LOCALD-F02-HUIHONG-LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW-D3230C9EC8C7",
+            "unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              2452,
+              317,
+              2648,
+              814
+            ],
+            "context_box_xyxy": [
+              2155,
+              253,
+              2700,
+              878
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              2700,
+              1351
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  2550,
+                  737
+                ],
+                "length_px": 396,
+                "start": [
+                  2550,
+                  341
+                ]
+              },
+              "b": {
+                "end": [
+                  2550,
+                  790
+                ],
+                "length_px": 31,
+                "start": [
+                  2550,
+                  759
+                ]
+              }
+            },
+            "native_mapping": {
+              "render_extents": [
+                1479242.5494,
+                424872.4162,
+                2034605.6823,
+                698977.7305
+              ],
+              "raw_extents": [
+                -1926990.6642,
+                259409.3461,
+                2100986.5769,
+                862418.9545
+              ],
+              "render_size_px": [
+                2700,
+                1351
+              ],
+              "robust_extent_clipping": true,
+              "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+            },
+            "mapping_note": "旧CAD渲染映射：px=(x-x0)*s+18，py=(y1-y)*s+18，s=min(2664/(x1-x0),2664/(y1-y0))；不是工程比例或PDF配准"
+          }
+        ],
+        "proximity_note": "整个Model概览已有旧展示/复核；标题锚点不保证是未看区域。须以原生实体身份和旧区域共同排除，不只换ID。"
+      },
+      "existing_render": {
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.png",
+        "render_extents": [
+          1479242.5494,
+          424872.4162,
+          2034605.6823,
+          698977.7305
+        ],
+        "raw_extents": [
+          -1926990.6642,
+          259409.3461,
+          2100986.5769,
+          862418.9545
+        ],
+        "render_size_px": [
+          2700,
+          1351
+        ],
+        "robust_extent_clipping": true,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+      },
+      "CAD_pair_status": "E：原CAD转换DXF可读，尚无确认对应PDF；尚不具备真实PDF配准标签依据",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：原CAD实体/已有渲染对照准备。后续可作为单独原CAD派生来源；不冒充真实PDF/扫描标签。",
+      "missing": "单位未声明；多张图在模型空间；旧渲染范围裁限、INSERT筛选、文字/字体/线宽未完整保留；具体图号/版本、视图区边界、旧目标映射待确认。"
+    },
+    {
+      "plan_unit": "TRIAL-10",
+      "priority": 10,
+      "source_entry_id": "SUPP-178",
+      "existing_source_ids": [
+        "DOC-F03-HVAC4-DWG"
+      ],
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/暖通/4#能源中心-暖施.dwg",
+      "absolute_read_path": "D:/programs/Image-to-CAD/image-to-cad/instrumented-e03/local-artifacts/draftsman/user-supplied-admission/dxf/asbuilt_hvac.dxf",
+      "original_DWG_path": "D:/programs/Image-to-CAD/materials/新建文件夹/竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/暖通/4#能源中心-暖施.dwg",
+      "design_family": {
+        "legacy_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+        "plan_id": "F03-AS-BUILT-INSTALL-2020-DWG",
+        "basis": "复用Local-B归族；不据文件数计算独立设计数",
+        "confidence": "旧登记依据；未全量重核"
+      },
+      "page_or_layout": {
+        "type": "原CAD派生对照视图（条件项，不是PDF页）",
+        "space": "Model",
+        "subsheet_title": "一层空调、通风平面图",
+        "title_entity_handle": "16B1",
+        "title_insert_native": [
+          4367260.179,
+          -1674816.58
+        ],
+        "coordinate_unit": "CAD原生坐标；INSUNITS=0，未声明，不当作毫米",
+        "old_local_c_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+      },
+      "why_this_page": "多图位于Model空间；已有可读转换DXF和旧渲染。按标题定位具体图纸，不把空布局或整个Model空间当一张图。",
+      "regions": [
+        {
+          "region": "标题对应工程图内的转折/间隙/对象邻接",
+          "observation_box_native": null,
+          "coordinate_basis": "待定位。已有标题插入点只是检索锚点，不是图纸边界/目标中心",
+          "next_step": "用已有实体与旧渲染定位到具体视图区；若旧范围裁限未覆盖，先挂起，不在本轮补渲染"
+        }
+      ],
+      "required_context": "相邻连续线、转折/间隙、对象标注、尺寸/图框；旧稀疏渲染不能当作原印刷线宽真值",
+      "history": {
+        "p3b": "未进入P3B来源候选/标签步骤",
+        "other_task_targets_and_context": [
+          {
+            "target_id": "LOCALD-F03-AS-BUILT-LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW-7CC3C6CC3A31",
+            "unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+            "review_state": "REVIEWED",
+            "label_role": "其他任务复核，标签不得自动导入P3B",
+            "local_box_xyxy": [
+              623,
+              1758,
+              963,
+              2580
+            ],
+            "context_box_xyxy": [
+              112,
+              1758,
+              1148,
+              2580
+            ],
+            "coordinate_unit": "旧Local-D源渲染像素，左上原点，xyxy",
+            "render_frame_px": [
+              1148,
+              2700
+            ],
+            "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+            "target_geometry": {
+              "a": {
+                "end": [
+                  790,
+                  1844
+                ],
+                "length_px": 62,
+                "start": [
+                  790,
+                  1782
+                ]
+              },
+              "b": {
+                "end": [
+                  796,
+                  2556
+                ],
+                "length_px": 706,
+                "start": [
+                  796,
+                  1850
+                ]
+              }
+            },
+            "native_mapping": {
+              "render_extents": [
+                4261838.8578,
+                -1770186.9462,
+                4360374.5045,
+                -1534112.1552
+              ],
+              "raw_extents": [
+                4261838.8578,
+                -1770186.9462,
+                4360374.5045,
+                -1534112.1552
+              ],
+              "render_size_px": [
+                1148,
+                2700
+              ],
+              "robust_extent_clipping": false,
+              "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+            },
+            "mapping_note": "旧CAD渲染映射：px=(x-x0)*s+18，py=(y1-y)*s+18，s=min(2664/(x1-x0),2664/(y1-y0))；不是工程比例或PDF配准"
+          }
+        ],
+        "proximity_note": "整个Model概览已有旧展示/复核；标题锚点不保证是未看区域。须以原生实体身份和旧区域共同排除，不只换ID。"
+      },
+      "existing_render": {
+        "render_path": "local-artifacts/draftsman/user-supplied-candidate-mining-v2-local-d/source-renders/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.png",
+        "render_extents": [
+          4261838.8578,
+          -1770186.9462,
+          4360374.5045,
+          -1534112.1552
+        ],
+        "raw_extents": [
+          4261838.8578,
+          -1770186.9462,
+          4360374.5045,
+          -1534112.1552
+        ],
+        "render_size_px": [
+          1148,
+          2700
+        ],
+        "robust_extent_clipping": false,
+        "insert_transform_filter": "virtual INSERT expansions with any absolute scale >20 or <1e-6 were skipped"
+      },
+      "CAD_pair_status": "E：原CAD转换DXF可读，尚无确认对应PDF；尚不具备真实PDF配准标签依据",
+      "current_split": "尚未分配",
+      "allowed_use": "本轮：原CAD实体/已有渲染对照准备。后续可作为单独原CAD派生来源；不冒充真实PDF/扫描标签。",
+      "missing": "单位未声明；5个代理实体；旧简化渲染不完整保留文字、字体及线宽；具体图号/版本、视图区边界、旧目标映射待确认。"
+    }
+  ]
+}

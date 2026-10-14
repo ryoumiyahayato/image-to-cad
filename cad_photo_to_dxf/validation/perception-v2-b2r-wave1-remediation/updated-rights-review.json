@@ -1,0 +1,87 @@
+{
+  "task": "PERCEPTION-V2-B2R",
+  "review_date": "2026-09-19",
+  "reviewer": "Codex actual-byte and official-evidence rights remediation review",
+  "update_type": "DELTA_ONLY",
+  "prior_rights_registry": "../perception-v2-b2-wave1-acquisition/rights-registry.json",
+  "policy": {
+    "usable_dispositions": ["PUBLIC_DOMAIN", "CC0", "CC_BY", "EXPLICIT_PERMISSION"],
+    "public_release_or_download_is_not_dataset_approval": true,
+    "actual_byte_review_required": true,
+    "rights_review_required_is_quarantine_only": true
+  },
+  "records": [
+    {
+      "SOURCE_FAMILY_ID": "SF-V2-01",
+      "DOCUMENT_ID": "USACE-EM-1110-2-2610-2025",
+      "copyright_owner": "UNKNOWN_ACTUAL_BYTES_UNAVAILABLE",
+      "publisher": "U.S. Army Corps of Engineers",
+      "rights_basis": "Official indexed text states approved for public release and unlimited distribution, but 17 U.S.C. 105 applies only to qualifying U.S. Government works and actual-byte third-party exclusions could not be reviewed.",
+      "rights_evidence_urls": [
+        "https://www.publications.usace.army.mil/USACE-Publications/Engineer-Manuals/",
+        "https://www.publications.usace.army.mil/Portals/76/Publications/EngineerManuals/EM%201110-2-2610_FINAL_18Mar2025.pdf",
+        "https://uscode.house.gov/view.xhtml?edition=prelim&num=0&req=granuleid%3AUSC-prelim-title17-section105"
+      ],
+      "actual_byte_notices": "NOT_INSPECTED_DOWNLOAD_FAILED",
+      "commercial_use": "UNKNOWN_PENDING_ACTUAL_BYTES",
+      "raw_retention": "NOT_APPLICABLE_NO_BINARY",
+      "derived_crop_retention": "NOT_ALLOWED_PENDING_REVIEW",
+      "label_retention": "NOT_ALLOWED_PENDING_REVIEW",
+      "ml_training_evaluation": "NOT_ALLOWED_PENDING_REVIEW",
+      "redistribution": "UNKNOWN_PENDING_ACTUAL_BYTES",
+      "attribution": ["If later admitted, credit the Department of the Army and U.S. Army Corps of Engineers and preserve source-specific notices"],
+      "third_party_exclusions": "UNKNOWN_ACTUAL_BYTES_UNAVAILABLE",
+      "reviewer": "Codex actual-byte and official-evidence rights remediation review",
+      "review_date": "2026-09-19",
+      "final_disposition": "RIGHTS_REVIEW_REQUIRED"
+    },
+    {
+      "SOURCE_FAMILY_ID": "SF-V2-03",
+      "DOCUMENT_ID": "USDA-RUS-1728F-806",
+      "copyright_owner": "UNKNOWN_NON_FEDERAL_AUTHORSHIP_SIGNAL_UNRESOLVED",
+      "publisher": "U.S. Department of Agriculture, Rural Utilities Service",
+      "rights_basis": "Federal publication, agency maintenance, and incorporation by reference do not establish that the drawing set was prepared by federal employees or that any non-federal rights were assigned or licensed for commercial derivative, ML-training, and redistribution uses.",
+      "rights_evidence_urls": [
+        "https://www.usda.gov/guidance-documents/electric/rus/specifications-and-drawings-underground-electric-distribution",
+        "https://www.rd.usda.gov/media/file/download/uep-bulletin-1728f-806.pdf",
+        "https://www.federalregister.gov/documents/2018/11/06/2018-24248/specifications-and-drawings-for-underground-electric-distribution",
+        "https://www.usda.gov/sites/default/files/documents/dr-1410-001.pdf",
+        "https://www.copyright.gov/title17/92chap1.html",
+        "https://uscode.house.gov/view.xhtml?edition=prelim&num=0&req=granuleid%3AUSC-prelim-title17-section105"
+      ],
+      "actual_byte_notices": [
+        "XMP dc:creator is Emgarten, Bob.",
+        "XMP pdfx:Company is Iowa Lakes Electric Cooperative.",
+        "No visible or searchable copyright, proprietary, permission, assignment, federal-employee authorship, or page-level third-party attribution statement was found.",
+        "Cover identifies USDA/RUS, Electric Staff Division, effective date, and incorporation by reference; these establish identity and regulatory provenance, not copyright ownership."
+      ],
+      "commercial_use": "UNKNOWN_PENDING_OWNERSHIP_REVIEW",
+      "raw_retention": "QUARANTINE_FOR_RIGHTS_REVIEW_ONLY",
+      "derived_crop_retention": "NOT_ALLOWED_PENDING_REVIEW",
+      "label_retention": "NOT_ALLOWED_PENDING_REVIEW",
+      "ml_training_evaluation": "NOT_ALLOWED_PENDING_REVIEW",
+      "redistribution": "UNKNOWN_PENDING_OWNERSHIP_REVIEW",
+      "attribution": ["If later admitted, credit USDA Rural Utilities Service and any confirmed drawing author/owner"],
+      "third_party_exclusions": "All construction-drawing pages remain quarantined because document-level non-federal metadata is unresolved and no supported page-level ownership distinction exists.",
+      "usable_page_allowlist": false,
+      "excluded_page_asset_list": "ALL_CONSTRUCTION_DRAWING_PAGES_QUARANTINED_PENDING_OWNERSHIP_REVIEW",
+      "reviewer": "Codex actual-byte and official-evidence rights remediation review",
+      "review_date": "2026-09-19",
+      "final_disposition": "RIGHTS_REVIEW_REQUIRED"
+    }
+  ],
+  "unchanged_record": {
+    "SOURCE_FAMILY_ID": "SF-V2-08",
+    "reference": "../perception-v2-b2-wave1-acquisition/rights-registry.json",
+    "modified": false
+  },
+  "summary": {
+    "PUBLIC_DOMAIN": 0,
+    "CC0": 0,
+    "CC_BY": 0,
+    "EXPLICIT_PERMISSION": 0,
+    "RIGHTS_REVIEW_REQUIRED": 2,
+    "REJECTED": 0,
+    "data_rights_provenance": "INCOMPLETE"
+  }
+}

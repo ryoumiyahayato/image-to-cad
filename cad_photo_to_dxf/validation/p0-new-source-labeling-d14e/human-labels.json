@@ -1,0 +1,219 @@
+{
+  "task": "P0-NEW-SOURCE-BLIND-MINING-AND-LABELING-D14E",
+  "base_checkpoint": "e98a3c8f74d0412ac8e16401f34febb810885686",
+  "candidate_registry": "candidate-registry.json",
+  "label_policy": "Human semantic review of frozen local/context/overlay evidence; no learned model output was generated or exposed",
+  "model_run": false,
+  "model_predictions_exposed": false,
+  "human_reviews": 16,
+  "labels": [
+    {
+      "review_order": 1,
+      "candidate_id": "D14E-B891230016C5",
+      "source_family": "H1",
+      "document_key": "H1-UT14",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "drawing_layout_rule",
+      "independence_cluster_id": "H1-UT14-S1-DRAWING-FRAME-RIGHT",
+      "independent_qualified": true,
+      "rationale": "The collinear fragments are the right-hand drawing/frame rule beside the title narrative, not bridge structure."
+    },
+    {
+      "review_order": 2,
+      "candidate_id": "D14E-F12FEFEB2245",
+      "source_family": "H1",
+      "document_key": "H1-NY4",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "drawing_layout_rule",
+      "independence_cluster_id": "H1-NY4-S1-DRAWING-FRAME-TOP",
+      "independent_qualified": true,
+      "rationale": "The fragments form the top archival sheet frame above the survey title."
+    },
+    {
+      "review_order": 3,
+      "candidate_id": "D14E-82AF53CB94E1",
+      "source_family": "H1",
+      "document_key": "H1-UT14",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "H1-UT14-S3-ELEVATION-LOWER-CHORD",
+      "independent_qualified": true,
+      "rationale": "Both fragments belong to the same bridge elevation lower-chord/deck structural member."
+    },
+    {
+      "review_order": 4,
+      "candidate_id": "D14E-4ECE70470938",
+      "source_family": "H1",
+      "document_key": "H1-NY4",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "H1-NY4-S2-ELEVATION-LOWER-CHORD",
+      "independent_qualified": true,
+      "rationale": "The fragments are portions of the same truss elevation lower chord."
+    },
+    {
+      "review_order": 5,
+      "candidate_id": "D14E-CE792322B81F",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "aligned_text_glyph",
+      "independence_cluster_id": "H2-FTC6-P1-FEATURE-INDEX-TITLE",
+      "independent_qualified": true,
+      "rationale": "The apparent line is formed by aligned glyph strokes in the Feature and Specification Index title."
+    },
+    {
+      "review_order": 6,
+      "candidate_id": "D14E-D8266A189086",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "INVALID_FOR_TASK",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "H2-FTC6-P2-FACE-SHADING-BAND-A",
+      "independent_qualified": false,
+      "rationale": "The proposal follows a gray rendered face-shading band rather than a structural or annotation stroke."
+    },
+    {
+      "review_order": 7,
+      "candidate_id": "D14E-210F3F812A66",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "H2-FTC6-P3-FRONT-FACE-HORIZONTAL-EDGE",
+      "independent_qualified": true,
+      "rationale": "The fragments are the same horizontal object edge across the central slot in the orthographic view."
+    },
+    {
+      "review_order": 8,
+      "candidate_id": "D14E-10740DFB9AE5",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "aligned_text_glyph",
+      "independence_cluster_id": "H2-FTC6-P1-FEATURE-INDEX-TITLE",
+      "independent_qualified": false,
+      "near_duplicate_of": "D14E-CE792322B81F",
+      "rationale": "A second gap in the same Feature and Specification Index title; semantically clear but not independent."
+    },
+    {
+      "review_order": 9,
+      "candidate_id": "D14E-7EAB23F9DB29",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "INVALID_FOR_TASK",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "H2-FTC6-P2-FACE-SHADING-BAND-B",
+      "independent_qualified": false,
+      "rationale": "The proposal follows another rendered face-shading band and does not test semantic continuation."
+    },
+    {
+      "review_order": 10,
+      "candidate_id": "D14E-142FAB52579F",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "dimension_extension_witness_line",
+      "independence_cluster_id": "H2-FTC6-P3-DIMENSION-WITNESS-K2",
+      "independent_qualified": true,
+      "rationale": "The vertical fragments belong to the dimension witness/extension system above the K2 slot."
+    },
+    {
+      "review_order": 11,
+      "candidate_id": "D14E-E3358E708EA3",
+      "source_family": "H2",
+      "document_key": "H2",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "aligned_text_glyph",
+      "independence_cluster_id": "H2-FTC6-P1-FOOTER-TEST-CASE-TEXT",
+      "independent_qualified": true,
+      "rationale": "The apparent horizontal continuation is produced by aligned footer text glyphs."
+    },
+    {
+      "review_order": 12,
+      "candidate_id": "D14E-FA2DB5B68BA2",
+      "source_family": "C1",
+      "document_key": "C1",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "C1-D5-ROADWAY-PLAN-EDGE",
+      "independent_qualified": true,
+      "rationale": "The fragments are portions of one roadway plan edge through the turnout region."
+    },
+    {
+      "review_order": 13,
+      "candidate_id": "D14E-101604055F6C",
+      "source_family": "C1",
+      "document_key": "C1",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "C1-D6-ROADWAY-PLAN-EDGE",
+      "independent_qualified": true,
+      "rationale": "The fragments follow a continuous roadway edge across the plan view."
+    },
+    {
+      "review_order": 14,
+      "candidate_id": "D14E-502CA91496D5",
+      "source_family": "C1",
+      "document_key": "C1",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "C1-D7-CURVED-ROADWAY-EDGE",
+      "independent_qualified": true,
+      "rationale": "The fragments belong to the same curved roadway edge in plan."
+    },
+    {
+      "review_order": 15,
+      "candidate_id": "D14E-B93CCEEAA320",
+      "source_family": "C1",
+      "document_key": "C1",
+      "semantic_label": "ANNOTATION_OR_GLYPH",
+      "hard_negative_subtype": "drawing_layout_rule",
+      "independence_cluster_id": "C1-D8-SHEET-PANEL-RIGHT-RULE",
+      "independent_qualified": true,
+      "rationale": "The vertical fragments form the right sheet/panel boundary, not civil geometry."
+    },
+    {
+      "review_order": 16,
+      "candidate_id": "D14E-97391B48B08C",
+      "source_family": "C1",
+      "document_key": "C1",
+      "semantic_label": "STRUCTURAL_CONTINUATION",
+      "hard_negative_subtype": null,
+      "independence_cluster_id": "C1-D9-PROFILE-GRADE",
+      "independent_qualified": true,
+      "rationale": "The fragments are the same profile-grade structural line across a culvert crossing."
+    }
+  ],
+  "summary": {
+    "H1": {
+      "structural_continuation": 2,
+      "annotation_or_glyph": 2,
+      "ambiguous": 0,
+      "invalid_for_task": 0,
+      "independent_qualified_total": 4,
+      "target": "MET"
+    },
+    "H2": {
+      "structural_continuation": 1,
+      "annotation_or_glyph": 3,
+      "ambiguous": 0,
+      "invalid_for_task": 2,
+      "near_duplicates_excluded": 1,
+      "independent_qualified_total": 4,
+      "target": "PARTIAL"
+    },
+    "C1": {
+      "structural_continuation": 4,
+      "annotation_or_glyph": 1,
+      "ambiguous": 0,
+      "invalid_for_task": 0,
+      "independent_qualified_total": 5,
+      "target": "MET"
+    },
+    "total_structural_continuation": 7,
+    "total_annotation_or_glyph": 6,
+    "total_independent_qualified": 13,
+    "near_duplicates_excluded": 1
+  }
+}
