@@ -1,0 +1,547 @@
+{
+  "real_wall_door_pattern_line_checks": [
+    {
+      "source_ids": [
+        "HOUGH-000078"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1454.0,
+        384.0,
+        1568.0,
+        384.0
+      ],
+      "new_geometry": [
+        [
+          1454.0,
+          384.0,
+          1568.0,
+          384.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000177"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1491.0,
+        381.0,
+        1567.0,
+        381.0
+      ],
+      "new_geometry": [
+        [
+          1491.0,
+          381.0,
+          1567.0,
+          381.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000328"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1519.0,
+        373.0,
+        1575.0,
+        373.0
+      ],
+      "new_geometry": [
+        [
+          1519.0,
+          373.0,
+          1575.0,
+          373.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001065"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1438.125,
+        385.80157470703125,
+        1615.625,
+        385.8006286621094
+      ],
+      "new_geometry": [
+        [
+          1438.125,
+          385.80157470703125,
+          1615.625,
+          385.8006286621094
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-004960"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1386.875,
+        381.875,
+        1576.875,
+        381.875
+      ],
+      "new_geometry": [
+        [
+          1386.875,
+          381.875,
+          1576.875,
+          381.875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-005013"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        1386.875,
+        383.1708984375,
+        1576.875,
+        383.1157531738281
+      ],
+      "new_geometry": [
+        [
+          1386.875,
+          383.1708984375,
+          1576.875,
+          383.1157531738281
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000273"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2245.0,
+        1217.0,
+        2245.0,
+        1282.0
+      ],
+      "new_geometry": [
+        [
+          2245.0,
+          1217.0,
+          2245.0,
+          1282.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000341"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2233.0,
+        1013.0,
+        2233.0,
+        1086.0
+      ],
+      "new_geometry": [
+        [
+          2233.0,
+          1013.0,
+          2233.0,
+          1086.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000450"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2245.0,
+        1014.0,
+        2245.0,
+        1088.0
+      ],
+      "new_geometry": [
+        [
+          2245.0,
+          1014.0,
+          2245.0,
+          1088.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-000627"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2233.241943359375,
+        1014.3740844726562,
+        2233.289306640625,
+        1085.625732421875
+      ],
+      "new_geometry": [
+        [
+          2233.241943359375,
+          1014.3740844726562,
+          2233.289306640625,
+          1085.625732421875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-000628"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2245.4833984375,
+        1013.1244506835938,
+        2245.519775390625,
+        1086.8756103515625
+      ],
+      "new_geometry": [
+        [
+          2245.4833984375,
+          1013.1244506835938,
+          2245.519775390625,
+          1086.8756103515625
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-000645"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2245.498291015625,
+        1281.8753662109375,
+        2245.519775390625,
+        1216.87451171875
+      ],
+      "new_geometry": [
+        [
+          2245.498291015625,
+          1281.8753662109375,
+          2245.519775390625,
+          1216.87451171875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-000647"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2233.250732421875,
+        1281.875,
+        2233.255126953125,
+        1219.3748779296875
+      ],
+      "new_geometry": [
+        [
+          2233.250732421875,
+          1281.875,
+          2233.255126953125,
+          1219.3748779296875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000148"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.0,
+        1129.0,
+        2160.0,
+        1192.0
+      ],
+      "new_geometry": [
+        [
+          2160.0,
+          1129.0,
+          2160.0,
+          1192.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000166"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.0,
+        1128.0,
+        2163.0,
+        1193.0
+      ],
+      "new_geometry": [
+        [
+          2163.0,
+          1128.0,
+          2163.0,
+          1193.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000237"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.0,
+        1309.0,
+        2160.0,
+        1372.0
+      ],
+      "new_geometry": [
+        [
+          2160.0,
+          1309.0,
+          2160.0,
+          1372.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000332"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.0,
+        1316.0,
+        2163.0,
+        1373.0
+      ],
+      "new_geometry": [
+        [
+          2163.0,
+          1316.0,
+          2163.0,
+          1373.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000440"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.0,
+        1223.0,
+        2163.0,
+        1283.0
+      ],
+      "new_geometry": [
+        [
+          2163.0,
+          1223.0,
+          2163.0,
+          1283.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "HOUGH-000476"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.0,
+        1226.0,
+        2160.0,
+        1282.0
+      ],
+      "new_geometry": [
+        [
+          2160.0,
+          1226.0,
+          2160.0,
+          1282.0
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001152"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.1796875,
+        1128.1248779296875,
+        2160.191162109375,
+        1193.1248779296875
+      ],
+      "new_geometry": [
+        [
+          2160.1796875,
+          1128.1248779296875,
+          2160.191162109375,
+          1193.1248779296875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001153"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.54833984375,
+        1191.875244140625,
+        2163.575927734375,
+        1128.1246337890625
+      ],
+      "new_geometry": [
+        [
+          2163.54833984375,
+          1191.875244140625,
+          2163.575927734375,
+          1128.1246337890625
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001156"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.1796875,
+        1218.1248779296875,
+        2160.191162109375,
+        1283.1248779296875
+      ],
+      "new_geometry": [
+        [
+          2160.1796875,
+          1218.1248779296875,
+          2160.191162109375,
+          1283.1248779296875
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001157"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.54833984375,
+        1281.875244140625,
+        2163.575927734375,
+        1218.1246337890625
+      ],
+      "new_geometry": [
+        [
+          2163.54833984375,
+          1281.875244140625,
+          2163.575927734375,
+          1218.1246337890625
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001172"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2160.174072265625,
+        1308.1246337890625,
+        2160.20166015625,
+        1371.875244140625
+      ],
+      "new_geometry": [
+        [
+          2160.174072265625,
+          1308.1246337890625,
+          2160.20166015625,
+          1371.875244140625
+        ]
+      ]
+    },
+    {
+      "source_ids": [
+        "LSD-001173"
+      ],
+      "geometry_unchanged": true,
+      "original_geometry": [
+        2163.54833984375,
+        1371.875244140625,
+        2163.575927734375,
+        1308.1246337890625
+      ],
+      "new_geometry": [
+        [
+          2163.54833984375,
+          1371.875244140625,
+          2163.575927734375,
+          1308.1246337890625
+        ]
+      ]
+    }
+  ],
+  "all_selected_geometries_unchanged": true,
+  "door_has_no_new_LINE_bridge": true,
+  "complete_touching_contour_vertex_lists_unchanged": false,
+  "contour_note": "Whole touching entity lists differ because contour chunk boundaries shift; compare actual clipped geometry, not entity partition.",
+  "clipped_visible_native_geometry_checks": [
+    {
+      "region": "door",
+      "roi": [
+        2150,
+        990,
+        2280,
+        1270
+      ],
+      "native_geometry_symmetric_difference_length_px": 0.0,
+      "geometry_equal": true
+    },
+    {
+      "region": "pattern",
+      "roi": [
+        2147,
+        1120,
+        2178,
+        1390
+      ],
+      "native_geometry_symmetric_difference_length_px": 0.0,
+      "geometry_equal": true
+    },
+    {
+      "region": "walls",
+      "roi": [
+        1380,
+        370,
+        1580,
+        390
+      ],
+      "native_geometry_symmetric_difference_length_px": 0.0,
+      "geometry_equal": true
+    }
+  ],
+  "comparison_precision": "Source coordinates rounded to 7 decimals after DXF mm inversion; LINE and zero-bulge LWPOLYLINE geometric union, visible layers only.",
+  "native_text_contract_unchanged": true,
+  "baseline_LINE_count": 958,
+  "new_LINE_count": 842
+}

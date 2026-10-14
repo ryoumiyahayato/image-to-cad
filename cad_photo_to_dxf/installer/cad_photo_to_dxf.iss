@@ -1,14 +1,21 @@
-#define MyAppName "CAD Photo to DXF"
+#define MyAppName "Image to CAD"
 #ifndef MyAppVersion
   #error MyAppVersion must be supplied by the build command from app.__version__
 #endif
-#define MyAppPublisher "CAD Photo to DXF"
+#ifndef MyAppFileVersion
+  #error MyAppFileVersion must be derived from app.__version__ by scripts.versioning.parse_version
+#endif
+#define MyAppPublisher "Image to CAD"
 #define MyAppExeName "CADPhotoToDXF.exe"
 
 [Setup]
 AppId={{D8F2917B-7357-4A84-9251-30105D8BF1A1}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
+VersionInfoVersion={#MyAppFileVersion}
+VersionInfoTextVersion={#MyAppVersion}
+VersionInfoProductVersion={#MyAppFileVersion}
+VersionInfoProductTextVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\CADPhotoToDXF
 DefaultGroupName={#MyAppName}

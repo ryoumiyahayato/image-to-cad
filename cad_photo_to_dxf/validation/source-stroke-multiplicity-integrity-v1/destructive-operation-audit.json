@@ -1,0 +1,149 @@
+{
+  "destructive_operation_count": 10,
+  "findings": {
+    "centerline_collapse_path_found": true,
+    "contained_valid_stroke_suppression_found": true,
+    "destructive_extent_union_found": true,
+    "earliest_common_geometry_mutation_stage": "RAW_DETECTOR_PREPARATION_RECENTER_THICK_STROKE",
+    "earliest_dev_multiplicity_loss_stage": "DEV_RAW_HOUGH_NORMALIZATION_PER_ORIENTATION_LONGEST_CAP",
+    "longest_segment_wins_found": true,
+    "near_collinear_collapse_path_found": true
+  },
+  "operation_count": 11,
+  "operations": [
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO (both coordinates move)",
+      "input": "one raw Hough/LSD segment",
+      "output": "one recentered segment",
+      "path": "cad_photo_to_dxf/app/line_detect.py::_recenter_thick_stroke",
+      "purpose": "move thick-stroke edge detections to a distance-transform ridge",
+      "reversible": "NO from returned segment alone",
+      "risk": "can make distinct close trajectories share a centerline when thickness evidence is ambiguous",
+      "source_instance_ids_preserved": "PARTIAL (detector ID retained; original geometry only in optional preparation trace)",
+      "stage": "raw detector preparation"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO",
+      "input": "source-tagged LineSegment list",
+      "output": "same count with mutated endpoints",
+      "path": "cad_photo_to_dxf/app/geometry_cleaner.py::_snap_endpoints_with_count",
+      "purpose": "snap nearby endpoints to a cluster center/intersection",
+      "reversible": "NO",
+      "risk": "independent endpoint sets can become indistinguishable",
+      "source_instance_ids_preserved": "YES as aggregate tags",
+      "stage": "geometry cleaning"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO",
+      "input": "length-sorted LineSegment list",
+      "output": "one averaged-axis union-of-extents segment per merged set",
+      "path": "cad_photo_to_dxf/app/geometry_cleaner.py::_merge_collinear_with_report + _merge_pair",
+      "purpose": "greedily bridge/union nearby collinear segments",
+      "reversible": "NO",
+      "risk": "highest: longest-first, center averaging, extent union, contained-line swallowing",
+      "source_instance_ids_preserved": "PARTIAL (IDs aggregated; per-ID geometry lost)",
+      "stage": "geometry cleaning"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO for suppressed member",
+      "input": "length/width-sorted LineSegment list",
+      "output": "one kept geometry with aggregate source IDs",
+      "path": "cad_photo_to_dxf/app/geometry_cleaner.py::_remove_duplicates_with_count",
+      "purpose": "suppress near-identical endpoint pairs",
+      "reversible": "NO",
+      "risk": "contained/equal valid source instances can be erased as detector duplicates",
+      "source_instance_ids_preserved": "PARTIAL (IDs only)",
+      "stage": "geometry cleaning"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO",
+      "input": "overlapping recentered segments",
+      "output": "longest-based, median-axis extent union",
+      "path": "cad_photo_to_dxf/app/straight_line_reconstruction.py::consolidate_source_supported_thick_fragments",
+      "purpose": "collapse centered fragments when union centerline has raster support",
+      "reversible": "NO",
+      "risk": "continuous ink support proves locus support, not source-instance equivalence",
+      "source_instance_ids_preserved": "PARTIAL (aggregate IDs only)",
+      "stage": "post-detection thick-stroke consolidation"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO",
+      "input": "parallel LineSegment group",
+      "output": "median centerline with unioned extents",
+      "path": "cad_photo_to_dxf/app/straight_line_reconstruction.py::collapse_scan_parallel_duplicates",
+      "purpose": "collapse nearby edges with overlap/cross-band ink support",
+      "reversible": "NO",
+      "risk": "near-parallel source edges may be reduced to a centerline",
+      "source_instance_ids_preserved": "PARTIAL (aggregate IDs only)",
+      "stage": "scan-line duplicate collapse"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO",
+      "input": "parallel LineSegment group",
+      "output": "longest-first base only",
+      "path": "cad_photo_to_dxf/app/straight_line_reconstruction.py::suppress_parallel_duplicate_detections",
+      "purpose": "drop nearby parallel detections",
+      "reversible": "NO",
+      "risk": "explicit longest-segment-wins path without member references",
+      "source_instance_ids_preserved": "NO for discarded members",
+      "stage": "late restoration filtering"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO for filtered candidate",
+      "input": "candidate and existing LineSegment lists",
+      "output": "uncovered candidates only",
+      "path": "cad_photo_to_dxf/app/straight_line_reconstruction.py::_prepare_late_restorations",
+      "purpose": "drop candidates already 95% covered by nearby existing spans",
+      "reversible": "NO from output",
+      "risk": "contained source strokes can be classified as already represented",
+      "source_instance_ids_preserved": "NO for filtered candidate",
+      "stage": "late restoration filtering"
+    },
+    {
+      "destructive": "NO after this change for grouped members",
+      "endpoints_preserved": "YES in member_hypotheses",
+      "input": "raw Hough records",
+      "output": "derived normalized geometry plus member hypotheses",
+      "path": "cad_photo_to_dxf/app/line_provenance_audit_v1.py::normalize_hough_records",
+      "purpose": "axis projection and 2-pixel duplicate grouping",
+      "reversible": "YES for grouped members",
+      "risk": "the separate per-orientation 1200-item cap remains destructive and longest-first",
+      "source_instance_ids_preserved": "YES as hypothesis IDs (physical multiplicity remains ambiguous)",
+      "stage": "DEV raw Hough normalization"
+    },
+    {
+      "destructive": "YES",
+      "endpoints_preserved": "NO downstream",
+      "input": "normalized groups sorted longest-first",
+      "output": "bounded prefix",
+      "path": "cad_photo_to_dxf/app/line_provenance_audit_v1.py::normalize_hough_records per-orientation cap",
+      "purpose": "bound normalized candidates to 1200 per orientation",
+      "reversible": "YES only by returning to raw audit input",
+      "risk": "explicit longest-segment-wins capacity suppression",
+      "source_instance_ids_preserved": "NO for groups beyond cap",
+      "stage": "DEV raw Hough normalization"
+    },
+    {
+      "destructive": "YES for downstream eligible membership",
+      "endpoints_preserved": "NO in survivor",
+      "input": "admissible pair candidates",
+      "output": "one survivor plus separate filtered audit records",
+      "path": "cad_photo_to_dxf/app/fresh_dev_candidate_remining_v1.py::deduplicate_new_pool",
+      "purpose": "keep one 8-pixel-quantized pair geometry",
+      "reversible": "PARTIAL from full runtime audit",
+      "risk": "CASE16's 793/794-axis alternatives demonstrate lost competing hypothesis membership",
+      "source_instance_ids_preserved": "NO in survivor; YES only in filtered audit side channel",
+      "stage": "DEV candidate deduplication after pair admission"
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "SOURCE_STROKE_MULTIPLICITY_INTEGRITY_V1"
+}

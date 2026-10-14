@@ -1,0 +1,23 @@
+{
+  "batch": "formal-seed-v2-001",
+  "class_counts": {
+    "OTHER": 36,
+    "SINGLE_PHYSICAL_STROKE": 38,
+    "TRUE_PARALLEL_STRUCTURE": 21
+  },
+  "freeze_directory": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\frozen\\formal-seed-v2-001",
+  "history_count": 385,
+  "label_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+  "manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+  "remaining_undo_events": 201,
+  "reviewed_count": 100,
+  "reviewer_feedback": "Intended objects were identifiable, but some overlays had imperfect alignment/coverage; Stage-1 correctness is not guaranteed. Preserve classes and independently flag nomination risks.",
+  "revision": 385,
+  "status": "FROZEN_HUMAN_EVIDENCE_NOT_TRAINING_AUTHORIZATION",
+  "status_counts": {
+    "INVALID_NOMINATION": 4,
+    "UNCLEAR_TARGET": 1,
+    "VALID_TARGET": 95
+  },
+  "training_authorized": false
+}

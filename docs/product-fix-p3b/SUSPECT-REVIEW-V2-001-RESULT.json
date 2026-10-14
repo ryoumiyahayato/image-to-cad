@@ -1,0 +1,252 @@
+{
+  "CONFIRMED_OTHER": 10,
+  "CONFIRMED_TRUE_PARALLEL": 2,
+  "EXACT_AGREEMENT": 12,
+  "FORMAL_SEED_FINAL_STATUS": "NEEDS_ADJUDICATION",
+  "RECOMMENDED_NEXT_ACTION": "ADJUDICATE DISPUTED SAMPLES ONLY",
+  "REVISED_TO_AMBIGUOUS": 0,
+  "REVISED_TO_OTHER": 0,
+  "REVISED_TO_PARALLEL": 0,
+  "REVISED_TO_SINGLE": 0,
+  "REVISED_TO_X_OR_U": 1,
+  "SEED_RESULT": {
+    "ADJUDICATION_REQUIRED": 1,
+    "CONFIRMED_AMBIGUOUS": 0,
+    "CONFIRMED_OTHER": 36,
+    "CONFIRMED_SINGLE": 38,
+    "CONFIRMED_TRUE_PARALLEL": 20,
+    "EXCLUDED": 5,
+    "TRAINING_READY_LABELS": 94
+  },
+  "STAGE0_DISAGREEMENT": 1,
+  "STAGE1_DISAGREEMENT": 0,
+  "TOTAL_REVIEWED": 13,
+  "background_tasks_created": false,
+  "disagreements": [
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": null,
+      "new_stage0": "INVALID_NOMINATION",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 40,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "ADJUDICATION_REQUIRED",
+      "sample_id": "real-48f0cee35570a79663988685",
+      "training_authorized": false
+    }
+  ],
+  "next_action_started": false,
+  "original_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+  "re_review_manifest_sha256": "0722af98c0ea10e09d25c7a11821bd2dd234a49e282ab1006514b1307bb86bb6",
+  "re_review_state_sha256": "e3c9bbedf8282f3abf25ae5f2a9dbe24b74d60536914d0fba3089d2e4402e34b",
+  "sample_comparisons": [
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 1,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-40651c8f7456a8fcd456ef80",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": null,
+      "new_stage0": "INVALID_NOMINATION",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 40,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "ADJUDICATION_REQUIRED",
+      "sample_id": "real-48f0cee35570a79663988685",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 65,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-9d5e486edda4bc3978792245",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_ENDPOINT_SUPPORT",
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 4,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-602f15f56aa19daaa5968f38",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 46,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-35237b3af343941bd896f3f6",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 66,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-6b47221a7d0b06d16aba5e46",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 68,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-b5d026c19f431084528841a6",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 72,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-4f65fa426b2669dde99dad93",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 75,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-8f5fb67c351941da87125e40",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 81,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-67ee997bf7c474f2493f123b",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 84,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-9753827163aa0491a3566080",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 93,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-b6e833e0e89bef821a51d5b3",
+      "training_authorized": false
+    },
+    {
+      "audit_reason": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "new_class": "OTHER",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "OTHER",
+      "original_rank": 100,
+      "original_stage0": "VALID_TARGET",
+      "review_result": "CONFIRMED",
+      "sample_id": "real-c7d4e7b292d5f55400eca8ea",
+      "training_authorized": false
+    }
+  ],
+  "saved_history_audit": {
+    "DIRECT_SKIP_WITHOUT_STAGE0": 0,
+    "FINAL_STATE_INTERNALLY_CONSISTENT": true,
+    "INCONSISTENT_X_U_OVERWRITES": 0,
+    "INTERNAL_ERRORS": [],
+    "INVALID_NOMINATION": 1,
+    "MISSING_PRESENTATIONS": [],
+    "PRESENTATIONS_PERSISTED": 13,
+    "PRESENTATION_LOG_ENTRIES": 13,
+    "SCHEMA_VALID": true,
+    "SESSION_COUNT": 1,
+    "STAGE1_CLASSES_PRESENT": {
+      "AMBIGUOUS": 0,
+      "OTHER": 10,
+      "SINGLE_PHYSICAL_STROKE": 0,
+      "TRUE_PARALLEL_STRUCTURE": 2
+    },
+    "STAGE1_CLASS_COUNT": 12,
+    "STAGE1_WITHOUT_PRIOR_V": [],
+    "TOTAL_REVIEWED": 13,
+    "TRACEABLE_TARGET_RATE": 0.4,
+    "UNCLEAR_TARGET": 0,
+    "UNDO_LOG_ENTRIES": 0,
+    "VALID_TARGET": 12,
+    "V_WITH_STAGE1_SKIPPED": 0,
+    "X_U_LATER_CHANGED_TO_V": [],
+    "ZERO_SOURCE_SUPPORT_STAGE1": []
+  },
+  "seed_count_definition": "Accepted original 82 READY labels plus exact re-review agreements; no disputed old or new class is included. CONFIRMED seed counts do not claim independent re-review of the original 82.",
+  "stage1_disagreement_definition": "Compared only when both Stage-0 decisions are V; X/U changes are Stage-0 disagreements",
+  "training_authorized": false
+}

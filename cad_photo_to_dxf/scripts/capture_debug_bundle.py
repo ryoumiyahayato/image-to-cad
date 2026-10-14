@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.debug_bundle import capture_debug_bundle  # noqa: E402
+from app.diagnostics.debug_bundle import capture_debug_bundle  # noqa: E402 - project bootstrap
 
 
 def _parser() -> argparse.ArgumentParser:

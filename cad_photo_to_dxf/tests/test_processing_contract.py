@@ -7,18 +7,9 @@ import cv2
 import numpy as np
 import pytest
 
-from app.final_structure import FINAL_STRUCTURE_SCHEMA_VERSION
-from app.processing_contract import (
-    DISABLED_LAYOUT_PROFILE,
-    LayoutProfileSelection,
-    ProcessingCacheKey,
-    ProductionProcessingConfig,
-    ProductionProcessingService,
-    build_processing_cache_key,
-    cache_key_matches,
-    file_content_sha256,
-)
-from app.trace_storage import load_trace_cache, save_trace_cache
+from app.core.structure import FINAL_STRUCTURE_SCHEMA_VERSION
+from app.core.processing import DISABLED_LAYOUT_PROFILE, LayoutProfileSelection, ProcessingCacheKey, ProductionProcessingConfig, ProductionProcessingService, build_processing_cache_key, cache_key_matches, file_content_sha256
+from app.core.cache import load_trace_cache, save_trace_cache
 
 
 def _page() -> np.ndarray:
@@ -156,6 +147,12 @@ def test_production_service_is_deterministic_and_records_configuration() -> None
     assert not first.final_structure.contour_binary.flags.writeable
     with pytest.raises(TypeError):
         first.final_structure.provenance["mutate"] = True  # type: ignore[index]
+    processing = first.final_structure.provenance["processing_contract"]
+    with pytest.raises(TypeError):
+        processing["source_dpi"] = 600.0  # type: ignore[index]
+    thresholds = processing["critical_thresholds"]  # type: ignore[index]
+    with pytest.raises(TypeError):
+        thresholds["maximum_connection_distance_mm"] = 99.0  # type: ignore[index]
 
 
 def test_cache_roundtrip_requires_exact_embedded_key(

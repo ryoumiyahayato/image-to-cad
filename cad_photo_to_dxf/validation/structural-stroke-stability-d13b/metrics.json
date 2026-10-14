@@ -1,0 +1,51 @@
+{
+  "schema_version": "structural-stroke-stability-d13b-summary-v1",
+  "authoritative_base_checkpoint": "669e72ff0e7a4b04d3c60927039ff948a37aca5f",
+  "production_semantic_delta": "NONE",
+  "qualified_dataset": 28,
+  "split": {
+    "train": {"total": 18, "structural": 13, "annotation_or_glyph": 5},
+    "held_out": {"total": 10, "structural": 5, "annotation_or_glyph": 5}
+  },
+  "fixed_held_out_raw": {
+    "correct": 7,
+    "total": 10,
+    "confusion_matrix": {"structural_as_structural": 2, "structural_as_annotation": 3, "annotation_as_structural": 0, "annotation_as_annotation": 5},
+    "structural_precision": 1.0,
+    "structural_recall": 0.4,
+    "annotation_recall": 1.0,
+    "dangerous_false_structural": 0
+  },
+  "whole_source_raw": {
+    "correct": 23,
+    "total": 28,
+    "confusion_matrix": {"structural_as_structural": 16, "structural_as_annotation": 2, "annotation_as_structural": 3, "annotation_as_annotation": 7},
+    "structural_precision": 0.8421052631578947,
+    "structural_recall": 0.8888888888888888,
+    "annotation_recall": 0.7,
+    "dangerous_false_structural": 3
+  },
+  "groups": {
+    "G0R2-15EE2398726E8037": {"total": 3, "structural": 1, "annotation_or_glyph": 2, "correct": 3, "structural_precision": 1.0, "structural_recall": 1.0, "annotation_recall": 1.0, "dangerous_false_structural": 0},
+    "G0R2-3B970FD759C6026F": {"total": 4, "structural": 2, "annotation_or_glyph": 2, "correct": 3, "structural_precision": 0.6666666666666666, "structural_recall": 1.0, "annotation_recall": 0.5, "dangerous_false_structural": 1},
+    "G0R2-4A34D1B8D93B1B06": {"total": 4, "structural": 3, "annotation_or_glyph": 1, "correct": 4, "structural_precision": 1.0, "structural_recall": 1.0, "annotation_recall": 1.0, "dangerous_false_structural": 0},
+    "G0R2-6C9464FA73A2A027": {"total": 7, "structural": 6, "annotation_or_glyph": 1, "correct": 6, "structural_precision": 0.8571428571428571, "structural_recall": 1.0, "annotation_recall": 0.0, "dangerous_false_structural": 1},
+    "G0R2-7E30C7F445081F40": {"total": 3, "structural": 2, "annotation_or_glyph": 1, "correct": 3, "structural_precision": 1.0, "structural_recall": 1.0, "annotation_recall": 1.0, "dangerous_false_structural": 0},
+    "G0R2-C2D095E069663C17": {"total": 7, "structural": 4, "annotation_or_glyph": 3, "correct": 4, "structural_precision": 0.6666666666666666, "structural_recall": 0.5, "annotation_recall": 0.6666666666666666, "dangerous_false_structural": 1, "classification": "PARTIALLY_RECOVERED"}
+  },
+  "abstention": {
+    "status": "ABSTENTION_NOT_CALIBRATABLE",
+    "method": "train-only internal leave-one-SOURCE_GROUP-out; max(min absolute correct margin, max annotation structural-side margin, 0)",
+    "threshold": 0.06118963046827641,
+    "fixed_held_out_abstentions": 8,
+    "fixed_held_out_total": 10
+  },
+  "ambiguity_reserve": {
+    "raw_prediction": "STRUCTURAL_CONTINUATION",
+    "structural_cosine": 0.8188046763306449,
+    "annotation_cosine": 0.7370830942461479,
+    "margin": 0.08172158208449698,
+    "abstain": false
+  },
+  "stability_verdict": "CROSS_SOURCE_SIGNAL_PROMISING_BUT_UNSTABLE"
+}

@@ -1,0 +1,306 @@
+{
+  "interpretation": {
+    "crossing_requires_axial_continuation": true,
+    "termination_requires_axial_stop": true,
+    "weak_plain_endpoint_without_identity_is_ambiguous": true
+  },
+  "profile_count": 12,
+  "profiles": [
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.428571,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "A-CONTINUOUS:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        58.0,
+        50.0
+      ],
+      "source_stroke_id": "A-CONTINUOUS",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.571429,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.428571,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 2,
+      "endpoint_id": "A-CONTINUOUS:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        64.0,
+        50.0
+      ],
+      "source_stroke_id": "A-CONTINUOUS",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.571429,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "B-LEFT:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        50.0,
+        50.0
+      ],
+      "source_stroke_id": "B-LEFT",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 2,
+      "endpoint_id": "B-RIGHT:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        82.0,
+        50.0
+      ],
+      "source_stroke_id": "B-RIGHT",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 1.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 1.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "C-CONTINUOUS:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        60.0,
+        50.0
+      ],
+      "source_stroke_id": "C-CONTINUOUS",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 1.0,
+      "transverse_positive_evidence": 1.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 1.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 1.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "C-CONTINUOUS:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        60.0,
+        50.0
+      ],
+      "source_stroke_id": "C-CONTINUOUS",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 1.0,
+      "transverse_positive_evidence": 1.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        55.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+      "t_junction_evidence": 1.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 1.0,
+      "transverse_positive_evidence": 1.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 2,
+      "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        85.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 1.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        55.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 1.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.0,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 2,
+      "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        85.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 1.0,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.142857,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 1,
+      "endpoint_id": "HYPOTHESIS:line-observation-000000:END",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        1.0,
+        -0.0
+      ],
+      "position": [
+        50.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000000",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.857143,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    },
+    {
+      "competing_stroke_ids": [],
+      "continuing_ridge_evidence": 0.142857,
+      "corner_evidence": 0.0,
+      "crossing_evidence": 0.0,
+      "endpoint_component_id": 2,
+      "endpoint_id": "HYPOTHESIS:line-observation-000001:START",
+      "incoming_ridge_evidence": 1.0,
+      "local_multiplicity": 1,
+      "local_tangent": [
+        -1.0,
+        -0.0
+      ],
+      "position": [
+        58.0,
+        50.0
+      ],
+      "source_stroke_id": "HYPOTHESIS:line-observation-000001",
+      "t_junction_evidence": 0.0,
+      "termination_strength": 0.857143,
+      "topology_confidence": 1.0,
+      "transverse_negative_evidence": 0.0,
+      "transverse_positive_evidence": 0.0
+    }
+  ],
+  "real_profile_coverage": {
+    "case_count": 12,
+    "endpoint_local_profiles_present_in_frozen_records": 0,
+    "policy": "do not reconstruct endpoint identity from aggregate historic metrics",
+    "scalar_or_aggregate_profiles_present": 12
+  },
+  "schema_version": 1,
+  "task_id": "ENDPOINT_TOPOLOGY_SOURCE_IDENTITY_V1"
+}

@@ -1,0 +1,20 @@
+{
+  "V1_and_acceptance_states_unchanged": true,
+  "audit_formal_seed_runs": 1,
+  "background_tasks_created": false,
+  "blind_sources_opened": 0,
+  "derived_audit_sha256": "a3d2440b6c44263cb2d09e017ab8084a6dd20acaead136ad6a614435af0d87ce",
+  "heartbeat_status": "NOT_PRESENT",
+  "human_labels_modified": false,
+  "independent_correspondence_tests_passed": 5,
+  "manifest_modified": false,
+  "manual_foreground_task": true,
+  "next_action_started": false,
+  "production_files_unchanged": 157,
+  "recommended_review_count": 13,
+  "report_sha256": "955fc01b286b12786f6bc275a82acecc255b51e0a4197b01f6da38a66d9a76ca",
+  "ruff": "PASS",
+  "saved_history_revision": 385,
+  "training_authorized": false,
+  "validation_sources_opened": 0
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "broad-content-recall-d3-v1",
+  "source_group_id": "A2-SG-009",
+  "bundle_directory": "local-artifacts/draftsman/input-fidelity-d1/20260910-d1/bundles/A2-SG-009-complete",
+  "vqa_run_directory": "local-artifacts/draftsman/pipeline-destruction-fix-p1/final/runs/20260910T111341Z-A2-SG-009-jpg-33172d9bb3",
+  "regions": [
+    {"region_id": "REGION_A", "label": "UPPER LEFT", "roi": [220, 260, 1370, 1010], "control": false},
+    {"region_id": "REGION_B", "label": "UPPER RIGHT", "roi": [1690, 260, 1320, 1010], "control": false},
+    {"region_id": "REGION_C", "label": "LOWER LEFT", "roi": [190, 1360, 1450, 1110], "control": true},
+    {"region_id": "REGION_D", "label": "LOWER RIGHT", "roi": [1670, 1360, 1370, 1110], "control": true}
+  ],
+  "d2_anchors": [
+    {"case_id": "D2-001", "point": [1322, 739], "expected_first_loss": "DETECTION"},
+    {"case_id": "D2-002", "point": [2329, 492], "expected_first_loss": "OWNERSHIP_FILTER"}
+  ],
+  "sanity_bindings": [
+    {"source_group_id": "A2-SG-009", "final_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40", "entity_count": 5842},
+    {"source_group_id": "A2-SG-022", "final_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059", "entity_count": 2194},
+    {"source_group_id": "G0R2-3560D9BEBEAA3543", "final_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890", "entity_count": 2934}
+  ]
+}

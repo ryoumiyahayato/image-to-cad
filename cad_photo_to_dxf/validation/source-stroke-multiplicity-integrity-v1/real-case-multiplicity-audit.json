@@ -1,0 +1,111 @@
+{
+  "case_count": 10,
+  "cases": [
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "case": "CASE15",
+      "class": "residual invalid",
+      "collapse_stage": "no case-specific upstream collapse proven",
+      "current_failure": "pair admitted without positive shared source identity",
+      "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+      "primary_failure": "PAIR_IDENTITY_LOSS",
+      "raw_hypotheses_present": "YES: one detector hypothesis per fragment"
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "case": "CASE16",
+      "class": "residual invalid",
+      "collapse_stage": "2-pixel normalization grouping followed by 8-pixel candidate dedup loses competing-candidate membership from the survivor",
+      "current_failure": "lossy upstream hypothesis representation plus pair admission without positive shared source identity",
+      "evidence_source": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+      "primary_failure": "BOTH",
+      "raw_hypotheses_present": "YES: fragment A has 792/793/794-axis raw alternatives; fragment B has a 794-axis hypothesis"
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "case": "PRIOR_PIECEWISE_OFFSET",
+      "class": "piecewise-offset collapse",
+      "collapse_stage": "approximately collinear fitted corridor remains accepted",
+      "current_failure": "Span and axis accept the claimed line and frozen admissibility remains positive; coherence and endpoint diagnostics expose strong direction/identity instability but do not produce a safe generic rejection.",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "UPSTREAM_MULTIPLICITY_LOSS",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "case": "PRIOR_HOLLOW_CENTERLINE",
+      "class": "hollow/parallel-edge centerline collapse",
+      "collapse_stage": "broad corridor support conflates two flanks with one axis",
+      "current_failure": "Explicit hollow/structural interruptions remain accepted because dense collinear ink masks primitive identity; axis cadence is observed but still classed supported. Collinearity does not establish one primitive.",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "BOTH",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    },
+    {
+      "candidate_id": "FRESH1-83DFE0F6BE9016CC7844",
+      "case": "PRIOR_SOURCE_BOUNDARY_SWITCH",
+      "class": "source-boundary switch",
+      "collapse_stage": "span/axis/coherence evidence identifies disjoint trajectory but endpoint identity remains unavailable",
+      "current_failure": "Independent span, axis, and coherence measurements support a disjoint/boundary-switch hypothesis. The endpoint reason is only a diagnostic hypothesis and does not replace the human OTHER_PRIMITIVE_MISMATCH label.",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "PAIR_IDENTITY_LOSS",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    },
+    {
+      "candidate_id": "FRESH1-585E8520AB511B998A25",
+      "case": "PRIOR_NEAR_COLLINEAR",
+      "class": "nearby/overlapping linework collapse",
+      "collapse_stage": "approximately collinear ink supplies the fitted corridor",
+      "current_failure": "Irregular structural interruptions and nearby/overlapping linework remain accepted because approximately collinear ink supplies the fitted corridor; current measurements do not establish one source primitive identity.",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "BOTH",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    },
+    {
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "case": "VALID_PAIR_CONTROL_1",
+      "class": "continuous source stroke control",
+      "collapse_stage": "none established",
+      "current_failure": "NONE; human-confirmed continuous control",
+      "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+      "primary_failure": "OTHER",
+      "raw_hypotheses_present": "YES: fragment detector IDs retained"
+    },
+    {
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "case": "VALID_PAIR_CONTROL_2",
+      "class": "continuous source stroke control",
+      "collapse_stage": "none established",
+      "current_failure": "NONE; human-confirmed continuous control",
+      "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+      "primary_failure": "OTHER",
+      "raw_hypotheses_present": "YES: fragment detector IDs retained"
+    },
+    {
+      "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+      "case": "SINGLE_STROKE_CONTROL_1",
+      "class": "valid single straight primitive",
+      "collapse_stage": "none established",
+      "current_failure": "NONE",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "OTHER",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    },
+    {
+      "candidate_id": "FRESH1-33163D6DB78308987FD9",
+      "case": "SINGLE_STROKE_CONTROL_2",
+      "class": "valid single straight primitive",
+      "collapse_stage": "none established",
+      "current_failure": "NONE",
+      "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+      "primary_failure": "OTHER",
+      "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+    }
+  ],
+  "conclusion": "BOTH: destructive representation exists upstream, and current pair admission does not consume positive source identity",
+  "hard_cap": 12,
+  "locked_blind_inspected": false,
+  "new_source_documents_inspected": false,
+  "schema_version": 1,
+  "task_id": "SOURCE_STROKE_MULTIPLICITY_INTEGRITY_V1"
+}

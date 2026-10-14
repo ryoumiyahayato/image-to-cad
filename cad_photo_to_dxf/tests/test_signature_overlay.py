@@ -7,20 +7,12 @@ import ezdxf
 import numpy as np
 import pytest
 
-from app.auxiliary_recognition import TextCandidate
-from app.content_ownership import partition_content
-from app.logo_detection import LogoRegion, detect_logo_regions
-from app.raster_trace import trace_binary
-from app.signature_overlay import (
-    SignatureRegion,
-    detect_signature_regions,
-    mark_graphic_texts,
-    mark_signature_texts,
-    signature_rgba,
-    suppress_signature_strokes,
-    suppress_text_strokes,
-)
-from app.trace_single_export import export_exact_trace_dxf
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.geometry.content_ownership import partition_content
+from app.ocr.logo_detection import LogoRegion, detect_logo_regions
+from app.geometry.raster_trace import trace_binary
+from app.ocr.signature_overlay import SignatureRegion, detect_signature_regions, mark_graphic_texts, mark_signature_texts, signature_rgba, suppress_signature_strokes, suppress_text_strokes
+from app.export.trace_single_export import export_exact_trace_dxf
 
 
 def _title_block() -> tuple[np.ndarray, tuple[TextCandidate, ...]]:

@@ -1,0 +1,180 @@
+{
+  "task": "PERCEPTION-V2-B3A",
+  "base_checkpoint": "c88badf4b821d34dbc0554196aee3a180fb78e13",
+  "cluster_policy": "Clusters are deterministic document-structure and visual-format groups formed before any candidate mining. A single representative page is frozen from each related or near-duplicate group; cluster membership does not assert a case label.",
+  "prediction_blind": true,
+  "families": [
+    {
+      "source_family_id": "SF-V2-01",
+      "document_id": "FAA-AC-43.13-1B-CHANGE-1",
+      "result": "PAGE_SET_FROZEN",
+      "clusters": [
+        {
+          "page_cluster_id": "SF-V2-01-C01-WOOD-SPAR-SPLICE",
+          "cluster_basis": "Chapter 1 wood-structure repair plates showing spar/splice methods with section views and lettered dimensions/callouts.",
+          "related_page_indices_considered": [49, 50, 51, 52, 53, 54, 55],
+          "selected_pdf_page_index": 53,
+          "selected_printed_identifier": "Page 1-20; Par 1-46",
+          "representative_reason": "Figure 1-8 provides a distinct box-spar flange splice arrangement while avoiding multiple consecutive wood-spar plates."
+        },
+        {
+          "page_cluster_id": "SF-V2-01-C02-COMPOSITE-CORE-REPAIR",
+          "cluster_basis": "Chapter 3 composite/sandwich repair pages with layered skin/core/cavity and overlap-repair diagrams.",
+          "related_page_indices_considered": [125, 126, 127, 128],
+          "selected_pdf_page_index": 126,
+          "selected_printed_identifier": "Page 3-10; Par 3-10",
+          "representative_reason": "Figure 3-10 supplies multiple core-replacement forms and a different material/section convention from the wood and metal groups."
+        },
+        {
+          "page_cluster_id": "SF-V2-01-C03-METAL-RIB-INTERSECTION-REPAIR",
+          "cluster_basis": "Chapter 4 metal repair plates for cracked leading/trailing edges, ribs, frames, and fittings.",
+          "related_page_indices_considered": [183, 184, 185, 186],
+          "selected_pdf_page_index": 183,
+          "selected_printed_identifier": "Page 4-42; Par 4-62",
+          "representative_reason": "Figure 4-21 combines several connected rib/edge repair situations on one plate and is the most varied representative of the local group."
+        },
+        {
+          "page_cluster_id": "SF-V2-01-C04-METAL-FINGER-PATCH",
+          "cluster_basis": "Chapter 4 dented-member and welded/finger-patch repair diagrams with repeated patch geometry.",
+          "related_page_indices_considered": [204, 205, 206, 207],
+          "selected_pdf_page_index": 204,
+          "selected_printed_identifier": "Page 4-64; Par 4-91",
+          "representative_reason": "Figure 4-34 provides repeated finger-patch geometry without selecting the adjacent sleeve-repair pages as duplicates."
+        },
+        {
+          "page_cluster_id": "SF-V2-01-C05-TUBE-SPLICE-DIMENSIONED",
+          "cluster_basis": "Chapter 4 tubular-structure splice plates with streamline tubes, sleeves, dimensions, and data tables.",
+          "related_page_indices_considered": [210, 211, 212, 213, 214, 215, 216],
+          "selected_pdf_page_index": 214,
+          "selected_printed_identifier": "Page 4-74; Par 4-102",
+          "representative_reason": "Figure 4-42 combines close parallel tube geometry with a numeric table and dimensional drafting, maximizing format diversity within the tube group."
+        },
+        {
+          "page_cluster_id": "SF-V2-01-C06-BOLT-ROD-END-INSPECTION-FIGURES",
+          "cluster_basis": "Chapter 9 compact inspection-figure pages for bolt holes, rod ends, torque tubes, and localized mechanical damage.",
+          "related_page_indices_considered": [428, 429, 430, 431],
+          "selected_pdf_page_index": 429,
+          "selected_printed_identifier": "Par 9-10; Page 9-9",
+          "representative_reason": "Figures 9-4 through 9-6 provide a multi-figure small-object format not represented by the larger fabrication/repair plates."
+        }
+      ]
+    },
+    {
+      "source_family_id": "SF-V2-03",
+      "document_id": "FAA-AC-150-5340-30J",
+      "result": "PAGE_SET_FROZEN",
+      "clusters": [
+        {
+          "page_cluster_id": "SF-V2-03-C01-RUNWAY-TAXIWAY-LAYOUT",
+          "cluster_basis": "Appendix A runway/taxiway plan layouts with repeated fixture placements and legend-driven symbols.",
+          "related_page_indices_considered": [188, 189, 190, 191, 192, 193, 194],
+          "selected_pdf_page_index": 192,
+          "selected_printed_identifier": "A-6",
+          "representative_reason": "Figure A-6 includes a normal runway with taxiway and provides the broadest connected layout of the local runway-configuration group."
+        },
+        {
+          "page_cluster_id": "SF-V2-03-C02-LIGHT-BEAM-ORIENTATION",
+          "cluster_basis": "Appendix A RGL/stop-bar orientation and holding-position layout plates.",
+          "related_page_indices_considered": [236, 237, 238, 239, 240],
+          "selected_pdf_page_index": 238,
+          "selected_printed_identifier": "A-52",
+          "representative_reason": "Figure A-52 adds angular beam lines and runway/taxiway relationships rather than another repeated fixture-placement plan."
+        },
+        {
+          "page_cluster_id": "SF-V2-03-C03-WIREWAY-INSTALLATION",
+          "cluster_basis": "Appendix A land/hold-short light wireway, pavement, drilling, and cross-section details.",
+          "related_page_indices_considered": [249, 250, 251, 252],
+          "selected_pdf_page_index": 250,
+          "selected_printed_identifier": "A-64",
+          "representative_reason": "Figure A-64 is the wireway installation detail; adjacent pages are intentionally not repeated because they share the same standard-detail family."
+        },
+        {
+          "page_cluster_id": "SF-V2-03-C04-MALS-STRUCTURE-INSTALLATION",
+          "cluster_basis": "Appendix A MALS wiring and frangible-structure installation pages.",
+          "related_page_indices_considered": [271, 272, 273, 274, 275],
+          "selected_pdf_page_index": 273,
+          "selected_printed_identifier": "A-87",
+          "representative_reason": "Figure A-87 combines multi-view structural installation, foundation, conduit, and notes; it is more visually diverse than selecting a wiring-only neighbor."
+        },
+        {
+          "page_cluster_id": "SF-V2-03-C05-REIL-POWER-CONTROL-DETAIL",
+          "cluster_basis": "Appendix E REIL/PAPI standard profile and power/control details.",
+          "related_page_indices_considered": [339, 340, 341, 342, 343],
+          "selected_pdf_page_index": 341,
+          "selected_printed_identifier": "E-25; Figure E-24",
+          "representative_reason": "Figure E-24 provides a profile/detail sheet with foundation, base, conduit, and cable relationships distinct from Appendix A plan and wiring formats."
+        },
+        {
+          "page_cluster_id": "SF-V2-03-C06-LEGACY-RUNWAY-STOPWAY",
+          "cluster_basis": "Appendix H legacy runway/stopway lighting figures.",
+          "related_page_indices_considered": [384, 385, 386, 387, 388],
+          "selected_pdf_page_index": 386,
+          "selected_printed_identifier": "H-10; Figure H-9",
+          "representative_reason": "Figure H-9 preserves a legacy layout convention and avoids selecting several near-identical displaced-threshold/stopway plates."
+        }
+      ]
+    },
+    {
+      "source_family_id": "SF-V2-08",
+      "document_id": "NASA-CR-161594",
+      "result": "PAGE_SET_FROZEN",
+      "clusters": [
+        {
+          "page_cluster_id": "SF-V2-08-C01-GEOPLATFORM-TRUSS",
+          "cluster_basis": "Chapter 2 large-space-system platform/truss conceptual figure pages.",
+          "related_page_indices_considered": [27, 28, 29, 30],
+          "selected_pdf_page_index": 27,
+          "selected_printed_identifier": "Report page 2-10; Figure 2-10",
+          "representative_reason": "The geostationary platform page adds an isometric truss situation and avoids selecting adjacent prose/concept pages."
+        },
+        {
+          "page_cluster_id": "SF-V2-08-C02-BASELINE-VEHICLE-CONCEPT",
+          "cluster_basis": "Chapter 5 baseline expendable low-thrust OTV concept/profile pages.",
+          "related_page_indices_considered": [76, 77, 78, 79],
+          "selected_pdf_page_index": 76,
+          "selected_printed_identifier": "Report page 5-1; Figure 5-1",
+          "representative_reason": "Figure 5-1 is the baseline vehicle overview and is the most useful page-scale structural/equipment layout in this local group."
+        },
+        {
+          "page_cluster_id": "SF-V2-08-C03-TORUS-TANK-STRUCTURAL-SHELL",
+          "cluster_basis": "Chapter 5 torus-tank shell, stiffened-skin, frame, and assembly concept pages.",
+          "related_page_indices_considered": [84, 85, 86, 87],
+          "selected_pdf_page_index": 85,
+          "selected_printed_identifier": "Report page 5-10",
+          "representative_reason": "The page contains alternative structural shell concepts and fabrication discussion, without duplicating the overall OTV profile."
+        },
+        {
+          "page_cluster_id": "SF-V2-08-C04-TANK-ACQUISITION-MANIFOLD",
+          "cluster_basis": "Chapter 5 toroidal tank propellant-acquisition/manifold and misalignment diagrams.",
+          "related_page_indices_considered": [90, 91, 92, 93],
+          "selected_pdf_page_index": 91,
+          "selected_printed_identifier": "Report page 5-16; Figures 5-13 and 5-14",
+          "representative_reason": "The page provides circular/radial and connected manifold geometry plus a misalignment situation, distinct from shell and linear duct pages."
+        },
+        {
+          "page_cluster_id": "SF-V2-08-C05-LH2-TANK-ACQUISITION",
+          "cluster_basis": "Chapter 5 LH2 tank screened-channel, perforated-plate, and raised-duct detail pages.",
+          "related_page_indices_considered": [99, 100, 101],
+          "selected_pdf_page_index": 100,
+          "selected_printed_identifier": "Report page 5-25; Figure 5-21",
+          "representative_reason": "Figure 5-21 is the clearest local representative of fine screen/branch-channel/tank-wall detail and weak scan linework."
+        },
+        {
+          "page_cluster_id": "SF-V2-08-C06-DEPLOYMENT-ENVELOPE",
+          "cluster_basis": "Chapter 5 installation/deployment envelope and payload-interface figure pages.",
+          "related_page_indices_considered": [134, 135, 136, 137, 138, 139, 140],
+          "selected_pdf_page_index": 136,
+          "selected_printed_identifier": "Report page 5-61; Figure 5-49",
+          "representative_reason": "Figure 5-49 adds long-axis deployment and payload envelope geometry, broadening the scan family beyond tank internals and prose."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "families_frozen": 3,
+    "total_clusters": 18,
+    "total_selected_pages": 18,
+    "hard_page_maximum": 21,
+    "ready_for_perception_v2_b3b": true
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+  "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_2",
+  "replacement_candidates": [
+    {
+      "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "candidate_id": "FRESH1-5E86528C5450BEA7E342",
+      "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+      "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+      "diagnostic_stratum": "IRREGULAR_SEPARATE_SEGMENTS",
+      "orientation": "vertical",
+      "prior_review_status": "PREVIOUSLY_UNREVIEWED",
+      "reason_selected": "Matched the vacated V1.1 stratum using the unchanged deterministic source-gap rank after restricting to CURRENT_PRIMITIVE_ELIGIBLE_SET_V1, excluding retained, prior-reviewed, and duplicate primitives.",
+      "review_index": 10,
+      "selection_score": {
+        "base_score": 1.092044,
+        "combined_score": 1.092044,
+        "diversity_bonus": 0.0,
+        "eligible_count": 5,
+        "eligible_rank": 1
+      },
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_unit": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "visible_gap_length_px": 5.0
+    },
+    {
+      "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+      "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+      "diagnostic_stratum": "AMBIGUOUS_EDGE_CASES",
+      "orientation": "horizontal",
+      "prior_review_status": "PREVIOUSLY_UNREVIEWED",
+      "reason_selected": "Matched the vacated V1.1 stratum using the unchanged deterministic source-gap rank after restricting to CURRENT_PRIMITIVE_ELIGIBLE_SET_V1, excluding retained, prior-reviewed, and duplicate primitives.",
+      "review_index": 15,
+      "selection_score": {
+        "base_score": 0.911546,
+        "combined_score": 0.911546,
+        "diversity_bonus": 0.0,
+        "eligible_count": 57,
+        "eligible_rank": 1
+      },
+      "source_family": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_unit": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "visible_gap_length_px": 7.0
+    },
+    {
+      "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+      "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+      "diagnostic_stratum": "AMBIGUOUS_EDGE_CASES",
+      "orientation": "vertical",
+      "prior_review_status": "PREVIOUSLY_UNREVIEWED",
+      "reason_selected": "Matched the vacated V1.1 stratum using the unchanged deterministic source-gap rank after restricting to CURRENT_PRIMITIVE_ELIGIBLE_SET_V1, excluding retained, prior-reviewed, and duplicate primitives.",
+      "review_index": 16,
+      "selection_score": {
+        "base_score": 0.526923,
+        "combined_score": 0.866923,
+        "diversity_bonus": 0.34,
+        "eligible_count": 56,
+        "eligible_rank": 1
+      },
+      "source_family": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_unit": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "visible_gap_length_px": 5.0
+    }
+  ],
+  "schema_version": 1,
+  "task_id": "STRAIGHT_VALIDITY_FREEZE_SOURCE_GAP_V1_2"
+}

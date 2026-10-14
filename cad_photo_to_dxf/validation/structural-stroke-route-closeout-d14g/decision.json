@@ -1,0 +1,148 @@
+{
+  "schema_version": "structural-stroke-route-closeout-d14g-v1",
+  "task": "STRUCTURAL-STROKE-PERCEPTION-ROUTE-CLOSEOUT-D14G",
+  "base_checkpoint": "c8ee243ee0d7a5cf5386217ac0e1e2d996df1477",
+  "production_baseline": "3ad0ec4",
+  "production_semantic_delta": "NONE",
+  "phase_classification": "EXPLORATORY_PHASE_COMPLETE",
+  "decisions": {
+    "root_cause_understood": true,
+    "handcrafted_route_boundary_established": true,
+    "new_visual_evidence_source_identified": true,
+    "new_source_transfer_demonstrated": true,
+    "production_solution_complete": false,
+    "next_development_direction_known": true,
+    "visual_semantic_perception_worth_continuing": true,
+    "generic_mobilenet_production_ready": false,
+    "domain_specific_representation_justified_now": false,
+    "larger_multi_source_dev_dataset_justified": true,
+    "production_integration_justified_now": false
+  },
+  "root_cause": {
+    "statement": "Source and binary evidence can remain continuous while detect_lines Hough/LSD emits endpoint-bounded fragments, producing real reconstruction loss.",
+    "cross_source_cases": [
+      "D2-001",
+      "D2-006"
+    ],
+    "excluded_causes": [
+      "generic source absence",
+      "global preprocessing failure",
+      "5000-segment cap",
+      "consolidation alone",
+      "FinalStructure mutation"
+    ]
+  },
+  "insufficient_routes": {
+    "existing_downstream_evidence": "D6 insufficient",
+    "handcrafted_structural_morphology": "D7 insufficient",
+    "generic_bridge_or_snap_heuristics_recommended": false
+  },
+  "reference_baseline": {
+    "name": "STRUCTURAL-STROKE REFERENCE BASELINE V1",
+    "role": "REFERENCE_BASELINE_NOT_PRODUCTION_DEPENDENCY",
+    "encoder": "OpenCV Zoo MobileNetV2 image_classification_mobilenetv2_2022apr.onnx",
+    "upstream_commit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+    "sha256": "C0C3F76D93FA3FD6580652A45618618A220FCED18BABF65774ED169DE0432AD5",
+    "feature_layer": "onnx_node!GlobalAveragePool_97",
+    "local_dimension": 1280,
+    "context_dimension": 1280,
+    "concatenated_dimension": 2560,
+    "classifier": "COSINE_NEAREST_CLASS_CENTROID",
+    "abstention": "NONE",
+    "d13b_whole_source": {
+      "correct": 23,
+      "total": 28,
+      "structural_precision": 0.842,
+      "structural_recall": 0.889,
+      "annotation_recall": 0.7,
+      "dangerous_false_structural": 3
+    },
+    "d14f_new_source": {
+      "correct": 10,
+      "total": 13,
+      "structural_precision": 0.833,
+      "structural_recall": 0.714,
+      "annotation_recall": 0.833,
+      "annotation_cases": 6,
+      "dangerous_false_structural": 1,
+      "generalization_verdict": "NEW_SOURCE_GENERALIZATION_SUPPORTED"
+    }
+  },
+  "primary_unsolved_safety_failure": {
+    "class": "line-dominant annotation that visually resembles object structure",
+    "priority_examples": [
+      "dimension extension and witness lines",
+      "dimension chains",
+      "leaders",
+      "drawing-layout rules",
+      "similar annotation-derived long straight strokes"
+    ],
+    "d14f_reference_case": {
+      "candidate_id": "D14E-142FAB52579F",
+      "family": "H2",
+      "subtype": "dimension_extension_witness_line"
+    },
+    "special_case_rule_authorized": false
+  },
+  "uncertainty": {
+    "status": "UNSOLVED",
+    "finding": "COSINE_MARGIN_NOT_VALID_UNCERTAINTY_PROXY",
+    "hand_tuned_cosine_threshold_recommended": false
+  },
+  "next_dev_scale": {
+    "status": "DEVELOPMENT_TARGET_NOT_STATISTICALLY_CERTIFIED_REQUIREMENT",
+    "additional_source_families": {
+      "minimum_target": 8,
+      "maximum_target": 10
+    },
+    "independent_qualified_cases": {
+      "minimum_target": 80,
+      "maximum_target": 120
+    },
+    "minimum_overall_class_count": {
+      "STRUCTURAL_CONTINUATION": 35,
+      "ANNOTATION_OR_GLYPH": 35
+    },
+    "per_family_expectation": "Both classes in every admitted family; target at least three independent examples per class where the source permits.",
+    "minimum_hard_negative_subtypes": 6,
+    "priority_subtype_target": "At least five independent cases across at least two source families for each of dimension witness/extension lines, dimension chains, leaders, and drawing-layout rules.",
+    "priority": "SOURCE_FAMILY_DIVERSITY"
+  },
+  "future_stages": [
+    "Build larger multi-source labels while preserving Reference Baseline V1.",
+    "Evaluate stronger classifiers, representations, context evidence, and uncertainty strategies against V1 without preselecting a winner."
+  ],
+  "holdout_governance": {
+    "H1": "PRESERVED_NEW_SOURCE_HOLDOUT",
+    "H2": "PRESERVED_NEW_SOURCE_HOLDOUT",
+    "C1": "BASELINE_RECORDED_MAY_BECOME_DEV_ONLY_IN_SEPARATE_EXPLICIT_TASK",
+    "validation_inspected": false,
+    "locked_blind_exposure": "0 / 8"
+  },
+  "production_entry_gates": [
+    "cross-source-family stability",
+    "explicit dangerous-false-structural measurement",
+    "robust hard-negative coverage",
+    "uncertainty or rejection better than cosine margin",
+    "deterministic evidence provenance",
+    "no direct unsupported geometry creation",
+    "paired positive and negative regression controls",
+    "human-visible reconstruction improvement",
+    "no unacceptable regression on existing good cases"
+  ],
+  "eventual_architecture": [
+    "source evidence",
+    "detector fragments",
+    "continuation hypothesis",
+    "visual semantic evidence",
+    "optional domain evidence",
+    "evidence arbitration",
+    "ACCEPT / REJECT / AMBIGUOUS",
+    "accepted source-supported result may enter normal reconstruction",
+    "FinalStructure remains sole authority"
+  ],
+  "model_role": "ADVISORY_EVIDENCE_ONLY",
+  "next_production_change_candidate": "NONE",
+  "validation": false,
+  "locked_blind": "0 / 8"
+}

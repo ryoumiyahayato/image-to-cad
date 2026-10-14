@@ -1,0 +1,22 @@
+{
+  "W01": {
+    "lines": 358,
+    "exact_tuple_equal": true,
+    "reference": "closed-P1 verified cache"
+  },
+  "W02": {
+    "lines": 183,
+    "exact_tuple_equal": true,
+    "reference": "initial closed-P1 equality assertion line snapshot"
+  },
+  "W03": {
+    "lines": 842,
+    "exact_tuple_equal": true,
+    "reference": "closed-P1 verified cache"
+  },
+  "E01": {
+    "method": "frozen UAT LINE tuple; production representation stage replay",
+    "exact_tuple_equal": true,
+    "lines": 1394
+  }
+}

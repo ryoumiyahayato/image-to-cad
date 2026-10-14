@@ -1,0 +1,325 @@
+{
+  "original_manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+  "original_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+  "purpose": "Immutable historical evidence; never displayed before re-review answers",
+  "samples": [
+    {
+      "original_correspondence_audit_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 1,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "ca7d13b6b52f350af71abf409284c2f61f1d637531e9063d1ad10fef8b26253a",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:35:25.635503+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "TRUE_PARALLEL_STRUCTURE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "ca7d13b6b52f350af71abf409284c2f61f1d637531e9063d1ad10fef8b26253a",
+        "timestamp_utc": "2026-10-07T05:35:26.604447+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-40651c8f7456a8fcd456ef80"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 40,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "210d3220573e6997bf618d4d86438de475989839ddad6aed623098c360787ca7",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:38:15.334872+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "TRUE_PARALLEL_STRUCTURE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "210d3220573e6997bf618d4d86438de475989839ddad6aed623098c360787ca7",
+        "timestamp_utc": "2026-10-07T05:38:15.771284+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-48f0cee35570a79663988685"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 65,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "ab9e75807a649ed4268d49e24b714c6b04173c2a97254515c9365a0748fdb7cf",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:39:53.490338+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "TRUE_PARALLEL_STRUCTURE",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "ab9e75807a649ed4268d49e24b714c6b04173c2a97254515c9365a0748fdb7cf",
+        "timestamp_utc": "2026-10-07T05:39:55.642845+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-9d5e486edda4bc3978792245"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_ENDPOINT_SUPPORT",
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 4,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "0cf4b565e7ab36c4eabde74eef90a3d980e651b5ffc4d5df4b78c3220ffd1dee",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:35:32.419384+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "0cf4b565e7ab36c4eabde74eef90a3d980e651b5ffc4d5df4b78c3220ffd1dee",
+        "timestamp_utc": "2026-10-07T05:35:33.308873+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-602f15f56aa19daaa5968f38"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 46,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "00326e0293be28f33defd1f922da1b57b9486268c81e02a6d3a9d92a6b5e3ce1",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:38:29.526202+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "00326e0293be28f33defd1f922da1b57b9486268c81e02a6d3a9d92a6b5e3ce1",
+        "timestamp_utc": "2026-10-07T05:38:30.260164+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-35237b3af343941bd896f3f6"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT",
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "original_rank": 66,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "db931817ccf810c02d467682777e10d48464795f812b9ccd4f2ed63170314e39",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:39:56.739002+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "db931817ccf810c02d467682777e10d48464795f812b9ccd4f2ed63170314e39",
+        "timestamp_utc": "2026-10-07T05:39:57.195268+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-6b47221a7d0b06d16aba5e46"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 68,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "1d7e95909d3d698ab3facb213fdadc27eccec4b05cda9bf18a0105bc864f00b1",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:39:59.689620+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "1d7e95909d3d698ab3facb213fdadc27eccec4b05cda9bf18a0105bc864f00b1",
+        "timestamp_utc": "2026-10-07T05:40:00.797220+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-b5d026c19f431084528841a6"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT",
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 72,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "be23083b3d9836304052a1e073d3aa14080e900b232806d26cb76845e965a4e1",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:40:10.154241+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "be23083b3d9836304052a1e073d3aa14080e900b232806d26cb76845e965a4e1",
+        "timestamp_utc": "2026-10-07T05:40:11.171134+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-4f65fa426b2669dde99dad93"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "original_rank": 75,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "e9525dee73f14f17d8789d97990fa3da7fa1d2435f24813c950c38e096939a77",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:40:20.490678+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "e9525dee73f14f17d8789d97990fa3da7fa1d2435f24813c950c38e096939a77",
+        "timestamp_utc": "2026-10-07T05:40:21.925335+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-8f5fb67c351941da87125e40"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "original_rank": 81,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "5f98ebcef753e1719174ffa639f27c90a4af0c96329dd74a02f62a85ba796437",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:42:45.819282+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "5f98ebcef753e1719174ffa639f27c90a4af0c96329dd74a02f62a85ba796437",
+        "timestamp_utc": "2026-10-07T05:42:46.676308+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-67ee997bf7c474f2493f123b"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 84,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "b9f18aa22f0978f8b2670e03e2f00df79622ba76a40291653985de253b4a2ba2",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:43:32.578876+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "b9f18aa22f0978f8b2670e03e2f00df79622ba76a40291653985de253b4a2ba2",
+        "timestamp_utc": "2026-10-07T05:43:34.122155+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-9753827163aa0491a3566080"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "original_rank": 93,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "c2f4133802d7152504561431cae4eadb20a2eeb0a7846cad241ef8b91c0a778a",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:44:57.115008+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "c2f4133802d7152504561431cae4eadb20a2eeb0a7846cad241ef8b91c0a778a",
+        "timestamp_utc": "2026-10-07T05:44:57.906929+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-b6e833e0e89bef821a51d5b3"
+    },
+    {
+      "original_correspondence_audit_reasons": [
+        "B_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "original_rank": 100,
+      "original_stage0": {
+        "annotator": "local-reviewer",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "01a2f7e3d897e4fe814fe8b2f00d88ad73977545ebd775ba730a3acd65fc3c61",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T05:45:22.299533+00:00"
+      },
+      "original_stage1": {
+        "annotator": "local-reviewer",
+        "label": "OTHER",
+        "nomination_status": "VALID_TARGET",
+        "provenance": "human_source_review_after_stage_0",
+        "rubric_version": "p3b-rubric-v2",
+        "sample_sha256": "01a2f7e3d897e4fe814fe8b2f00d88ad73977545ebd775ba730a3acd65fc3c61",
+        "timestamp_utc": "2026-10-07T05:45:23.131346+00:00",
+        "training_authorized": false
+      },
+      "sample_id": "real-c7d4e7b292d5f55400eca8ea"
+    }
+  ]
+}

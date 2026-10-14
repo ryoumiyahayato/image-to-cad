@@ -1,0 +1,40 @@
+{
+  "schema_version": "draftsman-raster-evidence-baseline-v1",
+  "base_head": "4b3d00e65954c04829b822883122cf76ad425857",
+  "evidence_contract": "draftsman-raster-evidence-v1",
+  "source_document_id": "environment-plan-page-003-150dpi",
+  "source_page": 3,
+  "source_sha256": "47a7d9fc4062cfa556e2e4a1ea62124342416c9b2f27d0c42a691f76d8ad83cc",
+  "candidate_count": 55,
+  "covered_reference_ids": [
+    "ELEC-150-S01-141",
+    "ELEC-150-S01-142",
+    "ELEC-150-S01-143",
+    "ELEC-150-S01-146",
+    "ELEC-150-S01-147",
+    "ELEC-150-S01-148",
+    "ELEC-150-S01-149",
+    "ELEC-150-S01-150",
+    "ELEC-150-S01-151",
+    "ELEC-150-S01-152",
+    "ELEC-150-S01-155",
+    "ELEC-150-S01-162",
+    "ELEC-150-S01-167",
+    "ELEC-150-S01-176",
+    "ELEC-150-S01-177"
+  ],
+  "family_result": {
+    "auto_accepted": 5,
+    "review_required": 10,
+    "missed": 23,
+    "false_positives": 0,
+    "failure_distribution": {
+      "EVIDENCE": 23,
+      "DOMAIN": 3,
+      "TOPOLOGY": 7,
+      "LOGICAL_ENTITY": 0,
+      "ASSEMBLY": 0
+    }
+  },
+  "provenance": "Recorded deterministic VS3-GA audit at base HEAD; reference-only and never used for runtime discovery."
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from app.ocr_pipeline import remove_table_rules_for_ocr
+from app.ocr.ocr_pipeline import remove_table_rules_for_ocr
 
 
 def test_table_rules_are_whitened_without_erasing_nearby_text() -> None:

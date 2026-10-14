@@ -1,0 +1,139 @@
+{
+  "schema_version": "structural-stroke-label-expansion-d13a-v1",
+  "artifact_policy": "EXISTING_D11_REVIEW_PAIRS_ONLY",
+  "selection_policy": "SOURCE_GROUP_COVERAGE_ONLY_NO_D12_PREDICTIONS",
+  "review_limit": 16,
+  "reviewed": 12,
+  "candidates": [
+    {
+      "candidate_id": "D11-04999BB49451",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 9,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The vertical span is a sheet/title-layout boundary joining table rows, not drawing structure.",
+      "hard_negative_subtype": "drawing_layout_rule",
+      "near_duplicate_cluster_id": null,
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-ED85F4EB56C4",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 11,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments follow one continuous exterior wall through the floor plan.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": "G6C-REPEATED-VERTICAL-WALL-01",
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-F8833FB0CE0F",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 15,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments follow the same repeated exterior-wall pattern seen on another plan.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": "G6C-REPEATED-VERTICAL-WALL-01",
+      "independent_case": false
+    },
+    {
+      "candidate_id": "D11-82DEA3016C9D",
+      "source_group": "G0R2-6C9464FA73A2A027",
+      "page": 9,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The highlighted fragments form one continuous upper exterior building boundary.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-4A817D53018D",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 51,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The proposal follows the border of an embedded report figure.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": false
+    },
+    {
+      "candidate_id": "D11-F7E510105CF0",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 59,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The span is the outer border of a rotated embedded drawing figure.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": false
+    },
+    {
+      "candidate_id": "D11-B11AFD6EDDEF",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 63,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The detected line is an embedded figure boundary rather than continuation ambiguity.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": false
+    },
+    {
+      "candidate_id": "D11-5404479D428A",
+      "source_group": "G0R2-B441E5911528F402",
+      "page": 69,
+      "label": "INVALID_FOR_TASK",
+      "reason": "The proposal traces the right border of an embedded report figure.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": false
+    },
+    {
+      "candidate_id": "D11-B3D4E39CE80F",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 2,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments continue one civil boundary through the key-plan inset.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": null,
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-FCE8771B5495",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 4,
+      "label": "ANNOTATION_OR_GLYPH",
+      "reason": "The fragments are the CADREF/SCALE title-block row rule.",
+      "hard_negative_subtype": "title_block_rule",
+      "near_duplicate_cluster_id": null,
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-6CD1F65F9B09",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 4,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments form the continuous finished-ground profile in a trench detail.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": "GC2-REPEATED-TRENCH-GROUND-01",
+      "independent_case": true
+    },
+    {
+      "candidate_id": "D11-3AC8A02A2B94",
+      "source_group": "G0R2-C2D095E069663C17",
+      "page": 6,
+      "label": "STRUCTURAL_CONTINUATION",
+      "reason": "The fragments repeat the same finished-ground trench-detail profile.",
+      "hard_negative_subtype": null,
+      "near_duplicate_cluster_id": "GC2-REPEATED-TRENCH-GROUND-01",
+      "independent_case": false
+    }
+  ],
+  "summary": {
+    "new_raw_reviews": 12,
+    "new_qualified_structural": 6,
+    "new_qualified_annotation_or_glyph": 2,
+    "new_ambiguous": 0,
+    "new_invalid": 4,
+    "new_independent_structural_cases": 4,
+    "new_independent_hard_negatives": 2,
+    "near_duplicates_rejected": 2
+  }
+}

@@ -1,0 +1,588 @@
+{
+  "AMBIGUOUS_TRAIN_SAMPLES_USED_AS_HARD_LABELS": 0,
+  "AMBIGUOUS_VALIDATION_ROLE": "ABSTENTION_EVALUATION",
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "BLIND_TOUCHED": "NO",
+  "FIRST_MODEL_CLASS_POLICY": "3_CLASS_PLUS_ABSTENTION",
+  "MODEL_TRAINED": "NO",
+  "TRAINING_DATA_FREEZE": "PASS",
+  "TRAIN_VALIDATION_LEAKAGE": "NONE",
+  "baseline_configuration_sha256": "61e2f49eadf84c05e9c9b6b1a696556945cd30e314097d4ca8a48a560054fcd1",
+  "current_truth_snapshots": {
+    "train-adjudicated-truth.jsonl": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\frozen\\training-data-v2-001\\train-adjudicated-truth.jsonl",
+      "sha256": "2e4bdfe4e8e1d56beae9b238aba210538dcd215230609079d2d236241813043d"
+    },
+    "validation-adjudicated-truth.jsonl": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\frozen\\training-data-v2-001\\validation-adjudicated-truth.jsonl",
+      "sha256": "465d826ea8a4d7d9a9b3551ba74155e81c7dab103256043dc45e49a522d03990"
+    }
+  },
+  "dataset_version": "p3b-final-three-class-abstention-v1",
+  "drawing_source_family_identities": {
+    "train": [
+      {
+        "drawing": "A2-SG-009",
+        "family": "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+        "sample_ids": [
+          "real-0df67723e0a3998bff08e8d8",
+          "real-2733c068be5e17143eb3cf63",
+          "real-40651c8f7456a8fcd456ef80",
+          "real-48f0cee35570a79663988685",
+          "real-709b66276d3bfeae6c2269ce",
+          "real-9ea4e317781371a35858c98e",
+          "real-a0a30b63f3f0a991359d522e",
+          "real-a8f7539d0beef1ead1a3c655",
+          "real-d95c20a846d82691441e3f65",
+          "real-v2-727b638d422879b10e05d364"
+        ]
+      },
+      {
+        "drawing": "A2-SG-022",
+        "family": "UK_BANBURY_TRAMWAY_ASBUILT",
+        "sample_ids": [
+          "real-37ce216196668402c8ec208c",
+          "real-44bcbe9af9a53fa0a0293b8f",
+          "real-74344fd0908442d3c8bb88a2",
+          "real-8025fde158737f5241ff782c",
+          "real-9d5e486edda4bc3978792245",
+          "real-v2-03959d90ff2c5de1924cc118",
+          "real-v2-32846912b5de2d241053e3a0",
+          "real-v2-398cbeacb83a9622b236adc5",
+          "real-v2-4b290e19ee37dadef2460f66",
+          "real-v2-8b9c40e3499af640ed982bd4"
+        ]
+      },
+      {
+        "drawing": "G0R2-15EE2398726E8037",
+        "family": "JP_IGA_4291000114",
+        "sample_ids": [
+          "real-110a9b9b734aeffbc92ca343",
+          "real-3dc91625fadf2a43d1ff6d42",
+          "real-v2-2859a4fbf3c79580ff8ba4d0",
+          "real-v2-2c59a3cef0b08b1da0592f9f",
+          "real-v2-a2a30ad5950fe09e7f490687"
+        ]
+      },
+      {
+        "drawing": "G0R2-3560D9BEBEAA3543",
+        "family": "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+        "sample_ids": [
+          "real-602f15f56aa19daaa5968f38",
+          "real-691c9074b55347e031c7465a",
+          "real-6b47221a7d0b06d16aba5e46",
+          "real-8f5fb67c351941da87125e40",
+          "real-9753827163aa0491a3566080",
+          "real-b6e833e0e89bef821a51d5b3",
+          "real-c7d4e7b292d5f55400eca8ea",
+          "real-ed30546fbbe167cfb191b763",
+          "real-v2-2075712529a9e657216be459",
+          "real-v2-27d83f665c2e8e425fd5c3ec"
+        ]
+      },
+      {
+        "drawing": "G0R2-3B970FD759C6026F",
+        "family": "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+        "sample_ids": [
+          "real-2467752336c841095c82497b",
+          "real-4f059811e62c8e6885466649",
+          "real-v2-20b92a9db9eff90c2f2b9b4a",
+          "real-v2-3084fb0533c13126c2bd3934",
+          "real-v2-4acde5113f5a42357fad3917",
+          "real-v2-7b3e989b3a7336a0e83614ff",
+          "real-v2-7b65774f19c1a5738ca72b6b",
+          "real-v2-7cdb5a87ead0df679ab5a4c4",
+          "real-v2-a2f0655511f0c962bcc483c5"
+        ]
+      },
+      {
+        "drawing": "G0R2-4A34D1B8D93B1B06",
+        "family": "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+        "sample_ids": [
+          "real-v2-1bd30182c70087747a6ba9f5",
+          "real-v2-209f8e67c0f5d21e9cf6ac13",
+          "real-v2-292c9ca38c3fcea39a9414a3",
+          "real-v2-dfe0359f7c86c54920f94701"
+        ]
+      },
+      {
+        "drawing": "G0R2-6C9464FA73A2A027",
+        "family": "JP_IGA_2020000378",
+        "sample_ids": [
+          "real-14833d60d2c338ffcc7b1627",
+          "real-1f76a22ef8d561871535b20a",
+          "real-35237b3af343941bd896f3f6",
+          "real-3d0f8f74da88220975f6887d",
+          "real-b5d026c19f431084528841a6",
+          "real-v2-1a50d2af3963e8a45339a9d3",
+          "real-v2-3e57a199b76ecb2b1ad25d49",
+          "real-v2-fae47e890a245d3c994e6a14",
+          "real-v2-ff27283966f5d92b64a02535"
+        ]
+      },
+      {
+        "drawing": "G0R2-7E30C7F445081F40",
+        "family": "AU_NSW_P5_2023_61",
+        "sample_ids": [
+          "real-13c73903c42787d1a23d2b88",
+          "real-2dfd0a65b89a47534c82798e",
+          "real-e90665daa6a8717c2d3aa023",
+          "real-v2-2b3527927c8998d4b100dd4f",
+          "real-v2-68f7133a07755005bf393dd5",
+          "real-v2-b999a507dac9825e9ce68077",
+          "real-v2-dbfae1cdc51080227a05c38d",
+          "real-v2-ec53884b5a9e12ec2b7fe868"
+        ]
+      },
+      {
+        "drawing": "G0R2-B441E5911528F402",
+        "family": "US_LOC_HABS_FL0790",
+        "sample_ids": [
+          "real-v2-2b6358ad34b06492364dac50",
+          "real-v2-374fa9a364bd62b1d02f071e",
+          "real-v2-75a661f94ecfc94b97da4b4b",
+          "real-v2-82a40571e62e2c143ea0bb77"
+        ]
+      },
+      {
+        "drawing": "G0R2-C2D095E069663C17",
+        "family": "AU_NSW_P5_2024_93",
+        "sample_ids": [
+          "real-5873870ab4d2073deedcf1a3",
+          "real-a06a4bb1dcb60fa5a475208b",
+          "real-bd8a89674690e0984c32fccc",
+          "real-d8afed411bcea64f01983d83",
+          "real-v2-19c8e7daadc879c5c2fa3f45",
+          "real-v2-31592c3ae3ae02f15df57ab6",
+          "real-v2-5fa9feb0529d0722d13322c1",
+          "real-v2-ca2100a50e0142fba1fea118"
+        ]
+      },
+      {
+        "drawing": "environment-building",
+        "family": "user-project-haiyang",
+        "sample_ids": [
+          "real-0271fa4e21bf670bc8120088",
+          "real-0a86624311b32f8df6d25a93",
+          "real-179d405a0e90b21b0e5050c3",
+          "real-2318ae1bcb897ad7e4e9d4dd",
+          "real-2ec8b16a83787ccb58a5fdf4",
+          "real-402901c451d6d70387cc48ec",
+          "real-7837a1473a608d53f1e4a061",
+          "real-9d47e9caf44e70ee40cf4826",
+          "real-v2-10a7872e745433da1ee0a3c3"
+        ]
+      },
+      {
+        "drawing": "sample-plan-photo",
+        "family": "sample-plan-photo",
+        "sample_ids": [
+          "real-0ed09feec097ee0b6c34da51",
+          "real-1e873e7386fb08f10321c093",
+          "real-v2-21fd3e994d73cdcd8020d410",
+          "real-v2-43ce2322a96b7f30ea7e8cbe",
+          "real-v2-f692dd249418a1b0f7d650a5"
+        ]
+      },
+      {
+        "drawing": "warehouse-electrical",
+        "family": "user-project-haiyang",
+        "sample_ids": [
+          "real-0670739e7eafdf93ee503be5",
+          "real-2b9dea796bfc86369705cf61",
+          "real-4001b9c49f981a96de6eea46",
+          "real-4710b3c1e1e82b1bd9b5db91",
+          "real-4f65fa426b2669dde99dad93",
+          "real-67ee997bf7c474f2493f123b",
+          "real-948bf8a640b92d8aec00decc",
+          "real-94b9a6ea10256ce9e5cf7a74",
+          "real-v2-0430952fc9b21559564085ca"
+        ]
+      }
+    ],
+    "validation": [
+      {
+        "drawing": "A2-SG-008",
+        "family": "US_NARA_BUILDING9",
+        "sample_ids": [
+          "val-v2-047e2c7b3b9ddaad83674cdd",
+          "val-v2-07af8a2aa2b9be3b1c3d0752",
+          "val-v2-0dd9dec399c0d6049d906fa8",
+          "val-v2-11be2a3e35870cb013477935",
+          "val-v2-1538daa5b57396860aabda59",
+          "val-v2-18160c5b2e1af8b7443a888a",
+          "val-v2-1f535f83ca9c190bc7d39fb8",
+          "val-v2-224d1f94a7e612f6af1cda61",
+          "val-v2-22576775523aaf2612d86d05",
+          "val-v2-371d42c1f676b1e7eb37529c",
+          "val-v2-3a221fa3fb897e09d5bd9ee8",
+          "val-v2-3e38622b7878ff2a062db407",
+          "val-v2-3eeccb1374a6af997385ea59"
+        ]
+      },
+      {
+        "drawing": "G0R2-22E85E2DB7746A00",
+        "family": "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+        "sample_ids": [
+          "val-v2-01922739fa98e666f952f2f6",
+          "val-v2-0eb34b1c9229868ebd1f8faf",
+          "val-v2-152f8e015747d6a353ce315a",
+          "val-v2-1874d3980494d6fbf226f896",
+          "val-v2-1bcc68323293282decb59552",
+          "val-v2-25c68ab3747b833a74553b2f",
+          "val-v2-2c845886246d3f39c38e0363",
+          "val-v2-3c6bd570fe8c9e681630005e",
+          "val-v2-4aa0531660a605b8125a4c95",
+          "val-v2-4b6491263ace597bfa348098",
+          "val-v2-551e135d1bbb75df2c9ba5e4",
+          "val-v2-5ac20caeaac0d640b19f2dda"
+        ]
+      },
+      {
+        "drawing": "G0R2-4DC97797ABE2CB18",
+        "family": "AU_GOLDCOAST_OPW_2014_2240",
+        "sample_ids": [
+          "val-v2-178997c891366e6505443ec2",
+          "val-v2-1bf3cc2ebcb0324ce6c02c10",
+          "val-v2-261d3cffb584f26f925431dd",
+          "val-v2-284dd47b663f2082374d3ebb",
+          "val-v2-2c20fc9cda807dae42456924",
+          "val-v2-383cabc2d85021a99a5a2d6f",
+          "val-v2-3b342dec0dbc33b290fa2c17",
+          "val-v2-3b9d39a406e108d18d0e510a",
+          "val-v2-3d055195c7ff5a95add31627",
+          "val-v2-3f85ee0ce1adedb0a8e37708",
+          "val-v2-422de0ebc37678c813c5ca30",
+          "val-v2-45091e17492dabbc871213bd"
+        ]
+      },
+      {
+        "drawing": "G0R2-99D5B85436EBB965",
+        "family": "US_LOC_HABS_GU0014",
+        "sample_ids": [
+          "val-v2-00fb8bf830ff74082babcb29"
+        ]
+      },
+      {
+        "drawing": "G0R2-F519B357241CAC3A",
+        "family": "US_LOC_HABS_UT0288",
+        "sample_ids": [
+          "val-v2-06a7ca055670ed570a410116",
+          "val-v2-0bff20a694e4b26f7af6f810",
+          "val-v2-0ef668e8d4a1ddc737649a25",
+          "val-v2-115c58721d68b21e3a19687f",
+          "val-v2-161b11bdbc2dc930fce9f8b7",
+          "val-v2-194de57a7e9ca69147555833",
+          "val-v2-19fa87d80bb54ff6794f6a51",
+          "val-v2-1b8fcd9fb4d9b245ca1596c3",
+          "val-v2-222502cf7092e91bbcaa712a",
+          "val-v2-3313a34b5f7967ac370d4c11",
+          "val-v2-7563d104c1b4902e4798bea3",
+          "val-v2-a83bfe5d70833f6c1b89314f"
+        ]
+      }
+    ]
+  },
+  "human_input_bindings": {
+    "accepted_freeze": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\TRAINING-DATA-FREEZE.json",
+      "sha256": "40152614ad46a97195f07ddc437aff27692bf1f6bcf476d3b411db1fccbe89f1"
+    },
+    "accepted_validation_result": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\VALIDATION-SUSPECT-REVIEW-FINAL.json",
+      "sha256": "85407240ebf676c8832a782f9a5d9788b17cc60b1a8d24eff08386eea6597d44"
+    },
+    "split_manifest": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\split-manifest.json",
+      "sha256": "d354b6604e92a1e6c8a01d10bb61032c2872167188bff4d4b7943b3955b25444"
+    },
+    "train_adjudication": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\formal-seed-adjudicated-decisions.jsonl",
+      "sha256": "2e4bdfe4e8e1d56beae9b238aba210538dcd215230609079d2d236241813043d"
+    },
+    "train_manifest": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\formal-seed-v2-001.jsonl",
+      "sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37"
+    },
+    "train_original_labels": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\formal-seed-v2-001.json",
+      "sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d"
+    },
+    "train_re_review_labels": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\suspect-review-v2-001.json",
+      "sha256": "e3c9bbedf8282f3abf25ae5f2a9dbe24b74d60536914d0fba3089d2e4402e34b"
+    },
+    "train_re_review_manifest": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\suspect-review-v2-001.jsonl",
+      "sha256": "0722af98c0ea10e09d25c7a11821bd2dd234a49e282ab1006514b1307bb86bb6"
+    },
+    "validation_adjudication": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\validation-adjudicated-decisions.jsonl",
+      "sha256": "465d826ea8a4d7d9a9b3551ba74155e81c7dab103256043dc45e49a522d03990"
+    },
+    "validation_manifest": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\validation-v2-001.jsonl",
+      "sha256": "de5e3b1d8e3f869d79ed67d5248398c6ff2d005b50b58ccbb7f183fa5d743ed2"
+    },
+    "validation_original_labels": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\validation-v2-001.json",
+      "sha256": "006d8e3f61c5e1f0909605e534b78aebb12432f8501ed83b06410dc7d6df8c25"
+    },
+    "validation_re_review_labels": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\labels\\validation-suspect-v2-001.json",
+      "sha256": "8ae020ad77140ad79279ac969dc4b2f82a941eb63fdd50749ca5617d4818dbe2"
+    },
+    "validation_re_review_manifest": {
+      "path": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\validation-suspect-v2-001.jsonl",
+      "sha256": "cadf50661d7d8514e81ab170c790ebaca6254219ac419b58190052b4343c62d1"
+    }
+  },
+  "human_labels_infallible": false,
+  "human_provenance_sha256": "8bc86f08a5852c916aef5100edf441b62739e1bfde99f340c23ebb61de111f21",
+  "input_contract_sha256": "053014a9cc38f2f1b6b89e06fea7da6c5a267850ddd9618212dd18a61adeeddb",
+  "leakage_checks": {
+    "patch_sha256": [],
+    "sample_id": [],
+    "source_drawing_id": [],
+    "source_family_id": [],
+    "source_sha256": []
+  },
+  "sample_ids": {
+    "abstention_evaluation": [
+      "val-v2-047e2c7b3b9ddaad83674cdd"
+    ],
+    "train": [
+      "real-0271fa4e21bf670bc8120088",
+      "real-0670739e7eafdf93ee503be5",
+      "real-0a86624311b32f8df6d25a93",
+      "real-0df67723e0a3998bff08e8d8",
+      "real-0ed09feec097ee0b6c34da51",
+      "real-110a9b9b734aeffbc92ca343",
+      "real-14833d60d2c338ffcc7b1627",
+      "real-179d405a0e90b21b0e5050c3",
+      "real-1e873e7386fb08f10321c093",
+      "real-1f76a22ef8d561871535b20a",
+      "real-2318ae1bcb897ad7e4e9d4dd",
+      "real-2467752336c841095c82497b",
+      "real-2b9dea796bfc86369705cf61",
+      "real-2ec8b16a83787ccb58a5fdf4",
+      "real-35237b3af343941bd896f3f6",
+      "real-37ce216196668402c8ec208c",
+      "real-3d0f8f74da88220975f6887d",
+      "real-3dc91625fadf2a43d1ff6d42",
+      "real-402901c451d6d70387cc48ec",
+      "real-40651c8f7456a8fcd456ef80",
+      "real-44bcbe9af9a53fa0a0293b8f",
+      "real-4710b3c1e1e82b1bd9b5db91",
+      "real-4f059811e62c8e6885466649",
+      "real-4f65fa426b2669dde99dad93",
+      "real-5873870ab4d2073deedcf1a3",
+      "real-602f15f56aa19daaa5968f38",
+      "real-67ee997bf7c474f2493f123b",
+      "real-691c9074b55347e031c7465a",
+      "real-6b47221a7d0b06d16aba5e46",
+      "real-709b66276d3bfeae6c2269ce",
+      "real-74344fd0908442d3c8bb88a2",
+      "real-7837a1473a608d53f1e4a061",
+      "real-8025fde158737f5241ff782c",
+      "real-8f5fb67c351941da87125e40",
+      "real-948bf8a640b92d8aec00decc",
+      "real-94b9a6ea10256ce9e5cf7a74",
+      "real-9753827163aa0491a3566080",
+      "real-9d47e9caf44e70ee40cf4826",
+      "real-9d5e486edda4bc3978792245",
+      "real-9ea4e317781371a35858c98e",
+      "real-a06a4bb1dcb60fa5a475208b",
+      "real-a0a30b63f3f0a991359d522e",
+      "real-a8f7539d0beef1ead1a3c655",
+      "real-b5d026c19f431084528841a6",
+      "real-b6e833e0e89bef821a51d5b3",
+      "real-bd8a89674690e0984c32fccc",
+      "real-c7d4e7b292d5f55400eca8ea",
+      "real-d8afed411bcea64f01983d83",
+      "real-d95c20a846d82691441e3f65",
+      "real-e90665daa6a8717c2d3aa023",
+      "real-ed30546fbbe167cfb191b763",
+      "real-v2-03959d90ff2c5de1924cc118",
+      "real-v2-0430952fc9b21559564085ca",
+      "real-v2-10a7872e745433da1ee0a3c3",
+      "real-v2-19c8e7daadc879c5c2fa3f45",
+      "real-v2-1a50d2af3963e8a45339a9d3",
+      "real-v2-1bd30182c70087747a6ba9f5",
+      "real-v2-2075712529a9e657216be459",
+      "real-v2-209f8e67c0f5d21e9cf6ac13",
+      "real-v2-20b92a9db9eff90c2f2b9b4a",
+      "real-v2-21fd3e994d73cdcd8020d410",
+      "real-v2-27d83f665c2e8e425fd5c3ec",
+      "real-v2-2859a4fbf3c79580ff8ba4d0",
+      "real-v2-292c9ca38c3fcea39a9414a3",
+      "real-v2-2b3527927c8998d4b100dd4f",
+      "real-v2-2b6358ad34b06492364dac50",
+      "real-v2-2c59a3cef0b08b1da0592f9f",
+      "real-v2-3084fb0533c13126c2bd3934",
+      "real-v2-31592c3ae3ae02f15df57ab6",
+      "real-v2-32846912b5de2d241053e3a0",
+      "real-v2-374fa9a364bd62b1d02f071e",
+      "real-v2-398cbeacb83a9622b236adc5",
+      "real-v2-3e57a199b76ecb2b1ad25d49",
+      "real-v2-43ce2322a96b7f30ea7e8cbe",
+      "real-v2-4acde5113f5a42357fad3917",
+      "real-v2-4b290e19ee37dadef2460f66",
+      "real-v2-5fa9feb0529d0722d13322c1",
+      "real-v2-68f7133a07755005bf393dd5",
+      "real-v2-75a661f94ecfc94b97da4b4b",
+      "real-v2-7b3e989b3a7336a0e83614ff",
+      "real-v2-7b65774f19c1a5738ca72b6b",
+      "real-v2-7cdb5a87ead0df679ab5a4c4",
+      "real-v2-82a40571e62e2c143ea0bb77",
+      "real-v2-8b9c40e3499af640ed982bd4",
+      "real-v2-a2a30ad5950fe09e7f490687",
+      "real-v2-a2f0655511f0c962bcc483c5",
+      "real-v2-b999a507dac9825e9ce68077",
+      "real-v2-ca2100a50e0142fba1fea118",
+      "real-v2-dbfae1cdc51080227a05c38d",
+      "real-v2-dfe0359f7c86c54920f94701",
+      "real-v2-ec53884b5a9e12ec2b7fe868",
+      "real-v2-f692dd249418a1b0f7d650a5",
+      "real-v2-fae47e890a245d3c994e6a14",
+      "real-v2-ff27283966f5d92b64a02535"
+    ],
+    "validation": [
+      "val-v2-00fb8bf830ff74082babcb29",
+      "val-v2-01922739fa98e666f952f2f6",
+      "val-v2-06a7ca055670ed570a410116",
+      "val-v2-07af8a2aa2b9be3b1c3d0752",
+      "val-v2-0bff20a694e4b26f7af6f810",
+      "val-v2-0dd9dec399c0d6049d906fa8",
+      "val-v2-0eb34b1c9229868ebd1f8faf",
+      "val-v2-0ef668e8d4a1ddc737649a25",
+      "val-v2-115c58721d68b21e3a19687f",
+      "val-v2-11be2a3e35870cb013477935",
+      "val-v2-152f8e015747d6a353ce315a",
+      "val-v2-1538daa5b57396860aabda59",
+      "val-v2-161b11bdbc2dc930fce9f8b7",
+      "val-v2-178997c891366e6505443ec2",
+      "val-v2-18160c5b2e1af8b7443a888a",
+      "val-v2-1874d3980494d6fbf226f896",
+      "val-v2-194de57a7e9ca69147555833",
+      "val-v2-19fa87d80bb54ff6794f6a51",
+      "val-v2-1b8fcd9fb4d9b245ca1596c3",
+      "val-v2-1bcc68323293282decb59552",
+      "val-v2-1bf3cc2ebcb0324ce6c02c10",
+      "val-v2-1f535f83ca9c190bc7d39fb8",
+      "val-v2-222502cf7092e91bbcaa712a",
+      "val-v2-224d1f94a7e612f6af1cda61",
+      "val-v2-22576775523aaf2612d86d05",
+      "val-v2-25c68ab3747b833a74553b2f",
+      "val-v2-261d3cffb584f26f925431dd",
+      "val-v2-284dd47b663f2082374d3ebb",
+      "val-v2-2c20fc9cda807dae42456924",
+      "val-v2-2c845886246d3f39c38e0363",
+      "val-v2-3313a34b5f7967ac370d4c11",
+      "val-v2-371d42c1f676b1e7eb37529c",
+      "val-v2-383cabc2d85021a99a5a2d6f",
+      "val-v2-3a221fa3fb897e09d5bd9ee8",
+      "val-v2-3b342dec0dbc33b290fa2c17",
+      "val-v2-3b9d39a406e108d18d0e510a",
+      "val-v2-3c6bd570fe8c9e681630005e",
+      "val-v2-3d055195c7ff5a95add31627",
+      "val-v2-3e38622b7878ff2a062db407",
+      "val-v2-3eeccb1374a6af997385ea59",
+      "val-v2-3f85ee0ce1adedb0a8e37708",
+      "val-v2-422de0ebc37678c813c5ca30",
+      "val-v2-45091e17492dabbc871213bd",
+      "val-v2-4aa0531660a605b8125a4c95",
+      "val-v2-4b6491263ace597bfa348098",
+      "val-v2-551e135d1bbb75df2c9ba5e4",
+      "val-v2-5ac20caeaac0d640b19f2dda",
+      "val-v2-7563d104c1b4902e4798bea3",
+      "val-v2-a83bfe5d70833f6c1b89314f"
+    ]
+  },
+  "source_family_splits": {
+    "train": [
+      "AU_NSW_P5_2023_61",
+      "AU_NSW_P5_2024_93",
+      "CAN_BELLEVILLE_SCHOOL_ARCHIVE",
+      "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671",
+      "JP_IGA_2020000378",
+      "JP_IGA_4291000114",
+      "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM",
+      "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016",
+      "UK_BANBURY_TRAMWAY_ASBUILT",
+      "US_LOC_HABS_FL0790",
+      "sample-plan-photo",
+      "user-project-haiyang"
+    ],
+    "validation": [
+      "AU_GOLDCOAST_OPW_2014_2240",
+      "TW_NHRM_GREEN_ISLAND_MEMORIAL_IMPROVEMENT",
+      "US_LOC_HABS_GU0014",
+      "US_LOC_HABS_UT0288",
+      "US_NARA_BUILDING9"
+    ]
+  },
+  "source_freeze_sha256": "40152614ad46a97195f07ddc437aff27692bf1f6bcf476d3b411db1fccbe89f1",
+  "train": {
+    "class_distribution": {
+      "AMBIGUOUS": 0,
+      "OTHER": 36,
+      "SINGLE_PHYSICAL_STROKE": 38,
+      "TRUE_PARALLEL_STRUCTURE": 20
+    },
+    "drawings": 13,
+    "excluded": [
+      {
+        "sample_id": "real-v2-727b638d422879b10e05d364",
+        "stage0": "UNCLEAR_TARGET"
+      },
+      {
+        "sample_id": "real-13c73903c42787d1a23d2b88",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-48f0cee35570a79663988685",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-4001b9c49f981a96de6eea46",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-2733c068be5e17143eb3cf63",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-2dfd0a65b89a47534c82798e",
+        "stage0": "INVALID_NOMINATION"
+      }
+    ],
+    "included_count": 94,
+    "known_dpi_distribution": {
+      "110.000000": 78,
+      "240.000000": 4
+    },
+    "source_families": 12,
+    "supervised_or_accuracy_count": 94,
+    "unknown_dpi_count": 12
+  },
+  "training_authorized": false,
+  "unresolved_disputes": 0,
+  "validation": {
+    "class_distribution": {
+      "AMBIGUOUS": 1,
+      "OTHER": 7,
+      "SINGLE_PHYSICAL_STROKE": 22,
+      "TRUE_PARALLEL_STRUCTURE": 20
+    },
+    "drawings": 5,
+    "excluded": [],
+    "included_count": 50,
+    "known_dpi_distribution": {
+      "110.000000": 37
+    },
+    "source_families": 5,
+    "supervised_or_accuracy_count": 49,
+    "unknown_dpi_count": 13
+  }
+}

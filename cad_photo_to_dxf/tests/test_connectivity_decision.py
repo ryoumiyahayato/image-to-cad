@@ -4,13 +4,9 @@ import cv2
 import numpy as np
 import pytest
 
-from app.connectivity_safety import (
-    CONNECTION_CONFIDENCE_THRESHOLD,
-    evaluate_structural_bridge,
-    millimetres_to_pixels,
-)
-from app.line_detect import LineSegment
-from app.structural_roi import StructuralRoi
+from app.geometry.connectivity_safety import CONNECTION_CONFIDENCE_THRESHOLD, evaluate_structural_bridge, millimetres_to_pixels
+from app.geometry.line_detect import LineSegment
+from app.geometry.structural_roi import StructuralRoi
 
 
 def _case(

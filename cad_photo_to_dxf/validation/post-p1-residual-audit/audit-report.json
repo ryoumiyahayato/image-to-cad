@@ -1,0 +1,210 @@
+{
+  "schema_version": "post-p1-residual-census-v1",
+  "source_group_id": "A2-SG-009",
+  "checkpoint": "3ad0ec45b4b96504b39320814970c73b061d43e2",
+  "method": "Reuses the conservative D3 source mask and unchanged upstream masks; remeasures terminal spatial support against the post-P1 reconstructed FinalStructure with the existing 4 px correspondence tolerance.",
+  "fallback_retained_definition": "source-supported, fallback-eligible, post-P1-final-supported pixels not already supported by the native geometry mask",
+  "regions": [
+    {
+      "region_id": "REGION_A",
+      "label": "UPPER LEFT",
+      "source_supported_px": 52245,
+      "usable_raw_evidence_px": 18020,
+      "candidate_evidence_px": 14045,
+      "post_ownership_filter_evidence_px": 520,
+      "fallback_eligible_evidence_px": 51933,
+      "fallback_retained_evidence_px": 4049,
+      "final_structure_supported_evidence_px": 4562,
+      "final_retention": 0.087319,
+      "raw_line_census": {
+        "RAW_COMPLETE": 21,
+        "RAW_FRAGMENTED": 68,
+        "RAW_MISSING": 13
+      },
+      "first_loss_support_px": {
+        "DETECTION": 30188,
+        "CANDIDATE_FORMATION": 3975,
+        "OWNERSHIP_FILTER": 13517,
+        "GEOMETRY_OR_LATER": 3
+      },
+      "first_major_loss_stage": "DETECTION",
+      "terminal_support_count": {
+        "DETECTION_FRAGMENTED": 71,
+        "PRESERVED": 455,
+        "NEAR_DAMAGE_FRAGMENT_REJECTED": 582,
+        "DAMAGE_CLUSTER_PROPAGATION_REJECTED": 126,
+        "ARTIFACT_SUPPRESSION_REJECTED": 47
+      },
+      "terminal_support_pixels": {
+        "DETECTION_FRAGMENTED": 43531,
+        "PRESERVED": 11314,
+        "NEAR_DAMAGE_FRAGMENT_REJECTED": 7040,
+        "DAMAGE_CLUSTER_PROPAGATION_REJECTED": 8495,
+        "ARTIFACT_SUPPRESSION_REJECTED": 1556
+      }
+    },
+    {
+      "region_id": "REGION_B",
+      "label": "UPPER RIGHT",
+      "source_supported_px": 71169,
+      "usable_raw_evidence_px": 21779,
+      "candidate_evidence_px": 15217,
+      "post_ownership_filter_evidence_px": 0,
+      "fallback_eligible_evidence_px": 71169,
+      "fallback_retained_evidence_px": 18428,
+      "final_structure_supported_evidence_px": 18428,
+      "final_retention": 0.258933,
+      "raw_line_census": {
+        "RAW_COMPLETE": 28,
+        "RAW_FRAGMENTED": 65,
+        "RAW_MISSING": 18
+      },
+      "first_loss_support_px": {
+        "DETECTION": 37300,
+        "CANDIDATE_FORMATION": 3928,
+        "OWNERSHIP_FILTER": 11513,
+        "GEOMETRY_OR_LATER": 0
+      },
+      "first_major_loss_stage": "DETECTION",
+      "terminal_support_count": {
+        "PRESERVED": 331,
+        "DAMAGE_CLUSTER_PROPAGATION_REJECTED": 224,
+        "NEAR_DAMAGE_FRAGMENT_REJECTED": 725,
+        "DETECTION_FRAGMENTED": 83,
+        "ARTIFACT_SUPPRESSION_REJECTED": 42
+      },
+      "terminal_support_pixels": {
+        "PRESERVED": 22018,
+        "DAMAGE_CLUSTER_PROPAGATION_REJECTED": 12816,
+        "NEAR_DAMAGE_FRAGMENT_REJECTED": 8207,
+        "DETECTION_FRAGMENTED": 42108,
+        "ARTIFACT_SUPPRESSION_REJECTED": 1297
+      }
+    },
+    {
+      "region_id": "REGION_C",
+      "label": "LOWER LEFT",
+      "source_supported_px": 56653,
+      "usable_raw_evidence_px": 23322,
+      "candidate_evidence_px": 20663,
+      "post_ownership_filter_evidence_px": 4046,
+      "fallback_eligible_evidence_px": 54017,
+      "fallback_retained_evidence_px": 51059,
+      "final_structure_supported_evidence_px": 55338,
+      "final_retention": 0.976789,
+      "raw_line_census": {
+        "RAW_COMPLETE": 46,
+        "RAW_FRAGMENTED": 69,
+        "RAW_MISSING": 7
+      },
+      "first_loss_support_px": {
+        "DETECTION": 401,
+        "CANDIDATE_FORMATION": 241,
+        "OWNERSHIP_FILTER": 673,
+        "GEOMETRY_OR_LATER": 0
+      },
+      "first_major_loss_stage": "OWNERSHIP_FILTER",
+      "terminal_support_count": {
+        "PRESERVED": 1560,
+        "DETECTION_FRAGMENTED": 2
+      },
+      "terminal_support_pixels": {
+        "PRESERVED": 57420,
+        "DETECTION_FRAGMENTED": 1487
+      }
+    },
+    {
+      "region_id": "REGION_D",
+      "label": "LOWER RIGHT",
+      "source_supported_px": 109503,
+      "usable_raw_evidence_px": 35837,
+      "candidate_evidence_px": 28711,
+      "post_ownership_filter_evidence_px": 603,
+      "fallback_eligible_evidence_px": 107755,
+      "fallback_retained_evidence_px": 107441,
+      "final_structure_supported_evidence_px": 109430,
+      "final_retention": 0.999333,
+      "raw_line_census": {
+        "RAW_COMPLETE": 43,
+        "RAW_FRAGMENTED": 91,
+        "RAW_MISSING": 29
+      },
+      "first_loss_support_px": {
+        "DETECTION": 65,
+        "CANDIDATE_FORMATION": 8,
+        "OWNERSHIP_FILTER": 0,
+        "GEOMETRY_OR_LATER": 0
+      },
+      "first_major_loss_stage": "DETECTION",
+      "terminal_support_count": {
+        "PRESERVED": 2093
+      },
+      "terminal_support_pixels": {
+        "PRESERVED": 110778
+      }
+    }
+  ],
+  "upper_aggregate": {
+    "source_supported_px": 123414,
+    "usable_raw_evidence_px": 39799,
+    "post_ownership_filter_evidence_px": 520,
+    "fallback_eligible_evidence_px": 123102,
+    "fallback_retained_evidence_px": 22477,
+    "final_structure_supported_evidence_px": 22990,
+    "first_loss_support_px": {
+      "DETECTION": 67488,
+      "CANDIDATE_FORMATION": 7903,
+      "OWNERSHIP_FILTER": 25030,
+      "GEOMETRY_OR_LATER": 3
+    }
+  },
+  "page_scale_change": {
+    "before_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+    "after_structure_id": "b4cdebff251a27e01b9ed7e169bbdec81a3acd68077670aeabdd55dedde5737f",
+    "before_entity_count": 5842,
+    "after_entity_count": 6001,
+    "entity_delta": 159,
+    "d2_002": {
+      "after": {
+        "covered_pixels": 195,
+        "maximum_gap": 2,
+        "target_pixels": 201
+      },
+      "before": {
+        "covered_pixels": 0,
+        "maximum_gap": 201,
+        "target_pixels": 201
+      }
+    },
+    "d2_003": {
+      "after": {
+        "covered_pixels": 160,
+        "maximum_gap": 0,
+        "target_pixels": 160
+      },
+      "before": {
+        "covered_pixels": 160,
+        "maximum_gap": 0,
+        "target_pixels": 160
+      }
+    }
+  },
+  "dev_controls": {
+    "A2-SG-022": {
+      "final_structure_id_unchanged": true,
+      "entity_count_unchanged": true,
+      "case_terminal_reasons": {
+        "D2-005": "PRESERVED",
+        "D2-006": "PRESERVED"
+      }
+    },
+    "G0R2-3560D9BEBEAA3543": {
+      "final_structure_id_unchanged": true,
+      "entity_count_unchanged": true
+    }
+  },
+  "production_semantic_delta": "NONE_IN_THIS_AUDIT",
+  "validation_executed": "NO",
+  "locked_blind_runtime": "0 / 8",
+  "locked_blind_manual_inspection": "NO"
+}

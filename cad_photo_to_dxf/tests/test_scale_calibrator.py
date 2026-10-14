@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from app.scale_calibrator import ScaleCalibration, create_calibration
+from app.core.scale_calibrator import ScaleCalibration, create_calibration
 
 
 def test_finite_calibration_scale() -> None:

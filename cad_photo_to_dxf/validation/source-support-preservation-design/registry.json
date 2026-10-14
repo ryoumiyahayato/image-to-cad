@@ -1,0 +1,52 @@
+{
+  "schema_version": "source-support-preservation-design-v1",
+  "source_group_id": "A2-SG-009",
+  "d3_registry": "cad_photo_to_dxf/validation/broad-content-recall-d3/region-registry.json",
+  "lineages": [
+    {
+      "source_support_id": "SSP-UPPER-OWNERSHIP-FAIL",
+      "label": "UPPER FAIL - text-adjacent horizontal rule",
+      "region_id": "REGION_B",
+      "target": [2229, 492, 2429, 492],
+      "approximate_width_px": 3,
+      "expected_terminal_reason": "FALLBACK_REJECTED_SCAN_ARTIFACT_SUPPRESSION",
+      "d2_case_id": "D2-002",
+      "pair_id": "PAIR-HORIZONTAL-TEXT-ADJACENT"
+    },
+    {
+      "source_support_id": "SSP-LOWER-FALLBACK-SUCCESS",
+      "label": "LOWER SUCCESS - text-adjacent horizontal rule",
+      "region_id": "REGION_C",
+      "target": [849, 1516, 1008, 1516],
+      "approximate_width_px": 3,
+      "expected_terminal_reason": "PRESERVED_BY_CONTOUR_FALLBACK",
+      "d2_case_id": "D2-003",
+      "pair_id": "PAIR-HORIZONTAL-TEXT-ADJACENT"
+    },
+    {
+      "source_support_id": "SSP-UPPER-DETECTION-FAIL",
+      "label": "UPPER FAIL - vertical rule",
+      "region_id": "REGION_A",
+      "target": [1322, 481, 1322, 998],
+      "approximate_width_px": 3,
+      "expected_terminal_reason": "FALLBACK_REJECTED_SCAN_ARTIFACT_SUPPRESSION",
+      "d2_case_id": "D2-001",
+      "pair_id": "PAIR-VERTICAL-RULE"
+    },
+    {
+      "source_support_id": "SSP-LOWER-FALLBACK-SUCCESS-2",
+      "label": "LOWER SUCCESS - horizontal rule",
+      "region_id": "REGION_D",
+      "target": [2008, 1508, 2152, 1508],
+      "approximate_width_px": 3,
+      "expected_terminal_reason": "PRESERVED_BY_CONTOUR_FALLBACK",
+      "d2_case_id": "D2-004",
+      "pair_id": "PAIR-HORIZONTAL-RULE"
+    }
+  ],
+  "sanity_bindings": [
+    {"source_group_id": "A2-SG-009", "final_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40", "entity_count": 5842},
+    {"source_group_id": "A2-SG-022", "final_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059", "entity_count": 2194},
+    {"source_group_id": "G0R2-3560D9BEBEAA3543", "final_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890", "entity_count": 2934}
+  ]
+}

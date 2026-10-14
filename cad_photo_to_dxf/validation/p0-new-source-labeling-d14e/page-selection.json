@@ -1,0 +1,57 @@
+{
+  "selection_policy": "Prediction-blind document structure and drawing-content selection, frozen before candidate generation",
+  "model_output_used": false,
+  "documents": [
+    {
+      "document_key": "H1-UT14",
+      "source_family": "H1",
+      "role": "NEW-SOURCE HOLDOUT H1",
+      "pages": [
+        {"page": 1, "sheet_id": "HAER UT-14 sheet 1 of 4"},
+        {"page": 2, "sheet_id": "HAER UT-14 sheet 2 of 4"},
+        {"page": 3, "sheet_id": "HAER UT-14 sheet 3 of 4"},
+        {"page": 4, "sheet_id": "HAER UT-14 sheet 4 of 4"}
+      ],
+      "selection_reason": "Entire admitted four-sheet measured-drawing set; within the H1 budget."
+    },
+    {
+      "document_key": "H1-NY4",
+      "source_family": "H1",
+      "role": "NEW-SOURCE HOLDOUT H1",
+      "pages": [
+        {"page": 1, "sheet_id": "HAER NY-4 sheet 1 of 5"},
+        {"page": 2, "sheet_id": "HAER NY-4 sheet 2 of 5"},
+        {"page": 3, "sheet_id": "HAER NY-4 sheet 3 of 5"},
+        {"page": 4, "sheet_id": "HAER NY-4 sheet 4 of 5"},
+        {"page": 5, "sheet_id": "HAER NY-4 sheet 5 of 5"}
+      ],
+      "selection_reason": "Entire admitted five-sheet measured-drawing set; within the H1 budget."
+    },
+    {
+      "document_key": "H2",
+      "source_family": "H2",
+      "role": "NEW-SOURCE HOLDOUT H2",
+      "pages": [
+        {"page": 1, "sheet_id": "NIST FTC 6 Rev D page 1 of 3"},
+        {"page": 2, "sheet_id": "NIST FTC 6 Rev D page 2 of 3"},
+        {"page": 3, "sheet_id": "NIST FTC 6 Rev D page 3 of 3"}
+      ],
+      "selection_reason": "Entire admitted three-page mechanical drawing; within the H2 budget."
+    },
+    {
+      "document_key": "C1",
+      "source_family": "C1",
+      "role": "untouched DEV baseline until frozen D14F evaluation",
+      "pages": [
+        {"page": 14, "sheet_id": "D.5"},
+        {"page": 15, "sheet_id": "D.6"},
+        {"page": 16, "sheet_id": "D.7"},
+        {"page": 17, "sheet_id": "D.8"},
+        {"page": 18, "sheet_id": "D.9"},
+        {"page": 19, "sheet_id": "D.10"}
+      ],
+      "selection_reason": "Six-sheet contiguous plan/profile run selected from document structure before proposal generation; contains roadway/profile lines plus grids, stationing, dimensions, leaders, and sheet-layout rules."
+    }
+  ],
+  "page_sheet_total": 18
+}

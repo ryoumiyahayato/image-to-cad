@@ -11,9 +11,7 @@ def test_release_workflow_preserves_qualification_and_least_privilege() -> None:
     source = WORKFLOW.read_text(encoding="utf-8")
 
     assert "FREECAD_APT_VERSION: 0.19.2+dfsg1-3ubuntu1" in source
-    assert "scripts/validate_fixtures.py" in source
-    assert "scripts/run_fixture_benchmarks.py" in source
-    assert "--minimum 1" in source
+    assert "../maintenance/preservation_check.py" in source
     assert "nonempty_shape_count" in source
     assert "environment: production-release" in source
     assert "needs:\n      - qualify\n      - build" in source

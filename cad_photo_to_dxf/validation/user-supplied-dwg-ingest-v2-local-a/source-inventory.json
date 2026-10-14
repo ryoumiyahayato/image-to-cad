@@ -1,0 +1,1896 @@
+{
+  "schema_version": 1,
+  "task_id": "USER-SUPPLIED-DWG-PDF-INGEST-V2-LOCAL-A",
+  "source_directory": "C:\\Users\\agcrf\\Desktop\\新建文件夹",
+  "source_origin": "USER_SUPPLIED_LOCAL",
+  "authorized_this_task": "LOCAL INGEST / CONVERSION / FEASIBILITY TESTING",
+  "public_domain": "NOT_ASSUMED",
+  "redistribution": "NOT_AUTHORIZED",
+  "public_release": "NO",
+  "source_files_read_only": true,
+  "total_files": 198,
+  "category_counts": {
+    "DWG": 93,
+    "DXF": 0,
+    "PDF": 89,
+    "RASTER": 3,
+    "OTHER": 13
+  },
+  "extension_counts": {
+    ".bak": 6,
+    ".dwg": 93,
+    ".dwl": 1,
+    ".dwl2": 1,
+    ".emjsx": 3,
+    ".jpg": 3,
+    ".pdf": 89,
+    ".tmp": 1,
+    ".xlsx": 1
+  },
+  "top_level_directory_counts": {
+    "<root>": 27,
+    "b34518c5c2c0f4b265ed8c4c4d8eefd9": 64,
+    "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计": 76,
+    "竣工图（安装）2020年11月版本 (1)": 31
+  },
+  "exact_duplicate_hash_group_count": 3,
+  "exact_duplicate_file_participants": 6,
+  "duplicate_extra_files": 3,
+  "exact_duplicate_groups": [
+    {
+      "sha256": "41deceef998f3e6c34568a1ebfe2d69a6c7933c47f4323eedb51bc992de444e7",
+      "count": 2,
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室-水施_t3.bak",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/泰州景云非人防地下室-水施_t3.dwg"
+      ]
+    },
+    {
+      "sha256": "4ef2325a1b60f59140c50ee5d9fd100a0c101a15a52bf4103e18136230423990",
+      "count": 2,
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/给排水设计施工说明_t3.dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水设计施工说明_t3.dwg"
+      ]
+    },
+    {
+      "sha256": "a8b5cb297924d00b98d34236bf8d028b97b2ae51ab03140fe8b519f5ca24fe84",
+      "count": 2,
+      "files": [
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8 (1).dwg",
+        "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8.dwg"
+      ]
+    }
+  ],
+  "estimated_distinct_source_families": "UNKNOWN",
+  "source_family_evidence": [
+    "Four observable top-level buckets are present, including three named/nested trees and a heterogeneous root bucket.",
+    "DWG names span structural, electrical, plumbing, HVAC, as-built, revision, and residential/building conventions.",
+    "The metadata supports many likely source families but does not prove independent provenance for each family."
+  ],
+  "selected_samples": {
+    "dwg": [
+      {
+        "sample_id": "sample-01",
+        "relative_path": "车间_结构0310.dwg",
+        "reason": "root-level structural drawing; substantially larger than the smallest samples and outside the two nested source trees",
+        "sha256": "a1fd5bbfa42166d5e11ef04709303776ee6ec9c3e4af957971e14e52adf49b1e",
+        "bytes": 23794976
+      },
+      {
+        "sample_id": "sample-02",
+        "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/电施/TZSW1-能源中心电施-SD-180730审图修改t3.dwg",
+        "reason": "nested as-built electrical drawing; distinct directory family and discipline from sample-01",
+        "sha256": "42d5447f06a1cd9c8aaec0a1c6df250c14ebe281bcdbdc5bf86c81ea22643aa0",
+        "bytes": 14424268
+      },
+      {
+        "sample_id": "sample-03",
+        "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/11#给排水平面图_t3.dwg",
+        "reason": "hashed-source-tree plumbing plan; distinct directory family and smaller size than samples 01-02",
+        "sha256": "331f195736cace4e715124e8de135cdb00d2b5be3df421984d99dd8932f08083",
+        "bytes": 2973658
+      }
+    ],
+    "pdf": [
+      {
+        "sample_id": "pdf-01",
+        "relative_path": "环保局主大楼.pdf",
+        "reason": "root-level engineering-document PDF with a substantially larger file size",
+        "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+        "bytes": 18746417
+      },
+      {
+        "sample_id": "pdf-02",
+        "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-10B_改造二层平面图(2).pdf",
+        "reason": "nested architectural drawing-sheet PDF from a distinct source tree",
+        "sha256": "ebc7df8d07925f8dd9864e2e4b77d9890cd3018ddb8c1c5bd85893f43e373e53",
+        "bytes": 1398161
+      }
+    ]
+  },
+  "files": [
+    {
+      "relative_path": "-+济川药业集团有限公司+儿科新药东二区2号固体楼-颗粒剂车间.pdf",
+      "extension": ".pdf",
+      "stem": "-+济川药业集团有限公司+儿科新药东二区2号固体楼-颗粒剂车间",
+      "bytes": 184788,
+      "modified_utc": "2026-09-19T14:20:27.730811Z",
+      "sha256": "3e12901d3d935d6ea39add90d47bcc0cd4764aac2905ebc35bfb2ae96bd65fa1",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "0026_20260601.pdf",
+      "extension": ".pdf",
+      "stem": "0026_20260601",
+      "bytes": 5905211,
+      "modified_utc": "2026-09-09T09:22:22.666512Z",
+      "sha256": "478862c1f5a9041acddf78b4322df89b1682d88adf91507632c2e41ea7d984f3",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "20210416zumen.pdf",
+      "extension": ".pdf",
+      "stem": "20210416zumen",
+      "bytes": 7017662,
+      "modified_utc": "2026-09-09T09:23:30.780910Z",
+      "sha256": "b005e4158f8e56ae973444a479dba6e5d288f19c83d6da4c0d8855c516327527",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "2026dennkisetsubi.pdf",
+      "extension": ".pdf",
+      "stem": "2026dennkisetsubi",
+      "bytes": 5401143,
+      "modified_utc": "2026-09-09T09:22:44.192792Z",
+      "sha256": "427c05ee4298999ecb8cc2bb2b73002b9592f9905bc74cc5e64098f58741327a",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "32579.pdf",
+      "extension": ".pdf",
+      "stem": "32579",
+      "bytes": 129175,
+      "modified_utc": "2026-09-09T09:09:04.897139Z",
+      "sha256": "eefac3ddc870f25b34239add340fc15a5ee48e657ab2766f248a4d4b78ce770f",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "32580.pdf",
+      "extension": ".pdf",
+      "stem": "32580",
+      "bytes": 4437119,
+      "modified_utc": "2026-09-09T09:08:55.502361Z",
+      "sha256": "3601308fb2781575eeb5146e7b12acf0620ee5ca27b9e0ed49e8428e8ba3e4f2",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "32581.pdf",
+      "extension": ".pdf",
+      "stem": "32581",
+      "bytes": 2168985,
+      "modified_utc": "2026-09-09T09:08:33.829538Z",
+      "sha256": "2d0eb3cf093c8b5cfb288f4ce93f4ebadd79aec2582e3d358401c5ea0c6f0fca",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "52725.pdf",
+      "extension": ".pdf",
+      "stem": "52725",
+      "bytes": 24353824,
+      "modified_utc": "2026-09-09T09:19:36.403842Z",
+      "sha256": "1dce366346b4048a478a01c65185e6672284419cf723863a47c200cdd1440df2",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "Addendum_2-Major_Renovation_&_Modernization_of_FEMS_Dept_Engine_House_No14.pdf",
+      "extension": ".pdf",
+      "stem": "Addendum_2-Major_Renovation_&_Modernization_of_FEMS_Dept_Engine_House_No14",
+      "bytes": 6135793,
+      "modified_utc": "2026-09-09T09:25:06.800475Z",
+      "sha256": "cc0c3eaf850b56663871ab2651ce76e21beca6f9c66f7d1887b8bc591268b5d6",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/七号排风机房.jpg",
+      "extension": ".jpg",
+      "stem": "七号排风机房",
+      "bytes": 263078,
+      "modified_utc": "2026-09-19T14:31:29.918213Z",
+      "sha256": "96af11c561059349c7067d94cc933a8cb5d4ae0bdd7efe9591ae980d62130a00",
+      "category": "RASTER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/六号排风机房.jpg",
+      "extension": ".jpg",
+      "stem": "六号排风机房",
+      "bytes": 330692,
+      "modified_utc": "2026-09-19T14:31:29.928549Z",
+      "sha256": "ceb7a6b36e120e849379e0a8b9dd59da76f98290d36010beda28f5fbf767b0bb",
+      "category": "RASTER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/十一号排风机房.jpg",
+      "extension": ".jpg",
+      "stem": "十一号排风机房",
+      "bytes": 410492,
+      "modified_utc": "2026-09-19T14:31:29.934633Z",
+      "sha256": "0bb6cd245dd10c40a42b09b57ce79fc1ad519dc3457486739f15481cd79c9ea0",
+      "category": "RASTER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/10#-暖通施工图2019.05.25.dwg",
+      "extension": ".dwg",
+      "stem": "10#-暖通施工图2019.05.25",
+      "bytes": 5364260,
+      "modified_utc": "2026-09-19T14:31:30.228693Z",
+      "sha256": "e4b641c98330306b43774204f8afa5b7f34a71788c9803dfc00774ff0d0ed54f",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/11#-暖通施工图2019.05.25.dwg",
+      "extension": ".dwg",
+      "stem": "11#-暖通施工图2019.05.25",
+      "bytes": 3602074,
+      "modified_utc": "2026-09-19T14:31:30.274088Z",
+      "sha256": "16fcc9a7327a098b88cc32a00d403abe30ad4a98641930991c9c8da714fcacba",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/13#-暖通施工图2019.05.25.dwg",
+      "extension": ".dwg",
+      "stem": "13#-暖通施工图2019.05.25",
+      "bytes": 3604752,
+      "modified_utc": "2026-09-19T14:31:30.314137Z",
+      "sha256": "b86eee9db32eaae63e7533c40d8a3d0e52c2471ed2c3e28922a7f0977055a289",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/beifen.bak",
+      "extension": ".bak",
+      "stem": "beifen",
+      "bytes": 0,
+      "modified_utc": "2026-09-19T14:31:30.320005Z",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30.bak",
+      "extension": ".bak",
+      "stem": "地下车库暖通施工图2019.05.30",
+      "bytes": 4565929,
+      "modified_utc": "2026-09-19T14:31:30.372209Z",
+      "sha256": "5c5c7fe08ce3009ddbb931fe05ecc216a27c0b05963ebbfbc37c38273052f051",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30.dwg",
+      "extension": ".dwg",
+      "stem": "地下车库暖通施工图2019.05.30",
+      "bytes": 4534047,
+      "modified_utc": "2026-09-19T14:31:30.440154Z",
+      "sha256": "ac591c12d907e0229d7f7e074dc956561aad3645abadbf5cf9dd33692dde532a",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30_recover.bak",
+      "extension": ".bak",
+      "stem": "地下车库暖通施工图2019.05.30_recover",
+      "bytes": 4528967,
+      "modified_utc": "2026-09-19T14:31:30.487812Z",
+      "sha256": "b165a87003892f99e6ea92de5913f0b1f1eca587dbc0b8a0721e9b542ef7b25a",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/地下车库暖通施工图2019.05.30_recover.dwg",
+      "extension": ".dwg",
+      "stem": "地下车库暖通施工图2019.05.30_recover",
+      "bytes": 4621763,
+      "modified_utc": "2026-09-19T14:31:30.544078Z",
+      "sha256": "8a9dac110c527fda270ebdb783142b66caf599047b205d5e8c2aff19f58d241b",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/暖通1-5#有加压送风.dwg",
+      "extension": ".dwg",
+      "stem": "暖通1-5#有加压送风",
+      "bytes": 5321972,
+      "modified_utc": "2026-09-19T14:31:30.607408Z",
+      "sha256": "67e83dac8f3b1ec648da1141024d86116f1e1e7f9cd1290a3b3a7743c668da57",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/暖通（12#14#S1S2不出图）/暖通（12#14#S1S2不出图）/暖通6-9#有加压送风.dwg",
+      "extension": ".dwg",
+      "stem": "暖通6-9#有加压送风",
+      "bytes": 5319908,
+      "modified_utc": "2026-09-19T14:31:30.667128Z",
+      "sha256": "ccb4aa5affd03e3db0fed4ec452c76fe5ab018529ce074672c21639d4776c1ce",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/64842653b6d331b61e283a0f472dce5c_536f200c954914c2ef3b4af55de418ed_8.dwg",
+      "extension": ".dwg",
+      "stem": "64842653b6d331b61e283a0f472dce5c_536f200c954914c2ef3b4af55de418ed_8",
+      "bytes": 5973072,
+      "modified_utc": "2026-09-19T14:31:30.755411Z",
+      "sha256": "788790c766c71e1b967752beb853fdef89733d55bd40e1b8faa65b11b6d8c5ff",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/7000b241413371dc9d27236a6cbf2ffc_1b40c2e748280bbac37751ddd429419c_8.dwg",
+      "extension": ".dwg",
+      "stem": "7000b241413371dc9d27236a6cbf2ffc_1b40c2e748280bbac37751ddd429419c_8",
+      "bytes": 1380913,
+      "modified_utc": "2026-09-19T14:31:30.773728Z",
+      "sha256": "468eab8bbeed14d34f456c21e15b747446970d5a7b47ad9301e2559b19146911",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/968c542f541501df5118409795c4853e_8d02ee9a9595d7ab0a7abe64f23e4436_8.dwg",
+      "extension": ".dwg",
+      "stem": "968c542f541501df5118409795c4853e_8d02ee9a9595d7ab0a7abe64f23e4436_8",
+      "bytes": 11899180,
+      "modified_utc": "2026-09-19T14:31:30.932803Z",
+      "sha256": "b3d4ba40a57cd09ba66b551359d23f94d017fc0462dae46d2293d68a96c8c753",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8 (1).dwg",
+      "extension": ".dwg",
+      "stem": "a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8 (1)",
+      "bytes": 5946688,
+      "modified_utc": "2026-09-19T14:31:30.999395Z",
+      "sha256": "a8b5cb297924d00b98d34236bf8d028b97b2ae51ab03140fe8b519f5ca24fe84",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8.dwg",
+      "extension": ".dwg",
+      "stem": "a201e604b633683ef2a02b80d15fdb1b_58135e82dcbd299b540d87aa1751f540_8",
+      "bytes": 5946688,
+      "modified_utc": "2026-09-19T14:31:31.071094Z",
+      "sha256": "a8b5cb297924d00b98d34236bf8d028b97b2ae51ab03140fe8b519f5ca24fe84",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿土建图纸/ba3627aa19fae09ada2db36701c4add1_fff65df3d8b76a1eeff34bdcccfb6568_8.dwg",
+      "extension": ".dwg",
+      "stem": "ba3627aa19fae09ada2db36701c4add1_fff65df3d8b76a1eeff34bdcccfb6568_8",
+      "bytes": 4691735,
+      "modified_utc": "2026-09-19T14:31:31.130984Z",
+      "sha256": "4948d1c79ad47e118cba09cb596118f12ac9a7cf60924eee6159d774f329d0fe",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/汇鸿地下式风管排版.xlsx",
+      "extension": ".xlsx",
+      "stem": "汇鸿地下式风管排版",
+      "bytes": 16739,
+      "modified_utc": "2026-09-19T14:31:29.939172Z",
+      "sha256": "1e07d934c65f7bbe87d46374c1ffb06607b02f9ce7b3f0e649826b9f21a5e8c7",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州市汇鸿景云花园施工一标段 消防.emjsx",
+      "extension": ".emjsx",
+      "stem": "泰州市汇鸿景云花园施工一标段 消防",
+      "bytes": 1412815,
+      "modified_utc": "2026-09-19T14:31:29.961416Z",
+      "sha256": "622c9b13362ba2e94128b38ba10faf3b0ea03d6d14ad416cadef1fa734565687",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州市汇鸿景云花园施工一标段 消防增加通风工程.emjsx",
+      "extension": ".emjsx",
+      "stem": "泰州市汇鸿景云花园施工一标段 消防增加通风工程",
+      "bytes": 502926,
+      "modified_utc": "2026-09-19T14:31:29.970443Z",
+      "sha256": "980969ce1657dac7a8cc632686eec32e1327cf69422df6c79eb18d099def2910",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州市汇鸿景云花园进度款.emjsx",
+      "extension": ".emjsx",
+      "stem": "泰州市汇鸿景云花园进度款",
+      "bytes": 1177009,
+      "modified_utc": "2026-09-19T14:31:29.986276Z",
+      "sha256": "fbcd92a5b6e75f9f72b7ca028fa71c16db9ab6bb6cac48032c594c1e74c08afa",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室-水施_t3.bak",
+      "extension": ".bak",
+      "stem": "泰州景云非人防地下室-水施_t3",
+      "bytes": 2573818,
+      "modified_utc": "2026-09-19T14:31:30.018857Z",
+      "sha256": "41deceef998f3e6c34568a1ebfe2d69a6c7933c47f4323eedb51bc992de444e7",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室-水施_t3.dwg",
+      "extension": ".dwg",
+      "stem": "泰州景云非人防地下室-水施_t3",
+      "bytes": 2642446,
+      "modified_utc": "2026-09-19T14:31:30.052557Z",
+      "sha256": "7696b79676a79cdccb6113dbd754d820df3174430e5fdd7224428b359e8af6f6",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室泵房修改图.bak",
+      "extension": ".bak",
+      "stem": "泰州景云非人防地下室泵房修改图",
+      "bytes": 2014705,
+      "modified_utc": "2026-09-19T14:31:30.081945Z",
+      "sha256": "2f923f0409ab024afaefcc3d25673a2d6c378c9d47f9cf6d76f49876b4072ce4",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/泰州景云非人防地下室泵房修改图.dwg",
+      "extension": ".dwg",
+      "stem": "泰州景云非人防地下室泵房修改图",
+      "bytes": 2138765,
+      "modified_utc": "2026-09-19T14:31:30.108208Z",
+      "sha256": "39232500fa89230766b9c1f52ffed8851fe1e995a7bc605f3ac572b755aa51a4",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/1#~5#楼-电气2019.06.04.dwg",
+      "extension": ".dwg",
+      "stem": "1#~5#楼-电气2019.06.04",
+      "bytes": 4410674,
+      "modified_utc": "2026-09-19T14:31:31.207408Z",
+      "sha256": "54fc76fed6223d63ed516f9fa9ab3eef54ac0c11daef7613fe4cd5ec09618e29",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/10#电气（校审）_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "10#电气（校审）_t3_t3_t3",
+      "bytes": 2887186,
+      "modified_utc": "2026-09-19T14:31:31.245686Z",
+      "sha256": "4a1bb3d0cfa39b01cb051ad6dbbd12d19966d66a979fbcf43f69b8509275ecde",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/11#电气（校审）_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "11#电气（校审）_t3_t3_t3",
+      "bytes": 2864649,
+      "modified_utc": "2026-09-19T14:31:31.273843Z",
+      "sha256": "a69ace282faa618ee7da491b907b64fbff60f87fdf656c5ed2c8709f29af2060",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/12#电气（校审）_t3_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "12#电气（校审）_t3_t3_t3_t3",
+      "bytes": 2883715,
+      "modified_utc": "2026-09-19T14:31:31.315359Z",
+      "sha256": "19861880b60bd2d1f98ab33687e70c6df915ba6cbbe6d6a4e2dcfa41208bb8b1",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/13#电气（校审）_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "13#电气（校审）_t3_t3_t3",
+      "bytes": 2784921,
+      "modified_utc": "2026-09-19T14:31:31.351304Z",
+      "sha256": "ea4f2d8d3f11072245f26e3e381b20c3b1b5dd693cab4f36bb6dd3def62163ae",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/14#电气（校审）_t3_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "14#电气（校审）_t3_t3_t3_t3",
+      "bytes": 2879455,
+      "modified_utc": "2026-09-19T14:31:31.388732Z",
+      "sha256": "536c7c5bcb07d4f8dad723194371554ab2e0b8bcc14f19d4f57db634f839392e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/6#~9#楼-电气2019.06.04.dwg",
+      "extension": ".dwg",
+      "stem": "6#~9#楼-电气2019.06.04",
+      "bytes": 5843536,
+      "modified_utc": "2026-09-19T14:31:31.453796Z",
+      "sha256": "8981edc5a0acc29b7dde4b6c1fa869d4311a645f4dcf4a59845be2f5f03bcb30",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/电气/电气/地下室电气（校审）_t3_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "地下室电气（校审）_t3_t3_t3",
+      "bytes": 3800066,
+      "modified_utc": "2026-09-19T14:31:31.499919Z",
+      "sha256": "20c62d0d73180acec1751ce8d972c44685130ff848d7774a6429a077688c7efb",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/10#给排水平面图_t3.dwg",
+      "extension": ".dwg",
+      "stem": "10#给排水平面图_t3",
+      "bytes": 5114385,
+      "modified_utc": "2026-09-19T14:31:31.700521Z",
+      "sha256": "1875d9e437ade51340e7853ea48ce4048d4ee3eb1afcf33614fe67e6e3bc1dd1",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/11#给排水平面图_t3.dwg",
+      "extension": ".dwg",
+      "stem": "11#给排水平面图_t3",
+      "bytes": 2973658,
+      "modified_utc": "2026-09-19T14:31:31.732114Z",
+      "sha256": "331f195736cace4e715124e8de135cdb00d2b5be3df421984d99dd8932f08083",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/12#14#给排水平面图_t3.dwg",
+      "extension": ".dwg",
+      "stem": "12#14#给排水平面图_t3",
+      "bytes": 5928555,
+      "modified_utc": "2026-09-19T14:31:31.791766Z",
+      "sha256": "4e5d2407ce95b7214f4357ea7b247d745909152f841c40d67a32a8a09d3323fd",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/13#给排水平面图_t3.dwg",
+      "extension": ".dwg",
+      "stem": "13#给排水平面图_t3",
+      "bytes": 3200939,
+      "modified_utc": "2026-09-19T14:31:31.824148Z",
+      "sha256": "a8fdfe758effb5f75990d1c3a6060e650b4832aef0ee5f6b450a5320e8507536",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/sav2631.tmp",
+      "extension": ".tmp",
+      "stem": "sav2631",
+      "bytes": 1560916,
+      "modified_utc": "2026-09-19T14:31:31.843975Z",
+      "sha256": "519482f2aa3e59fc7a0c2b708b4f8864293028f2744b9a4fbe15ce7d4be58c18",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/大样/10#大样（EF户型）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "10#大样（EF户型）_t3",
+      "bytes": 1786552,
+      "modified_utc": "2026-09-19T14:31:31.899170Z",
+      "sha256": "96d0b89a536c3fb74053042f88c3a07ac8d2ce67764a63e3ab49ec3497484b59",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/大样/11#大样（GJ户型）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "11#大样（GJ户型）_t3",
+      "bytes": 1955741,
+      "modified_utc": "2026-09-19T14:31:31.920831Z",
+      "sha256": "1b72e8274c6f3dfebf3ff3f16ab46420c546414e9f53f89966ff5a7e9b44dde1",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/大样/12#14#大样（ABC户型）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "12#14#大样（ABC户型）_t3",
+      "bytes": 5923690,
+      "modified_utc": "2026-09-19T14:31:31.963004Z",
+      "sha256": "029fd6780c95b410c30b6eb1f7953dfb1b8fde22b2ee56c23083ef2b88626a6e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/大样/13#大样（D户型）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "13#大样（D户型）_t3",
+      "bytes": 1498260,
+      "modified_utc": "2026-09-19T14:31:31.978888Z",
+      "sha256": "81fab71a284853c14120b62ebe69fb09f8aa4927ac1e96d9376bab8c2e92221d",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/目录、系统_t3.dwg",
+      "extension": ".dwg",
+      "stem": "目录、系统_t3",
+      "bytes": 3674413,
+      "modified_utc": "2026-09-19T14:31:31.875833Z",
+      "sha256": "661acaa2a465aa04ccade9313a0c2d887d2a948e8cc14df5b686fca59c85fd90",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/10#说明.dwg",
+      "extension": ".dwg",
+      "stem": "10#说明",
+      "bytes": 1116528,
+      "modified_utc": "2026-09-19T14:31:31.996220Z",
+      "sha256": "da034695b743598e0fef73323560ec93a0203958c2302f586f4cc89fea5a409f",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/10~14#抗震说明.dwg",
+      "extension": ".dwg",
+      "stem": "10~14#抗震说明",
+      "bytes": 21086792,
+      "modified_utc": "2026-09-19T14:31:32.202299Z",
+      "sha256": "2935a9edccfd4f4b50575c08762c298c09068a500629a126823dfa33bdf6eaee",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/11#说明.dwg",
+      "extension": ".dwg",
+      "stem": "11#说明",
+      "bytes": 1116236,
+      "modified_utc": "2026-09-19T14:31:32.214809Z",
+      "sha256": "11873547a09c3a1200595b60a7fa33317ce58b0cacceb18cee1e69b2cc590282",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/12#说明.dwg",
+      "extension": ".dwg",
+      "stem": "12#说明",
+      "bytes": 1116154,
+      "modified_utc": "2026-09-19T14:31:32.228389Z",
+      "sha256": "32d53ff4f683d541e99a990799a0dbdd6dd697995418a7d2d53c3cdb977e0b9a",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/13#说明.dwg",
+      "extension": ".dwg",
+      "stem": "13#说明",
+      "bytes": 1115748,
+      "modified_utc": "2026-09-19T14:31:32.241950Z",
+      "sha256": "16a43f3055350681881903850f75e75da620b8983fe4b8f33d2ff3c67eb71033",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/14#说明.dwg",
+      "extension": ".dwg",
+      "stem": "14#说明",
+      "bytes": 1116009,
+      "modified_utc": "2026-09-19T14:31:32.256191Z",
+      "sha256": "96f6826fc7b0bb0d084c0bb185487a8a9fc4b9bec82b50d8478b4df8b7a3b47e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/10~14#住宅/说明/雨水回用专篇.dwg",
+      "extension": ".dwg",
+      "stem": "雨水回用专篇",
+      "bytes": 1342521,
+      "modified_utc": "2026-09-19T14:31:32.277005Z",
+      "sha256": "a02baf42ddad1053226fef565db2fa537392b8f8db399d9036742e83c68912b3",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/6-9#楼给排水施工版(无章)_t3.dwg",
+      "extension": ".dwg",
+      "stem": "6-9#楼给排水施工版(无章)_t3",
+      "bytes": 5383019,
+      "modified_utc": "2026-09-19T14:31:31.584018Z",
+      "sha256": "0697423ff48963d270d81c111fd1ec850d262d2590ef8bf3c6261336c640b887",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/商业/S1#S2#商业给排水平面图.dwg",
+      "extension": ".dwg",
+      "stem": "S1#S2#商业给排水平面图",
+      "bytes": 3659114,
+      "modified_utc": "2026-09-19T14:31:32.315173Z",
+      "sha256": "0c250a51c1133ce49f91a2f690ba6eb928b0ad3326d67cb56c9198c8eb1a9b6e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/商业/S1#说明.dwg",
+      "extension": ".dwg",
+      "stem": "S1#说明",
+      "bytes": 1080984,
+      "modified_utc": "2026-09-19T14:31:32.325519Z",
+      "sha256": "597f7c4fb0addebc2396feac63d0ccd5a29b2f7e368cef0dae2657723d7ce459",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/商业/S1、S2商业抗震说明.dwg",
+      "extension": ".dwg",
+      "stem": "S1、S2商业抗震说明",
+      "bytes": 9117847,
+      "modified_utc": "2026-09-19T14:31:32.415784Z",
+      "sha256": "59d83d50484c7b8024c393682a5463aaae9ca4a0fe5a326dac41b0b8a9bdf9c7",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/商业/S2#说明.dwg",
+      "extension": ".dwg",
+      "stem": "S2#说明",
+      "bytes": 1079458,
+      "modified_utc": "2026-09-19T14:31:32.428807Z",
+      "sha256": "ce281c69dbdd879f801721f8f1aa45768f155177e991643d5162c74d1c54c84e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/商业/目录.dwg",
+      "extension": ".dwg",
+      "stem": "目录",
+      "bytes": 108973,
+      "modified_utc": "2026-09-19T14:31:32.432818Z",
+      "sha256": "4e2916a9563c0d130848406f142e324ba043f625df324b18e36d2ef57593b58a",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/泰州景云非人防地下室-水施_t3.dwg",
+      "extension": ".dwg",
+      "stem": "泰州景云非人防地下室-水施_t3",
+      "bytes": 2573818,
+      "modified_utc": "2026-09-19T14:31:32.469240Z",
+      "sha256": "41deceef998f3e6c34568a1ebfe2d69a6c7933c47f4323eedb51bc992de444e7",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/给排水设计施工说明.bak",
+      "extension": ".bak",
+      "stem": "给排水设计施工说明",
+      "bytes": 4303030,
+      "modified_utc": "2026-09-19T14:31:32.520686Z",
+      "sha256": "6e3bec0bd43d74d4561728e0753828365859d57832398d0b3453fdab82d1d3e4",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/给排水设计施工说明.dwg",
+      "extension": ".dwg",
+      "stem": "给排水设计施工说明",
+      "bytes": 3636275,
+      "modified_utc": "2026-09-19T14:31:32.564067Z",
+      "sha256": "2ef658f8a09e0a0736d01f78aced23909338b92446ebc021236c15b732b83cd6",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/地下室/给排水设计施工说明_t3.dwg",
+      "extension": ".dwg",
+      "stem": "给排水设计施工说明_t3",
+      "bytes": 5184178,
+      "modified_utc": "2026-09-19T14:31:32.615492Z",
+      "sha256": "4ef2325a1b60f59140c50ee5d9fd100a0c101a15a52bf4103e18136230423990",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水/给排水/景云1-5#施工版(无章）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "景云1-5#施工版(无章）_t3",
+      "bytes": 5260650,
+      "modified_utc": "2026-09-19T14:31:31.651140Z",
+      "sha256": "0e94beb4ae5e3243d759ec1e3b70393b58277daa7ff5ee8be47937fa6faddb79",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "b34518c5c2c0f4b265ed8c4c4d8eefd9/汇鸿2019/给排水设计施工说明_t3.dwg",
+      "extension": ".dwg",
+      "stem": "给排水设计施工说明_t3",
+      "bytes": 5184178,
+      "modified_utc": "2026-09-19T14:31:30.157791Z",
+      "sha256": "4ef2325a1b60f59140c50ee5d9fd100a0c101a15a52bf4103e18136230423990",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "dennkisetubi.pdf",
+      "extension": ".pdf",
+      "stem": "dennkisetubi",
+      "bytes": 241803,
+      "modified_utc": "2026-09-09T09:23:14.299319Z",
+      "sha256": "d4de6ab58ade7444dcfd5405350ad3965e8f762606bd21a53d817b1464bc6364",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "九龙镇九龙路126号沿街房消防电改2.pdf",
+      "extension": ".pdf",
+      "stem": "九龙镇九龙路126号沿街房消防电改2",
+      "bytes": 9213973,
+      "modified_utc": "2026-09-19T14:20:41.357430Z",
+      "sha256": "1ed4e7e097ca2b2c14f526e5a7250efb914da84449ca07729306045e8f42a082",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "图纸-综合仓库-电专业+815.pdf",
+      "extension": ".pdf",
+      "stem": "图纸-综合仓库-电专业+815",
+      "bytes": 3887790,
+      "modified_utc": "2026-09-19T14:20:27.702310Z",
+      "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/审查意见回复单/建筑  第一次审查回复单(1).pdf",
+      "extension": ".pdf",
+      "stem": "建筑  第一次审查回复单(1)",
+      "bytes": 531095,
+      "modified_utc": "2026-09-19T14:32:24.861282Z",
+      "sha256": "e30f3f244986c0b14698604fafdcf90aa0e9abaea1a1071946baa797b711e7c4",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/审查意见回复单/建筑专业 第二次审查回复单(2).pdf",
+      "extension": ".pdf",
+      "stem": "建筑专业 第二次审查回复单(2)",
+      "bytes": 373133,
+      "modified_utc": "2026-09-19T14:32:24.864847Z",
+      "sha256": "2682b06f1b8190fdc80991412f5e0ebbbe5b7f606a0e2e101116a848503d7530",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-00B_图纸目录(2).pdf",
+      "extension": ".pdf",
+      "stem": "建施-00B_图纸目录(2)",
+      "bytes": 343285,
+      "modified_utc": "2026-09-19T14:32:24.873148Z",
+      "sha256": "22b0361f09915698f3eea7306c0bfd302872374d677edbcaab8fd39b49f45cc3",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-01A_消防设计说明(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-01A_消防设计说明(1)",
+      "bytes": 864423,
+      "modified_utc": "2026-09-19T14:32:24.889282Z",
+      "sha256": "5a93691ee9e4f5ff4f41ef9f23bb9cf91c1abd81c5c3414dbf0a11e1e141c145",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-02A_装修设计说明（一）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-02A_装修设计说明（一）(1)",
+      "bytes": 2016797,
+      "modified_utc": "2026-09-19T14:32:24.914539Z",
+      "sha256": "d78013412d15ab7724abb68bbd33d67df1a04c8cd0b8717a89fe1f951c5e926e",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-03_装修设计说明（二）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-03_装修设计说明（二）(0)",
+      "bytes": 2186845,
+      "modified_utc": "2026-09-19T14:32:24.936944Z",
+      "sha256": "8e0d14f49e00e81be85eab49ef6bd6653b9de32f87931db9834efcea7f5ce7e9",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-04A_装修设计说明（三）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-04A_装修设计说明（三）(1)",
+      "bytes": 2239671,
+      "modified_utc": "2026-09-19T14:32:24.956623Z",
+      "sha256": "3f07c0705a199c15b954f9766c2b70a3d1eaac45231a05029ee10f098760744d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-05B_装修设计说明（四）(2).pdf",
+      "extension": ".pdf",
+      "stem": "建施-05B_装修设计说明（四）(2)",
+      "bytes": 628088,
+      "modified_utc": "2026-09-19T14:32:24.968827Z",
+      "sha256": "53f3fe7c78a4e7e1a5f497767ccc00e4e40a1f4f66d5a12c1711ebb91cd60969",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-06_建筑防水设计专篇（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-06_建筑防水设计专篇（一）(0)",
+      "bytes": 1336351,
+      "modified_utc": "2026-09-19T14:32:24.984934Z",
+      "sha256": "f81c078dbf940980dffdaa5f421fcfb2f2a59dd0bf0650e3a46da47c4c51a5f1",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-07_建筑防水设计专篇（二）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-07_建筑防水设计专篇（二）(0)",
+      "bytes": 785885,
+      "modified_utc": "2026-09-19T14:32:24.993137Z",
+      "sha256": "6010554c574cb7a5c79ee016c1d5b0563f7a15dd4f586d513f97601d29249cf1",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-08A_无障碍设计通用专篇(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-08A_无障碍设计通用专篇(1)",
+      "bytes": 975769,
+      "modified_utc": "2026-09-19T14:32:25.010086Z",
+      "sha256": "c42a34954c6118da9268c8978973641690feed38db911a29c65e31c5a95f52e9",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-09A_改造一层平面图(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-09A_改造一层平面图(1)",
+      "bytes": 1484209,
+      "modified_utc": "2026-09-19T14:32:25.019490Z",
+      "sha256": "c3cd33db545a4ce34ed17d2399db4236ba6f82b2d60da5a3d041f823a6b032b7",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-10B_改造二层平面图(2).pdf",
+      "extension": ".pdf",
+      "stem": "建施-10B_改造二层平面图(2)",
+      "bytes": 1398161,
+      "modified_utc": "2026-09-19T14:32:25.032369Z",
+      "sha256": "ebc7df8d07925f8dd9864e2e4b77d9890cd3018ddb8c1c5bd85893f43e373e53",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-11_一层、二层改造区域吊顶平面图(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-11_一层、二层改造区域吊顶平面图(0)",
+      "bytes": 1225739,
+      "modified_utc": "2026-09-19T14:32:25.058468Z",
+      "sha256": "b30a01601e6c4d193f7da0afbf898500f2af6fc889767065db7673462d0ca0f7",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-12B_一、二层改造区域地面铺装平面图(2).pdf",
+      "extension": ".pdf",
+      "stem": "建施-12B_一、二层改造区域地面铺装平面图(2)",
+      "bytes": 1099456,
+      "modified_utc": "2026-09-19T14:32:25.072001Z",
+      "sha256": "a10a767b9e9a88bd46a28d58da7e4ea1d9b87f8e18a5abf3a6a53bcdeef9818b",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-13_防火分区示意图(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-13_防火分区示意图(0)",
+      "bytes": 1654757,
+      "modified_utc": "2026-09-19T14:32:25.082031Z",
+      "sha256": "767c25b67de9f7493ce740fdbebfed5a918d8a2de4e045a19f02052af34deb02",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-14A_改造区域立面索引图(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-14A_改造区域立面索引图(1)",
+      "bytes": 924659,
+      "modified_utc": "2026-09-19T14:32:25.111351Z",
+      "sha256": "c6d1bfba55b295ae7e88e0cbb7361dcb4d1eebbedac541425c553a048fb996ab",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-15_一层主要立面图（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-15_一层主要立面图（一）(0)",
+      "bytes": 1310267,
+      "modified_utc": "2026-09-19T14:32:25.133000Z",
+      "sha256": "cf477670143c070ee7028fe95d1fa85f841653c0701005526886202a23f6e669",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-16_一层主要立面图（二）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-16_一层主要立面图（二）(0)",
+      "bytes": 1470232,
+      "modified_utc": "2026-09-19T14:32:25.143492Z",
+      "sha256": "70b7a336f1fbb01c182ca7d4995dbc98484bc47fb0f83035e308b0365f330eac",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-17_一层主要立面图（三）(0).pdf",
+      "extension": ".pdf",
+      "stem": "建施-17_一层主要立面图（三）(0)",
+      "bytes": 1461801,
+      "modified_utc": "2026-09-19T14:32:25.158593Z",
+      "sha256": "656589787e58ceade30469c45f1a89bb46884fe1cead4024ce5ce79285c0dd9d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-18A_一层主要立面图（四）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-18A_一层主要立面图（四）(1)",
+      "bytes": 1167228,
+      "modified_utc": "2026-09-19T14:32:25.174573Z",
+      "sha256": "6d7b5745a6ec8a97406f669fff17d8f2ce26d3bdd084f43283f56463645dab10",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-19A_二层主要立面图（一）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-19A_二层主要立面图（一）(1)",
+      "bytes": 1460878,
+      "modified_utc": "2026-09-19T14:32:25.191804Z",
+      "sha256": "3625c6f7aeaab9d33963e03aeb1420d7dfd465e81c2a8cb5118aca88cb494b80",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-20A_二层主要立面图（二）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-20A_二层主要立面图（二）(1)",
+      "bytes": 1402892,
+      "modified_utc": "2026-09-19T14:32:25.207094Z",
+      "sha256": "96f9133b3e53e6664f082136d3870bc1a6d909ca3e35ffc0d1cf177e773fc411",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-21A_二层主要立面图（三）(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-21A_二层主要立面图（三）(1)",
+      "bytes": 1986764,
+      "modified_utc": "2026-09-19T14:32:25.232177Z",
+      "sha256": "17892d705775b4259fc9f38691d3e813281b90220d15cf996eac1f43b31fb90d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/建筑图纸/建施-22_服务台详图(1).pdf",
+      "extension": ".pdf",
+      "stem": "建施-22_服务台详图(1)",
+      "bytes": 873176,
+      "modified_utc": "2026-09-19T14:32:25.243642Z",
+      "sha256": "c57fb7ae3d02f8ddbb277ee676433f0514a602694ddab989e2d2497957f9dfcf",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/总平面图/建施-00B_图纸目录(2).pdf",
+      "extension": ".pdf",
+      "stem": "建施-00B_图纸目录(2)",
+      "bytes": 343285,
+      "modified_utc": "2026-09-19T14:32:25.254096Z",
+      "sha256": "eefc237b93c9911a814a48ffc2351b60e419980424402690d2206bf5c942f727",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/节能计算书/000_通用建筑说明竣工图（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "000_通用建筑说明竣工图（一）(0)",
+      "bytes": 15790707,
+      "modified_utc": "2026-09-19T14:32:25.401453Z",
+      "sha256": "f19dafcb4c360cc479757ff7aee2b6eab83bd379bee8b79fa8d74e2b19c79338",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/建筑/节能计算书/001_1#楼建筑竣工图（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "001_1#楼建筑竣工图（一）(0)",
+      "bytes": 9896354,
+      "modified_utc": "2026-09-19T14:32:25.513417Z",
+      "sha256": "18048775647389b13efb92e7503cb0fd3c9a5916dda8c61572e1820eb725abf5",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/审查意见回复单/暖通 第一次审查回复单(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖通 第一次审查回复单(1)",
+      "bytes": 521672,
+      "modified_utc": "2026-09-19T14:32:25.529152Z",
+      "sha256": "d80e655f96f0ba73b49416e484a22e1e33d7eca22d25c54442db8ab4e24e675b",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通图纸/暖施-00A_图纸目录(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖施-00A_图纸目录(1)",
+      "bytes": 226073,
+      "modified_utc": "2026-09-19T14:32:25.534575Z",
+      "sha256": "87e3344c5d3869acc21e39c3a178bb766b65ec4a44632702c28addd47aca322c",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通图纸/暖施-01A_设计与施工说明(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖施-01A_设计与施工说明(1)",
+      "bytes": 957566,
+      "modified_utc": "2026-09-19T14:32:25.552119Z",
+      "sha256": "316879f97e5ca96100ff6d8c4e07c662ae40307bda46749139519b5024e82c13",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通图纸/暖施-02A_防排烟设计专篇(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖施-02A_防排烟设计专篇(1)",
+      "bytes": 2552388,
+      "modified_utc": "2026-09-19T14:32:25.576832Z",
+      "sha256": "fad6de0ef1132cd14d77eff10be610c9612ce924bc47888d62d9d08f1b77ed8e",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通图纸/暖施-03A_一层排烟平面布置图(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖施-03A_一层排烟平面布置图(1)",
+      "bytes": 1157496,
+      "modified_utc": "2026-09-19T14:32:25.576832Z",
+      "sha256": "9b62c24e2e5260b2c8b85c53a0cab84cd8e4b1069c81f1bca99a5d496822bb2c",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通图纸/暖施-04A_二层排烟平面布置图(1).pdf",
+      "extension": ".pdf",
+      "stem": "暖施-04A_二层排烟平面布置图(1)",
+      "bytes": 1198981,
+      "modified_utc": "2026-09-19T14:32:25.593785Z",
+      "sha256": "03935ef2c1d102d0a11a67300bd55bfb7a55cdae44877a90081c44020300b7eb",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/暖通/暖通空调计算书/001_1#楼通风与空调竣工图（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "001_1#楼通风与空调竣工图（一）(0)",
+      "bytes": 15611501,
+      "modified_utc": "2026-09-19T14:32:25.767334Z",
+      "sha256": "0b3dc57aefa9f5997a854c12923970414a4d441d6e3a3020f783c827fc0f24ce",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/审查意见回复单/电气 第一次审查回复单(1).pdf",
+      "extension": ".pdf",
+      "stem": "电气 第一次审查回复单(1)",
+      "bytes": 415294,
+      "modified_utc": "2026-09-19T14:32:25.809885Z",
+      "sha256": "a166b273990cf17b59ac9167934ec7696a623b671e817eaf23a7b6a270fffc28",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-00A_图纸目录(1).pdf",
+      "extension": ".pdf",
+      "stem": "电施-00A_图纸目录(1)",
+      "bytes": 257043,
+      "modified_utc": "2026-09-19T14:32:25.822702Z",
+      "sha256": "1772effc28b2266e07a151e62e81822ea08f24a660b40b5855c3c87e87be2c25",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-01A_电气设计说明(1).pdf",
+      "extension": ".pdf",
+      "stem": "电施-01A_电气设计说明(1)",
+      "bytes": 1100443,
+      "modified_utc": "2026-09-19T14:32:25.836671Z",
+      "sha256": "ac64b2af8be7465c37c7f0fd83592ffd4d55aa89cb0d923ab5b9963be91bc050",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-02_火灾报警设计说明(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-02_火灾报警设计说明(0)",
+      "bytes": 1028333,
+      "modified_utc": "2026-09-19T14:32:25.851012Z",
+      "sha256": "3275f4427618d33291316a4ce18962b873359a195371a338a61d4c4bcf7d5bcb",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-03A_应急照明及疏散指示系统设计说明(1).pdf",
+      "extension": ".pdf",
+      "stem": "电施-03A_应急照明及疏散指示系统设计说明(1)",
+      "bytes": 1075280,
+      "modified_utc": "2026-09-19T14:32:25.860809Z",
+      "sha256": "90a9d6533f7d8106638c2a25aacdc4b0759479eb7ea4ad6b21969a81e4dd3b9e",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-04A_火灾报警系统图、应急照明及疏散指示系统图(1).pdf",
+      "extension": ".pdf",
+      "stem": "电施-04A_火灾报警系统图、应急照明及疏散指示系统图(1)",
+      "bytes": 587963,
+      "modified_utc": "2026-09-19T14:32:25.879270Z",
+      "sha256": "732e3ee688d90c4a0df836b9f951d92e40e97267d805a423b8e787ba4f1b19d6",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-05A_消防电源监控系统(1).pdf",
+      "extension": ".pdf",
+      "stem": "电施-05A_消防电源监控系统(1)",
+      "bytes": 749378,
+      "modified_utc": "2026-09-19T14:32:25.892318Z",
+      "sha256": "f61fab5530e5d6e1a7956c6531f77b54d2d809d89e917db0a9b341e331351e37",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-06_一层火灾自动报警平面图(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-06_一层火灾自动报警平面图(0)",
+      "bytes": 1000715,
+      "modified_utc": "2026-09-19T14:32:25.908177Z",
+      "sha256": "e5ba745b124976a62c759e3d02666198e151ca3122e95d8773613c603f044a0a",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-07_二层火灾自动报警平面图(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-07_二层火灾自动报警平面图(0)",
+      "bytes": 1079834,
+      "modified_utc": "2026-09-19T14:32:25.908875Z",
+      "sha256": "f8127f657b04d5b42d29d10a00b09e6bd1f0f990f2799aae8470ef2a90acb952",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-08_一层应急照明平面图(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-08_一层应急照明平面图(0)",
+      "bytes": 978550,
+      "modified_utc": "2026-09-19T14:32:25.935302Z",
+      "sha256": "9a2768b4a2ca07954ac6055e17e86481924457b0a1ab07a539c7aa98482225ba",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-09_二层应急照明平面图(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-09_二层应急照明平面图(0)",
+      "bytes": 1064633,
+      "modified_utc": "2026-09-19T14:32:25.948492Z",
+      "sha256": "b0197cfb7f93c1d3af70c2a13d96a3571edb0aba0cd5907419c5a51b958fc257",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气图纸/电施-10_一二层防火分区示意图(0).pdf",
+      "extension": ".pdf",
+      "stem": "电施-10_一二层防火分区示意图(0)",
+      "bytes": 605310,
+      "modified_utc": "2026-09-19T14:32:25.957253Z",
+      "sha256": "54243254a6f2a4650bb48bf076819ec9b8e277c2067fee6b46b5bc52f55fcfc4",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气计算书/000_通用电气图纸说明(0).pdf",
+      "extension": ".pdf",
+      "stem": "000_通用电气图纸说明(0)",
+      "bytes": 13153269,
+      "modified_utc": "2026-09-19T14:32:26.112595Z",
+      "sha256": "ab591af4e24239506f6532bd9ccbb833a067291ff4cd734e46c69406ac1c9d6d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/电气/电气计算书/001_1#楼电气图纸 （一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "001_1#楼电气图纸 （一）(0)",
+      "bytes": 13973779,
+      "modified_utc": "2026-09-19T14:32:26.267782Z",
+      "sha256": "ea8b6963ada55d671e64f147f5e492175c3fbf856c240adba0ff0096c7f19d86",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/审查意见回复单/作废(3).pdf",
+      "extension": ".pdf",
+      "stem": "作废(3)",
+      "bytes": 1076,
+      "modified_utc": "2026-09-19T14:32:26.272651Z",
+      "sha256": "1d5776474131cdac643283abc590cc82e4df2810b0db96c79499fae526f214d2",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/审查意见回复单/结构专业  第三次审查回复单(3).pdf",
+      "extension": ".pdf",
+      "stem": "结构专业  第三次审查回复单(3)",
+      "bytes": 314169,
+      "modified_utc": "2026-09-19T14:32:26.288157Z",
+      "sha256": "4f30a151c7992931728afbd16f4e0a2b426d4ef70d9c5fad1b749924c80219be",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/审查意见回复单/结构专业  第二次审查回复单(2).pdf",
+      "extension": ".pdf",
+      "stem": "结构专业  第二次审查回复单(2)",
+      "bytes": 669223,
+      "modified_utc": "2026-09-19T14:32:26.296800Z",
+      "sha256": "08ab7380f7df2adcf154347f0789788052bb24f685f0d8d010ac020566f87376",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/审查意见回复单/结构第一次审查回复单(1).pdf",
+      "extension": ".pdf",
+      "stem": "结构第一次审查回复单(1)",
+      "bytes": 597290,
+      "modified_utc": "2026-09-19T14:32:26.308080Z",
+      "sha256": "8e477c596a76fe8a2b111628be6389aee8474e9fef2174493c41a18051046fee",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-00B_图纸目录(3).pdf",
+      "extension": ".pdf",
+      "stem": "结施-00B_图纸目录(3)",
+      "bytes": 293295,
+      "modified_utc": "2026-09-19T14:32:26.320087Z",
+      "sha256": "d1ebbb14fb153a36a33d9fcd62aa9c6261923182b7ee3e20c37a98c2c5df4cf8",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-01A_混凝土结构改造加固设计总说明(2).pdf",
+      "extension": ".pdf",
+      "stem": "结施-01A_混凝土结构改造加固设计总说明(2)",
+      "bytes": 1225661,
+      "modified_utc": "2026-09-19T14:32:26.332545Z",
+      "sha256": "67a2a2e6974ff31f8294c12c7b11fae039da14632c11e36264718efac7359872",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-02_危重工程设计说明(0).pdf",
+      "extension": ".pdf",
+      "stem": "结施-02_危重工程设计说明(0)",
+      "bytes": 602886,
+      "modified_utc": "2026-09-19T14:32:26.336195Z",
+      "sha256": "eb4d927bb277d10a4cbdb9de1158b68078f44c4b9dd26fa0aa496fe5f7bdc063",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-03B_一层梁加固平面图、二层结构布置平面图(2).pdf",
+      "extension": ".pdf",
+      "stem": "结施-03B_一层梁加固平面图、二层结构布置平面图(2)",
+      "bytes": 539146,
+      "modified_utc": "2026-09-19T14:32:26.352201Z",
+      "sha256": "99dedcdbe78bd8e6db41a3b96d7f109ac079b2160d9222ee9b128f6b8fd501e1",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-04B_二层梁、板加固平面图(2).pdf",
+      "extension": ".pdf",
+      "stem": "结施-04B_二层梁、板加固平面图(2)",
+      "bytes": 513672,
+      "modified_utc": "2026-09-19T14:32:26.352201Z",
+      "sha256": "fdecaa4e6e7cdef8bb0d62c043ce2208fd0bcb58f1adcd004261357be1dcb6b5",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构图纸/结施-05B_楼梯详图(3).pdf",
+      "extension": ".pdf",
+      "stem": "结施-05B_楼梯详图(3)",
+      "bytes": 412850,
+      "modified_utc": "2026-09-19T14:32:26.370015Z",
+      "sha256": "eefe414e3253e69b8c5ece6b31cc6251fbcbb8e271313b8c73535f88b281c34d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/001_1#楼结构竣工图（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "001_1#楼结构竣工图（一）(0)",
+      "bytes": 20675140,
+      "modified_utc": "2026-09-19T14:32:26.602660Z",
+      "sha256": "e416946b79e069688ef04debcd9c1916cc4e083d67fd17ab70016c99cd1314f4",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/01.结构-计算书-审图提交(2).pdf",
+      "extension": ".pdf",
+      "stem": "01.结构-计算书-审图提交(2)",
+      "bytes": 3478308,
+      "modified_utc": "2026-09-19T14:32:26.631048Z",
+      "sha256": "25819cac9d6bc11101e9f6786ea921acce21f3916f5f144b01d19184dfdcb1ce",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/02.结构-计算书-一审回复(2).pdf",
+      "extension": ".pdf",
+      "stem": "02.结构-计算书-一审回复(2)",
+      "bytes": 1863185,
+      "modified_utc": "2026-09-19T14:32:26.651351Z",
+      "sha256": "13e13f7a73ac8e3755e2ece935ec7ae27833235d953b4d2d8bacb05c42c9f732",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/03.结构-计算书-二审回复(2).pdf",
+      "extension": ".pdf",
+      "stem": "03.结构-计算书-二审回复(2)",
+      "bytes": 6784029,
+      "modified_utc": "2026-09-19T14:32:26.711860Z",
+      "sha256": "4cbcfdfc35cc9e7aa6d0c4828da47acf2c55af9678ad3398d0ac67931a6d0370",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/04.结构竣工图-1#楼结构竣工图（三）(2).pdf",
+      "extension": ".pdf",
+      "stem": "04.结构竣工图-1#楼结构竣工图（三）(2)",
+      "bytes": 19378830,
+      "modified_utc": "2026-09-19T14:32:26.910193Z",
+      "sha256": "d9c5a2bc41d998e1643959c22d40bf2ef28110e3c859d819c8734e9130bcf625",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/04.结构竣工图-地下室结构竣工图（三）(2).pdf",
+      "extension": ".pdf",
+      "stem": "04.结构竣工图-地下室结构竣工图（三）(2)",
+      "bytes": 17475318,
+      "modified_utc": "2026-09-19T14:32:27.102441Z",
+      "sha256": "61afd15485035e818186e55030e8f510f93d29270f88608417c44eb963e25693",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/04.结构竣工图-地下室结构竣工图（四）(2).pdf",
+      "extension": ".pdf",
+      "stem": "04.结构竣工图-地下室结构竣工图（四）(2)",
+      "bytes": 16410317,
+      "modified_utc": "2026-09-19T14:32:27.268808Z",
+      "sha256": "31442810e9add51e08092aa1cae0f9348131fdd58bc83dd2770ce2e0d885cde9",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/结构/结构计算书/结构-计算书-三审回复(3).pdf",
+      "extension": ".pdf",
+      "stem": "结构-计算书-三审回复(3)",
+      "bytes": 274526,
+      "modified_utc": "2026-09-19T14:32:27.282820Z",
+      "sha256": "d429a67a480bf68f5cabb25c8fe758b27ed6e5e934a8aa2db393ff2601e24247",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-00_图纸目录(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-00_图纸目录(0)",
+      "bytes": 334369,
+      "modified_utc": "2026-09-19T14:32:37.413937Z",
+      "sha256": "fef781177abf4d9bf90b6851905f1a0f6ed3f1f4b98320745ba1ab46a84ce433",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-01_设计与施工说明(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-01_设计与施工说明(0)",
+      "bytes": 819535,
+      "modified_utc": "2026-09-19T14:32:37.420859Z",
+      "sha256": "154e92abd5706d57261522019d046aefe2aa63c12f11d25c2b31bf7db121242d",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-02_建筑机电工程抗震设计专篇(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-02_建筑机电工程抗震设计专篇(0)",
+      "bytes": 945336,
+      "modified_utc": "2026-09-19T14:32:37.434436Z",
+      "sha256": "4ad68f53b545d200dc107f3f62b2b44aa8eb1dd4c6ae8758a7495117e2a8c578",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-03_一层消火栓平面布置图(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-03_一层消火栓平面布置图(0)",
+      "bytes": 988606,
+      "modified_utc": "2026-09-19T14:32:37.446082Z",
+      "sha256": "b49312f847763c9855ca867b982bf8e833abbdc7502b1aa559a630e97ccf0539",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-04_二层消火栓平面布置图(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-04_二层消火栓平面布置图(0)",
+      "bytes": 1022156,
+      "modified_utc": "2026-09-19T14:32:37.468959Z",
+      "sha256": "408cfb8ab9f603d1d9fa4a8cb8e4191ec0539f78233c67e2c71f4add0206d0fe",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-05_一层喷淋平面布置图(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-05_一层喷淋平面布置图(0)",
+      "bytes": 1032656,
+      "modified_utc": "2026-09-19T14:32:37.492306Z",
+      "sha256": "7ccd8874c602e488700cba81df8d46f8348bfcf5e522da6af7d5cc5a8e2f3c2c",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水图纸/水施-06_二层喷淋平面布置图(0).pdf",
+      "extension": ".pdf",
+      "stem": "水施-06_二层喷淋平面布置图(0)",
+      "bytes": 1063862,
+      "modified_utc": "2026-09-19T14:32:37.507936Z",
+      "sha256": "3835c179af2b9c8f9ceb502df363e7e13320ca28527e22c2fb663503cb51a55e",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水计算书/000_通用给排水图纸说明（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "000_通用给排水图纸说明（一）(0)",
+      "bytes": 15186561,
+      "modified_utc": "2026-09-19T14:32:37.692233Z",
+      "sha256": "d4573439b797717eec6358bd15ba35a52e6b014d911afeb29d38af40b1c0350a",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "审查合格盖章版 泰州市海陵区新东方艺术培训有限公司医药高新区万象城分公司装修消防改造设计/施工图审查/给排水/给排水计算书/001_1#楼给排水图纸（一）(0).pdf",
+      "extension": ".pdf",
+      "stem": "001_1#楼给排水图纸（一）(0)",
+      "bytes": 11773988,
+      "modified_utc": "2026-09-19T14:32:37.819762Z",
+      "sha256": "f62700d9e06ed9549fb60472795aeb005fafa1bc2fa4da89ebc803186269f669",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "海阳捻织立体库暖通施工图（初审回复）2022.2.22(2)_t3.dwg",
+      "extension": ".dwg",
+      "stem": "海阳捻织立体库暖通施工图（初审回复）2022.2.22(2)_t3",
+      "bytes": 10688040,
+      "modified_utc": "2026-09-19T14:24:49.286851Z",
+      "sha256": "bd8eb57bfe75bfe7d2c6fd28dd6e139f0a5fdea36f1a701b31b93e246c460787",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "海阳捻织车间暖通施工图2022.1.10_t3.dwg",
+      "extension": ".dwg",
+      "stem": "海阳捻织车间暖通施工图2022.1.10_t3",
+      "bytes": 11259758,
+      "modified_utc": "2026-09-19T14:24:49.411610Z",
+      "sha256": "b487559eecbaeaba7c8aaa2ae7060fbbe1f3b70b33950ea976e2fd72143266bc",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "海阳立体库2022.2.22_t3.dwg",
+      "extension": ".dwg",
+      "stem": "海阳立体库2022.2.22_t3",
+      "bytes": 922701,
+      "modified_utc": "2026-09-19T14:24:49.111615Z",
+      "sha256": "8d2430a2aa57ffe369816ea405ac7b3816ea433a8cc61c76ea592fedbd6510e9",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "海阳车间2022.2.22_t3.dwg",
+      "extension": ".dwg",
+      "stem": "海阳车间2022.2.22_t3",
+      "bytes": 1948137,
+      "modified_utc": "2026-09-19T14:24:49.143102Z",
+      "sha256": "5827d924d6af425121b483e48daf1d699877033953182e9940c4a01caac435d6",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "海阳门卫20210830_t3.dwg",
+      "extension": ".dwg",
+      "stem": "海阳门卫20210830_t3",
+      "bytes": 241055,
+      "modified_utc": "2022-03-16T07:21:47Z",
+      "sha256": "a6a7c7694b7874a5cb9897e6252077cf5b54075de20e40d2e623fcbcf8eb32c3",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "环保局主大楼.pdf",
+      "extension": ".pdf",
+      "stem": "环保局主大楼",
+      "bytes": 18746417,
+      "modified_utc": "2026-07-22T10:08:23.318058Z",
+      "sha256": "c242c22967b3f4fb361d985da442f2c76701e762d0747c376cf7ebc32152e8d7",
+      "category": "PDF"
+    },
+    {
+      "relative_path": "立体库_结构0301(1).dwg",
+      "extension": ".dwg",
+      "stem": "立体库_结构0301(1)",
+      "bytes": 7376384,
+      "modified_utc": "2026-09-19T14:25:47.389755Z",
+      "sha256": "717ca88c2a887a838332c76c87f2276a8c3a293f6c7fabb1086b16dbeb4fd36e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "立体库电气出图.dwg",
+      "extension": ".dwg",
+      "stem": "立体库电气出图",
+      "bytes": 7904367,
+      "modified_utc": "2022-03-16T03:55:21Z",
+      "sha256": "a736f780b3f80cdce86d7d5e14507cd4bb4bf99c9337fcdbe311e771c8b7bfcc",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/暖通/4#能源中心-暖施.dwg",
+      "extension": ".dwg",
+      "stem": "4#能源中心-暖施",
+      "bytes": 1712192,
+      "modified_utc": "2026-09-19T14:27:42.376199Z",
+      "sha256": "26ac0e14536108eb1553917dae14b863e4da84fcd06e79c58a1c947c557fac40",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/水施/TZSW1-能源中心水施-SD-180828.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-能源中心水施-SD-180828",
+      "bytes": 9423777,
+      "modified_utc": "2026-09-19T14:27:42.479553Z",
+      "sha256": "b6ec36f0cd69bccb0e916025713c354cbff3b26a197878fda11938b186856889",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/1、能源中心-竣工图纸/电施/TZSW1-能源中心电施-SD-180730审图修改t3.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-能源中心电施-SD-180730审图修改t3",
+      "bytes": 14424268,
+      "modified_utc": "2026-09-19T14:27:42.623531Z",
+      "sha256": "42d5447f06a1cd9c8aaec0a1c6df250c14ebe281bcdbdc5bf86c81ea22643aa0",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/2、质检综合楼-竣工图纸/暖通/1#质检综合楼-暖施(2019.09.07)_t3_t3.dwg",
+      "extension": ".dwg",
+      "stem": "1#质检综合楼-暖施(2019.09.07)_t3_t3",
+      "bytes": 1963882,
+      "modified_utc": "2026-09-19T14:27:42.656672Z",
+      "sha256": "b0eec3aaf2f971325df7c5c59bd78115e743c9e580e5c1dab9dc813b7b7a0d76",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/2、质检综合楼-竣工图纸/水施/TZSW1-质检综合楼水施.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-质检综合楼水施",
+      "bytes": 8088852,
+      "modified_utc": "2026-09-19T14:27:42.752780Z",
+      "sha256": "895f186f7f11a0ef0ee45adebc1540c04b4c77ffc8b913e2e0c8bcce677f2957",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/2、质检综合楼-竣工图纸/电施/2.质检综合楼雨棚灯位置.dwg",
+      "extension": ".dwg",
+      "stem": "2.质检综合楼雨棚灯位置",
+      "bytes": 2594800,
+      "modified_utc": "2026-09-19T14:27:42.798876Z",
+      "sha256": "f0df6f458e8edc772e2d0f71ae5f816714dcac406249f2df0b9f4a8b906e2c1b",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/2、质检综合楼-竣工图纸/电施/TZSW1-质检综合楼-电施.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-质检综合楼-电施",
+      "bytes": 8794162,
+      "modified_utc": "2026-09-19T14:27:42.898160Z",
+      "sha256": "13b6aeef706c7601112efae57e338a1bb4467a69ce67295cd28ed12124ff5a1d",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/3、仓库-竣工图纸/暖通/3#仓库-暖施(2019.11.10).dwg",
+      "extension": ".dwg",
+      "stem": "3#仓库-暖施(2019.11.10)",
+      "bytes": 894720,
+      "modified_utc": "2026-09-19T14:27:42.925897Z",
+      "sha256": "029793a3f6b40e4160811977d487cbcf16aca7254c4bdc255be4663660397806",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/3、仓库-竣工图纸/水施/TZSW1-仓库水施-SD-190816(卫生间调整)(2).dwl",
+      "extension": ".dwl",
+      "stem": "TZSW1-仓库水施-SD-190816(卫生间调整)(2)",
+      "bytes": 46,
+      "modified_utc": "2026-09-19T14:27:42.933860Z",
+      "sha256": "282c54c7f4e26d685881f547c0ea8d1c12eefdfe6834d7a61bc02c91f12d284f",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/3、仓库-竣工图纸/水施/TZSW1-仓库水施-SD-190816(卫生间调整)(2).dwl2",
+      "extension": ".dwl2",
+      "stem": "TZSW1-仓库水施-SD-190816(卫生间调整)(2)",
+      "bytes": 199,
+      "modified_utc": "2026-09-19T14:27:42.941532Z",
+      "sha256": "31dc9a2be16a9f8116538a1c9b3e10dd7bf4c6d3f8a7a9e6dfc76e549958d31d",
+      "category": "OTHER"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/3、仓库-竣工图纸/水施/TZSW1-仓库水施.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-仓库水施",
+      "bytes": 7447907,
+      "modified_utc": "2026-09-19T14:27:43.034029Z",
+      "sha256": "bdf576e43508756153fd124e483976af6d56cae01a5f23503a00045882e870e6",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/3、仓库-竣工图纸/电施/TZSW1-仓库平面图-竣工图.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-仓库平面图-竣工图",
+      "bytes": 7328030,
+      "modified_utc": "2026-09-19T14:27:43.121168Z",
+      "sha256": "41e44f777860de5f1f8f6649a689ae2164ac2aee854c9d9c41ce09216a5a1a4f",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/4、生产车间一-竣工图纸/水施/TZSW1-生产车间水施-竣工图.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-生产车间水施-竣工图",
+      "bytes": 11048509,
+      "modified_utc": "2026-09-19T14:27:43.260380Z",
+      "sha256": "be1a7559d1aaf0cbbab0c9fc9728a343914f57e2faecebeff7e1bbdb62aa321e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/4、生产车间一-竣工图纸/水施/生产车间一 审图意见回复单.dwg",
+      "extension": ".dwg",
+      "stem": "生产车间一 审图意见回复单",
+      "bytes": 999840,
+      "modified_utc": "2026-09-19T14:27:43.298553Z",
+      "sha256": "45aed6fe7c3f270028f5d44ee505cf0772f381a69058fbda2a0ff97b31b90563",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/4、生产车间一-竣工图纸/电施/TZSW1-生产车间一 电施 -竣工图_.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-生产车间一 电施 -竣工图_",
+      "bytes": 25019248,
+      "modified_utc": "2026-09-19T14:27:43.613469Z",
+      "sha256": "9719a7cbaa679e16a014255d77aa4e4eea03baed8b12335b2dc20a80442636c3",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/5、消防水池-竣工图纸/暖通/11#消防水池(2018.07.30).dwg",
+      "extension": ".dwg",
+      "stem": "11#消防水池(2018.07.30)",
+      "bytes": 378304,
+      "modified_utc": "2026-09-19T14:27:43.638725Z",
+      "sha256": "1a085b948c619c2e1c26e89d3f5eab7f31d99538ea639aa03f33075c54a7b6a6",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/5、消防水池-竣工图纸/水施/TZSW1-消防水池水施-SD-180813.dwg.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-消防水池水施-SD-180813.dwg",
+      "bytes": 6244708,
+      "modified_utc": "2026-09-19T14:27:43.731412Z",
+      "sha256": "ea4442fbeff74a863d9a388115d0a04a4b6f53cd77e82c0a6907889c2b6a0dbc",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/5、消防水池-竣工图纸/水施/消防水池-审查意见回复单.dwg",
+      "extension": ".dwg",
+      "stem": "消防水池-审查意见回复单",
+      "bytes": 486176,
+      "modified_utc": "2026-09-19T14:27:43.745589Z",
+      "sha256": "210ff039475feb9c96a273a347121a917e1f0a77a55bc4b616be9a9029abf829",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/5、消防水池-竣工图纸/电施/TZSW1-消防水池一 电施 --SD-180730_t3.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-消防水池一 电施 --SD-180730_t3",
+      "bytes": 4605851,
+      "modified_utc": "2026-09-19T14:27:43.795000Z",
+      "sha256": "b1bb19564083c56a7d2929881eeaf00d0f3271a16791039cdef36e9a065d3eef",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/6、门卫室-竣工图纸/暖通/7#门卫-暖施(2018.07.30).dwg",
+      "extension": ".dwg",
+      "stem": "7#门卫-暖施(2018.07.30)",
+      "bytes": 346688,
+      "modified_utc": "2026-09-19T14:27:43.810522Z",
+      "sha256": "dede0e3d511eb223e0370589154286eee09b24570dbf976acb0d0586513bb624",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/6、门卫室-竣工图纸/水施/TZSW1-门卫水施-SD-180730.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-门卫水施-SD-180730",
+      "bytes": 1670272,
+      "modified_utc": "2026-09-19T14:27:43.853927Z",
+      "sha256": "4eb0da85239c0e8748624c71f94773338ec7bf607a5dfd956251970d131b904f",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/6、门卫室-竣工图纸/水施/门卫室-审查意见回复单.dwg",
+      "extension": ".dwg",
+      "stem": "门卫室-审查意见回复单",
+      "bytes": 472352,
+      "modified_utc": "2026-09-19T14:27:43.869355Z",
+      "sha256": "ab1fc6b8cad7fb3ea297438f6ab2c11b876bee16bb6b5ab16e8432fb211913f4",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/6、门卫室-竣工图纸/电施/TZSW1-门卫室-电施--变更修改7-5.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-门卫室-电施--变更修改7-5",
+      "bytes": 6359279,
+      "modified_utc": "2026-09-19T14:27:43.935813Z",
+      "sha256": "c943ac926d7e5d6352c163403742646cf5d698afcadd7ffc692ea2580695c456",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/7、连廊一竣工图纸/水施/TZSW1-连廊一水施-SD-181217.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-连廊一水施-SD-181217",
+      "bytes": 692789,
+      "modified_utc": "2026-09-19T14:27:43.955814Z",
+      "sha256": "a2c64cb2bef87bef626aed5ab3f0005006ceb300939a1d7d43003282d3e6a070",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/7、连廊一竣工图纸/电施/TZSW1-连廊一-电施-SD-181227修改_t3.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-连廊一-电施-SD-181227修改_t3",
+      "bytes": 475217,
+      "modified_utc": "2026-09-19T14:27:43.981141Z",
+      "sha256": "a4605d0010f961c00a05a42f6cbaba234d6b58ec69cf2cfb20d5807a97b6fe75",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/8、危险品仓库-竣工图纸/暖通/6#危险品仓库-暖施(2018.06.30).dwg",
+      "extension": ".dwg",
+      "stem": "6#危险品仓库-暖施(2018.06.30)",
+      "bytes": 376960,
+      "modified_utc": "2026-09-19T14:27:44.007450Z",
+      "sha256": "82b250cab5382dbd6f95154c33ef63c0d684eb432a1cf1ff169c35f9d0ca8e9c",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/8、危险品仓库-竣工图纸/水施/TZSW1-危险品库水施-SD-180730.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-危险品库水施-SD-180730",
+      "bytes": 1424483,
+      "modified_utc": "2026-09-19T14:27:44.031564Z",
+      "sha256": "27f0732bcad4835b2ce9d21efd63bf511b5d224a50f6150113eaa1a79465dddb",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/8、危险品仓库-竣工图纸/水施/危险品仓库-审查意见回复单.dwg",
+      "extension": ".dwg",
+      "stem": "危险品仓库-审查意见回复单",
+      "bytes": 383658,
+      "modified_utc": "2026-09-19T14:27:44.040039Z",
+      "sha256": "c329c3125f487ac8fd0489e0c227785fd58403f8e954a97189c1ded3c43030ff",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/8、危险品仓库-竣工图纸/电施/TZSW1-危险品仓库-电施-SD-0625_t3.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-危险品仓库-电施-SD-0625_t3",
+      "bytes": 3312992,
+      "modified_utc": "2026-09-19T14:27:44.085454Z",
+      "sha256": "6fdaa6a5b2e07427237424d01aab6579fa2d88c06e4a91a13c01adc639c1aa19",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/9、总图-竣工图纸/水施/TZSW1-总图-给排水竣工图0917.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-总图-给排水竣工图0917",
+      "bytes": 2285084,
+      "modified_utc": "2026-09-19T14:27:44.133271Z",
+      "sha256": "d3d921eae829bc5eb889915c6009face066616905e2d92488130621aae357193",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "竣工图（安装）2020年11月版本 (1)/9、总图-竣工图纸/电施/TZSW1-总体-电施-SD-20-0710二次修改（补充路灯接地要求）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "TZSW1-总体-电施-SD-20-0710二次修改（补充路灯接地要求）_t3",
+      "bytes": 1930669,
+      "modified_utc": "2026-09-19T14:27:44.165316Z",
+      "sha256": "aa3acf0c16e36884d18473e1094b4055521094f1151bc2832fa9908980ccf3f5",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "给排水海阳立体库20220113（审图版）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "给排水海阳立体库20220113（审图版）_t3",
+      "bytes": 8635572,
+      "modified_utc": "2022-03-16T07:18:48Z",
+      "sha256": "d48b1a45560ff3347b69f5e8ca0e2bda1dc9267a288d7efab6f7f0442bf0328a",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "给排水海阳车间20220316（审图版）_t3.dwg",
+      "extension": ".dwg",
+      "stem": "给排水海阳车间20220316（审图版）_t3",
+      "bytes": 6822249,
+      "modified_utc": "2022-03-16T07:10:43Z",
+      "sha256": "f1c3a300198c0ea0cc25a219b80cfb7051da2a8e45e01195715f2f4028b0f6b5",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "车间_结构0310.dwg",
+      "extension": ".dwg",
+      "stem": "车间_结构0310",
+      "bytes": 23794976,
+      "modified_utc": "2026-09-19T14:25:47.276859Z",
+      "sha256": "a1fd5bbfa42166d5e11ef04709303776ee6ec9c3e4af957971e14e52adf49b1e",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "车间电气出图.dwg",
+      "extension": ".dwg",
+      "stem": "车间电气出图",
+      "bytes": 4437932,
+      "modified_utc": "2022-03-16T04:04:49Z",
+      "sha256": "3b8db35d7b2624ac61d79d065497cad4961a8e730946e7b1ce4a12f0cdd159ca",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "门卫2021.11.12_t3.dwg",
+      "extension": ".dwg",
+      "stem": "门卫2021.11.12_t3",
+      "bytes": 1247678,
+      "modified_utc": "2026-09-19T14:24:49.161528Z",
+      "sha256": "8d15d25ad063794a951fd534d4b4f76436438cba804c2c3d2aee9307753dc7e4",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "门卫_结构1224(1).dwg",
+      "extension": ".dwg",
+      "stem": "门卫_结构1224(1)",
+      "bytes": 2203168,
+      "modified_utc": "2026-09-19T14:25:47.305627Z",
+      "sha256": "131b0aea7e551e12e372a3aed8e4a126fd4ebc3a91c43c57232adf3c717aec3b",
+      "category": "DWG"
+    },
+    {
+      "relative_path": "门卫电气出图.dwg",
+      "extension": ".dwg",
+      "stem": "门卫电气出图",
+      "bytes": 296671,
+      "modified_utc": "2022-03-16T03:59:27Z",
+      "sha256": "1a182b1664e6897896916af1d7e1d35093fd0e92222cf1f55e84f5d18aac2b92",
+      "category": "DWG"
+    }
+  ]
+}

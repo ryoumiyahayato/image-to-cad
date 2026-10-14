@@ -1,0 +1,560 @@
+{
+  "contract_downgrade_reasons": {
+    "confidence_below_contract": 2,
+    "replacement_unsafe": 169
+  },
+  "evaluated_condition_counts_all_candidates": {
+    "bbox_or_orientation_unreliable": 3,
+    "connected_component_spans_characters": 114,
+    "ocr_confidence_below_contract": 2,
+    "other_safety_condition": 1,
+    "ownership_pixels_incomplete": 6,
+    "straight_line_candidate_conflict": 6,
+    "table_rule_touch_or_cell_clip": 106,
+    "uncovered_nearby_ink": 45
+  },
+  "examples": [
+    {
+      "bbox": [
+        1204,
+        1691,
+        40,
+        42
+      ],
+      "candidate_id": "ocr-104",
+      "confidence": 0.99982,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "bbox_or_orientation_unreliable",
+      "replacement_safe": false,
+      "review_note": "倾斜或竖排候选需人工确认",
+      "table_cell_clipped": false,
+      "text": "154"
+    },
+    {
+      "bbox": [
+        2999,
+        1889,
+        91,
+        74
+      ],
+      "candidate_id": "ocr-114",
+      "confidence": 0.99961,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "bbox_or_orientation_unreliable",
+      "replacement_safe": false,
+      "review_note": "倾斜或竖排候选需人工确认",
+      "table_cell_clipped": false,
+      "text": "200"
+    },
+    {
+      "bbox": [
+        3022,
+        1964,
+        83,
+        64
+      ],
+      "candidate_id": "ocr-120",
+      "confidence": 0.99365,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "bbox_or_orientation_unreliable",
+      "replacement_safe": false,
+      "review_note": "倾斜或竖排候选需人工确认",
+      "table_cell_clipped": false,
+      "text": "201"
+    },
+    {
+      "bbox": [
+        3571,
+        180,
+        262,
+        48
+      ],
+      "candidate_id": "ocr-001",
+      "confidence": 0.99997,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "无锡市建筑设计研究院"
+    },
+    {
+      "bbox": [
+        3623,
+        218,
+        162,
+        46
+      ],
+      "candidate_id": "ocr-002",
+      "confidence": 0.99997,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "有限责任公司"
+    },
+    {
+      "bbox": [
+        3569,
+        305,
+        246,
+        35
+      ],
+      "candidate_id": "ocr-006",
+      "confidence": 0.86765,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "国泉甲级工程资计证卡编号：100107-sj"
+    },
+    {
+      "bbox": [
+        1311,
+        351,
+        31,
+        32
+      ],
+      "candidate_id": "ocr-008",
+      "confidence": 0.99613,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "3"
+    },
+    {
+      "bbox": [
+        3633,
+        265,
+        114,
+        23
+      ],
+      "candidate_id": "ocr-003",
+      "confidence": 0.93008,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "WUDI ARCHITECTURAL"
+    },
+    {
+      "bbox": [
+        3567,
+        286,
+        215,
+        26
+      ],
+      "candidate_id": "ocr-004",
+      "confidence": 0.89983,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "DESIGH AND RESEARCH INSTIUTE Co,LH."
+    },
+    {
+      "bbox": [
+        3569,
+        390,
+        37,
+        18
+      ],
+      "candidate_id": "ocr-010",
+      "confidence": 0.64344,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符位置，保留完整源轮廓等待确认",
+      "table_cell_clipped": false,
+      "text": "NOWES"
+    },
+    {
+      "bbox": [
+        1385,
+        466,
+        56,
+        29
+      ],
+      "candidate_id": "ocr-021",
+      "confidence": 0.99998,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "3800"
+    },
+    {
+      "bbox": [
+        2930,
+        2533,
+        218,
+        54
+      ],
+      "candidate_id": "ocr-195",
+      "confidence": 0.99999,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "incomplete_character_coverage",
+      "replacement_safe": false,
+      "review_note": "逐字分割覆盖不足，保留原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "171-172"
+    },
+    {
+      "bbox": [
+        2440,
+        462,
+        56,
+        31
+      ],
+      "candidate_id": "ocr-019",
+      "confidence": 0.99998,
+      "conflicts": [],
+      "ownership_conflict_pixels": 19,
+      "primary_reason": "ownership_pixels_incomplete",
+      "replacement_safe": false,
+      "review_note": "已按原始笔画间隔生成逐字定位框；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.",
+      "table_cell_clipped": true,
+      "text": "3800"
+    },
+    {
+      "bbox": [
+        972,
+        467,
+        56,
+        30
+      ],
+      "candidate_id": "ocr-022",
+      "confidence": 0.99999,
+      "conflicts": [],
+      "ownership_conflict_pixels": 84,
+      "primary_reason": "ownership_pixels_incomplete",
+      "replacement_safe": false,
+      "review_note": "已按原始笔画间隔生成逐字定位框；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.",
+      "table_cell_clipped": true,
+      "text": "2500"
+    },
+    {
+      "bbox": [
+        3564,
+        1506,
+        88,
+        25
+      ],
+      "candidate_id": "ocr-091",
+      "confidence": 0.92949,
+      "conflicts": [],
+      "ownership_conflict_pixels": 27,
+      "primary_reason": "ownership_pixels_incomplete",
+      "replacement_safe": false,
+      "review_note": "已按原始笔画间隔生成逐字定位框；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.",
+      "table_cell_clipped": true,
+      "text": "出图专用章"
+    },
+    {
+      "bbox": [
+        429,
+        1672,
+        28,
+        56
+      ],
+      "candidate_id": "ocr-099",
+      "confidence": 0.92078,
+      "conflicts": [
+        "straight_line"
+      ],
+      "ownership_conflict_pixels": 52,
+      "primary_reason": "ownership_pixels_incomplete",
+      "replacement_safe": false,
+      "review_note": "已按原始笔画间隔生成逐字定位框；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.",
+      "table_cell_clipped": true,
+      "text": "380"
+    },
+    {
+      "bbox": [
+        2646,
+        289,
+        56,
+        26
+      ],
+      "candidate_id": "ocr-005",
+      "confidence": 0.99503,
+      "conflicts": [
+        "trace_text_symbol"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "uncovered_nearby_ink",
+      "replacement_safe": false,
+      "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "2000"
+    },
+    {
+      "bbox": [
+        2876,
+        467,
+        52,
+        28
+      ],
+      "candidate_id": "ocr-026",
+      "confidence": 0.99995,
+      "conflicts": [
+        "straight_line"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "uncovered_nearby_ink",
+      "replacement_safe": false,
+      "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "1800"
+    },
+    {
+      "bbox": [
+        1895,
+        468,
+        78,
+        28
+      ],
+      "candidate_id": "ocr-028",
+      "confidence": 0.99997,
+      "conflicts": [
+        "straight_line"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "uncovered_nearby_ink",
+      "replacement_safe": false,
+      "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "11400"
+    },
+    {
+      "bbox": [
+        1617,
+        824,
+        37,
+        36
+      ],
+      "candidate_id": "ocr-041",
+      "confidence": 0.99979,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "uncovered_nearby_ink",
+      "replacement_safe": false,
+      "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认",
+      "table_cell_clipped": false,
+      "text": "143"
+    },
+    {
+      "bbox": [
+        1154,
+        427,
+        56,
+        28
+      ],
+      "candidate_id": "ocr-014",
+      "confidence": 0.99995,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "5800"
+    },
+    {
+      "bbox": [
+        848,
+        428,
+        56,
+        29
+      ],
+      "candidate_id": "ocr-016",
+      "confidence": 0.99998,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "8400"
+    },
+    {
+      "bbox": [
+        2718,
+        429,
+        7,
+        26
+      ],
+      "candidate_id": "ocr-018",
+      "confidence": 0.90963,
+      "conflicts": [
+        "trace_text_symbol"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "6500"
+    },
+    {
+      "bbox": [
+        1210,
+        467,
+        54,
+        28
+      ],
+      "candidate_id": "ocr-023",
+      "confidence": 0.99998,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "3800"
+    },
+    {
+      "bbox": [
+        2264,
+        467,
+        55,
+        28
+      ],
+      "candidate_id": "ocr-024",
+      "confidence": 0.99996,
+      "conflicts": [
+        "trace_text_symbol"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "3800"
+    },
+    {
+      "bbox": [
+        1562,
+        468,
+        54,
+        27
+      ],
+      "candidate_id": "ocr-027",
+      "confidence": 0.99998,
+      "conflicts": [
+        "straight_line"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "3800"
+    },
+    {
+      "bbox": [
+        776,
+        469,
+        55,
+        28
+      ],
+      "candidate_id": "ocr-030",
+      "confidence": 0.99999,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "5900"
+    },
+    {
+      "bbox": [
+        3155,
+        522,
+        30,
+        55
+      ],
+      "candidate_id": "ocr-031",
+      "confidence": 0.99999,
+      "conflicts": [],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_spans_characters",
+      "replacement_safe": false,
+      "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内",
+      "table_cell_clipped": true,
+      "text": "5400"
+    },
+    {
+      "bbox": [
+        346,
+        686,
+        34,
+        39
+      ],
+      "candidate_id": "ocr-032",
+      "confidence": 0.99741,
+      "conflicts": [
+        "trace_text_symbol"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "A"
+    },
+    {
+      "bbox": [
+        1531,
+        726,
+        46,
+        41
+      ],
+      "candidate_id": "ocr-033",
+      "confidence": 0.99801,
+      "conflicts": [
+        "residual_graphic"
+      ],
+      "ownership_conflict_pixels": 0,
+      "primary_reason": "connected_component_crosses_bbox",
+      "replacement_safe": false,
+      "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认",
+      "table_cell_clipped": false,
+      "text": "162"
+    }
+  ],
+  "fallback_primary_reason_counts": {
+    "bbox_or_orientation_unreliable": 3,
+    "connected_component_crosses_bbox": 72,
+    "connected_component_spans_characters": 42,
+    "incomplete_character_coverage": 1,
+    "ownership_pixels_incomplete": 6,
+    "uncovered_nearby_ink": 45
+  },
+  "method": {
+    "condition_counts": "Multi-label diagnostic conditions; table clipping and spatial overlap can be contextual without being the causal downgrade.",
+    "primary_reason": "Mutually exclusive causal reason assigned from the pre-table review_note, except ownership downgrades, which use the arbitration downgrade record."
+  },
+  "table_cell_clipped_candidate_count": 106,
+  "table_cell_clipping_caused_replacement_safe_to_flip": 0
+}

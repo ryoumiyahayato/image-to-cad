@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "P3B V2 persisted two-stage human review state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "manifest_sha256", "labels", "nomination_statuses", "skipped", "events", "review_log", "cursor_sample_id", "revision", "training_authorized", "purpose", "label_version"],
+  "properties": {
+    "schema_version": {"const": "p3b-label-v2"},
+    "manifest_sha256": {"$ref": "#/$defs/hash"},
+    "label_version": {"$ref": "#/$defs/hash"},
+    "training_authorized": {"const": false},
+    "purpose": {"enum": ["30-sample UI acceptance only", "formal human seed labeling; no training authorized", "13-sample independent suspect re-review; no training authorized", "independent validation labeling; no training authorized", "8-sample independent validation suspect re-review; no training authorized"]},
+    "revision": {"type": "integer", "minimum": 0},
+    "cursor_sample_id": {"type": ["string", "null"]},
+    "labels": {"type": "object", "additionalProperties": {"$ref": "#/$defs/label"}},
+    "nomination_statuses": {"type": "object", "additionalProperties": {"$ref": "#/$defs/nomination"}},
+    "skipped": {"type": "object", "additionalProperties": {"$ref": "#/$defs/skip"}},
+    "events": {"type": "array", "items": {"$ref": "#/$defs/event"}},
+    "review_log": {"type": "array", "items": {"$ref": "#/$defs/log"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "time": {"type": "string", "format": "date-time"},
+    "class": {"enum": ["SINGLE_PHYSICAL_STROKE", "TRUE_PARALLEL_STRUCTURE", "OTHER", "AMBIGUOUS"]},
+    "status": {"enum": ["VALID_TARGET", "INVALID_NOMINATION", "UNCLEAR_TARGET"]},
+    "label": {
+      "type": "object", "additionalProperties": false,
+      "required": ["label", "annotator", "timestamp_utc", "provenance", "sample_sha256", "nomination_status", "rubric_version", "training_authorized"],
+      "properties": {
+        "label": {"$ref": "#/$defs/class"},
+        "annotator": {"type": "string"}, "timestamp_utc": {"$ref": "#/$defs/time"},
+        "provenance": {"const": "human_source_review_after_stage_0"},
+        "sample_sha256": {"$ref": "#/$defs/hash"}, "nomination_status": {"const": "VALID_TARGET"},
+        "rubric_version": {"const": "p3b-rubric-v2"}, "training_authorized": {"const": false}
+      }
+    },
+    "nomination": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "annotator", "timestamp_utc", "sample_sha256", "provenance"],
+      "properties": {
+        "status": {"$ref": "#/$defs/status"}, "annotator": {"type": "string"},
+        "timestamp_utc": {"$ref": "#/$defs/time"}, "sample_sha256": {"$ref": "#/$defs/hash"},
+        "provenance": {"const": "human_stage_0_review"}
+      }
+    },
+    "skip": {
+      "type": "object", "additionalProperties": false,
+      "required": ["timestamp_utc", "session_id"],
+      "properties": {"timestamp_utc": {"$ref": "#/$defs/time"}, "session_id": {"type": "string", "format": "uuid"}}
+    },
+    "event": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sample_id", "action", "previous_label", "previous_nomination", "previous_skip"],
+      "properties": {
+        "sample_id": {"type": "string"}, "action": {"enum": ["nomination", "label", "skip"]},
+        "previous_label": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/label"}]},
+        "previous_nomination": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/nomination"}]},
+        "previous_skip": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/skip"}]}
+      }
+    },
+    "log": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sample_id", "action", "session_id", "timestamp_utc"],
+      "properties": {
+        "sample_id": {"type": "string"}, "action": {"enum": ["present", "nomination", "physical_class", "skip", "undo"]},
+        "session_id": {"type": "string", "format": "uuid"}, "timestamp_utc": {"$ref": "#/$defs/time"},
+        "queue_rank": {"type": "integer", "minimum": 1}, "status": {"$ref": "#/$defs/status"},
+        "label": {"$ref": "#/$defs/class"}, "reversed_action": {"enum": ["nomination", "label", "skip"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"action": {"const": "present"}}}, "then": {"required": ["queue_rank"]}},
+        {"if": {"properties": {"action": {"const": "nomination"}}}, "then": {"required": ["status"]}},
+        {"if": {"properties": {"action": {"const": "physical_class"}}}, "then": {"required": ["label"]}},
+        {"if": {"properties": {"action": {"const": "undo"}}}, "then": {"required": ["reversed_action"]}}
+      ]
+    }
+  },
+  "$comment": "Cross-record prior-V, source support, identity, history/undo, cursor, revision and manifest constraints are additionally audited by tools/p3b/audit_acceptance.py. Acceptance is not training authorization."
+}

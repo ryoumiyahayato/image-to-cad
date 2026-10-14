@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "P3B V2 completed human sample decision",
+  "type": "object",
+  "required": ["sample_id", "nomination_status", "physical_class", "training_authorized"],
+  "properties": {
+    "sample_id": {"type": "string"},
+    "nomination_status": {"enum": ["VALID_TARGET", "INVALID_NOMINATION", "UNCLEAR_TARGET"]},
+    "physical_class": {"enum": [null, "SINGLE_PHYSICAL_STROKE", "TRUE_PARALLEL_STRUCTURE", "OTHER", "AMBIGUOUS"]},
+    "training_authorized": {"const": false}
+  },
+  "allOf": [
+    {"if": {"properties": {"nomination_status": {"enum": ["INVALID_NOMINATION", "UNCLEAR_TARGET"]}}},
+     "then": {"properties": {"physical_class": {"const": null}}}}
+  ],
+  "$comment": "Unreviewed targets have no Stage-0 record yet. Exactly one of the three statuses is required after Stage-0 review. Stage-1 classes require human VALID_TARGET. No acceptance decision authorizes training."
+}

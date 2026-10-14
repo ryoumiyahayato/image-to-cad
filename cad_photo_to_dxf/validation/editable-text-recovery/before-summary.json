@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "git": {
+    "branch": "fix/non-destructive-editable-text",
+    "head": "625dcd9",
+    "phase12_baseline_commit": "6f5f69329aabf0bd3a7eda84baf66eb1959bdcba",
+    "production_code_modified": false,
+    "regression_baseline_modified": false,
+    "tmp_modified": false
+  },
+  "unit_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 259,
+    "warnings": 141,
+    "junit": "test-results-before.xml"
+  },
+  "formal_unique_real_pages": {
+    "document_count": 10,
+    "dxf_audit_passed_count": 10,
+    "fallback_candidate_count": 977,
+    "native_TEXT_count": 197,
+    "ocr_candidate_count": 1188,
+    "residual_candidate_count": 14,
+    "source": "before/text-contract.json"
+  },
+  "user_pdf_all_pages": {
+    "document_count": 14,
+    "dxf_audit_passed_count": 14,
+    "fallback_candidate_count": 2228,
+    "fallback_outline_entity_count": 16052,
+    "native_TEXT_count": 558,
+    "ocr_candidate_count": 2843,
+    "residual_candidate_count": 57,
+    "residual_entity_count": 3817,
+    "source": "before/user-pdf-dxf-inventory.json",
+    "text_symbol_entity_count": 15270
+  },
+  "uat_page001_240dpi": {
+    "dxf_audit_error_count": 0,
+    "fallback_candidate_count": 169,
+    "fallback_outline_entity_count": 1393,
+    "native_TEXT_count": 37,
+    "ocr_candidate_count": 208,
+    "residual_candidate_count": 2,
+    "residual_entity_count": 535,
+    "text_symbol_entity_count": 1406
+  }
+}
+

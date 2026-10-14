@@ -1,0 +1,127 @@
+{
+  "AMBIGUOUS_TRAIN_SAMPLES_USED_AS_HARD_LABELS": 0,
+  "AMBIGUOUS_VALIDATION_ROLE": "ABSTENTION_EVALUATION",
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "BLIND_TOUCHED": "NO",
+  "CELL_EXECUTION_PASS": "NOT_RUN",
+  "CHANGED_DECISIONS": 2,
+  "CHECKPOINT_READBACK": "NOT_RUN",
+  "CHECKPOINT_WRITE": "NOT_RUN",
+  "CNN_TRAINED": "NO",
+  "COLAB_MCP_INSTALLED": "YES",
+  "COLAB_SESSION_CONNECTED": "NO",
+  "CURRENT_VALIDATION_TRUTH_FROZEN": "YES",
+  "DRIVE_MOUNT": "NOT_RUN",
+  "EXACT_AGREEMENT": 6,
+  "FIRST_MODEL_CLASS_POLICY": "3_CLASS_PLUS_ABSTENTION",
+  "GOOGLE_LOGIN_COMPLETED": "USER_ACTION_REQUIRED",
+  "IDENTITY_GUARDS": "NOT_RUN",
+  "LOCAL_DATA_IDENTITY_GUARDS": "PASS",
+  "LOGISTIC_BASELINE_READY": "NO",
+  "MCP_CLIENT_COMPATIBLE": "NO",
+  "MODEL_TRAINED": "NO",
+  "NEXT_STEP": "Compatibility blocker: a verified local client/build that refreshes tools on notifications/tools/list_changed is required. Do not enable this disabled MCP entry or proceed to browser/Drive/runtime/learning until that requirement is resolved. No unofficial fork or alternative client was used.",
+  "ORIGINAL_HISTORICAL_ANSWERS_PRESERVED": "YES",
+  "PRODUCTION_CODE_CHANGED": "NO",
+  "RESUME": "NOT_RUN",
+  "TOTAL_REVIEWED": 8,
+  "TRAINING_DATA_FREEZE": "PASS",
+  "TRAIN_FINAL_COUNTS": {
+    "class_distribution": {
+      "AMBIGUOUS": 0,
+      "OTHER": 36,
+      "SINGLE_PHYSICAL_STROKE": 38,
+      "TRUE_PARALLEL_STRUCTURE": 20
+    },
+    "drawings": 13,
+    "excluded": [
+      {
+        "sample_id": "real-v2-727b638d422879b10e05d364",
+        "stage0": "UNCLEAR_TARGET"
+      },
+      {
+        "sample_id": "real-13c73903c42787d1a23d2b88",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-48f0cee35570a79663988685",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-4001b9c49f981a96de6eea46",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-2733c068be5e17143eb3cf63",
+        "stage0": "INVALID_NOMINATION"
+      },
+      {
+        "sample_id": "real-2dfd0a65b89a47534c82798e",
+        "stage0": "INVALID_NOMINATION"
+      }
+    ],
+    "included_count": 94,
+    "known_dpi_distribution": {
+      "110.000000": 78,
+      "240.000000": 4
+    },
+    "source_families": 12,
+    "supervised_or_accuracy_count": 94,
+    "unknown_dpi_count": 12
+  },
+  "TRAIN_VALIDATION_LEAKAGE": "NONE",
+  "VALIDATION_FINAL_COUNTS": {
+    "class_distribution": {
+      "AMBIGUOUS": 1,
+      "OTHER": 7,
+      "SINGLE_PHYSICAL_STROKE": 22,
+      "TRUE_PARALLEL_STRUCTURE": 20
+    },
+    "drawings": 5,
+    "excluded": [],
+    "included_count": 50,
+    "known_dpi_distribution": {
+      "110.000000": 37
+    },
+    "source_families": 5,
+    "supervised_or_accuracy_count": 49,
+    "unknown_dpi_count": 13
+  },
+  "VALIDATION_REREVIEW_RECOVERED": "YES",
+  "changed_decision_details": [
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 17,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 33,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "training_authorized": false
+    }
+  ],
+  "final_freeze_sha256": "4a4faa39a2a56811f6723fa0ccfa2322320080023c59c35a2179f40f08942795",
+  "input_contract_sha256": "053014a9cc38f2f1b6b89e06fea7da6c5a267850ddd9618212dd18a61adeeddb",
+  "mcp_evidence_sha256": "5e1995e14f6149a838f86e9e17bfd2b0352d4f0b53c18f1567502e37d6822ac4",
+  "report_sha256": "8befbc88128d4e0790df62f48e8c86230f9e8aab17cc64f79348116224bde759",
+  "stop_phase": "PHASE_6_CLIENT_COMPATIBILITY",
+  "training_authorized": false
+}

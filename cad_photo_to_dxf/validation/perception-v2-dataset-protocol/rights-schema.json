@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:image-to-cad:perception-v2:rights-record:1",
+  "title": "Perception V2 data-rights provenance record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["SOURCE_FAMILY_ID","DOCUMENT_ID","copyright_owner","publisher","license_status","license_url","public_domain_basis","commercial_use_status","raw_retention_permission","derived_crop_retention_permission","label_retention_permission","ml_training_evaluation_status","redistribution_status","attribution_obligations","share_alike_obligations","reviewer","review_date","disposition"],
+  "properties": {
+    "SOURCE_FAMILY_ID":{"type":"string","minLength":1},
+    "DOCUMENT_ID":{"type":"string","minLength":1},
+    "copyright_owner":{"type":["string","null"]},
+    "publisher":{"type":"string","minLength":1},
+    "license_status":{"type":"string","minLength":1},
+    "license_url":{"type":["string","null"],"format":"uri"},
+    "public_domain_basis":{"type":["string","null"]},
+    "commercial_use_status":{"enum":["ALLOWED","NOT_ALLOWED","UNKNOWN","NOT_APPLICABLE"]},
+    "raw_retention_permission":{"enum":["ALLOWED","NOT_ALLOWED","UNKNOWN"]},
+    "derived_crop_retention_permission":{"enum":["ALLOWED","NOT_ALLOWED","UNKNOWN"]},
+    "label_retention_permission":{"enum":["ALLOWED","NOT_ALLOWED","UNKNOWN"]},
+    "ml_training_evaluation_status":{"enum":["ALLOWED","NOT_ALLOWED","UNKNOWN","EVALUATION_ONLY"]},
+    "redistribution_status":{"enum":["ALLOWED","NOT_ALLOWED","CONDITIONAL","UNKNOWN"]},
+    "attribution_obligations":{"type":"array","items":{"type":"string"}},
+    "share_alike_obligations":{"type":"array","items":{"type":"string"}},
+    "reviewer":{"type":"string","minLength":1},
+    "review_date":{"type":"string","format":"date"},
+    "disposition":{"enum":["PUBLIC_DOMAIN","CC0","CC_BY","EXPLICIT_PERMISSION","RIGHTS_REVIEW_REQUIRED","REJECTED"]},
+    "evidence_notes":{"type":"string"},
+    "restrictions":{"type":"array","items":{"type":"string"}}
+  },
+  "allOf": [
+    {"if":{"properties":{"disposition":{"const":"RIGHTS_REVIEW_REQUIRED"}}},"then":{"properties":{"ml_training_evaluation_status":{"const":"UNKNOWN"},"raw_retention_permission":{"const":"UNKNOWN"},"derived_crop_retention_permission":{"const":"UNKNOWN"}}}},
+    {"if":{"properties":{"disposition":{"const":"REJECTED"}}},"then":{"properties":{"ml_training_evaluation_status":{"const":"NOT_ALLOWED"},"raw_retention_permission":{"const":"NOT_ALLOWED"},"derived_crop_retention_permission":{"const":"NOT_ALLOWED"}}}}
+  ],
+  "x_protocol": {"public_download_is_approval":false,"usable_dev_dispositions":["PUBLIC_DOMAIN","CC0","CC_BY","EXPLICIT_PERMISSION"],"rights_review_required_action":"QUARANTINE_ONLY; no labeling, model development, or retained derived crops until resolved"}
+}

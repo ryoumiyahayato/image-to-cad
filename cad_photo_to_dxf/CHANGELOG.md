@@ -1,4 +1,17 @@
-# Changelog
+# Image to CAD — Changelog
+
+## 当前开发预览
+
+当前版本由 `app/version.py` 定义，`python main.py --version` 显示。
+
+- 正式采用 Image to CAD 产品名；内部 Python package 保持不变。
+- 开发版本使用 0.x 和 `-dev` 后缀，Windows numeric version 从同一来源转换。
+- 恢复当前 exporter 的扫描底图 + LINE + TEXT + IMAGE 回归覆盖。
+- 删除四个已退役的 V1 CLI 参数，并更新构建/验证脚本。
+- 静态 Junction 数据目录改为 `geometry_rules`，JSON 数据未改。
+- 修正旧 preservation baseline 的历史来源表述，保留真正 PRE 独立验证摘要。
+
+以下版本号为历史记录，不是当前产品版本。
 
 ## 1.3.0（内部预览）
 

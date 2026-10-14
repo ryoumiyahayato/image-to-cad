@@ -1,0 +1,22 @@
+{
+  "status": "CANDIDATE_NOT_TARGET_VALIDATED",
+  "source_repository": "google/fonts",
+  "source_commit": "a85815a42757630ce188fdad368c2dfc444d4773",
+  "source_url": "https://raw.githubusercontent.com/google/fonts/a85815a42757630ce188fdad368c2dfc444d4773/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+  "license_url": "https://raw.githubusercontent.com/google/fonts/a85815a42757630ce188fdad368c2dfc444d4773/ofl/notosanssc/OFL.txt",
+  "filename": "NotoSansSC[wght].ttf",
+  "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+  "license": "SIL Open Font License 1.1",
+  "license_sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+  "required_characters": "电施图纸目录项目编号ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-.®，。；：！？（）【】《》、",
+  "comparison_texts": ["电施", "图纸目录", "项目编号", "Project Name", "Design Institute", "1", "7", "01", "2024.8.15", "®"],
+  "static_derivative": {
+    "license_review": "OFL-DERIVATION-REVIEW.md",
+    "filename": "ITCCADSC-Regular.ttf",
+    "family": "ITC CAD SC",
+    "style": "Regular",
+    "postscript_name": "ITCCADSC-Regular",
+    "axes": {"wght": 400},
+    "production_bundling": "NOT_APPROVED_PENDING_CAD_VALIDATION"
+  }
+}

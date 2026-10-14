@@ -1,0 +1,209 @@
+IMAGE TO CAD — PRODUCT FIX P1 REPORT
+Date: 2026-10-05 (Asia/Taipei)
+Product: Image to CAD 0.3.0-dev
+Base: c73edd46a40d380e6bd6511ed5ab3d50ba77504b
+Worktree: C:/Users/agcrf/Desktop/image-to-cad/instrumented-e03
+
+HOLLOW_GLYPH_ROOT_CAUSE: MIXED
+REAL_CAD_DISPLAY_TESTED: YES — installed LibreCAD 2.2.1.5 native dxf2pdf engine.
+
+A. Real output diagnosis
+
+Samples: unchanged UAT W02 source ROI [1635,685,1748,808] (M/SL engineering symbols),
+and W01 ROI [1090,385,1780,580] (crowded bilingual header cells). No hand-drawn substitutes.
+Full per-entity records are in W02-entity-diagnosis.json and W01-entity-diagnosis.json.
+These include type/layer/string/style/font/height/width/rotation/insertion/alignment,
+actual geometry bbox, source candidate/trace bbox, source dimensions, and contour
+closed flags/point counts. Units are explicitly separated between DXF mm and source px.
+
+1. FONT_STYLE_SCALE: the actual native TEXT refers to wqy-unicode / wqy-unicode.lff.
+The installed LibreCAD font is byte-identical to the product font. Its M, S, L and 2
+glyphs each have one CLOSED contour (29,111,7,69 vertices respectively), rather than
+single-stroke centerlines. LibreCAD strokes those contours. Hollow typography is
+therefore reproducible with the real referenced font, not an OCR recognition failure
+or an observer-only invented boundary.
+
+2. Candidate-box fitting contributes to apparent enlargement. W01 TEXT 814 occupies
+[1107,400,145,45], while dark source ink inside that candidate spans 133x32 px.
+TEXT 816 ('Project Name') occupies 112x35 px versus source ink 97x23 px.
+Their actual visible glyph boxes overlap vertically over y=442..445. The exported
+LFF bounds exactly fit those candidate boxes; there is no unexplained extra exporter
+scale in these samples. Candidate padding and box-to-visible-glyph fitting enlarge
+letters, and narrow width factors (e.g. 816 = 0.407942) squeeze the English labels.
+This explains the sampled crowding; it is not a claim about every reported overflow.
+
+3. DXF entity / semantic representation: W02 9FD/9FE are native TEXT 'M2', not an
+intact M-in-box plus independent adjacent 2. A00 is TEXT 'SL', without its original
+circular enclosure. Text boxes are 40x26, 37x24 and 24x22 px. The object grouping and
+loss of enclosure exist in the actual DXF; font replacement alone would not restore
+these relationships. Recognition/ownership/symbol policy was not changed this round.
+
+4. CONTOUR_REPRESENTATION: W02 413 is a closed 50-point LWPOLYLINE (source bbox
+[1513,686,1715,755]); 414 is a closed 14-point enclosure remnant; 40B is a closed
+21-point contour of the lower symbol/connector. These are actual zero-width,
+unfilled boundary loops on TRACE_TEXT_SYMBOL. Source ink has been represented by
+its boundary, so the thin bus and connectors really do have two sides in DXF.
+Each contour record matches an original cached FinalStructure path index.
+
+5. OBSERVER_RENDERING: the UAT observer normalizes display strokes and uses Qt to
+stroke the same LFF paths. It makes the symptom easy to see, but LibreCAD reproduces
+both the hollow TEXT and boundary contours. No independent observer bug was found
+or changed. AutoCAD and FreeCAD display were not tested.
+
+CAD method: read original DXFs, extract relevant entities to separate diagnostic DXFs,
+keep TEXT/style/geometry unchanged, run installed LibreCAD dxf2pdf, inspect the result.
+Original hairline output was very faint on white PDF. A separate diagnostic plot copy
+sets only color=black and lineweight=0.25 mm to make native geometry visible; this is
+explicitly a plotting aid, not an output repair. No software or font was installed.
+CLI reference: https://docs.librecad.org/en/2.2.0_a/guides/console-tool.html
+Native render evidence: local-artifacts/product-fix-p1/W02-librecad-visible.png and
+W01-librecad-visible.png. Original UAT assets and output.dxf files remain untouched.
+
+B. W01 root cause and bounded correction
+
+W01_DUPLICATE_ROOT_CAUSE: MULTI_DETECTOR_DUPLICATE
+Original final index/handle/source identity:
+23 / AA  / HOUGH-000029: (473,1023) -> (659,1023)
+463/ 262 / LSD-001063: (474.374969,1022.854919) -> (658.125,1022.862854)
+469/ 268 / LSD-001069: (474.374969,1025.895142) -> (658.125,1025.887085)
+
+The raw-detector-before-consolidation ledger already contains all three proposals.
+The two LSD tracks follow opposite outer edges of the same thin stroke, and Hough
+adds a third observation. They have estimated width 1.90999997 px and no thick-stroke
+recentering history. At x=500 the original gray pixels are y1023=255, y1024=65,
+y1025=189, y1026=255. Thus every original trajectory's direct strong-source support
+is EMPTY (0 px), although its raster ownership footprint touches the printed rule.
+
+All three pass ownership as MAIN_ACCEPTED; this is the first point where three
+proposals become three accepted native LINE candidates. Reconciliation does not
+create another copy. It retains already accepted inputs when source relation is
+unresolved, with terminal reason 'Accepted input retained because source relation
+is unresolved', then emits UNCHANGED_ALREADY_ACCEPTED_SUBSEGMENT for each. Each
+independent member reaches FinalStructure and is exported one-to-one to DXF.
+There is no raster/vector roundtrip or exporter-only duplication.
+Evidence: origin-observed.json, origin-transformations.json, representations.json,
+evidence.json, pieces.json and supersession_ledger.json (selected original records).
+
+The original endpoint-decision replay gives two different guards:
+right 1px gap: unresolved_structural_gap (below line width + one pixel);
+left 3px gap: non_structural_component_merge (off-ink detector trajectories).
+Details: W01-original-connection-decisions-replay.json. The old bridge guards remain
+unchanged. New source-normalized junctions no longer need to infer a bridge through
+blank detector coordinates.
+
+Only straight_line_reconstruction.py changes in product code. Before the existing
+connectivity/ownership/reconciliation stages, clean digital table proposals may bind
+to the already available verified source rule masks. The correction requires:
+- a connected multi-cell table network, not an isolated two-by-two enclosure;
+- a complete rectangular source rule intersecting perpendicular source rules;
+- exactly ONE rule identity throughout every axial station of the existing production
+  claim footprint, with no unexplained source pixels or protected parent claim;
+- overlapping observations of that same rule (disjoint intervals are not merged);
+- short OUTWARD endpoint movement only to an actual perpendicular source-rule
+  intersection with an eligible peer, within the pre-existing physical 0.4 mm budget;
+- a protection-clear resulting claim, followed by normal ownership and reconciliation.
+
+Separate parallel source bands have separate identities (or ambiguous multi-band
+claims, which are rejected). Source gaps cannot become full rectangular rules.
+Singletons, isolated frames/symbol boxes, scans, protected and ambiguous candidates
+remain on the existing path. No new distance/angle merge threshold, global snap,
+exporter dedup, or reconciliation validator exemption was introduced.
+Every many-to-one change retains source IDs and is recorded with the existing ledger
+observe_consolidation API; FinalStructure still consumes the normal committed set.
+
+The verified W01 source rule bbox is (327,1024,1660,2); the two source vertical rule
+bboxes are (471,770,2,1693) and (660,860,2,1603). The cell-level retained source extent
+is (471,1024)->(660,1024), on original ink throughout, including both junctions.
+
+Final acceptance results are recorded after the final production rerun below.
+
+Availability check: LibreCAD executable was found at C:/Users/agcrf/Desktop/LibreCAD/LibreCAD.exe.
+ODAFileConverter 27.1.0 also exists under Program Files/ODA; an ODA Viewer registry
+entry exists. No FreeCAD executable was found in the checked PATH/install locations.
+LibreCAD supplied the actual CAD renderer used here; ODA/FreeCAD were not needed.
+
+W01_DUPLICATE_FIXED: YES — the specified AA/262/268 family has one final LINE.
+W01_SOURCE_SUPPORTED_GAPS_FIXED: YES — both explicitly verified cell junctions.
+W01_RESULT: 3 near-coincident LINEs -> 1 source-bound LINE;
+            left/right gaps 3px/1px -> 0px/0px;
+            cell source extent -> (471,1024)-(660,1024).
+The horizontal endpoints and the two vertical endpoints are bit-for-bit equal in
+actual DXF coordinates. This is native CAD geometry, not preview thickening.
+This status applies to the proven failure family and specified nodes, not a claim
+that every remaining near-T candidate on the page has been semantically adjudicated.
+
+Final W01 full-page output: 358 LINE, 913 LWPOLYLINE, 89 TEXT.
+Baseline: 901 LINE, 1015 LWPOLYLINE, 89 TEXT. Counts alone are not acceptance evidence;
+the native geometry checks in W01-actual-output-verification.json are authoritative.
+W01 native TEXT string/style/height/width/rotation/placement stays unchanged.
+The wordmark enclosure observations LSD-000988 and LSD-000992 remain separate and
+unchanged in the final output; the real fixture also has a dedicated protection test.
+DXF_AUDIT: PASS — W01 errors=0, fixes=0.
+EDIT_SAVE_REOPEN: PASS — independent native LINE and TEXT edits persisted through
+an ezdxf save/reopen, reopen errors=0/fixes=0. This is not a claim of GUI editing UAT.
+
+CURRENT_TEST_SUITE: focused 221 passed; full current suite 535 passed, 1 warning.
+Focused includes reconstruction, reconciliation, gap-extent, connectivity, structural
+ROI, whole-page topology, ownership veto, junction consumer, and R4 safety tests.
+Added real product regressions: W01 triplicate/shared-node FinalStructure->DXF->reopen;
+W03 real parallel rails + door opening + XY pattern; W01 independent wordmark box;
+and protected-source / missing-source veto cases (5 collected cases total).
+The real PDF fixture is loaded unchanged at production DPI. Negative veto cases alter
+only in-memory copies. No UAT input asset was edited.
+
+Additional mechanism detail: reconstruction's source-support filter uses a dilated
+ink corridor, so these off-ink detector edges pass eligibility. The later ledger's
+actual-trajectory gray/binary binding is deliberately stricter and reports UNKNOWN.
+The correction resolves that representation mismatch before ownership. The ledger's
+fail-closed relation and ownership veto policies were not loosened.
+
+The final W01 three-LINE junction sample was also opened by the LibreCAD native
+DXF-to-PDF engine; its only diagnostic changes were plotting color/lineweight.
+Final artifacts are under local-artifacts/product-fix-p1/verified/; original UAT
+outputs remain under ../product-uat-20261005/.
+
+W03_PARALLEL_WALL_PROTECTED: YES
+DOOR_OPENINGS_PROTECTED: YES
+PATTERNED_LINES_PROTECTED: YES
+The final complete W03 production run regenerated FinalStructure and DXF (842 LINE,
+5202 LWPOLYLINE, 204 TEXT). All 25 selected actual source-observation geometries are
+unchanged, including distinct parallel rails and the wall ends beside the door.
+No LINE crosses the real door opening. Native TEXT attributes are also unchanged.
+
+Whole touching contour entity vertex lists are not identical: contour chunk boundaries
+shift when the page's committed grid lines change. Therefore protection is evaluated
+by the union of actual visible LINE/LWPOLYLINE geometry clipped to each source ROI,
+not by entity count or chunk identity. Door [2150,990,2280,1270], XY pattern
+[2147,1120,2178,1390], and parallel rails [1380,370,1580,390] all have geometric
+symmetric-difference length 0 px. DXF mm is inverted to source coordinates with
+7-decimal normalization for floating-point conversion; W01 shared nodes were checked
+separately with exact unrounded DXF coordinate equality. Source / before-DXF /
+after-DXF crops were also visually reviewed. This protects existing defects rather
+than claiming these W03 objects are now otherwise fully correct.
+Evidence: W03-actual-protection-verification.json, W03-clipped-native-geometry.json,
+W03-source-protection-evidence.json; comparison PNGs under the verified directory.
+W03 DXF audit and native LINE/TEXT edit/save/reopen: PASS, zero errors/fixes.
+
+NEW_PRODUCT_REGRESSION: NONE observed in the checked scopes.
+PRODUCT_READINESS: NEEDS_MAJOR_PRODUCT_FIX (unchanged; this is one bounded product fix).
+ARCHITECTURE_REOPEN_REQUIRED: NO
+COMMITS: one commit, 'fix: deduplicate source-supported table strokes and junctions'.
+WORKTREE: CLEAN after committing the scoped code, tests and evidence (Git state is
+reported in the final response). Generated heavy outputs remain in ignored local-artifacts.
+NEXT_RECOMMENDED_FAILURE_FAMILY: TEXT_SYMBOL_REPRESENTATION
+
+Execution / evidence locations:
+- Product code: cad_photo_to_dxf/app/geometry/straight_line_reconstruction.py
+- New regression: cad_photo_to_dxf/tests/test_product_p1_grid_regression.py
+- Baseline inputs/outputs: ../product-uat-20261005/W01, W02, W03 (unchanged)
+- Final production driver: local-artifacts/product-fix-p1/run_verified.py
+- Final complete output: local-artifacts/product-fix-p1/verified/W01 and W03
+- Actual output verifier: local-artifacts/product-fix-p1/verify_actual.py
+- Runtime logs: local-artifacts/product-fix-p1/verified/production.log
+- Test results: focused-tests.txt and full-tests.txt alongside this report
+- W01 comparison: local-artifacts/product-fix-p1/verified/W01-before-after.png
+
+The outer original checkout had a corrupt Git index on initial inspection. It was
+not repaired or used for commits; the existing UAT production worktree above was
+clean at start and is the only worktree changed by this task.
+STOP.

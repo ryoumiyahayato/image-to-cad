@@ -1,0 +1,58 @@
+{
+  "blind_sources_opened": 0,
+  "cache_bytes": 83737206,
+  "cache_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p3b-cache",
+  "dependencies": {
+    "Pillow": "12.3.0",
+    "PySide6": "6.11.2",
+    "ezdxf": "1.4.4",
+    "numpy": "2.4.6",
+    "opencv-python": "4.14.0.94",
+    "pypdfium2": "5.13.0",
+    "scipy": "1.17.1"
+  },
+  "exact_patch_split_overlap": 0,
+  "production_files_changed": [],
+  "production_files_hashed": 157,
+  "production_snapshot_digest": "faf1688d0acfaf6098736dbbbf600d0180fc0ac2d68f607273614493ac598c1c",
+  "real_by_kind": {
+    "graphic_control": 6,
+    "paired_edges": 239,
+    "retained_source_roi": 3,
+    "single_rule_control": 225,
+    "text_control": 32,
+    "untyped_ink_control": 264
+  },
+  "real_deterministic_decisions": {
+    "NOT_CAPTURED": 755,
+    "PRESERVE_CAPTURED_W03": 14
+  },
+  "real_label_count": 0,
+  "real_manifest_sha256": "a33a88cdeff760fcb5a360997e723cdf708d5500fb52ce829e9068cf3cf79678",
+  "real_samples": 769,
+  "retained_doc_bytes": 3667494,
+  "source_drawing_count_extracted": 13,
+  "source_family_split_overlap": 0,
+  "synthetic_by_class": {
+    "OTHER": 70,
+    "SINGLE_PHYSICAL_STROKE": 54,
+    "TRUE_PARALLEL_STRUCTURE": 72
+  },
+  "synthetic_manifest_sha256": "c56b334c48c766a585fc04bffbf08e9b366f72ade88b02950670103a711438c1",
+  "synthetic_samples": 196,
+  "tooling_hashes": {
+    "active_learning.py": "a262e8c6936b2b899d049c7209b573b086ab0fc9369224879b4922e8c039a1db",
+    "benchmark.py": "0b8ae834b4d60db0a9b373e4c49af12c9fcd297091f14b73357a965cf4b39eac",
+    "classical.py": "95d9267ae66bd977b8dce5b4c1630c901abef55ca84a4eb0b69e8a147dd7fa0e",
+    "common.py": "eb9a67b9f6b9cdbb39652dd0f1794b175a1e33bfb08b33d03a3eca9a5f2f32ce",
+    "extract.py": "2a68e544682b3452442b63db6a921eb08ce8745bdf5d643681b998c05afb3cd3",
+    "features.py": "432c1111c62eecf11113b5e2c72c59490ec813d801f04b35a965bae316d1f11f",
+    "finalize.py": "c0495fe125d2119f310678641f270e6e98b17f3e4d9eaec77b2753ca970a4541",
+    "inventory.py": "a708b5b422495dc51f49c8a75842861db5a6d1602eb67432ca91d77970b058ce",
+    "label_ui.py": "3b5f47b91705654c9f2cfeae986870abababb136fc15527f2dd08acce1bbd447",
+    "p3a_baseline.py": "9bf209fd9a3a29d6b5b305895be5cf649e72224c04f30c6fbd401e3a1901eb3c",
+    "synthetic.py": "44d0cda22c315fdba0a6f7a756fd16d70b0d0672f53eb9089ed47744b2c3b699",
+    "test_preparation.py": "1d1ce455b23f4f9599cb775d8bc0b04696685a24bc793ce139e8d81b606cb192",
+    "train_small.py": "bec30aaa2cc7b4a03f41d7b36237f8e5a1c5cef1116be9922ccb46ac8ddd1c8c"
+  }
+}

@@ -3,13 +3,10 @@ from __future__ import annotations
 import ezdxf
 from PySide6.QtWidgets import QApplication
 
-from app.auxiliary_recognition import TextCandidate
-from app.gui_librecad_release import LibreCadOcrReviewDialog
-from app.librecad_lff import (
-    LIBRECAD_FONT_FAMILY,
-    LIBRECAD_FONT_FILENAME,
-)
-from app.ocr_outline_export import add_ocr_outline_blocks
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.gui.review_actions import LibreCadOcrReviewDialog
+from app.ocr.librecad_lff import LIBRECAD_FONT_FAMILY, LIBRECAD_FONT_FILENAME
+from app.export.ocr_outline_export import add_ocr_outline_blocks
 
 
 def _application() -> QApplication:

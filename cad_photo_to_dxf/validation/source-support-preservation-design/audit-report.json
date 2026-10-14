@@ -1,0 +1,169 @@
+{
+  "schema_version": "source-support-preservation-design-report-v1",
+  "status": "COMPLETE",
+  "source_group_id": "A2-SG-009",
+  "production_semantic_delta": "NONE",
+  "first_systematic_divergence": {
+    "stage": "SCAN_ARTIFACT_CONTOUR_SUPPRESSION_INSIDE_FALLBACK",
+    "production_replay_exact": true,
+    "removed_event_count": 441,
+    "mechanism": "Fallback runs in every region. Upper-page fallback contour roots enter the scanned-page damage classifier and its proximity-growth cluster; lower-page roots overwhelmingly survive the same branch.",
+    "root_reason_census": {
+      "DIRECT_DAMAGE_ROOT": 7,
+      "DAMAGE_CLUSTER_PROPAGATION": 430,
+      "LONG_SPARSE_FLIGHT": 2
+    }
+  },
+  "region_fallback_census": [
+    {
+      "region_id": "REGION_A",
+      "fallback_eligible_px": 68581,
+      "fallback_rescued_px": 10905,
+      "fallback_retention": 0.159009,
+      "fallback_executed_roots": 1232,
+      "fallback_rejected_roots": 156,
+      "fallback_skipped": 0,
+      "direct_damage_roots": 2,
+      "damage_cluster_propagation_roots": 154,
+      "root_classifier_removed_px": 48439,
+      "nearby_damage_fragment_removed_px": 9237
+    },
+    {
+      "region_id": "REGION_B",
+      "fallback_eligible_px": 84673,
+      "fallback_rescued_px": 5435,
+      "fallback_retention": 0.064188,
+      "fallback_executed_roots": 1324,
+      "fallback_rejected_roots": 277,
+      "fallback_skipped": 0,
+      "direct_damage_roots": 5,
+      "damage_cluster_propagation_roots": 272,
+      "root_classifier_removed_px": 67743,
+      "nearby_damage_fragment_removed_px": 11495
+    },
+    {
+      "region_id": "REGION_C",
+      "fallback_eligible_px": 57950,
+      "fallback_rescued_px": 56463,
+      "fallback_retention": 0.97434,
+      "fallback_executed_roots": 1539,
+      "fallback_rejected_roots": 2,
+      "fallback_skipped": 0,
+      "long_sparse_flight_roots": 2
+    },
+    {
+      "region_id": "REGION_D",
+      "fallback_eligible_px": 111329,
+      "fallback_rescued_px": 111329,
+      "fallback_retention": 1.0,
+      "fallback_executed_roots": 2032,
+      "fallback_rejected_roots": 0,
+      "fallback_skipped": 0
+    }
+  ],
+  "same_type_lineage_comparison": {
+    "failure": {
+      "case_id": "D2-002",
+      "source_support_id": "SSP-UPPER-OWNERSHIP-FAIL",
+      "source": "PRESENT",
+      "binary": "PRESENT",
+      "raw": "PRESENT",
+      "candidate": "PRESENT",
+      "filter": "SUPPRESSED",
+      "ownership": "REROUTED_TO_GRAPHIC_FALLBACK",
+      "fallback": "REJECTED",
+      "geometry": "ABSENT",
+      "final_structure": "ABSENT",
+      "terminal_reason": "FALLBACK_REJECTED_SCAN_ARTIFACT_SUPPRESSION"
+    },
+    "success": {
+      "case_id": "D2-003",
+      "source_support_id": "SSP-LOWER-FALLBACK-SUCCESS",
+      "source": "PRESENT",
+      "binary": "PRESENT",
+      "raw": "PRESENT",
+      "candidate": "PRESENT",
+      "filter": "FRAGMENTED",
+      "ownership": "REROUTED_TO_GRAPHIC_FALLBACK",
+      "fallback": "RESCUED",
+      "geometry": "FRAGMENTED",
+      "final_structure": "PRESERVED",
+      "terminal_reason": "PRESERVED_BY_CONTOUR_FALLBACK"
+    }
+  },
+  "ownership_verdict": {
+    "mutually_exclusive": true,
+    "pixel_support_conserved_at_partition": true,
+    "semantic_lineage_conserved_after_candidate_suppression": false,
+    "source_support_lifetime_coupled_to_candidate": "YES_FOR_SEMANTIC_LINEAGE",
+    "finding": "Suppressed LINE pixels can remain in the anonymous graphic fallback, but their source-support and candidate identity no longer accompanies the contour into artifact suppression or FinalStructure."
+  },
+  "source_support_preservation_architecture": [
+    "NEEDS_SHARED_EVIDENCE_LAYER",
+    "NEEDS_FALLBACK_COVERAGE_REDESIGN",
+    "NEEDS_OWNERSHIP_MODEL_REDESIGN",
+    "NEEDS_REPRESENTATION_LIFECYCLE_REDESIGN"
+  ],
+  "primary_architectural_defect": "Fallback artifact suppression receives anonymous contour roots after semantic candidate identity and source-support provenance have been discarded, so damage-cluster propagation cannot protect known drawing structure.",
+  "secondary_architectural_defect": "Exclusive pixel ownership can downgrade an entire LINE candidate on partial conflict; the recovery contour has no shared evidence identity linking it back to that line.",
+  "not_supported_hypotheses": [
+    "Upper fallback was skipped or globally ineligible",
+    "Geometry, promotion, or FinalStructure assembly caused broad loss",
+    "Page position is itself a production routing rule",
+    "Global preprocessing destruction within the conservative D3 baseline"
+  ],
+  "proposed_contract": {
+    "name": "SourceSupportLifecycle",
+    "semantic_authority": "NONE",
+    "invariant": "Every qualified source support has an explicit terminal fate. Semantic rejection cannot erase provenance, and evidence cannot directly authorize CAD geometry.",
+    "required_terminal_reasons": [
+      "NO_RAW_EVIDENCE",
+      "DETECTION_FRAGMENTED",
+      "CANDIDATE_INELIGIBLE",
+      "OWNERSHIP_SUPPRESSED",
+      "FILTERED",
+      "FALLBACK_NOT_ELIGIBLE",
+      "FALLBACK_REJECTED_SCAN_ARTIFACT_SUPPRESSION",
+      "GEOMETRY_DROPPED",
+      "PROMOTION_REJECTED",
+      "ASSEMBLY_DROPPED",
+      "PRESERVED"
+    ]
+  },
+  "next_production_change_candidate": "Instrument SourceSupportLifecycle IDs and terminal reasons through native LINE, exclusive ownership, graphic fallback, scan-artifact suppression, and FinalStructure without changing acceptance decisions.",
+  "worth_implementing": true,
+  "p1_fixed_control": {
+    "continuous": true,
+    "bridge_used": false,
+    "duplicate_cad_line": false,
+    "new_noise": false
+  },
+  "p0_cjk_renderer": "PASS",
+  "sanity_reruns": [
+    {
+      "source_group_id": "A2-SG-009",
+      "run_id": "20260912T180257Z-A2-SG-009-jpg-33172d9bb3",
+      "final_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+      "entity_count": 5842,
+      "unchanged": true
+    },
+    {
+      "source_group_id": "A2-SG-022",
+      "run_id": "20260912T180958Z-A2-SG-022-pdf-29147fb911",
+      "final_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059",
+      "entity_count": 2194,
+      "unchanged": true
+    },
+    {
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "run_id": "20260912T181345Z-G0R2-3560D9BEBEAA3543-pdf-ff15c53d3d",
+      "final_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890",
+      "entity_count": 2934,
+      "unchanged": true
+    }
+  ],
+  "locked_blind_runtime": "0 / 8",
+  "locked_blind_manual_inspection": "NO",
+  "validation_executed": "NO",
+  "next_action": "IMPLEMENT_SOURCE_SUPPORT_LIFECYCLE_INSTRUMENTATION"
+}

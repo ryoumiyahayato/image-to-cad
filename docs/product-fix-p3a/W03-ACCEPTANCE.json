@@ -1,0 +1,356 @@
+{
+  "source": {
+    "UAT_ID": "W03",
+    "SOURCE_FILE": "warehouse-electrical-vector.pdf",
+    "SOURCE_PAGE": 3,
+    "SOURCE_TYPE": "vector-path PDF rasterized by production loader",
+    "DPI": 110,
+    "PAGE_SIZE_MM": [
+      1099.961111111111,
+      630.061111111111
+    ],
+    "IMAGE_SIZE": [
+      4764,
+      2729
+    ]
+  },
+  "processing_seconds": 866.3026110999999,
+  "structure_id": "b2388ac2c06a20376c17aa92fb638136590c5fd24a6c33f16116b7e78a898c3c",
+  "entities_before": {
+    "LINE": 842,
+    "LWPOLYLINE": 5011,
+    "CIRCLE": 13,
+    "TEXT": 198,
+    "IMAGE": 8
+  },
+  "entities_after": {
+    "LINE": 842,
+    "LWPOLYLINE": 4997,
+    "CIRCLE": 13,
+    "TEXT": 197,
+    "IMAGE": 9
+  },
+  "native_text_outside_graphic_attributes_exactly_unchanged": true,
+  "graphic_owned_native_text_before": [
+    "N"
+  ],
+  "ocr_observations_path": "C:\\Users\\agcrf\\Desktop\\image-to-cad-retained-history\\storage-cleanup-20261006\\project\\instrumented-e03\\local-artifacts\\product-fix-p1\\verified\\W03\\texts.json",
+  "ocr_observations_sha256": "3b3faa1d7759a244fd1f1aa5c7376fa77dc4299bc3a5a0261d1ef2bce5e31b65",
+  "ocr_observations_count": 206,
+  "p2b_eight_asset_hashes_unchanged": true,
+  "straight_line_tuples_exactly_unchanged": true,
+  "before_lines_not_in_after": 0,
+  "lineweight_counts": {
+    "THIN": 468,
+    "UNMEASURED": 23,
+    "MEDIUM": 323,
+    "THICK": 28
+  },
+  "source_width_px_counts": {
+    "1.0": 468,
+    "UNMEASURED": 23,
+    "2.0": 315,
+    "5.0": 15,
+    "4.0": 13,
+    "3.0": 8
+  },
+  "source_supported_fill_count": 0,
+  "graphic_move_scale_save_reopen_delete": "PASS",
+  "false_parallel_decisions": [],
+  "graphics": [
+    {
+      "bbox": [
+        3753,
+        163,
+        123,
+        169
+      ],
+      "closed_complexity": 0,
+      "contour_count": 4,
+      "density": 0.15249915812767595,
+      "evidence_source": "source_geometry_only",
+      "hole_count": 3,
+      "mask_pixels": 3170,
+      "reason": "isolated circular perimeter, broad anisotropic filled core, no structural continuation",
+      "reflection_similarity": 0.0,
+      "structural_score": 1.0,
+      "visual_kind": "engineering_graphic"
+    }
+  ],
+  "assets": [
+    {
+      "file": "drawing.signature-001.png",
+      "class": "SIGNATURE",
+      "sha256": "a33674438d89673f1f9bd4fc1f83ca56b6d1254b02f83760c901103bbb87f449"
+    },
+    {
+      "file": "drawing.signature-002.png",
+      "class": "SIGNATURE",
+      "sha256": "b4322773bf0abe16b5a19e4bf04ac6034c839afea23b2ee4bd8d49eb7098142e"
+    },
+    {
+      "file": "drawing.signature-003.png",
+      "class": "SIGNATURE",
+      "sha256": "603a32cc92d0bf0702e182bca8fe0dcc6098cd4f9d3dbb9a77be53906457c496"
+    },
+    {
+      "file": "drawing.signature-004.png",
+      "class": "SIGNATURE",
+      "sha256": "effe4d3b17e00cbf3f0ba7771c1f8ab400434bc6e5727b308056e384b7997780"
+    },
+    {
+      "file": "drawing.signature-005.png",
+      "class": "SIGNATURE",
+      "sha256": "bd581565e51d97f1ed4b2a76604074376a5c93fe09c152a96e93c2a927e89e05"
+    },
+    {
+      "file": "drawing.signature-006.png",
+      "class": "SIGNATURE",
+      "sha256": "cdb168af0ef29f164de24f95c498c462bb29211b73062af62407a485e615a0af"
+    },
+    {
+      "file": "drawing.signature-007.png",
+      "class": "SIGNATURE",
+      "sha256": "278a76764e58a6c737e8f643434ca4a02addc59b1fbfaf7af61fbf4d7a5e0f99"
+    },
+    {
+      "file": "drawing.logo-001.png",
+      "class": "LOGO",
+      "sha256": "ed318259affa88e9f9abe64554e9743efd1d365b382baed4a2c3dc1caa8d9ac6"
+    },
+    {
+      "file": "drawing.logo-002.png",
+      "class": "GRAPHIC",
+      "sha256": "3f9e2c490a13a747b441baacd8a97a78739623a125de927087a6030c2adb5266"
+    }
+  ],
+  "audit_errors": 0,
+  "preview_final_parity": true,
+  "preview_parity_scope": "exact pixels against actual source-unit DXF; calibrated DXF entity geometry/weights verified equivalent",
+  "calibrated_source_unit_geometry_max_error": 9.094947017729282e-13,
+  "inverse_scale_raster_different_pixels": 66403,
+  "inverse_scale_raster_max_intensity_delta": 179,
+  "evidence": {
+    "full-sheet": {
+      "roi_source_px": [
+        0,
+        0,
+        4764,
+        2729
+      ],
+      "geometry_count_before": {
+        "LINE": 842,
+        "LWPOLYLINE": 3570,
+        "CIRCLE": 13,
+        "TEXT": 198,
+        "IMAGE": 8
+      },
+      "geometry_count_after": {
+        "LINE": 842,
+        "LWPOLYLINE": 3561,
+        "CIRCLE": 13,
+        "TEXT": 197,
+        "IMAGE": 9
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "STRUCTURAL GEOMETRY / mixed sheet",
+      "source_support": "original source rules and normal cross-section records",
+      "entity_type": "native LINE/LWPOLYLINE/TEXT and local IMAGE as applicable",
+      "source_stroke_width": "see intersecting line records; graphic retains source pixels",
+      "cad_lineweight": "bounded 13/25/50/100 for measured native LINE; IMAGE not applicable",
+      "source_stroke_width_px_counts": {
+        "1.0": 468,
+        "UNMEASURED": 23,
+        "2.0": 315,
+        "5.0": 15,
+        "4.0": 13,
+        "3.0": 8
+      },
+      "cad_lineweight_counts": {
+        "25": 468,
+        "UNCHANGED": 23,
+        "50": 323,
+        "100": 28
+      }
+    },
+    "north-arrow": {
+      "roi_source_px": [
+        3741,
+        151,
+        147,
+        193
+      ],
+      "geometry_count_before": {
+        "LWPOLYLINE": 9,
+        "TEXT": 1
+      },
+      "geometry_count_after": {
+        "IMAGE": 1
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "GRAPHIC OBJECT",
+      "source_support": "isolated circular perimeter, broad anisotropic filled core, no structural continuation",
+      "entity_type": "IMAGE",
+      "source_stroke_width": "see intersecting line records; graphic retains source pixels",
+      "cad_lineweight": "bounded 13/25/50/100 for measured native LINE; IMAGE not applicable",
+      "source_stroke_width_px_counts": {},
+      "cad_lineweight_counts": {}
+    },
+    "title-block": {
+      "roi_source_px": [
+        4260,
+        770,
+        370,
+        1840
+      ],
+      "geometry_count_before": {
+        "LINE": 59,
+        "LWPOLYLINE": 39,
+        "TEXT": 71,
+        "IMAGE": 8
+      },
+      "geometry_count_after": {
+        "LINE": 59,
+        "LWPOLYLINE": 39,
+        "TEXT": 71,
+        "IMAGE": 8
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "STRUCTURAL GEOMETRY",
+      "source_support": "original source rules and normal cross-section records",
+      "entity_type": "native LINE/LWPOLYLINE/TEXT and local IMAGE as applicable",
+      "source_stroke_width": "see intersecting line records; graphic retains source pixels",
+      "cad_lineweight": "bounded 13/25/50/100 for measured native LINE; IMAGE not applicable",
+      "source_stroke_width_px_counts": {
+        "UNMEASURED": 8,
+        "5.0": 15,
+        "4.0": 8,
+        "1.0": 16,
+        "2.0": 9,
+        "3.0": 3
+      },
+      "cad_lineweight_counts": {
+        "UNCHANGED": 8,
+        "100": 23,
+        "25": 16,
+        "50": 12
+      }
+    },
+    "thick-rule": {
+      "roi_source_px": [
+        4189,
+        294,
+        160,
+        320
+      ],
+      "geometry_count_before": {
+        "LINE": 5
+      },
+      "geometry_count_after": {
+        "LINE": 5
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "STRUCTURAL GEOMETRY",
+      "source_support": "original source rules and normal cross-section records",
+      "entity_type": "native LINE/LWPOLYLINE/TEXT and local IMAGE as applicable",
+      "source_stroke_width": {
+        "source_width_px": 5.0,
+        "stable_fraction": 1.0,
+        "dark_core_fraction": 0.8,
+        "center_offset_px": 2.0,
+        "samples": 19,
+        "contrast_separated_fraction": 0.0,
+        "source_width_mm": 1.1545454545454545,
+        "source_dpi": 110.0,
+        "category": "THICK",
+        "cad_lineweight": 100,
+        "ownership_class": "STRUCTURAL GEOMETRY",
+        "source_support": "stable normal dark runs; paper-separated runs measured independently"
+      },
+      "cad_lineweight": 100,
+      "source_stroke_width_px_counts": {
+        "5.0": 4,
+        "1.0": 1
+      },
+      "cad_lineweight_counts": {
+        "100": 4,
+        "25": 1
+      }
+    },
+    "thin-table-rule": {
+      "roi_source_px": [
+        4280,
+        2027,
+        320,
+        120
+      ],
+      "geometry_count_before": {
+        "LINE": 1,
+        "LWPOLYLINE": 1,
+        "TEXT": 11
+      },
+      "geometry_count_after": {
+        "LINE": 1,
+        "LWPOLYLINE": 1,
+        "TEXT": 11
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "STRUCTURAL GEOMETRY",
+      "source_support": "original source rules and normal cross-section records",
+      "entity_type": "native LINE/LWPOLYLINE/TEXT and local IMAGE as applicable",
+      "source_stroke_width": {
+        "source_width_px": 1.0,
+        "stable_fraction": 1.0,
+        "dark_core_fraction": 1.0,
+        "center_offset_px": 1.0,
+        "samples": 16,
+        "contrast_separated_fraction": 0.0,
+        "source_width_mm": 0.2309090909090909,
+        "source_dpi": 110.0,
+        "category": "THIN",
+        "cad_lineweight": 25,
+        "ownership_class": "STRUCTURAL GEOMETRY",
+        "source_support": "stable normal dark runs; paper-separated runs measured independently"
+      },
+      "cad_lineweight": 25,
+      "source_stroke_width_px_counts": {
+        "1.0": 1
+      },
+      "cad_lineweight_counts": {
+        "25": 1
+      }
+    },
+    "true-double-wall": {
+      "roi_source_px": [
+        1300,
+        350,
+        340,
+        62
+      ],
+      "geometry_count_before": {
+        "LINE": 10,
+        "LWPOLYLINE": 25,
+        "TEXT": 1
+      },
+      "geometry_count_after": {
+        "LINE": 10,
+        "LWPOLYLINE": 25,
+        "TEXT": 1
+      },
+      "count_scope": "visible emitted entities intersecting the source crop; an extending entity counts once",
+      "ownership_class": "STRUCTURAL GEOMETRY",
+      "source_support": "original source rules and normal cross-section records",
+      "entity_type": "native LINE/LWPOLYLINE/TEXT and local IMAGE as applicable",
+      "source_stroke_width": "see intersecting line records; graphic retains source pixels",
+      "cad_lineweight": "bounded 13/25/50/100 for measured native LINE; IMAGE not applicable",
+      "source_stroke_width_px_counts": {
+        "1.0": 4,
+        "2.0": 6
+      },
+      "cad_lineweight_counts": {
+        "25": 4,
+        "50": 6
+      }
+    }
+  }
+}

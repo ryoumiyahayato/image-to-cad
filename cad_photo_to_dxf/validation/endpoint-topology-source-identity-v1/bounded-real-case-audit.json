@@ -1,0 +1,572 @@
+{
+  "case15_generic_status": "AMBIGUOUS",
+  "case16_generic_status": "AMBIGUOUS",
+  "case_count": 12,
+  "cases": [
+    {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 0.5,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 3,
+          "fragment_a_thickness_px": 4.0,
+          "fragment_b_thickness_px": 3.0,
+          "fragment_thickness_ratio": 1.333333,
+          "gap_length_px": 7,
+          "off_axis_ink_fraction": 0.197802,
+          "parallel_run_fraction": 0.0,
+          "transverse_crossing_columns": 1,
+          "volumetric_components": 1
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 0.5,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 3,
+        "fragment_a_thickness_px": 4.0,
+        "fragment_b_thickness_px": 3.0,
+        "fragment_thickness_ratio": 1.333333,
+        "gap_length_px": 7,
+        "off_axis_ink_fraction": 0.197802,
+        "parallel_run_fraction": 0.0,
+        "transverse_crossing_columns": 1,
+        "volumetric_components": 1
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-6DA3382199DB993085B8",
+        "case": "CASE15",
+        "class": "residual invalid",
+        "collapse_stage": "no case-specific upstream collapse proven",
+        "current_failure": "pair admitted without positive shared source identity",
+        "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+        "primary_failure": "PAIR_IDENTITY_LOSS",
+        "raw_hypotheses_present": "YES: one detector hypothesis per fragment"
+      },
+      "role": "CASE15_ANCHOR"
+    },
+    {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 2,
+          "fragment_a_thickness_px": 8.0,
+          "fragment_b_thickness_px": 8.0,
+          "fragment_thickness_ratio": 1.0,
+          "gap_length_px": 5,
+          "off_axis_ink_fraction": 0.217949,
+          "parallel_run_fraction": 0.0,
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 1
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 2,
+        "fragment_a_thickness_px": 8.0,
+        "fragment_b_thickness_px": 8.0,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 5,
+        "off_axis_ink_fraction": 0.217949,
+        "parallel_run_fraction": 0.0,
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 1
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+        "case": "CASE16",
+        "class": "residual invalid",
+        "collapse_stage": "2-pixel normalization grouping followed by 8-pixel candidate dedup loses competing-candidate membership from the survivor",
+        "current_failure": "lossy upstream hypothesis representation plus pair admission without positive shared source identity",
+        "evidence_source": "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/candidate-set-runtime.json",
+        "primary_failure": "BOTH",
+        "raw_hypotheses_present": "YES: fragment A has 792/793/794-axis raw alternatives; fragment B has a 794-axis hypothesis"
+      },
+      "role": "CASE16_ANCHOR"
+    },
+    {
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 3,
+          "fragment_a_thickness_px": 1.0,
+          "fragment_b_thickness_px": 1.0,
+          "fragment_thickness_ratio": 1.0,
+          "gap_length_px": 40,
+          "off_axis_ink_fraction": 0.033721,
+          "parallel_run_fraction": 1.0,
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 1
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 3,
+        "fragment_a_thickness_px": 1.0,
+        "fragment_b_thickness_px": 1.0,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 40,
+        "off_axis_ink_fraction": 0.033721,
+        "parallel_run_fraction": 1.0,
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 1
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "SUPPORTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-AB2943863A535D1044B9",
+        "case": "VALID_PAIR_CONTROL_1",
+        "class": "continuous source stroke control",
+        "collapse_stage": "none established",
+        "current_failure": "NONE; human-confirmed continuous control",
+        "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+        "primary_failure": "OTHER",
+        "raw_hypotheses_present": "YES: fragment detector IDs retained"
+      },
+      "role": "KNOWN_VALID_CONTINUATION_PAIR"
+    },
+    {
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 3,
+          "fragment_a_thickness_px": 2.0,
+          "fragment_b_thickness_px": 2.0,
+          "fragment_thickness_ratio": 1.0,
+          "gap_length_px": 30,
+          "off_axis_ink_fraction": 0.21292,
+          "parallel_run_fraction": 0.645161,
+          "transverse_crossing_columns": 8,
+          "volumetric_components": 0
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 3,
+        "fragment_a_thickness_px": 2.0,
+        "fragment_b_thickness_px": 2.0,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 30,
+        "off_axis_ink_fraction": 0.21292,
+        "parallel_run_fraction": 0.645161,
+        "transverse_crossing_columns": 8,
+        "volumetric_components": 0
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "SUPPORTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+        "case": "VALID_PAIR_CONTROL_2",
+        "class": "continuous source stroke control",
+        "collapse_stage": "none established",
+        "current_failure": "NONE; human-confirmed continuous control",
+        "evidence_source": "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+        "primary_failure": "OTHER",
+        "raw_hypotheses_present": "YES: fragment detector IDs retained"
+      },
+      "role": "KNOWN_VALID_CONTINUATION_PAIR"
+    },
+    {
+      "candidate_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 2,
+          "fragment_a_thickness_px": 2.0,
+          "fragment_b_thickness_px": 3.0,
+          "fragment_thickness_ratio": 1.5,
+          "gap_length_px": 33,
+          "off_axis_ink_fraction": 0.045349,
+          "parallel_run_fraction": 1.0,
+          "transverse_crossing_columns": 2,
+          "volumetric_components": 0
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 2,
+        "fragment_a_thickness_px": 2.0,
+        "fragment_b_thickness_px": 3.0,
+        "fragment_thickness_ratio": 1.5,
+        "gap_length_px": 33,
+        "off_axis_ink_fraction": 0.045349,
+        "parallel_run_fraction": 1.0,
+        "transverse_crossing_columns": 2,
+        "volumetric_components": 0
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "SUPPORTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": null,
+      "role": "KNOWN_VALID_CONTINUATION_PAIR"
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 1.0,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 4,
+          "fragment_a_thickness_px": 3.0,
+          "fragment_b_thickness_px": 5.0,
+          "fragment_thickness_ratio": 1.666667,
+          "gap_length_px": 5,
+          "off_axis_ink_fraction": 0.262821,
+          "parallel_run_fraction": 0.0,
+          "transverse_crossing_columns": 2,
+          "volumetric_components": 1
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "coherence_reason": "EXCESSIVE_LOCAL_DIRECTION_CHANGE",
+        "coherence_status": "PRIMITIVE_COHERENCE_UNCERTAIN",
+        "diagnostic_available": true,
+        "junction_or_crossing_fraction_max": 0.55814,
+        "local_continuity_fraction_min": 0.904762,
+        "local_tangent_delta_p95_degrees_max": 38.361461,
+        "status": "MEASURED"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 1.0,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 4,
+        "fragment_a_thickness_px": 3.0,
+        "fragment_b_thickness_px": 5.0,
+        "fragment_thickness_ratio": 1.666667,
+        "gap_length_px": 5,
+        "off_axis_ink_fraction": 0.262821,
+        "parallel_run_fraction": 0.0,
+        "transverse_crossing_columns": 2,
+        "volumetric_components": 1
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+        "case": "PRIOR_HOLLOW_CENTERLINE",
+        "class": "hollow/parallel-edge centerline collapse",
+        "collapse_stage": "broad corridor support conflates two flanks with one axis",
+        "current_failure": "Explicit hollow/structural interruptions remain accepted because dense collinear ink masks primitive identity; axis cadence is observed but still classed supported. Collinearity does not establish one primitive.",
+        "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+        "primary_failure": "BOTH",
+        "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+      },
+      "role": "KNOWN_REJECTED_PAIR_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-B7300C5B8E706C736EB1",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 0.311111,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 1,
+          "fragment_a_thickness_px": 1.0,
+          "fragment_b_thickness_px": 1.0,
+          "fragment_thickness_ratio": 1.0,
+          "gap_length_px": 44,
+          "off_axis_ink_fraction": 0.01376,
+          "parallel_run_fraction": 0.177778,
+          "transverse_crossing_columns": 0,
+          "volumetric_components": 0
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 0.311111,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 1,
+        "fragment_a_thickness_px": 1.0,
+        "fragment_b_thickness_px": 1.0,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 44,
+        "off_axis_ink_fraction": 0.01376,
+        "parallel_run_fraction": 0.177778,
+        "transverse_crossing_columns": 0,
+        "volumetric_components": 0
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": null,
+      "role": "KNOWN_REJECTED_PAIR_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": {
+        "evidence": {
+          "axis_delta_px": 0.0,
+          "centerline_support_fraction": 0.333333,
+          "enclosed_contours": 0,
+          "endpoint_boundary_sides": 4,
+          "fragment_a_thickness_px": 3.0,
+          "fragment_b_thickness_px": 3.0,
+          "fragment_thickness_ratio": 1.0,
+          "gap_length_px": 5,
+          "off_axis_ink_fraction": 0.288462,
+          "parallel_run_fraction": 0.0,
+          "transverse_crossing_columns": 2,
+          "volumetric_components": 2
+        },
+        "geometry_mutated": false,
+        "reason": "CLEAR_DIRECT_TRAJECTORY",
+        "semantic_or_model_evidence_used": false,
+        "status": "DIRECT_CONTINUATION_ADMISSIBLE"
+      },
+      "existing_endpoint_or_tangent_evidence": {
+        "diagnostic_available": false,
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS"
+      },
+      "existing_scalar_evidence": {
+        "axis_delta_px": 0.0,
+        "centerline_support_fraction": 0.333333,
+        "enclosed_contours": 0,
+        "endpoint_boundary_sides": 4,
+        "fragment_a_thickness_px": 3.0,
+        "fragment_b_thickness_px": 3.0,
+        "fragment_thickness_ratio": 1.0,
+        "gap_length_px": 5,
+        "off_axis_ink_fraction": 0.288462,
+        "parallel_run_fraction": 0.0,
+        "transverse_crossing_columns": 2,
+        "volumetric_components": 2
+      },
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": null,
+      "role": "KNOWN_REJECTED_PAIR_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": null,
+      "existing_endpoint_or_tangent_evidence": {
+        "max_internal_gap_before_tail_fraction": 0.051724,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.571906,
+        "max_tail_width_ratio": 2.0,
+        "reason": "ENDPOINT_IDENTITY_CHANGE",
+        "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+      },
+      "existing_scalar_evidence": null,
+      "expected_pair_validity_from_preserved_human_evidence": "SUPPORTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-4497ADEE7DB5D798A893",
+        "case": "SINGLE_STROKE_CONTROL_1",
+        "class": "valid single straight primitive",
+        "collapse_stage": "none established",
+        "current_failure": "NONE",
+        "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+        "primary_failure": "OTHER",
+        "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+      },
+      "role": "CROSSING_VALID_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-316D125FE4861584BE02",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": null,
+      "existing_endpoint_or_tangent_evidence": {
+        "max_internal_gap_before_tail_fraction": 0.041667,
+        "max_tail_junction_fraction": 0.958333,
+        "max_tail_offset_change_widths": 0.166667,
+        "max_tail_width_ratio": 9.666667,
+        "reason": "ENDPOINT_IDENTITY_CHANGE",
+        "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+      },
+      "existing_scalar_evidence": null,
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-316D125FE4861584BE02",
+        "case": "PRIOR_PIECEWISE_OFFSET",
+        "class": "piecewise-offset collapse",
+        "collapse_stage": "approximately collinear fitted corridor remains accepted",
+        "current_failure": "Span and axis accept the claimed line and frozen admissibility remains positive; coherence and endpoint diagnostics expose strong direction/identity instability but do not produce a safe generic rejection.",
+        "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+        "primary_failure": "UPSTREAM_MULTIPLICITY_LOSS",
+        "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+      },
+      "role": "MULTIPLICITY_OR_BOUNDARY_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-83DFE0F6BE9016CC7844",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": null,
+      "existing_endpoint_or_tangent_evidence": {
+        "max_internal_gap_before_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 0.958333,
+        "max_tail_offset_change_widths": 2.0,
+        "max_tail_width_ratio": 6.0,
+        "reason": "FOREIGN_STROKE_CAPTURE",
+        "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+      },
+      "existing_scalar_evidence": null,
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-83DFE0F6BE9016CC7844",
+        "case": "PRIOR_SOURCE_BOUNDARY_SWITCH",
+        "class": "source-boundary switch",
+        "collapse_stage": "span/axis/coherence evidence identifies disjoint trajectory but endpoint identity remains unavailable",
+        "current_failure": "Independent span, axis, and coherence measurements support a disjoint/boundary-switch hypothesis. The endpoint reason is only a diagnostic hypothesis and does not replace the human OTHER_PRIMITIVE_MISMATCH label.",
+        "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+        "primary_failure": "PAIR_IDENTITY_LOSS",
+        "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+      },
+      "role": "MULTIPLICITY_OR_BOUNDARY_CONTROL"
+    },
+    {
+      "candidate_id": "FRESH1-585E8520AB511B998A25",
+      "decision_basis": "Ambiguity retained because the old artifact lacks endpoint-local axial/transverse topology or confirmed source-instance membership.",
+      "endpoint_topology_availability": "PARTIAL_SCALAR_ONLY",
+      "existing_direct_continuation": null,
+      "existing_endpoint_or_tangent_evidence": {
+        "max_internal_gap_before_tail_fraction": 0.0,
+        "max_tail_junction_fraction": 1.0,
+        "max_tail_offset_change_widths": 0.0,
+        "max_tail_width_ratio": 5.5,
+        "reason": "ENDPOINT_IDENTITY_CHANGE",
+        "status": "ENDPOINT_OVERSHOOT_UNCERTAIN"
+      },
+      "existing_scalar_evidence": null,
+      "expected_pair_validity_from_preserved_human_evidence": "REJECTED",
+      "false_rejection": false,
+      "generic_identity_status": "SOURCE_IDENTITY_AMBIGUOUS",
+      "multiplicity_finding": {
+        "candidate_id": "FRESH1-585E8520AB511B998A25",
+        "case": "PRIOR_NEAR_COLLINEAR",
+        "class": "nearby/overlapping linework collapse",
+        "collapse_stage": "approximately collinear ink supplies the fitted corridor",
+        "current_failure": "Irregular structural interruptions and nearby/overlapping linework remain accepted because approximately collinear ink supplies the fitted corridor; current measurements do not establish one source primitive identity.",
+        "evidence_source": "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+        "primary_failure": "BOTH",
+        "raw_hypotheses_present": "NOT EXPOSED BY TRACKED JOIN"
+      },
+      "role": "MULTIPLICITY_OR_BOUNDARY_CONTROL"
+    }
+  ],
+  "crossing_valid_controls": 2,
+  "evidence_sources": [
+    "cad_photo_to_dxf/validation/source-gap-residual-invalid-audit-v1/source-gap-residual-invalid-audit-results.json",
+    "cad_photo_to_dxf/validation/source-fidelity-primitive-contract-v1/frozen-16-diagnostic-join.json",
+    "cad_photo_to_dxf/validation/source-stroke-multiplicity-integrity-v1/real-case-multiplicity-audit.json"
+  ],
+  "false_pair_rejections": 0,
+  "hard_cap": 14,
+  "known_rejected_pair_controls": 3,
+  "known_valid_pair_controls": 3,
+  "known_valid_pair_controls_preserved": 3,
+  "multiplicity_or_boundary_controls": 3,
+  "pair_rejection_safe_for_frozen_membership": false,
+  "schema_version": 1,
+  "task_id": "ENDPOINT_TOPOLOGY_SOURCE_IDENTITY_V1"
+}

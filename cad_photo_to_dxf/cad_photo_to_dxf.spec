@@ -55,6 +55,7 @@ for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime"):
 datas += [
     ("README.md", "."),
     ("samples/test.jpg", "samples"),
+    ("app/geometry_rules", "app/geometry_rules"),
     (str(font_directory), "resources/fonts"),
 ]
 

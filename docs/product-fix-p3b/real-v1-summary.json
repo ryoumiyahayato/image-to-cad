@@ -1,0 +1,34 @@
+{
+  "blind_sources_opened": 0,
+  "by_drawing": {
+    "A2-SG-009": 48,
+    "A2-SG-022": 48,
+    "G0R2-15EE2398726E8037": 48,
+    "G0R2-3560D9BEBEAA3543": 22,
+    "G0R2-3B970FD759C6026F": 47,
+    "G0R2-4A34D1B8D93B1B06": 21,
+    "G0R2-6C9464FA73A2A027": 48,
+    "G0R2-7E30C7F445081F40": 48,
+    "G0R2-B441E5911528F402": 16,
+    "G0R2-C2D095E069663C17": 48,
+    "environment-building": 144,
+    "sample-plan-photo": 46,
+    "warehouse-electrical": 185
+  },
+  "by_kind": {
+    "graphic_control": 6,
+    "paired_edges": 239,
+    "retained_source_roi": 3,
+    "single_rule_control": 225,
+    "text_control": 32,
+    "untyped_ink_control": 264
+  },
+  "dataset_version": "17937329bc59e7d14805a7f098b6ac7513275c6026cae4eb186da7bb7c9719d9",
+  "label_counts": {
+    "UNLABELED": 769
+  },
+  "negative_patches": "UNQUALIFIED_PENDING_HUMAN",
+  "positive_patches": "UNQUALIFIED_PENDING_HUMAN",
+  "samples": 769,
+  "split_version": "c2e9a8f54e9413abf4e601e8e179fdd74ebdb1ebfa9e39cd33cd03ab21d63d19"
+}

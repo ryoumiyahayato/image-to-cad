@@ -1,0 +1,43 @@
+{
+  "candidate_count": 16,
+  "candidate_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1-SOURCE-GAP-3E5E2CC228D4",
+  "current_eligible_set_digest": "966a26a3cfc4974eccd36bf4a6453a6b22c800046465611ccb40596ff86e9075",
+  "current_eligible_set_id": "CURRENT-PRIMITIVE-ELIGIBLE-SET-V1",
+  "human_review": "PENDING_3_REPLACEMENTS_ONLY",
+  "machine_verdict_exposed_to_reviewer": false,
+  "package_id": "targeted-source-gap-review-v1-2",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_2",
+  "review_order": [
+    "FRESH1-AB2943863A535D1044B9",
+    "FRESH1-9BB32E8680E08F3ED86C",
+    "FRESH1-2BF547C27C8497056BA6",
+    "FRESH1-51DF39D706DE8C684F10",
+    "FRESH1-847714DB8B47800A7342",
+    "FRESH1-6E1D7A515EF8BC7293A3",
+    "FRESH1-B7300C5B8E706C736EB1",
+    "FRESH1-FF28E80F90C3CFA05A78",
+    "FRESH1-BD17A756658C48E6DE5F",
+    "FRESH1-5E86528C5450BEA7E342",
+    "FRESH1-98D0BD1ED4DBB02B9A3A",
+    "FRESH1-82EE2790BE71525F9762",
+    "FRESH1-DAF59F989A2B0C8E453B",
+    "FRESH1-4F58534C04C2C40E9E25",
+    "FRESH1-6DA3382199DB993085B8",
+    "FRESH1-EAF5141532787D12AFE2"
+  ],
+  "review_protocol": "SOURCE_GAP_REVIEW_V1",
+  "runtime_package_manifest_sha256": "aa66843f62207a10bcae02db4c3ac1457a1e85720db9d33114f253c3b599f24c",
+  "runtime_package_path": "local-artifacts/draftsman/targeted-source-gap-review-v1-2/review-package",
+  "runtime_package_validation": {
+    "bottom_control_overlap_guard": "PASS",
+    "candidate_count": 16,
+    "click_to_enlarge": "PASS",
+    "four_view_assets": "PASS",
+    "import_export": "PASS",
+    "optional_notes_initially_empty": true,
+    "primary_choice_initially_empty": true,
+    "secondary_flags_initially_empty": true
+  },
+  "schema_version": 1,
+  "task_id": "STRAIGHT_VALIDITY_FREEZE_SOURCE_GAP_V1_2"
+}

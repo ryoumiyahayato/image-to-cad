@@ -1,0 +1,3610 @@
+{
+  "by_domain": {
+    "real": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 769
+    }
+  },
+  "by_source_dpi": {
+    "110": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 611
+    },
+    "240": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 64
+    },
+    "None": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 94
+    }
+  },
+  "by_source_drawing_id": {
+    "A2-SG-009": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "A2-SG-022": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "G0R2-15EE2398726E8037": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "G0R2-3560D9BEBEAA3543": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 22
+    },
+    "G0R2-3B970FD759C6026F": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 47
+    },
+    "G0R2-4A34D1B8D93B1B06": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 21
+    },
+    "G0R2-6C9464FA73A2A027": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "G0R2-7E30C7F445081F40": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "G0R2-B441E5911528F402": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 16
+    },
+    "G0R2-C2D095E069663C17": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "environment-building": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 144
+    },
+    "sample-plan-photo": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 46
+    },
+    "warehouse-electrical": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 185
+    }
+  },
+  "by_source_family_id": {
+    "AU_NSW_P5_2023_61": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "AU_NSW_P5_2024_93": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "CAN_BELLEVILLE_SCHOOL_ARCHIVE": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "CN_ZHEJIANG_PUBLIC_ELECTRICAL_0C1671": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 21
+    },
+    "JP_IGA_2020000378": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "JP_IGA_4291000114": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "JP_YOKOHAMA_HIYOSHIDAI_TEMP_CLASSROOM": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 47
+    },
+    "TW_NTPC_INDIGENOUS_HOME_STANDARD_2016": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 22
+    },
+    "UK_BANBURY_TRAMWAY_ASBUILT": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 48
+    },
+    "US_LOC_HABS_FL0790": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 16
+    },
+    "sample-plan-photo": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 46
+    },
+    "user-project-haiyang": {
+      "AMBIGUOUS_prediction_coverage": null,
+      "AMBIGUOUS_truth_coverage": null,
+      "FALSE_MERGE_RATE": null,
+      "FMR_one_sided_95pct_upper_iid": null,
+      "abstention_coverage": null,
+      "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+      "confusion_matrix": {
+        "AMBIGUOUS": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "OTHER": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "ABSTAIN": 0,
+          "AMBIGUOUS": 0,
+          "OTHER": 0,
+          "SINGLE_PHYSICAL_STROKE": 0,
+          "TRUE_PARALLEL_STRUCTURE": 0
+        }
+      },
+      "false_merges": 0,
+      "labeled_samples": 0,
+      "parallel_support": 0,
+      "per_class": {
+        "AMBIGUOUS": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "OTHER": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "SINGLE_PHYSICAL_STROKE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        },
+        "TRUE_PARALLEL_STRUCTURE": {
+          "precision": null,
+          "recall": null,
+          "support": 0
+        }
+      },
+      "selective": [
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.5
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.8
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.9
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.95
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.99
+        },
+        {
+          "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+          "FALSE_MERGE_RATE_all_parallel_denominator": null,
+          "accepted": 0,
+          "accepted_parallel_support": 0,
+          "coverage": null,
+          "selective_accuracy": null,
+          "threshold": 0.995
+        }
+      ],
+      "unlabeled_samples": 329
+    }
+  },
+  "overall": {
+    "AMBIGUOUS_prediction_coverage": null,
+    "AMBIGUOUS_truth_coverage": null,
+    "FALSE_MERGE_RATE": null,
+    "FMR_one_sided_95pct_upper_iid": null,
+    "abstention_coverage": null,
+    "confidence_bound_warning": "IID bound only; correlated patches require structure grouping and drawing-cluster audit",
+    "confusion_matrix": {
+      "AMBIGUOUS": {
+        "ABSTAIN": 0,
+        "AMBIGUOUS": 0,
+        "OTHER": 0,
+        "SINGLE_PHYSICAL_STROKE": 0,
+        "TRUE_PARALLEL_STRUCTURE": 0
+      },
+      "OTHER": {
+        "ABSTAIN": 0,
+        "AMBIGUOUS": 0,
+        "OTHER": 0,
+        "SINGLE_PHYSICAL_STROKE": 0,
+        "TRUE_PARALLEL_STRUCTURE": 0
+      },
+      "SINGLE_PHYSICAL_STROKE": {
+        "ABSTAIN": 0,
+        "AMBIGUOUS": 0,
+        "OTHER": 0,
+        "SINGLE_PHYSICAL_STROKE": 0,
+        "TRUE_PARALLEL_STRUCTURE": 0
+      },
+      "TRUE_PARALLEL_STRUCTURE": {
+        "ABSTAIN": 0,
+        "AMBIGUOUS": 0,
+        "OTHER": 0,
+        "SINGLE_PHYSICAL_STROKE": 0,
+        "TRUE_PARALLEL_STRUCTURE": 0
+      }
+    },
+    "false_merges": 0,
+    "labeled_samples": 0,
+    "parallel_support": 0,
+    "per_class": {
+      "AMBIGUOUS": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "OTHER": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "SINGLE_PHYSICAL_STROKE": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      },
+      "TRUE_PARALLEL_STRUCTURE": {
+        "precision": null,
+        "recall": null,
+        "support": 0
+      }
+    },
+    "selective": [
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.5
+      },
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.8
+      },
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.9
+      },
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.95
+      },
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.99
+      },
+      {
+        "FALSE_MERGE_RATE_accepted_parallel_denominator": null,
+        "FALSE_MERGE_RATE_all_parallel_denominator": null,
+        "accepted": 0,
+        "accepted_parallel_support": 0,
+        "coverage": null,
+        "selective_accuracy": null,
+        "threshold": 0.995
+      }
+    ],
+    "unlabeled_samples": 769
+  }
+}

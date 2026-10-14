@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import os
 from pathlib import Path
 
@@ -10,16 +11,14 @@ import numpy as np
 from PySide6.QtWidgets import QApplication
 import pytest
 
-import app.gui_exact_release as exact_release
-from app.auxiliary_recognition import TextCandidate
-from app.final_structure import build_final_structure
-from app.gui_exact_release import MainWindow
-from app.gui_librecad_release import MainWindow as ActiveMainWindow
-from app.processing_contract import (
-    ProductionProcessingService,
-)
-from app.raster_trace import trace_binary
-from app.trace_storage import save_trace_cache
+import app.gui.document as exact_release
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.core.structure_build import build_final_structure
+from app.gui import MainWindow
+from app.gui import MainWindow as ActiveMainWindow
+from app.core.processing import ProductionProcessingService
+from app.geometry.raster_trace import trace_binary
+from app.core.cache import save_trace_cache
 
 
 _APP = QApplication.instance() or QApplication([])
@@ -29,7 +28,10 @@ def _prepared_window(tmp_path: Path) -> tuple[MainWindow, tuple[str, int | None]
     window = MainWindow()
     window._native_pdf_mode = True
     window.current_path = tmp_path / "source.pdf"
+    window.current_path.write_bytes(b'cache identity fixture')
+    window._refresh_visual_acceptance = lambda: None
     window._current_pdf_page_index = 0
+    window._pdf_page_sizes_mm = {0: (210.0, 297.0)}
     binary = np.full((80, 120), 255, dtype=np.uint8)
     cv2.rectangle(binary, (10, 10), (110, 70), 0, 3)
     paths = trace_binary(binary)
@@ -115,10 +117,39 @@ def test_reviewed_text_rebuilds_the_same_final_structure_used_by_export(
     window.close()
 
 
+def test_quad_only_review_changes_result_identity_but_not_processing_key(
+    tmp_path: Path,
+) -> None:
+    window, key, _cache_path = _prepared_window(tmp_path)
+    first = TextCandidate(
+        text="ROOM",
+        bbox=(20, 20, 60, 20),
+        confidence=0.95,
+        kind="text_candidate",
+        quad=((20.0, 20.0), (80.0, 20.0), (80.0, 40.0), (20.0, 40.0)),
+        approved=True,
+        reviewed=True,
+    )
+    first_structure = window._replace_final_structure_texts((first,))
+    window._dirty_trace_keys.clear()
+    second = replace(
+        first,
+        quad=((20.0, 20.0), (80.0, 28.0), (80.0, 40.0), (20.0, 32.0)),
+    )
+
+    second_structure = window._replace_final_structure_texts((second,))
+
+    assert first_structure.structure_id != second_structure.structure_id
+    assert window._current_trace_key() == key
+    assert key in window._dirty_trace_keys
+    window.close()
+
+
 def test_active_gui_rejects_cache_after_same_path_content_changes(
     tmp_path: Path,
 ) -> None:
     window = ActiveMainWindow()
+    window._refresh_visual_acceptance = lambda: None
     try:
         source = tmp_path / "source.pdf"
         source.write_bytes(b"first PDF content")

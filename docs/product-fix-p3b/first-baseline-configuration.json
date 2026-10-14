@@ -1,0 +1,61 @@
+{
+  "C": 1.0,
+  "CNN_future_architecture": "Conv16/32/64, global pooling, 18-feature fusion, 64-unit head, 3 logits",
+  "CNN_gate": "No CNN unless a later decision after the classical benchmark justifies it",
+  "FALSE_MERGE_RATE": "truth TRUE_PARALLEL predicted SINGLE / all truth TRUE_PARALLEL; denominator retained under abstention",
+  "ambiguous_evaluation": "Separate abstention group, never remapped into supervised accuracy truth",
+  "checkpoint_required_fields": [
+    "model_state",
+    "optimizer_state",
+    "completed_epoch",
+    "dataset_version",
+    "label_version",
+    "split_manifest",
+    "configuration",
+    "feature_normalization",
+    "random_seed",
+    "RNG_state",
+    "metric_history"
+  ],
+  "checkpoint_retention": [
+    "latest",
+    "best",
+    "at most 2 explicit milestones"
+  ],
+  "class_weight": "balanced",
+  "classes": [
+    "SINGLE_PHYSICAL_STROKE",
+    "TRUE_PARALLEL_STRUCTURE",
+    "OTHER"
+  ],
+  "dataset_version": "p3b-final-three-class-abstention-v1",
+  "durable_workspace": "MyDrive/Image-to-CAD-ML/{manifests,labels,checkpoints,metrics,runs,active-learning}",
+  "hot_storage": "/content/p3b",
+  "input_contract_sha256": "053014a9cc38f2f1b6b89e06fea7da6c5a267850ddd9618212dd18a61adeeddb",
+  "max_iter": 1000,
+  "metrics": [
+    "per_class_precision",
+    "per_class_recall",
+    "confusion_matrix",
+    "balanced_accuracy",
+    "macro_F1",
+    "FALSE_MERGE_RATE",
+    "SINGLE_action_coverage",
+    "abstention_coverage",
+    "selective_accuracy"
+  ],
+  "model": "18-feature standardized LogisticRegression",
+  "model_trained": false,
+  "scaling": "training-only StandardScaler",
+  "seed": 314159,
+  "selection": "No model selection or confidence threshold tuning on blind data; avoid tuning on these reviewed validation answers",
+  "thresholds_for_reporting": [
+    0.5,
+    0.8,
+    0.9,
+    0.95,
+    0.99,
+    0.995
+  ],
+  "training_authorized": false
+}

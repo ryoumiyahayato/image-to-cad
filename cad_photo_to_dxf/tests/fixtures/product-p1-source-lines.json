@@ -1,0 +1,669 @@
+{
+  "source": "Unmodified product-uat-20261005 final LINE observations; coordinates in original PDF-raster frame",
+  "W01": [
+    {
+      "x1": 473.0,
+      "y1": 1023.0,
+      "x2": 659.0,
+      "y2": 1023.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000029"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 659.0,
+      "y1": 950.0,
+      "x2": 659.0,
+      "y2": 1022.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000106"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 470.0,
+      "y1": 950.0,
+      "x2": 470.0,
+      "y2": 1023.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000244"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 659.0501098632812,
+      "y1": 950.625,
+      "x2": 659.0505981445312,
+      "y2": 1021.875,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000656"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 474.3749694824219,
+      "y1": 1022.8549194335938,
+      "x2": 658.125,
+      "y2": 1022.8628540039062,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001063"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 474.3749694824219,
+      "y1": 1025.8951416015625,
+      "x2": 658.125,
+      "y2": 1025.8870849609375,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001069"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 661.7042846679688,
+      "y1": 950.625,
+      "x2": 661.7048950195312,
+      "y2": 1021.875,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-002609"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 470.1529235839844,
+      "y1": 950.625,
+      "x2": 470.1535339355469,
+      "y2": 1021.875,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-002824"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 472.6570129394531,
+      "y1": 1021.875,
+      "x2": 472.6579284667969,
+      "y2": 950.625,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-003032"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    }
+  ],
+  "W03": [
+    {
+      "x1": 1454.0,
+      "y1": 384.0,
+      "x2": 1568.0,
+      "y2": 384.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000078"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 1491.0,
+      "y1": 381.0,
+      "x2": 1567.0,
+      "y2": 381.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000177"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:HOUGH-000177:REP:observation-b3745b0db0dcd557f9e3:piece-000:0.000000000-76.000000000",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 1519.0,
+      "y1": 373.0,
+      "x2": 1575.0,
+      "y2": 373.0,
+      "width": 1.909999966621399,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000328"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 1438.125,
+      "y1": 385.80157470703125,
+      "x2": 1615.625,
+      "y2": 385.8006286621094,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001065"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 1386.875,
+      "y1": 381.875,
+      "x2": 1576.875,
+      "y2": 381.875,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-004960"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:LSD-004960:REP:observation-1b9342219c83b0685cc5:piece-000:0.000000000-190.000000000",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 1386.875,
+      "y1": 383.1708984375,
+      "x2": 1576.875,
+      "y2": 383.1157531738281,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-005013"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2245.0,
+      "y1": 1217.0,
+      "x2": 2245.0,
+      "y2": 1282.0,
+      "width": 2.738600015640259,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000273"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:HOUGH-000273:REP:observation-b123677b98aab941d595:piece-000:0.000000000-65.000000000",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2233.0,
+      "y1": 1013.0,
+      "x2": 2233.0,
+      "y2": 1086.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000341"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2245.0,
+      "y1": 1014.0,
+      "x2": 2245.0,
+      "y2": 1088.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000450"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:HOUGH-000450:REP:observation-5c9149b930d3b3d0a4ad:piece-000:0.000000000-74.000000000",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2233.241943359375,
+      "y1": 1014.3740844726562,
+      "x2": 2233.289306640625,
+      "y2": 1085.625732421875,
+      "width": 2.738600015640259,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000627"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2245.4833984375,
+      "y1": 1013.1244506835938,
+      "x2": 2245.519775390625,
+      "y2": 1086.8756103515625,
+      "width": 2.738600015640259,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000628"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:LSD-000628:REP:observation-b729e4ad672f445ee664:piece-000:0.000000000-73.751168639",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2245.498291015625,
+      "y1": 1281.8753662109375,
+      "x2": 2245.519775390625,
+      "y2": 1216.87451171875,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000645"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "source_stroke_piece:MAIN:LSD-000645:REP:observation-80c74036f51bc5f71975:piece-000:0.000000000-65.000858043",
+        "source_stroke_reconciliation_piece"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2233.250732421875,
+      "y1": 1281.875,
+      "x2": 2233.255126953125,
+      "y2": 1219.3748779296875,
+      "width": 2.738600015640259,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000647"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.0,
+      "y1": 1129.0,
+      "x2": 2160.0,
+      "y2": 1192.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000148"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.0,
+      "y1": 1128.0,
+      "x2": 2163.0,
+      "y2": 1193.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000166"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.0,
+      "y1": 1309.0,
+      "x2": 2160.0,
+      "y2": 1372.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000237"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.0,
+      "y1": 1316.0,
+      "x2": 2163.0,
+      "y2": 1373.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000332"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.0,
+      "y1": 1223.0,
+      "x2": 2163.0,
+      "y2": 1283.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000440"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.0,
+      "y1": 1226.0,
+      "x2": 2160.0,
+      "y2": 1282.0,
+      "width": 3.819999933242798,
+      "confidence": 1.0,
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000476"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.1796875,
+      "y1": 1128.1248779296875,
+      "x2": 2160.191162109375,
+      "y2": 1193.1248779296875,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001152"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.54833984375,
+      "y1": 1191.875244140625,
+      "x2": 2163.575927734375,
+      "y2": 1128.1246337890625,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001153"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.1796875,
+      "y1": 1218.1248779296875,
+      "x2": 2160.191162109375,
+      "y2": 1283.1248779296875,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001156"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.54833984375,
+      "y1": 1281.875244140625,
+      "x2": 2163.575927734375,
+      "y2": 1218.1246337890625,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001157"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2160.174072265625,
+      "y1": 1308.1246337890625,
+      "x2": 2160.20166015625,
+      "y2": 1371.875244140625,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001172"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 2163.54833984375,
+      "y1": 1371.875244140625,
+      "x2": 2163.575927734375,
+      "y2": 1308.1246337890625,
+      "width": 3.819999933242798,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001173"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    }
+  ],
+  "W01_ENCLOSURE": [
+    {
+      "x1": 935.625,
+      "y1": 537.857666015625,
+      "x2": 1003.125,
+      "y2": 537.857666015625,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000988"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    },
+    {
+      "x1": 938.125,
+      "y1": 540.7131958007812,
+      "x2": 1000.625,
+      "y2": 540.7078857421875,
+      "width": 1.909999966621399,
+      "confidence": 0.8,
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000992"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": 1.0,
+      "classification_reasons": []
+    }
+  ]
+}

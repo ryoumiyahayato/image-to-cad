@@ -1,0 +1,98 @@
+{
+  "task": "PERCEPTION-V2-B2",
+  "review_date": "2026-09-19",
+  "reviewer": "Codex actual-byte rights review",
+  "policy": {
+    "usable_dev_dispositions": ["PUBLIC_DOMAIN", "CC0", "CC_BY", "EXPLICIT_PERMISSION"],
+    "rights_review_required_is_quarantine_only": true,
+    "public_download_is_approval": false,
+    "actual_byte_recheck_required": true
+  },
+  "records": [
+    {
+      "SOURCE_FAMILY_ID": "SF-V2-01",
+      "DOCUMENT_ID": "USACE-EM-1110-2-2610-2025",
+      "copyright_owner": "UNKNOWN; expected U.S. Government work, but actual bytes were unavailable",
+      "publisher": "U.S. Army Corps of Engineers",
+      "rights_status": "RIGHTS_REVIEW_REQUIRED",
+      "rights_evidence_url": "https://www.usace.army.mil/Privacy-and-Security/",
+      "public_domain_basis": "Preliminary 17 U.S.C. 105 and USACE public-information basis only; not confirmed against the approved binary",
+      "actual_byte_notices": "NOT_INSPECTED_DOWNLOAD_FAILED",
+      "commercial_use_status": "UNKNOWN_PENDING_ACTUAL_BYTES",
+      "raw_retention_permission": "NOT_APPLICABLE_NO_BINARY",
+      "derived_crop_retention_permission": "NOT_ALLOWED_PENDING_REVIEW",
+      "human_label_retention_permission": "NOT_ALLOWED_PENDING_REVIEW",
+      "ml_training_evaluation_status": "NOT_ALLOWED_PENDING_REVIEW",
+      "redistribution_status": "UNKNOWN_PENDING_ACTUAL_BYTES",
+      "attribution_obligations": ["If later admitted, credit U.S. Army Corps of Engineers and preserve source-specific notices"],
+      "third_party_exclusions": "UNKNOWN; actual bytes unavailable",
+      "review_date": "2026-09-19",
+      "final_disposition": "RIGHTS_REVIEW_REQUIRED",
+      "evidence_notes": "No rights inference was promoted from B1 because the exact binary could not be acquired and inspected."
+    },
+    {
+      "SOURCE_FAMILY_ID": "SF-V2-03",
+      "DOCUMENT_ID": "USDA-RUS-1728F-806",
+      "copyright_owner": "UNKNOWN; official USDA/RUS issuer conflicts with PDF metadata naming Iowa Lakes Electric Cooperative and Bob Emgarten",
+      "publisher": "U.S. Department of Agriculture, Rural Utilities Service",
+      "rights_status": "RIGHTS_REVIEW_REQUIRED",
+      "rights_evidence_url": "https://www.rd.usda.gov/privacy-policy",
+      "public_domain_basis": "USDA/RUS federal publication and agency public-information statement, but actual-file authorship metadata prevents a confident 17 U.S.C. 105 conclusion for the drawing set",
+      "actual_byte_notices": [
+        "No explicit copyright, proprietary, restricted-distribution, export-control, reproduction, or permission notice found in searchable PDF text or selectively inspected cover/end pages.",
+        "PDF Author is 'Emgarten, Bob'.",
+        "PDF Company is 'Iowa Lakes Electric Cooperative'."
+      ],
+      "commercial_use_status": "UNKNOWN_PENDING_OWNERSHIP_REVIEW",
+      "raw_retention_permission": "QUARANTINE_FOR_RIGHTS_REVIEW_ONLY",
+      "derived_crop_retention_permission": "NOT_ALLOWED_PENDING_REVIEW",
+      "human_label_retention_permission": "NOT_ALLOWED_PENDING_REVIEW",
+      "ml_training_evaluation_status": "NOT_ALLOWED_PENDING_REVIEW",
+      "redistribution_status": "UNKNOWN_PENDING_OWNERSHIP_REVIEW",
+      "attribution_obligations": ["If later admitted, credit USDA Rural Utilities Service and any confirmed drawing author/owner"],
+      "third_party_exclusions": "Treat all construction-drawing pages as unresolved until the Iowa Lakes Electric Cooperative / Bob Emgarten authorship signal is resolved; no page-level exclusion can safely cure the current uncertainty",
+      "review_date": "2026-09-19",
+      "final_disposition": "RIGHTS_REVIEW_REQUIRED",
+      "evidence_notes": "The non-federal author/company metadata is material because the intended dataset value is the embedded drawing set. Public availability and federal publication are insufficient to override this signal."
+    },
+    {
+      "SOURCE_FAMILY_ID": "SF-V2-08",
+      "DOCUMENT_ID": "NASA-CR-161594",
+      "copyright_owner": "United States Government, according to the candidate-specific NTRS rights designation",
+      "publisher": "NASA Technical Reports Server",
+      "rights_status": "PUBLIC_DOMAIN_CONFIRMED",
+      "rights_evidence_url": "https://sti.nasa.gov/disclaimers/",
+      "public_domain_basis": "Candidate-specific NTRS designation 'Work of the US Gov. Public Use Permitted' plus 17 U.S.C. 105; actual bytes contain no contrary notice",
+      "actual_byte_notices": [
+        "General Dynamics Convair Division is identified as corporate author and contractor under Contract NAS8-33527.",
+        "No copyright notice, proprietary legend, restricted-distribution language, export-control notice, reproduction restriction, government-purpose-only legend, or third-party ownership notice was found in searchable PDF text or selectively inspected cover/end pages.",
+        "The cover/catalog material marks the report unclassified."
+      ],
+      "commercial_use_status": "ALLOWED_ON_PUBLIC_DOMAIN_BASIS_WITHOUT_ENDORSEMENT",
+      "raw_retention_permission": "ALLOWED",
+      "derived_crop_retention_permission": "ALLOWED",
+      "human_label_retention_permission": "ALLOWED",
+      "ml_training_evaluation_status": "ALLOWED",
+      "redistribution_status": "ALLOWED",
+      "attribution_obligations": [
+        "Acknowledge NASA/NTRS as source",
+        "Retain General Dynamics Convair corporate-author attribution",
+        "Do not imply NASA or General Dynamics endorsement"
+      ],
+      "third_party_exclusions": [],
+      "review_date": "2026-09-19",
+      "final_disposition": "PUBLIC_DOMAIN",
+      "evidence_notes": "Mandatory actual-byte recheck passed. Contractor authorship was present but no material notice conflicted with the candidate-specific NTRS U.S.-Government-work designation."
+    }
+  ],
+  "summary": {
+    "PUBLIC_DOMAIN": 1,
+    "CC0": 0,
+    "CC_BY": 0,
+    "EXPLICIT_PERMISSION": 0,
+    "RIGHTS_REVIEW_REQUIRED": 2,
+    "REJECTED": 0,
+    "actual_byte_reviews_completed": 2,
+    "data_rights_provenance": "INCOMPLETE"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "source": "historical-verification-20261005 (documentation evidence only; no runtime/test dependency)",
+  "pre_revision": "4a8031eb14ec136ab71cbe3c66a7a46e1198d1af",
+  "compared_current_revision": "fb42639d87aac71a20aa6bbd0ed218d540b84833",
+  "old_baseline_first_git_addition": "26ad39e44755473c29723ece07efd3f3209f814c",
+  "OLD_BASELINE_PROVENANCE": "UNPROVEN / UNKNOWN",
+  "baseline_provenance_evidence": "First Git addition: 26ad39e44755473c29723ece07efd3f3209f814c, 2026-10-05 14:50:22 Asia/Taipei. Generation script imports PROJECT derived from its own location and --baseline writes local measure output. Progress says captured before changing engine but provides no exact run command, code-directory hash or independent snapshot log. The service/algorithm/model were unchanged between PRE and this commit; main CLI and export allow_empty had changed, and disconnected modules had been removed. No source execution evidence conclusively establishes A/B/C. All compact fields recorded in the old baseline are independently reproduced by the genuine PRE snapshot; equality alone does not prove their historical origin.",
+  "modern_scope": "Three identical archived PRE-derived inputs, 300 DPI, OCR off, foreground_threshold=None, disabled layout specialization; separate Python processes and separate Git archive snapshots. Full structure content, every line coordinate, every contour point/hierarchy, text objects, masks, provenance, cache key/digest and every raw NPZ array match. Actual DXF entity types/counts, attributes and all polyline points match after excluding file-local handle/owner identifiers. All ezdxf audit errors and fixes are zero. This finding is bounded to these inputs/settings.",
+  "modern_comparison": {
+    "processing-contract-page": {
+      "differences": [],
+      "pre_members": {
+        "straight_lines": 21,
+        "contours": 0,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "current_members": {
+        "straight_lines": 21,
+        "contours": 0,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "pre_dxf": {
+        "LINE": 21
+      },
+      "current_dxf": {
+        "LINE": 21
+      }
+    },
+    "sample-test": {
+      "differences": [],
+      "pre_members": {
+        "straight_lines": 229,
+        "contours": 145,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "current_members": {
+        "straight_lines": 229,
+        "contours": 145,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "pre_dxf": {
+        "LINE": 229,
+        "LWPOLYLINE": 209
+      },
+      "current_dxf": {
+        "LINE": 229,
+        "LWPOLYLINE": 209
+      }
+    },
+    "reconciliation-gap-junction": {
+      "differences": [],
+      "pre_members": {
+        "straight_lines": 12,
+        "contours": 0,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "current_members": {
+        "straight_lines": 12,
+        "contours": 0,
+        "texts": 0,
+        "logos": 0,
+        "signatures": 0
+      },
+      "pre_dxf": {
+        "LINE": 12
+      },
+      "current_dxf": {
+        "LINE": 12
+      }
+    }
+  },
+  "scan_underlay_runtime": "Both PRE and CURRENT modern export APIs independently reproduce one LINE, one TEXT, one linked scan IMAGE, underlay file and zero audit errors from the deleted test's payload. Thus the proven gap is test coverage, not deletion of scan-underlay functionality.",
+  "TEST_ONLY_PRODUCTION_MODULES": 0,
+  "OPTIONAL_PRODUCTION_DIAGNOSTICS": 6,
+  "diagnostic_modules": [
+    "app/diagnostics/debug_bundle.py",
+    "app/diagnostics/observability.py",
+    "app/diagnostics/performance_observability.py",
+    "app/diagnostics/source_support_lifecycle.py",
+    "app/diagnostics/trace_verification.py",
+    "app/diagnostics/visual_acceptance.py"
+  ],
+  "FIRST_PROVEN_PRODUCT_REGRESSION": "NONE",
+  "limitations": "Bounded to three inputs and the tested settings; not proof of all OCR output or mathematical equivalence for all engineering drawings."
+}

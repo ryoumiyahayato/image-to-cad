@@ -1,0 +1,174 @@
+{
+  "admissibility_guard_changed": "COMPOSITION_WIRING_ONLY",
+  "axis_guard_changed": false,
+  "base_checkpoint": "4d382fcc95c40203794fe2e1f6f01f50bc6c816d",
+  "batch03_should_resume": "NO",
+  "bounded_cases_audited": 16,
+  "candidate_specific_exceptions": false,
+  "current_invalid_replacement_audited": true,
+  "current_invalid_replacement_status": "STRAIGHT_REJECTED",
+  "current_source_gap_16_records": [
+    {
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-9BB32E8680E08F3ED86C",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_UNCERTAIN"
+    },
+    {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-847714DB8B47800A7342",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_UNCERTAIN"
+    },
+    {
+      "candidate_id": "FRESH1-6E1D7A515EF8BC7293A3",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-B7300C5B8E706C736EB1",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_UNCERTAIN",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-BD17A756658C48E6DE5F",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-FC529FBBABD1C203BAD8",
+      "eligibility_after": "INELIGIBLE_STRAIGHT_REJECTED",
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-82EE2790BE71525F9762",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-DAF59F989A2B0C8E453B",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-4F58534C04C2C40E9E25",
+      "eligibility_after": "ELIGIBLE_UNCHANGED",
+      "straight_validity_status": "STRAIGHT_SUPPORTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-4966D4412392002C19C2",
+      "eligibility_after": "INELIGIBLE_STRAIGHT_REJECTED",
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "text_status": "TEXT_INDEPENDENT"
+    },
+    {
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "eligibility_after": "INELIGIBLE_STRAIGHT_REJECTED",
+      "straight_validity_status": "STRAIGHT_REJECTED",
+      "text_status": "TEXT_UNCERTAIN"
+    }
+  ],
+  "current_source_gap_16_rejected": 3,
+  "current_source_gap_16_supported": 10,
+  "current_source_gap_16_uncertain": 3,
+  "curved_contour_straight_fit": "CONFIRMED",
+  "dimension_grid_safety": "PASS",
+  "endpoint_guard": "NO",
+  "final_eligible_count": 120,
+  "fresh_human_direct_annotation_controls": 6,
+  "fresh_human_direct_controls": 9,
+  "frozen147_reevaluated": true,
+  "frozen147_straight_rejected": 24,
+  "frozen147_straight_supported": 82,
+  "frozen147_straight_uncertain": 41,
+  "generic_straight_primitive_validity_gate": true,
+  "h1_h2_opened": "NO",
+  "intersection_safety": "PASS",
+  "lateral_offset_profile_used": true,
+  "local_tangent_profile_used": true,
+  "local_trajectory_profile_used": true,
+  "locked_blind": "0 / 8",
+  "model_assisted_labeling": "NO",
+  "model_bake_off_should_resume": "NO",
+  "model_run": "NO",
+  "new_candidate_mining": "NO",
+  "new_source_gap_package": "NO",
+  "newly_ineligible_after_straight_gate": 18,
+  "newly_ineligible_candidate_ids": [
+    "FRESH1-2FF08EDFC754E290D7A4",
+    "FRESH1-316D125FE4861584BE02",
+    "FRESH1-4694F629CD0F75FF0AB7",
+    "FRESH1-4966D4412392002C19C2",
+    "FRESH1-5BF4B6744E8C47B6DCD2",
+    "FRESH1-624D754C52D4723051AF",
+    "FRESH1-74CFEA76FF37C64DE059",
+    "FRESH1-778AAC63B06DA9E1A5BB",
+    "FRESH1-7BD0B466999194C62E5F",
+    "FRESH1-91191386DC95E23BEDAC",
+    "FRESH1-ACE2F5BAEAFA699A90AC",
+    "FRESH1-C35D8D4055B82991DCFC",
+    "FRESH1-C8E58C04849244A581BA",
+    "FRESH1-DA204D3E75998A08D07B",
+    "FRESH1-E0F87F9DB039E5A48AAB",
+    "FRESH1-EAF5141532787D12AFE2",
+    "FRESH1-FC529FBBABD1C203BAD8",
+    "FRESH1-FE24B910C4F62319F60E"
+  ],
+  "next_target": "FROZEN147_NEWLY_INELIGIBLE_STRAIGHT_REJECTED_AUDIT",
+  "old_valid_annotation_controls": 6,
+  "old_valid_direct_control": 1,
+  "piecewise_offset_collapse": "CONFIRMED",
+  "previously_human_reviewed_among_newly_rejected": 4,
+  "production_semantic_delta": "NONE",
+  "schema_version": 1,
+  "source_boundary_switch": "SUPPORTED",
+  "source_continuity_guard": "NO",
+  "source_gap_review_v1_1_status": "PAUSED_PRIMITIVE_VALIDITY",
+  "span_guard_changed": false,
+  "straight_symbol_edge_safety": "PASS",
+  "support_identity_evidence_used": true,
+  "table_border_safety": "PASS",
+  "task_id": "STRAIGHT_PRIMITIVE_VALIDITY_V1",
+  "tests": "105 passed: straight validity 15, coherence/span 31, axis/text 39, admissibility 8, DEV remining 12; Ruff passed for new files; compileall passed.",
+  "text_glyph_guard_changed": false,
+  "text_rejected_and_straight_rejected": 6,
+  "title_block_border_safety": "PASS",
+  "validation": "NO"
+}

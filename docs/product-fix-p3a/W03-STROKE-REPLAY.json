@@ -1,0 +1,9 @@
+{
+  "main_inputs_replayed": 851,
+  "all_input_digest_verified": "10d305aca5bc0348097a997aba543c67b3e2fff7b4535ac4add517c486e5510c",
+  "source_sha256_verified": "345aaa6d0bc95138ea0b7030416d2d6ba0ae19c58134fb977f2ea0aa798027ec",
+  "protection_mask": "NONE; stronger no-proposal check",
+  "new_merge_decisions": 0,
+  "all_main_geometry_unchanged": true,
+  "lineweight_changes_in_this_refresh": 0
+}

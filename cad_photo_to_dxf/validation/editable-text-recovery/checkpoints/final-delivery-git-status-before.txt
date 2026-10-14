@@ -1,0 +1,16 @@
+## fix/non-destructive-editable-text
+ M validation/editable-text-recovery/README.md
+ M validation/editable-text-recovery/build_final_delivery.py
+ M validation/editable-text-recovery/git-commit-sequence.md
+ M validation/editable-text-recovery/implementation-contract.md
+ M validation/editable-text-recovery/per-page-index.json
+?? validation/editable-text-recovery/before-after-summary.json
+?? validation/editable-text-recovery/checkpoints/final-delivery-builder*.log
+?? validation/editable-text-recovery/checkpoints/full-validation-results-git-status-after.txt
+?? validation/editable-text-recovery/completion-status.md
+?? validation/editable-text-recovery/entity-type-audit.json
+?? validation/editable-text-recovery/page001-before-after.md
+?? validation/editable-text-recovery/semantic-ownership-audit.json
+
+No production files, regression baselines, tmp files, or unrelated untracked
+directories are modified or staged by this final-delivery commit.

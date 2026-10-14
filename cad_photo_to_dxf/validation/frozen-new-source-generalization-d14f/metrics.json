@@ -1,0 +1,186 @@
+{
+  "schema_version": "frozen-new-source-generalization-d14f-v1",
+  "base_checkpoint": "4920d12966b8a256678ed1d1f26bd880ec82e9e6",
+  "production_baseline": "3ad0ec4",
+  "dataset_integrity": {
+    "old_reference": {
+      "structural": 18,
+      "annotation_or_glyph": 10,
+      "total": 28,
+      "source_groups": [
+        "G0R2-15EE2398726E8037",
+        "G0R2-3B970FD759C6026F",
+        "G0R2-4A34D1B8D93B1B06",
+        "G0R2-6C9464FA73A2A027",
+        "G0R2-7E30C7F445081F40",
+        "G0R2-C2D095E069663C17"
+      ]
+    },
+    "new_test": {
+      "H1": 4,
+      "H2": 4,
+      "C1": 5,
+      "structural": 7,
+      "annotation_or_glyph": 6,
+      "total": 13
+    }
+  },
+  "encoder": {
+    "name": "OpenCV Zoo MobileNetV2 image_classification_mobilenetv2_2022apr.onnx",
+    "pinned_commit": "47534e27c9851bb1128ccc0102f1145e27f23f98",
+    "sha256": "c0c3f76d93fa3fd6580652a45618618a220fced18babf65774ed169de0432ad5",
+    "opencv_version": "4.13.0",
+    "feature_layer": "onnx_node!GlobalAveragePool_97",
+    "feature_shape": [
+      1,
+      1280,
+      1,
+      1
+    ],
+    "feature_dimension_per_view": 1280,
+    "concatenated_feature_dimension": 2560,
+    "frozen": true
+  },
+  "preprocessing": {
+    "color": "OpenCV BGR decode then BGR-to-RGB",
+    "resize": "direct 256x256 cv2.INTER_LINEAR",
+    "center_crop": "[16:240,16:240] => 224x224",
+    "scale": "divide by 255",
+    "mean": [
+      0.48500001430511475,
+      0.4560000002384186,
+      0.4059999883174896
+    ],
+    "std": [
+      0.2290000021457672,
+      0.2240000069141388,
+      0.22499999403953552
+    ],
+    "layout": "HWC to NCHW",
+    "dtype": "float32",
+    "feature_normalization": "L2-normalize each concatenated local+context feature; mean unit training features by class; L2-normalize each centroid"
+  },
+  "classifier": "COSINE NEAREST CLASS CENTROID",
+  "old_reference_samples_used": 28,
+  "new_source_adaptation": "NONE",
+  "abstention": "NONE",
+  "family_metrics": {
+    "H1": {
+      "correct": 3,
+      "total": 4,
+      "confusion_matrix": {
+        "structural_as_structural": 1,
+        "structural_as_annotation": 1,
+        "annotation_as_structural": 0,
+        "annotation_as_annotation": 2
+      },
+      "structural_precision": 1.0,
+      "structural_recall": 0.5,
+      "annotation_recall": 1.0,
+      "dangerous_false_structural": 0
+    },
+    "H2": {
+      "correct": 3,
+      "total": 4,
+      "confusion_matrix": {
+        "structural_as_structural": 1,
+        "structural_as_annotation": 0,
+        "annotation_as_structural": 1,
+        "annotation_as_annotation": 2
+      },
+      "structural_precision": 0.5,
+      "structural_recall": 1.0,
+      "annotation_recall": 0.6666666666666666,
+      "dangerous_false_structural": 1
+    },
+    "C1": {
+      "correct": 4,
+      "total": 5,
+      "confusion_matrix": {
+        "structural_as_structural": 3,
+        "structural_as_annotation": 1,
+        "annotation_as_structural": 0,
+        "annotation_as_annotation": 1
+      },
+      "structural_precision": 1.0,
+      "structural_recall": 0.75,
+      "annotation_recall": 1.0,
+      "dangerous_false_structural": 0
+    }
+  },
+  "aggregate_metrics": {
+    "correct": 10,
+    "total": 13,
+    "confusion_matrix": {
+      "structural_as_structural": 5,
+      "structural_as_annotation": 2,
+      "annotation_as_structural": 1,
+      "annotation_as_annotation": 5
+    },
+    "structural_precision": 0.8333333333333334,
+    "structural_recall": 0.7142857142857143,
+    "annotation_recall": 0.8333333333333334,
+    "dangerous_false_structural": 1
+  },
+  "always_structural_baseline": {
+    "correct": 7,
+    "total": 13,
+    "structural_precision": 0.5384615384615384,
+    "structural_recall": 1.0,
+    "annotation_recall": 0.0,
+    "dangerous_false_structural": 6
+  },
+  "diagnostic_interpretation": {
+    "family_verdicts": {
+      "H1": "USEFUL_SEPARATION",
+      "H2": "MIXED",
+      "C1": "USEFUL_SEPARATION"
+    },
+    "d14a_source_style_concern": "REDUCED",
+    "generalization_verdict": "NEW_SOURCE_GENERALIZATION_SUPPORTED",
+    "generic_mobilenet_direction_worth_continuing": "YES",
+    "larger_multi_source_dev_dataset_justified": "YES",
+    "domain_specific_representation_justified_now": "NOT_YET",
+    "interpretation_limit": "Evidence of transfer from 13 external cases, not a production performance estimate; H2 has only one independent structural positive."
+  },
+  "error_analysis": {
+    "dangerous_false_structural": [
+      {
+        "candidate_id": "D14E-142FAB52579F",
+        "family": "H2",
+        "hard_negative_subtype": "dimension_extension_witness_line",
+        "structural_cosine": 0.8052878503189321,
+        "annotation_cosine": 0.7665711361778736,
+        "signed_raw_margin": 0.038716714141058484,
+        "visual_reason": "The long, clean, object-adjacent vertical witness line dominates the crop and resembles a structural edge; dimension arrows and PMI context are present but do not outweigh that geometry in the frozen representation."
+      }
+    ],
+    "missed_structural": [
+      {
+        "candidate_id": "D14E-82AF53CB94E1",
+        "family": "H1",
+        "structural_cosine": 0.7427278009193224,
+        "annotation_cosine": 0.7452608483951924,
+        "signed_raw_margin": -0.0025330474758699095,
+        "visual_reason": "The archival lower chord is embedded in dense truss, dimension, label, and frame context; the raw score falls just on the annotation side."
+      },
+      {
+        "candidate_id": "D14E-101604055F6C",
+        "family": "C1",
+        "structural_cosine": 0.794402938070385,
+        "annotation_cosine": 0.8019951105021343,
+        "signed_raw_margin": -0.007592172431749367,
+        "visual_reason": "The roadway edge crosses dense hatch, ticks, bearing text, and leader geometry; the raw score falls narrowly on the annotation side."
+      }
+    ]
+  },
+  "governance": {
+    "production_semantic_delta": "NONE",
+    "h1_h2_holdout_status": "PRESERVED",
+    "c1_untouched_baseline": "RECORDED",
+    "ready_for_production_integration": false,
+    "validation": false,
+    "locked_blind": "0 / 8",
+    "new_pdf_acquisition": false
+  }
+}

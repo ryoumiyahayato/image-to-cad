@@ -1,0 +1,194 @@
+{
+  "before_lines": 3,
+  "after_lines": 1,
+  "before_gap_px": [
+    3,
+    1
+  ],
+  "after_gap_px": [
+    0,
+    0
+  ],
+  "source_extent": [
+    471,
+    1024,
+    660,
+    1024
+  ],
+  "actual_dxf_shared_endpoints": true,
+  "lines": [
+    {
+      "index": 22,
+      "source_line": {
+        "x1": 471.0,
+        "y1": 1024.0,
+        "x2": 660.0,
+        "y2": 1024.0,
+        "width": 1.909999966621399,
+        "confidence": 1.0,
+        "layer": "DETAIL",
+        "source_ids": [
+          "HOUGH-000029",
+          "LSD-001063",
+          "LSD-001069"
+        ],
+        "history": [
+          "detected:hough",
+          "trim_to_source_support",
+          "detected:lsd",
+          "source_grid_rule_normalization",
+          "source_stroke_piece:MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce:piece-000:0.000000000-189.000000000",
+          "source_stroke_reconciliation_piece"
+        ],
+        "classification_confidence": 1.0,
+        "classification_reasons": []
+      },
+      "handle": "A9",
+      "start_mm": [
+        49.85514649486117,
+        211.6991358592831,
+        0.0
+      ],
+      "end_mm": [
+        69.86071483356342,
+        211.6991358592831,
+        0.0
+      ]
+    },
+    {
+      "index": 165,
+      "source_line": {
+        "x1": 471.0,
+        "y1": 948.0,
+        "x2": 471.0,
+        "y2": 1024.0,
+        "width": 1.909999966621399,
+        "confidence": 1.0,
+        "layer": "DETAIL",
+        "source_ids": [
+          "HOUGH-000244",
+          "LSD-002824",
+          "LSD-003032"
+        ],
+        "history": [
+          "detected:hough",
+          "trim_to_source_support",
+          "detected:lsd",
+          "source_grid_rule_normalization",
+          "source_stroke_piece:MAIN:HOUGH-000244+LSD-002824+LSD-003032:REP:observation-913f567e96f97af90827:piece-000:0.000000000-76.000000000",
+          "source_stroke_reconciliation_piece"
+        ],
+        "classification_confidence": 1.0,
+        "classification_reasons": []
+      },
+      "handle": "138",
+      "start_mm": [
+        49.85514649486117,
+        219.74370302193586,
+        0.0
+      ],
+      "end_mm": [
+        49.85514649486117,
+        211.6991358592831,
+        0.0
+      ]
+    },
+    {
+      "index": 78,
+      "source_line": {
+        "x1": 660.0,
+        "y1": 948.0,
+        "x2": 660.0,
+        "y2": 1024.0,
+        "width": 1.909999966621399,
+        "confidence": 1.0,
+        "layer": "DETAIL",
+        "source_ids": [
+          "HOUGH-000106",
+          "LSD-000656",
+          "LSD-002609"
+        ],
+        "history": [
+          "detected:hough",
+          "trim_to_source_support",
+          "detected:lsd",
+          "source_grid_rule_normalization",
+          "source_stroke_piece:MAIN:HOUGH-000106+LSD-000656+LSD-002609:REP:observation-9a4eae51b1dc72345e07:piece-000:0.000000000-76.000000000",
+          "source_stroke_reconciliation_piece"
+        ],
+        "classification_confidence": 1.0,
+        "classification_reasons": []
+      },
+      "handle": "E1",
+      "start_mm": [
+        69.86071483356342,
+        219.74370302193586,
+        0.0
+      ],
+      "end_mm": [
+        69.86071483356342,
+        211.6991358592831,
+        0.0
+      ]
+    }
+  ],
+  "representations": [
+    {
+      "endpoint_ids": [
+        "MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce:start",
+        "MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce:end"
+      ],
+      "geometry_px": {
+        "end": [
+          660.0,
+          1024.0
+        ],
+        "start": [
+          471.0,
+          1024.0
+        ],
+        "width": 1.909999966621399
+      },
+      "history": [
+        "detected:hough",
+        "trim_to_source_support",
+        "detected:lsd",
+        "source_grid_rule_normalization"
+      ],
+      "observation_interval": {
+        "end": 189.0,
+        "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+        "evidence_refs": [],
+        "start": 0.0
+      },
+      "ownership_evidence_refs": [
+        "ownership:MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce"
+      ],
+      "ownership_state": "MAIN_ACCEPTED",
+      "parent_ids": [],
+      "representation_id": "MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce",
+      "route_origin": "MAIN",
+      "route_producer": "structural-main",
+      "source_ids": [
+        "HOUGH-000029",
+        "LSD-001063",
+        "LSD-001069"
+      ],
+      "source_support_intervals": [
+        {
+          "end": 189.0,
+          "endpoint_convention": "HALF_OPEN_INTERIOR_WITH_SEPARATE_ENDPOINT_OBLIGATIONS",
+          "evidence_refs": [
+            "support:MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce"
+          ],
+          "start": 0.0
+        }
+      ],
+      "structural_obligation_ids": [],
+      "terminal_reason": "Distinct or unresolved relation preserved",
+      "trajectory_evidence_refs": [
+        "support:MAIN:HOUGH-000029+LSD-001063+LSD-001069:REP:observation-2b571817f6eaf62cd5ce"
+      ]
+    }
+  ]
+}

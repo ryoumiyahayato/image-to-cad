@@ -1,0 +1,1315 @@
+{
+  "W01": {
+    "input": {
+      "UAT_ID": "W01",
+      "SOURCE_FILE": "warehouse-electrical-vector.pdf",
+      "SOURCE_PAGE": 1,
+      "SOURCE_TYPE": "vector-path PDF rasterized by production loader",
+      "DPI": 240,
+      "PAGE_SIZE_MM": [
+        230.0111111111111,
+        319.96944444444443
+      ],
+      "IMAGE_SIZE": [
+        2174,
+        3024
+      ]
+    },
+    "candidates": [
+      {
+        "text": "7",
+        "bbox": [
+          1618,
+          1117,
+          21,
+          42
+        ],
+        "confidence": 0.61082,
+        "kind": "dimension_text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1618.0,
+            1117.0
+          ],
+          [
+            1639.0,
+            1117.0
+          ],
+          [
+            1639.0,
+            1159.0
+          ],
+          [
+            1618.0,
+            1159.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1624,
+            1120,
+            11,
+            36
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      }
+    ]
+  },
+  "W02": {
+    "input": {
+      "UAT_ID": "W02",
+      "SOURCE_FILE": "warehouse-electrical-vector.pdf",
+      "SOURCE_PAGE": 2,
+      "SOURCE_TYPE": "vector-path PDF rasterized by production loader",
+      "DPI": 136,
+      "PAGE_SIZE_MM": [
+        890.0583333333333,
+        630.061111111111
+      ],
+      "IMAGE_SIZE": [
+        4766,
+        3374
+      ]
+    },
+    "candidates": [
+      {
+        "text": "M2",
+        "bbox": [
+          1701,
+          714,
+          40,
+          26
+        ],
+        "confidence": 0.99379,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1701.0,
+            714.0
+          ],
+          [
+            1741.0,
+            714.0
+          ],
+          [
+            1741.0,
+            740.0
+          ],
+          [
+            1701.0,
+            740.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1709,
+            714,
+            12,
+            26
+          ],
+          [
+            1729,
+            718,
+            9,
+            18
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "M2",
+        "bbox": [
+          1650,
+          715,
+          37,
+          24
+        ],
+        "confidence": 0.99853,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1650.0,
+            715.0
+          ],
+          [
+            1687.0,
+            715.0
+          ],
+          [
+            1687.0,
+            739.0
+          ],
+          [
+            1650.0,
+            739.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1655,
+            717,
+            12,
+            22
+          ],
+          [
+            1676,
+            718,
+            8,
+            18
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "SL",
+        "bbox": [
+          1649,
+          757,
+          24,
+          22
+        ],
+        "confidence": 0.99913,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1649.0,
+            757.0
+          ],
+          [
+            1673.0,
+            757.0
+          ],
+          [
+            1673.0,
+            779.0
+          ],
+          [
+            1649.0,
+            779.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1649,
+            757,
+            13,
+            22
+          ],
+          [
+            1661,
+            757,
+            12,
+            22
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "2",
+        "bbox": [
+          1703,
+          778,
+          22,
+          24
+        ],
+        "confidence": 1.0,
+        "kind": "dimension_text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1703.0,
+            778.0
+          ],
+          [
+            1725.0,
+            778.0
+          ],
+          [
+            1725.0,
+            802.0
+          ],
+          [
+            1703.0,
+            802.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1703,
+            778,
+            16,
+            22
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "2",
+        "bbox": [
+          1653,
+          779,
+          17,
+          22
+        ],
+        "confidence": 0.99998,
+        "kind": "dimension_text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            1653.0,
+            779.0
+          ],
+          [
+            1670.0,
+            779.0
+          ],
+          [
+            1670.0,
+            801.0
+          ],
+          [
+            1653.0,
+            801.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            1656,
+            782,
+            10,
+            17
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "S",
+        "bbox": [
+          4216,
+          1468,
+          294,
+          141
+        ],
+        "confidence": 0.81098,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4216.0,
+            1468.0
+          ],
+          [
+            4510.0,
+            1468.0
+          ],
+          [
+            4510.0,
+            1609.0
+          ],
+          [
+            4216.0,
+            1609.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4227,
+            1483,
+            280,
+            112
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      }
+    ]
+  },
+  "W03": {
+    "input": {
+      "UAT_ID": "W03",
+      "SOURCE_FILE": "warehouse-electrical-vector.pdf",
+      "SOURCE_PAGE": 3,
+      "SOURCE_TYPE": "vector-path PDF rasterized by production loader",
+      "DPI": 110,
+      "PAGE_SIZE_MM": [
+        1099.961111111111,
+        630.061111111111
+      ],
+      "IMAGE_SIZE": [
+        4764,
+        2729
+      ]
+    },
+    "candidates": [
+      {
+        "text": "S",
+        "bbox": [
+          4321,
+          1189,
+          235,
+          111
+        ],
+        "confidence": 0.70513,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4321.0,
+            1189.0
+          ],
+          [
+            4556.0,
+            1189.0
+          ],
+          [
+            4556.0,
+            1300.0
+          ],
+          [
+            4321.0,
+            1300.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4327,
+            1199,
+            228,
+            92
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "签字",
+        "bbox": [
+          4459,
+          1628,
+          54,
+          22
+        ],
+        "confidence": 0.99976,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4459.0,
+            1628.0
+          ],
+          [
+            4513.0,
+            1628.0
+          ],
+          [
+            4513.0,
+            1650.0
+          ],
+          [
+            4459.0,
+            1650.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4462,
+            1631,
+            17,
+            17
+          ],
+          [
+            4493,
+            1631,
+            16,
+            17
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "Signature",
+        "bbox": [
+          4464,
+          1647,
+          43,
+          18
+        ],
+        "confidence": 0.9473,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4464.0,
+            1647.0
+          ],
+          [
+            4507.0,
+            1647.0
+          ],
+          [
+            4507.0,
+            1665.0
+          ],
+          [
+            4464.0,
+            1665.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4468,
+            1650,
+            8,
+            12
+          ],
+          [
+            4474,
+            1659,
+            3,
+            3
+          ],
+          [
+            4475,
+            1653,
+            7,
+            10
+          ],
+          [
+            4480,
+            1653,
+            4,
+            9
+          ],
+          [
+            4482,
+            1653,
+            6,
+            9
+          ],
+          [
+            4486,
+            1651,
+            5,
+            11
+          ],
+          [
+            4489,
+            1653,
+            5,
+            9
+          ],
+          [
+            4492,
+            1653,
+            6,
+            9
+          ],
+          [
+            4496,
+            1653,
+            7,
+            9
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "笔画跨越多个字符格或相邻图形，保留原轮廓等待人工确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "陆岳",
+        "bbox": [
+          4450,
+          1670,
+          68,
+          39
+        ],
+        "confidence": 0.70287,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4450.0,
+            1670.0
+          ],
+          [
+            4518.0,
+            1670.0
+          ],
+          [
+            4518.0,
+            1709.0
+          ],
+          [
+            4450.0,
+            1709.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4456,
+            1671,
+            29,
+            38
+          ],
+          [
+            4486,
+            1674,
+            27,
+            26
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "陆岳",
+        "bbox": [
+          4378,
+          1674,
+          41,
+          34
+        ],
+        "confidence": 0.99996,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4378.0,
+            1674.0
+          ],
+          [
+            4419.0,
+            1674.0
+          ],
+          [
+            4419.0,
+            1708.0
+          ],
+          [
+            4378.0,
+            1708.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4383,
+            1677,
+            14,
+            25
+          ],
+          [
+            4397,
+            1678,
+            15,
+            25
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      },
+      {
+        "text": "查震",
+        "bbox": [
+          4442,
+          1714,
+          83,
+          39
+        ],
+        "confidence": 0.70744,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4442.0,
+            1714.0
+          ],
+          [
+            4525.0,
+            1714.0
+          ],
+          [
+            4525.0,
+            1753.0
+          ],
+          [
+            4442.0,
+            1753.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4442,
+            1727,
+            19,
+            26
+          ],
+          [
+            4456,
+            1714,
+            65,
+            39
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "黄震",
+        "bbox": [
+          4379,
+          1716,
+          40,
+          35
+        ],
+        "confidence": 0.94579,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4379.0,
+            1716.0
+          ],
+          [
+            4419.0,
+            1716.0
+          ],
+          [
+            4419.0,
+            1751.0
+          ],
+          [
+            4379.0,
+            1751.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4383,
+            1719,
+            15,
+            28
+          ],
+          [
+            4397,
+            1720,
+            15,
+            26
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      },
+      {
+        "text": "马祥胜",
+        "bbox": [
+          4371,
+          1760,
+          55,
+          33
+        ],
+        "confidence": 0.99943,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4371.0,
+            1760.0
+          ],
+          [
+            4426.0,
+            1760.0
+          ],
+          [
+            4426.0,
+            1793.0
+          ],
+          [
+            4371.0,
+            1793.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4375,
+            1764,
+            15,
+            26
+          ],
+          [
+            4389,
+            1763,
+            17,
+            26
+          ],
+          [
+            4405,
+            1765,
+            15,
+            24
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "董晓俊",
+        "bbox": [
+          4370,
+          1803,
+          55,
+          34
+        ],
+        "confidence": 0.99887,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4370.0,
+            1803.0
+          ],
+          [
+            4425.0,
+            1803.0
+          ],
+          [
+            4425.0,
+            1837.0
+          ],
+          [
+            4370.0,
+            1837.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4375,
+            1807,
+            15,
+            25
+          ],
+          [
+            4391,
+            1807,
+            14,
+            26
+          ],
+          [
+            4404,
+            1807,
+            16,
+            26
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      },
+      {
+        "text": "马样",
+        "bbox": [
+          4442,
+          1842,
+          85,
+          41
+        ],
+        "confidence": 0.83701,
+        "kind": "text_candidate",
+        "rotation_deg": -2.063819728456962,
+        "quad": [
+          [
+            4442.0,
+            1842.0
+          ],
+          [
+            4527.0,
+            1842.0
+          ],
+          [
+            4527.0,
+            1883.0
+          ],
+          [
+            4442.0,
+            1883.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4442,
+            1842,
+            52,
+            41
+          ],
+          [
+            4488,
+            1842,
+            39,
+            38
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "马祥胜",
+        "bbox": [
+          4371,
+          1846,
+          54,
+          35
+        ],
+        "confidence": 0.99859,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4371.0,
+            1846.0
+          ],
+          [
+            4425.0,
+            1846.0
+          ],
+          [
+            4425.0,
+            1881.0
+          ],
+          [
+            4371.0,
+            1881.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4375,
+            1851,
+            15,
+            25
+          ],
+          [
+            4389,
+            1850,
+            17,
+            26
+          ],
+          [
+            4405,
+            1851,
+            15,
+            24
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框附近仍有未覆盖笔画，保留完整源轮廓等待确认; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "唐忠菜",
+        "bbox": [
+          4442,
+          1887,
+          85,
+          40
+        ],
+        "confidence": 0.66683,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4442.0,
+            1887.0
+          ],
+          [
+            4527.0,
+            1887.0
+          ],
+          [
+            4527.0,
+            1927.0
+          ],
+          [
+            4442.0,
+            1927.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4442,
+            1895,
+            33,
+            32
+          ],
+          [
+            4471,
+            1887,
+            25,
+            40
+          ],
+          [
+            4492,
+            1891,
+            34,
+            36
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "唐忠荣",
+        "bbox": [
+          4371,
+          1889,
+          55,
+          34
+        ],
+        "confidence": 0.99962,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4371.0,
+            1889.0
+          ],
+          [
+            4426.0,
+            1889.0
+          ],
+          [
+            4426.0,
+            1923.0
+          ],
+          [
+            4371.0,
+            1923.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4375,
+            1893,
+            16,
+            27
+          ],
+          [
+            4391,
+            1893,
+            14,
+            26
+          ],
+          [
+            4406,
+            1893,
+            14,
+            26
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      },
+      {
+        "text": "忠菜",
+        "bbox": [
+          4442,
+          1930,
+          85,
+          40
+        ],
+        "confidence": 0.57768,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4442.0,
+            1930.0
+          ],
+          [
+            4527.0,
+            1930.0
+          ],
+          [
+            4527.0,
+            1970.0
+          ],
+          [
+            4442.0,
+            1970.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4442,
+            1930,
+            34,
+            40
+          ],
+          [
+            4471,
+            1930,
+            56,
+            37
+          ]
+        ],
+        "replacement_safe": false,
+        "review_note": "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认；文字位置已限制在检测到的表格单元格内; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry.; Unified ownership arbitration retained conflicting source pixels as structural or outline geometry."
+      },
+      {
+        "text": "唐忠荣",
+        "bbox": [
+          4371,
+          1932,
+          55,
+          35
+        ],
+        "confidence": 0.99978,
+        "kind": "text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4371.0,
+            1932.0
+          ],
+          [
+            4426.0,
+            1932.0
+          ],
+          [
+            4426.0,
+            1967.0
+          ],
+          [
+            4371.0,
+            1967.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4375,
+            1937,
+            16,
+            26
+          ],
+          [
+            4391,
+            1936,
+            14,
+            27
+          ],
+          [
+            4406,
+            1936,
+            14,
+            26
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      },
+      {
+        "text": "7",
+        "bbox": [
+          4563,
+          2141,
+          15,
+          24
+        ],
+        "confidence": 0.80999,
+        "kind": "dimension_text_candidate",
+        "rotation_deg": 0.0,
+        "quad": [
+          [
+            4563.0,
+            2141.0
+          ],
+          [
+            4578.0,
+            2141.0
+          ],
+          [
+            4578.0,
+            2165.0
+          ],
+          [
+            4563.0,
+            2165.0
+          ]
+        ],
+        "source": "rapidocr-tile",
+        "approved": true,
+        "reviewed": false,
+        "font_family": "",
+        "font_file": "",
+        "font_match_score": 0.0,
+        "character_boxes": [
+          [
+            4567,
+            2143,
+            8,
+            21
+          ]
+        ],
+        "replacement_safe": true,
+        "review_note": "已按原始笔画间隔生成逐字定位框"
+      }
+    ]
+  },
+  "E01": {
+    "input": {
+      "UAT_ID": "E01",
+      "SOURCE_FILE": "environment-building-scan.pdf",
+      "SOURCE_PAGE": 1,
+      "SOURCE_TYPE": "scanned raster PDF",
+      "DPI": 240,
+      "PAGE_SIZE_MM": [
+        419.48098449707027,
+        296.54501291910805
+      ],
+      "IMAGE_SIZE": [
+        3964,
+        2803
+      ]
+    },
+    "candidates": []
+  }
+}

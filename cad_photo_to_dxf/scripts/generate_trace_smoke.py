@@ -11,9 +11,9 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.raster_trace import trace_image  # noqa: E402
-from app.scale_calibrator import ScaleCalibration  # noqa: E402
-from app.trace_single_export import export_exact_trace_dxf  # noqa: E402
+from app.core.processing import ProductionProcessingConfig, ProductionProcessingService  # noqa: E402 - project bootstrap
+from app.core.scale_calibrator import ScaleCalibration  # noqa: E402 - project bootstrap
+from app.export.trace_single_export import export_final_structure_dxf  # noqa: E402 - project bootstrap
 
 
 def build_smoke_image() -> np.ndarray:
@@ -44,12 +44,11 @@ def main() -> int:
     args = parser.parse_args()
 
     image = build_smoke_image()
-    result = trace_image(image)
+    result = ProductionProcessingService.process_page(image, ProductionProcessingConfig(enable_ocr=False))
     calibration = ScaleCalibration((0.0, 0.0), (799.0, 0.0), 420.0)
-    export = export_exact_trace_dxf(
-        result.paths,
+    export = export_final_structure_dxf(
+        result.final_structure,
         args.output,
-        result.binary.shape[0],
         calibration,
         drawing_multiplier=100.0,
         trace_color=7,

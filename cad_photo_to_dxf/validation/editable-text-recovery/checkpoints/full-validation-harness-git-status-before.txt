@@ -1,0 +1,5 @@
+## fix/non-destructive-editable-text
+?? validation/editable-text-recovery/full-validation-manifest.json
+?? validation/editable-text-recovery/pages/
+?? validation/editable-text-recovery/per-page-index.json
+?? validation/editable-text-recovery/run_full_validation.py

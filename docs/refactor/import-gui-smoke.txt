@@ -1,0 +1,2 @@
+74 production module imports + offscreen MainWindow show/close: PASS
+Release inline provenance Python parses; only current preservation evidence referenced: PASS

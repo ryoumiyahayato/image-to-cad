@@ -1,0 +1,3438 @@
+[
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "3eb6aa48124b306b60eb6207017e9db735ceea08460ed09de7b5e70aa6262a22",
+      "timestamp_utc": "2026-10-06T14:43:27.207512+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "3eb6aa48124b306b60eb6207017e9db735ceea08460ed09de7b5e70aa6262a22",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PAIR_SEPARATION_UNSTABLE"
+    ],
+    "sample_id": "real-dbe406bba7f2cdf53bb10ca5",
+    "source_crop_sha256": "667d0f68e7940a315f6af2018b912bd7fa17a35d0143e4c8f492977b6ff6354f",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "f47a284ac60eac4fcb2390d0f18cd0df59d78380fd9727933dade7ae181fc9a5",
+      "timestamp_utc": "2026-10-06T14:59:53.599143+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "f47a284ac60eac4fcb2390d0f18cd0df59d78380fd9727933dade7ae181fc9a5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-a581bfcef9bc5949e88a0f38",
+    "source_crop_sha256": "859df17d76958b0d124dce24cee101c72660182c17cf5c164d6139d68fba4930",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "80054fab1d6c8810838eae5a8fe07e342206bdeae210f247f5b3e4144a8e9695",
+      "timestamp_utc": "2026-10-06T15:07:33.457141+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "80054fab1d6c8810838eae5a8fe07e342206bdeae210f247f5b3e4144a8e9695",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-429aa503b2ba6cbfc10bf2a1",
+    "source_crop_sha256": "c1aad79fbb9e6fd9c5a6be7ae64e38e6d2d7f6aa536b070f24cf7b006ba48c6f",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "cb0bcbc2e9dc9c92af567e25a1b28f59f39a578fc542fcb8f16627d70992338e",
+      "timestamp_utc": "2026-10-06T15:09:04.663438+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "cb0bcbc2e9dc9c92af567e25a1b28f59f39a578fc542fcb8f16627d70992338e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-a0a30b63f3f0a991359d522e",
+    "source_crop_sha256": "a1810744b333ab692f923e0f231daf5c415709cfe11d46243f1ef14cf8eb97fe",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b804ece3d07541dfdf420676858d06831e927d2b1334aafcef8ce902fb27750a",
+      "timestamp_utc": "2026-10-06T15:09:53.558260+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b804ece3d07541dfdf420676858d06831e927d2b1334aafcef8ce902fb27750a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-33b8d02b777e9fb16133cb45",
+    "source_crop_sha256": "998cd973f1921a2054ab9bea84f8f0c11ab4a08aff76814b22755e0fcb57ad1e",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "bbc91451e9f38bf6c9cfdbc2a5ad9c18933d7d5c6bed4375b8f552382823b594",
+      "timestamp_utc": "2026-10-06T15:10:16.550929+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "bbc91451e9f38bf6c9cfdbc2a5ad9c18933d7d5c6bed4375b8f552382823b594",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-a8f7539d0beef1ead1a3c655",
+    "source_crop_sha256": "e167981c1b65101bc6d015d49be23008f601dccfd91baca11e55cbfbafaa6293",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "1aa4ab914492a84394fe00b891ee46781fc87186236c211392b54bb6b791d7db",
+      "timestamp_utc": "2026-10-06T15:10:40.789943+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "1aa4ab914492a84394fe00b891ee46781fc87186236c211392b54bb6b791d7db",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-709b66276d3bfeae6c2269ce",
+    "source_crop_sha256": "3d60bce36135cda986fefc4ebbdaeccdf7794b3aa8f42cccee193b48d45003d6",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "26d5fb803393810f1dcd308e33d52d796ce440f8c95ae2f035c4437340fa29a7",
+      "timestamp_utc": "2026-10-06T15:11:03.062429+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "26d5fb803393810f1dcd308e33d52d796ce440f8c95ae2f035c4437340fa29a7",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PAIR_SEPARATION_UNSTABLE"
+    ],
+    "sample_id": "real-0e02f94f067adeec2a26e282",
+    "source_crop_sha256": "a999b0a9c22ff316b9c230c432c2221e2ab8044bb0c87b917f0ceadf68d9dfac",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "1e77cb8b1c7df735b5d3cc3cfe94da96860560be6aba80d0f3ef46a495df6768",
+      "timestamp_utc": "2026-10-06T15:11:35.023210+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "1e77cb8b1c7df735b5d3cc3cfe94da96860560be6aba80d0f3ef46a495df6768",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-40651c8f7456a8fcd456ef80",
+    "source_crop_sha256": "ccf23fa75ff4c5995b3cf9f01a74f5bdda5ae17ae13b09c0e2c25574d6ef701b",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "c00234cc2264f04f8a796e1fd59c56fe63d98399a7bc05d36e8c1d784414095c",
+      "timestamp_utc": "2026-10-06T15:12:39.471551+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "c00234cc2264f04f8a796e1fd59c56fe63d98399a7bc05d36e8c1d784414095c",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-d95c20a846d82691441e3f65",
+    "source_crop_sha256": "3c86bff36ed10f1c707501c4fdffae61161ede40c3499f802cbe6a680a6e0ace",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "27844f1428351ed497c9715dc4a20c6e10d2ccacfa4e9e9e81dd52c15e207407",
+      "timestamp_utc": "2026-10-06T15:13:00.614694+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "27844f1428351ed497c9715dc4a20c6e10d2ccacfa4e9e9e81dd52c15e207407",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-fa0b734a1bd8e8bc6ef5da7b",
+    "source_crop_sha256": "381ecb797f19c3c82045646f4ac2148d39aba118377bdbaaa19d0a0bf637b3d0",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "405ad5902ad181d5067dbfc288b1d118f1487c14df8ea7e12e04e93f0dbe38af",
+      "timestamp_utc": "2026-10-06T15:13:20.950668+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "405ad5902ad181d5067dbfc288b1d118f1487c14df8ea7e12e04e93f0dbe38af",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-05af36a9be2c60d5c135013f",
+    "source_crop_sha256": "5579b7318ed16a33237f90890d83282fe407d38d2b9ef83e0e37fa58b1e55994",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "04227e07c243c5a3f34cb84941bd0b771ad125e31e4b59590a662a3242323d60",
+      "timestamp_utc": "2026-10-06T15:13:36.406979+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "04227e07c243c5a3f34cb84941bd0b771ad125e31e4b59590a662a3242323d60",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-48f0cee35570a79663988685",
+    "source_crop_sha256": "5b1afe200b5272c85072216ae0899a569887cc9b0af8ec38cde6ef48fb6009de",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "a1b59b9942e12068ea1eb93f86ed7b1c993db451f3f5c8a00ffd127a28a8bebc",
+      "timestamp_utc": "2026-10-06T15:14:48.821463+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "a1b59b9942e12068ea1eb93f86ed7b1c993db451f3f5c8a00ffd127a28a8bebc",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-9ea4e317781371a35858c98e",
+    "source_crop_sha256": "f6320bad3746c7d1abbb9781fcfe27ff84177563bb33ab311cc54ea5c6e120bc",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "ef6b3d4b950efe59b2f51e97e27f50633d6b6790ceb4e9fbd4ade813f92fd6ef",
+      "timestamp_utc": "2026-10-06T15:15:12.894451+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "ef6b3d4b950efe59b2f51e97e27f50633d6b6790ceb4e9fbd4ade813f92fd6ef",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-3b3dd215694e58d5c3faedc1",
+    "source_crop_sha256": "3470a347ba0b764ee72e0eb5cf321839695548a7e725eb99d77dac8e61194c96",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "766cb15bf3294625c6d59e74008b3bec66b7dc47271a08d82f65d95166b682ad",
+      "timestamp_utc": "2026-10-06T14:46:45.711551+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "766cb15bf3294625c6d59e74008b3bec66b7dc47271a08d82f65d95166b682ad",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-8025fde158737f5241ff782c",
+    "source_crop_sha256": "ec3344f3294f27820d2246ed8ed164b7baf22a1c429b48c83113240374fcba1b",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "487f299231ac74705dcc611fdb9f94045973e0c82d05e7d44028f139f835e141",
+      "timestamp_utc": "2026-10-06T15:02:25.647336+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "487f299231ac74705dcc611fdb9f94045973e0c82d05e7d44028f139f835e141",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-afd4a89e76045a8fff65125c",
+    "source_crop_sha256": "6150e4e3a465cb70111afc36dfd6e9f1e7a71fec63c9c22dd36484f427906c86",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "354883c6adbc0e009559f267a64fe231c007d9e3b39272af052fcee58375cd43",
+      "timestamp_utc": "2026-10-06T15:09:55.775216+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "354883c6adbc0e009559f267a64fe231c007d9e3b39272af052fcee58375cd43",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-50c4f62d241f527f52069137",
+    "source_crop_sha256": "98cd33523c4ad82fe715a89e72358590f4219f9cef995b2c807ac074b5a676e7",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "23b5eba51d15a12a6b11f5ae252aa53352131c6f3b8c2c654a3e4734894f426a",
+      "timestamp_utc": "2026-10-06T15:10:18.511340+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "23b5eba51d15a12a6b11f5ae252aa53352131c6f3b8c2c654a3e4734894f426a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-aa02dca52c2a176cb0f5a73b",
+    "source_crop_sha256": "250227e3f82ce95434071471ce32f9f2a9bc5c4b50f3ef274ce400f73bc7ae32",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "29eb38ccfa8bb231c2a7622f7cc66d8700ee848b0170547ce4b7ceec6654103b",
+      "timestamp_utc": "2026-10-06T15:10:42.295730+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "29eb38ccfa8bb231c2a7622f7cc66d8700ee848b0170547ce4b7ceec6654103b",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-28817ac9eded2a86a8bde995",
+    "source_crop_sha256": "49dae00defb57b30a96e405bbde921e19996586d7a1cb991b5a80c220ac0bdd2",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fc6d74aae3aee405aa6e56984f066082d9b04326d574b812eb9edd28ddd2967e",
+      "timestamp_utc": "2026-10-06T15:11:39.495181+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fc6d74aae3aee405aa6e56984f066082d9b04326d574b812eb9edd28ddd2967e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-f09ad07c41eb8bbf3d181270",
+    "source_crop_sha256": "ae0697d53c4431013ce04aae6e09d996869892a8d1888d4cd53b5c89d9adc3e2",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "40863cf50104a3b21c1a902e7332a211bfec575644048fc6fdd2a5566dd95a53",
+      "timestamp_utc": "2026-10-06T15:12:43.991389+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "40863cf50104a3b21c1a902e7332a211bfec575644048fc6fdd2a5566dd95a53",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-42398e15ecfe356401073691",
+    "source_crop_sha256": "5e5dbd52d103d7871ccc137d7e2f1bf6c9d9aa4fa1352a338d775048463c04e7",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "ba20055c475db897ede6d5fcd7aed3a89cf4bb1d53892ad8b666d1cd818a7994",
+      "timestamp_utc": "2026-10-06T15:13:02.255380+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "ba20055c475db897ede6d5fcd7aed3a89cf4bb1d53892ad8b666d1cd818a7994",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f67e9ca171f8876adc41dcc7",
+    "source_crop_sha256": "7c6cfc7c253dd77c2df935e88acfb41c7e3f02ef7eec9019bc4c6b0676611331",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "0d8789671481f201a0cf4947475cb8f9b8ed35178bdb3f33560ad83e4cf72dd5",
+      "timestamp_utc": "2026-10-06T15:13:22.134504+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "0d8789671481f201a0cf4947475cb8f9b8ed35178bdb3f33560ad83e4cf72dd5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-3bea6cbcf1e95ae4a42ad65a",
+    "source_crop_sha256": "7807d3ee492385c9b075a335a54ab27940cb4fb0ccbb0a45f66bdba6bb2437b1",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "26f0be235aaba6c2691d3a060277bce7487a0622b6292cfe27f6b3c5ffbda57e",
+      "timestamp_utc": "2026-10-06T15:13:37.823852+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "26f0be235aaba6c2691d3a060277bce7487a0622b6292cfe27f6b3c5ffbda57e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-7db9c5fd66971bd6aed35215",
+    "source_crop_sha256": "d3bc7044750ebb573bb6cd1e2956ee491453b47ce677d9c3dbf23070c7dc6d7a",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "03fba186d3ebbb4d58c009b52119840c379e36b43a81b79bd688a1ee2d8165da",
+      "timestamp_utc": "2026-10-06T15:14:09.214971+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "03fba186d3ebbb4d58c009b52119840c379e36b43a81b79bd688a1ee2d8165da",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-3af48c419b77bb0f500cfbc4",
+    "source_crop_sha256": "7f759e94b05880020de6db1201967580204e0886e0739b36f944223395c0b946",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "74661ec952ccfbb65d842fa99e295a58a8da38bf8bb585ff6500ba8eaaaa09e8",
+      "timestamp_utc": "2026-10-06T15:14:51.424618+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "74661ec952ccfbb65d842fa99e295a58a8da38bf8bb585ff6500ba8eaaaa09e8",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-74344fd0908442d3c8bb88a2",
+    "source_crop_sha256": "def95f984cb079cffc1772eb6e19e7331c3ff252ad0c5cddecbfa661c477e21f",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "22717acd10ebc7fa590af3dbd83b0e96c89e9995a8ff404132bcb0be27644822",
+      "timestamp_utc": "2026-10-06T15:15:14.776273+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "22717acd10ebc7fa590af3dbd83b0e96c89e9995a8ff404132bcb0be27644822",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PAIR_SEPARATION_UNSTABLE",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-95f3279ddba5e0bd94d85485",
+    "source_crop_sha256": "3e34af6f208ffcf8bb40c82470f2891f6396692551b2729cc759686249b98f8f",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b3b7a5fb8e2dc98ac64b8d136bf568860bf687750f7123e1b995cdf04e6a9c8e",
+      "timestamp_utc": "2026-10-06T14:46:47.832110+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b3b7a5fb8e2dc98ac64b8d136bf568860bf687750f7123e1b995cdf04e6a9c8e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-f78d61a6379eed33306feb5b",
+    "source_crop_sha256": "12cd0f664cbef20db1c42ef36ed8279615e6d5ebad37883280172d9b5e3a6484",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "1ad9e72fba91544b8221f2431fa72965ba324e8b0c168931bfec26df3d578591",
+      "timestamp_utc": "2026-10-06T15:08:10.591237+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "1ad9e72fba91544b8221f2431fa72965ba324e8b0c168931bfec26df3d578591",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-fb0786cda7ec66ffd21acc92",
+    "source_crop_sha256": "131ed69e19caa443eb58b8f14f469900c353751452b989b8db12416d3cf232c7",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e2897b5b2a42b55833533a5f4ca09efc10ed45e61e680ee0b635c3596d572651",
+      "timestamp_utc": "2026-10-06T15:09:20.583478+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e2897b5b2a42b55833533a5f4ca09efc10ed45e61e680ee0b635c3596d572651",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT"
+    ],
+    "sample_id": "real-53c4210e181d55184c6b466d",
+    "source_crop_sha256": "c195b9f58e480746669aa0d6e41e14c4016cfe16c554cd16e3a0abd8a5c8d197",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "4bf72b9db92dd54c7334c3f696608e46bef62247beff1a3fe4a389efa40cb15f",
+      "timestamp_utc": "2026-10-06T15:09:59.606362+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "4bf72b9db92dd54c7334c3f696608e46bef62247beff1a3fe4a389efa40cb15f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-13f893913e051175a275aba8",
+    "source_crop_sha256": "d14d20fac5457cd07d21940eb60935851147fae3557551bde5e59199a581b2a5",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "78850d71f1e4ebe4c7a308b74c368e4e7cdeacf20bb4b954ace8e4e0b1727b97",
+      "timestamp_utc": "2026-10-06T15:10:20.119307+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "78850d71f1e4ebe4c7a308b74c368e4e7cdeacf20bb4b954ace8e4e0b1727b97",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-ad0438adc55821eb9f59c004",
+    "source_crop_sha256": "db09f5e3e2529d9727c538b3bca7d8b53588a06120c57ec8f629c86fd918fb6c",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "d644c4a44c232b134f18c995ecdffffc7f6ce0f863c2e82f7adb010c64c7d08e",
+      "timestamp_utc": "2026-10-06T15:10:43.880691+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "d644c4a44c232b134f18c995ecdffffc7f6ce0f863c2e82f7adb010c64c7d08e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-6ac3d213f763379dff23d61a",
+    "source_crop_sha256": "4ab71259d97a06df418b9e74d8dcebdd9453d449661a44ef8d43d176bc17d0b4",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "c47bd4d3437ad969ca8fbbd9b5e34fad47e9d4533c0732213756189d15c132c5",
+      "timestamp_utc": "2026-10-06T15:11:11.158423+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "c47bd4d3437ad969ca8fbbd9b5e34fad47e9d4533c0732213756189d15c132c5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-c6cc0eb5470a931c56c16d5d",
+    "source_crop_sha256": "cf9517039916ebb70ceb858fb0dcadc84e4d3979bd16052fc7eb7aacae23e219",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b025e9cfdab77bc6eef127116c534d88d41798fd6931c3b980f75a80c86ba361",
+      "timestamp_utc": "2026-10-06T15:11:41.221966+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b025e9cfdab77bc6eef127116c534d88d41798fd6931c3b980f75a80c86ba361",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT"
+    ],
+    "sample_id": "real-573d8879d80e453c3f5eff25",
+    "source_crop_sha256": "14c26511c5e485f1ac1dc38d26ab0a4202ba4eb66f2fc87b173351f7bf0ac713",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e3d4fe4bfb87ecd148925c5ae550c674aa2d56a4ee610722d02fef230992fb37",
+      "timestamp_utc": "2026-10-06T15:12:45.143489+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e3d4fe4bfb87ecd148925c5ae550c674aa2d56a4ee610722d02fef230992fb37",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-6df9f1eee02b6639d9be28ca",
+    "source_crop_sha256": "ffc1286a128805e4c7adc35f46e66de15a34ae6bb34b9573c8d6bdae61ff90e8",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "ccc66b5f685c4a99af0e6c4c6eb8e2434909caa25c9dd91d8e4fd9fc06863cf1",
+      "timestamp_utc": "2026-10-06T15:13:03.734664+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "ccc66b5f685c4a99af0e6c4c6eb8e2434909caa25c9dd91d8e4fd9fc06863cf1",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-012819b91cfde1f62774448d",
+    "source_crop_sha256": "5d250ee706c6b99eb5d62befe0eef6f398169b3adfe22ca63af5904d0a266f06",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "0ad32131b63235c3396badc517aaf6c157a18e2a88be115edc02166614b9b938",
+      "timestamp_utc": "2026-10-06T15:13:23.102317+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "0ad32131b63235c3396badc517aaf6c157a18e2a88be115edc02166614b9b938",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-5ee83b41593ed8269f8f3849",
+    "source_crop_sha256": "d66f98f21dc9192f7c1a2c8983f7810eaafa47f1e7daf7553643444d8d4c3f47",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2b15593f411b7f8126ee0f62c228b0e99a9a36b28685daf27754131e1d92ae73",
+      "timestamp_utc": "2026-10-06T15:13:38.734492+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2b15593f411b7f8126ee0f62c228b0e99a9a36b28685daf27754131e1d92ae73",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-f1a8b6351d4ed5d715d9b2b0",
+    "source_crop_sha256": "0cd27d7e16f467c1137b97864031cbd0798922726841bdca9c462e0d65d23b89",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "6ae8db01d5957b8c11b5641e3fe0d5bd70c590b525770aaf1d2e6f43df3047b5",
+      "timestamp_utc": "2026-10-06T15:14:11.677750+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "6ae8db01d5957b8c11b5641e3fe0d5bd70c590b525770aaf1d2e6f43df3047b5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-afefc0aec80e7b83ea896ec0",
+    "source_crop_sha256": "e1cf64d6dab5c6c4224b5179d216b3f759481dabd9ab44f6b84809038ce2c749",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "23e8833601df39ff8570be02e83a234bf20bd4cb120c92d5ea50384bfd6fea8a",
+      "timestamp_utc": "2026-10-06T15:14:52.359512+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "23e8833601df39ff8570be02e83a234bf20bd4cb120c92d5ea50384bfd6fea8a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-4cdf9ddb74b2aa75283e68dd",
+    "source_crop_sha256": "02e545a2e1aa2f347f01f7d5b6f50af5b432aa849197bc84226455de3c307453",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "462c8fd5f512c6d8e66a2a1fdb29c1f6719868eb8a978d07740918317a33eeac",
+      "timestamp_utc": "2026-10-06T15:15:16.287068+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "462c8fd5f512c6d8e66a2a1fdb29c1f6719868eb8a978d07740918317a33eeac",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-b0f8fb6130b21069bf44b44b",
+    "source_crop_sha256": "415fffea2eae1031fa41ed9a8f0572d9644ecf550a0ccd9153ab4fe7084e7518",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "bd518187d903a51dc96c4e7071dbfcd152e674c1a3401808f41594d32d122c9b",
+      "timestamp_utc": "2026-10-06T14:46:58.175938+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "bd518187d903a51dc96c4e7071dbfcd152e674c1a3401808f41594d32d122c9b",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-8f5fb67c351941da87125e40",
+    "source_crop_sha256": "4382543dd1e1ee2c37e73294fdf664d1d2a33fcad1ee23cb898a4d85a273f2b9",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "bc946aa0c8029784cda87775725d0179c8b2c5682f04e3377f51790bbe7008c2",
+      "timestamp_utc": "2026-10-06T15:03:30.752132+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "bc946aa0c8029784cda87775725d0179c8b2c5682f04e3377f51790bbe7008c2",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-106c16571154ddfc5e7ff278",
+    "source_crop_sha256": "7dfec1f47a2f8a7dbcc2dff7982d37895cc5f3d3a8e74637f31f9d7247d4706e",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "c86331d675880ac10d0ee85198c5c70086e2f8b8ece58f25b50ddcc8be126854",
+      "timestamp_utc": "2026-10-06T15:08:28.559517+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "c86331d675880ac10d0ee85198c5c70086e2f8b8ece58f25b50ddcc8be126854",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-9753827163aa0491a3566080",
+    "source_crop_sha256": "f2489f4d0df0520cb3089c63904bed8b62d8047a0b7a70a292f0bb2df04243ad",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "743e050e250ceceb17c7046e7922a9321188853f20d6820a9bb85e0f2abdf833",
+      "timestamp_utc": "2026-10-06T15:09:21.934753+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "743e050e250ceceb17c7046e7922a9321188853f20d6820a9bb85e0f2abdf833",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-b52f80595b33eaf691e25a55",
+    "source_crop_sha256": "39767bdc77143df59252fdfd5795b1adfbe5ee27994273033240657a1f1d9ea3",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "c67a47f7018e48b561c8ada1c2781f55cbc582e3aeec6483894add319bc5ef84",
+      "timestamp_utc": "2026-10-06T15:10:01.158073+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "c67a47f7018e48b561c8ada1c2781f55cbc582e3aeec6483894add319bc5ef84",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-feaa871fdd77a3f3aeb30213",
+    "source_crop_sha256": "0fe226575cfd0c15fb98fb2fbfe34a56973ae9e6162c2828e402a1770234bab7",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e473ed33a26b93a8c01e280d218c0e86a973e6f34c893050e97ffbf5844fb3e8",
+      "timestamp_utc": "2026-10-06T15:10:21.719346+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e473ed33a26b93a8c01e280d218c0e86a973e6f34c893050e97ffbf5844fb3e8",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-691c9074b55347e031c7465a",
+    "source_crop_sha256": "aae982503da79146fc38e92ab8c64ab48fd589f4abe88531d82df6a2abd80ba0",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "3e724edb06bb6125be510814d186cccdaf69e8a9351005f18ad1ba748772419a",
+      "timestamp_utc": "2026-10-06T15:10:45.222365+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "3e724edb06bb6125be510814d186cccdaf69e8a9351005f18ad1ba748772419a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-c7d4e7b292d5f55400eca8ea",
+    "source_crop_sha256": "22fe301ca80e9e5fca92c41094bcc50778fc95bcba8fc543920eedee5831394b",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "8765ef584de1f1f012fb25c3f16f88dfd85d6533d4ac1b9dfa1cfb612ab65c03",
+      "timestamp_utc": "2026-10-06T15:11:12.358707+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "8765ef584de1f1f012fb25c3f16f88dfd85d6533d4ac1b9dfa1cfb612ab65c03",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-602f15f56aa19daaa5968f38",
+    "source_crop_sha256": "bea2d60ded05be5fc1fb2f064c30cf66ebf068c2ad2a174d0043eb1527ce528f",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "12ce542feeeb441bb5124a417ac08beece7fce26b9998e5f152d502ab3f0927e",
+      "timestamp_utc": "2026-10-06T15:12:46.455150+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "12ce542feeeb441bb5124a417ac08beece7fce26b9998e5f152d502ab3f0927e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-b6e833e0e89bef821a51d5b3",
+    "source_crop_sha256": "244c9fffcc165efc615ff45e9639e730b36580b18cf4c2604030d370c6b006ac",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "effd50f9f80d2c0b0e8e102a7b087ad1977e3c51160c50c748653ab68eac3701",
+      "timestamp_utc": "2026-10-06T15:13:05.111044+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "effd50f9f80d2c0b0e8e102a7b087ad1977e3c51160c50c748653ab68eac3701",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-ed30546fbbe167cfb191b763",
+    "source_crop_sha256": "6dfc0f6d9a14d0f37049aa5270602f99b1da4f1e91a4ccde11013f34d0801ec3",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "abe52ed88b2245a4348f82da122da4367368fd2ecd970ff20872add802485658",
+      "timestamp_utc": "2026-10-06T14:47:00.465202+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "abe52ed88b2245a4348f82da122da4367368fd2ecd970ff20872add802485658",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-a87b35df7f64d30ef312244b",
+    "source_crop_sha256": "d1cb246515f186cf8f5f68d3e058a47a093273d38f432da5b943890475299fa1",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2f34a4a8851a7e3a9e9d6f385832b05ee17539ce99bbab3f911fcfbea7bffb1d",
+      "timestamp_utc": "2026-10-06T15:04:38.591766+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2f34a4a8851a7e3a9e9d6f385832b05ee17539ce99bbab3f911fcfbea7bffb1d",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-9a0937df293488ab658d5680",
+    "source_crop_sha256": "70f66da26963676c41b9b76bb09e6ef550e61781d2a53a5c918842e565cffe46",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "a65fde6ccc6523e87ae4357d2e1165318b2f17a6e3efdb8b0a3740e257bf575f",
+      "timestamp_utc": "2026-10-06T15:08:33.614390+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "a65fde6ccc6523e87ae4357d2e1165318b2f17a6e3efdb8b0a3740e257bf575f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-ed577ad61b4aeac9106fc4c4",
+    "source_crop_sha256": "1d623a587e5f8d5c190dbc68fd496befe875581a735663fb96d227321954f885",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "cea9bedd98903b139d17e7c1a0826efc78fb692de6558c71201a23ee298748be",
+      "timestamp_utc": "2026-10-06T15:09:23.728666+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "cea9bedd98903b139d17e7c1a0826efc78fb692de6558c71201a23ee298748be",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-2a320812871b3187762c4c54",
+    "source_crop_sha256": "ccf77e3ff139e5e14b6b9648b304bde93cc76aa9b1ea229dfd687136a4c74f46",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "c3e05cb6681a5ee328693b091c1398402a1e90915d5f0ee65292137e7b586e4a",
+      "timestamp_utc": "2026-10-06T15:10:02.791416+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "c3e05cb6681a5ee328693b091c1398402a1e90915d5f0ee65292137e7b586e4a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-b744b2f5b2d4c67afa195b10",
+    "source_crop_sha256": "c9725475146584a43b2960a8cf41e371d05353d5b97d9f90e83fe33c14e7ce22",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "d9734c05d22c8b1e787603dc746884d5cc98825a0e9a23ac1f46a4094daf8b6b",
+      "timestamp_utc": "2026-10-06T15:10:23.038089+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "d9734c05d22c8b1e787603dc746884d5cc98825a0e9a23ac1f46a4094daf8b6b",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-5c5168d23dc34ec806efb57a",
+    "source_crop_sha256": "06f380bb42d336088eb621fd323fd95cc25f68c029a79cd069272d2c1fb796d6",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b885ce4d235403f5953362c3710568ce657ddb131d8c7e2896a360b3e861b9b2",
+      "timestamp_utc": "2026-10-06T15:10:47.663583+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b885ce4d235403f5953362c3710568ce657ddb131d8c7e2896a360b3e861b9b2",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f4f8ff5544d8ab866825924d",
+    "source_crop_sha256": "769659a717250f3e9f8d2cd8c4dd0d8df099bf9f014ba96f55411c6211985fd9",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b470b43ca178a3a775b04313525ce8d9c18fd96e9d0b21a5c8faab78f28f0792",
+      "timestamp_utc": "2026-10-06T15:11:13.553116+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b470b43ca178a3a775b04313525ce8d9c18fd96e9d0b21a5c8faab78f28f0792",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-d89abe93bb0cc256a8f101e2",
+    "source_crop_sha256": "5f7db0c745f3a1bec3a1837b3c3333496c9259cb6d671fd3ad4cf9cfb55b3a32",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "389ab0aab19702b1abd70736506c190efadbae4d6ce6bf953e99b92d333f0887",
+      "timestamp_utc": "2026-10-06T15:11:48.871540+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "389ab0aab19702b1abd70736506c190efadbae4d6ce6bf953e99b92d333f0887",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-993955454e6cdd047aa28866",
+    "source_crop_sha256": "71d355f1e90da19b6eb2de67fbc232e4bc51d3178af2ac57e4134477c9f6b449",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "43b81091b26982e50f96df547d8190b4f9ad06160e7b4466fbe0b7b5506e0bb2",
+      "timestamp_utc": "2026-10-06T15:12:48.023095+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "43b81091b26982e50f96df547d8190b4f9ad06160e7b4466fbe0b7b5506e0bb2",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-bd611fd17edc3a1e81284fcf",
+    "source_crop_sha256": "b9898f42f760232efe9e7dbdc056068f4e5dea3a1676d4709c0089eab4e8d60c",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "930c8cf96dd86dcb503a6534281890f0460326eb482606c5a9007717f6e6dd72",
+      "timestamp_utc": "2026-10-06T15:13:06.287395+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "930c8cf96dd86dcb503a6534281890f0460326eb482606c5a9007717f6e6dd72",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-856c24b4aace6f9d6e9a6913",
+    "source_crop_sha256": "616ab74ec3e7695deec3ff6db25c66603309bf2febe0e258ca572914a7834c7f",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "56205196057e53b2258218ba05cb5be3405172753209e8d55dc5a7def07777e7",
+      "timestamp_utc": "2026-10-06T15:13:27.469884+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "56205196057e53b2258218ba05cb5be3405172753209e8d55dc5a7def07777e7",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-eb37863328a646ce31268fa0",
+    "source_crop_sha256": "5b674bf3d8a0076eb25421a51d969cbd59770e292397ab11f51d84e9b11f6e2e",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "0447c2bbc6320ee6643778d1bdffb1e6f7ab37e3f4fc66b88aa27a932901da7b",
+      "timestamp_utc": "2026-10-06T15:13:43.943477+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "0447c2bbc6320ee6643778d1bdffb1e6f7ab37e3f4fc66b88aa27a932901da7b",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-37faf19411b1df96c4cd9014",
+    "source_crop_sha256": "bdd480dbae2cba1b349f413a22feaecfbece97b2d5caed23e7f21af7d78890a4",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "f846e08d10a5caa92537e4e7e0d3a37739a9e4afe40e106a4dd1f24754b551a9",
+      "timestamp_utc": "2026-10-06T15:14:14.919229+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "f846e08d10a5caa92537e4e7e0d3a37739a9e4afe40e106a4dd1f24754b551a9",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-e33617eedecde2b914128dce",
+    "source_crop_sha256": "efa6c40bd9817d21ec1af5c6772cc84a210322794bef019a6771059ae2c77b8c",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e28f3d6a1fc13b943e81bf51193ae02a0e18bd9d36fbb7160d5cd601dd9fa0e4",
+      "timestamp_utc": "2026-10-06T15:14:57.095788+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e28f3d6a1fc13b943e81bf51193ae02a0e18bd9d36fbb7160d5cd601dd9fa0e4",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-7341931608dc344f9ba29243",
+    "source_crop_sha256": "87cb53ea21bac2eef74668df7bf3725b8b6d8173772af8f4e5e1242eb9c05557",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b59c60375e0faede5acb7af2b6321de3ce3cc297dc4ebfc8168db40b45f17ff6",
+      "timestamp_utc": "2026-10-06T15:15:18.839358+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b59c60375e0faede5acb7af2b6321de3ce3cc297dc4ebfc8168db40b45f17ff6",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f0c9aa79ecadffa167dd46cb",
+    "source_crop_sha256": "f38a6c9372224ac93c1e78963e065657b4a025ae2aec69e96a0d323c4d118a56",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2b67b8aaf0e6670846ed5238f1c59d738605c3f8fc13f8ce5dd0c71ac8313146",
+      "timestamp_utc": "2026-10-06T14:47:02.728017+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2b67b8aaf0e6670846ed5238f1c59d738605c3f8fc13f8ce5dd0c71ac8313146",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f0b2ac301e1b3475b4c5111c",
+    "source_crop_sha256": "2db5449833096e054cf4f050de46303875c2262254dcf44561da7115d0ed5533",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "83921af392a38fe76e311a1898b183553f2ca0b3c472594d975bfa42e5a19c97",
+      "timestamp_utc": "2026-10-06T15:08:35.278713+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "83921af392a38fe76e311a1898b183553f2ca0b3c472594d975bfa42e5a19c97",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-16d14182720212687d7ef955",
+    "source_crop_sha256": "925e523524a48c2240379f3930385318afb84d112116ad4c84e9577730d251ea",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "5b053971dceee5664cca846739bea4604caa382435922a524a5f273f61ea813e",
+      "timestamp_utc": "2026-10-06T15:09:28.824283+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "5b053971dceee5664cca846739bea4604caa382435922a524a5f273f61ea813e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-81cdd156c0c8351a6955f8bd",
+    "source_crop_sha256": "86b10b6ab43101b24e53be837043ede68025df032c02d9ee11dbed1ff42baf01",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "3ca1090bba21cc915310a4ae83f18f5a59e3feccb1ec679fb8273bfabab28dd8",
+      "timestamp_utc": "2026-10-06T15:10:04.208817+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "3ca1090bba21cc915310a4ae83f18f5a59e3feccb1ec679fb8273bfabab28dd8",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-3d508f7adcca577edfca14fb",
+    "source_crop_sha256": "fc9a3d1b9b2fdd3bb076785096c6d18a5ff3de8930c323223bf2297b04f1c6e1",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "9a3894c7cbfe732f6cd1cb8d685c2d111bf9dbf14be8cc244847caa94d13d2a7",
+      "timestamp_utc": "2026-10-06T14:47:04.431594+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "9a3894c7cbfe732f6cd1cb8d685c2d111bf9dbf14be8cc244847caa94d13d2a7",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT"
+    ],
+    "sample_id": "real-26426acb6dbb926aef7335f5",
+    "source_crop_sha256": "3359549ce35865d9d571b6cfb85c02e7bdb6240c0869e04afbde854411214899",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2cd8f92d2e8cfe822295298b8f9e008f31ccb3b614df366a267f17292b1964b6",
+      "timestamp_utc": "2026-10-06T15:04:47.143541+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2cd8f92d2e8cfe822295298b8f9e008f31ccb3b614df366a267f17292b1964b6",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-b971e092f52262412310a327",
+    "source_crop_sha256": "f0a52efb5184a4357763502435e2b393afee3bd39a1b3cac2f225bae5a611a17",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2ba9f9244afb650dd56dc34b8897d955f37ba1aebde4001e8aec47c3d4a9f1af",
+      "timestamp_utc": "2026-10-06T15:08:37.112250+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2ba9f9244afb650dd56dc34b8897d955f37ba1aebde4001e8aec47c3d4a9f1af",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT"
+    ],
+    "sample_id": "real-f4c9300a3318619b3738cc88",
+    "source_crop_sha256": "4c7a31fb9465efc806149c47998ddff3b425ddf73e1c39086904e3d64a10ed76",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "56075bc8ea5670afdf93f9e86eff312b1273250ba9a2eff12dc11aada077728a",
+      "timestamp_utc": "2026-10-06T15:09:31.711935+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "56075bc8ea5670afdf93f9e86eff312b1273250ba9a2eff12dc11aada077728a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-14833d60d2c338ffcc7b1627",
+    "source_crop_sha256": "be232aa4b50aa6ff4b405238bce7ebf0b4880dd444bb1b747f161ba0c75c92b6",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "cffb359b1b1a9f15000f9d53bbbb81cd37f60f3127f8b1d36b70921d2a950874",
+      "timestamp_utc": "2026-10-06T15:10:05.415319+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "cffb359b1b1a9f15000f9d53bbbb81cd37f60f3127f8b1d36b70921d2a950874",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-2364a5f6ecd7b155a9ae7804",
+    "source_crop_sha256": "b64d310284c5390895ceb93a4ed481c4d84320782f68830ffc0df27c73cf5ffe",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "8ae2f98bf7a5df3950111089de8d3ccf9402284f5ae4d9f8a6a428021cdd9194",
+      "timestamp_utc": "2026-10-06T15:10:25.807646+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "8ae2f98bf7a5df3950111089de8d3ccf9402284f5ae4d9f8a6a428021cdd9194",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-6e59277e4a2207d06420bb4c",
+    "source_crop_sha256": "664e2ca9f54973b95fbc6bbb6294f96f1d0f8a243b41fc42e18b5a981128e615",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "524426283d5ef29b49481cb0f7772762a8160531207e1a1f10452422891edd5a",
+      "timestamp_utc": "2026-10-06T15:10:50.415143+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "524426283d5ef29b49481cb0f7772762a8160531207e1a1f10452422891edd5a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-08f7bf4f8d1c180a89ae7087",
+    "source_crop_sha256": "e30a6852c128e079a9b992f78e7de806a15d6e131a33c1320b2f3903f5c6adc6",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "9cae73bc1588d79873dc5304d686a4f1722c96ab4586cfe86f1dd6114e3996d5",
+      "timestamp_utc": "2026-10-06T15:11:16.711486+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "9cae73bc1588d79873dc5304d686a4f1722c96ab4586cfe86f1dd6114e3996d5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-a0b6f73e81fc6ac369781ef0",
+    "source_crop_sha256": "c08938700381666d4c64a12fcf1ef05af7b30441f4228f5442a928a570831ee2",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "d90c88f0e710b63231e1b101a3f5311961dc52264faffbe5724be6eaae85e383",
+      "timestamp_utc": "2026-10-06T15:11:54.599555+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "d90c88f0e710b63231e1b101a3f5311961dc52264faffbe5724be6eaae85e383",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-902e4658f6583229602627ae",
+    "source_crop_sha256": "ddecddf8a7312109121cb43dc9a5c74e168e19e130b75629bd3943437e85a477",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "2d03b83c379dde591c3c3740d29d5dcf89282b35bca037bde52b2b857dde8b43",
+      "timestamp_utc": "2026-10-06T15:12:50.102426+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "2d03b83c379dde591c3c3740d29d5dcf89282b35bca037bde52b2b857dde8b43",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-991d8a897cae6bcc390e768e",
+    "source_crop_sha256": "b9cb44590b5e49c5a4bc2ada1df482320a5967727f4b886b544dd4c1c1cdc892",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "3be38d931277950285629f29ea95e559ed91f83e0470082a95657c9580660aa4",
+      "timestamp_utc": "2026-10-06T15:13:08.494388+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "3be38d931277950285629f29ea95e559ed91f83e0470082a95657c9580660aa4",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-126cb89de9a09c270b3fc11e",
+    "source_crop_sha256": "5439d989e5709b67d008fc39d90a88ee585dad287bbf35e83908ab38eb219644",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e9c82b0ddb5a6bc458eb976c42c335ba3aaab83b6e59cae240b4e613fc34163b",
+      "timestamp_utc": "2026-10-06T15:13:30.112097+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e9c82b0ddb5a6bc458eb976c42c335ba3aaab83b6e59cae240b4e613fc34163b",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-8875d5917412946cb140cece",
+    "source_crop_sha256": "ed334c5660008cd088e3cde1b6951ce08c00d376c0c5c638e02c74e6ce59f80f",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fa86d10e582a7e074b1845e83d7a587e8aa37d8fc0e9cb1dcbc9422f320e9dc0",
+      "timestamp_utc": "2026-10-06T15:13:47.087399+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fa86d10e582a7e074b1845e83d7a587e8aa37d8fc0e9cb1dcbc9422f320e9dc0",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-b5d026c19f431084528841a6",
+    "source_crop_sha256": "b1fb3ceae219118aa5e9994b7db358b59a7d27f1b679a73a24a2279689f46cc2",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "35b8c3a6e646fd4d51e691777f9e37913b63142118e9f4efd1fee6ff19b11d31",
+      "timestamp_utc": "2026-10-06T15:14:16.712139+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "35b8c3a6e646fd4d51e691777f9e37913b63142118e9f4efd1fee6ff19b11d31",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-084176e5b41a3f15221393a1",
+    "source_crop_sha256": "d2665eac078c6c3c9b92e93a3d8371b5918e54c0a338c2e17393fbbc5b39d020",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "135bd69c830d1948fe2c2559227ca5e155a58621a27b8d21d48232b6464b162e",
+      "timestamp_utc": "2026-10-06T15:14:59.351585+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "135bd69c830d1948fe2c2559227ca5e155a58621a27b8d21d48232b6464b162e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-35237b3af343941bd896f3f6",
+    "source_crop_sha256": "7dc44c68b8dd4c7591ddda20f8c17955f85167e2dda368f107c58d6043678b0f",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fe052eef4574b3dd8f4c648f67bf825bc8bb45bd4ea7ea53bf5bd282bf6fb9d5",
+      "timestamp_utc": "2026-10-06T15:15:20.926855+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fe052eef4574b3dd8f4c648f67bf825bc8bb45bd4ea7ea53bf5bd282bf6fb9d5",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f3fe8985c4627e6f9a32cc9a",
+    "source_crop_sha256": "19a1958281d90f8abc99ae068282bca3df6d2dd03ebffad084d87b27a5bd7252",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "219aa4b5fa70518fa7ae1d45c5eab486c25d1387a239c8ef531019186e0219b1",
+      "timestamp_utc": "2026-10-06T15:08:40.048547+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "219aa4b5fa70518fa7ae1d45c5eab486c25d1387a239c8ef531019186e0219b1",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-a06a79e48984cf8da6589265",
+    "source_crop_sha256": "f36a684b9f1878a6cc7f1a76545fe3b90e22e9c99b2bd3d3f86819508b0195ca",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "dc9a5c52c43513e8a39bb03ab4749949b29fc4592716b1f3361fc117e1c1e230",
+      "timestamp_utc": "2026-10-06T15:09:33.359296+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "dc9a5c52c43513e8a39bb03ab4749949b29fc4592716b1f3361fc117e1c1e230",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-b950895a467067275b67570f",
+    "source_crop_sha256": "56498d45d6203759b46a8de4d7f1d830b667524e3f67af9b97b17b8ed8e022dd",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "56f85bab7e827850dc220e9778787013a8353712fe0866acff8d50e57f127014",
+      "timestamp_utc": "2026-10-06T15:10:06.663475+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "56f85bab7e827850dc220e9778787013a8353712fe0866acff8d50e57f127014",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-1fccbab36be7f0784c5d1dfb",
+    "source_crop_sha256": "d600e2730ccb6fef516cd7dd8881bed5feac3db1c2fbdec44f24c75c791a56dc",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e14d8ea507f3e4db0d261d8ad61222e57a873212d5383a8f5c3d5c70a945c89e",
+      "timestamp_utc": "2026-10-06T15:10:27.359111+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e14d8ea507f3e4db0d261d8ad61222e57a873212d5383a8f5c3d5c70a945c89e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-e90665daa6a8717c2d3aa023",
+    "source_crop_sha256": "60e24c54d16c3d3a4069d8da73968368d40db28aae94ca0054c1c9dbe9722f39",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "11f5e156441c71eec44a1b9493f544314b4ebb9a56fd3abfe5b647665694b0be",
+      "timestamp_utc": "2026-10-06T15:10:51.654250+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "11f5e156441c71eec44a1b9493f544314b4ebb9a56fd3abfe5b647665694b0be",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-f5bf59eb5d5adc8bf5f738e3",
+    "source_crop_sha256": "83d886ad1c6508d881cb69de887e66cea6873cbe77a5703093dde885f96cba3f",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "387825849765ab4fbf1a4ce3e1ea04b850582969ec8bc68215a8b76190ff8668",
+      "timestamp_utc": "2026-10-06T15:11:17.983459+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "387825849765ab4fbf1a4ce3e1ea04b850582969ec8bc68215a8b76190ff8668",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-73e107b2b87e315cd43346e1",
+    "source_crop_sha256": "aeb361bfe30282513980d457c9b66d20ee5a2f27c5bfa124b671ecb10330c73d",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "6e88063eda6fbe52f7b7df8a5b7707a51fdceac206a621b2d311e6d764558b5a",
+      "timestamp_utc": "2026-10-06T15:11:55.966569+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "6e88063eda6fbe52f7b7df8a5b7707a51fdceac206a621b2d311e6d764558b5a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PAIR_SEPARATION_UNSTABLE",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-27659158803d5e61bfaca29e",
+    "source_crop_sha256": "1e8c2458d35bd45fea0380e514d901df54bed6eefbefdb2c17c30825cdca4cab",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e16798fd8fa0f5d8b574a658aceb5efd0f63aba23a3def6d175b54a4fc346cc9",
+      "timestamp_utc": "2026-10-06T15:12:51.470983+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e16798fd8fa0f5d8b574a658aceb5efd0f63aba23a3def6d175b54a4fc346cc9",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-94447b09fb357999544ac132",
+    "source_crop_sha256": "ae664bfaa4dec203e38b2ba79ca5d093b275ce9c1f88b2397b2816f07ade97d1",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "4f255d69345301ff9217f717ce15c5e50e2e9678a14606e6adb5019ff8302ea3",
+      "timestamp_utc": "2026-10-06T15:13:10.663071+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "4f255d69345301ff9217f717ce15c5e50e2e9678a14606e6adb5019ff8302ea3",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-e471ba937ac68f5c2334b524",
+    "source_crop_sha256": "df79f34539bad926da74c2ca98c377eebb0fc53c7ffd0b4f38119901f6f95988",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "72e56a47c0ed06e031a28c5d487e3b4c88c354d27c67eb7cf6db01b99fb26a9f",
+      "timestamp_utc": "2026-10-06T15:13:50.294440+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "72e56a47c0ed06e031a28c5d487e3b4c88c354d27c67eb7cf6db01b99fb26a9f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-7a9069d3ca5643f508f0b6f5",
+    "source_crop_sha256": "32608eb01e327bd892b98cf7b662c7beaca5eba04af145fda11dcbf01edc9543",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "ed574bf4e557bb8a2786e6927fd923dfc6e98531226cd8aed11ce268ee5b289e",
+      "timestamp_utc": "2026-10-06T15:14:17.885999+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "ed574bf4e557bb8a2786e6927fd923dfc6e98531226cd8aed11ce268ee5b289e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-dcee8de385bc0c7f01a30c83",
+    "source_crop_sha256": "ea52179839e2b04d92db90e92813dc95b979b4675b8a4eec8428999d00db2845",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "OTHER",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "7bf9664dcaf174b0ff2d48334427d9d4e8989d29345eac6cf6115b85cd9931fe",
+      "timestamp_utc": "2026-10-06T15:15:00.606417+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "7bf9664dcaf174b0ff2d48334427d9d4e8989d29345eac6cf6115b85cd9931fe",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-d3b0bd4d70074f9450464f80",
+    "source_crop_sha256": "52482759d3f161ef4efc6765d63e48e456d915a9980af7e2f4ace64dae17738c",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "604f9c42f032f1460f1e39049386b34acdf94212b1116111f3669465f427bb9f",
+      "timestamp_utc": "2026-10-06T15:15:23.200028+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "604f9c42f032f1460f1e39049386b34acdf94212b1116111f3669465f427bb9f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-16d8c0492961241c0e4ad121",
+    "source_crop_sha256": "72bce244315acfa43acbc7fd61055a9c27deeaad10177f79b092b62c89d34127",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e126b27166df880dedf4f6800a40ca711ad2c70b33a55d1b8a84df4a6bd7d59d",
+      "timestamp_utc": "2026-10-06T15:05:43.063424+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e126b27166df880dedf4f6800a40ca711ad2c70b33a55d1b8a84df4a6bd7d59d",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-6f6c62bcb973cd661e6f9e67",
+    "source_crop_sha256": "106ebfb9a3dc01775db9bd6a8260e54820ff3dad784d9c090a268d506da2d3fe",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "3045061c29cc350ee912dd963048a4c7affafa353ced55fa1a566a13dcab9e67",
+      "timestamp_utc": "2026-10-06T15:08:50.589971+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "3045061c29cc350ee912dd963048a4c7affafa353ced55fa1a566a13dcab9e67",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-690999e4efe2f1dd10849150",
+    "source_crop_sha256": "1a4fe908f285f29b086b53c125422ade061330baa353f428ed6be06798035a0e",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "9bd7bb44d0d37bf31f1c7481ddff41a0ec31bb44bbe00b1f5db787d531ff88f9",
+      "timestamp_utc": "2026-10-06T15:09:36.910993+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "9bd7bb44d0d37bf31f1c7481ddff41a0ec31bb44bbe00b1f5db787d531ff88f9",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-aeaf7652c83aceb138bba2f6",
+    "source_crop_sha256": "bb6257c928d910f2c707ce1ed8fe2a913bff743d2c29ccf41420ec19b15bb620",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "f82e719a5b525aaf62b7ec00ca5faff1fcd8a6ead1d96082f68e643980c30006",
+      "timestamp_utc": "2026-10-06T15:10:09.654343+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "f82e719a5b525aaf62b7ec00ca5faff1fcd8a6ead1d96082f68e643980c30006",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-b85fecbe1869bc968a2634cf",
+    "source_crop_sha256": "22fd71c91e0091f93d82c1fbf29685899ceb19a1d6727171cedffdeac6550650",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "568faef47673fa774b4e9e1be2564d2f0b7c1ff00a2014b3cf7cadca8896c0c9",
+      "timestamp_utc": "2026-10-06T15:10:31.368024+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "568faef47673fa774b4e9e1be2564d2f0b7c1ff00a2014b3cf7cadca8896c0c9",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-7df67573caae1280023475a0",
+    "source_crop_sha256": "d2fd479376e03e7a4ec6fc7b8e2752fff73f8f49f9ffe7bbf2ecdf0ad46d0e99",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "bfe09f8a26b6bbb368592dd535cccfc7e9b36d8c75608169e19211b15a4e0fa0",
+      "timestamp_utc": "2026-10-06T15:10:53.791111+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "bfe09f8a26b6bbb368592dd535cccfc7e9b36d8c75608169e19211b15a4e0fa0",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-f2e729ca1f4974ae7fcd4752",
+    "source_crop_sha256": "123a11b36cae93959222b1170bf52bf27de11de7ac861a5bc19c950dc2fe401c",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "85a5532812b3ccd656904d840db6099a3714f13d8c043eaf109333fbdbf0df81",
+      "timestamp_utc": "2026-10-06T15:11:25.423249+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "85a5532812b3ccd656904d840db6099a3714f13d8c043eaf109333fbdbf0df81",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-9d6be20467dffa5dd1c74d59",
+    "source_crop_sha256": "63cc16ad2234e457506c1c8541742aa495fbbfb44293a9b589395b8bdc51c316",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b9082254dae5a8a51011db8eee8cc8923b01ad15a2532062700d11ee0bd194ce",
+      "timestamp_utc": "2026-10-06T15:11:58.934414+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b9082254dae5a8a51011db8eee8cc8923b01ad15a2532062700d11ee0bd194ce",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-a06a4bb1dcb60fa5a475208b",
+    "source_crop_sha256": "0c9183fa12f9692be88de43a727cbf1087ed924b4ce37d34d6ac456630c8496d",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fb7222d20eec5cf17e3029221e7ee7b9b0793b2ef2add75d33308523efe4f374",
+      "timestamp_utc": "2026-10-06T15:12:55.615637+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fb7222d20eec5cf17e3029221e7ee7b9b0793b2ef2add75d33308523efe4f374",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-194b16ae4e3eddeb2594666f",
+    "source_crop_sha256": "3bb5eea7c177839178735bb39be9e8ef0ef0191331a8ca5a7991ae7f111d6f81",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "4317025466c5951f97fd2a2e58f84394ad744c1f31eabe92b21170b9dcc7b5f3",
+      "timestamp_utc": "2026-10-06T15:13:13.727627+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "4317025466c5951f97fd2a2e58f84394ad744c1f31eabe92b21170b9dcc7b5f3",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-a6e3938929969a54ac1825b7",
+    "source_crop_sha256": "dcd9ea1b07fb5cc923beb302634384af8a2fda56a07f4fdb190b2491bb02f18c",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e77b5beb7427f94f2e1e41d4fe17883b32aa1c4a2f0e8a7f2f36f195e9a9274e",
+      "timestamp_utc": "2026-10-06T15:13:33.103299+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e77b5beb7427f94f2e1e41d4fe17883b32aa1c4a2f0e8a7f2f36f195e9a9274e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-bd8a89674690e0984c32fccc",
+    "source_crop_sha256": "c6d0f4f12507b34b44b15b7a2aa2979dd6ccd1819a185ada85dd8354d6c9eb32",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "5f35d6dbfcb6773786efd87b0e0358add11e52947047bc426449a293a43768a4",
+      "timestamp_utc": "2026-10-06T15:13:56.040186+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "5f35d6dbfcb6773786efd87b0e0358add11e52947047bc426449a293a43768a4",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-9644da0d727c61ed9beb2255",
+    "source_crop_sha256": "0bdd8b48a92f0192b49f4ae5ccf0ee11c0708903bfba30aeb371565c24ce473c",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e45ba3c198b211057d255b07b7dca42246edd0e28861ceb16fbd4c6ac378f90f",
+      "timestamp_utc": "2026-10-06T15:14:42.238898+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e45ba3c198b211057d255b07b7dca42246edd0e28861ceb16fbd4c6ac378f90f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-1e7b5f780fa2fe167bb8f696",
+    "source_crop_sha256": "96c2322b72bab6473ae2f474cad80b78f83d691e69aa21ab548f6bc78cb1f38b",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "8337969073517dd369fe87086102e3a6f2f0456c52352af2b87981df00d5d498",
+      "timestamp_utc": "2026-10-06T15:15:05.061862+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "8337969073517dd369fe87086102e3a6f2f0456c52352af2b87981df00d5d498",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-9f0dd8c2d5a97e00425b8a79",
+    "source_crop_sha256": "1220f0ea2a1dd5b551cd43f68c66c2d5f9bf07c9c9049c08d0b3fd5916dcb529",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "73f617289d2915baa0cd1286e1a52e03be170b10ab3f9ffa5e146dbbd8dd5154",
+      "timestamp_utc": "2026-10-06T15:15:25.183344+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "73f617289d2915baa0cd1286e1a52e03be170b10ab3f9ffa5e146dbbd8dd5154",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-9127419c8845ea0292d8449d",
+    "source_crop_sha256": "6c5f5cc32c40903854f7e6ff1aedae91d162a9c305f80ba16f7771f2dda2ebdf",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "17bed0696b13a82d5b5a86648f592dfbd79a355515ac7f75af1cf236129cf005",
+      "timestamp_utc": "2026-10-06T15:08:53.767731+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "17bed0696b13a82d5b5a86648f592dfbd79a355515ac7f75af1cf236129cf005",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "SEVERE_EXTENT_MISMATCH",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-5c531a0cde3070eebfb1b9f1",
+    "source_crop_sha256": "fc7e669b1d22892679d0d86292e29a1dac359d3bfbbe211ab6dfdbd725e14aa3",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "dd6bee823b125437c17f9a3413ae5506542c95ef04f1456e5e75b34b6cd0be5e",
+      "timestamp_utc": "2026-10-06T15:10:11.575105+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "dd6bee823b125437c17f9a3413ae5506542c95ef04f1456e5e75b34b6cd0be5e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-01352baad3286a22152b9222",
+    "source_crop_sha256": "e35ab6388b30b8d424f28768909eecb0b57ecb5fa097fdb062e6e28091a20054",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "844788c22c591bb3a6b5548332577edd5e593208349513d32a619afc341349ee",
+      "timestamp_utc": "2026-10-06T15:10:36.318341+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "844788c22c591bb3a6b5548332577edd5e593208349513d32a619afc341349ee",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-2318ae1bcb897ad7e4e9d4dd",
+    "source_crop_sha256": "29e493fcf6eaae68c10bb4b0d59d7fc2f0b2a16381360da20fc53bd5db35d69f",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "efc4483c8e01c1181b86f4ada6f619222e172c73422ad3fe1b3a6e798c502425",
+      "timestamp_utc": "2026-10-06T15:10:55.823666+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "efc4483c8e01c1181b86f4ada6f619222e172c73422ad3fe1b3a6e798c502425",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-4af9fb76c907c51283fd059d",
+    "source_crop_sha256": "f045ec064a2111ef6c9fb03d039eb816a4b725630cbb68f6ca41a6d13c36edf8",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "a2cdd2daf44ac4ec78e14f75a1960ca77291a15ab762ce94eaa6cb6761a0b118",
+      "timestamp_utc": "2026-10-06T15:11:29.119001+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "a2cdd2daf44ac4ec78e14f75a1960ca77291a15ab762ce94eaa6cb6761a0b118",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-e178dac4c654da8ac337edf6",
+    "source_crop_sha256": "6d50e0f4697303ffde39557bed53db1f385908f9874594c52e78ce2447b84a89",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "db5c3973f09b7dae4f1715318d92314faacc8c2e1b8d6dbc8ba39ffdfc762527",
+      "timestamp_utc": "2026-10-06T15:12:57.303157+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "db5c3973f09b7dae4f1715318d92314faacc8c2e1b8d6dbc8ba39ffdfc762527",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT"
+    ],
+    "sample_id": "real-98e90d4082a05efdbe654322",
+    "source_crop_sha256": "4f105c11be08632d8f8023676ac4f867b82a7de7a3cec102e42ee308769f7353",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "7f374dc85027b18dde175248da83b05a524611a46cbc09b922a7b6131b7f6e7c",
+      "timestamp_utc": "2026-10-06T15:13:15.350639+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "7f374dc85027b18dde175248da83b05a524611a46cbc09b922a7b6131b7f6e7c",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-7837a1473a608d53f1e4a061",
+    "source_crop_sha256": "01df014881cece460ce6b5b31f9fbd8214ac72525cd6d4dc71089a9562b4d7a5",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "48dc4890190f81aa06d5277316163b987a4297dbfc18920468f7f9bcc935c8d0",
+      "timestamp_utc": "2026-10-06T15:13:34.111581+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "48dc4890190f81aa06d5277316163b987a4297dbfc18920468f7f9bcc935c8d0",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-9f77c36e04dfbc3ff97cfbd0",
+    "source_crop_sha256": "1ef10970ac0e81a185ff6e17377faad1b5a7ab0484af62052967ff4ba2a8b251",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "d81202197b0ab9b1935db589117b48e9ec02aec5f88a4c342918b760dd11885e",
+      "timestamp_utc": "2026-10-06T15:13:57.536747+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "d81202197b0ab9b1935db589117b48e9ec02aec5f88a4c342918b760dd11885e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-fefd070265d82d577f04bb48",
+    "source_crop_sha256": "0545c5dc9455ee55bb15bc990ace8910814faf75e1dacdba0a99beb5c3a4cd44",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "ae665cb499b541a9cd38df7fdbfbf64d0fcb47ca482760db93d5a884e67eb7fe",
+      "timestamp_utc": "2026-10-06T15:14:43.407106+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "ae665cb499b541a9cd38df7fdbfbf64d0fcb47ca482760db93d5a884e67eb7fe",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-179d405a0e90b21b0e5050c3",
+    "source_crop_sha256": "4057f27908700723ca835073b62baad5f3967b7496b3c08e4d8057b6e81f480a",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "596a4682156020e6d06f012b17e31030cc7743c7e76cdbc05229888a0495074a",
+      "timestamp_utc": "2026-10-06T15:15:07.807657+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "596a4682156020e6d06f012b17e31030cc7743c7e76cdbc05229888a0495074a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-e5d59cb1375bc8e1675b2bbd",
+    "source_crop_sha256": "99b7d8cf6addabfaa133217d2c70b54bc8f8ab447c210c22d8562957bc7271f8",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "7d5ff30585aa62df8e65c499ad38c9348811b7b4fc15038e253a4aa63e96c13d",
+      "timestamp_utc": "2026-10-06T15:15:32.006844+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "7d5ff30585aa62df8e65c499ad38c9348811b7b4fc15038e253a4aa63e96c13d",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH"
+    ],
+    "sample_id": "real-b8265a5364bd4ee1b240cbeb",
+    "source_crop_sha256": "5843a97ef4add9e05b7052be081382d37925edee98210f6fe95f30aa2a5d4f08",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fc3f14d1a4e7cac7b1840198248d67a9d8a8ff7c79e4c7b6f70f5a79ca93c386",
+      "timestamp_utc": "2026-10-06T14:54:59.495056+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fc3f14d1a4e7cac7b1840198248d67a9d8a8ff7c79e4c7b6f70f5a79ca93c386",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-918cf84d8d2663b92b00c755",
+    "source_crop_sha256": "9630c1d0f88998b4d070d3e9b325e6737debf67f6d2871110f6bef6e0d767467",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "e980f78647af2d4e74291b7eb72b77bcffe200524f072196a2f525e20b988067",
+      "timestamp_utc": "2026-10-06T15:05:58.478783+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "e980f78647af2d4e74291b7eb72b77bcffe200524f072196a2f525e20b988067",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-de3cfa7f2b081a08a44a7b4c",
+    "source_crop_sha256": "7fca802e93b28a19924d99cdab827fd94085a5879a294a38738ab001a65b2b89",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "79cb7b23b1e51a7a35d2297869204e2bb805f717e830f13ce6d25396b398f575",
+      "timestamp_utc": "2026-10-06T15:08:56.423305+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "79cb7b23b1e51a7a35d2297869204e2bb805f717e830f13ce6d25396b398f575",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-034e4eccc0c109c410ce103e",
+    "source_crop_sha256": "d29296a51d347f44cbb9065468db2d4d45acf3d88f46f257bf712a9817b2ce0d",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "6914a5ad46dbfd0a15ade3fe3e47d871b79dc8114cff08a2fbf2f8a2ef70fb33",
+      "timestamp_utc": "2026-10-06T15:09:48.207408+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "6914a5ad46dbfd0a15ade3fe3e47d871b79dc8114cff08a2fbf2f8a2ef70fb33",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-817221c57679b2e0d0017635",
+    "source_crop_sha256": "bb48ad736ec60780fa6d08b6b2d2bc37383aba2670c55b36905cb3ca677dc939",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b46687af3343b5b748cd8ae75d2f94c79e5a28f90233e614292d6131637b5217",
+      "timestamp_utc": "2026-10-06T15:10:13.358687+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b46687af3343b5b748cd8ae75d2f94c79e5a28f90233e614292d6131637b5217",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-0ed17329b5af5d9ae2851a49",
+    "source_crop_sha256": "8b7a5e32e727c159ff5e6b8848d2d526f2727ccdfe498d38bb3cd658f53fae7a",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "07696a3f830c9988ebcfeda7bb00efdcf2645f3286ca48bf0d5a1f2631c0fba8",
+      "timestamp_utc": "2026-10-06T15:10:37.574491+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "07696a3f830c9988ebcfeda7bb00efdcf2645f3286ca48bf0d5a1f2631c0fba8",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-0afb8595a79d48c438b3b200",
+    "source_crop_sha256": "7a58337fd75f252544c88f2306c8648588b12a7524c187a86477bb310b9d23bd",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b5241073a969d17036e3d9c39b4162765970967ae041d31bd343194019ab797a",
+      "timestamp_utc": "2026-10-06T15:10:57.885738+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b5241073a969d17036e3d9c39b4162765970967ae041d31bd343194019ab797a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-06910c9baebb494cb38249fa",
+    "source_crop_sha256": "d699a6a7cd3d6180c04ef7023854ceb1ef487c80d8733ed3f99d75afdbde19d8",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "adbfedc470831fd3596f7982d258dfd62e5769a6f59d9dbcfb2891edc84d6976",
+      "timestamp_utc": "2026-10-06T15:11:31.503371+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "adbfedc470831fd3596f7982d258dfd62e5769a6f59d9dbcfb2891edc84d6976",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-5f7c6256372b6d6a243c7658",
+    "source_crop_sha256": "b1710a04ca9bb2721d66454a905237ebfe274e6f466ac0d3f2e38d2d8501975a",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "30cb6934ea9933515321613cd6dea51eb18d5fa2416150b6d1d88fa6ef75097e",
+      "timestamp_utc": "2026-10-06T15:12:36.599377+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "30cb6934ea9933515321613cd6dea51eb18d5fa2416150b6d1d88fa6ef75097e",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-6aceee44ea1794f4f5e15d3d",
+    "source_crop_sha256": "615a15333033387c3d5fcadd1a047eb42fcbe25950c37b848c837f9391eb75f1",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "511c0760e9b95dcbc35647726143abbea14332397f234cd997bcb7071d9f8903",
+      "timestamp_utc": "2026-10-06T15:12:58.423265+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "511c0760e9b95dcbc35647726143abbea14332397f234cd997bcb7071d9f8903",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "CANDIDATE_MISALIGNMENT",
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-16527b7cf3548779cca950ab",
+    "source_crop_sha256": "40bb3a69607d088832a8708d276ce2e18d4a901dd02ce24fbe257d8157e4fdc8",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "b0792f7ae5f93e212f7b0f0f2855daf858d12b87a53e09d08f3d17ca4951bf48",
+      "timestamp_utc": "2026-10-06T15:13:16.549742+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "b0792f7ae5f93e212f7b0f0f2855daf858d12b87a53e09d08f3d17ca4951bf48",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-f1e9c5a196837598a4a470f6",
+    "source_crop_sha256": "1f0acf565476e793a618c6b8ed72917ca9164a8ab079b3b266040185ee04a736",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "7919ffc0a987acdd4e444bba88e21da644104973755e112bcc428719c39f905f",
+      "timestamp_utc": "2026-10-06T15:13:34.847667+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "7919ffc0a987acdd4e444bba88e21da644104973755e112bcc428719c39f905f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-927828d1e97096584bd72d0a",
+    "source_crop_sha256": "2d01c78655c70846d0b1f8262461ddc2464ab609a8a9b0cfbc854ffd443c83a9",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "fdd0cd828daac9d2be9d2bc28cdfc06e52869ca640e0fcfd55495d40ca8339d9",
+      "timestamp_utc": "2026-10-06T15:13:58.527176+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "fdd0cd828daac9d2be9d2bc28cdfc06e52869ca640e0fcfd55495d40ca8339d9",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING",
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED",
+      "UNSUPPORTED_ENDPOINT"
+    ],
+    "sample_id": "real-e52a436bde666a67d8cb2e3d",
+    "source_crop_sha256": "61e84ae9042d341aa7acf827c10763a758ef7dd904c16907395fb91d1d9a987c",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "9b7f71dd288ebcc2624a0fbbd7fa4fba1b8584a045dcc7c5e10419dff848de7a",
+      "timestamp_utc": "2026-10-06T15:14:45.926609+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "9b7f71dd288ebcc2624a0fbbd7fa4fba1b8584a045dcc7c5e10419dff848de7a",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [],
+    "sample_id": "real-c5cf33c052e81f51bc8be7d1",
+    "source_crop_sha256": "4a6719d16f57e8ccc940e6b3f9f6d4d72fb77d360b321f5e4ff102b71295b6e2",
+    "status": "PILOT_V1_RETAINABLE_CANDIDATE",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "75aafbfa846eecef8aec671d72335594308a15108e05d07dfa4523742907fb02",
+      "timestamp_utc": "2026-10-06T15:15:09.446800+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "75aafbfa846eecef8aec671d72335594308a15108e05d07dfa4523742907fb02",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "SEVERE_EXTENT_MISMATCH",
+      "TARGET_CLIPPED"
+    ],
+    "sample_id": "real-665e4872b90acf38d8ad7eaf",
+    "source_crop_sha256": "c6798add855dd020be01add72866d9fa8fbf4ff8627df911dc3db64a32c6154a",
+    "status": "PILOT_V1_NEEDS_HUMAN_REVIEW",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  },
+  {
+    "candidate_identity_unchanged": true,
+    "human_decision": {
+      "annotator": "local-reviewer",
+      "context_available": true,
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "provenance": "human_source_review",
+      "rubric_version": "p3b-rubric-v1",
+      "sample_sha256": "071a0f42c078f8d5885c79ba2a0f04024a928eef3427c05331648d43bc6c672f",
+      "timestamp_utc": "2026-10-06T15:15:33.702995+00:00"
+    },
+    "nomination_status": null,
+    "original_sample_sha256": "071a0f42c078f8d5885c79ba2a0f04024a928eef3427c05331648d43bc6c672f",
+    "quarantine_status": "PILOT_V1_UNVERIFIED",
+    "reasons": [
+      "LOCAL_INK_MISALIGNMENT",
+      "PARTNER_EDGE_MISSING_OR_FLOATING"
+    ],
+    "sample_id": "real-1898220e5361337de44df80a",
+    "source_crop_sha256": "63628e701d9fad9df1302fd2c0d9f36c9b40dedcbd45a9e7fef8ed5840274b88",
+    "status": "PILOT_V1_INVALID_NOMINATION",
+    "training_authorized": false,
+    "triage_basis": "source/geometry quality flags; no human Stage-0 certification"
+  }
+]

@@ -1,0 +1,142 @@
+{
+  "blind_sources_opened": 0,
+  "final_manual_report": "FORMAL-SEED-AUDIT.md",
+  "freeze": {
+    "batch": "formal-seed-v2-001",
+    "class_counts": {
+      "OTHER": 36,
+      "SINGLE_PHYSICAL_STROKE": 38,
+      "TRUE_PARALLEL_STRUCTURE": 21
+    },
+    "freeze_directory": "C:\\Users\\agcrf\\Desktop\\image-to-cad\\instrumented-e03\\docs\\product-fix-p3b\\frozen\\formal-seed-v2-001",
+    "history_count": 385,
+    "label_state_sha256": "54b405724f2bd7ea20e09327967ff449db56091f106267a4c6d272261449be1d",
+    "manifest_sha256": "6019f7fb321d924407eb1203260607a18dbb23fddb36a766724c3803b2a9cd37",
+    "remaining_undo_events": 201,
+    "reviewed_count": 100,
+    "reviewer_feedback": "Intended objects were identifiable, but some overlays had imperfect alignment/coverage; Stage-1 correctness is not guaranteed. Preserve classes and independently flag nomination risks.",
+    "revision": 385,
+    "status": "FROZEN_HUMAN_EVIDENCE_NOT_TRAINING_AUTHORIZATION",
+    "status_counts": {
+      "INVALID_NOMINATION": 4,
+      "UNCLEAR_TARGET": 1,
+      "VALID_TARGET": 95
+    },
+    "training_authorized": false
+  },
+  "independent_quality_policy": {
+    "dark_threshold": 180,
+    "poor_max_mean_px": 2.5,
+    "poor_max_p95_px": 4.0,
+    "poor_min_overlap_px": 16.0,
+    "poor_min_pair_ratio": 0.4,
+    "poor_min_support": 0.6,
+    "poor_min_tangent_alignment": 0.5,
+    "sample_step_px": 0.5,
+    "strong_max_mean_px": 1.1,
+    "strong_max_p95_px": 1.5,
+    "strong_max_pair_separation_range_px": 1.0,
+    "strong_min_endpoint_support": 0.95,
+    "strong_min_pair_ratio": 0.85,
+    "strong_min_support": 0.98,
+    "strong_min_tangent_alignment": 0.95,
+    "support_radius_px": 1.5,
+    "version": "post-label-independent-v1"
+  },
+  "quality_by_class_for_reporting_only": {
+    "OTHER": {
+      "NOMINATION_BORDERLINE": 10,
+      "NOMINATION_STRONG": 26
+    },
+    "SINGLE_PHYSICAL_STROKE": {
+      "NOMINATION_STRONG": 38
+    },
+    "TRUE_PARALLEL_STRUCTURE": {
+      "NOMINATION_BORDERLINE": 3,
+      "NOMINATION_STRONG": 18
+    }
+  },
+  "quality_counts_labeled_V": {
+    "NOMINATION_BORDERLINE": 13,
+    "NOMINATION_STRONG": 82
+  },
+  "review_status_counts_all_100": {
+    "EXCLUDE_NOMINATION": 5,
+    "READY": 82,
+    "REVIEW_RECOMMENDED": 13
+  },
+  "source_pages_opened": [
+    [
+      "A2-SG-009",
+      1
+    ],
+    [
+      "A2-SG-022",
+      1
+    ],
+    [
+      "G0R2-15EE2398726E8037",
+      1
+    ],
+    [
+      "G0R2-3560D9BEBEAA3543",
+      1
+    ],
+    [
+      "G0R2-3B970FD759C6026F",
+      1
+    ],
+    [
+      "G0R2-4A34D1B8D93B1B06",
+      1
+    ],
+    [
+      "G0R2-6C9464FA73A2A027",
+      1
+    ],
+    [
+      "G0R2-7E30C7F445081F40",
+      1
+    ],
+    [
+      "G0R2-B441E5911528F402",
+      1
+    ],
+    [
+      "G0R2-C2D095E069663C17",
+      1
+    ],
+    [
+      "environment-building",
+      1
+    ],
+    [
+      "environment-building",
+      3
+    ],
+    [
+      "environment-building",
+      4
+    ],
+    [
+      "sample-plan-photo",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      2
+    ],
+    [
+      "warehouse-electrical",
+      3
+    ]
+  ],
+  "training_authorized": false,
+  "validation_sources_opened": 0,
+  "visual_review_directory": "C:\\Users\\agcrf\\Desktop\\image-to-cad-p3b-cache\\formal-seed-post-audit",
+  "visual_review_status": "COMPLETED_100_CLASS_UNANNOTATED_CONTACT_VIEWS"
+}

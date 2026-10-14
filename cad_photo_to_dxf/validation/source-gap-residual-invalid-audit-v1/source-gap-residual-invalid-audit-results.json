@@ -1,0 +1,1230 @@
+{
+  "schema_version": 1,
+  "task_id": "SOURCE_GAP_RESIDUAL_INVALID_AUDIT_V1",
+  "base_checkpoint": "234a9da7db429d8d447347a945ea9f0d6b22ec44",
+  "scope": {
+    "residual_case_count": 2,
+    "bounded_control_count": 6,
+    "bounded_total": 8,
+    "new_candidate_mining": false,
+    "source_acquisition": false,
+    "model_run": false,
+    "replacement_package_created": false
+  },
+  "cases": {
+    "FRESH1-6DA3382199DB993085B8": {
+      "candidate_id": "FRESH1-6DA3382199DB993085B8",
+      "review_index": 15,
+      "source_family": "F01-HAIYANG-2022-ROOT-DWG",
+      "source_unit": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW",
+      "orientation": "horizontal",
+      "primitive_length_px": 88.0,
+      "projected_span_px": 88.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2209,
+          276
+        ],
+        "claimed_start_px": [
+          2121,
+          276
+        ],
+        "fragment_a": {
+          "end": [
+            2157,
+            276
+          ],
+          "start": [
+            2121,
+            276
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2209,
+            276
+          ],
+          "start": [
+            2164,
+            276
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2157,
+          276
+        ],
+        "gap_endpoint_b_px": [
+          2164,
+          276
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001150"
+          ],
+          "fragment_b": [
+            "raw-hough-000801"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_UNCERTAIN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE",
+          "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_a",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          },
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_b",
+            "reason": "INSUFFICIENT_STRAIGHT_TRAJECTORY_SUPPORT",
+            "status": "STRAIGHT_UNCERTAIN"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 0.921348,
+        "centerline_support_fraction": 0.5,
+        "direct_off_axis_ink_fraction": 0.197802,
+        "fragment_thickness_ratio": 1.333333,
+        "local_density_fraction": 0.096984
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.824642,
+        "coherence_selection_score": 0.095342,
+        "supported_run_count": 2,
+        "supported_run_cv": 0.121951,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 0.5,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 3,
+            "fragment_a_thickness_px": 4.0,
+            "fragment_b_thickness_px": 3.0,
+            "fragment_thickness_ratio": 1.333333,
+            "gap_length_px": 7,
+            "off_axis_ink_fraction": 0.197802,
+            "parallel_run_fraction": 0.0,
+            "transverse_crossing_columns": 1,
+            "volumetric_components": 1
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-001150"
+          ],
+          "fragment_b": [
+            "raw-hough-000801"
+          ]
+        },
+        "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean normalized vector evidence; no raster or proxy entities in the reused audit."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "INVALID_PRIMITIVE_FOR_GAP_REVIEW",
+        "secondary_flags": [],
+        "source": "authoritative current human result, review_index 15"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "RESIDUAL_HUMAN_INVALID",
+      "pair_validity_assessment": "REJECTED",
+      "earliest_ideal_rejection_or_abstention_stage": "PAIR_ADMISSION"
+    },
+    "FRESH1-EAF5141532787D12AFE2": {
+      "candidate_id": "FRESH1-EAF5141532787D12AFE2",
+      "review_index": 16,
+      "source_family": "F03-AS-BUILT-INSTALL-2020-DWG",
+      "source_unit": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW",
+      "orientation": "vertical",
+      "primitive_length_px": 139.0,
+      "projected_span_px": 139.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          794,
+          2108
+        ],
+        "claimed_start_px": [
+          794,
+          1969
+        ],
+        "fragment_a": {
+          "end": [
+            794,
+            2034
+          ],
+          "start": [
+            794,
+            1969
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            794,
+            2108
+          ],
+          "start": [
+            794,
+            2039
+          ]
+        },
+        "gap_endpoint_a_px": [
+          794,
+          2034
+        ],
+        "gap_endpoint_b_px": [
+          794,
+          2039
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000425"
+          ],
+          "fragment_b": [
+            "raw-hough-000943"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_UNCERTAIN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE",
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_a",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          },
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_b",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "direct_off_axis_ink_fraction": 0.217949,
+        "fragment_thickness_ratio": 1.0,
+        "local_density_fraction": 0.04029
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.852635,
+        "coherence_selection_score": 0.081838,
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 1.0,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 2,
+            "fragment_a_thickness_px": 8.0,
+            "fragment_b_thickness_px": 8.0,
+            "fragment_thickness_ratio": 1.0,
+            "gap_length_px": 5,
+            "off_axis_ink_fraction": 0.217949,
+            "parallel_run_fraction": 0.0,
+            "transverse_crossing_columns": 0,
+            "volumetric_components": 1
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000425"
+          ],
+          "fragment_b": [
+            "raw-hough-000943"
+          ]
+        },
+        "selection_stratum": "AMBIGUOUS_EDGE_CASES",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Mostly usable normalized vector with five proxy entities retained as a documented risk."
+      },
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "INVALID_PRIMITIVE_FOR_GAP_REVIEW",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE"
+        ],
+        "source": "authoritative current human result, review_index 16"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "RESIDUAL_HUMAN_INVALID",
+      "pair_validity_assessment": "REJECTED",
+      "earliest_ideal_rejection_or_abstention_stage": "PAIR_ADMISSION"
+    },
+    "FRESH1-AB2943863A535D1044B9": {
+      "candidate_id": "FRESH1-AB2943863A535D1044B9",
+      "review_index": 1,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8",
+      "orientation": "vertical",
+      "primitive_length_px": 191.0,
+      "projected_span_px": 191.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          615,
+          715
+        ],
+        "claimed_start_px": [
+          615,
+          524
+        ],
+        "fragment_a": {
+          "end": [
+            615,
+            580
+          ],
+          "start": [
+            615,
+            524
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            615,
+            715
+          ],
+          "start": [
+            615,
+            620
+          ]
+        },
+        "gap_endpoint_a_px": [
+          615,
+          580
+        ],
+        "gap_endpoint_b_px": [
+          615,
+          620
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000400"
+          ],
+          "fragment_b": [
+            "raw-hough-000569"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_SUPPORTED",
+        "reasons": [
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_a",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          },
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_b",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "direct_off_axis_ink_fraction": 0.033721,
+        "fragment_thickness_ratio": 1.0,
+        "local_density_fraction": 0.044396
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.271042,
+        "coherence_selection_score": 0.356247,
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 1.0,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 3,
+            "fragment_a_thickness_px": 1.0,
+            "fragment_b_thickness_px": 1.0,
+            "fragment_thickness_ratio": 1.0,
+            "gap_length_px": 40,
+            "off_axis_ink_fraction": 0.033721,
+            "parallel_run_fraction": 1.0,
+            "transverse_crossing_columns": 0,
+            "volumetric_components": 1
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000400"
+          ],
+          "fragment_b": [
+            "raw-hough-000569"
+          ]
+        },
+        "selection_stratum": "CONTINUOUS_STROKE_CONTROLS",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "CONTINUOUS_SOURCE_STROKE",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE"
+        ],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_VALID_PAIR_CONTROL",
+      "pair_validity_assessment": "SUPPORTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    },
+    "FRESH1-51DF39D706DE8C684F10": {
+      "candidate_id": "FRESH1-51DF39D706DE8C684F10",
+      "review_index": 4,
+      "source_family": "F04-XDF-RENOVATION-REVIEW-PDF",
+      "source_unit": "LOCALC-F04-PDF-ARCH10B-P1",
+      "orientation": "horizontal",
+      "primitive_length_px": 137.0,
+      "projected_span_px": 137.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          1419,
+          1198
+        ],
+        "claimed_start_px": [
+          1282,
+          1198
+        ],
+        "fragment_a": {
+          "end": [
+            1330,
+            1198
+          ],
+          "start": [
+            1282,
+            1198
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            1419,
+            1198
+          ],
+          "start": [
+            1360,
+            1198
+          ]
+        },
+        "gap_endpoint_a_px": [
+          1330,
+          1198
+        ],
+        "gap_endpoint_b_px": [
+          1360,
+          1198
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000303"
+          ],
+          "fragment_b": [
+            "raw-hough-000455"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_UNCERTAIN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE",
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_a",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          },
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_b",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "direct_off_axis_ink_fraction": 0.21292,
+        "fragment_thickness_ratio": 1.0,
+        "local_density_fraction": 0.376902
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.299984,
+        "coherence_selection_score": 0.381404,
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 1.0,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 3,
+            "fragment_a_thickness_px": 2.0,
+            "fragment_b_thickness_px": 2.0,
+            "fragment_thickness_ratio": 1.0,
+            "gap_length_px": 30,
+            "off_axis_ink_fraction": 0.21292,
+            "parallel_run_fraction": 0.645161,
+            "transverse_crossing_columns": 8,
+            "volumetric_components": 0
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000303"
+          ],
+          "fragment_b": [
+            "raw-hough-000455"
+          ]
+        },
+        "selection_stratum": "CONTINUOUS_STROKE_CONTROLS",
+        "source_quality_bin": "DEGRADED_OR_SCANNED",
+        "source_degradation_context": "Large plotted page with mixed PDF objects and review/stamp lineage."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "CONTINUOUS_SOURCE_STROKE",
+        "secondary_flags": [],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_VALID_PAIR_CONTROL",
+      "pair_validity_assessment": "SUPPORTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    },
+    "FRESH1-FF28E80F90C3CFA05A78": {
+      "candidate_id": "FRESH1-FF28E80F90C3CFA05A78",
+      "review_index": 8,
+      "source_family": "F02-HUIHONG-2019-HASHED-DWG",
+      "source_unit": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW",
+      "orientation": "vertical",
+      "primitive_length_px": 117.0,
+      "projected_span_px": 117.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2285,
+          1109
+        ],
+        "claimed_start_px": [
+          2285,
+          992
+        ],
+        "fragment_a": {
+          "end": [
+            2285,
+            1020
+          ],
+          "start": [
+            2285,
+            992
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2285,
+            1109
+          ],
+          "start": [
+            2285,
+            1053
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2285,
+          1020
+        ],
+        "gap_endpoint_b_px": [
+          2285,
+          1053
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000675"
+          ],
+          "fragment_b": [
+            "raw-hough-000902"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_UNCERTAIN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE",
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_a",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          },
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_b",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 1.0,
+        "centerline_support_fraction": 1.0,
+        "direct_off_axis_ink_fraction": 0.045349,
+        "fragment_thickness_ratio": 1.5,
+        "local_density_fraction": 0.040082
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.269105,
+        "coherence_selection_score": 0.385039,
+        "supported_run_count": 1,
+        "supported_run_cv": 1.0,
+        "unsupported_interval_count": 0,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 1.0,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 2,
+            "fragment_a_thickness_px": 2.0,
+            "fragment_b_thickness_px": 3.0,
+            "fragment_thickness_ratio": 1.5,
+            "gap_length_px": 33,
+            "off_axis_ink_fraction": 0.045349,
+            "parallel_run_fraction": 1.0,
+            "transverse_crossing_columns": 2,
+            "volumetric_components": 0
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000675"
+          ],
+          "fragment_b": [
+            "raw-hough-000902"
+          ]
+        },
+        "selection_stratum": "STRUCTURAL_INTERRUPTION",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean normalized vector evidence; paperspace has only two non-printable entities in one layout and one empty layout."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "CONTINUOUS_SOURCE_STROKE",
+        "secondary_flags": [],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_VALID_PAIR_CONTROL",
+      "pair_validity_assessment": "SUPPORTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    },
+    "FRESH1-2BF547C27C8497056BA6": {
+      "candidate_id": "FRESH1-2BF547C27C8497056BA6",
+      "review_index": 3,
+      "source_family": "F06-ONTAKE-VISITOR-CENTER-ELECTRICAL",
+      "source_unit": "LOCALC-F06-PDF-20210416ZUMEN-P4",
+      "orientation": "vertical",
+      "primitive_length_px": 138.0,
+      "projected_span_px": 138.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          2212,
+          952
+        ],
+        "claimed_start_px": [
+          2212,
+          814
+        ],
+        "fragment_a": {
+          "end": [
+            2212,
+            916
+          ],
+          "start": [
+            2212,
+            814
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            2212,
+            952
+          ],
+          "start": [
+            2212,
+            921
+          ]
+        },
+        "gap_endpoint_a_px": [
+          2212,
+          916
+        ],
+        "gap_endpoint_b_px": [
+          2212,
+          921
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-001184"
+          ],
+          "fragment_b": [
+            "raw-hough-000950"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_UNCERTAIN",
+        "reasons": [
+          "INSUFFICIENT_EVIDENCE",
+          "INSUFFICIENT_EVIDENCE"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_a",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          },
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_b",
+            "reason": "INSUFFICIENT_EVIDENCE",
+            "status": "STRAIGHT_UNCERTAIN"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 0.971223,
+        "centerline_support_fraction": 1.0,
+        "direct_off_axis_ink_fraction": 0.262821,
+        "fragment_thickness_ratio": 1.666667,
+        "local_density_fraction": 0.080912
+      },
+      "local_tangent_profile": {
+        "status": "MEASURED",
+        "diagnostic_available": true,
+        "local_tangent_delta_p95_degrees_max": 38.361461,
+        "junction_or_crossing_fraction_max": 0.55814,
+        "local_continuity_fraction_min": 0.904762,
+        "coherence_status": "PRIMITIVE_COHERENCE_UNCERTAIN",
+        "coherence_reason": "EXCESSIVE_LOCAL_DIRECTION_CHANGE"
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.14183,
+        "coherence_selection_score": 0.701918,
+        "supported_run_count": 2,
+        "supported_run_cv": 0.155556,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 1.0,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 4,
+            "fragment_a_thickness_px": 3.0,
+            "fragment_b_thickness_px": 5.0,
+            "fragment_thickness_ratio": 1.666667,
+            "gap_length_px": 5,
+            "off_axis_ink_fraction": 0.262821,
+            "parallel_run_fraction": 0.0,
+            "transverse_crossing_columns": 2,
+            "volumetric_components": 1
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-001184"
+          ],
+          "fragment_b": [
+            "raw-hough-000950"
+          ]
+        },
+        "selection_stratum": "STRUCTURAL_INTERRUPTION",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean plot-like PDF with weak export-texture variation."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "STRUCTURAL_INTERRUPTION",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE"
+        ],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_INVALID_PAIR_CONTROL",
+      "pair_validity_assessment": "REJECTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    },
+    "FRESH1-B7300C5B8E706C736EB1": {
+      "candidate_id": "FRESH1-B7300C5B8E706C736EB1",
+      "review_index": 7,
+      "source_family": "F08-YANGZIJIANG-WAREHOUSE-ELECTRICAL",
+      "source_unit": "LOCALC-F08-PDF-WAREHOUSE815-P1",
+      "orientation": "horizontal",
+      "primitive_length_px": 133.0,
+      "projected_span_px": 133.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          634,
+          430
+        ],
+        "claimed_start_px": [
+          501,
+          430
+        ],
+        "fragment_a": {
+          "end": [
+            545,
+            430
+          ],
+          "start": [
+            501,
+            430
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            634,
+            430
+          ],
+          "start": [
+            589,
+            430
+          ]
+        },
+        "gap_endpoint_a_px": [
+          545,
+          430
+        ],
+        "gap_endpoint_b_px": [
+          589,
+          430
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000162"
+          ],
+          "fragment_b": [
+            "raw-hough-000142"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_SUPPORTED",
+        "reasons": [
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_a",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          },
+          {
+            "crossing_aware_straight_window": false,
+            "fragment": "fragment_b",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 0.813433,
+        "centerline_support_fraction": 0.311111,
+        "direct_off_axis_ink_fraction": 0.01376,
+        "fragment_thickness_ratio": 1.0,
+        "local_density_fraction": 0.054781
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.616663,
+        "coherence_selection_score": 0.107038,
+        "supported_run_count": 2,
+        "supported_run_cv": 0.137615,
+        "unsupported_interval_count": 1,
+        "unsupported_interval_cv": 1.0
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 0.311111,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 1,
+            "fragment_a_thickness_px": 1.0,
+            "fragment_b_thickness_px": 1.0,
+            "fragment_thickness_ratio": 1.0,
+            "gap_length_px": 44,
+            "off_axis_ink_fraction": 0.01376,
+            "parallel_run_fraction": 0.177778,
+            "transverse_crossing_columns": 0,
+            "volumetric_components": 0
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000162"
+          ],
+          "fragment_b": [
+            "raw-hough-000142"
+          ]
+        },
+        "selection_stratum": "PATTERNED_VISIBLE_SEGMENTS",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean PDF with a small portrait directory sheet and larger drawing sheets."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "STRUCTURAL_INTERRUPTION",
+        "secondary_flags": [],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_INVALID_PAIR_CONTROL",
+      "pair_validity_assessment": "REJECTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    },
+    "FRESH1-98D0BD1ED4DBB02B9A3A": {
+      "candidate_id": "FRESH1-98D0BD1ED4DBB02B9A3A",
+      "review_index": 11,
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P8",
+      "orientation": "horizontal",
+      "primitive_length_px": 140.0,
+      "projected_span_px": 140.0,
+      "primitive_geometry": {
+        "a_b_relation": "fragment_a_then_gap_then_fragment_b",
+        "claimed_end_px": [
+          754,
+          1544
+        ],
+        "claimed_start_px": [
+          614,
+          1544
+        ],
+        "fragment_a": {
+          "end": [
+            679,
+            1544
+          ],
+          "start": [
+            614,
+            1544
+          ]
+        },
+        "fragment_b": {
+          "end": [
+            754,
+            1544
+          ],
+          "start": [
+            684,
+            1544
+          ]
+        },
+        "gap_endpoint_a_px": [
+          679,
+          1544
+        ],
+        "gap_endpoint_b_px": [
+          684,
+          1544
+        ],
+        "primitive_ids": {
+          "fragment_a": [
+            "raw-hough-000262"
+          ],
+          "fragment_b": [
+            "raw-hough-000287"
+          ]
+        }
+      },
+      "straight_validity": {
+        "status": "STRAIGHT_SUPPORTED",
+        "reasons": [
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+          "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED"
+        ],
+        "fragment_statuses": [
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_a",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          },
+          {
+            "crossing_aware_straight_window": true,
+            "fragment": "fragment_b",
+            "reason": "STRAIGHT_SOURCE_TRAJECTORY_CONFIRMED",
+            "status": "STRAIGHT_SUPPORTED"
+          }
+        ],
+        "eligibility_after": "ELIGIBLE_UNCHANGED"
+      },
+      "lateral_offset_profile": {
+        "axis_support_fraction": 0.929078,
+        "centerline_support_fraction": 0.333333,
+        "direct_off_axis_ink_fraction": 0.288462,
+        "fragment_thickness_ratio": 1.0,
+        "local_density_fraction": 0.102206
+      },
+      "local_tangent_profile": {
+        "status": "NOT_AVAILABLE_IN_EXISTING_ARTIFACTS",
+        "diagnostic_available": false
+      },
+      "trajectory_profile": {
+        "clean_control_score": 0.781356,
+        "coherence_selection_score": 0.126517,
+        "supported_run_count": 4,
+        "supported_run_cv": 0.845469,
+        "unsupported_interval_count": 3,
+        "unsupported_interval_cv": 0.141421
+      },
+      "support_identity_evidence": {
+        "direct_continuation": {
+          "status": "DIRECT_CONTINUATION_ADMISSIBLE",
+          "reason": "CLEAR_DIRECT_TRAJECTORY",
+          "evidence": {
+            "axis_delta_px": 0.0,
+            "centerline_support_fraction": 0.333333,
+            "enclosed_contours": 0,
+            "endpoint_boundary_sides": 4,
+            "fragment_a_thickness_px": 3.0,
+            "fragment_b_thickness_px": 3.0,
+            "fragment_thickness_ratio": 1.0,
+            "gap_length_px": 5,
+            "off_axis_ink_fraction": 0.288462,
+            "parallel_run_fraction": 0.0,
+            "transverse_crossing_columns": 2,
+            "volumetric_components": 2
+          },
+          "geometry_mutated": false,
+          "semantic_or_model_evidence_used": false
+        },
+        "raw_ancestor_ids": {
+          "fragment_a": [
+            "raw-hough-000262"
+          ],
+          "fragment_b": [
+            "raw-hough-000287"
+          ]
+        },
+        "selection_stratum": "IRREGULAR_SEPARATE_SEGMENTS",
+        "source_quality_bin": "NATIVE_OR_VECTOR",
+        "source_degradation_context": "Clean plot-like page; same package title-block lineage as page 1."
+      },
+      "text_glyph_status": "TEXT_INDEPENDENT",
+      "prior_span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "prior_axis_status": "PRIMITIVE_AXIS_SUPPORTED",
+      "prior_human_observation": {
+        "primary_class": "STRUCTURAL_INTERRUPTION",
+        "secondary_flags": [
+          "CROSSES_STRUCTURE",
+          "ENDPOINT_ANOMALY"
+        ],
+        "optional_note": "",
+        "source": "existing SOURCE_GAP_REVIEW_V1_2 human state"
+      },
+      "current_eligibility": {
+        "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+        "final_current_eligible": true,
+        "exclusion_reasons": []
+      },
+      "pair_audit_class": "KNOWN_INVALID_PAIR_CONTROL",
+      "pair_validity_assessment": "REJECTED",
+      "earliest_ideal_rejection_or_abstention_stage": "NOT_ASSERTED_FOR_CONTROL"
+    }
+  },
+  "shared_generic_failure": {
+    "status": "YES",
+    "layer": "PAIR_ADMISSION",
+    "summary": "SHORT_GAP_PAIR_ADMITTED_WITHOUT_DETERMINISTIC_SOURCE_STROKE_IDENTITY"
+  },
+  "pair_level_guard_implemented": false,
+  "straight_validity_gate_changed": false,
+  "replay_checks": {
+    "exact_residual_ids_recovered": true,
+    "all_bounded_cases_currently_eligible": true,
+    "bounded_total_within_hard_cap": true,
+    "human_observations_preserved": true,
+    "replay_digest": "cdef28094d78e9d6b40c41547490c525893a6463ce80ad30a06e2e458705b1e8"
+  },
+  "governance": {
+    "production_semantic_delta": "NONE",
+    "span_guard_changed": false,
+    "axis_guard_changed": false,
+    "text_glyph_guard_changed": false,
+    "admissibility_changed": false,
+    "candidate_specific_exceptions": false,
+    "validation": false,
+    "locked_blind": "0 / 8",
+    "h1_h2_opened": false
+  },
+  "audit_digest": "988ce5fa4867af37d0844e48f094817c1ac85f41bcc74b331bf6e7e4373ff34e"
+}

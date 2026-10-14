@@ -1,0 +1,4 @@
+processing-contract-page {'straight_lines': 21, 'contours': 0, 'texts': 0, 'logos': 0, 'signatures': 0}
+sample-test {'straight_lines': 229, 'contours': 145, 'texts': 0, 'logos': 0, 'signatures': 0}
+reconciliation-gap-junction {'straight_lines': 12, 'contours': 0, 'texts': 0, 'logos': 0, 'signatures': 0}
+EXACT structural/geometry/cache/export parity

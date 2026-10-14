@@ -1,0 +1,30 @@
+{
+  "counts": {
+    "EXACT_DUPLICATES_REMOVED": 0,
+    "NEAR_DUPLICATES_REMOVED": 3,
+    "SAME_STRUCTURE_REPETITIONS_REMOVED": 1,
+    "UNIQUE_CANDIDATES_REMAINING": 570
+  },
+  "details": [
+    {
+      "duplicate_of": "real-v2-20b92a9db9eff90c2f2b9b4a",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-776e0e2067f87abc6c7ecd39"
+    },
+    {
+      "duplicate_of": "real-v2-3084fb0533c13126c2bd3934",
+      "reason": "SAME_STRUCTURE_REPETITION",
+      "sample_id": "real-v2-6915fd57e19fb2d42ab44fea"
+    },
+    {
+      "duplicate_of": "real-4f059811e62c8e6885466649",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-5cf7ad1eab5d5d64b06bb7c3"
+    },
+    {
+      "duplicate_of": "real-v2-09b7dfce230ff7917a0f9750",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-v2-ce54afdb7336e9ef1ab5ea6c"
+    }
+  ]
+}

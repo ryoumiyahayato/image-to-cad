@@ -1,0 +1,228 @@
+{
+  "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+  "candidate_id_hash": {
+    "baseline": "f0075fe75e94b0d85b897d23442f026af37da11536ebc4abee094a5b25bb815e",
+    "candidate": "f0075fe75e94b0d85b897d23442f026af37da11536ebc4abee094a5b25bb815e",
+    "equal": true
+  },
+  "changed_partitions": [
+    "text_geometry_hash"
+  ],
+  "contract_version": "non-destructive-editable-text-v1",
+  "counts": {
+    "eligible": {
+      "baseline": 2,
+      "candidate": 2,
+      "equal": true
+    },
+    "fallback": {
+      "baseline": 0,
+      "candidate": 0,
+      "equal": true
+    },
+    "native_text": {
+      "baseline": 2,
+      "candidate": 2,
+      "equal": true
+    },
+    "source_text_outline": {
+      "baseline": 27,
+      "candidate": 27,
+      "equal": true
+    },
+    "trace_text_symbol": {
+      "baseline": 100,
+      "candidate": 100,
+      "equal": true
+    }
+  },
+  "dpi": 96,
+  "dxf_audit_error_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "eligible_count": {
+    "baseline": 2,
+    "candidate": 2,
+    "equal": true
+  },
+  "evidence_mode": "compact",
+  "failure_reasons": [],
+  "fallback_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "full_raw_evidence_path": "raw/pages/perspective-sample-plan.json",
+  "full_raw_evidence_record_count": 1158,
+  "full_raw_evidence_sha256": "b37c710ca4c5d4d55e921204c7893df7f03dc33ff1fd0320b1db4be2a71c44b3",
+  "full_structure_id": {
+    "baseline": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+    "candidate": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+    "equal": true
+  },
+  "native_text_count": {
+    "baseline": 2,
+    "candidate": 2,
+    "equal": true
+  },
+  "non_text_structure_hash": {
+    "baseline": "a6b6a655072aadc527013dd6c88e1da2f334a468662b8955f4d37e97ad430088",
+    "candidate": "a6b6a655072aadc527013dd6c88e1da2f334a468662b8955f4d37e97ad430088",
+    "equal": true
+  },
+  "ocr_content_hash": {
+    "baseline": "183b715014b55c493450672cf09f520eb04f07cfdbf5d4e73e1a58812bf97618",
+    "candidate": "183b715014b55c493450672cf09f520eb04f07cfdbf5d4e73e1a58812bf97618",
+    "equal": true
+  },
+  "original_source_relative_path": "tests/real_regression/assets/test.jpg",
+  "original_source_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+  "page_id": "perspective-sample-plan",
+  "page_number": 1,
+  "page_transform_hash": {
+    "baseline": "de16f280326fae2bf88f2fafef1ece17d5127218868aa1d1af7e1dc6398f39a5",
+    "candidate": "de16f280326fae2bf88f2fafef1ece17d5127218868aa1d1af7e1dc6398f39a5",
+    "equal": true
+  },
+  "partition_hashes": {
+    "baseline": {
+      "non_text_structure_hash": "a6b6a655072aadc527013dd6c88e1da2f334a468662b8955f4d37e97ad430088",
+      "page_transform_hash": "de16f280326fae2bf88f2fafef1ece17d5127218868aa1d1af7e1dc6398f39a5",
+      "protected_content_hash": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+      "source_outline_hash": "22afd17f2fab5402874914267c065084fd07d9dc0917a531a8276af19bd8081f",
+      "text_geometry_hash": "862ccaabc4a5676192ef6d1374cba60e78686e543b0782e8d8eeb4c9036fe78b",
+      "text_semantic_hash": "8938aff215b634121fa441ec8cea48e3eb770de7a4ab142af3f1728083d728a4",
+      "text_symbol_hash": "0a30f272563a895c70d2d0679b4257a5dbedc79fe829c0ed2c3dc17a39bfd6b5"
+    },
+    "candidate": {
+      "non_text_structure_hash": "a6b6a655072aadc527013dd6c88e1da2f334a468662b8955f4d37e97ad430088",
+      "page_transform_hash": "de16f280326fae2bf88f2fafef1ece17d5127218868aa1d1af7e1dc6398f39a5",
+      "protected_content_hash": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+      "source_outline_hash": "22afd17f2fab5402874914267c065084fd07d9dc0917a531a8276af19bd8081f",
+      "text_geometry_hash": "7e25cccfb130e791e298e1a26f4fd7a76117c215c0aa2a1108e2e6481db0ad68",
+      "text_semantic_hash": "8938aff215b634121fa441ec8cea48e3eb770de7a4ab142af3f1728083d728a4",
+      "text_symbol_hash": "0a30f272563a895c70d2d0679b4257a5dbedc79fe829c0ed2c3dc17a39bfd6b5"
+    },
+    "changed": [
+      "text_geometry_hash"
+    ]
+  },
+  "passed": true,
+  "protected": {
+    "logo": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "residual": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "signature": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "uncertain": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    }
+  },
+  "protected_content_hash": {
+    "baseline": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+    "candidate": "6a9400d452c3333635bbaa585cbecf2bcff20bfe75b1ac6aa3099c0649a7eb0f",
+    "equal": true
+  },
+  "protected_content_part_hashes": {
+    "baseline": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "candidate": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    }
+  },
+  "read_save_read": {
+    "baseline": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "candidate": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "equal": true
+  },
+  "regeneration_command": "python scripts/editable_text_regression_contract.py build --contract non-destructive-editable-text-v1 --evidence-mode compact --raw-evidence-dir <external-recovery-package>",
+  "regeneration_tool_version": "editable-text-regression-contract/compact-evidence-v1",
+  "schema_version": 1,
+  "source_dimensions": [
+    1850,
+    1250
+  ],
+  "source_outline_hash": {
+    "baseline": "22afd17f2fab5402874914267c065084fd07d9dc0917a531a8276af19bd8081f",
+    "candidate": "22afd17f2fab5402874914267c065084fd07d9dc0917a531a8276af19bd8081f",
+    "equal": true
+  },
+  "source_relative_path": "tests/real_regression/assets/test.jpg",
+  "source_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af",
+  "source_text_outline_count": {
+    "baseline": 27,
+    "candidate": 27,
+    "equal": true
+  },
+  "source_text_outline_state": {
+    "baseline": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "candidate": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "equal": true
+  },
+  "text_geometry_hash": {
+    "baseline": "862ccaabc4a5676192ef6d1374cba60e78686e543b0782e8d8eeb4c9036fe78b",
+    "candidate": "7e25cccfb130e791e298e1a26f4fd7a76117c215c0aa2a1108e2e6481db0ad68",
+    "equal": false
+  },
+  "text_semantic_hash": {
+    "baseline": "8938aff215b634121fa441ec8cea48e3eb770de7a4ab142af3f1728083d728a4",
+    "candidate": "8938aff215b634121fa441ec8cea48e3eb770de7a4ab142af3f1728083d728a4",
+    "equal": true
+  },
+  "text_symbol_hash": {
+    "baseline": "0a30f272563a895c70d2d0679b4257a5dbedc79fe829c0ed2c3dc17a39bfd6b5",
+    "candidate": "0a30f272563a895c70d2d0679b4257a5dbedc79fe829c0ed2c3dc17a39bfd6b5",
+    "equal": true
+  },
+  "trace_text_symbol_count": {
+    "baseline": 100,
+    "candidate": 100,
+    "equal": true
+  }
+}

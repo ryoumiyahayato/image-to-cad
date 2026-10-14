@@ -4,19 +4,9 @@ import cv2
 import numpy as np
 import pytest
 
-from app.geometry_cleaner import GeometryCleanParams
-from app.geometry_normalized import (
-    clean_geometry_with_report as clean_normalized_geometry,
-    effective_geometry_params,
-)
-from app.line_detect import LineDetectionParams, LineSegment, detect_lines
-from app.preprocess import preprocess_image_with_stages
-from app.resolution import (
-    coordinate_resolution_scale,
-    image_resolution_scale,
-    scaled_int,
-    spatial_bucket,
-)
+from app.geometry.line_detect import LineDetectionParams, detect_lines
+from app.geometry.preprocess import preprocess_image_with_stages
+from app.core.resolution import coordinate_resolution_scale, image_resolution_scale, scaled_int, spatial_bucket
 
 
 def test_image_resolution_scale_is_bounded_and_reference_based() -> None:
@@ -66,43 +56,10 @@ def test_preprocessing_rejects_unsupported_shapes_and_dtypes() -> None:
         preprocess_image_with_stages(np.zeros((120, 180, 2), np.uint8))
 
 
-def test_geometry_distances_scale_together() -> None:
-    lines = [
-        LineSegment(0, 0, 5000, 0, source_ids=("A",)),
-        LineSegment(5000, 0, 5000, 3000, source_ids=("B",)),
-    ]
-    effective, scale = effective_geometry_params(lines, GeometryCleanParams())
-    assert scale == pytest.approx(5000 / 2400)
-    assert effective.snap_distance == pytest.approx(6.0 * scale)
-    assert effective.max_bridge_gap == pytest.approx(12.0 * scale)
-    assert effective.collinear_distance == pytest.approx(3.0 * scale)
-    assert effective.duplicate_distance == pytest.approx(3.0 * scale)
-    assert effective.min_line_length == pytest.approx(12.0 * scale)
 
 
-def test_invalid_candidates_do_not_block_geometry_filtering() -> None:
-    invalid = LineSegment(float("nan"), 0, 100, 0, source_ids=("BAD",))
-    valid = LineSegment(0, 0, 100, 0, source_ids=("GOOD",))
-    result = clean_normalized_geometry(
-        [invalid, valid],
-        GeometryCleanParams(min_line_length=1),
-    )
-    assert result.report.final_invalid_removed == 1
-    assert len(result.lines) == 1
-    assert result.lines[0].source_ids == ("GOOD",)
 
 
-def test_sparse_drawing_uses_full_image_scale_when_supplied() -> None:
-    sparse = [LineSegment(100, 100, 300, 100, source_ids=("A",))]
-    image_scale = image_resolution_scale((3500, 5000))
-    effective, scale = effective_geometry_params(
-        sparse,
-        GeometryCleanParams(),
-        resolution_scale=image_scale,
-    )
-    assert scale == pytest.approx(5000 / 2400)
-    assert effective.snap_distance == pytest.approx(6.0 * scale)
-    assert effective.min_line_length == pytest.approx(12.0 * scale)
 
 
 def test_thick_stroke_candidates_are_recentred() -> None:

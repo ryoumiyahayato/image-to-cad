@@ -1,0 +1,5 @@
+Command: project .venv/Scripts/python.exe -m pytest tests/test_product_p1_grid_regression.py -q
+Result: 5 passed, 1 warning in 4.88s
+Warning: pre-existing denied write to cad_photo_to_dxf/.pytest_cache/v/cache/nodeids.
+Scope: existing real P1 protective regression cases only.
+No P2 focused tests were added after the A1 representation STOP condition.

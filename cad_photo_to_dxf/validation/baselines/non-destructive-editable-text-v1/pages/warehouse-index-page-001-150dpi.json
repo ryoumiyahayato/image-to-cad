@@ -1,0 +1,228 @@
+{
+  "baseline_source_commit": "5f7846e00b41913c003f178558a110e6475c0ee0",
+  "candidate_commit": "80be85aba985e457bc7bff1e9ece49f50e7a46d2",
+  "candidate_id_hash": {
+    "baseline": "f76f17476d6cbb7084f3a40d5b152e836c6b77a0436606bb5141be8ed374c42b",
+    "candidate": "f76f17476d6cbb7084f3a40d5b152e836c6b77a0436606bb5141be8ed374c42b",
+    "equal": true
+  },
+  "changed_partitions": [
+    "text_geometry_hash"
+  ],
+  "contract_version": "non-destructive-editable-text-v1",
+  "counts": {
+    "eligible": {
+      "baseline": 89,
+      "candidate": 89,
+      "equal": true
+    },
+    "fallback": {
+      "baseline": 2,
+      "candidate": 2,
+      "equal": true
+    },
+    "native_text": {
+      "baseline": 89,
+      "candidate": 89,
+      "equal": true
+    },
+    "source_text_outline": {
+      "baseline": 851,
+      "candidate": 851,
+      "equal": true
+    },
+    "trace_text_symbol": {
+      "baseline": 5,
+      "candidate": 5,
+      "equal": true
+    }
+  },
+  "dpi": 150,
+  "dxf_audit_error_count": {
+    "baseline": 0,
+    "candidate": 0,
+    "equal": true
+  },
+  "eligible_count": {
+    "baseline": 89,
+    "candidate": 89,
+    "equal": true
+  },
+  "evidence_mode": "compact",
+  "failure_reasons": [],
+  "fallback_count": {
+    "baseline": 2,
+    "candidate": 2,
+    "equal": true
+  },
+  "full_raw_evidence_path": "raw/pages/warehouse-index-page-001-150dpi.json",
+  "full_raw_evidence_record_count": 4510,
+  "full_raw_evidence_sha256": "041375d4e11ee9590f531a9ef9db628038eac18fb0ccf83335615d7405b488f6",
+  "full_structure_id": {
+    "baseline": "6f29197ea5d469c8e69245472e1ac122e8c86755f526dfa007c79013a31646f2",
+    "candidate": "6f29197ea5d469c8e69245472e1ac122e8c86755f526dfa007c79013a31646f2",
+    "equal": true
+  },
+  "native_text_count": {
+    "baseline": 89,
+    "candidate": 89,
+    "equal": true
+  },
+  "non_text_structure_hash": {
+    "baseline": "b513a90a3284f679ac3061e0be5d1378bca60b64b44ed793a263edb6219e8740",
+    "candidate": "b513a90a3284f679ac3061e0be5d1378bca60b64b44ed793a263edb6219e8740",
+    "equal": true
+  },
+  "ocr_content_hash": {
+    "baseline": "3bb4bf9b4a28c511f7ce48413fde00adf6c51c02836efa85b7cd0c9f60fe5d23",
+    "candidate": "3bb4bf9b4a28c511f7ce48413fde00adf6c51c02836efa85b7cd0c9f60fe5d23",
+    "equal": true
+  },
+  "original_source_relative_path": "tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+  "original_source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+  "page_id": "warehouse-index-page-001-150dpi",
+  "page_number": 1,
+  "page_transform_hash": {
+    "baseline": "e5c5783e7d807aac5d8b7c24e7462b66a383544fa7a7c74b8857135afa0ced1f",
+    "candidate": "e5c5783e7d807aac5d8b7c24e7462b66a383544fa7a7c74b8857135afa0ced1f",
+    "equal": true
+  },
+  "partition_hashes": {
+    "baseline": {
+      "non_text_structure_hash": "b513a90a3284f679ac3061e0be5d1378bca60b64b44ed793a263edb6219e8740",
+      "page_transform_hash": "e5c5783e7d807aac5d8b7c24e7462b66a383544fa7a7c74b8857135afa0ced1f",
+      "protected_content_hash": "f34a06ba6b1b2dacdd1ac9edc07fe28d6c9db5f69cdc599a3570254fab330d76",
+      "source_outline_hash": "6bdc01e1a5ecd0ac4598d524e5353eb239202ffaca0bd976dc6f2e6040110057",
+      "text_geometry_hash": "019c37f41689c1e40329aede884e2f5ae6ae63ae83e86d770b65b9dd3fec4aeb",
+      "text_semantic_hash": "157cc5571e2a58b54f5a14f2fe1d81d8458d04358506e0aa63a798b0e4705fd2",
+      "text_symbol_hash": "a781269f826025351b3eab7f89b0dc0d31c4eb0e5f4f90e970184545125124bd"
+    },
+    "candidate": {
+      "non_text_structure_hash": "b513a90a3284f679ac3061e0be5d1378bca60b64b44ed793a263edb6219e8740",
+      "page_transform_hash": "e5c5783e7d807aac5d8b7c24e7462b66a383544fa7a7c74b8857135afa0ced1f",
+      "protected_content_hash": "f34a06ba6b1b2dacdd1ac9edc07fe28d6c9db5f69cdc599a3570254fab330d76",
+      "source_outline_hash": "6bdc01e1a5ecd0ac4598d524e5353eb239202ffaca0bd976dc6f2e6040110057",
+      "text_geometry_hash": "1d202392227d1864d2343b503a188d11f7ab9c1801ea766f660e3645708d706f",
+      "text_semantic_hash": "157cc5571e2a58b54f5a14f2fe1d81d8458d04358506e0aa63a798b0e4705fd2",
+      "text_symbol_hash": "a781269f826025351b3eab7f89b0dc0d31c4eb0e5f4f90e970184545125124bd"
+    },
+    "changed": [
+      "text_geometry_hash"
+    ]
+  },
+  "passed": true,
+  "protected": {
+    "logo": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "residual": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "signature": {
+      "baseline": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "candidate": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "equal": true
+    },
+    "uncertain": {
+      "baseline": "8b377266ab3a96142d9119c5831a6b0b067baaffab6b235eea85433fa7426783",
+      "candidate": "8b377266ab3a96142d9119c5831a6b0b067baaffab6b235eea85433fa7426783",
+      "equal": true
+    }
+  },
+  "protected_content_hash": {
+    "baseline": "f34a06ba6b1b2dacdd1ac9edc07fe28d6c9db5f69cdc599a3570254fab330d76",
+    "candidate": "f34a06ba6b1b2dacdd1ac9edc07fe28d6c9db5f69cdc599a3570254fab330d76",
+    "equal": true
+  },
+  "protected_content_part_hashes": {
+    "baseline": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "8b377266ab3a96142d9119c5831a6b0b067baaffab6b235eea85433fa7426783"
+    },
+    "candidate": {
+      "logo": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "residual": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "signature": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "uncertain": "8b377266ab3a96142d9119c5831a6b0b067baaffab6b235eea85433fa7426783"
+    }
+  },
+  "read_save_read": {
+    "baseline": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "candidate": {
+      "audit_errors_after": 0,
+      "passed": true,
+      "source_outline_state_after": {
+        "exists": true,
+        "frozen": true,
+        "off": true
+      }
+    },
+    "equal": true
+  },
+  "regeneration_command": "python scripts/editable_text_regression_contract.py build --contract non-destructive-editable-text-v1 --evidence-mode compact --raw-evidence-dir <external-recovery-package>",
+  "regeneration_tool_version": "editable-text-regression-contract/compact-evidence-v1",
+  "schema_version": 1,
+  "source_dimensions": [
+    1359,
+    1890
+  ],
+  "source_outline_hash": {
+    "baseline": "6bdc01e1a5ecd0ac4598d524e5353eb239202ffaca0bd976dc6f2e6040110057",
+    "candidate": "6bdc01e1a5ecd0ac4598d524e5353eb239202ffaca0bd976dc6f2e6040110057",
+    "equal": true
+  },
+  "source_relative_path": "tests/real_regression/assets/warehouse-page-001.png",
+  "source_sha256": "ee4937113bf9615ae2ab056c71850d279fea515258b7c87ed0b100439bf6011d",
+  "source_text_outline_count": {
+    "baseline": 851,
+    "candidate": 851,
+    "equal": true
+  },
+  "source_text_outline_state": {
+    "baseline": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "candidate": {
+      "exists": true,
+      "frozen": true,
+      "off": true
+    },
+    "equal": true
+  },
+  "text_geometry_hash": {
+    "baseline": "019c37f41689c1e40329aede884e2f5ae6ae63ae83e86d770b65b9dd3fec4aeb",
+    "candidate": "1d202392227d1864d2343b503a188d11f7ab9c1801ea766f660e3645708d706f",
+    "equal": false
+  },
+  "text_semantic_hash": {
+    "baseline": "157cc5571e2a58b54f5a14f2fe1d81d8458d04358506e0aa63a798b0e4705fd2",
+    "candidate": "157cc5571e2a58b54f5a14f2fe1d81d8458d04358506e0aa63a798b0e4705fd2",
+    "equal": true
+  },
+  "text_symbol_hash": {
+    "baseline": "a781269f826025351b3eab7f89b0dc0d31c4eb0e5f4f90e970184545125124bd",
+    "candidate": "a781269f826025351b3eab7f89b0dc0d31c4eb0e5f4f90e970184545125124bd",
+    "equal": true
+  },
+  "trace_text_symbol_count": {
+    "baseline": 5,
+    "candidate": 5,
+    "equal": true
+  }
+}

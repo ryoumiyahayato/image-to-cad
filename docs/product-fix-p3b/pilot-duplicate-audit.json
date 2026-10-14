@@ -1,0 +1,31 @@
+{
+  "counts": {
+    "EXACT_DUPLICATES_REMOVED": 0,
+    "NEAR_DUPLICATES_REMOVED": 2,
+    "SAME_STRUCTURE_REPETITIONS_REMOVED": 2,
+    "UNIQUE_CANDIDATES_REMAINING": 205
+  },
+  "details": [
+    {
+      "duplicate_of": "real-9a0937df293488ab658d5680",
+      "reason": "SAME_STRUCTURE_REPETITION",
+      "sample_id": "real-2a320812871b3187762c4c54"
+    },
+    {
+      "duplicate_of": "real-8a55dde8a5f6efb6bb550b88",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-8d6668164d53e94d4c69ff12"
+    },
+    {
+      "duplicate_of": "real-8a55dde8a5f6efb6bb550b88",
+      "reason": "DUPLICATE_NEAR",
+      "sample_id": "real-670c5dc3040e1bbe29d0dfdc"
+    },
+    {
+      "duplicate_of": "real-01352baad3286a22152b9222",
+      "reason": "SAME_STRUCTURE_REPETITION",
+      "sample_id": "real-e5d59cb1375bc8e1675b2bbd"
+    }
+  ],
+  "scope": "first 209; policy-identified candidates; same drawing/page only"
+}

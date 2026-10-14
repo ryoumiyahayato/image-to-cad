@@ -1,0 +1,69 @@
+{
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "CELL_EXECUTION_PASS": "NOT_RUN",
+  "CHECKPOINT_READBACK": "NOT_RUN",
+  "CHECKPOINT_WRITE": "NOT_RUN",
+  "CNN_TRAINED": "NO",
+  "COLAB_MCP_INSTALLED": "YES",
+  "COLAB_SESSION_CONNECTED": "NO",
+  "DRIVE_MOUNT": "NOT_RUN",
+  "GOOGLE_LOGIN_COMPLETED": "USER_ACTION_REQUIRED",
+  "IDENTITY_GUARDS": "NOT_RUN",
+  "LOGISTIC_BASELINE_READY": "NO",
+  "MCP_CLIENT_COMPATIBLE": "NO",
+  "MODEL_TRAINED": "NO",
+  "PRODUCTION_CODE_CHANGED": "NO",
+  "RESUME": "NOT_RUN",
+  "compatibility_basis": "Source-based blocker at the matching installed version, not a claimed failed live Colab notebook test. The legacy notification handler logs on_tool_list_changed without refreshing the model-visible legacy catalog; the official server injects tools after browser connectivity and requires dynamic refresh. No Colab tool is available in this active Codex tool catalog.",
+  "config_path": "C:/Users/agcrf/.codex/config.toml",
+  "configured_enabled": false,
+  "data_uploaded": false,
+  "durable_drive_workspace_created": false,
+  "google_secrets_written_to_repository": false,
+  "installed_codex_cli": "0.160.1",
+  "isolated_python": "3.13.16",
+  "local_data_freeze_sha256": "4a4faa39a2a56811f6723fa0ccfa2322320080023c59c35a2179f40f08942795",
+  "next_step": "Compatibility blocker: a verified local client/build that refreshes tools on notifications/tools/list_changed is required. Do not enable this disabled MCP entry or proceed to browser/Drive/runtime/learning until that requirement is resolved. No unofficial fork or alternative client was used.",
+  "official_commit": "b9ab3899e0f1fa493390b1fd6d54aa2e464ecdf1",
+  "official_origin": "https://github.com/googlecolab/colab-mcp",
+  "official_package_version": "1.0.1",
+  "packages_added_to_project_environment": false,
+  "server_handshake": {
+    "browser_connection_tool_called": false,
+    "cell_execution": "NOT_RUN",
+    "colab_browser_session_connected": false,
+    "initial_tool_names": [
+      "open_colab_browser_connection"
+    ],
+    "persistent_process_left": false,
+    "protocol_version": "2025-11-25",
+    "server_info": {
+      "icons": null,
+      "name": "ColabMCP",
+      "title": null,
+      "version": "2.14.5",
+      "websiteUrl": null
+    },
+    "server_initialization": "PASS",
+    "server_tool_list_changed": true
+  },
+  "source_evidence": {
+    "codex_legacy_catalog": {
+      "path": "C:\\Users\\agcrf\\.codex\\mcp-envs\\colab-mcp\\compatibility-evidence\\codex_legacy_catalog.rs",
+      "sha256": "b8562b3a6def953aab82fc8e728785010da932d5dce4526b0e8df861a7e3e685",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.160.1/codex-rs/codex-mcp/src/rmcp_client.rs"
+    },
+    "codex_notification_forwarder": {
+      "path": "C:\\Users\\agcrf\\.codex\\mcp-envs\\colab-mcp\\compatibility-evidence\\codex_notification_forwarder.rs",
+      "sha256": "b76fa12d80d3485e9ef206e35072ab9fa27add8437ce7cd8cedd2c4affc8955a",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.160.1/codex-rs/rmcp-client/src/elicitation_client_service.rs"
+    },
+    "codex_tool_list_handler": {
+      "path": "C:\\Users\\agcrf\\.codex\\mcp-envs\\colab-mcp\\compatibility-evidence\\codex_tool_list_handler.rs",
+      "sha256": "4cd0a7019faeafabe3c8125ec996f67e986e01b262a57b3ef1f0b5a87fc43e81",
+      "url": "https://raw.githubusercontent.com/openai/codex/rust-v0.160.1/codex-rs/rmcp-client/src/logging_client_handler.rs"
+    }
+  },
+  "stage_stopped_at": "PHASE_6_CLIENT_COMPATIBILITY",
+  "user_install_root": "C:\\Users\\agcrf\\.codex\\mcp-envs\\colab-mcp"
+}

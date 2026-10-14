@@ -1,0 +1,5 @@
+# Optional future research environment. No training or installation performed by P3B.
+-r requirements-preparation.txt
+scikit-learn>=1.5,<2
+joblib>=1.4,<2
+torch>=2.4,<3

@@ -1,0 +1,127 @@
+{
+  "EXACT_DUPLICATES_REMOVED": 0,
+  "NEAR_DUPLICATES_REMOVED": 3,
+  "REAL_V2_CANDIDATES": 30,
+  "SAME_STRUCTURE_REPETITIONS_REMOVED": 1,
+  "UNIQUE_CANDIDATES_REMAINING": 570,
+  "V1_TRAINING_AUTHORIZED": 0,
+  "V2_TRAINING_AUTHORIZED": 0,
+  "acceptance_target": ">=29/30 explicitly identifiable; human review pending",
+  "blind_sources_accessed": 0,
+  "by_drawing": {
+    "A2-SG-009": 3,
+    "A2-SG-022": 3,
+    "G0R2-15EE2398726E8037": 3,
+    "G0R2-3560D9BEBEAA3543": 3,
+    "G0R2-3B970FD759C6026F": 2,
+    "G0R2-4A34D1B8D93B1B06": 2,
+    "G0R2-6C9464FA73A2A027": 2,
+    "G0R2-7E30C7F445081F40": 2,
+    "G0R2-B441E5911528F402": 2,
+    "G0R2-C2D095E069663C17": 2,
+    "environment-building": 2,
+    "sample-plan-photo": 2,
+    "warehouse-electrical": 2
+  },
+  "by_type": {
+    "CONTROL": 14,
+    "PAIR": 12,
+    "SINGLE": 4
+  },
+  "generated_or_queued": 30,
+  "internal_quality_passed_nomination_count": 574,
+  "manifest_sha256": "435a779017e88bef35897b84e0496dbb14f98d99f58f2cbe4c19b7cad53e3d72",
+  "quality_policy": {
+    "dark_threshold": 180,
+    "display_margin_px": 12,
+    "max_mean_distance_px": 1.0,
+    "max_p95_distance_px": 2.0,
+    "max_separation_range_px": 1.5,
+    "min_endpoint_support": 0.75,
+    "min_length_ratio": 0.7,
+    "min_local_alignment": 0.75,
+    "min_overlap_px": 32.0,
+    "min_support_ratio": 0.9,
+    "support_radius_px": 1.25,
+    "version": "human-queue-quality-v2"
+  },
+  "rejection_counts": {
+    "LOCAL_INK_MISALIGNMENT": 1,
+    "NO_EXPLICIT_COMPONENT": 18,
+    "PAIR_SEPARATION_UNSTABLE": 3,
+    "PARTNER_EDGE_MISSING_OR_FLOATING": 1,
+    "TARGET_CLIPPED": 6,
+    "UNSUPPORTED_OR_MISALIGNED_GEOMETRY": 166
+  },
+  "source_pages_accessed": [
+    [
+      "A2-SG-009",
+      1
+    ],
+    [
+      "A2-SG-022",
+      1
+    ],
+    [
+      "G0R2-15EE2398726E8037",
+      1
+    ],
+    [
+      "G0R2-3560D9BEBEAA3543",
+      1
+    ],
+    [
+      "G0R2-3B970FD759C6026F",
+      1
+    ],
+    [
+      "G0R2-4A34D1B8D93B1B06",
+      1
+    ],
+    [
+      "G0R2-6C9464FA73A2A027",
+      1
+    ],
+    [
+      "G0R2-7E30C7F445081F40",
+      1
+    ],
+    [
+      "G0R2-B441E5911528F402",
+      1
+    ],
+    [
+      "G0R2-C2D095E069663C17",
+      1
+    ],
+    [
+      "environment-building",
+      1
+    ],
+    [
+      "environment-building",
+      3
+    ],
+    [
+      "environment-building",
+      4
+    ],
+    [
+      "sample-plan-photo",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      1
+    ],
+    [
+      "warehouse-electrical",
+      2
+    ],
+    [
+      "warehouse-electrical",
+      3
+    ]
+  ],
+  "validation_sources_accessed": 0
+}

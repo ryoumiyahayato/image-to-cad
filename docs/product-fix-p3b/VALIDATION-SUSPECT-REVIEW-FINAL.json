@@ -1,0 +1,219 @@
+{
+  "AMBIGUOUS_TRAINING_POLICY": {
+    "fourth_probability": "Do not fabricate a learned/calibrated AMBIGUOUS probability from a three-class model; any later API abstention mapping must be explicitly documented.",
+    "limits": "Low confidence is not guaranteed to detect human ambiguity or wrong high-confidence predictions. Evaluate abstention on the independent ambiguous subset; report its small size. Threshold selection must avoid fitting to these eight review answers. This recommendation requires later explicit training authorization and leaves production safety vetoes intact.",
+    "reason": "The 94 accepted train labels contain no AMBIGUOUS examples. Ambiguity here reflects unresolved source interpretation rather than a consistently observed fourth physical structure. An initial three-class baseline avoids an unsupported learned fourth class; four-class learning requires genuine train ambiguity evidence (route B), never fabricated balance.",
+    "recommendation": "Three-class SINGLE / TRUE_PARALLEL / OTHER classifier plus separately evaluated abstention/confidence policy",
+    "recommended_route": "A",
+    "retention": "Every human AMBIGUOUS label remains in frozen validation truth. Evaluate these separately as ambiguity/abstention cases alongside unambiguous classification, with all-sample coverage and failure reporting; never remap class 4 to another class or silently remove it.",
+    "training_authorized": false
+  },
+  "BACKGROUND_TASKS_CREATED": "NO",
+  "BLIND_TOUCHED": "NO",
+  "COLAB_STARTED": "NO",
+  "CONFIRMED_AMBIGUOUS": 1,
+  "CONFIRMED_OTHER": 0,
+  "CONFIRMED_SINGLE": 3,
+  "CONFIRMED_TRUE_PARALLEL": 2,
+  "DISAGREEMENTS": [
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 17,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 33,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "training_authorized": false
+    }
+  ],
+  "DISPUTED_REMAINING": 0,
+  "EXACT_AGREEMENT": 6,
+  "FINAL_VALIDATION_AMBIGUOUS": 1,
+  "FINAL_VALIDATION_EXCLUDED": 0,
+  "FINAL_VALIDATION_OTHER": 7,
+  "FINAL_VALIDATION_SINGLE": 22,
+  "FINAL_VALIDATION_TRUE_PARALLEL": 20,
+  "MODEL_TRAINED": "NO",
+  "NEXT_ACTION": "Separate explicitly authorized Colab/training pre-flight; no training now",
+  "READY_FOR_COLAB_TRAINING_PREFLIGHT": "YES",
+  "REVISED_TO_AMBIGUOUS": 0,
+  "REVISED_TO_OTHER": 0,
+  "REVISED_TO_SINGLE": 0,
+  "REVISED_TO_TRUE_PARALLEL": 2,
+  "REVISED_TO_X_OR_U": 0,
+  "STAGE0_DISAGREEMENT": 0,
+  "STAGE1_DISAGREEMENT": 2,
+  "TOTAL_REVIEWED": 8,
+  "TRAINING_DATA_FREEZE": "READY",
+  "TRAIN_VALIDATION_LEAKAGE": "NONE",
+  "VALIDATION_FINAL_STATUS": "PASS",
+  "adjudication_authority": "Current user explicitly authorized completed internally valid re-review as current truth. Every disagreement remains reported alongside both preserved historical answers.",
+  "adjudication_sha256": "465d826ea8a4d7d9a9b3551ba74155e81c7dab103256043dc45e49a522d03990",
+  "history_audit": {
+    "DIRECT_SKIP_WITHOUT_STAGE0": 0,
+    "FINAL_STATE_INTERNALLY_CONSISTENT": true,
+    "INCONSISTENT_X_U_OVERWRITES": 0,
+    "INTERNAL_ERRORS": [],
+    "INVALID_NOMINATION": 0,
+    "MISSING_PRESENTATIONS": [],
+    "PRESENTATIONS_PERSISTED": 8,
+    "PRESENTATION_LOG_ENTRIES": 8,
+    "SCHEMA_VALID": true,
+    "SESSION_COUNT": 1,
+    "STAGE1_CLASSES_PRESENT": {
+      "AMBIGUOUS": 1,
+      "OTHER": 0,
+      "SINGLE_PHYSICAL_STROKE": 3,
+      "TRUE_PARALLEL_STRUCTURE": 4
+    },
+    "STAGE1_CLASS_COUNT": 8,
+    "STAGE1_WITHOUT_PRIOR_V": [],
+    "TOTAL_REVIEWED": 8,
+    "TRACEABLE_TARGET_RATE": 1.0,
+    "UNCLEAR_TARGET": 0,
+    "UNDO_LOG_ENTRIES": 0,
+    "VALID_TARGET": 8,
+    "V_WITH_STAGE1_SKIPPED": 0,
+    "X_U_LATER_CHANGED_TO_V": [],
+    "ZERO_SOURCE_SUPPORT_STAGE1": []
+  },
+  "original_manifest_sha256": "de5e3b1d8e3f869d79ed67d5248398c6ff2d005b50b58ccbb7f183fa5d743ed2",
+  "original_state_sha256": "006d8e3f61c5e1f0909605e534b78aebb12432f8501ed83b06410dc7d6df8c25",
+  "re_review_manifest_sha256": "cadf50661d7d8514e81ab170c790ebaca6254219ac419b58190052b4343c62d1",
+  "re_review_state_sha256": "8ae020ad77140ad79279ac969dc4b2f82a941eb63fdd50749ca5617d4818dbe2",
+  "sample_comparisons": [
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 16,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "val-v2-261d3cffb584f26f925431dd",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "TRUE_PARALLEL_STRUCTURE",
+      "original_rank": 41,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "NARROW_PAIR_SINGLE_VS_PARALLEL_BOUNDARY: 4.886px separation; heterogeneous archival ink/white gap can be interpreted as boundaries or a stroked run. Confirm the intended source objects with context; do not infer truth from gap alone."
+      ],
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "SINGLE_PHYSICAL_STROKE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "SINGLE_PHYSICAL_STROKE",
+      "original_rank": 30,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "PAIR_UNEQUAL_EXTENT"
+      ],
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "AMBIGUOUS",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 6,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 17,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "USER_AUTHORIZED_ADJUDICATED_RE_REVIEW",
+      "exact_agreement": false,
+      "new_class": "TRUE_PARALLEL_STRUCTURE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "AMBIGUOUS",
+      "original_rank": 33,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "HUMAN_AMBIGUOUS_VALID_LABEL: confirm or retain 4 using available context; uncertainty is not an error and no class is forced"
+      ],
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "SINGLE_PHYSICAL_STROKE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "SINGLE_PHYSICAL_STROKE",
+      "original_rank": 13,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "val-v2-115c58721d68b21e3a19687f",
+      "training_authorized": false
+    },
+    {
+      "current_resolution": "CONFIRMED",
+      "exact_agreement": true,
+      "new_class": "SINGLE_PHYSICAL_STROKE",
+      "new_stage0": "VALID_TARGET",
+      "original_class": "SINGLE_PHYSICAL_STROKE",
+      "original_rank": 36,
+      "original_stage0": "VALID_TARGET",
+      "review_reasons": [
+        "A_LOCAL_TANGENT_ALIGNMENT"
+      ],
+      "sample_id": "val-v2-3d055195c7ff5a95add31627",
+      "training_authorized": false
+    }
+  ],
+  "training_authorized": false,
+  "training_data_freeze_sha256": "40152614ad46a97195f07ddc437aff27692bf1f6bcf476d3b411db1fccbe89f1"
+}

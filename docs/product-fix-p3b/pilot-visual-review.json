@@ -1,0 +1,70 @@
+{
+  "all_contact_sheets_inspected": true,
+  "context_resolution": "128px contact views; source metrics from full native rasters; targeted full-size crops available",
+  "distinct_samples_inspected": 209,
+  "examples": [
+    {
+      "finding": "No explicit text target",
+      "queue_rank": 13,
+      "sample_id": "real-eb7ad2d6aefdd921f1218110"
+    },
+    {
+      "finding": "Full target extends past viewport",
+      "queue_rank": 24,
+      "sample_id": "real-c6bd2baf21207871a98b8b0f"
+    },
+    {
+      "finding": "Visible floating candidate in source background",
+      "queue_rank": 45,
+      "sample_id": "real-81cdd156c0c8351a6955f8bd"
+    },
+    {
+      "finding": "Partner does not track printed rail",
+      "queue_rank": 51,
+      "sample_id": "real-817221c57679b2e0d0017635"
+    },
+    {
+      "finding": "Full extent outside local viewport",
+      "queue_rank": 53,
+      "sample_id": "real-33b8d02b777e9fb16133cb45"
+    },
+    {
+      "finding": "Truncated pair view",
+      "queue_rank": 77,
+      "sample_id": "real-0afb8595a79d48c438b3b200"
+    },
+    {
+      "finding": "Misaligned partners across shutter hatching",
+      "queue_rank": 90,
+      "sample_id": "real-06910c9baebb494cb38249fa"
+    },
+    {
+      "finding": "Long framing nomination clipped",
+      "queue_rank": 101,
+      "sample_id": "real-9d6be20467dffa5dd1c74d59"
+    },
+    {
+      "finding": "Unsupported partial rail partner",
+      "queue_rank": 116,
+      "sample_id": "real-6aceee44ea1794f4f5e15d3d"
+    },
+    {
+      "finding": "Wrong/misaligned rail partner",
+      "queue_rank": 168,
+      "sample_id": "real-e52a436bde666a67d8cb2e3d"
+    },
+    {
+      "finding": "Long rail extent clipped",
+      "queue_rank": 194,
+      "sample_id": "real-665e4872b90acf38d8ad7eaf"
+    },
+    {
+      "finding": "No target overlay on text/control",
+      "queue_rank": 208,
+      "sample_id": "real-02865f7124605c81a55ef069"
+    }
+  ],
+  "genuinely_ambiguous_source": "not established without valid nomination and human class review",
+  "human_skip_intent": "not inferred",
+  "reviewer": "Codex source/display audit; not human Stage-0 validation"
+}

@@ -1,0 +1,1340 @@
+{
+  "roi": [
+    1090,
+    385,
+    1780,
+    580
+  ],
+  "objects": [
+    {
+      "handle": "B8",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.37602904330929,
+        258.9080431559032,
+        134.7464999744337,
+        258.9080431559032
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.0,
+        578.0,
+        1273.0,
+        578.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.0,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "BA",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.37602904330929,
+        268.85790254128955,
+        134.7464999744337,
+        268.85790254128955
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.0,
+        484.0,
+        1273.0,
+        484.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.0,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "BC",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.37602904330929,
+        278.9136114946055,
+        209.58214450069028,
+        278.9136114946055
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.0,
+        389.0,
+        1980.0,
+        389.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        890.0,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "D1",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.10025566293396,
+        258.9080431559032,
+        186.5069386920284,
+        258.9080431559032
+      ],
+      "actual_geometry_bbox_source_px": [
+        1607.0,
+        578.0,
+        1762.0,
+        578.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        155.0,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "DC",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.10025566293396,
+        268.85790254128955,
+        187.67128393925447,
+        268.85790254128955
+      ],
+      "actual_geometry_bbox_source_px": [
+        1607.0,
+        484.0,
+        1773.0,
+        484.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        166.0,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "FE",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.0640486782226,
+        258.9080431559032,
+        152.95262565833204,
+        258.9080431559032
+      ],
+      "actual_geometry_bbox_source_px": [
+        1275.9999999999998,
+        578.0,
+        1445.0,
+        578.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        169.00000000000023,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "12D",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        169.78270695914506,
+        258.9080431559032,
+        169.78270695914506,
+        268.5403538375006
+      ],
+      "actual_geometry_bbox_source_px": [
+        1604.0000000000002,
+        487.0,
+        1604.0000000000002,
+        578.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0,
+        91.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "131",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        138.66293398783043,
+        268.85790254128955,
+        162.7966354757887,
+        268.85790254128955
+      ],
+      "actual_geometry_bbox_source_px": [
+        1310.0,
+        484.0,
+        1537.9999999999998,
+        484.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        227.99999999999977,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "144",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        134.7464999744337,
+        268.9637521092192,
+        134.7464999744337,
+        278.5960627908166
+      ],
+      "actual_geometry_bbox_source_px": [
+        1273.0,
+        392.0,
+        1273.0,
+        483.0
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0,
+        91.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1A2",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.44218502326531,
+        278.90897928389955,
+        209.51598852073425,
+        278.90897928389955
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.625,
+        389.04376220703125,
+        1979.375,
+        389.04376220703125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        888.75,
+        0.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1AA",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        169.78782371071978,
+        268.950520913228,
+        169.78792707943845,
+        278.4769820268957
+      ],
+      "actual_geometry_bbox_source_px": [
+        1604.04833984375,
+        393.125,
+        1604.04931640625,
+        483.125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0009765625,
+        90.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1AB",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.44218502326531,
+        268.85306359314626,
+        134.62741921051284,
+        268.85308297478105
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.625,
+        484.04553222656205,
+        1271.875,
+        484.04571533203125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        181.25,
+        0.00018310546920474735
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1AC",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.15666705016105,
+        268.85321218567935,
+        169.69008858720662,
+        268.8532218764968
+      ],
+      "actual_geometry_bbox_source_px": [
+        1276.875,
+        484.04421997070267,
+        1603.125,
+        484.0443115234375
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        326.25,
+        9.155273482974735e-05
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1AD",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.21933642685482,
+        268.85305713260135,
+        189.66919453392646,
+        268.85308297478105
+      ],
+      "actual_geometry_bbox_source_px": [
+        1608.125,
+        484.04553222656205,
+        1791.875,
+        484.0457763671875
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.75,
+        0.00024414062545474735
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "1AF",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        169.78786247398926,
+        259.0271239198241,
+        169.78791415834863,
+        268.42127307357975
+      ],
+      "actual_geometry_bbox_source_px": [
+        1604.0487060546875,
+        488.125,
+        1604.0491943359375,
+        576.875
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.00048828125,
+        88.75
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "239",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        134.73196374836914,
+        268.950520913228,
+        134.732054195998,
+        278.4769820268957
+      ],
+      "actual_geometry_bbox_source_px": [
+        1272.8626708984375,
+        393.125,
+        1272.863525390625,
+        483.125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0008544921875,
+        90.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "23A",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.05203206467593,
+        268.950520913228,
+        135.05212251230478,
+        278.4769820268957
+      ],
+      "actual_geometry_bbox_source_px": [
+        1275.886474609375,
+        393.125,
+        1275.8873291015627,
+        483.125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0008544921877273737,
+        90.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "23F",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        134.73200251163865,
+        259.0271239198241,
+        134.73204127490814,
+        268.42127307357975
+      ],
+      "actual_geometry_bbox_source_px": [
+        1272.8630371093752,
+        488.125,
+        1272.8634033203125,
+        576.875
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0003662109372726263,
+        88.75
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "240",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.05204498576575,
+        259.0271239198241,
+        135.05208374903526,
+        268.42127307357975
+      ],
+      "actual_geometry_bbox_source_px": [
+        1275.8865966796875,
+        488.125,
+        1275.886962890625,
+        576.875
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0003662109375,
+        88.75
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "246",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.44218502326531,
+        258.92281842212975,
+        134.62741921051284,
+        258.9228442643094
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.625,
+        577.8601684570312,
+        1271.875,
+        577.8604125976562
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        181.25,
+        0.000244140625
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "247",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.15666705016105,
+        258.9229476330281,
+        169.69008858720662,
+        258.92296055411794
+      ],
+      "actual_geometry_bbox_source_px": [
+        1276.875,
+        577.8590698242188,
+        1603.125,
+        577.8591918945308
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        326.25,
+        0.00012207031204525265
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "248",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.21933642685482,
+        258.92281842212975,
+        189.66919453392646,
+        258.9228378037645
+      ],
+      "actual_geometry_bbox_source_px": [
+        1608.125,
+        577.8602294921875,
+        1791.875,
+        577.8604125976562
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.75,
+        0.00018310546875
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2BC",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.44218502326531,
+        278.62686020843864,
+        134.62741921051284,
+        278.62700557069934
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.625,
+        391.70767211914017,
+        1271.875,
+        391.70904541015625
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        181.25,
+        0.0013732910160797474
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2BD",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.15666705016105,
+        278.62679883326194,
+        169.69008858720662,
+        278.6268279057141
+      ],
+      "actual_geometry_bbox_source_px": [
+        1276.875,
+        391.7093505859375,
+        1603.125,
+        391.7096252441406
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        326.25,
+        0.000274658203125
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2BE",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.21933642685482,
+        278.6268828203459,
+        189.66919453392646,
+        278.6269506560675
+      ],
+      "actual_geometry_bbox_source_px": [
+        1608.125,
+        391.70819091796875,
+        1791.875,
+        391.7088317871094
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.75,
+        0.000640869140625
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2C0",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.0691029153414,
+        268.950520913228,
+        170.06911583643122,
+        278.4769820268957
+      ],
+      "actual_geometry_bbox_source_px": [
+        1606.7056884765625,
+        393.125,
+        1606.705810546875,
+        483.125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0001220703125,
+        90.0
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2C1",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        115.44218502326531,
+        268.57123201193417,
+        134.62741921051284,
+        268.57125785411387
+      ],
+      "actual_geometry_bbox_source_px": [
+        1090.625,
+        486.7080383300781,
+        1271.875,
+        486.7082824707031
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        181.25,
+        0.000244140625
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2C2",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        135.15666705016105,
+        268.57112541294305,
+        169.69008858720662,
+        268.5711415643053
+      ],
+      "actual_geometry_bbox_source_px": [
+        1276.875,
+        486.7091369628906,
+        1603.125,
+        486.70928955078125
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        326.25,
+        0.000152587890625
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2C3",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.21933642685482,
+        268.57123201193417,
+        189.66919453392646,
+        268.5712481632965
+      ],
+      "actual_geometry_bbox_source_px": [
+        1608.125,
+        486.7081298828125,
+        1791.875,
+        486.7082824707031
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        183.75,
+        0.000152587890625
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "2C5",
+      "entity_type": "LINE",
+      "layer": "TRACE_STRAIGHT",
+      "bbox_mm": [
+        170.06908999425156,
+        259.0271239198241,
+        170.06912875752107,
+        268.42127307357975
+      ],
+      "actual_geometry_bbox_source_px": [
+        1606.70556640625,
+        488.125,
+        1606.7059326171875,
+        576.875
+      ],
+      "source_candidate_bbox": null,
+      "source_bbox_dimensions": [
+        0.0003662109375,
+        88.75
+      ],
+      "source_bbox_note": "contour source trace geometry; no OCR candidate"
+    },
+    {
+      "handle": "482",
+      "entity_type": "LWPOLYLINE",
+      "layer": "TRACE_TEXT_SYMBOL",
+      "closed": true,
+      "point_count": 4,
+      "actual_geometry_bbox": [
+        169.99440609500434,
+        258.5904944521143,
+        170.10025566293396,
+        258.69634402004397
+      ],
+      "constant_width": 0,
+      "bbox_mm": [
+        169.99440609500434,
+        258.5904944521143,
+        170.10025566293396,
+        258.69634402004397
+      ],
+      "actual_geometry_bbox_source_px": [
+        1606.0,
+        580.0,
+        1607.0,
+        581.0
+      ],
+      "source_candidate_bbox": [
+        1606.0,
+        580.0,
+        1.0,
+        1.0
+      ],
+      "source_bbox_dimensions": [
+        1.0,
+        1.0
+      ],
+      "source_bbox_note": "Exact cached FinalStructure contour bbox, source-pixel frame",
+      "source_trace_path_indices": [
+        121
+      ]
+    },
+    {
+      "handle": "483",
+      "entity_type": "LWPOLYLINE",
+      "layer": "TRACE_TEXT_SYMBOL",
+      "closed": true,
+      "point_count": 4,
+      "actual_geometry_bbox": [
+        134.95819911029298,
+        258.5904944521143,
+        135.0640486782226,
+        258.69634402004397
+      ],
+      "constant_width": 0,
+      "bbox_mm": [
+        134.95819911029298,
+        258.5904944521143,
+        135.0640486782226,
+        258.69634402004397
+      ],
+      "actual_geometry_bbox_source_px": [
+        1275.0,
+        580.0,
+        1275.9999999999998,
+        581.0
+      ],
+      "source_candidate_bbox": [
+        1275.0,
+        580.0,
+        1.0,
+        1.0
+      ],
+      "source_bbox_dimensions": [
+        1.0,
+        1.0
+      ],
+      "source_bbox_note": "Exact cached FinalStructure contour bbox, source-pixel frame",
+      "source_trace_path_indices": [
+        122
+      ]
+    },
+    {
+      "handle": "48E",
+      "entity_type": "LWPOLYLINE",
+      "layer": "TRACE_TEXT_SYMBOL",
+      "closed": true,
+      "point_count": 4,
+      "actual_geometry_bbox": [
+        169.88855652707468,
+        268.5403538375006,
+        170.10025566293396,
+        268.7520529733599
+      ],
+      "constant_width": 0,
+      "bbox_mm": [
+        169.88855652707468,
+        268.5403538375006,
+        170.10025566293396,
+        268.7520529733599
+      ],
+      "actual_geometry_bbox_source_px": [
+        1605.0,
+        484.99999999999955,
+        1607.0,
+        487.0
+      ],
+      "source_candidate_bbox": [
+        1605.0,
+        485.0,
+        2.0,
+        2.0
+      ],
+      "source_bbox_dimensions": [
+        2.0,
+        2.0
+      ],
+      "source_bbox_note": "Exact cached FinalStructure contour bbox, source-pixel frame",
+      "source_trace_path_indices": [
+        132
+      ]
+    },
+    {
+      "handle": "48F",
+      "entity_type": "LWPOLYLINE",
+      "layer": "TRACE_TEXT_SYMBOL",
+      "closed": true,
+      "point_count": 3,
+      "actual_geometry_bbox": [
+        134.85234954236333,
+        268.64620340543024,
+        134.95819911029298,
+        268.7520529733599
+      ],
+      "constant_width": 0,
+      "bbox_mm": [
+        134.85234954236333,
+        268.64620340543024,
+        134.95819911029298,
+        268.7520529733599
+      ],
+      "actual_geometry_bbox_source_px": [
+        1274.0,
+        484.99999999999955,
+        1275.0,
+        486.0
+      ],
+      "source_candidate_bbox": [
+        1274.0,
+        485.0,
+        1.0,
+        1.0
+      ],
+      "source_bbox_dimensions": [
+        1.0,
+        1.0
+      ],
+      "source_bbox_note": "Exact cached FinalStructure contour bbox, source-pixel frame",
+      "source_trace_path_indices": [
+        133
+      ]
+    },
+    {
+      "handle": "814",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "项目名称",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 3.7670540431902015,
+      "width_factor": 0.7269803506916965,
+      "rotation": 0,
+      "insert": [
+        117.1754716981132,
+        273.47993833176383,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          117.1754716981132,
+          273.47993833176383,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1107,
+        400,
+        145,
+        45
+      ],
+      "source_bbox_dimensions": [
+        145,
+        45
+      ],
+      "source_candidate_index": 1,
+      "bbox_mm": [
+        117.1754716981132,
+        272.9860356905456,
+        132.52365904791122,
+        277.7492662473794
+      ],
+      "actual_geometry_bbox_source_px": [
+        1107.0,
+        400.0,
+        1252.0,
+        445.0
+      ],
+      "source_ink_bbox_px": [
+        1114,
+        407,
+        1247,
+        439
+      ],
+      "source_ink_dimensions_px": [
+        133,
+        32
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "815",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "项目编号",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 3.7670540431902015,
+      "width_factor": 0.7199860374806436,
+      "rotation": 0,
+      "insert": [
+        172.2172470215268,
+        273.47993833176383,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          172.2172470215268,
+          273.47993833176383,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1627,
+        400,
+        145,
+        45
+      ],
+      "source_bbox_dimensions": [
+        145,
+        45
+      ],
+      "source_candidate_index": 2,
+      "bbox_mm": [
+        172.2172470215268,
+        272.9860356905456,
+        187.5654343713248,
+        277.7492662473794
+      ],
+      "actual_geometry_bbox_source_px": [
+        1626.9999999999998,
+        400.0,
+        1771.9999999999998,
+        445.0
+      ],
+      "source_ink_bbox_px": [
+        1634,
+        407,
+        1766,
+        439
+      ],
+      "source_ink_dimensions_px": [
+        132,
+        32
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "816",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "Project Name",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 2.6631480749071312,
+      "width_factor": 0.40794216474900497,
+      "rotation": 0,
+      "insert": [
+        118.9749143529171,
+        270.4924836485992,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          118.9749143529171,
+          270.4924836485992,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1124,
+        442,
+        112,
+        35
+      ],
+      "source_bbox_dimensions": [
+        112,
+        35
+      ],
+      "source_candidate_index": 3,
+      "bbox_mm": [
+        118.9749143529171,
+        269.59884951679703,
+        130.83006596103695,
+        273.3035843943345
+      ],
+      "actual_geometry_bbox_source_px": [
+        1124.0,
+        441.99999999999955,
+        1236.0,
+        477.0
+      ],
+      "source_ink_bbox_px": [
+        1132,
+        449,
+        1229,
+        472
+      ],
+      "source_ink_dimensions_px": [
+        97,
+        23
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "817",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "Project No.",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 2.6631480749071312,
+      "width_factor": 0.4146804951488767,
+      "rotation": 0,
+      "insert": [
+        174.33423838011961,
+        270.4924836485992,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          174.33423838011961,
+          270.4924836485992,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1647,
+        442,
+        99,
+        35
+      ],
+      "source_bbox_dimensions": [
+        99,
+        35
+      ],
+      "source_candidate_index": 4,
+      "bbox_mm": [
+        174.33423838011961,
+        269.59884951679703,
+        184.81334560515413,
+        273.3035843943345
+      ],
+      "actual_geometry_bbox_source_px": [
+        1646.9999999999998,
+        441.99999999999955,
+        1745.9999999999998,
+        477.0
+      ],
+      "source_ink_bbox_px": [
+        1656,
+        449,
+        1740,
+        472
+      ],
+      "source_ink_dimensions_px": [
+        84,
+        23
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "818",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "子项名称",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 3.7670540431902015,
+      "width_factor": 0.6888763646231293,
+      "rotation": 0,
+      "insert": [
+        117.1754716981132,
+        263.4242293784479,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          117.1754716981132,
+          263.4242293784479,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1107,
+        495,
+        145,
+        45
+      ],
+      "source_bbox_dimensions": [
+        145,
+        45
+      ],
+      "source_candidate_index": 5,
+      "bbox_mm": [
+        117.1754716981132,
+        262.9303267372296,
+        132.52365904791122,
+        267.69355729406345
+      ],
+      "actual_geometry_bbox_source_px": [
+        1107.0,
+        495.00000000000045,
+        1252.0,
+        540.0
+      ],
+      "source_ink_bbox_px": [
+        1114,
+        502,
+        1247,
+        534
+      ],
+      "source_ink_dimensions_px": [
+        133,
+        32
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "819",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "子项编号",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 3.7670540431902015,
+      "width_factor": 0.6778853313477338,
+      "rotation": 0,
+      "insert": [
+        172.32309658945644,
+        263.4242293784479,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          172.32309658945644,
+          263.4242293784479,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1628,
+        495,
+        144,
+        45
+      ],
+      "source_bbox_dimensions": [
+        144,
+        45
+      ],
+      "source_candidate_index": 6,
+      "bbox_mm": [
+        172.32309658945644,
+        262.9303267372296,
+        187.5654343713248,
+        267.69355729406345
+      ],
+      "actual_geometry_bbox_source_px": [
+        1628.0,
+        495.00000000000045,
+        1771.9999999999998,
+        540.0
+      ],
+      "source_ink_bbox_px": [
+        1634,
+        502,
+        1766,
+        534
+      ],
+      "source_ink_dimensions_px": [
+        132,
+        32
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "81B",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "Sub-Project",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 2.5788190912795117,
+      "width_factor": 0.43191482326488345,
+      "rotation": 0,
+      "insert": [
+        119.39831262463565,
+        260.5143272042623,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          119.39831262463565,
+          260.5143272042623,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1128,
+        537,
+        104,
+        34
+      ],
+      "source_bbox_dimensions": [
+        104,
+        34
+      ],
+      "source_candidate_index": 8,
+      "bbox_mm": [
+        119.39831262463565,
+        259.64899013141076,
+        130.4066676893184,
+        263.2478754410186
+      ],
+      "actual_geometry_bbox_source_px": [
+        1127.9999999999998,
+        536.9999999999991,
+        1232.0,
+        570.9999999999995
+      ],
+      "source_ink_bbox_px": [
+        1136,
+        543,
+        1225,
+        567
+      ],
+      "source_ink_dimensions_px": [
+        89,
+        24
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    },
+    {
+      "handle": "81C",
+      "entity_type": "TEXT",
+      "layer": "OCR_TEXT",
+      "text": "Sub-Project No.",
+      "style": "wqy-unicode",
+      "font": "wqy-unicode.lff",
+      "height": 2.5788190912795117,
+      "width_factor": 0.4051251004872963,
+      "rotation": 0,
+      "insert": [
+        172.74649486117502,
+        260.5143272042623,
+        0.0
+      ],
+      "alignment": {
+        "halign": 0,
+        "valign": 0,
+        "point": [
+          172.74649486117502,
+          260.5143272042623,
+          0.0
+        ]
+      },
+      "bbox_method": "actual referenced LFF glyph paths; DXF transformation",
+      "source_candidate_bbox": [
+        1632,
+        537,
+        130,
+        34
+      ],
+      "source_bbox_dimensions": [
+        130,
+        34
+      ],
+      "source_candidate_index": 9,
+      "bbox_mm": [
+        172.74649486117502,
+        259.64899013141076,
+        186.5069386920284,
+        263.2478754410186
+      ],
+      "actual_geometry_bbox_source_px": [
+        1632.0000000000002,
+        536.9999999999991,
+        1762.0,
+        570.9999999999995
+      ],
+      "source_ink_bbox_px": [
+        1640,
+        543,
+        1757,
+        567
+      ],
+      "source_ink_dimensions_px": [
+        117,
+        24
+      ],
+      "source_ink_measurement": "All dark original pixels (gray <=150) inside candidate box; symbol enclosure/neighbors not separated"
+    }
+  ]
+}

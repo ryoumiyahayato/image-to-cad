@@ -1,0 +1,165 @@
+{
+  "annotation_layout": 6,
+  "batch02_human_review": "PENDING",
+  "batch02_pool_insufficient": false,
+  "batch02_selected": 24,
+  "class_floor_plan": {
+    "annotation_layout_remaining_to_floor": 29,
+    "annotation_layout_target_floor": 35,
+    "object_geometry_remaining_to_floor": 27,
+    "object_geometry_target_floor": 35,
+    "planning_only": true,
+    "statistical_guarantee": false
+  },
+  "completed_batches": [
+    "batch-01"
+  ],
+  "direct_straight_continuation": 15,
+  "fresh_frozen_pool": 147,
+  "funnel_bookkeeping": {
+    "existing_telemetry_paths": [
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F04-PDF-ARCH10B-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F04-PDF-ELEC06-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F05-PDF-DENNKISETSUBI-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F06-PDF-20210416ZUMEN-P4.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F06-PDF-2026DENNKISETSUBI-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F07-PDF-0026-P11.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F07-PDF-0026-P12.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F08-PDF-WAREHOUSE815-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F08-PDF-WAREHOUSE815-P6.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F09-PDF-JIULONG-P8.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F10-PDF-ENV-BUREAU-P1.json",
+      "local-artifacts/draftsman/fresh-dev-candidate-remining-v1/raw-primitive-audit/LOCALC-F10-PDF-ENV-BUREAU-P8.json"
+    ],
+    "funnel_bookkeeping_status": "COMPLETE",
+    "hough_rerun": "NO",
+    "not_span_evaluated_reason_counts": {
+      "orientation_filter_rejected_before_span_evaluation": 537
+    },
+    "orientation_filter_rule": "canonical geometry is retained only when abs(dx) >= 3 * max(1, abs(dy)) or abs(dy) >= 3 * max(1, abs(dx))",
+    "orientation_filter_source_sha256": "6d06bc6f9813f7af14be452c3098d0d3754ad773711ac24794065e6f7d70a936",
+    "per_unit": [
+      {
+        "not_span_evaluated": 0,
+        "orientation_eligible": 1385,
+        "raw_hough_primitives": 1385,
+        "selected_unit_id": "LOCALC-F01-DWG-HVAC20220110-MODEL-OVERVIEW"
+      },
+      {
+        "not_span_evaluated": 6,
+        "orientation_eligible": 987,
+        "raw_hough_primitives": 993,
+        "selected_unit_id": "LOCALC-F02-DWG-HVAC10-MODEL-OVERVIEW"
+      },
+      {
+        "not_span_evaluated": 0,
+        "orientation_eligible": 1123,
+        "raw_hough_primitives": 1123,
+        "selected_unit_id": "LOCALC-F03-DWG-HVAC4-MODEL-OVERVIEW"
+      },
+      {
+        "not_span_evaluated": 107,
+        "orientation_eligible": 2318,
+        "raw_hough_primitives": 2425,
+        "selected_unit_id": "LOCALC-F04-PDF-ARCH10B-P1"
+      },
+      {
+        "not_span_evaluated": 60,
+        "orientation_eligible": 1815,
+        "raw_hough_primitives": 1875,
+        "selected_unit_id": "LOCALC-F04-PDF-ELEC06-P1"
+      },
+      {
+        "not_span_evaluated": 2,
+        "orientation_eligible": 1429,
+        "raw_hough_primitives": 1431,
+        "selected_unit_id": "LOCALC-F05-PDF-DENNKISETSUBI-P1"
+      },
+      {
+        "not_span_evaluated": 17,
+        "orientation_eligible": 1233,
+        "raw_hough_primitives": 1250,
+        "selected_unit_id": "LOCALC-F06-PDF-20210416ZUMEN-P4"
+      },
+      {
+        "not_span_evaluated": 20,
+        "orientation_eligible": 2989,
+        "raw_hough_primitives": 3009,
+        "selected_unit_id": "LOCALC-F06-PDF-2026DENNKISETSUBI-P1"
+      },
+      {
+        "not_span_evaluated": 12,
+        "orientation_eligible": 2653,
+        "raw_hough_primitives": 2665,
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P11"
+      },
+      {
+        "not_span_evaluated": 3,
+        "orientation_eligible": 2099,
+        "raw_hough_primitives": 2102,
+        "selected_unit_id": "LOCALC-F07-PDF-0026-P12"
+      },
+      {
+        "not_span_evaluated": 0,
+        "orientation_eligible": 285,
+        "raw_hough_primitives": 285,
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P1"
+      },
+      {
+        "not_span_evaluated": 0,
+        "orientation_eligible": 762,
+        "raw_hough_primitives": 762,
+        "selected_unit_id": "LOCALC-F08-PDF-WAREHOUSE815-P6"
+      },
+      {
+        "not_span_evaluated": 13,
+        "orientation_eligible": 1918,
+        "raw_hough_primitives": 1931,
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P1"
+      },
+      {
+        "not_span_evaluated": 172,
+        "orientation_eligible": 846,
+        "raw_hough_primitives": 1018,
+        "selected_unit_id": "LOCALC-F09-PDF-JIULONG-P8"
+      },
+      {
+        "not_span_evaluated": 92,
+        "orientation_eligible": 2265,
+        "raw_hough_primitives": 2357,
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P1"
+      },
+      {
+        "not_span_evaluated": 33,
+        "orientation_eligible": 1557,
+        "raw_hough_primitives": 1590,
+        "selected_unit_id": "LOCALC-F10-PDF-ENV-BUREAU-P8"
+      }
+    ],
+    "raw_hough_funnel_unaccounted": 0,
+    "raw_hough_not_span_evaluated": 537,
+    "raw_hough_primitives_previous": 26201,
+    "raw_hough_span_status_total_previous": 25664
+  },
+  "future_stopping_rule": "Continue 24-case batches until OBJECT_GEOMETRY >= 35 and ANNOTATION_LAYOUT >= 35 using completed human-reviewed DIRECT cases.",
+  "h1_h2_opened": "NO",
+  "insufficient_evidence": 0,
+  "locked_blind": "0 / 8",
+  "model_bake_off_should_resume": "NO",
+  "new_candidate_mining": "NO",
+  "not_direct_straight_continuation": 9,
+  "object_geometry": 8,
+  "production_semantic_delta": "NONE",
+  "protocol": "DIRECT_CONTINUATION_REVIEW_V1",
+  "remaining_before_batch02": 123,
+  "schema_version": 1,
+  "status": "HUMAN_REVIEW_FROZEN_BATCH01_BATCH02_PENDING",
+  "task_id": "DIRECT-CONTINUATION-REVIEW-ACCUMULATION-V1",
+  "total_reviewed": 24,
+  "unknown_role": 1,
+  "validation": "NO"
+}

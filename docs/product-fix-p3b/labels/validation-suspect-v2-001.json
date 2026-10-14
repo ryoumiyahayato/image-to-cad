@@ -1,0 +1,482 @@
+{
+  "cursor_sample_id": "val-v2-3d055195c7ff5a95add31627",
+  "events": [
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-261d3cffb584f26f925431dd"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "ca25b986ed42612ac23e6e701cb32b83fdcd174ef922676cee6079dc2bbfeb83",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:03:52.304689+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-261d3cffb584f26f925431dd"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "fe1a979b15717883bae85e7af9b39ad4ad68164517fe90c48e8fb9b819424d73",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:10:46.185395+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "e30f85e228019011297a4d7ea207ecd3d518f0303e35d055a90414b13776a030",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:10:49.696405+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "a3b2be2d0f8d2bc0436aa1353969ff5c4483f569542a40294f06ec2e64cdc09b",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:14:30.016481+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "25ed4f95860f4c69bfcef9aec40bd98116144b693e8944e4a612b335039b812c",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:14:34.488762+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "2c3bd17ee6d7f4f3af2e0fabd9977590ac5b20e139bf71a034dc3c6e1fb1cf1d",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:14:47.599861+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-115c58721d68b21e3a19687f"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "7505fb5777fbc20b931257b93d8eceba8f1f55884d94cac04d130cc43d1de30e",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:14:49.360020+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-115c58721d68b21e3a19687f"
+    },
+    {
+      "action": "nomination",
+      "previous_label": null,
+      "previous_nomination": null,
+      "previous_skip": null,
+      "sample_id": "val-v2-3d055195c7ff5a95add31627"
+    },
+    {
+      "action": "label",
+      "previous_label": null,
+      "previous_nomination": {
+        "annotator": "local-reviewer-validation-re-review",
+        "provenance": "human_stage_0_review",
+        "sample_sha256": "eb389b7854903a06abe6325dda34668adb1cc26e9ab4912137195ab297661023",
+        "status": "VALID_TARGET",
+        "timestamp_utc": "2026-10-07T10:14:52.313166+00:00"
+      },
+      "previous_skip": null,
+      "sample_id": "val-v2-3d055195c7ff5a95add31627"
+    }
+  ],
+  "label_version": "66c142b80fcd29540910f8d3c0c304c2b87fc0006cb381d50a10e94f1d5b89e4",
+  "labels": {
+    "val-v2-047e2c7b3b9ddaad83674cdd": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "AMBIGUOUS",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "a3b2be2d0f8d2bc0436aa1353969ff5c4483f569542a40294f06ec2e64cdc09b",
+      "timestamp_utc": "2026-10-07T10:14:30.022044+00:00",
+      "training_authorized": false
+    },
+    "val-v2-0ef668e8d4a1ddc737649a25": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "25ed4f95860f4c69bfcef9aec40bd98116144b693e8944e4a612b335039b812c",
+      "timestamp_utc": "2026-10-07T10:14:34.496300+00:00",
+      "training_authorized": false
+    },
+    "val-v2-115c58721d68b21e3a19687f": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "7505fb5777fbc20b931257b93d8eceba8f1f55884d94cac04d130cc43d1de30e",
+      "timestamp_utc": "2026-10-07T10:14:49.367936+00:00",
+      "training_authorized": false
+    },
+    "val-v2-19fa87d80bb54ff6794f6a51": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "2c3bd17ee6d7f4f3af2e0fabd9977590ac5b20e139bf71a034dc3c6e1fb1cf1d",
+      "timestamp_utc": "2026-10-07T10:14:47.606093+00:00",
+      "training_authorized": false
+    },
+    "val-v2-1b8fcd9fb4d9b245ca1596c3": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "fe1a979b15717883bae85e7af9b39ad4ad68164517fe90c48e8fb9b819424d73",
+      "timestamp_utc": "2026-10-07T10:10:46.193693+00:00",
+      "training_authorized": false
+    },
+    "val-v2-1f535f83ca9c190bc7d39fb8": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "e30f85e228019011297a4d7ea207ecd3d518f0303e35d055a90414b13776a030",
+      "timestamp_utc": "2026-10-07T10:10:49.705442+00:00",
+      "training_authorized": false
+    },
+    "val-v2-261d3cffb584f26f925431dd": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "ca25b986ed42612ac23e6e701cb32b83fdcd174ef922676cee6079dc2bbfeb83",
+      "timestamp_utc": "2026-10-07T10:03:52.312962+00:00",
+      "training_authorized": false
+    },
+    "val-v2-3d055195c7ff5a95add31627": {
+      "annotator": "local-reviewer-validation-re-review",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "nomination_status": "VALID_TARGET",
+      "provenance": "human_source_review_after_stage_0",
+      "rubric_version": "p3b-rubric-v2",
+      "sample_sha256": "eb389b7854903a06abe6325dda34668adb1cc26e9ab4912137195ab297661023",
+      "timestamp_utc": "2026-10-07T10:14:52.322257+00:00",
+      "training_authorized": false
+    }
+  },
+  "manifest_sha256": "cadf50661d7d8514e81ab170c790ebaca6254219ac419b58190052b4343c62d1",
+  "nomination_statuses": {
+    "val-v2-047e2c7b3b9ddaad83674cdd": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "a3b2be2d0f8d2bc0436aa1353969ff5c4483f569542a40294f06ec2e64cdc09b",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:30.016481+00:00"
+    },
+    "val-v2-0ef668e8d4a1ddc737649a25": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "25ed4f95860f4c69bfcef9aec40bd98116144b693e8944e4a612b335039b812c",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:34.488762+00:00"
+    },
+    "val-v2-115c58721d68b21e3a19687f": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "7505fb5777fbc20b931257b93d8eceba8f1f55884d94cac04d130cc43d1de30e",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:49.360020+00:00"
+    },
+    "val-v2-19fa87d80bb54ff6794f6a51": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "2c3bd17ee6d7f4f3af2e0fabd9977590ac5b20e139bf71a034dc3c6e1fb1cf1d",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:47.599861+00:00"
+    },
+    "val-v2-1b8fcd9fb4d9b245ca1596c3": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "fe1a979b15717883bae85e7af9b39ad4ad68164517fe90c48e8fb9b819424d73",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:10:46.185395+00:00"
+    },
+    "val-v2-1f535f83ca9c190bc7d39fb8": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "e30f85e228019011297a4d7ea207ecd3d518f0303e35d055a90414b13776a030",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:10:49.696405+00:00"
+    },
+    "val-v2-261d3cffb584f26f925431dd": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "ca25b986ed42612ac23e6e701cb32b83fdcd174ef922676cee6079dc2bbfeb83",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:03:52.304689+00:00"
+    },
+    "val-v2-3d055195c7ff5a95add31627": {
+      "annotator": "local-reviewer-validation-re-review",
+      "provenance": "human_stage_0_review",
+      "sample_sha256": "eb389b7854903a06abe6325dda34668adb1cc26e9ab4912137195ab297661023",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:52.313166+00:00"
+    }
+  },
+  "purpose": "8-sample independent validation suspect re-review; no training authorized",
+  "review_log": [
+    {
+      "action": "present",
+      "queue_rank": 1,
+      "sample_id": "val-v2-261d3cffb584f26f925431dd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:02:46.294538+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-261d3cffb584f26f925431dd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:03:52.304689+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "sample_id": "val-v2-261d3cffb584f26f925431dd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:03:52.312962+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 2,
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:03:52.333380+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:10:46.185395+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "sample_id": "val-v2-1b8fcd9fb4d9b245ca1596c3",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:10:46.193693+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 3,
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:10:46.218748+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:10:49.696405+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "sample_id": "val-v2-1f535f83ca9c190bc7d39fb8",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:10:49.706446+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 4,
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:10:49.727970+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:30.016481+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "AMBIGUOUS",
+      "sample_id": "val-v2-047e2c7b3b9ddaad83674cdd",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:30.022044+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 5,
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:30.045083+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:34.488762+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "sample_id": "val-v2-0ef668e8d4a1ddc737649a25",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:34.496300+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 6,
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:34.515961+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:47.600861+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "TRUE_PARALLEL_STRUCTURE",
+      "sample_id": "val-v2-19fa87d80bb54ff6794f6a51",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:47.606093+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 7,
+      "sample_id": "val-v2-115c58721d68b21e3a19687f",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:47.626064+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-115c58721d68b21e3a19687f",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:49.360020+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "sample_id": "val-v2-115c58721d68b21e3a19687f",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:49.368455+00:00"
+    },
+    {
+      "action": "present",
+      "queue_rank": 8,
+      "sample_id": "val-v2-3d055195c7ff5a95add31627",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:49.385571+00:00"
+    },
+    {
+      "action": "nomination",
+      "sample_id": "val-v2-3d055195c7ff5a95add31627",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "status": "VALID_TARGET",
+      "timestamp_utc": "2026-10-07T10:14:52.313166+00:00"
+    },
+    {
+      "action": "physical_class",
+      "label": "SINGLE_PHYSICAL_STROKE",
+      "sample_id": "val-v2-3d055195c7ff5a95add31627",
+      "session_id": "b69f782d-6688-417a-a6a2-3b2c38148419",
+      "timestamp_utc": "2026-10-07T10:14:52.322257+00:00"
+    }
+  ],
+  "revision": 24,
+  "schema_version": "p3b-label-v2",
+  "skipped": {},
+  "training_authorized": false
+}

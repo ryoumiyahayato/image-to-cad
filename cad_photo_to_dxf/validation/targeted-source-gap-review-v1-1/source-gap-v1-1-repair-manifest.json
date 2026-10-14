@@ -1,0 +1,103 @@
+{
+  "final_review_size": 16,
+  "frozen_fresh_pool": 147,
+  "governance": {
+    "admissibility_guard_changed": "NO",
+    "axis_guard_changed": "NO",
+    "endpoint_guard_implemented": "NO",
+    "h1_h2_opened": "NO",
+    "locked_blind": "0 / 8",
+    "model_assisted_labeling": "NO",
+    "model_run": "NO",
+    "new_candidate_mining": "NO",
+    "production_semantic_delta": "NONE",
+    "source_continuity_guard_implemented": "NO",
+    "span_guard_changed": "NO",
+    "text_glyph_guard_changed": "NO",
+    "validation": "NO"
+  },
+  "guard_changes": {
+    "admissibility": "NO",
+    "axis": "NO",
+    "span": "NO",
+    "text_glyph": "NO"
+  },
+  "human_state_migration": "PASS",
+  "invalid_current_candidates_removed": 1,
+  "invalid_primitive_fail_closed_option": true,
+  "machine_verdict_exposed": false,
+  "migrated_human_answers": 15,
+  "new_candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-SOURCE-GAP-06B5674E3BF1-REPAIRED-56758299A192",
+  "new_selection_digest": "56758299a1926d726cedb7b8e92f78334167215ee45de0a89da1550997d36093",
+  "old_candidate_set_id": "FRESH-DEV-CANDIDATE-REMINING-V1-5EA8AAE98504-SOURCE-GAP-06B5674E3BF1",
+  "old_review_size": 16,
+  "old_selection_digest": "06b5674e3bf1ef9290661da1549ef1ccbab6ae041fcad8fade2bdea35fd71862",
+  "package_id": "targeted-source-gap-review-v1-1",
+  "package_revision": "SOURCE_GAP_REVIEW_V1_1",
+  "package_validation": {
+    "bottom_control_overlap_guard": "PASS",
+    "candidate_count": 16,
+    "click_to_enlarge": "PASS",
+    "four_view_assets": "PASS",
+    "import_export": "PASS",
+    "optional_notes_initially_empty": true,
+    "primary_choice_initially_empty": true,
+    "secondary_flags_initially_empty": true
+  },
+  "previously_unreviewed_replacements": 1,
+  "protocol": "SOURCE_GAP_REVIEW_V1",
+  "removed_candidates": [
+    {
+      "candidate_id": "FRESH1-EDC71A4759AD64EDCE78",
+      "eligibility_reason": "INELIGIBLE_TEXT_REJECTED",
+      "old_review_index": 16,
+      "prior_human_answer": {
+        "optional_note": "",
+        "primary_class": "STRUCTURAL_INTERRUPTION",
+        "secondary_flags": [
+          "ENDPOINT_ANOMALY"
+        ]
+      },
+      "reason_removed_from_repaired_package": "Text/glyph guard marks glyph-only support; the source-gap taxonomy requires a valid primitive.",
+      "text_glyph_status": "TEXT_REJECTED"
+    }
+  ],
+  "removed_human_answers_retained_as_history": 1,
+  "replacement_answers_prefilled": "NO",
+  "replacement_candidates": 1,
+  "replacement_candidates_provenance": [
+    {
+      "admissibility_status": "DIRECT_CONTINUATION_ADMISSIBLE",
+      "axis_status": "AXIS_SUPPORT_SUPPORTED",
+      "candidate_id": "FRESH1-91191386DC95E23BEDAC",
+      "diagnostic_stratum": "AMBIGUOUS_EDGE_CASES",
+      "orientation": "horizontal",
+      "prior_review_status": "PREVIOUSLY_UNREVIEWED",
+      "reason_selected": "Matched the removed candidate's AMBIGUOUS_EDGE_CASES stratum using the original SOURCE_GAP_REVIEW_V1 deterministic rank after excluding text-rejected, retained, prior-reviewed, and exact-duplicate candidates.",
+      "selection_score": {
+        "base_score": 0.888816,
+        "combined_score": 1.008816,
+        "diversity_bonus": 0.12,
+        "eligible_count": 70,
+        "eligible_rank": 1
+      },
+      "source_family": "F09-JIULONG-FIRE-ELECTRICAL",
+      "source_unit": "LOCALC-F09-PDF-JIULONG-P1",
+      "span_status": "SPAN_INTEGRITY_SUPPORTED",
+      "text_eligibility": "ELIGIBLE_UNCHANGED",
+      "text_glyph_status": "TEXT_UNCERTAIN",
+      "visible_gap_length_px": 6.0
+    }
+  ],
+  "retained_current_candidates": 15,
+  "retained_order_preserved": true,
+  "runtime_package_manifest_sha256": "9f273a91aa9861554090211e248a5540bfa10ae4b270b4f283d4f894772e3bf0",
+  "runtime_package_path": "local-artifacts/draftsman/targeted-source-gap-review-v1-1/review-package",
+  "schema_version": 1,
+  "selection_deterministic_replay": "PASS",
+  "selection_rule": "Match each removed candidate's original diagnostic stratum where possible; rank only the unchanged frozen pool after span, axis, text/glyph, and direct-continuation/admissibility eligibility, excluding prior-reviewed, retained, rejected, and exact-duplicate candidates.",
+  "task_id": "TARGETED_SOURCE_GAP_REVIEW_V1_1_REPAIR",
+  "text_rejected_in_final_review": 0,
+  "text_uncertain_in_final_review": 3,
+  "visible_primary_options": 7
+}

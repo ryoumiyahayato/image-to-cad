@@ -1,0 +1,517 @@
+{
+  "schema_version": 1,
+  "replay_id": "junction-v2-r4-reviewed-saved-replay-d2cecc",
+  "canonical_head": "d2cecc05b8022612127162683b6c31bc7866cb46",
+  "origin": {
+    "participant_remap_matrix_sha256": "882a202c3d996fc0558de8bfd6bf5d6589f491f2ce0ffb245157d95dfe3fb078",
+    "bounded_replay_ledgers_sha256": "9e946ebc5825cfb65750966c7a7e4d35fe8d7682d83a58c712e5910f40330af2",
+    "saved_trace_cache_sha256": {
+      "environment-page-003": "231cffe2f79805fdd6e9b389556a973070baeabfed37569dc0af86a57cb02e4c",
+      "warehouse-page-001": "4a6dadb2c7caf20f11532bb2349d681007d7f1925dcab0032c1a3df7e9fe484e"
+    }
+  },
+  "page_scopes": [
+    {
+      "page_id": "environment-page-003",
+      "source_scope_digest": "04671f7e973e97ad577f6278e23f36f3ac18e30371db80c80a71bf47549d5128",
+      "final_structure_id": "cc29502b41eccee06147cd73a68dc7c7c4ac76ecfdd1e81e9eff3a704ed37929"
+    },
+    {
+      "page_id": "warehouse-page-001",
+      "source_scope_digest": "f06842b7e2a0495245a816614033cb7241a02f3cbdf5c5008c5e7baf69405f7c",
+      "final_structure_id": "eda8031c70bb4974194c5aa159d145c87ea0e343fc323f4231068f96ae77602c"
+    }
+  ],
+  "r4_node_transactions": [
+    {
+      "node_id": "ENV-3",
+      "ledger_digest": "991713e4d9bd85ff14804211dc56465c2ae8d1924afde0e6d0dff1cec9af92ea",
+      "input_set_digest": "806a4b1ff04be95eb3e27e0c5299e8b3ac7faf6f44bac0a89194324ca183349b",
+      "final_set_digest": "ab9dd38a514e52dd3c5ac6ee294665c489134bbc878840f9e17dc7743e3c2bb0",
+      "terminal_representation_ids": [
+        "MAIN:LSD-000208:REP:observation-28830e7088dfa5812da4",
+        "MAIN:LSD-001280:REP:observation-1e4486b6afe84ba6b0ca"
+      ],
+      "final_piece_ids": [
+        "MAIN:LSD-000208:REP:observation-28830e7088dfa5812da4:piece-000:0.000000000-226.250310432",
+        "MAIN:LSD-001280:REP:observation-1e4486b6afe84ba6b0ca:piece-000:0.000000000-43.749942375"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-1",
+      "ledger_digest": "ec5e03b11248f40ecc5f70147caab60b4a1fbdeffd47568760ddb8af629b81e5",
+      "input_set_digest": "5ddc4641e676efdd1a3d3eea592245ffe58721143657dffc999b8b931ac8d570",
+      "final_set_digest": "026e187af8a560f49be46c9705076ae6d0fe0cd8567c71a5ab1ff8cf1c677b2b",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73",
+        "MAIN:LSD-000569:REP:observation-90dd31094a97bc222e9f"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73:piece-000:0.000000000-1035.000000000",
+        "MAIN:LSD-000569:REP:observation-90dd31094a97bc222e9f:piece-000:0.000000000-1636.250000000"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-2",
+      "ledger_digest": "56b61cb1b9dccf6ee29223b4ea1eb970c66342142ec79a9e27298a9012b6face",
+      "input_set_digest": "b5813e41598561d6edba7873c6d6f108981c52e0ce92ad4efc855f2bcad09d31",
+      "final_set_digest": "bd3dc8a02887a74e2b405719e75039036be093e76befb696f3c2cf8250675003",
+      "terminal_representation_ids": [
+        "MAIN:LSD-000001:REP:observation-8ec6a1833c397d544aa7",
+        "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0"
+      ],
+      "final_piece_ids": [
+        "MAIN:LSD-000001:REP:observation-8ec6a1833c397d544aa7:piece-000:0.000000000-1032.500000000",
+        "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0:piece-000:0.000000000-1635.000000000"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-3",
+      "ledger_digest": "5e4c0b1ee470bc6cfe5bd90800d38b61a41a4abb0ea716b0fd31bfefd3fd7f49",
+      "input_set_digest": "92da2e9eb7faf9f56d7eb2db8f3ca7856d556e9205fa3d5fada1fa2af6f59e79",
+      "final_set_digest": "65c09230d4c645da9aaf9d6a8ba51e39dd510574949137baa2e107e1b90b45da",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73",
+        "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73:piece-000:0.000000000-1035.000000000",
+        "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0:piece-000:0.000000000-1635.000000000"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-4",
+      "ledger_digest": "9050887a5f30d17c9ce1de90cd5952322062fb11a0c9c7dd35a388b86320b8f2",
+      "input_set_digest": "4b4a5dc6d2971d778faeebb01394d86daa5e3a97e824080e5e1be121d57fe086",
+      "final_set_digest": "4b4a5dc6d2971d778faeebb01394d86daa5e3a97e824080e5e1be121d57fe086",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000063:REP:observation-21f14ae5a13f3c2a95b2",
+        "MAIN:LSD-000909:REP:observation-b24262200b405fdacf9c",
+        "MAIN:LSD-000912:REP:observation-d7a47697732d5e592733"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000063:REP:observation-21f14ae5a13f3c2a95b2:piece-000:0.000000000-1028.000000000",
+        "MAIN:LSD-000909:REP:observation-b24262200b405fdacf9c:piece-000:0.000000000-45.000000000",
+        "MAIN:LSD-000912:REP:observation-d7a47697732d5e592733:piece-000:0.000000000-45.000000011"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-5",
+      "ledger_digest": "584f2d7e54571b5cf396e8b13aa3ac2c8e175a3b6bd20ce132e2a86afd120279",
+      "input_set_digest": "bb8c92edd0c634ca95a6c179257fc3e2f62fee133742011228365362e4696ca5",
+      "final_set_digest": "bb8c92edd0c634ca95a6c179257fc3e2f62fee133742011228365362e4696ca5",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000041:REP:observation-efa6bce9484dd4e6e6c5",
+        "MAIN:LSD-000917:REP:observation-1e90b0cbe04400821192",
+        "MAIN:LSD-000920:REP:observation-dab2b7759e9739fbcf50"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000041:REP:observation-efa6bce9484dd4e6e6c5:piece-000:0.000000000-1028.000000000",
+        "MAIN:LSD-000917:REP:observation-1e90b0cbe04400821192:piece-000:0.000000000-45.000000000",
+        "MAIN:LSD-000920:REP:observation-dab2b7759e9739fbcf50:piece-000:0.000000000-43.750000010"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-6",
+      "ledger_digest": "cc605c9b010bc80467c4749ea1368318a7e9a6eacf15fc5eb43ed1246011c5f0",
+      "input_set_digest": "5263e5b3fac89768a7db123e9116ff67f48db76d6f706665f5f504f6186477e3",
+      "final_set_digest": "5263e5b3fac89768a7db123e9116ff67f48db76d6f706665f5f504f6186477e3",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000058:REP:observation-f8c4d23a789f0e05166d",
+        "MAIN:LSD-000927:REP:observation-5a0a6ba1692b3fbe1488",
+        "MAIN:LSD-000930:REP:observation-608e184f20272bc59a68"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000058:REP:observation-f8c4d23a789f0e05166d:piece-000:0.000000000-941.000000000",
+        "MAIN:LSD-000927:REP:observation-5a0a6ba1692b3fbe1488:piece-000:0.000000000-45.000000000",
+        "MAIN:LSD-000930:REP:observation-608e184f20272bc59a68:piece-000:0.000000000-45.000000011"
+      ],
+      "transaction_state": "VALIDATED"
+    },
+    {
+      "node_id": "WH-7",
+      "ledger_digest": "053b8192d5ba1f6219e95498161f27394c988e8809e87e2c838ba36f239b8440",
+      "input_set_digest": "cbbec625b6d4654cb3693571592de999ead3e08932492b3ab06a164bdb37ad83",
+      "final_set_digest": "cbbec625b6d4654cb3693571592de999ead3e08932492b3ab06a164bdb37ad83",
+      "terminal_representation_ids": [
+        "MAIN:HOUGH-000059:REP:observation-845806bf75b9b34ea516",
+        "MAIN:LSD-000935:REP:observation-24972e9769f49fbfd8e1",
+        "MAIN:LSD-000938:REP:observation-06d37eb0cc4bb7a35974"
+      ],
+      "final_piece_ids": [
+        "MAIN:HOUGH-000059:REP:observation-845806bf75b9b34ea516:piece-000:0.000000000-941.000000000",
+        "MAIN:LSD-000935:REP:observation-24972e9769f49fbfd8e1:piece-000:0.000000000-45.000000000",
+        "MAIN:LSD-000938:REP:observation-06d37eb0cc4bb7a35974:piece-000:0.000000000-43.750000010"
+      ],
+      "transaction_state": "VALIDATED"
+    }
+  ],
+  "members": [
+    {
+      "member_id": "MAIN:LSD-001280:REP:observation-1e4486b6afe84ba6b0ca:piece-000:0.000000000-43.749942375",
+      "x1": "0x1.f5c19e0000000p+9",
+      "y1": "0x1.0518020000000p+10",
+      "x2": "0x1.f5c3d40000000p+9",
+      "y2": "0x1.f450060000000p+9",
+      "width": "0x1.e8f5c20000000p+1",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-001280"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000208:REP:observation-28830e7088dfa5812da4:piece-000:0.000000000-226.250310432",
+      "x1": "0x1.f1cfe1bf83d03p+9",
+      "y1": "0x1.f5c9f9ff38752p+9",
+      "x2": "0x1.3177f5dfc1e82p+10",
+      "y2": "0x1.f5d037ff38752p+9",
+      "width": "0x1.e8f5c20000000p+2",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000208"
+      ],
+      "history": [
+        "detected:lsd",
+        "recenter_thick_stroke",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000569:REP:observation-90dd31094a97bc222e9f:piece-000:0.000000000-1636.250000000",
+      "x1": "0x1.35def40000000p+10",
+      "y1": "0x1.f680000000000p+6",
+      "x2": "0x1.35def40000000p+10",
+      "y2": "0x1.b878000000000p+10",
+      "width": "0x1.e8f5c20000000p+1",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000569"
+      ],
+      "history": [
+        "detected:lsd",
+        "recenter_thick_stroke",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:HOUGH-000016:REP:observation-552aa64fcd1f6b92fc73:piece-000:0.000000000-1035.000000000",
+      "x1": "0x1.9a00000000000p+7",
+      "y1": "0x1.b840000000000p+10",
+      "x2": "0x1.3600000000000p+10",
+      "y2": "0x1.b840000000000p+10",
+      "width": "0x1.e8f5c20000000p+1",
+      "confidence": "0x1.0000000000000p+0",
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000016"
+      ],
+      "history": [
+        "detected:hough",
+        "recenter_thick_stroke",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000079:REP:observation-16bfef28b88560ce0df0:piece-000:0.000000000-1635.000000000",
+      "x1": "0x1.9c9c45ffffff1p+7",
+      "y1": "0x1.b8780006b18e5p+10",
+      "x2": "0x1.9c9cb7ffffff1p+7",
+      "y2": "0x1.fb80006b18e50p+6",
+      "width": "0x1.e8f5c20000000p+1",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000079"
+      ],
+      "history": [
+        "detected:lsd",
+        "recenter_thick_stroke",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000001:REP:observation-8ec6a1833c397d544aa7:piece-000:0.000000000-1032.500000000",
+      "x1": "0x1.9b3fffe538e71p+7",
+      "y1": "0x1.fd7aedffffff9p+6",
+      "x2": "0x1.3587fffca71cep+10",
+      "y2": "0x1.fd7b35ffffff9p+6",
+      "width": "0x1.e8f5c20000000p+1",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000001"
+      ],
+      "history": [
+        "detected:lsd",
+        "recenter_thick_stroke",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:HOUGH-000063:REP:observation-21f14ae5a13f3c2a95b2:piece-000:0.000000000-1028.000000000",
+      "x1": "0x1.a000000000000p+7",
+      "y1": "0x1.5700000000000p+9",
+      "x2": "0x1.3500000000000p+10",
+      "y2": "0x1.5700000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.0000000000000p+0",
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000063"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000909:REP:observation-b24262200b405fdacf9c:piece-000:0.000000000-45.000000000",
+      "x1": "0x1.e664420000000p+9",
+      "y1": "0x1.5770000000000p+9",
+      "x2": "0x1.e664460000000p+9",
+      "y2": "0x1.40f0000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000909"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000912:REP:observation-d7a47697732d5e592733:piece-000:0.000000000-45.000000011",
+      "x1": "0x1.e6642c0000000p+9",
+      "y1": "0x1.6e90000000000p+9",
+      "x2": "0x1.e6644c0000000p+9",
+      "y2": "0x1.5810000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000912"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:HOUGH-000041:REP:observation-efa6bce9484dd4e6e6c5:piece-000:0.000000000-1028.000000000",
+      "x1": "0x1.a000000000000p+7",
+      "y1": "0x1.8680000000000p+9",
+      "x2": "0x1.3500000000000p+10",
+      "y2": "0x1.8680000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.0000000000000p+0",
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000041"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000917:REP:observation-1e90b0cbe04400821192:piece-000:0.000000000-45.000000000",
+      "x1": "0x1.e664420000000p+9",
+      "y1": "0x1.86f0000000000p+9",
+      "x2": "0x1.e664460000000p+9",
+      "y2": "0x1.7070000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000917"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000920:REP:observation-dab2b7759e9739fbcf50:piece-000:0.000000000-43.750000010",
+      "x1": "0x1.e6643a0000000p+9",
+      "y1": "0x1.9d70000000000p+9",
+      "x2": "0x1.e664580000000p+9",
+      "y2": "0x1.8790000000000p+9",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000920"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:HOUGH-000058:REP:observation-f8c4d23a789f0e05166d:piece-000:0.000000000-941.000000000",
+      "x1": "0x1.2700000000000p+8",
+      "y1": "0x1.15c0000000000p+10",
+      "x2": "0x1.3500000000000p+10",
+      "y2": "0x1.15c0000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.0000000000000p+0",
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000058"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000927:REP:observation-5a0a6ba1692b3fbe1488:piece-000:0.000000000-45.000000000",
+      "x1": "0x1.e664420000000p+9",
+      "y1": "0x1.15f8000000000p+10",
+      "x2": "0x1.e664460000000p+9",
+      "y2": "0x1.0ab8000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000927"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000930:REP:observation-608e184f20272bc59a68:piece-000:0.000000000-45.000000011",
+      "x1": "0x1.e6642c0000000p+9",
+      "y1": "0x1.2188000000000p+10",
+      "x2": "0x1.e6644c0000000p+9",
+      "y2": "0x1.1648000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000930"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:HOUGH-000059:REP:observation-845806bf75b9b34ea516:piece-000:0.000000000-941.000000000",
+      "x1": "0x1.2700000000000p+8",
+      "y1": "0x1.2d80000000000p+10",
+      "x2": "0x1.3500000000000p+10",
+      "y2": "0x1.2d80000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.0000000000000p+0",
+      "layer": "DETAIL",
+      "source_ids": [
+        "HOUGH-000059"
+      ],
+      "history": [
+        "detected:hough",
+        "trim_to_source_support"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000935:REP:observation-24972e9769f49fbfd8e1:piece-000:0.000000000-45.000000000",
+      "x1": "0x1.e664420000000p+9",
+      "y1": "0x1.2db8000000000p+10",
+      "x2": "0x1.e664460000000p+9",
+      "y2": "0x1.2278000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000935"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    },
+    {
+      "member_id": "MAIN:LSD-000938:REP:observation-06d37eb0cc4bb7a35974:piece-000:0.000000000-43.750000010",
+      "x1": "0x1.e6643a0000000p+9",
+      "y1": "0x1.38f8000000000p+10",
+      "x2": "0x1.e664580000000p+9",
+      "y2": "0x1.2e08000000000p+10",
+      "width": "0x1.e8f5c20000000p+0",
+      "confidence": "0x1.999999999999ap-1",
+      "layer": "DETAIL",
+      "source_ids": [
+        "LSD-000938"
+      ],
+      "history": [
+        "detected:lsd",
+        "trim_to_source_support",
+        "suppress_parallel_duplicate_detection"
+      ],
+      "classification_confidence": "0x1.0000000000000p+0",
+      "classification_reasons": []
+    }
+  ]
+}

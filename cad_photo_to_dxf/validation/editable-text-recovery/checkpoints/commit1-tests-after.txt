@@ -1,0 +1,11 @@
+focused_tests=39 passed, 72 warnings in 4.33s
+ruff=passed
+page001_ocr_candidate_count=208
+page001_text_emit_eligible_count=206
+page001_native_TEXT_count=206
+page001_source_outline_suppressible_count=37
+page001_source_outline_backup_count=169
+page001_confidence_hard_reject_count=2
+page001_invalid_geometry_count=0
+page001_dxf_audit_error_count=0
+page001_native_TEXT_matches_eligible=true

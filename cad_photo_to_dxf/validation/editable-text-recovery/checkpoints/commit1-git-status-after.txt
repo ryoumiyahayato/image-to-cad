@@ -1,0 +1,6 @@
+branch=fix/non-destructive-editable-text
+head=f26a7b8
+worktree_after_code_commit=clean
+tmp_modified=false
+regression_baseline_modified=false
+

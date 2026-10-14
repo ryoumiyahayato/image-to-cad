@@ -1,0 +1,126 @@
+{
+  "schema_version": "broad-content-recall-d3-audit-v1",
+  "status": "COMPLETE",
+  "source_group_id": "A2-SG-009",
+  "regions_audited": 4,
+  "production_semantic_delta": "NONE",
+  "method": {
+    "coordinate_system": "fixed source-page coordinates",
+    "coverage_basis": "conservative binary-supported drawing content after excluding broad physical-damage regions",
+    "correspondence_tolerance_px": 4,
+    "warning": "Spatial-support retention is diagnostic and is not semantic accuracy. Preprocessing loss outside the conservative baseline is not quantified."
+  },
+  "region_summary": [
+    {
+      "region_id": "REGION_A",
+      "label": "UPPER LEFT",
+      "source_support_px": 52245,
+      "raw_retention": 0.344913,
+      "post_ownership_retention": 0.009953,
+      "final_retention": 0.087319,
+      "major_first_loss_stage": "DETECTION",
+      "machine_saw_then_deleted_px": 13517,
+      "machine_never_formed_raw_px": 30188,
+      "fallback_rescued_px": 4049
+    },
+    {
+      "region_id": "REGION_B",
+      "label": "UPPER RIGHT",
+      "source_support_px": 71169,
+      "raw_retention": 0.306018,
+      "post_ownership_retention": 0.0,
+      "final_retention": 0.042266,
+      "major_first_loss_stage": "DETECTION",
+      "machine_saw_then_deleted_px": 15059,
+      "machine_never_formed_raw_px": 46682,
+      "fallback_rescued_px": 3008
+    },
+    {
+      "region_id": "REGION_C",
+      "label": "LOWER LEFT",
+      "source_support_px": 56653,
+      "raw_retention": 0.411664,
+      "post_ownership_retention": 0.071417,
+      "final_retention": 0.976789,
+      "major_first_loss_stage": "OWNERSHIP_FILTER",
+      "machine_saw_then_deleted_px": 673,
+      "machine_never_formed_raw_px": 401,
+      "fallback_rescued_px": 51455,
+      "success_control": true
+    },
+    {
+      "region_id": "REGION_D",
+      "label": "LOWER RIGHT",
+      "source_support_px": 109503,
+      "raw_retention": 0.32727,
+      "post_ownership_retention": 0.005507,
+      "final_retention": 0.999333,
+      "major_first_loss_stage": "DETECTION",
+      "machine_saw_then_deleted_px": 0,
+      "machine_never_formed_raw_px": 65,
+      "fallback_rescued_px": 108827,
+      "success_control": true
+    }
+  ],
+  "broad_loss_census_support_px": {
+    "INPUT": 0,
+    "PREPROCESSING": 0,
+    "DETECTION": 77336,
+    "OWNERSHIP_FILTER": 39893,
+    "GEOMETRY": 3,
+    "PROMOTION_ASSEMBLY": 0,
+    "PRESERVED": 172338
+  },
+  "upper_vs_lower": {
+    "upper_final_retention": 0.061338,
+    "lower_final_retention": 0.991646,
+    "upper_machine_saw_then_deleted_px": 28576,
+    "upper_machine_never_formed_raw_px": 76870,
+    "upper_fallback_rescued_px": 7057,
+    "lower_machine_saw_then_deleted_px": 673,
+    "lower_machine_never_formed_raw_px": 466,
+    "lower_fallback_rescued_px": 160282
+  },
+  "common_failure_families": [
+    "FALLBACK_COVERAGE_GAP",
+    "OWNERSHIP_OVER_SUPPRESSION"
+  ],
+  "architecture_risks": {
+    "MUTUALLY_EXCLUSIVE_OWNERSHIP_RISK": "YES",
+    "SOURCE_SUPPORT_DROPPED": "YES",
+    "FALLBACK_DEPENDENCY": "YES",
+    "FRAGMENT_FIRST_RECONSTRUCTION_RISK": "YES"
+  },
+  "damage_concentration": "NO_WITHIN_CONSERVATIVE_BASELINE",
+  "d2_anchor_consistency": {
+    "D2-001": "CONSISTENT",
+    "D2-002": "CONSISTENT"
+  },
+  "sanity_reruns": [
+    {
+      "source_group_id": "A2-SG-009",
+      "run_id": "20260912T134849Z-A2-SG-009-jpg-33172d9bb3",
+      "final_structure_id": "33172d9bb3a26669a9de387eb61497ffd97b5fbf462e8c448c28376caa4e8d40",
+      "entity_count": 5842,
+      "binding_unchanged": true
+    },
+    {
+      "source_group_id": "A2-SG-022",
+      "run_id": "20260912T135408Z-A2-SG-022-pdf-29147fb911",
+      "final_structure_id": "29147fb911b1a868fae8ed85891f7eb6c3c8f8e907fb8e4890319dd9061fa059",
+      "entity_count": 2194,
+      "binding_unchanged": true
+    },
+    {
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "run_id": "20260912T135752Z-G0R2-3560D9BEBEAA3543-pdf-ff15c53d3d",
+      "final_structure_id": "ff15c53d3d76d3d79a30d6f8a58ea1a3e332f65d28074d9a38266b6230534890",
+      "entity_count": 2934,
+      "binding_unchanged": true
+    }
+  ],
+  "locked_blind_runtime": "0 / 8",
+  "locked_blind_manual_inspection": "NO",
+  "validation_executed": "NO",
+  "next_action": "DESIGN_END_TO_END_SOURCE_SUPPORT_PRESERVATION"
+}

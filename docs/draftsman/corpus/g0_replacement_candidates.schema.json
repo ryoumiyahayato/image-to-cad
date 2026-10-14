@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "g0_replacement_candidates.schema.json",
+  "title": "Draftsman G0 acquisition-verified replacement candidates",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "discovery_phase",
+    "candidate_registry_sha256",
+    "authoritative_split_sha256",
+    "registry_record_count",
+    "replacement_target",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {"const": "draftsman-g0-replacement-candidates-v1"},
+    "discovery_phase": {"const": "G0-R3"},
+    "candidate_registry_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "authoritative_split_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "registry_record_count": {"const": 99},
+    "replacement_target": {"const": 7},
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/candidate"}
+    }
+  },
+  "$defs": {
+    "sourceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "local_relative_path", "local_source_filename", "original_download_filename",
+        "source_format", "detected_mime", "byte_size", "sha256", "page_count",
+        "integrity_check"
+      ],
+      "properties": {
+        "local_relative_path": {"type": "string", "pattern": "^local-artifacts/draftsman/replacement-candidates/G0R3-[0-9A-F]{16}/"},
+        "local_source_filename": {"type": "string", "minLength": 1},
+        "original_download_filename": {"type": "string", "minLength": 1},
+        "source_format": {"enum": ["PDF", "JPEG", "PNG", "TIFF", "ZIP"]},
+        "detected_mime": {"type": "string", "minLength": 1},
+        "byte_size": {"type": "integer", "minimum": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "page_count": {"type": ["integer", "null"], "minimum": 1},
+        "integrity_check": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_group_id", "canonical_source_url", "organization", "project_or_package",
+        "country_or_area", "region", "drawing_family", "vector_raster_status",
+        "historical_archival", "degraded_status", "native_image",
+        "electrical_drawing_evidence", "source_provenance", "governance_access_notes",
+        "source_group_independence_notes", "existing_registry_dedup_result",
+        "acquisition_verified", "files"
+      ],
+      "properties": {
+        "source_group_id": {"type": "string", "pattern": "^G0R3-[0-9A-F]{16}$"},
+        "canonical_source_url": {"type": "string", "format": "uri"},
+        "organization": {"type": "string", "minLength": 1},
+        "project_or_package": {"type": "string", "minLength": 1},
+        "country_or_area": {"type": "string", "minLength": 1},
+        "region": {"type": "string", "minLength": 1},
+        "drawing_family": {"type": "string", "minLength": 1},
+        "vector_raster_status": {"enum": ["CONFIRMED_RASTER", "CONFIRMED_VECTOR", "CONFIRMED_MIXED", "UNKNOWN"]},
+        "historical_archival": {"type": "boolean"},
+        "degraded_status": {"enum": ["CONFIRMED_DEGRADED", "NOT_CONFIRMED_DEGRADED", "UNKNOWN"]},
+        "native_image": {"type": "boolean"},
+        "electrical_drawing_evidence": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "source_provenance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["method", "host_url_observed", "referrer_url_observed", "downloaded_at_local", "identity_evidence"],
+          "properties": {
+            "method": {"enum": ["USER_BROWSER_DOWNLOAD_TO_DESKTOP", "BROWSER_VERIFIED_DIRECT_OFFICIAL_URL_LOCAL_BYTE_SAVE"]},
+            "host_url_observed": {"type": "string", "format": "uri"},
+            "referrer_url_observed": {"type": "string", "format": "uri"},
+            "downloaded_at_local": {"type": "string", "minLength": 1},
+            "identity_evidence": {"type": "string", "minLength": 20}
+          }
+        },
+        "governance_access_notes": {"type": "string", "minLength": 1},
+        "source_group_independence_notes": {"type": "string", "minLength": 1},
+        "existing_registry_dedup_result": {"const": "DISTINCT_FROM_99_RECORD_REGISTRY"},
+        "acquisition_verified": {"const": true},
+        "files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/sourceFile"}}
+      }
+    }
+  }
+}

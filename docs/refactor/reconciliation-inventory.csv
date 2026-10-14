@@ -1,0 +1,91 @@
+symbol,original_line,loc,category,disposition
+Relation,44,4,core reconciliation logic,retained; referenced by production commitment
+Operation,50,5,core reconciliation logic,retained; referenced by production commitment
+RouteOrigin,57,3,core reconciliation logic,retained; referenced by production commitment
+LineageOperation,62,8,core reconciliation logic,retained; referenced by production commitment
+TerminalDisposition,72,9,core reconciliation logic,retained; referenced by production commitment
+ParameterInterval,84,25,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+RelationCell,112,67,core reconciliation logic,retained; referenced by production commitment
+_ReconciliationEvidenceCache,182,16,memoized geometry computations (content-neutral),retained; referenced by production commitment
+_ImmutableRasterSnapshot,201,39,core reconciliation logic,retained; referenced by production commitment
+ScopedRestorationAcceptance,243,9,production public API,retained; referenced by production commitment
+_ValidationContext,255,21,core reconciliation logic,retained; referenced by production commitment
+ReconciliationResult,279,144,production public API,retained; referenced by production commitment
+ReconciliationLedger,425,1658,production public API,retained; referenced by production commitment
+_RetainedCandidateIndex,2085,78,core reconciliation logic,retained; referenced by production commitment
+_artifact,2165,2,core reconciliation logic,retained; referenced by production commitment
+_payload_without_gap_extent,2169,13,transaction/proving ledger,retained; referenced by production commitment
+_set_gap_extent_extension,2184,20,transaction/proving ledger,retained; referenced by production commitment
+_gap_extent_extension,2206,20,transaction/proving ledger,retained; referenced by production commitment
+_closed_v1_payload,2228,150,transaction/proving ledger,retained; referenced by production commitment
+_interval_covers,2380,7,core reconciliation logic,retained; referenced by production commitment
+_equivalent_cover_for_interval,2389,40,core reconciliation logic,retained; referenced by production commitment
+_build_gap_extent_v2_record,2431,597,transaction/proving ledger,retained; referenced by production commitment
+_gap_extent_semantic_errors,3030,79,transaction/proving ledger,retained; referenced by production commitment
+_transaction_invariant_checks,3111,22,transaction/proving ledger,retained; referenced by production commitment
+_source_scope_digest,3135,13,transaction/proving ledger,retained; referenced by production commitment
+_raster_snapshot_is_valid,3150,19,transaction/proving ledger,retained; referenced by production commitment
+_validate_source_authority,3171,25,transaction/proving ledger,retained; referenced by production commitment
+_semantic_transaction_errors,3198,744,transaction/proving ledger,retained; referenced by production commitment
+_validate_transaction_semantics,3944,34,transaction/proving ledger,retained; referenced by production commitment
+_validate_closed_transaction_semantics,3980,195,transaction/proving ledger,retained; referenced by production commitment
+_validated_ownership_masks,4177,15,transaction/proving ledger,retained; referenced by production commitment
+_source_visible_gap_certificates,4194,113,core reconciliation logic,retained; referenced by production commitment
+_raster_cell_parameter_half_width,4309,5,core reconciliation logic,retained; referenced by production commitment
+_complete_claim_footprint_records,4316,67,core reconciliation logic,retained; referenced by production commitment
+_continuous_footprint_segments,4385,63,core reconciliation logic,retained; referenced by production commitment
+_v2_interval_payload,4450,6,transaction/proving ledger,retained; referenced by production commitment
+_interval_from_v2_payload,4458,4,transaction/proving ledger,retained; referenced by production commitment
+_source_support_intervals,4464,44,core reconciliation logic,retained; referenced by production commitment
+_has_direct_trajectory_source,4510,21,core reconciliation logic,retained; referenced by production commitment
+_has_full_direct_trajectory_source,4533,22,core reconciliation logic,retained; referenced by production commitment
+_certify_pair_cells,4557,56,core reconciliation logic,retained; referenced by production commitment
+_certify_pair_cells_uncached,4615,427,core reconciliation logic,retained; referenced by production commitment
+_cross_section_relation,5044,110,core reconciliation logic,retained; referenced by production commitment
+_endpoint_obligations_clear,5156,59,core reconciliation logic,retained; referenced by production commitment
+_has_structural_endpoint_obligation,5217,50,core reconciliation logic,retained; referenced by production commitment
+_endpoint_attachment_status,5269,92,core reconciliation logic,retained; referenced by production commitment
+_normal_source_profile,5363,17,core reconciliation logic,retained; referenced by production commitment
+_point_has_source,5382,20,core reconciliation logic,retained; referenced by production commitment
+_cross_section_width,5404,20,core reconciliation logic,retained; referenced by production commitment
+_parameter_at_axis_coordinate,5426,11,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_child_interval_on_parent,5439,14,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_clipped_child_interval_on_parent,5455,9,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_trajectory_basis_payload,5466,11,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_pixel_is_source,5479,13,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_bresenham_pixels,5494,23,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_local_mask_state,5519,16,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_production_claim_thickness,5537,14,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_local_claim_footprint_pixels,5553,24,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_subtract_intervals,5579,19,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_intersect_interval_sets,5600,12,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_merge_intervals,5614,15,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_exact_subsegment,5631,12,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_claim_measurements,5645,29,core reconciliation logic,retained; referenced by production commitment
+_line_claim_mask,5676,18,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_claim_delta_measurements,5696,21,core reconciliation logic,retained; referenced by production commitment
+_piece_payload,5719,71,transaction/proving ledger,retained; referenced by production commitment
+_support_evidence_payload,5792,30,transaction/proving ledger,retained; referenced by production commitment
+_ownership_evidence_payload,5824,40,transaction/proving ledger,retained; referenced by production commitment
+_relation_evidence_payload,5866,28,transaction/proving ledger,retained; referenced by production commitment
+_endpoint_records,5896,26,core reconciliation logic,retained; referenced by production commitment
+_disposition,5924,25,core reconciliation logic,retained; referenced by production commitment
+_transaction_operation,5951,11,transaction/proving ledger,retained; referenced by production commitment
+_ledger_basis,5964,26,core reconciliation logic,retained; referenced by production commitment
+_representation_id,5992,9,core reconciliation logic,retained; referenced by production commitment
+_stable_line_key,6003,10,core reconciliation logic,retained; referenced by production commitment
+_piece_id,6015,7,core reconciliation logic,retained; referenced by production commitment
+_observation_key,6024,2,core reconciliation logic,retained; referenced by production commitment
+_line_identity_key,6028,7,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_acceptance_identity_key,6037,29,core reconciliation logic,retained; referenced by production commitment
+_trajectory_evidence_key,6068,7,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_source_claim_id,6077,2,core reconciliation logic,retained; referenced by production commitment
+_geometry_key,6081,10,core exact geometry / data constraints,moved unchanged to reconciliation_geometry
+_geometry_key_from_payload,6093,22,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_geometry_payload,6117,6,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_geometry_payload_matches_line,6125,40,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_line_payload,6167,14,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_line_from_payload,6183,16,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_line_from_geometry_payload,6201,21,transaction/proving ledger,moved unchanged to reconciliation_geometry
+_lines_digest,6224,3,transaction/proving ledger,retained; referenced by production commitment
+_digest_payload,6229,8,transaction/proving ledger,retained; referenced by production commitment

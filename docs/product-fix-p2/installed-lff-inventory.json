@@ -1,0 +1,237 @@
+[
+  {
+    "font": "amiri-regular.lff",
+    "sha256": "531cca14dcee33e04a7bf6a575a387e2747f97e8e5047805c3fb03bf977dfdbb",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "azomix.lff",
+    "sha256": "2e2e02bc968ac7ed549db75cb1581cf3f0aae5b3b8d00efb8f9b6758efe4b91b",
+    "missing": "电图纸录项编"
+  },
+  {
+    "font": "azomix_i.lff",
+    "sha256": "df087cc6193a2ee1b04685c6baf6497c36ea6700ba3546198e880c26a6b1dadd",
+    "missing": "电图纸录项编"
+  },
+  {
+    "font": "cursive.lff",
+    "sha256": "20c552eab834a630304a05eacc22f226c10f6a2d7e7321e9529c5ebd540bc049",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "cyrillic_ii.lff",
+    "sha256": "43452efa67875dbd1eb88438403ba681ea5775373ed92b562682c201a8e115ba",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "gothgbt.lff",
+    "sha256": "cdd18c9421a9d55d3beaa4ef12298f9829d88dd2a382052d96c16f1d019dcc1f",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "gothgrt.lff",
+    "sha256": "6f5243725a534af84913ac8065d47879cf8871e7f40ac2481958cc2f38ee25b6",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "gothitt.lff",
+    "sha256": "8ad7f30c53a4daa308bdcefb5f2203e88bb2e09db876be1117528fc291e1a381",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "greek_ol.lff",
+    "sha256": "078f116523e1f7c41ec6c6a22f953299860b6e9d3d836cd100931501249ee4c7",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "greekc.lff",
+    "sha256": "9438718a3eb15aea35dbaffaeec0050a3e6b6bb8e072eca56006432ce9e32368",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "greekcs.lff",
+    "sha256": "c616a0448cddeeeb6a2576334c795bf5d21c8198f3f53f3d124695957dc7ad8a",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "greekp.lff",
+    "sha256": "2f1b6be4772cf09faa85f7c1dd4cb19e175b81d2ad043956eb6993e35c8bd2de",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "greeks.lff",
+    "sha256": "6d2bf4e58ef0d003f4d98352beb28e0f7a18ef0b0eead03db3f4658972c9bea2",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "iso.lff",
+    "sha256": "7cba36aaa397aeec01ba44e2d8a8f56f2bfdafaaf7531e6d0ad1cf2a9f586983",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "iso3098.lff",
+    "sha256": "45cf7e46f1668217bf156e046310a587c5aa26d0e94308a51ce1d4a7e4164629",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "iso3098_i.lff",
+    "sha256": "95ce76cf2bff5d58d6898cb066fc0142725ca2a468bd0b20501a6d167c5d4cc3",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "italicc.lff",
+    "sha256": "0b3e2b97c494d79a2cc101f4fb87900a1149e037d3d82588b0d0606c5ca94d91",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "italiccs.lff",
+    "sha256": "15700383392ba0c58a9f9e09bbd2e951cf5c5fe5354120775967f4a12e8bf628",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "italict.lff",
+    "sha256": "96921febcbbd22f0a1a7cc61977151df071df33a5f2fcf54595bddb2e6e8d2de",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "kochigothic.lff",
+    "sha256": "e0ab04c34538b1176ed4a829258f24c9b25df7085a72243f9b0c3f2ce056203d",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "kochimincho.lff",
+    "sha256": "1cddb68506e5f6af1d4b9723c0da3d30d4e55c176158e88a22ef4372b3faae98",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "kst32b.lff",
+    "sha256": "50e028d85cc1f7eee587c33a55bcfa51e0d3aecf20d98425057de28e3f487647",
+    "missing": "电图纸录项编"
+  },
+  {
+    "font": "lc_opengost-ar.lff",
+    "sha256": "d6a94b7d7a9ea0474cd6fb3ece7b52a64d48b8b01b5946d51002b355c49c4188",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "lc_opengost-br.lff",
+    "sha256": "cefb5c3734cd0deeb8ad1d2c337d10575018dbcb7f895da4f056ebfbb63c4eff",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "opengosttypea-regular.lff",
+    "sha256": "bebdc018be8fff14f3795fe7353e4906d08b8bdd2929c1367c73162bfa71f3cd",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "opengosttypeb-regular.lff",
+    "sha256": "a553fa6574a76225efae34cb7bdc89008d7230e9992f8daa741b6513fc2673d0",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romanc.lff",
+    "sha256": "7d7a27ddf8f1245735ec70506cf5c2d2cf1aa04d3a93e540d3180442c22e34de",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romancs.lff",
+    "sha256": "27182e1ea4ebf0a6ef056b6251bfe79efe71fe254f8390bf2fc1f4572e2d99cb",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romand.lff",
+    "sha256": "da412429988e896431be09eaa8bdeed901be7694bca3a62d37a7fab07238b7fd",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romanp.lff",
+    "sha256": "6e916bb5ed27eb4684a8d77cc2343fe4e55ee4ac29345f8dda876e53bf67a547",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romans.lff",
+    "sha256": "257e060f6d19f2500fa6591398a7249739523efbe26da73631afb45877d9d5de",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "romansi.lff",
+    "sha256": "aa7b3ddef1f74d834dc7816bad3222ca72dccf9bf93ba8d41942ed3db304ebca",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "romant.lff",
+    "sha256": "17bb2fa5d2fa996a1b546ab6a4d017da780a1d0af9a891bf539d800c486e2906",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "scriptc.lff",
+    "sha256": "743d04afefc8c27e587fb1d0333c74d75829c803ce5483c52b3dd560230b9504",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "scripts.lff",
+    "sha256": "ad2f4ce148e4fcfc76a2a0beab725b87717c922803e376cfbadd2573ad73c979",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "simplex.lff",
+    "sha256": "1fcc78ef408458c9517e192477bfd52cfaee3ff16c71b8c2e1ad0b7c1d5c3c8f",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "standard.lff",
+    "sha256": "436a45a30c31f63b18c3b79e1f5ad11be4689557817f81b983f03d2a08f533db",
+    "missing": "电施图纸目录项编号"
+  },
+  {
+    "font": "syastro.lff",
+    "sha256": "3e0a9fb3f61cf6ddde08acd1e712dfaf40aec74d492708c614df98e7e4324295",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symap.lff",
+    "sha256": "7328ba2cf51927d3c14f3580866001a4c1758b65f09f9a9a15255c8a1da52855",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symath.lff",
+    "sha256": "1d50535f5aefdb218c9cf76f48a138c985076f34988189e825db74faa32845d0",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symbol.lff",
+    "sha256": "ed8b851172a8b05bdb54162486dae90f2b0ce0e6d1f891910fe27bca1a78f620",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symbol_misc1.lff",
+    "sha256": "7bc81ed31859b7661110b6763b343d93b0754a8500395017a3fabc7e45a23d89",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symbol_misc2.lff",
+    "sha256": "779b9bbff5a80b3b2bdce8d27eaae9ee0658e77605b310bfafeec68138ea3568",
+    "missing": "电施图纸目录项编号ProjectNamsignu®"
+  },
+  {
+    "font": "symeteo.lff",
+    "sha256": "d82b292ce8105b003bc3deff2267d0b54edbce8c98974428a01d2e8e37937600",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "symusic.lff",
+    "sha256": "a4ce9547eaae795e010595788540a18ecec3594af70425a4bfbf7d4c703c28a8",
+    "missing": "电施图纸目录项编号®"
+  },
+  {
+    "font": "unicode.lff",
+    "sha256": "06fd506ac7f2a33242faf15fb12979761b2b37679cfa1cfabc436d077d259614",
+    "missing": "电图纸录项编"
+  },
+  {
+    "font": "wqy-unicode.lff",
+    "sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+    "missing": ""
+  }
+]

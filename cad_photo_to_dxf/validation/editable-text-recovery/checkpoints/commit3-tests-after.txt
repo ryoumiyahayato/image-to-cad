@@ -1,0 +1,16 @@
+Ruff:
+All checks passed!
+
+Focused post-commit tests:
+.....................................                                    [100%]
+37 passed, 72 warnings in 2.11s
+
+Included:
+- tests/test_content_ownership.py
+- tests/test_text_output_contract.py
+- tests/test_trace_storage.py
+- tests/test_trace_storage_v2.py
+- tests/test_processing_contract.py
+- tests/test_trace_export.py
+- tests/test_document_export.py
+- tests/test_real_document_regression_contract.py

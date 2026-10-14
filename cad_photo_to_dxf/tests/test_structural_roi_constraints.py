@@ -3,21 +3,15 @@ from __future__ import annotations
 import cv2
 import numpy as np
 
-from app.auxiliary_recognition import TextCandidate
-from app.connectivity_safety import evaluate_structural_bridge
-from app.content_ownership import build_connection_protection
-from app.line_detect import LineSegment
-from app.logo_detection import LogoRegion
-from app.observability import roi_payload
-from app.signature_overlay import SignatureRegion
-from app.straight_line_reconstruction import (
-    extend_lines_to_first_intersection,
-)
-from app.structural_roi import (
-    StructuralRoi,
-    detect_structural_rois,
-    rasterize_structural_roi_corridor,
-)
+from app.ocr.auxiliary_recognition import TextCandidate
+from app.geometry.connectivity_safety import evaluate_structural_bridge
+from app.geometry.content_ownership import build_connection_protection
+from app.geometry.line_detect import LineSegment
+from app.ocr.logo_detection import LogoRegion
+from app.diagnostics.observability import roi_payload
+from app.ocr.signature_overlay import SignatureRegion
+from app.geometry.straight_line_reconstruction import extend_lines_to_first_intersection
+from app.geometry.structural_roi import StructuralRoi, detect_structural_rois, rasterize_structural_roi_corridor
 
 
 def _frame_lines() -> list[LineSegment]:

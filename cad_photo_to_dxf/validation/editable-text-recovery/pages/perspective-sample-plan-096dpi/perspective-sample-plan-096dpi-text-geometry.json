@@ -1,0 +1,81 @@
+{
+  "all_entity_types_TEXT": true,
+  "all_finite": true,
+  "contract_present_count": 2,
+  "maximum_center_error": 5.684341886080802e-14,
+  "maximum_rendered_to_target_height_ratio": 0.9999999999999999,
+  "maximum_rendered_to_target_width_ratio": 1.361966249033323,
+  "maximum_rotation_error": 0.0,
+  "maximum_width_factor": 0.72,
+  "metric_fallbacks": {
+    "none": 2
+  },
+  "metric_sources": {
+    "librecad-lff-visible-bounds": 2
+  },
+  "minimum_rendered_to_target_height_ratio": 0.9999999999999999,
+  "minimum_rendered_to_target_width_ratio": 1.1189023490154515,
+  "minimum_width_factor": 0.72,
+  "record_count": 2,
+  "records": [
+    {
+      "center_error": 0.0,
+      "entity_height_to_target_ratio": 0.9761388286334057,
+      "entity_index": 1,
+      "entity_rotation": 2.231174608031251,
+      "entity_type": "TEXT",
+      "finite": true,
+      "geometry_contract_present": true,
+      "metric_fallback": "none",
+      "metric_source": "librecad-lff-visible-bounds",
+      "raw_width_factor": 0.6434877901843221,
+      "rendered_height": 29.017236257093813,
+      "rendered_to_target_height_ratio": 0.9999999999999999,
+      "rendered_to_target_width_ratio": 1.1189023490154515,
+      "rendered_width": 86.22084647498288,
+      "rotation_error": 0.0,
+      "target_center": [
+        803.0,
+        976.0
+      ],
+      "target_height": 29.017236257093817,
+      "target_rotation": 2.231174608031251,
+      "target_width": 77.05841939723393,
+      "text": "12000",
+      "width_factor": 0.72,
+      "width_factor_clamped": true
+    },
+    {
+      "center_error": 5.684341886080802e-14,
+      "entity_height_to_target_ratio": 0.9771986970684039,
+      "entity_index": 2,
+      "entity_rotation": 1.801160515722367,
+      "entity_type": "TEXT",
+      "finite": true,
+      "geometry_contract_present": true,
+      "metric_fallback": "none",
+      "metric_source": "librecad-lff-visible-bounds",
+      "raw_width_factor": 0.5286474613530485,
+      "rendered_height": 60.03332407921453,
+      "rendered_to_target_height_ratio": 0.9999999999999999,
+      "rendered_to_target_width_ratio": 1.361966249033323,
+      "rendered_width": 433.319359914049,
+      "rotation_error": 0.0,
+      "target_center": [
+        321.0,
+        164.0
+      ],
+      "target_height": 60.03332407921454,
+      "target_rotation": 1.801160515722367,
+      "target_width": 318.1571938523471,
+      "text": "SAMPLE PLAN",
+      "width_factor": 0.72,
+      "width_factor_clamped": true
+    }
+  ],
+  "run_id": "perspective-sample-plan-096dpi",
+  "schema_version": 1,
+  "structure_id": "c27ee2b128e040a998351cae9094e9e9b6226f367062930a4bd1ea41e191fe8d",
+  "width_factor_below_0_60_count": 0,
+  "width_factor_clamped_count": 2
+}

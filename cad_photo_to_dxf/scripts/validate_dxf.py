@@ -13,7 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from app.dxf_validator import validate_dxf  # noqa: E402
+from app.export.dxf_validator import validate_dxf  # noqa: E402 - project bootstrap
 
 
 def validate_with_freecad(path: Path, freecad_command: str) -> dict[str, Any]:

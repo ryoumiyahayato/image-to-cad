@@ -1,0 +1,96 @@
+{
+  "schema_version": "input-fidelity-d1-report-v1",
+  "production_semantic_delta": "NONE",
+  "scope": {
+    "dev_source_groups": [
+      "A2-SG-009",
+      "A2-SG-022",
+      "G0R2-3560D9BEBEAA3543"
+    ],
+    "validation_executed": false,
+    "locked_blind_executed": 0,
+    "locked_blind_manually_inspected": false
+  },
+  "production_path": [
+    "ProductionProcessingService.process_page",
+    "trace_image_optimized",
+    "prepare_scan_page",
+    "OCR and line-detection branches",
+    "content ownership and geometry processing",
+    "FinalStructure",
+    "VQA canonical renderer"
+  ],
+  "cases": [
+    {
+      "case_id": "case_1",
+      "source_group_id": "A2-SG-022",
+      "roi": [5420, 1480, 420, 1120],
+      "target": [5558, 1725, 5558, 2460],
+      "first_divergence_stage": "CANDIDATE ELIGIBILITY FILTER (length >= 10 * width)",
+      "failure_class": "FILTERING_LOSS",
+      "thick_line_edge_double_detection": true
+    },
+    {
+      "case_id": "case_2",
+      "source_group_id": "A2-SG-022",
+      "roi": [3000, 1810, 2400, 260],
+      "target": [3050, 1918, 5320, 1918],
+      "first_divergence_stage": "RAW LINE DETECTION (native LINE channel only)",
+      "failure_class": "NO END-TO-END DEFECT / CONTOUR FALLBACK"
+    },
+    {
+      "case_id": "case_3",
+      "source_group_id": "A2-SG-009",
+      "roi": [1210, 500, 260, 480],
+      "target": [1285, 545, 1285, 915],
+      "first_divergence_stage": "DIAGNOSTIC TARGET COORDINATE",
+      "failure_class": "DIAGNOSTIC_TARGET_INVALID",
+      "target_binary_supported_rows": 54,
+      "target_row_count": 371,
+      "target_longest_unsupported_run": 102,
+      "actual_continuous_rule_x": [1322, 1323],
+      "actual_rule_binary_supported_rows": 362,
+      "actual_rule_raw_candidate_count": 12,
+      "actual_rule_contour_fallback_preserved": false,
+      "d2_correction": "The complete coordinate-verified x=1322 target is D2-001; it is absent from FinalStructure. The original x=1285 diagnosis remains invalid."
+    },
+    {
+      "case_id": "case_4",
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "roi": [1450, 1150, 180, 400],
+      "target": [1532, 1210, 1532, 1480],
+      "first_divergence_stage": "NONE OBSERVED",
+      "failure_class": "NO DEFECT",
+      "text_mask_cut_line": false
+    },
+    {
+      "case_id": "case_5",
+      "source_group_id": "G0R2-3560D9BEBEAA3543",
+      "roi": [1120, 1110, 420, 470],
+      "first_divergence_stage": "VQA FINAL RENDERER",
+      "failure_class": "RENDER_ONLY_DEFECT",
+      "raw_ocr_text_correct": true,
+      "final_structure_text_correct": true
+    }
+  ],
+  "root_cause_counts": {
+    "FILTERING_LOSS": 1,
+    "DETECTION_FRAGMENTATION": 0,
+    "RENDER_ONLY_DEFECT": 1,
+    "NO_END_TO_END_DEFECT": 3,
+    "DIAGNOSTIC_TARGET_INVALID": 1,
+    "INPUT_RENDER_DEFECT": 0,
+    "PREPROCESSING_DESTRUCTION": 0,
+    "MASK_DESTRUCTION": 0,
+    "PROMOTION_LOSS": 0,
+    "FINAL_ASSEMBLY_LOSS": 0,
+    "UNKNOWN": 0
+  },
+  "answers": {
+    "clear_thick_line_broken_before_algorithm": false,
+    "program_caused_break_or_loss": true,
+    "automatic_reconnect_appropriate_now": false,
+    "automatic_reconnect_reason": "FIRST STOP CREATING FALSE BREAKS"
+  },
+  "next_action": "PRIORITIZE_PIPELINE_DESTRUCTIVE_STAGES"
+}
