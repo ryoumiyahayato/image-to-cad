@@ -10,6 +10,10 @@
       "reason": "data/material/secret/cache/nested-worktree path"
     },
     {
+      "path": ".venv-ml-pilot/",
+      "reason": "directory outside reviewed exact file allowlist"
+    },
+    {
       "path": ".venv/",
       "reason": "data/material/secret/cache/nested-worktree path"
     },
