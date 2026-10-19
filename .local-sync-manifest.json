@@ -122,6 +122,10 @@
       "reason": "directory outside reviewed exact file allowlist"
     },
     {
+      "path": "p20d-native-stroke-20261019/",
+      "reason": "directory outside reviewed exact file allowlist"
+    },
+    {
       "path": "product-uat-20261005/",
       "reason": "directory outside reviewed exact file allowlist"
     },
