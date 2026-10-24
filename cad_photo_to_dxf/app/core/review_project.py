@@ -964,7 +964,7 @@ class ReviewProject:
         if (
             target.suffix.lower() != ".icreview"
             or target == Path(self._manifest["source"]["path"]).resolve()
-            or target.is_relative_to(self._cache_path.parent)
+            or target.is_relative_to(self._cache_path.parent.resolve())
         ):
             raise ReviewProjectError(
                 "Choose a persistent .icreview path outside the application temporary directory"
