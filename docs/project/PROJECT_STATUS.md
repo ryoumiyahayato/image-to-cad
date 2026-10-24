@@ -1,7 +1,28 @@
-2026-10-24 源码同步：五个工作树的提交对象、差异和工作文件已保全并异地恢复核对。候选使用 e5b80f9 的 baseline-runtime，未采用活动 P21-A 入口。隔离保存 Goal01—22 可公开代码，详细真实资料留私有副本。PR #35 保持 Draft；最后检查与未同步文件见 [SOURCE_SYNC_RESULT](SOURCE_SYNC_RESULT_20261024.md)。本轮无新产品收益验收。
+# Current project status — 2026-10-24
 
+Version remains `0.3.0-dev`; this is a development preview, with no new release.
+The current source includes the pre-P21-A P11–P20 runtime and isolated public
+Goal01–22 research. The reviewed scope, remaining private-test limits and
+merge conditions are in [PR35_REVIEW](PR35_REVIEW_20261024.md). Final workflow
+results and main integration are recorded on [PR #35](https://github.com/ryoumiyahayato/image-to-cad/pull/35).
 
-# Image to CAD project status
+The P10-A contract mismatch was investigated by replaying old main and the
+candidate in the same environment. Drawing records and historical source
+obligations agree; the sole identity difference is an empty scan-curve
+metadata list. A separate current contract now checks this narrow extension
+without overwriting the old baseline. See the
+[preservation transition](../refactor/preservation-transition-20261024.md).
+
+Product scope and source selection remain as documented in
+[SOURCE_SYNC_RESULT](SOURCE_SYNC_RESULT_20261024.md). Research `NO_GO`, no
+independent C acceptance, unmeasured human net labor and pending full-CAD
+editor compatibility remain unchanged. Source integration does not promote
+research candidates or establish new formal CAD benefit. No new Goal starts
+as part of this merge.
+
+The following older status is retained as history, not as the current work queue.
+
+# Historical project status — 2026-10-14 (retained)
 
 Updated: 2026-10-14. Version: 0.3.0-dev. Development preview; no new release or release tag.
 
@@ -47,7 +68,7 @@ Synchronization follow-up (2026-10-14): PDFium output pointers use the binding's
 
 The historical compact snapshot remains unchanged. An archived 20b2247 replay exactly matches it. Current code with only detector-alias consolidation bypassed reproduces every historical LINE payload. The first admission difference is the existing source-bound alias step: six groups remove seven output records, and one group removes one gap-case record. Each has zero unique source-pixel loss, unchanged width and an already-existing keeper geometry. Sample-test geometry remains unchanged. A separate versioned current snapshot retains exact structure/cache/DXF checks plus explicit transition source claims; it passes locally, together with 12 related guards. Linux's 61 related ARC/native/transition checks pass with the compatible Qt pair. D-013 and docs/refactor/preservation-transition-p10a.md record the scope. A clean Linux checkout with Python 3.11.17 and Qt/Shiboken 6.11.2 completed the full suite: 743 passed, 8 skipped in 74.18 seconds, with process exit 0. Preservation, Ruff, four-file mypy and compileall also pass locally. Ruff now explicitly retains the existing 0.12 E4/E7/E9/F policy rather than inheriting expanded 0.17 defaults. Final CI and merge state must be verified on PR #34; local successes alone do not close synchronization.
 
-## Current work
+## Work planned at that historical checkpoint
 
 P10-B is authorized but waits for GitHub main synchronization. No independent-source P10-B material processing has started. The existing CURRENT_TASK and NEXT_TASK records govern this pause. P10-A need not be restarted: its documented scope is complete.
 

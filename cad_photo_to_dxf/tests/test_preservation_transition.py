@@ -1,6 +1,7 @@
 """The reviewed compact transition must still detect real source loss."""
 
 from copy import deepcopy
+from dataclasses import replace
 import importlib.util
 import json
 from pathlib import Path
@@ -27,6 +28,7 @@ def test_current_transition_keeps_historical_records_and_source_obligations():
     result = ProductionProcessingService.process_page(image, ProductionProcessingConfig(enable_ocr=False))
     structure = result.final_structure
     module.verify_transition("processing-contract-page", image, structure, baseline, historical)
+    module.verify_p10a_identity("processing-contract-page", structure)
     assert len(structure.straight_lines) == 14
     # Removing an independent retained boundary cannot be accepted as this transition.
     incomplete = SimpleNamespace(straight_lines=structure.straight_lines[1:])
@@ -40,3 +42,27 @@ def test_current_transition_keeps_historical_records_and_source_obligations():
     ]
     with pytest.raises(AssertionError):
         module.verify_transition("processing-contract-page", image, structure, wrong, historical)
+    # The new contract does not excuse identity drift after counts still match.
+    changed = replace(structure, straight_lines=(
+        replace(structure.straight_lines[0], width=structure.straight_lines[0].width + 1),
+        *structure.straight_lines[1:],
+    ))
+    with pytest.raises(AssertionError, match="P10-A observable structure changed"):
+        module.verify_p10a_identity("processing-contract-page", changed)
+
+
+def test_current_contract_rejects_an_unreviewed_algorithm(monkeypatch):
+    config = replace(ProductionProcessingConfig(), algorithm_version="unreviewed")
+    monkeypatch.setattr(module, "ProductionProcessingConfig", lambda: config)
+    with pytest.raises(AssertionError, match="Unreviewed algorithm version"):
+        module.load_current_baseline()
+
+
+@pytest.mark.parametrize("name,message", [
+    ("FINAL_STRUCTURE_SCHEMA_VERSION", "Unreviewed structure schema"),
+    ("TRACE_CACHE_VERSION", "Unreviewed cache version"),
+])
+def test_current_contract_rejects_unreviewed_storage_versions(monkeypatch, name, message):
+    monkeypatch.setattr(module, name, 999)
+    with pytest.raises(AssertionError, match=message):
+        module.load_current_baseline()
