@@ -80,3 +80,9 @@ Goal12/13/21/22 使用原有技术汇总版；详细真实逐项报告不公开�
 后两项作为同步接口兼容修正：RasterTraceResult 补原生面积可选载荷，FinalStructure 适配器继续转交；缓存测试使用本地既有 replace 写法，保留“不相等”断言。17 项相关现有检查通过，涉及文件 Ruff 通过。公开测试只纳入该缓存断言兼容片段，不公开同文件的其他本地真实来源改动。
 
 P10-A 保存基线及 preservation_check.py 没有修改。未新建替代保存基线、删断言、放宽算法身份检查或增加跳过。该历史合同与当前算法身份尚未完成审查，继续阻塞合并。最终 SHA 的现有 CI 仍须按 PR 读回；首次源码 SHA 的结果不能代表后续提交。
+
+## 后续 SHA 检查与 Windows 退出码
+
+6e5660a193b695778ad55c00eb7032445b4b8e57 的 Linux CI 为 944 passed、1 failed、8 skipped，唯一失败仍是 P10-A algorithm_version 合同。该 SHA 的仓库卫生与 FreeCAD workflow 通过。未把 Linux 因前序失败而跳过的后续步骤记为通过。
+
+只读核对发现 Windows 现有 regression/static 步骤串行执行 pytest、Ruff、mypy、compileall，但没有逐条检查原生命令退出码。本轮为每条既有命令补失败即退出，不增加新检查，不改测试条件。最终 Windows workflow 的结果因此能够保留前序失败。最后提交的 SHA 与四项 workflow 结果见 PR #35 收口回执。
