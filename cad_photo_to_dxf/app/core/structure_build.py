@@ -75,6 +75,7 @@ def final_structure_from_trace_result(
         contours=tuple(result.paths),
         straight_lines=tuple(result.straight_lines),
         arcs=tuple(result.arcs),
+        native_fills=tuple(getattr(result, "native_fills", ())),
         texts=tuple(result.texts),
         logos=tuple(getattr(result, "logos", ())),
         signatures=tuple(result.signatures),
