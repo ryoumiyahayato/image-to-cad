@@ -1,0 +1,1511 @@
+{
+  "utc": "2026-10-24T03:41:37.873535+00:00",
+  "phase": "REGIONS_FROZEN_BEFORE_REC_AND_CANDIDATES",
+  "objects": [
+    {
+      "source_object_id": "example-0",
+      "parent": {
+        "source_object_id": "example-0",
+        "partition": "SYNTHETIC",
+        "kind": "integer",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/integer.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "whole",
+            "group_id": "standalone-0",
+            "parent_box": [
+              13,
+              13,
+              45,
+              37
+            ],
+            "source_box": [
+              13,
+              13,
+              45,
+              37
+            ],
+            "component_ids": [
+              1,
+              2
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          }
+        ],
+        "relations": [
+          {
+            "id": "standalone-0",
+            "type": "PROPOSED_STANDALONE",
+            "roles": {
+              "whole": "r0"
+            },
+            "separator_kind": null,
+            "state": "USABLE",
+            "spatial_rule": "separate horizontal component group; numeric content not yet known"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              14,
+              14,
+              27,
+              36
+            ],
+            "area": 112,
+            "center": [
+              20.071428571428573,
+              24.758928571428573
+            ],
+            "height": 22,
+            "slope": -0.06514817605103258,
+            "line_residual": 3.6284069227593685,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              30,
+              14,
+              44,
+              36
+            ],
+            "area": 89,
+            "center": [
+              37.12359550561798,
+              21.685393258426966
+            ],
+            "height": 22,
+            "slope": -0.06243346565910299,
+            "line_residual": 3.289303471444302,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 22.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-1",
+      "parent": {
+        "source_object_id": "example-1",
+        "partition": "SYNTHETIC",
+        "kind": "fraction",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/fraction.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "numerator",
+            "group_id": "g0",
+            "parent_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "source_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "component_ids": [
+              1
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r1",
+            "role": "denominator",
+            "group_id": "g0",
+            "parent_box": [
+              68,
+              32,
+              78,
+              48
+            ],
+            "source_box": [
+              68,
+              32,
+              78,
+              48
+            ],
+            "component_ids": [
+              3
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          }
+        ],
+        "relations": [
+          {
+            "id": "g0",
+            "type": "PROPOSED_FRACTION",
+            "roles": {
+              "numerator": "r0",
+              "denominator": "r1"
+            },
+            "separator_parent_box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "separator_source_box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "separator_component": 2,
+            "separator_kind": "SLANTED_CONNECTED_STROKE",
+            "slope": -0.4786628733997143,
+            "line_residual": 0.5632503179862633,
+            "spatial_rule": "upper-left numerator / lower-right denominator; nearby baseline-height whole only",
+            "state": "USABLE"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "area": 47,
+            "center": [
+              40.170212765957444,
+              13.382978723404255
+            ],
+            "height": 14,
+            "slope": -0.04802786281556566,
+            "line_residual": 2.204569483588429,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "area": 73,
+            "center": [
+              55.0,
+              30.0
+            ],
+            "height": 37,
+            "slope": -0.4786628733997143,
+            "line_residual": 0.5632503179862633,
+            "touches_edge": false,
+            "slash_candidate": true,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 3,
+            "box": [
+              69,
+              33,
+              77,
+              47
+            ],
+            "area": 35,
+            "center": [
+              73.08571428571429,
+              38.22857142857143
+            ],
+            "height": 14,
+            "slope": -0.10948232534762975,
+            "line_residual": 1.7933694661375625,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 14.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-2",
+      "parent": {
+        "source_object_id": "example-2",
+        "partition": "SYNTHETIC",
+        "kind": "mixed",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/mixed.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "numerator",
+            "group_id": "g0",
+            "parent_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "source_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "component_ids": [
+              1
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r1",
+            "role": "denominator",
+            "group_id": "g0",
+            "parent_box": [
+              68,
+              32,
+              78,
+              48
+            ],
+            "source_box": [
+              68,
+              32,
+              78,
+              48
+            ],
+            "component_ids": [
+              4
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r2",
+            "role": "whole",
+            "group_id": "g0",
+            "parent_box": [
+              13,
+              19,
+              28,
+              43
+            ],
+            "source_box": [
+              13,
+              19,
+              28,
+              43
+            ],
+            "component_ids": [
+              3
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          }
+        ],
+        "relations": [
+          {
+            "id": "g0",
+            "type": "PROPOSED_MIXED",
+            "roles": {
+              "numerator": "r0",
+              "denominator": "r1",
+              "whole": "r2"
+            },
+            "separator_parent_box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "separator_source_box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "separator_component": 2,
+            "separator_kind": "SLANTED_CONNECTED_STROKE",
+            "slope": -0.4786628733997143,
+            "line_residual": 0.5632503179862633,
+            "spatial_rule": "upper-left numerator / lower-right denominator; nearby baseline-height whole only",
+            "state": "USABLE"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "area": 47,
+            "center": [
+              40.170212765957444,
+              13.382978723404255
+            ],
+            "height": 14,
+            "slope": -0.04802786281556566,
+            "line_residual": 2.204569483588429,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              46,
+              12,
+              65,
+              49
+            ],
+            "area": 73,
+            "center": [
+              55.0,
+              30.0
+            ],
+            "height": 37,
+            "slope": -0.4786628733997143,
+            "line_residual": 0.5632503179862633,
+            "touches_edge": false,
+            "slash_candidate": true,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 3,
+            "box": [
+              14,
+              20,
+              27,
+              42
+            ],
+            "area": 112,
+            "center": [
+              20.071428571428573,
+              30.758928571428573
+            ],
+            "height": 22,
+            "slope": -0.06514817605103204,
+            "line_residual": 3.6284069227593685,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 4,
+            "box": [
+              69,
+              33,
+              77,
+              47
+            ],
+            "area": 35,
+            "center": [
+              73.08571428571429,
+              38.22857142857143
+            ],
+            "height": 14,
+            "slope": -0.10948232534762975,
+            "line_residual": 1.7933694661375625,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 18.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-3",
+      "parent": {
+        "source_object_id": "example-3",
+        "partition": "SYNTHETIC",
+        "kind": "independent-neighbor",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/independent-neighbor.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "numerator",
+            "group_id": "g0",
+            "parent_box": [
+              100,
+              6,
+              110,
+              22
+            ],
+            "source_box": [
+              100,
+              6,
+              110,
+              22
+            ],
+            "component_ids": [
+              1
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r1",
+            "role": "denominator",
+            "group_id": "g0",
+            "parent_box": [
+              133,
+              32,
+              143,
+              48
+            ],
+            "source_box": [
+              133,
+              32,
+              143,
+              48
+            ],
+            "component_ids": [
+              4
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r2",
+            "role": "whole",
+            "group_id": "standalone-2",
+            "parent_box": [
+              13,
+              13,
+              28,
+              37
+            ],
+            "source_box": [
+              13,
+              13,
+              28,
+              37
+            ],
+            "component_ids": [
+              3
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          }
+        ],
+        "relations": [
+          {
+            "id": "g0",
+            "type": "PROPOSED_FRACTION",
+            "roles": {
+              "numerator": "r0",
+              "denominator": "r1"
+            },
+            "separator_parent_box": [
+              111,
+              12,
+              130,
+              49
+            ],
+            "separator_source_box": [
+              111,
+              12,
+              130,
+              49
+            ],
+            "separator_component": 2,
+            "separator_kind": "SLANTED_CONNECTED_STROKE",
+            "slope": -0.4786628733997141,
+            "line_residual": 0.5632503179862639,
+            "spatial_rule": "upper-left numerator / lower-right denominator; nearby baseline-height whole only",
+            "state": "USABLE"
+          },
+          {
+            "id": "standalone-2",
+            "type": "PROPOSED_STANDALONE",
+            "roles": {
+              "whole": "r2"
+            },
+            "separator_kind": null,
+            "state": "USABLE",
+            "spatial_rule": "separate horizontal component group; numeric content not yet known"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              101,
+              7,
+              109,
+              21
+            ],
+            "area": 47,
+            "center": [
+              105.17021276595744,
+              13.382978723404255
+            ],
+            "height": 14,
+            "slope": -0.048027862815567625,
+            "line_residual": 2.20456948358843,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              111,
+              12,
+              130,
+              49
+            ],
+            "area": 73,
+            "center": [
+              120.0,
+              30.0
+            ],
+            "height": 37,
+            "slope": -0.4786628733997141,
+            "line_residual": 0.5632503179862639,
+            "touches_edge": false,
+            "slash_candidate": true,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 3,
+            "box": [
+              14,
+              14,
+              27,
+              36
+            ],
+            "area": 145,
+            "center": [
+              20.47586206896552,
+              24.627586206896552
+            ],
+            "height": 22,
+            "slope": 0.02071596429425252,
+            "line_residual": 4.108478093926448,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 4,
+            "box": [
+              134,
+              33,
+              142,
+              47
+            ],
+            "area": 35,
+            "center": [
+              138.0857142857143,
+              38.22857142857143
+            ],
+            "height": 14,
+            "slope": -0.10948232534762994,
+            "line_residual": 1.7933694661375637,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 18.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-4",
+      "parent": {
+        "source_object_id": "example-4",
+        "partition": "SYNTHETIC",
+        "kind": "engineering-line",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/engineering-line.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "whole",
+            "group_id": "standalone-0",
+            "parent_box": [
+              13,
+              13,
+              46,
+              37
+            ],
+            "source_box": [
+              13,
+              13,
+              46,
+              37
+            ],
+            "component_ids": [
+              2,
+              3
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r1",
+            "role": "whole",
+            "group_id": "standalone-1",
+            "parent_box": [
+              87,
+              12,
+              166,
+              51
+            ],
+            "source_box": [
+              87,
+              12,
+              166,
+              51
+            ],
+            "component_ids": [
+              1
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          }
+        ],
+        "relations": [
+          {
+            "id": "standalone-0",
+            "type": "PROPOSED_STANDALONE",
+            "roles": {
+              "whole": "r0"
+            },
+            "separator_kind": null,
+            "state": "USABLE",
+            "spatial_rule": "separate horizontal component group; numeric content not yet known"
+          },
+          {
+            "id": "standalone-1",
+            "type": "PROPOSED_STANDALONE",
+            "roles": {
+              "whole": "r1"
+            },
+            "separator_kind": null,
+            "state": "USABLE",
+            "spatial_rule": "separate horizontal component group; numeric content not yet known"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              88,
+              13,
+              165,
+              50
+            ],
+            "area": 171,
+            "center": [
+              118.30409356725146,
+              38.83040935672515
+            ],
+            "height": 37,
+            "slope": 0.16442561586518925,
+            "line_residual": 17.25122368890556,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              14,
+              14,
+              27,
+              36
+            ],
+            "area": 112,
+            "center": [
+              20.071428571428573,
+              24.758928571428573
+            ],
+            "height": 22,
+            "slope": -0.06514817605103258,
+            "line_residual": 3.6284069227593685,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 3,
+            "box": [
+              30,
+              14,
+              45,
+              36
+            ],
+            "area": 104,
+            "center": [
+              37.57692307692308,
+              25.51923076923077
+            ],
+            "height": 22,
+            "slope": 0.1903779620079642,
+            "line_residual": 3.6276341458727237,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 22.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-5",
+      "parent": {
+        "source_object_id": "example-5",
+        "partition": "SYNTHETIC",
+        "kind": "joined-separator",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/joined-separator.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          55
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          55,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "whole",
+            "group_id": "standalone-0",
+            "parent_box": [
+              43,
+              11,
+              66,
+              50
+            ],
+            "source_box": [
+              43,
+              11,
+              66,
+              50
+            ],
+            "component_ids": [
+              2
+            ],
+            "state": "AMBIGUOUS_DIAGONAL_COMPONENT",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "UNCERTAIN"
+          }
+        ],
+        "relations": [
+          {
+            "id": "standalone-0",
+            "type": "PROPOSED_STANDALONE",
+            "roles": {
+              "whole": "r0"
+            },
+            "separator_kind": null,
+            "state": "USABLE",
+            "spatial_rule": "separate horizontal component group; numeric content not yet known"
+          }
+        ],
+        "boundary_hints": [
+          {
+            "parent_box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "source_box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "component_id": 1,
+            "type": "SMALL_MARK_OR_UNIT_CONTEXT_UNVERIFIED"
+          },
+          {
+            "parent_box": [
+              69,
+              33,
+              77,
+              47
+            ],
+            "source_box": [
+              69,
+              33,
+              77,
+              47
+            ],
+            "component_id": 3,
+            "type": "SMALL_MARK_OR_UNIT_CONTEXT_UNVERIFIED"
+          }
+        ],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "area": 47,
+            "center": [
+              40.170212765957444,
+              13.382978723404255
+            ],
+            "height": 14,
+            "slope": -0.04802786281556566,
+            "line_residual": 2.204569483588429,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              44,
+              12,
+              65,
+              49
+            ],
+            "area": 103,
+            "center": [
+              53.83495145631068,
+              27.233009708737864
+            ],
+            "height": 37,
+            "slope": -0.3117073664328119,
+            "line_residual": 4.237336675019419,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": true
+          },
+          {
+            "id": 3,
+            "box": [
+              69,
+              33,
+              77,
+              47
+            ],
+            "area": 35,
+            "center": [
+              73.08571428571429,
+              38.22857142857143
+            ],
+            "height": 14,
+            "slope": -0.10948232534762975,
+            "line_residual": 1.7933694661375625,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 14.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    },
+    {
+      "source_object_id": "example-6",
+      "parent": {
+        "source_object_id": "example-6",
+        "partition": "SYNTHETIC",
+        "kind": "incomplete",
+        "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/incomplete.png",
+        "parent_box": [
+          0,
+          0,
+          180,
+          44
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "parent_provenance": "SYNTHETIC_DIAGNOSTIC"
+      },
+      "geometry": {
+        "version": "v2",
+        "params": {
+          "threshold": 180,
+          "min_area": 2,
+          "scale_component_parent_height": 0.25,
+          "slash_body_height": 0.8,
+          "slash_slope_min": -1.1,
+          "slash_slope_max": -0.3,
+          "slash_residual_height": 0.07,
+          "slash_residual_floor": 1.2,
+          "fraction_height_min": 0.3,
+          "fraction_height_max": 0.85,
+          "fraction_center_offset": 0.1,
+          "fraction_reach": 1.25,
+          "line_group_gap": 0.28,
+          "line_center_tolerance": 0.18,
+          "whole_to_fraction_height": 1.25,
+          "mixed_gap": 0.3,
+          "standalone_height": 0.38,
+          "word_gap": 0.18,
+          "tall_diagonal_body_height": 1.25,
+          "tall_diagonal_aspect": 1.5,
+          "max_center_spread": 0.26,
+          "crop_margin": 1
+        },
+        "parent_shape": [
+          44,
+          180
+        ],
+        "parent_to_source": [
+          1,
+          0,
+          0,
+          0,
+          1,
+          0
+        ],
+        "regions": [
+          {
+            "id": "r0",
+            "role": "numerator",
+            "group_id": "g0",
+            "parent_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "source_box": [
+              35,
+              6,
+              45,
+              22
+            ],
+            "component_ids": [
+              1
+            ],
+            "state": "USABLE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "PROPOSED_COMPLETE"
+          },
+          {
+            "id": "r1",
+            "role": "denominator",
+            "group_id": "g0",
+            "parent_box": [
+              68,
+              32,
+              78,
+              44
+            ],
+            "source_box": [
+              68,
+              32,
+              78,
+              44
+            ],
+            "component_ids": [
+              3
+            ],
+            "state": "AMBIGUOUS_PARENT_EDGE",
+            "glyph_content": "UNCONFIRMED",
+            "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+            "role_binding": "GEOMETRIC_PROPOSAL",
+            "visibility": "UNCERTAIN"
+          }
+        ],
+        "relations": [
+          {
+            "id": "g0",
+            "type": "PROPOSED_FRACTION",
+            "roles": {
+              "numerator": "r0",
+              "denominator": "r1"
+            },
+            "separator_parent_box": [
+              48,
+              12,
+              65,
+              44
+            ],
+            "separator_source_box": [
+              48,
+              12,
+              65,
+              44
+            ],
+            "separator_component": 2,
+            "separator_kind": "SLANTED_CONNECTED_STROKE",
+            "slope": -0.47717634448690477,
+            "line_residual": 0.5636940919746556,
+            "spatial_rule": "upper-left numerator / lower-right denominator; nearby baseline-height whole only",
+            "state": "AMBIGUOUS"
+          }
+        ],
+        "boundary_hints": [],
+        "components": [
+          {
+            "id": 1,
+            "box": [
+              36,
+              7,
+              44,
+              21
+            ],
+            "area": 47,
+            "center": [
+              40.170212765957444,
+              13.382978723404255
+            ],
+            "height": 14,
+            "slope": -0.04802786281556566,
+            "line_residual": 2.204569483588429,
+            "touches_edge": false,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 2,
+            "box": [
+              48,
+              12,
+              65,
+              44
+            ],
+            "area": 63,
+            "center": [
+              56.22222222222222,
+              27.46031746031746
+            ],
+            "height": 32,
+            "slope": -0.47717634448690477,
+            "line_residual": 0.5636940919746556,
+            "touches_edge": true,
+            "slash_candidate": true,
+            "uncertain_diagonal": false
+          },
+          {
+            "id": 3,
+            "box": [
+              69,
+              33,
+              77,
+              44
+            ],
+            "area": 29,
+            "center": [
+              73.41379310344827,
+              36.827586206896555
+            ],
+            "height": 11,
+            "slope": 0.008866308029487924,
+            "line_residual": 1.8662822380060835,
+            "touches_edge": true,
+            "slash_candidate": false,
+            "uncertain_diagonal": false
+          }
+        ],
+        "body_height": 14.0,
+        "status": "PROPOSALS_ONLY",
+        "runtime_human_role_boxes": 0,
+        "candidate_input": false,
+        "source_ocr_assistance": false
+      }
+    }
+  ]
+}

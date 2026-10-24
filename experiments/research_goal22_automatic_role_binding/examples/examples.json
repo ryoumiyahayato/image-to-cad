@@ -1,0 +1,331 @@
+[
+  {
+    "source_object_id": "example-0",
+    "partition": "SYNTHETIC",
+    "kind": "integer",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/integer.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "whole",
+        "label": "27",
+        "source_box": [
+          12,
+          14,
+          44,
+          36
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-1",
+    "partition": "SYNTHETIC",
+    "kind": "fraction",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/fraction.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "numerator",
+        "label": "3",
+        "source_box": [
+          35,
+          7,
+          45,
+          21
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "denominator",
+        "label": "7",
+        "source_box": [
+          68,
+          33,
+          78,
+          47
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-2",
+    "partition": "SYNTHETIC",
+    "kind": "mixed",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/mixed.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "numerator",
+        "label": "3",
+        "source_box": [
+          35,
+          7,
+          45,
+          21
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "denominator",
+        "label": "7",
+        "source_box": [
+          68,
+          33,
+          78,
+          47
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "whole",
+        "label": "2",
+        "source_box": [
+          12,
+          20,
+          29,
+          42
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-3",
+    "partition": "SYNTHETIC",
+    "kind": "independent-neighbor",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/independent-neighbor.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "numerator",
+        "label": "3",
+        "source_box": [
+          100,
+          7,
+          110,
+          21
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "denominator",
+        "label": "7",
+        "source_box": [
+          133,
+          33,
+          143,
+          47
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "whole",
+        "label": "9",
+        "source_box": [
+          12,
+          14,
+          29,
+          36
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "independent"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-4",
+    "partition": "SYNTHETIC",
+    "kind": "engineering-line",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/engineering-line.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "whole",
+        "label": "24",
+        "source_box": [
+          12,
+          14,
+          47,
+          36
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-5",
+    "partition": "SYNTHETIC",
+    "kind": "joined-separator",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/joined-separator.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      55
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "numerator",
+        "label": null,
+        "source_box": [
+          35,
+          7,
+          45,
+          21
+        ],
+        "visibility": "JOINED_SEPARATOR_UNCERTAIN",
+        "group": "target"
+      },
+      {
+        "role": "denominator",
+        "label": "7",
+        "source_box": [
+          68,
+          33,
+          78,
+          47
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      }
+    ]
+  },
+  {
+    "source_object_id": "example-6",
+    "partition": "SYNTHETIC",
+    "kind": "incomplete",
+    "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/incomplete.png",
+    "parent_box": [
+      0,
+      0,
+      180,
+      44
+    ],
+    "parent_to_source": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+    "roles": [
+      {
+        "role": "numerator",
+        "label": "3",
+        "source_box": [
+          35,
+          7,
+          45,
+          21
+        ],
+        "visibility": "COMPLETE_VISIBLE",
+        "group": "target"
+      },
+      {
+        "role": "denominator",
+        "label": null,
+        "source_box": [
+          68,
+          33,
+          78,
+          44
+        ],
+        "visibility": "TRUNCATED",
+        "group": "target"
+      }
+    ]
+  }
+]

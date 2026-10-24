@@ -1,0 +1,39 @@
+{
+  "experiment": "P12C-NUMERIC-18D-001-DRAFT",
+  "dataset_version": "p3b-final-three-class-abstention-v1",
+  "enabled": false,
+  "model": {
+    "C": 1,
+    "class_weight": "balanced",
+    "max_iter": 1000,
+    "random_state": 314159,
+    "solver": "lbfgs"
+  },
+  "thresholds": [0.5, 0.8, 0.9, 0.95, 0.99, 0.995],
+  "preprocessing": "Frozen 18 float32 values, original zero codes/known flags; train94-only StandardScaler; no imputer, feature selection or validation fit",
+  "resource_plan": {
+    "device": "CPU",
+    "threads": 1,
+    "maximum_real_fit_attempts": 1,
+    "child_process_timeout_seconds": 120,
+    "timeout_is_planned_not_measured": true
+  },
+  "admission": {
+    "gate_1a": "CONDITIONAL",
+    "gate_1b": "CONDITIONAL",
+    "label_review_resolved": false,
+    "numeric_only_missing_originals_accepted": false,
+    "all_17_local_rights_confirmed": false,
+    "all_17_cloud_rights_confirmed": false,
+    "specific_real_fit_authorized": false,
+    "specific_upload_authorized": false,
+    "authorization_reference": null
+  },
+  "limits": [
+    "Draft only; setting booleans cannot create rights or user authorization",
+    "No original review patches recovered; current-source descriptors matched, not historical pixels",
+    "Do not relabel, omit, replace or reassign a frozen record",
+    "No mid-fit exact continuation for sklearn lbfgs",
+    "No production CAD permission"
+  ]
+}
