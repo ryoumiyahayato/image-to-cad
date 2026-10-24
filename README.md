@@ -1,5 +1,7 @@
 # Image to CAD — editable CAD development preview
 
+
+**Agent 必读：** [产品意图与知识包实施指南](docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md) · [Agent 执行协议](docs/project/AGENT_OPERATING_PROTOCOL.md)。这份指南记录既有用户要求、设计目标与实现边界，不代表对应能力已全部完成。
 当前版本 **0.3.0-dev**。目标仍是内容正确、合理可编辑且显示清楚的二维 CAD，并减少人工核查和修正；质量与人工劳动节省优先于转换速度。
 
 ## 不可退回的产品要求（既有标准）
