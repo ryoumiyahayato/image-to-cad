@@ -7,7 +7,12 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from app import __version__
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from app.export.document_export import DocumentExportResult
 from app.export.dwg_converter import DwgConversionUnavailable, convert_dxf_to_dwg
 from app.export.document_export import ExportResult
@@ -93,8 +98,6 @@ def _convert_in_worker(
         return None, str(exc)
 
 
-
-
 def _multi_page_output_directory(requested_path: Path) -> Path:
     return requested_path.parent / f"{requested_path.stem}-pages"
 
@@ -117,9 +120,23 @@ def _editable_text_strategy() -> dict[str, object]:
     }
 
 
-
-
 def _start_single_export(window: Any) -> None:
+    project = getattr(window, "_review_project", None)
+    from app.core.manual_text_recovery import replay as replay_manual
+
+    manual_text_count = (
+        sum(r["action"] == "CONFIRM_LAYOUT" for r in replay_manual(project).values())
+        if project
+        else 0
+    )
+    if project is not None and (project.dirty or project.path is None):
+        QMessageBox.warning(window, "校对尚未保存", "请先保存校对项目，再导出正式CAD。")
+        return
+    try:
+        text_review = project.validated_review() if project is not None else None
+    except (OSError, ValueError) as exc:
+        QMessageBox.critical(window, "校对项目不可导出", str(exc))
+        return
     structure = getattr(window, "_final_structure", None)
     if structure is None or window.corrected_image is None:
         QMessageBox.warning(window, "尚无处理结果", "请先处理当前页。")
@@ -149,18 +166,25 @@ def _start_single_export(window: Any) -> None:
         and window.include_underlay_checkbox.isChecked()
     )
     multiplier_getter = getattr(window, "_export_drawing_multiplier", None)
-    drawing_multiplier = float(
-        multiplier_getter() if callable(multiplier_getter) else window._drawing_scale()
+    drawing_multiplier = (
+        float(project.manifest["export_settings"]["drawing_multiplier"])
+        if project is not None
+        else float(
+            multiplier_getter()
+            if callable(multiplier_getter)
+            else window._drawing_scale()
+        )
     )
     selected_ratio = float(window._drawing_scale())
     explicit_model_calibration = bool(
         getattr(window, "_has_explicit_model_calibration", lambda: False)()
     )
-    calibration = window.calibration
+    calibration = project.calibration if project is not None else window.calibration
     raster_image = window.corrected_image.copy() if include_underlay else None
     source_path = Path(window.current_path) if window.current_path is not None else None
     threshold = getattr(window, "_trace_threshold", None)
     foreground_pixels = int(getattr(window, "_trace_foreground_pixels", 0))
+
     def operation(token: CancellationToken, progress: ProgressCallback) -> object:
         result = export_final_structure_dxf(
             structure,
@@ -173,6 +197,7 @@ def _start_single_export(window: Any) -> None:
             raster_output_path=scan_path if include_underlay else None,
             cancellation_token=token,
             progress_callback=lambda stage, fraction: progress(stage, 0.94 * fraction),
+            text_review=text_review,
         )
         dwg_path, dwg_error = _convert_in_worker(
             dxf_path,
@@ -196,27 +221,34 @@ def _start_single_export(window: Any) -> None:
             "app_version": __version__,
             "mode": "editable_line_text_single_page",
             "input": str(source_path) if source_path is not None else None,
+            "text_review": (
+                {
+                    "snapshot_uuid": project.snapshot_uuid,
+                    "export_version": project.manifest["export_version"],
+                    "project": str(project.path),
+                    "records": len(project.records),
+                }
+                if project
+                else None
+            ),
             "trace": {
                 "structure_id": result.structure_id,
                 "path_count": result.trace_path_count,
                 "vertex_count": result.trace_vertex_count,
                 "arc_count": result.arc_count,
+                "hatch_count": result.hatch_count,
                 "threshold": threshold,
                 "foreground_pixels": foreground_pixels,
-                "ocr_text_line_count": result.text_count,
+                "ocr_text_line_count": result.text_count - manual_text_count,
+                "manual_text_insertion_count": manual_text_count,
+                "native_text_total": result.text_count,
                 "ocr_candidate_count": result.ocr_candidate_count,
-                "text_fallback_outline_count": (
-                    result.fallback_text_count
-                ),
-                "source_text_outline_count": (
-                    result.source_text_outline_count
-                ),
+                "text_fallback_outline_count": (result.fallback_text_count),
+                "source_text_outline_count": (result.source_text_outline_count),
                 "residual_graphic_count": result.residual_graphic_count,
                 "logo_count": result.logo_count,
                 "signature_image_count": len(result.signature_paths),
-                "text_downgrade_reasons": dict(
-                    result.text_downgrade_reasons
-                ),
+                "text_downgrade_reasons": dict(result.text_downgrade_reasons),
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
@@ -224,7 +256,7 @@ def _start_single_export(window: Any) -> None:
             "editable_entity_strategy": {
                 "page_block_wrappers": False,
                 "groups": False,
-                "hatches": False,
+                "hatches": bool(result.hatch_count),
                 **_editable_text_strategy(),
                 "max_vertices_per_non_text_polyline_piece": MAX_EDITABLE_POLYLINE_VERTICES,
             },
@@ -232,20 +264,18 @@ def _start_single_export(window: Any) -> None:
                 "ocr_candidate_count": result.ocr_candidate_count,
                 "text_count": result.text_count,
                 "fallback_count": result.fallback_text_count,
-                "source_text_outline_count": (
-                    result.source_text_outline_count
-                ),
+                "source_text_outline_count": (result.source_text_outline_count),
                 "residual_count": result.residual_graphic_count,
                 "logo_count": result.logo_count,
                 "signature_count": result.signature_count,
-                "downgrade_reasons": dict(
-                    result.text_downgrade_reasons
-                ),
+                "downgrade_reasons": dict(result.text_downgrade_reasons),
             },
             "export": {
                 **asdict(result),
                 "path": str(result.path),
-                "underlay_path": str(result.underlay_path) if result.underlay_path else None,
+                "underlay_path": str(result.underlay_path)
+                if result.underlay_path
+                else None,
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
@@ -271,9 +301,7 @@ def _start_single_export(window: Any) -> None:
             signature_count=len(result.signature_paths),
             ocr_candidate_count=result.ocr_candidate_count,
             fallback_text_count=result.fallback_text_count,
-            source_text_outline_count=(
-                result.source_text_outline_count
-            ),
+            source_text_outline_count=(result.source_text_outline_count),
             residual_graphic_count=result.residual_graphic_count,
             logo_count=result.logo_count,
             text_downgrade_reasons=result.text_downgrade_reasons,
@@ -308,5 +336,3 @@ def _start_single_export(window: Any) -> None:
         )
 
     window._start_processing(operation, completed, "正在后台导出当前页 CAD…")
-
-

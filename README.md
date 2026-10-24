@@ -1,3 +1,10 @@
+## 已审查的开发基准 — 2026-10-24
+
+当前检出保存了本地 P11—P20 的既有运行基准，以及与生产入口隔离的研究 Goal01—22。版本仍为 0.3.0-dev。P21-A 活动入口修改与 P20-D 未晋级候选留在私人恢复分支；研究 NO_GO 不变。
+
+本轮完成源码审查与保存合同迁移；主分支整合以 [PR #35](https://github.com/ryoumiyahayato/image-to-cad/pull/35) 的最终检查及合并记录为准。产品验收仍单独进行。审查范围与限制见 [审查记录](docs/project/PR35_REVIEW_20261024.md)，原同步与恢复过程见 [同步结果](docs/project/SOURCE_SYNC_RESULT_20261024.md) 和 [文件选择](docs/project/SYNC_SELECTION_20261024.json)。start-stable.ps1 加载当前检出，使用 -Python 指定解释器；原活动树的同名脚本并不表示稳定。
+
+
 # Image to CAD — development preview
 
 Image to CAD converts scans, drawing photographs and PDF pages into editable CAD objects. The current version is **0.3.0-dev**, defined in `cad_photo_to_dxf/app/version.py`.
@@ -6,7 +13,7 @@ Image to CAD converts scans, drawing photographs and PDF pages into editable CAD
 
 This is a development preview, not recovery of the original DWG or unknown design dimensions. Source pixels, ownership, endpoints and protected objects constrain every replacement. Uncertain content keeps its existing representation.
 
-## Current product state — 2026-10-14
+## Historical product checkpoint — 2026-10-14
 
 - P1–P7: verified fixes for specific line, ownership, text-layout and scan-performance defects. These are scoped results, not complete acceptance of every drawing.
 - P8: same physical ink does not authorize merging whole CAD objects with unresolved endpoints or nodes.

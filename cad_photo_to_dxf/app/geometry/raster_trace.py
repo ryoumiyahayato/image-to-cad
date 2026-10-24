@@ -11,6 +11,7 @@ from app.core.cancellation import CancellationToken, ProgressCallback, checkpoin
 from app.geometry.line_detect import LineSegment
 from app.core.trace_types import TracePath
 from app.core.arc_types import ArcSegment
+from app.core.native_fill import NativeFill
 from app.ocr.signature_overlay import SignatureRegion
 
 if TYPE_CHECKING:
@@ -36,6 +37,7 @@ class RasterTraceResult:
     logos: tuple[LogoRegion, ...] = ()
     final_structure: FinalStructure | None = None
     arcs: tuple[ArcSegment, ...] = ()
+    native_fills: tuple[NativeFill, ...] = ()
 
 
 def _to_gray(image: np.ndarray) -> np.ndarray:

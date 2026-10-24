@@ -1,0 +1,43 @@
+{
+  "id": "r0",
+  "source_object_id": "example-1",
+  "source_image": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/fraction.png",
+  "source_box": [
+    35,
+    6,
+    45,
+    22
+  ],
+  "box_origin": "AUTOMATIC_COMPONENT_GEOMETRY",
+  "role": "numerator",
+  "visibility": "AUTOMATIC_COMPLETE_PROPOSAL_UNVERIFIED",
+  "applicability": "DIGITS_1_TO_3",
+  "role_binding": "AUTOMATIC_GEOMETRIC_PROPOSAL",
+  "role_location_mode": "NORMAL_PARENT_AUTOMATIC_PROPOSAL",
+  "crop_id": "local-artifacts/research-goal22-automatic-role-binding-20261024/synthetic/crops/region-001.png",
+  "reader": "PP-OCRv6",
+  "reader_raw": "3",
+  "candidate_raw": "3/7",
+  "candidate_role_value": "3",
+  "comparison_result": "DIGIT_VALUE_EQUAL",
+  "failure_reason": null,
+  "untested_fields": [
+    "whole",
+    "denominator",
+    "relation",
+    "decimal_point",
+    "sign",
+    "unit",
+    "context"
+  ],
+  "full_eight_role_verification": "NOT_ESTABLISHED",
+  "automatic_write_authority": false,
+  "external_role_binding": true,
+  "candidate_parse_supported": true,
+  "comparison_assumption": "usable geometry proposal, not certified source truth",
+  "parent_provenance": "SYNTHETIC_DIAGNOSTIC",
+  "relation_proposal": "PROPOSED_FRACTION",
+  "region_state": "USABLE",
+  "relation_state": "USABLE",
+  "full_expression_verification": "NOT_ESTABLISHED"
+}

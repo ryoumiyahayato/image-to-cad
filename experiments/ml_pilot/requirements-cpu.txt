@@ -1,0 +1,4 @@
+# Isolated optional environment. Do not install into the CAD application environment.
+# A Colab runtime with torch >=2.4,<3 may use its installed build; record its version.
+--index-url https://download.pytorch.org/whl/cpu
+torch==2.8.0

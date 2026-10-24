@@ -1,0 +1,178 @@
+{
+  "plan_version": "p12c-numeric-only-admission-draft-v1",
+  "enabled": false,
+  "task": "Candidate physical-source relation, three classes plus abstention; precursor to review prioritization",
+  "not_a_label": "SINGLE does not authorize CAD merging; OTHER does not authorize source deletion",
+  "sample_unit": "One originally nominated PAIR, SINGLE or CONTROL, not an entire root or page; nomination kind is not the class label",
+  "coordinates": "source_bbox=[x,y,width,height] in original manifest source-render pixels; source_page is one-based physical page. Unknown source DPI remains unknown.",
+  "label_meanings": {
+    "SINGLE_PHYSICAL_STROKE": "Source context supports one physical stroke for the nominated target; CAD edit/node duties remain separate",
+    "TRUE_PARALLEL_STRUCTURE": "Distinct real structural boundaries or rails, even when close",
+    "OTHER": "Non-target annotation, glyph, fill, hatch, symbol or artifact; not a blanket noise/deletion label",
+    "AMBIGUOUS": "Human source evidence does not determine the class; validation abstention evaluation only",
+    "UNKNOWN_OR_UNLABELED": "Excluded from supervised loss; never converted to OTHER"
+  },
+  "review_record_requirements": [
+    "Source file, physical page and native-pixel region",
+    "Source-family and object-derivation grouping",
+    "Label unit and definition",
+    "Original source/context reference",
+    "Reviewer, UTC review time and decision provenance",
+    "Uncertainty and any unresolved node/member duties"
+  ],
+  "dataset_version": "p3b-final-three-class-abstention-v1",
+  "freeze_reference": "docs/product-fix-p3b/FINAL-TRAINING-DATA-FREEZE.json",
+  "baseline_configuration_reference": "docs/product-fix-p3b/first-baseline-configuration.json",
+  "input_contract_reference": "docs/product-fix-p3b/model-input-v1-frozen.json",
+  "training": {
+    "samples": 94,
+    "families": 12,
+    "drawings": 13
+  },
+  "validation": {
+    "records": 50,
+    "ordinary_classification": 49,
+    "ambiguous_abstention_only": 1,
+    "families": 5
+  },
+  "excluded": {
+    "training_records": 6,
+    "blind": "ALL",
+    "reserve": "ALL"
+  },
+  "model": "18-feature StandardScaler + LogisticRegression",
+  "settings": {
+    "C": 1.0,
+    "class_weight": "balanced",
+    "max_iter": 1000,
+    "seed": 314159,
+    "solver": "lbfgs"
+  },
+  "scaler_fit": "94 training records only",
+  "reporting_thresholds": [
+    0.5,
+    0.8,
+    0.9,
+    0.95,
+    0.99,
+    0.995
+  ],
+  "threshold_selection": "Do not tune on exposed validation or LOCKED_BLIND; thresholds are descriptive reports",
+  "non_ml_baselines": [
+    "uniform abstain",
+    "training class-frequency control"
+  ],
+  "production_rule_comparison": "NOT_READY: one included training decision and zero validation decisions captured",
+  "required_before_real_fit": [
+    "Gate0 already PASS; no repeat artificial Colab environment trial",
+    "Complete the one formal human target/class review without silent label/split changes",
+    "Accept a restricted numeric-only experiment: all18 values reproduce but144 original review images remain absent and profile generation differs",
+    "Confirm all17 source scopes for the proposed local numeric training; existing local processing is not an ML grant",
+    "Keep frozen94/50,6 exclusions and blind/reserve lock; train-only scaler and fixed18-feature zero/known encoding",
+    "Authorize one fixed CPU fit; enabled sklearn branch artificial-input compatibility check still required before activation",
+    "For Colab additionally approve each exact real-input file, cloud/source rights, account/storage and this upload/fit; no real package exists now"
+  ],
+  "new_labels_required_for_first_existing_dataset_feasibility_fit": 0,
+  "new_priority_worthiness_labels_available": 0,
+  "resource_plan": {
+    "device": "CPU",
+    "gpu_required": false,
+    "paid_compute": false,
+    "fit_count": 1,
+    "fit_time_budget_seconds_excluding_install": 120,
+    "time_budget_is_planning_not_measurement": true,
+    "checkpoint_estimated_max_bytes": 1000000
+  },
+  "metrics": [
+    "per-class precision/recall",
+    "per-family confusion",
+    "parallel predicted SINGLE rate with all parallel cases as denominator",
+    "coverage/abstention",
+    "separate AMBIGUOUS behavior",
+    "Brier/NLL/calibration",
+    "per-target-kind and missing-feature strata",
+    "CPU time and memory"
+  ],
+  "stop_conditions": [
+    "data/provenance mismatch",
+    "source leakage",
+    "unresolved usage rights",
+    "invalid numeric values",
+    "fit fails or exceeds budget"
+  ],
+  "fallback": "Save failure context; keep existing deterministic product unchanged. No automatic retry, threshold adjustment or deployment.",
+  "product_permission": "ADVISORY_ONLY; no delete/restore/merge/reconnect authority",
+  "p12b_followup": {
+    "report": "docs/project/ML_READINESS_P12B.md",
+    "originals_located": 18,
+    "review_patch_groups_recovered": 0,
+    "source_identity_views": 17,
+    "old_label_question_count": 1,
+    "rights": "6 REQUIRES_PERMISSION,9 UNKNOWN,2 LOCAL_ONLY;0 cloud approved",
+    "colab_runtime": "PASS",
+    "training_operation_template": "experiments/ml_pilot/TRAINING_RUNBOOK_TEMPLATE_ZH.md",
+    "real_fit_enabled": false,
+    "colab_acceptance_reference": "local-artifacts/product-p12b-data-and-colab-20261015/colab-run01/acceptance.json"
+  },
+  "p12a_b_historical_preconditions": [
+    "Resolve cloud-training and storage scope for all 17 source families, plus user account/data authorization",
+    "Locate 144 original reviewed patches or verify a recovered equivalent package against their exact source/region records",
+    "P12-B locates all18 originals using separate active/parent worktree prefixes; historic byte-version equivalence is not proved and144 original review patch groups remain unrecovered",
+    "Recheck one existing adjudicated example per family (17 total) against source and current label identity, without relabeling the frozen split",
+    "Retain 94/50 membership, one ambiguous evaluation-only record and six excluded train nominations",
+    "Execute the artificial Notebook in the intended Colab runtime and export its checkpoint receipt",
+    "Resolve human target/class clarification for frozen real-179d405a0e90b21b0e5050c3 without silent relabeling, exclusion or94/50 reassignment"
+  ],
+  "p12c_followup": {
+    "report": "docs/project/ML_READINESS_P12C.md",
+    "original_review_groups": 0,
+    "core_original_files": 0,
+    "source_originals": 18,
+    "metadata_features_recomputed_per_record": 13,
+    "current_source_descriptors_recomputed_per_record": 5,
+    "all144_numeric_vectors_match": true,
+    "original_pixel_or_historical_UI_identity": "NOT_PROVEN",
+    "profile_shift": "Training extract/prepare measures; validation_v2 explicitly stores None;46/94 vs0/50",
+    "feature_contract": "experiments/ml_pilot/FEATURE_CONTRACT_P12C_ZH.md",
+    "label_review": "UNRESOLVED;real-179d405a0e90b21b0e5050c3;no edit",
+    "rights_families": {
+      "CLOUD_TRAINING_ALLOWED": 2,
+      "REQUIRES_PERMISSION": 8,
+      "UNKNOWN": 7,
+      "LOCAL_TRAINING_ONLY": 0
+    },
+    "source_rights_eligible_numeric_records": {
+      "local": 5,
+      "Colab": 5,
+      "all_class": "OTHER"
+    },
+    "user_authorized_real_upload_records": 0,
+    "local_gate": "CONDITIONAL",
+    "colab_gate": "CONDITIONAL",
+    "production_gate": "NO_GO",
+    "closed_notebook": "experiments/ml_pilot/p12c_supervised_pilot_closed.ipynb",
+    "runbook": "experiments/ml_pilot/P12C_COLAB_RUNBOOK_ZH.md",
+    "real_fit_enabled": false,
+    "real_fit_run": false
+  },
+  "p12d_followup": {
+    "report": "docs/project/ML_READINESS_P12D.md",
+    "user_decisions": "docs/project/P12D_USER_DECISIONS_ZH.md",
+    "user_choice": "NO_TRAINING",
+    "formal_old_label_result": "PENDING_HUMAN_REVIEW;UNRESOLVED;no edit",
+    "new_internal_ML_grant": false,
+    "rights_cleared_numeric_records": 12,
+    "rights_cleared_families": 3,
+    "source_scope_clearance_not_upload_grant": true,
+    "frozen94_50_unchanged": true,
+    "route_A_gate": "NO_GO",
+    "route_B_gate": "NO_GO",
+    "route_B_proposed_only": "P12D-AUTHORIZED-NUMERIC-B34-DRAFT,26/8;no dataset or newtruth",
+    "current94_50_reader_must_not_be_weakened_for_B": true,
+    "local_pilot": "NO_GO",
+    "Colab_pilot": "NO_GO",
+    "production_ML": "NO_GO",
+    "handoff": "experiments/ml_pilot/P12D_LOCAL_COLAB_HANDOFF_ZH.md",
+    "real_fit_enabled": false
+  }
+}

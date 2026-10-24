@@ -1,7 +1,7 @@
-# Current task
+# 当前任务
 
-2026-10-14: close PR #34's Linux native-exit fault and compact-snapshot discrepancy, then synchronize the verified Image to CAD 0.3.0-dev product to GitHub main without rewriting history.
+2026-10-24：按用户“自行审核后合入主分支”的明确指令，完成 PR #35 的开发基准审查与保存合同修复，使用正常 merge 保留历史和原 main 恢复点。
 
-P10-B and new feature work are paused for this task. The source is the actual instrumented-e03 tree, including P1–P9 and completed P10-A work. Retain recovery points and the immutable historical snapshot; exclude raw libraries/caches/private files. Merge only after the final head passes all necessary CI and the bounded file-scope audit. Stop after synchronization; do not automatically start P10-B.
+审查内容与限制见 [审查记录](PR35_REVIEW_20261024.md)。最终提交的 CI、Windows 构建/安装冒烟及合并 SHA 以 [PR #35](https://github.com/ryoumiyahayato/image-to-cad/pull/35) 为准。原同步过程见 [历史同步记录](SOURCE_SYNC_RESULT_20261024.md)。
 
-Current product facts are in PROJECT_STATUS.md. This record supersedes the old July P1B task queue; historical decisions and evidence remain unchanged.
+私人真实资料不公开；研究候选 NO_GO 不变。该任务不启动训练、真实图纸转换或下一 Goal。

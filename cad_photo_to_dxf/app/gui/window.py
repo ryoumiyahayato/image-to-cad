@@ -25,7 +25,14 @@ from app.core.cancellation import CancellationToken
 from app.core.structure import FinalStructure
 from app.gui.image_canvas import ImageCanvas
 from app.geometry.line_detect import LineSegment
-from app.core.perspective import MIN_AUTOMATIC_PAPER_CONFIDENCE, auto_correct, resolve_paper_aspect_ratio, resolve_paper_dimensions_mm, rotate_image, warp_perspective
+from app.core.perspective import (
+    MIN_AUTOMATIC_PAPER_CONFIDENCE,
+    auto_correct,
+    resolve_paper_aspect_ratio,
+    resolve_paper_dimensions_mm,
+    rotate_image,
+    warp_perspective,
+)
 from app.geometry.preprocess import PreprocessParams
 from app.core.trace_types import TracePath
 from app.core.scale_calibrator import ScaleCalibration, create_calibration
@@ -44,14 +51,53 @@ class MainWindow(QMainWindow):
     """Desktop window. Domain processing lives in ProductionProcessingService."""
 
     from app.gui.controls import build_controls as _build_controls
-    from app.gui.document import _cache_file_matches, _cache_path_for_key, _current_trace_key, _load_pdf_page, _load_trace_source_for_current_page, _next_pdf_page, _on_pdf_page_changed, _previous_pdf_page, _processing_pdf_dpi, _restore_cached_trace_for_page, _save_current_pdf_state, _set_pdf_controls_enabled, _set_single_image_state, _source_key, _store_current_trace, import_image
-    from app.gui.processing import _apply_trace_result, _processing_config, _stage_text, batch_vectorize_pdf, detect_and_clean
-    from app.gui.review_actions import _preview_shape, _refresh_visual_acceptance, _replace_final_structure_texts, _scaled_for_preview, _visual_acceptance_source, review_layers, review_ocr_texts, verify_current_trace
+    from app.gui.document import (
+        _cache_file_matches,
+        _cache_path_for_key,
+        _current_trace_key,
+        _load_pdf_page,
+        _load_trace_source_for_current_page,
+        _next_pdf_page,
+        _on_pdf_page_changed,
+        _previous_pdf_page,
+        _processing_pdf_dpi,
+        _restore_cached_trace_for_page,
+        _save_current_pdf_state,
+        _set_pdf_controls_enabled,
+        _set_single_image_state,
+        _source_key,
+        _store_current_trace,
+        import_image,
+    )
+    from app.gui.processing import (
+        _apply_trace_result,
+        _processing_config,
+        _stage_text,
+        batch_vectorize_pdf,
+        detect_and_clean,
+    )
+    from app.gui.review_actions import (
+        _preview_shape,
+        _refresh_visual_acceptance,
+        _replace_final_structure_texts,
+        _scaled_for_preview,
+        _visual_acceptance_source,
+        review_layers,
+        review_ocr_texts,
+        verify_current_trace,
+    )
+    from app.gui.review_project_actions import save_review_project, open_review_project
+    from app.gui.manual_text_dialog import recover_manual_text, export_review_document
 
-    from app.gui.page_export import export_current_page_from_window as export_file, export_processed_pages_from_window as export_processed_pages
+    from app.gui.page_export import (
+        export_current_page_from_window as export_file,
+        export_processed_pages_from_window as export_processed_pages,
+    )
 
     def __init__(self) -> None:
         self._librecad_font_install_report = None
+        self._review_project = None
+        self._completed_trace_key = None
         self._dirty_trace_keys: set[object] = set()
         self._ocr_texts = ()
         self._signature_regions = ()
@@ -139,7 +185,12 @@ class MainWindow(QMainWindow):
         )
         self.visual_acceptance = VisualAcceptanceWidget(self)
         self.tabs.addTab(self.visual_acceptance, "视觉验收")
-        self.tabs.currentChanged.connect(lambda _index: self._refresh_visual_acceptance())
+        self.tabs.currentChanged.connect(
+            lambda _index: self._refresh_visual_acceptance()
+        )
+        from app.gui.review_async import preview_scheduler
+
+        preview_scheduler()  # Optional heartbeat also covers project loading.
 
     def _active_canvas(self) -> ImageCanvas | None:
         current = self.tabs.currentWidget()
@@ -192,6 +243,19 @@ class MainWindow(QMainWindow):
         export_action.triggered.connect(self.export_file)
         file_menu.addAction(open_action)
         file_menu.addAction(export_action)
+        save_review = QAction("保存校对项目…", self)
+        save_review.setShortcut("Ctrl+S")
+        save_review.triggered.connect(self.save_review_project)
+        open_review = QAction("打开校对项目…", self)
+        open_review.triggered.connect(self.open_review_project)
+        file_menu.addAction(save_review)
+        file_menu.addAction(open_review)
+        manual_text = QAction("补录未识别文字", self)
+        manual_text.triggered.connect(self.recover_manual_text)
+        file_menu.addAction(manual_text)
+        review_document = QAction("导出校对项目文档DXF…", self)
+        review_document.triggered.connect(self.export_review_document)
+        file_menu.addAction(review_document)
         for menu_action in self.menuBar().actions():
             menu = menu_action.menu()
             if menu is None or menu.title() != "文件":
@@ -231,6 +295,10 @@ class MainWindow(QMainWindow):
             widget.deleteLater()
 
     def _clear_trace_state(self) -> None:
+        from app.gui.review_project_actions import detach_review_project
+
+        detach_review_project(self)
+        self._completed_trace_key = None
         self._trace_paths = ()
         self._trace_threshold = None
         self._trace_foreground_pixels = 0
@@ -434,6 +502,13 @@ class MainWindow(QMainWindow):
             parent_layout.removeWidget(widget)
 
     def _require_corrected(self) -> bool:
+        if getattr(self, "_review_project", None) is not None:
+            QMessageBox.information(
+                self,
+                "保存快照",
+                "当前项目只开放文字字符串校对。图像和几何修改请重新导入源文件。",
+            )
+            return False
         if self.corrected_image is not None:
             return True
         if not self._require_original():
@@ -447,6 +522,13 @@ class MainWindow(QMainWindow):
         return False
 
     def _require_original(self) -> bool:
+        if getattr(self, "_review_project", None) is not None:
+            QMessageBox.information(
+                self,
+                "保存快照",
+                "当前项目只开放文字字符串校对。透视修改请重新导入源文件。",
+            )
+            return False
         if self.original_image is None:
             QMessageBox.warning(self, "缺少图片", "请先导入图纸照片。")
             return False
@@ -633,6 +715,11 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("已请求取消，将在当前 OpenCV/OCR 调用返回后停止")
 
     def closeEvent(self, event) -> None:
+        from app.gui.review_async import defer_close_for_review
+
+        if defer_close_for_review(self):
+            event.ignore()
+            return
         if self._is_processing():
             self.cancel_processing()
             event.ignore()
@@ -642,11 +729,22 @@ class MainWindow(QMainWindow):
                 "已请求取消。当前 OpenCV/OCR 调用返回后即可关闭窗口。",
             )
             return
+        from app.gui.review_project_actions import (
+            can_leave_review_project,
+            detach_review_project,
+        )
+
+        if not can_leave_review_project(self):
+            event.ignore()
+            return
         QMainWindow.closeEvent(self, event)
         if event.isAccepted():
+            detach_review_project(self)
             self._trace_cache_tempdir.cleanup()
 
     def correct_image(self) -> None:
+        if getattr(self, "_review_project", None) is not None:
+            return
         if self._native_pdf_mode:
             self.corrected_image = (
                 self.original_image.copy() if self.original_image is not None else None

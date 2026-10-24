@@ -56,9 +56,13 @@ jobs:
         shell: pwsh
         run: |
           python -m pytest -q
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m ruff check app tests validation main.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m mypy app/core/resolution.py app/core/scale_calibrator.py app/core/reporting.py app/ocr/auxiliary_recognition.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m compileall -q app tests validation main.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build portable application
         shell: pwsh

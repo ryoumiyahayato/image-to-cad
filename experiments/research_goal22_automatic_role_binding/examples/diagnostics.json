@@ -1,0 +1,182 @@
+[
+  {
+    "kind": "integer",
+    "region_count": 1,
+    "raw_strings": [
+      "27"
+    ],
+    "region_states": [
+      "USABLE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_STANDALONE",
+        "state": "USABLE",
+        "roles": {
+          "whole": "r0"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "target role/raw outputs and independent-group separation inspected; synthetic only"
+  },
+  {
+    "kind": "fraction",
+    "region_count": 2,
+    "raw_strings": [
+      "3",
+      "7"
+    ],
+    "region_states": [
+      "USABLE",
+      "USABLE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_FRACTION",
+        "state": "USABLE",
+        "roles": {
+          "numerator": "r0",
+          "denominator": "r1"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "target role/raw outputs and independent-group separation inspected; synthetic only"
+  },
+  {
+    "kind": "mixed",
+    "region_count": 3,
+    "raw_strings": [
+      "2",
+      "3",
+      "7"
+    ],
+    "region_states": [
+      "USABLE",
+      "USABLE",
+      "USABLE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_MIXED",
+        "state": "USABLE",
+        "roles": {
+          "numerator": "r0",
+          "denominator": "r1",
+          "whole": "r2"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "target role/raw outputs and independent-group separation inspected; synthetic only"
+  },
+  {
+    "kind": "independent-neighbor",
+    "region_count": 3,
+    "raw_strings": [
+      "9",
+      "3",
+      "7"
+    ],
+    "region_states": [
+      "USABLE",
+      "USABLE",
+      "USABLE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_FRACTION",
+        "state": "USABLE",
+        "roles": {
+          "numerator": "r0",
+          "denominator": "r1"
+        }
+      },
+      {
+        "type": "PROPOSED_STANDALONE",
+        "state": "USABLE",
+        "roles": {
+          "whole": "r2"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "target role/raw outputs and independent-group separation inspected; synthetic only"
+  },
+  {
+    "kind": "engineering-line",
+    "region_count": 2,
+    "raw_strings": [
+      "24",
+      "L"
+    ],
+    "region_states": [
+      "USABLE",
+      "USABLE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_STANDALONE",
+        "state": "USABLE",
+        "roles": {
+          "whole": "r0"
+        }
+      },
+      {
+        "type": "PROPOSED_STANDALONE",
+        "state": "USABLE",
+        "roles": {
+          "whole": "r1"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "correct standalone target; engineering-line proposal read non-digit and remains extra"
+  },
+  {
+    "kind": "joined-separator",
+    "region_count": 1,
+    "raw_strings": [
+      null
+    ],
+    "region_states": [
+      "AMBIGUOUS_DIAGONAL_COMPONENT"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_STANDALONE",
+        "state": "USABLE",
+        "roles": {
+          "whole": "r0"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "branched diagonal withheld; fixture does not actually join the numeral glyph, so true glyph-to-slash joining not certified"
+  },
+  {
+    "kind": "incomplete",
+    "region_count": 2,
+    "raw_strings": [
+      "3",
+      null
+    ],
+    "region_states": [
+      "USABLE",
+      "AMBIGUOUS_PARENT_EDGE"
+    ],
+    "relations": [
+      {
+        "type": "PROPOSED_FRACTION",
+        "state": "AMBIGUOUS",
+        "roles": {
+          "numerator": "r0",
+          "denominator": "r1"
+        }
+      }
+    ],
+    "real_engineering_score": false,
+    "interpretation": "truncated denominator not read; relation uncertain; numerator raw is partial evidence only"
+  }
+]

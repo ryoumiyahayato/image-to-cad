@@ -177,8 +177,8 @@ def test_cache_identity_changes_without_changing_schema():
     )
 
     old = ProductionProcessingConfig(
-        algorithm_version=ProductionProcessingConfig().algorithm_version.removesuffix(
-            "-isolated-scan-stroke-v1"
+        algorithm_version=ProductionProcessingConfig().algorithm_version.replace(
+            "-isolated-scan-stroke-v1", ""
         )
     )
     args = dict(input_content_sha256="a" * 64, page_index=3)

@@ -10,7 +10,12 @@ from ezdxf import units, zoom
 import numpy as np
 
 from app.ocr.auxiliary_recognition import TextCandidate
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from app.export.document_export import ExportResult
 from app.core.structure import FinalStructure
 from app.core.image_loader import save_image
@@ -22,6 +27,12 @@ from app.core.scale_calibrator import ScaleCalibration
 from app.ocr.signature_overlay import SignatureRegion
 from app.export.trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette
 from app.core.member_binding import ResolvedDraftsmanOutput, resolve_draftsman_output
+from app.export.line_source_ref import make_line_source_refs
+from app.export.text_consistency import TextConsistencyGuard
+from app.export.contour_source_ref import (
+    make_contour_source_refs,
+    ContourConsistencyGuard,
+)
 
 
 def export_exact_trace_dxf(
@@ -36,6 +47,7 @@ def export_exact_trace_dxf(
     palette: TracePalette | None = None,
     straight_lines: tuple[LineSegment, ...] = (),
     arcs: tuple[ArcSegment, ...] = (),
+    native_fills=(),
     texts: tuple[TextCandidate, ...] = (),
     source_text_outline_paths: tuple[TracePath, ...] = (),
     uncertain_text_outline_paths: tuple[TracePath, ...] = (),
@@ -44,16 +56,29 @@ def export_exact_trace_dxf(
     logos=(),
     enclosure_records=(),
     stroke_presentation=None,
+    text_rule_contours=(),
     raster_image: np.ndarray | None = None,
     raster_output_path: str | Path | None = None,
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     resolved_output: ResolvedDraftsmanOutput | None = None,
     allow_empty: bool = False,
+    text_review=None,
+    line_source_refs=None,
+    contour_source_refs=None,
 ) -> ExportResult:
     if image_height <= 0:
         raise ValueError("Image height must be greater than zero")
-    if not allow_empty and not trace_paths and not straight_lines and not arcs and not texts and not signatures and not logos:
+    if (
+        not allow_empty
+        and not trace_paths
+        and not straight_lines
+        and not arcs
+        and not native_fills
+        and not texts
+        and not signatures
+        and not logos
+    ):
         raise ValueError("At least one CAD entity is required")
     multiplier = float(drawing_multiplier)
     if not isfinite(multiplier) or multiplier <= 0:
@@ -78,6 +103,8 @@ def export_exact_trace_dxf(
     doc.header["$LWDISPLAY"] = 1
     styles = {"SCAN_UNDERLAY": {"color": 8, "lineweight": 0}, **TRACE_LAYER_STYLES}
     for layer_name, style in styles.items():
+        if layer_name == "NATIVE_PDF_FILL" and not native_fills:
+            continue
         if layer_name not in doc.layers:
             doc.layers.add(layer_name, **style)
     source_outline_layer = doc.layers.get("SOURCE_TEXT_OUTLINE")
@@ -90,17 +117,15 @@ def export_exact_trace_dxf(
     if resolved_width <= 0 and trace_paths:
         resolved_width = max(
             1,
-            int(round(max(float(x) for trace in trace_paths for x, _y in trace.points))) + 1,
+            int(round(max(float(x) for trace in trace_paths for x, _y in trace.points)))
+            + 1,
         )
     if resolved_width <= 0 and straight_lines:
         resolved_width = max(
             1,
             int(
                 round(
-                    max(
-                        max(float(line.x1), float(line.x2))
-                        for line in straight_lines
-                    )
+                    max(max(float(line.x1), float(line.x2)) for line in straight_lines)
                 )
             )
             + 1,
@@ -145,19 +170,48 @@ def export_exact_trace_dxf(
     def transform(x: float, y: float) -> tuple[float, float]:
         return (x * scale, (image_height - y) * scale)
 
-    (line_count, trace_path_count, trace_vertex_count, text_count,
-     signature_paths, entity_bounds, text_summary, signature_count, graphic_paths) = write_page_entities(
-        doc, modelspace, trace_paths=trace_paths, straight_lines=straight_lines,
+    text_consistency = TextConsistencyGuard()
+    contour_consistency = ContourConsistencyGuard()
+    (
+        line_count,
+        trace_path_count,
+        trace_vertex_count,
+        text_count,
+        signature_paths,
+        entity_bounds,
+        text_summary,
+        signature_count,
+        graphic_paths,
+    ) = write_page_entities(
+        doc,
+        modelspace,
+        trace_paths=trace_paths,
+        straight_lines=straight_lines,
         arcs=arcs,
+        native_fills=native_fills,
         stroke_presentation=stroke_presentation,
-        texts=texts, signatures=signatures, transform=transform, output_path=path,
-        logos=logos, enclosure_records=enclosure_records,
-        source_size=(resolved_width, image_height), trace_color=trace_color, palette=palette,
+        text_rule_contours=text_rule_contours,
+        text_review=text_review,
+        text_consistency=text_consistency,
+        line_source_refs=line_source_refs,
+        contour_source_refs=contour_source_refs,
+        contour_consistency=contour_consistency,
+        texts=texts,
+        signatures=signatures,
+        transform=transform,
+        output_path=path,
+        logos=logos,
+        enclosure_records=enclosure_records,
+        source_size=(resolved_width, image_height),
+        trace_color=trace_color,
+        palette=palette,
         source_text_outline_paths=source_text_outline_paths,
         uncertain_text_outline_paths=uncertain_text_outline_paths,
         semantic_outlines_prepartitioned=semantic_outlines_prepartitioned,
-        resolved_output=resolved_output, cancellation_token=cancellation_token,
-        progress_callback=entity_progress)
+        resolved_output=resolved_output,
+        cancellation_token=cancellation_token,
+        progress_callback=entity_progress,
+    )
     coordinates.extend(entity_bounds)
     if signature_count or graphic_paths:
         doc.set_raster_variables(
@@ -173,8 +227,8 @@ def export_exact_trace_dxf(
         doc.header["$EXTMAX"] = (max(xs), max(ys), 0.0)
         if arcs:
             # ezdxf saves these layout extents back into the header.
-            modelspace.dxf.extmin = doc.header['$EXTMIN']
-            modelspace.dxf.extmax = doc.header['$EXTMAX']
+            modelspace.dxf.extmin = doc.header["$EXTMIN"]
+            modelspace.dxf.extmax = doc.header["$EXTMAX"]
         try:
             zoom.extents(modelspace, factor=1.03)
         except Exception:
@@ -191,7 +245,11 @@ def export_exact_trace_dxf(
             delete=False,
         ) as handle:
             temporary_path = Path(handle.name)
+        text_consistency.validate(doc)
+        contour_consistency.validate(doc)
         doc.saveas(temporary_path)
+        text_consistency.validate(ezdxf.readfile(temporary_path))
+        contour_consistency.validate(ezdxf.readfile(temporary_path))
         temporary_path.replace(path)
     finally:
         if temporary_path is not None and temporary_path.exists():
@@ -202,6 +260,7 @@ def export_exact_trace_dxf(
         path=path,
         line_count=line_count,
         arc_count=len(arcs),
+        hatch_count=len(modelspace.query("HATCH")),
         mm_per_pixel=scale,
         calibrated=calibration is not None,
         text_count=text_count,
@@ -213,9 +272,7 @@ def export_exact_trace_dxf(
         graphic_paths=graphic_paths,
         ocr_candidate_count=text_summary.ocr_candidate_count,
         fallback_text_count=text_summary.fallback_outline_count,
-        source_text_outline_count=(
-            text_summary.source_outline_backup_count
-        ),
+        source_text_outline_count=(text_summary.source_outline_backup_count),
         residual_graphic_count=text_summary.residual_graphic_count,
         signature_count=len(signature_paths),
         text_downgrade_reasons=text_summary.downgrade_reasons,
@@ -235,9 +292,13 @@ def export_final_structure_dxf(
     cancellation_token: CancellationToken | None = None,
     progress_callback: ProgressCallback | None = None,
     allow_empty: bool = False,
+    text_review=None,
 ) -> ExportResult:
     """Export the same immutable structure instance used by the GUI preview."""
 
+    if text_review is not None:
+        text_review.validate_structure(structure)
+        text_review.validate_output(output_path)
     resolved_output = resolve_draftsman_output(structure)
     structure.assert_valid()
     width, height = structure.source_size_px
@@ -259,27 +320,28 @@ def export_final_structure_dxf(
         trace_color=trace_color,
         palette=palette,
         straight_lines=structure.straight_lines,
+        line_source_refs=make_line_source_refs(structure),
+        contour_source_refs=make_contour_source_refs(structure),
         arcs=structure.arcs,
+        native_fills=structure.native_fills,
         texts=structure.texts,
-        source_text_outline_paths=semantic_paths(
-            structure.source_text_outline_mask
-        ),
+        source_text_outline_paths=semantic_paths(structure.source_text_outline_mask),
         uncertain_text_outline_paths=semantic_paths(
             structure.uncertain_text_outline_mask
         ),
-        semantic_outlines_prepartitioned=(
-            semantic_outlines_prepartitioned
-        ),
+        semantic_outlines_prepartitioned=(semantic_outlines_prepartitioned),
         signatures=structure.signatures,
         logos=structure.logos,
-        enclosure_records=structure.provenance.get('engineering_enclosures', ()),
-        stroke_presentation=structure.provenance.get('stroke_presentation'),
+        enclosure_records=structure.provenance.get("engineering_enclosures", ()),
+        stroke_presentation=structure.provenance.get("stroke_presentation"),
+        text_rule_contours=structure.provenance.get("text_rule_contours", ()),
         raster_image=raster_image,
         raster_output_path=raster_output_path,
         cancellation_token=cancellation_token,
         progress_callback=progress_callback,
         resolved_output=resolved_output,
         allow_empty=allow_empty,
+        text_review=text_review,
     )
     return replace(
         result,

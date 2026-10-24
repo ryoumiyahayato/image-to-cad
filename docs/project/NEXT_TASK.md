@@ -1,9 +1,7 @@
-# Next task
+# 后续状态
 
-P10-B cross-source scan validation is authorized by the user and waits for completion of GitHub main synchronization.
+本次授权到 PR #35 审查、最终检查、正常合并和远端读回为止。不自动开始下一 Goal，不把合并源码等同于研究晋级或完整产品验收。
 
-P10-A is already implemented and verified for two isolated USDA scan strokes. After the GitHub synchronization, resume the bounded P10-B source selection and validation from the preserved local worktree; do not repeat P10-A as unstarted work.
+后续研发应由新的具体任务确定。私人来源材料、独立 C、完整编辑往返和人工净收益的未完成状态继续保留；不能以 CI 通过替代这些证据。
 
-P9 is in maintenance. Do not continue Tasmanian visibility/cap-sharing work, Southern clipping, training, labeling, broad material processing or new entity development without new authorization.
-
-See PROJECT_STATUS.md for current capabilities and limits.
+见 [审查记录](PR35_REVIEW_20261024.md) 与 [此前评审建议](REVIEW_FOLLOWUP_20261024.md)。

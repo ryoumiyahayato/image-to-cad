@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.diagnostics.observability import ObservationSink
 
 import json
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 from math import isfinite
 from pathlib import Path
@@ -14,17 +15,28 @@ from pathlib import Path
 import numpy as np
 
 from app.core.cancellation import CancellationToken, ProgressCallback
-from app.geometry.connectivity_safety import CONNECTION_CONFIDENCE_THRESHOLD, DEFAULT_CONNECTION_DPI, MAX_DIRECTION_ERROR_DEGREES, MAX_LINE_WIDTH_DIFFERENCE_MM
+from app.geometry.connectivity_safety import (
+    CONNECTION_CONFIDENCE_THRESHOLD,
+    DEFAULT_CONNECTION_DPI,
+    MAX_DIRECTION_ERROR_DEGREES,
+    MAX_LINE_WIDTH_DIFFERENCE_MM,
+)
 from app.core.structure import FINAL_STRUCTURE_SCHEMA_VERSION
-from app.geometry.junction_v2_consumer import JunctionContract, validate_junction_contract_authority
+from app.geometry.junction_v2_consumer import (
+    JunctionContract,
+    validate_junction_contract_authority,
+)
 from app.ocr.ocr_recognition import MAX_OCR_CANDIDATES, MIN_OCR_CONFIDENCE
 from app.geometry.optimized_trace import trace_image_optimized
 from app.diagnostics.performance_observability import PerformanceCallback
 from app.geometry.raster_trace import RasterTraceResult
-from app.geometry.straight_line_reconstruction import MAX_CONNECTION_DISTANCE_MM, PROTECTION_EXPANSION_MM
+from app.geometry.straight_line_reconstruction import (
+    MAX_CONNECTION_DISTANCE_MM,
+    PROTECTION_EXPANSION_MM,
+)
 from app.ocr.text_output_contract import DEFAULT_MINIMUM_TEXT_CONFIDENCE
 
-PRODUCTION_ALGORITHM_VERSION = "optimized-trace-phase11-p2b-representation-v2-upright-digits-v1-source-text-bounds-v1-cell-rows-v1-text-carriers-v1-source-raster-alias-v1-reading-basis-v1-printed-rows-v1-isolated-scan-stroke-v1"
+PRODUCTION_ALGORITHM_VERSION = "optimized-trace-phase11-p2b-representation-v2-upright-digits-v1-source-text-bounds-v1-cell-rows-v1-text-carriers-v1-source-raster-alias-v1-reading-basis-v1-printed-rows-v1-isolated-scan-stroke-v1-text-rule-source-scope-v1-single-glyph-display-v1-native-pdf-review-suggestions-v1-isolated-scan-curve-source-v1-long-line-orientation-v1-text-backup-source-scope-v2-artifact-component-scope-v1-artifact-local-damage-scope-v1-source-row-target-only-v1-source-row-ink-display-v1-native-text-group-backup-v1-native-pdf-fill-v1-native-source-group-v1-native-simple-polygon-fill-v2"
 PRODUCTION_MODEL_VERSION = "rapidocr-runtime-and-geometry-rules-v1"
 DISABLED_LAYOUT_PROFILE = "disabled"
 DEFAULT_IMAGE_DPI = 240.0
@@ -32,8 +44,8 @@ DEFAULT_IMAGE_DPI = 240.0
 
 def _sha256_hex(value: str, label: str) -> str:
     normalized = value.strip().lower()
-    if len(normalized) != 64 or any(x not in '0123456789abcdef' for x in normalized):
-        raise ValueError(f'{label} must be a SHA-256 hex digest')
+    if len(normalized) != 64 or any(x not in "0123456789abcdef" for x in normalized):
+        raise ValueError(f"{label} must be a SHA-256 hex digest")
     return normalized
 
 
@@ -102,7 +114,11 @@ class ProductionProcessingConfig:
     draftsman_behavior_manifest_digest: str | None = None
 
     def __post_init__(self) -> None:
-        if isinstance(self.source_dpi, (bool, np.bool_)) or not isfinite(float(self.source_dpi)) or float(self.source_dpi) <= 0:
+        if (
+            isinstance(self.source_dpi, (bool, np.bool_))
+            or not isfinite(float(self.source_dpi))
+            or float(self.source_dpi) <= 0
+        ):
             raise ValueError("Processing DPI must be a positive finite number")
         if self.foreground_threshold is not None and not (
             0 <= int(self.foreground_threshold) <= 255
@@ -115,7 +131,14 @@ class ProductionProcessingConfig:
         if self.junction_contract is not None:
             validate_junction_contract_authority(self.junction_contract)
         if self.draftsman_behavior_manifest_digest is not None:
-            object.__setattr__(self, 'draftsman_behavior_manifest_digest', _sha256_hex(self.draftsman_behavior_manifest_digest, 'Draftsman behavior manifest'))
+            object.__setattr__(
+                self,
+                "draftsman_behavior_manifest_digest",
+                _sha256_hex(
+                    self.draftsman_behavior_manifest_digest,
+                    "Draftsman behavior manifest",
+                ),
+            )
 
     def threshold_summary(self) -> dict[str, object]:
         return {
@@ -166,11 +189,15 @@ class ProcessingCacheKey:
     threshold_summary_json: str
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, 'input_content_sha256', _sha256_hex(self.input_content_sha256, 'Input content hash'))
+        object.__setattr__(
+            self,
+            "input_content_sha256",
+            _sha256_hex(self.input_content_sha256, "Input content hash"),
+        )
         if isinstance(self.page_number, bool) or self.page_number <= 0:
-            raise ValueError('Page number must be positive')
+            raise ValueError("Page number must be positive")
         if isinstance(self.dpi, bool) or not isfinite(self.dpi) or self.dpi <= 0:
-            raise ValueError('Cache DPI must be positive and finite')
+            raise ValueError("Cache DPI must be positive and finite")
 
     @property
     def digest(self) -> str:
@@ -223,7 +250,7 @@ def build_processing_cache_key(
     page_number = 1 if page_index is None else int(page_index) + 1
     config_payload = config.payload()
     if pdf_geometry_binding is not None:
-        config_payload['pdf_geometry_binding'] = dict(pdf_geometry_binding)
+        config_payload["pdf_geometry_binding"] = dict(pdf_geometry_binding)
     return ProcessingCacheKey(
         input_content_sha256=input_content_sha256,
         page_number=page_number,
@@ -264,6 +291,7 @@ class ProductionProcessingService:
         performance_callback: PerformanceCallback | None = None,
         observation_sink: ObservationSink | None = None,
         pdf_geometry=None,
+        pdf_text_suggestions=None,
         before_arc_replacement=None,
     ) -> RasterTraceResult:
         if config.layout_profile.enabled:
@@ -282,6 +310,28 @@ class ProductionProcessingService:
             junction_contract=config.junction_contract,
             processing_contract=config.payload(),
             pdf_geometry=pdf_geometry,
+            pdf_text_suggestions=pdf_text_suggestions,
             before_arc_replacement=before_arc_replacement,
         )
+        if pdf_text_suggestions is not None and result.final_structure is not None:
+            from app.geometry.pdf_text_suggestions import SUGGESTION_KEY
+
+            # Metadata only. The original OCR and final source ownership stay
+            # unchanged until explicit review of a saved snapshot.
+            structure = replace(
+                result.final_structure,
+                provenance={
+                    **result.final_structure.provenance,
+                    SUGGESTION_KEY: pdf_text_suggestions,
+                },
+            )
+            from app.ocr.source_row_display import normalize_source_row_displays
+
+            structure = normalize_source_row_displays(
+                structure,
+                source_binding=(
+                    pdf_geometry.binding if pdf_geometry is not None else None
+                ),
+            )
+            result = replace(result, final_structure=structure, texts=structure.texts)
         return result

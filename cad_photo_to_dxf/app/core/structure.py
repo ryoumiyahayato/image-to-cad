@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Mapping, cast
 
 import numpy as np
 from app.core.arc_types import ArcSegment
+from app.core.native_fill import NativeFill
 
 if TYPE_CHECKING:
     from app.ocr.auxiliary_recognition import TextCandidate
@@ -50,10 +51,7 @@ def _freeze_metadata(
                 frozen[key] = _freeze_metadata(item, active_ids=active)
             return MappingProxyType(frozen)
         if isinstance(value, (list, tuple)):
-            return tuple(
-                _freeze_metadata(item, active_ids=active)
-                for item in value
-            )
+            return tuple(_freeze_metadata(item, active_ids=active) for item in value)
     finally:
         active.remove(identity)
     raise TypeError(
@@ -67,10 +65,7 @@ def metadata_to_jsonable(value: object) -> object:
     if value is None or isinstance(value, (str, bool, int, float)):
         return value
     if isinstance(value, MappingABC):
-        return {
-            str(key): metadata_to_jsonable(item)
-            for key, item in value.items()
-        }
+        return {str(key): metadata_to_jsonable(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
         return [metadata_to_jsonable(item) for item in value]
     raise TypeError(f"Unsupported final structure metadata value: {type(value)!r}")
@@ -189,6 +184,15 @@ def _text_payload(text: Any) -> dict[str, object]:
         "font_match_score": _rounded(text.font_match_score),
         "rotation_valid": bool(isfinite(float(text.rotation_deg))),
         "replacement_safe": bool(text.replacement_safe),
+        **(
+            {
+                "display_quad": [
+                    [_exact_geometry_number(v) for v in p] for p in text.display_quad
+                ]
+            }
+            if text.display_quad is not None
+            else {}
+        ),
     }
 
 
@@ -199,8 +203,8 @@ def _masked_object_payload(item: Any) -> dict[str, object]:
         "mask_sha256": sha256(mask.tobytes()).hexdigest(),
         "foreground_pixels": int(np.count_nonzero(mask)),
     }
-    if getattr(item, 'visual_kind', '') == 'engineering_graphic':
-        payload['object_class'] = 'GRAPHIC'
+    if getattr(item, "visual_kind", "") == "engineering_graphic":
+        payload["object_class"] = "GRAPHIC"
     return payload
 
 
@@ -231,41 +235,90 @@ class FinalStructure:
     provenance: Mapping[str, object] = field(default_factory=dict)
     observations: tuple[Mapping[str, object], ...] = ()
     arcs: tuple[ArcSegment, ...] = ()
+    native_fills: tuple[NativeFill, ...] = ()
 
     def __post_init__(self) -> None:
-        if len(self.source_size_px) != 2 or any(isinstance(x, (bool, np.bool_)) for x in self.source_size_px):
-            raise ValueError('Final structure size must contain two dimensions')
+        if len(self.source_size_px) != 2 or any(
+            isinstance(x, (bool, np.bool_)) for x in self.source_size_px
+        ):
+            raise ValueError("Final structure size must contain two dimensions")
         width, height = (int(x) for x in self.source_size_px)
-        object.__setattr__(self, 'source_size_px', (width, height))
-        for name in ('contour_binary', 'preview_binary', 'editable_text_source_mask', 'source_text_outline_mask', 'uncertain_text_outline_mask'):
-            object.__setattr__(self, name, _immutable_mask(getattr(self, name), shape=(height, width)))
-        for name in ('contours', 'straight_lines', 'texts', 'warnings', 'arcs'):
+        object.__setattr__(self, "source_size_px", (width, height))
+        for name in (
+            "contour_binary",
+            "preview_binary",
+            "editable_text_source_mask",
+            "source_text_outline_mask",
+            "uncertain_text_outline_mask",
+        ):
+            object.__setattr__(
+                self, name, _immutable_mask(getattr(self, name), shape=(height, width))
+            )
+        for name in (
+            "contours",
+            "straight_lines",
+            "texts",
+            "warnings",
+            "arcs",
+            "native_fills",
+        ):
             object.__setattr__(self, name, tuple(getattr(self, name)))
-        for name in ('logos', 'signatures'):
-            object.__setattr__(self, name, tuple(_immutable_masked_object(x) for x in getattr(self, name)))
-        object.__setattr__(self, 'provenance', _freeze_metadata_mapping(self.provenance))
-        object.__setattr__(self, 'observations', tuple(_freeze_metadata_mapping(x) for x in self.observations))
+        for name in ("logos", "signatures"):
+            object.__setattr__(
+                self,
+                name,
+                tuple(_immutable_masked_object(x) for x in getattr(self, name)),
+            )
+        object.__setattr__(
+            self, "provenance", _freeze_metadata_mapping(self.provenance)
+        )
+        object.__setattr__(
+            self,
+            "observations",
+            tuple(_freeze_metadata_mapping(x) for x in self.observations),
+        )
         self.assert_valid()
 
     def assert_valid(self) -> None:
+        for fill in self.native_fills:
+            if not isinstance(fill, NativeFill):
+                raise TypeError(
+                    "Final native fills must be validated NativeFill objects"
+                )
+            NativeFill.from_payload(fill.payload())
+            if any(
+                not (
+                    0 <= x <= self.source_size_px[0]
+                    and 0 <= y <= self.source_size_px[1]
+                )
+                for x, y in fill.points
+            ):
+                raise ValueError("Native fill outside source canvas")
+        if len({f.object_id for f in self.native_fills}) != len(self.native_fills):
+            raise ValueError("Duplicate native fill source")
         if any(not isinstance(arc, ArcSegment) for arc in self.arcs):
-            raise TypeError('Final ARC members must be validated ArcSegments')
+            raise TypeError("Final ARC members must be validated ArcSegments")
         for arc in self.arcs:
             ArcSegment.from_payload(arc.payload())
         if len({arc.object_id for arc in self.arcs}) != len(self.arcs):
-            raise ValueError('Duplicate final ARC identity')
+            raise ValueError("Duplicate final ARC identity")
         replaced = [ref for arc in self.arcs for ref in arc.replaced_members]
         if len(set(replaced)) != len(replaced):
-            raise ValueError('Multiple ARCs cannot own the same replaced member')
-        if self.arcs and 'draftsman_output_v1' in self.provenance:
-            raise ValueError('ARC members are not supported by the frozen draftsman-output-v1 binding')
+            raise ValueError("Multiple ARCs cannot own the same replaced member")
+        if self.arcs and "draftsman_output_v1" in self.provenance:
+            raise ValueError(
+                "ARC members are not supported by the frozen draftsman-output-v1 binding"
+            )
         width, height = self.source_size_px
         if width <= 0 or height <= 0:
             raise AssertionError("Final structure source size must be positive")
         expected_shape = (height, width)
         if self.contour_binary.shape != expected_shape:
             raise AssertionError("Contour binary does not match source coordinates")
-        if self.preview_binary is not None and self.preview_binary.shape != expected_shape:
+        if (
+            self.preview_binary is not None
+            and self.preview_binary.shape != expected_shape
+        ):
             raise AssertionError("Preview binary does not match source coordinates")
         for mask in (
             self.editable_text_source_mask,
@@ -284,9 +337,7 @@ class FinalStructure:
                 & (self.uncertain_text_outline_mask > 0)
             )
         ):
-            raise AssertionError(
-                "Source and uncertain text outlines must be disjoint"
-            )
+            raise AssertionError("Source and uncertain text outlines must be disjoint")
         if (
             self.source_text_outline_mask is not None
             and self.editable_text_source_mask is not None
@@ -295,9 +346,7 @@ class FinalStructure:
                 & (self.editable_text_source_mask == 0)
             )
         ):
-            raise AssertionError(
-                "Source outline backup must belong to editable text"
-            )
+            raise AssertionError("Source outline backup must belong to editable text")
         for collection in (self.logos, self.signatures):
             for item in collection:
                 x, y, item_width, item_height = item.bbox
@@ -310,17 +359,51 @@ class FinalStructure:
                     or y + item_height > height
                     or item.mask.shape != (item_height, item_width)
                 ):
-                    raise AssertionError("Masked object lies outside source coordinates")
+                    raise AssertionError(
+                        "Masked object lies outside source coordinates"
+                    )
         for path in self.contours:
             for point in path.points:
                 _exact_geometry_number(point[0])
                 _exact_geometry_number(point[1])
+        if self.provenance.get("text_rule_contours"):
+            actual = {
+                tuple(path.points) for path in self.contours if path.depth % 2 == 0
+            }
+            for points in self.provenance["text_rule_contours"]:
+                if tuple(tuple(p) for p in points) not in actual:
+                    raise ValueError(
+                        "Retained text rule must bind a complete final contour"
+                    )
+        if self.provenance.get("stroke_presentation", {}).get(
+            "closed_scan_curve_records"
+        ):
+            from app.geometry.scan_curve_retention import validate_closed_curve_records
+
+            validate_closed_curve_records(self)
         for text in self.texts:
+            if text.display_quad is not None:
+                if len(text.display_quad) != 4 or any(
+                    len(p) != 2 for p in text.display_quad
+                ):
+                    raise ValueError("Display quad must contain four points")
+                for point in text.display_quad:
+                    for value in point:
+                        _exact_geometry_number(value)
             if text.quad is None:
                 continue
             for point in text.quad:
                 _exact_geometry_number(point[0])
                 _exact_geometry_number(point[1])
+
+    @property
+    def source_structure_id(self) -> str:
+        """Existing source context, excluding optional display-only results."""
+        if not any(t.display_quad is not None for t in self.texts):
+            return self.structure_id
+        return replace(
+            self, texts=tuple(replace(t, display_quad=None) for t in self.texts)
+        ).structure_id
 
     @property
     def structure_id(self) -> str:
@@ -330,9 +413,9 @@ class FinalStructure:
     def identity_for_schema(self, schema_version: int) -> str:
         """Existing cache integrity check, including legacy no-ARC schema 3."""
         if schema_version not in (3, FINAL_STRUCTURE_SCHEMA_VERSION):
-            raise ValueError('Unsupported final structure identity schema')
+            raise ValueError("Unsupported final structure identity schema")
         if schema_version == 3 and self.arcs:
-            raise ValueError('Legacy structure identity cannot contain ARC')
+            raise ValueError("Legacy structure identity cannot contain ARC")
 
         payload = {
             "schema_version": schema_version,
@@ -347,12 +430,8 @@ class FinalStructure:
                     np.ascontiguousarray(self.preview_binary).tobytes()
                 ).hexdigest()
             ),
-            "editable_text_source_sha256": _mask_sha256(
-                self.editable_text_source_mask
-            ),
-            "source_text_outline_sha256": _mask_sha256(
-                self.source_text_outline_mask
-            ),
+            "editable_text_source_sha256": _mask_sha256(self.editable_text_source_mask),
+            "source_text_outline_sha256": _mask_sha256(self.source_text_outline_mask),
             "uncertain_text_outline_sha256": _mask_sha256(
                 self.uncertain_text_outline_mask
             ),
@@ -387,11 +466,29 @@ class FinalStructure:
             ],
         }
         if schema_version >= 4:
-            payload['arcs'] = [arc.payload() for arc in sorted(self.arcs, key=lambda a: a.object_id)]
-        if self.provenance.get('engineering_enclosures'):
-            payload['engineering_enclosures'] = metadata_to_jsonable(self.provenance['engineering_enclosures'])
-        if self.provenance.get('stroke_presentation'):
-            payload['stroke_presentation'] = metadata_to_jsonable(self.provenance['stroke_presentation'])
+            payload["arcs"] = [
+                arc.payload() for arc in sorted(self.arcs, key=lambda a: a.object_id)
+            ]
+        if self.native_fills:
+            if schema_version < 4:
+                raise ValueError("Legacy identity cannot contain native fills")
+            payload["native_fills_v1"] = [f.payload() for f in self.native_fills]
+        if self.provenance.get("native_source_group_replacements_v1"):
+            payload["native_source_group_replacements_v1"] = metadata_to_jsonable(
+                self.provenance["native_source_group_replacements_v1"]
+            )
+        if self.provenance.get("engineering_enclosures"):
+            payload["engineering_enclosures"] = metadata_to_jsonable(
+                self.provenance["engineering_enclosures"]
+            )
+        if self.provenance.get("stroke_presentation"):
+            payload["stroke_presentation"] = metadata_to_jsonable(
+                self.provenance["stroke_presentation"]
+            )
+        if self.provenance.get("text_rule_contours"):
+            payload["text_rule_contours"] = metadata_to_jsonable(
+                self.provenance["text_rule_contours"]
+            )
         serialized = json.dumps(
             payload,
             ensure_ascii=False,
@@ -399,5 +496,3 @@ class FinalStructure:
             separators=(",", ":"),
         ).encode("utf-8")
         return sha256(serialized).hexdigest()
-
-

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.diagnostics.source_support_lifecycle import SourceSupportLifecycle
 
@@ -110,9 +111,7 @@ def _path_metrics(
     minimum_span = min(width, height)
     aspect_ratio = maximum_span / max(float(minimum_span), 1.0)
 
-    local_points = np.rint(points - np.array([x, y], dtype=np.float32)).astype(
-        np.int32
-    )
+    local_points = np.rint(points - np.array([x, y], dtype=np.float32)).astype(np.int32)
     contour_mask = np.zeros((height, width), dtype=np.uint8)
     cv2.fillPoly(contour_mask, [local_points], 255)
     foreground = (contour_mask > 0) & (binary[y : y + height, x : x + width] == 0)
@@ -122,9 +121,7 @@ def _path_metrics(
 
     median_tone = float(np.median(gray[y : y + height, x : x + width][foreground]))
     defect_overlap = float(
-        np.count_nonzero(
-            (damage_mask[y : y + height, x : x + width] > 0) & foreground
-        )
+        np.count_nonzero((damage_mask[y : y + height, x : x + width] > 0) & foreground)
     ) / float(foreground_count)
 
     edge_band = scaled_int(12.0, scale, minimum=8)
@@ -206,9 +203,7 @@ def _remove_corner_damage_clusters(
         x, y, width, height, _area = box
         return {
             int(value)
-            for value in np.unique(
-                foreground_labels[y : y + height, x : x + width]
-            )
+            for value in np.unique(foreground_labels[y : y + height, x : x + width])
             if int(value) > 0
         }
 
@@ -226,14 +221,10 @@ def _remove_corner_damage_clusters(
         for box in component_boxes:
             x, y, width, height, _area = box
             in_horizontal_corner = (
-                x <= padding
-                if left_side
-                else x + width >= page_width - padding
+                x <= padding if left_side else x + width >= page_width - padding
             )
             in_vertical_corner = (
-                y <= padding
-                if top_side
-                else y + height >= page_height - padding
+                y <= padding if top_side else y + height >= page_height - padding
             )
             if in_horizontal_corner and in_vertical_corner:
                 selected.append(box)
@@ -246,9 +237,7 @@ def _remove_corner_damage_clusters(
             for box in component_boxes:
                 if box in selected:
                     continue
-                same_damaged_root = bool(
-                    source_labels(box) & selected_source_labels
-                )
+                same_damaged_root = bool(source_labels(box) & selected_source_labels)
                 nearby_damage = any(
                     _box_distance(box[:4], existing[:4]) <= padding
                     for existing in selected
@@ -259,16 +248,8 @@ def _remove_corner_damage_clusters(
         if not selected or sum(box[4] for box in selected) < minimum_area:
             continue
 
-        x0 = (
-            0
-            if left_side
-            else max(0, min(box[0] for box in selected) - padding)
-        )
-        y0 = (
-            0
-            if top_side
-            else max(0, min(box[1] for box in selected) - padding)
-        )
+        x0 = 0 if left_side else max(0, min(box[0] for box in selected) - padding)
+        y0 = 0 if top_side else max(0, min(box[1] for box in selected) - padding)
         x1 = (
             min(
                 page_width,
@@ -323,13 +304,11 @@ def _box_distance(
     second_x, second_y, second_width, second_height = second
     dx = max(
         0,
-        max(first_x, second_x)
-        - min(first_x + first_width, second_x + second_width),
+        max(first_x, second_x) - min(first_x + first_width, second_x + second_width),
     )
     dy = max(
         0,
-        max(first_y, second_y)
-        - min(first_y + first_height, second_y + second_height),
+        max(first_y, second_y) - min(first_y + first_height, second_y + second_height),
     )
     return hypot(float(dx), float(dy))
 
@@ -341,14 +320,56 @@ def _remove_roots_from_binary(
 ) -> tuple[np.ndarray, np.ndarray]:
     cleaned = np.ascontiguousarray(binary.copy(), dtype=np.uint8)
     removed_mask = np.zeros_like(cleaned)
+    if not removed_roots:
+        return cleaned, removed_mask
+    _count, labels = cv2.connectedComponents(
+        np.where(binary == 0, 1, 0).astype(np.uint8), connectivity=8
+    )
+    page_height, page_width = binary.shape
     for root_index in removed_roots:
         points = np.rint(np.asarray(paths[root_index].points, dtype=np.float32)).astype(
             np.int32
         )
-        if len(points) >= 3:
-            cv2.fillPoly(cleaned, [points], 255)
-            cv2.fillPoly(removed_mask, [points], 255)
+        if len(points) < 3:
+            continue
+        # This geometric corridor is also requested with an all-white binary.
+        cv2.fillPoly(removed_mask, [points], 255)
+        xs = np.clip(points[:, 0], 0, page_width - 1)
+        ys = np.clip(points[:, 1], 0, page_height - 1)
+        boundary_labels = labels[ys, xs]
+        positive = boundary_labels[boundary_labels > 0]
+        if not positive.size:
+            continue
+        values, counts = np.unique(positive, return_counts=True)
+        component = int(values[np.argmax(counts)])
+        x, y, width, height = cv2.boundingRect(points)
+        x0, y0 = max(0, x), max(0, y)
+        x1, y1 = min(page_width, x + width), min(page_height, y + height)
+        if x1 <= x0 or y1 <= y0:
+            continue
+        local_mask = np.zeros((y1 - y0, x1 - x0), dtype=np.uint8)
+        cv2.fillPoly(local_mask, [points - (x0, y0)], 255)
+        # A nested, disconnected source member has its own classification duty.
+        selected = (local_mask > 0) & (labels[y0:y1, x0:x1] == component)
+        cleaned[y0:y1, x0:x1][selected] = 255
     return cleaned, removed_mask
+
+
+def _path_source_component(path: TracePath, labels: np.ndarray) -> int:
+    """Identify the same source member selected by whole-root removal."""
+    points = np.rint(np.asarray(path.points, dtype=np.float32)).astype(np.int32)
+    if len(points) < 3:
+        return 0
+    height, width = labels.shape
+    boundary = labels[
+        np.clip(points[:, 1], 0, height - 1),
+        np.clip(points[:, 0], 0, width - 1),
+    ]
+    positive = boundary[boundary > 0]
+    if not positive.size:
+        return 0
+    values, counts = np.unique(positive, return_counts=True)
+    return int(values[np.argmax(counts)])
 
 
 def _remove_nearby_damage_fragments(
@@ -391,9 +412,7 @@ def _remove_nearby_damage_fragments(
         ):
             continue
         overlap = float(
-            np.count_nonzero(
-                component & (corridor[y : y + height, x : x + width] > 0)
-            )
+            np.count_nonzero(component & (corridor[y : y + height, x : x + width] > 0))
         ) / float(area)
         if overlap < 0.15:
             continue
@@ -460,14 +479,15 @@ def suppress_scan_artifact_traces(
                 decision="OTHER_REJECTION",
                 reason="prefilter_edge_band_or_corner_damage_cluster",
             )
-    working_paths = (
-        trace_binary(working_binary)
-        if prefiltered_region_count
-        else paths
-    )
+    working_paths = trace_binary(working_binary) if prefiltered_region_count else paths
     metrics: dict[int, _RootMetrics] = {}
     damage_roots: set[int] = set()
     sparse_roots: set[int] = set()
+    mixed_local_roots: set[int] = set()
+    local_damage_covered: dict[int, bool] = {}
+    protected_local_mask = np.zeros_like(working_binary)
+    component_labels: np.ndarray | None = None
+    component_stats: np.ndarray | None = None
     for index, path in enumerate(working_paths):
         if path.depth != 0:
             continue
@@ -481,15 +501,41 @@ def suppress_scan_artifact_traces(
         if item is None:
             continue
         metrics[index] = item
-        if item.edge_damage or item.local_damage:
+        if item.local_damage and not item.edge_damage:
+            if component_labels is None:
+                _count, component_labels, component_stats, _centroids = (
+                    cv2.connectedComponentsWithStats(
+                        np.where(working_binary == 0, 1, 0).astype(np.uint8),
+                        connectivity=8,
+                    )
+                )
+            assert component_stats is not None
+            component = _path_source_component(path, component_labels)
+            fully_covered = False
+            if component:
+                x, y, width, height = (
+                    int(value) for value in component_stats[component, :4]
+                )
+                member = component_labels[y : y + height, x : x + width] == component
+                fully_covered = not np.any(
+                    member & (damage_mask[y : y + height, x : x + width] == 0)
+                )
+                if not fully_covered and not item.long_sparse_flight:
+                    protected_local_mask[y : y + height, x : x + width][member] = 255
+            local_damage_covered[index] = fully_covered
+            if not fully_covered:
+                mixed_local_roots.add(index)
+        # Local damage only nominates a member. Its influence must cover that
+        # complete source component before it can authorize whole-root erasure.
+        if item.edge_damage or (item.local_damage and index not in mixed_local_roots):
             damage_roots.add(index)
         if item.long_sparse_flight:
             sparse_roots.add(index)
 
-    component_labels: np.ndarray | None = None
-    if source_support_lifecycle is not None:
+    if source_support_lifecycle is not None and component_labels is None:
         _component_count, component_labels = cv2.connectedComponents(
-            np.where(working_binary < 128, 1, 0).astype(np.uint8), connectivity=8,
+            np.where(working_binary < 128, 1, 0).astype(np.uint8),
+            connectivity=8,
         )
 
     # A tear is commonly split at every surviving grid rule. Grow only from
@@ -504,6 +550,7 @@ def suppress_scan_artifact_traces(
             if (
                 index in clustered_damage
                 or index in sparse_roots
+                or index in mixed_local_roots
             ):
                 continue
             _x, _y, width, height = item.box
@@ -531,7 +578,11 @@ def suppress_scan_artifact_traces(
             item = metrics.get(index)
             if index in damage_roots:
                 decision = "REJECTED_DIRECT_DAMAGE_ROOT"
-                reason = "edge_damage" if item is not None and item.edge_damage else "local_damage"
+                reason = (
+                    "edge_damage"
+                    if item is not None and item.edge_damage
+                    else "local_damage"
+                )
             elif index in clustered_damage:
                 decision = "REJECTED_DAMAGE_CLUSTER_PROPAGATION"
                 reason = "damage_root_proximity_propagation"
@@ -540,7 +591,11 @@ def suppress_scan_artifact_traces(
                 reason = "long_sparse_flight"
             else:
                 decision = "ACCEPTED"
-                reason = "artifact_suppression_acceptance"
+                reason = (
+                    "local_damage_incomplete_source_coverage"
+                    if index in mixed_local_roots
+                    else "artifact_suppression_acceptance"
+                )
             metrics_payload = (
                 {}
                 if item is None
@@ -552,6 +607,9 @@ def suppress_scan_artifact_traces(
                     "aspect_ratio": float(item.aspect_ratio),
                     "edge_damage": bool(item.edge_damage),
                     "local_damage": bool(item.local_damage),
+                    "local_damage_complete_source_coverage": local_damage_covered.get(
+                        index
+                    ),
                     "long_sparse_flight": bool(item.long_sparse_flight),
                     "bbox": [int(value) for value in item.box],
                 }
@@ -586,6 +644,7 @@ def suppress_scan_artifact_traces(
         cleaned,
         damage_removed_mask,
         scale,
+        protected_mask=protected_local_mask,
     )
     nearby_removed_mask = np.where(
         (before_nearby_cleanup < 128) & (cleaned >= 128),

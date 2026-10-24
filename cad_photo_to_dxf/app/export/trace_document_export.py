@@ -8,12 +8,27 @@ from tempfile import NamedTemporaryFile
 import ezdxf
 from ezdxf import units
 
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
-from app.export.document_export import DocumentExportResult, DocumentPage, _resolve_raster
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
+from app.export.document_export import (
+    DocumentExportResult,
+    DocumentPage,
+    _resolve_raster,
+)
 from app.core.image_loader import save_image
 from app.export.trace_entity_writer import write_page_entities, semantic_paths
 from app.export.trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette
 from app.core.member_binding import resolve_draftsman_output
+from app.export.line_source_ref import make_line_source_refs
+from app.export.text_consistency import TextConsistencyGuard
+from app.export.contour_source_ref import (
+    make_contour_source_refs,
+    ContourConsistencyGuard,
+)
 
 
 def _require_first_page(
@@ -31,13 +46,12 @@ def _page_layer_names(index: int) -> dict[str, str]:
     prefix = f"PAGE_{index:03d}"
     return {
         "SCAN_UNDERLAY": f"{prefix}_SCAN_UNDERLAY",
+        "NATIVE_PDF_FILL": f"{prefix}_NATIVE_PDF_FILL",
         "TRACE_STRAIGHT": f"{prefix}_TRACE_STRAIGHT",
         "TRACE_CURVE": f"{prefix}_TRACE_CURVE",
         "TRACE_TEXT_SYMBOL": f"{prefix}_TRACE_TEXT_SYMBOL",
         "SOURCE_TEXT_OUTLINE": f"{prefix}_SOURCE_TEXT_OUTLINE",
-        "TEXT_FALLBACK_OUTLINE": (
-            f"{prefix}_TEXT_FALLBACK_OUTLINE"
-        ),
+        "TEXT_FALLBACK_OUTLINE": (f"{prefix}_TEXT_FALLBACK_OUTLINE"),
         "RESIDUAL_GRAPHIC": f"{prefix}_RESIDUAL_GRAPHIC",
         "OCR_TEXT": f"{prefix}_OCR_TEXT",
         "SIGNATURE_OVERLAY": f"{prefix}_SIGNATURE_OVERLAY",
@@ -46,8 +60,10 @@ def _page_layer_names(index: int) -> dict[str, str]:
     }
 
 
-def _ensure_page_layers(doc, index: int) -> dict[str, str]:
+def _ensure_page_layers(doc, index: int, native_fills=()) -> dict[str, str]:
     names = _page_layer_names(index)
+    if not native_fills:
+        names.pop("NATIVE_PDF_FILL")
     styles = {"SCAN_UNDERLAY": {"color": 8, "lineweight": 0}, **TRACE_LAYER_STYLES}
     for base_name, layer_name in names.items():
         style = styles[base_name]
@@ -128,6 +144,8 @@ def export_trace_document_streaming(
     origin_y = 0.0
     first_page_view: tuple[float, float] | None = None
     entity_extents = None
+    text_consistency = TextConsistencyGuard()
+    contour_consistency = ContourConsistencyGuard()
 
     for index, page in enumerate(page_stream(), start=1):
         checkpoint(cancellation_token)
@@ -135,6 +153,11 @@ def export_trace_document_streaming(
         if page.page_number <= 0:
             raise ValueError("Page numbers must be positive")
         structure = page.final_structure
+        if page.text_review is not None:
+            if structure is None:
+                raise ValueError("A text review requires its conversion snapshot")
+            page.text_review.validate_structure(structure)
+            page.text_review.validate_output(output_path)
         if structure is not None:
             structure.assert_valid()
             resolved_output = resolve_draftsman_output(structure)
@@ -154,14 +177,24 @@ def export_trace_document_streaming(
             )
             lines = structure.straight_lines
             arcs = structure.arcs
+            native_fills = structure.native_fills
             texts = structure.texts
             signatures = structure.signatures
             logos = structure.logos
-            enclosure_records = structure.provenance.get('engineering_enclosures', ())
-            stroke_presentation = structure.provenance.get('stroke_presentation')
+            enclosure_records = structure.provenance.get("engineering_enclosures", ())
+            stroke_presentation = structure.provenance.get("stroke_presentation")
+            text_rule_contours = structure.provenance.get("text_rule_contours", ())
             vector_size = structure.source_size_px
             structure_ids.append(structure.structure_id)
+            line_source_refs = make_line_source_refs(
+                structure, page_slot=index, physical_page=page.page_number
+            )
+            contour_source_refs = make_contour_source_refs(
+                structure, physical_page=page.page_number
+            )
         else:
+            line_source_refs = None
+            contour_source_refs = None
             resolved_output = None
             trace_paths = page.trace_paths
             source_text_outline_paths = ()
@@ -169,12 +202,22 @@ def export_trace_document_streaming(
             semantic_outlines_prepartitioned = False
             lines = page.lines
             arcs = ()
+            native_fills = ()
             texts = page.texts
             signatures = page.signatures
             logos, enclosure_records = (), ()
             stroke_presentation = None
+            text_rule_contours = ()
             vector_size = page.vector_size_px
-        if not trace_paths and not lines and not arcs and not texts and not signatures and not logos:
+        if (
+            not trace_paths
+            and not lines
+            and not arcs
+            and not native_fills
+            and not texts
+            and not signatures
+            and not logos
+        ):
             raise ValueError(
                 f"第 {page.page_number} 页尚未生成 CAD 内容。"
                 "请先执行当前 PDF 全部页处理后再导出。"
@@ -199,7 +242,7 @@ def export_trace_document_streaming(
         height_units = page_height_mm * page.drawing_scale
         scale_x = width_units / max(float(vector_width), 1.0)
         scale_y = height_units / max(float(vector_height), 1.0)
-        layer_names = _ensure_page_layers(doc, index)
+        layer_names = _ensure_page_layers(doc, index, native_fills)
         if first_page_view is None:
             first_page_view = (width_units, height_units)
 
@@ -241,35 +284,71 @@ def export_trace_document_streaming(
                 page_origin + (vector_height - y) * scale_y,
             )
 
-        (current_line_count, current_path_count, current_vertex_count,
-         current_text_count, current_signature_paths, _bounds, text_summary,
-         current_signature_count, current_graphic_paths) = write_page_entities(
-            doc, modelspace, trace_paths=trace_paths, straight_lines=lines,
+        (
+            current_line_count,
+            current_path_count,
+            current_vertex_count,
+            current_text_count,
+            current_signature_paths,
+            _bounds,
+            text_summary,
+            current_signature_count,
+            current_graphic_paths,
+        ) = write_page_entities(
+            doc,
+            modelspace,
+            trace_paths=trace_paths,
+            straight_lines=lines,
+            line_source_refs=line_source_refs,
+            contour_source_refs=contour_source_refs,
+            contour_consistency=contour_consistency,
             arcs=arcs,
-            texts=texts, signatures=signatures, transform=transform,
-            logos=logos, enclosure_records=enclosure_records,
+            native_fills=native_fills,
+            texts=texts,
+            signatures=signatures,
+            transform=transform,
+            text_review=page.text_review,
+            text_consistency=text_consistency,
+            logos=logos,
+            enclosure_records=enclosure_records,
             stroke_presentation=stroke_presentation,
-            output_path=(path if expected_pages == 1 else path.with_name(f"{path.stem}.page-{index:03d}.dxf")),
-            source_size=(vector_width, vector_height), trace_color=page.trace_color,
-            palette=palette, layer_names=layer_names,
-            block_prefix=f"PAGE_{index:03d}_OCR_LINE", signature_prefix=f"PAGE_{index:03d}_SIGNATURE",
+            text_rule_contours=text_rule_contours,
+            output_path=(
+                path
+                if expected_pages == 1
+                else path.with_name(f"{path.stem}.page-{index:03d}.dxf")
+            ),
+            source_size=(vector_width, vector_height),
+            trace_color=page.trace_color,
+            palette=palette,
+            layer_names=layer_names,
+            block_prefix=f"PAGE_{index:03d}_OCR_LINE",
+            signature_prefix=f"PAGE_{index:03d}_SIGNATURE",
             source_text_outline_paths=source_text_outline_paths,
             uncertain_text_outline_paths=uncertain_text_outline_paths,
             semantic_outlines_prepartitioned=semantic_outlines_prepartitioned,
-            resolved_output=resolved_output, cancellation_token=cancellation_token,
-            progress_callback=page_progress)
+            resolved_output=resolved_output,
+            cancellation_token=cancellation_token,
+            progress_callback=page_progress,
+        )
         signature_paths.extend(current_signature_paths)
         page_bounds = list(_bounds)
         if include_underlay:
-            page_bounds.extend(((0.0, page_origin), (width_units, page_origin + height_units)))
+            page_bounds.extend(
+                ((0.0, page_origin), (width_units, page_origin + height_units))
+            )
         if page_bounds:
             xs, ys = zip(*page_bounds)
             current_extents = (min(xs), min(ys), max(xs), max(ys))
-            entity_extents = current_extents if entity_extents is None else (
-                min(entity_extents[0], current_extents[0]),
-                min(entity_extents[1], current_extents[1]),
-                max(entity_extents[2], current_extents[2]),
-                max(entity_extents[3], current_extents[3]),
+            entity_extents = (
+                current_extents
+                if entity_extents is None
+                else (
+                    min(entity_extents[0], current_extents[0]),
+                    min(entity_extents[1], current_extents[1]),
+                    max(entity_extents[2], current_extents[2]),
+                    max(entity_extents[3], current_extents[3]),
+                )
             )
         graphic_paths.extend(current_graphic_paths)
         line_count += current_line_count
@@ -279,15 +358,9 @@ def export_trace_document_streaming(
         text_count += current_text_count
         ocr_candidate_count += text_summary.ocr_candidate_count
         fallback_text_count += text_summary.fallback_outline_count
-        source_text_outline_count += (
-            text_summary.source_outline_backup_count
-        )
+        source_text_outline_count += text_summary.source_outline_backup_count
         residual_graphic_count += text_summary.residual_graphic_count
-        logo_count += (
-            len(structure.logos)
-            if structure is not None
-            else 0
-        )
+        logo_count += len(structure.logos) if structure is not None else 0
         signature_count += current_signature_count
         downgrade_reasons.update(dict(text_summary.downgrade_reasons))
 
@@ -317,7 +390,11 @@ def export_trace_document_streaming(
             delete=False,
         ) as handle:
             temporary_path = Path(handle.name)
+        text_consistency.validate(doc)
+        contour_consistency.validate(doc)
         doc.saveas(temporary_path)
+        text_consistency.validate(ezdxf.readfile(temporary_path))
+        contour_consistency.validate(ezdxf.readfile(temporary_path))
         temporary_path.replace(path)
     finally:
         if temporary_path is not None and temporary_path.exists():
@@ -329,6 +406,7 @@ def export_trace_document_streaming(
         page_count=page_count,
         line_count=line_count,
         arc_count=arc_count,
+        hatch_count=len(modelspace.query("HATCH")),
         circle_count=0,
         text_count=text_count,
         trace_path_count=trace_path_count,
@@ -345,7 +423,5 @@ def export_trace_document_streaming(
         residual_graphic_count=residual_graphic_count,
         logo_count=logo_count,
         signature_count=signature_count,
-        text_downgrade_reasons=tuple(
-            sorted(downgrade_reasons.items())
-        ),
+        text_downgrade_reasons=tuple(sorted(downgrade_reasons.items())),
     )

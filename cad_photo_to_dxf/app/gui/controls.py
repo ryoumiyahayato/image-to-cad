@@ -63,6 +63,9 @@ def build_controls(self):
     note.setWordWrap(True)
     ocr_layout.addWidget(note)
     ocr_layout.addWidget(self._button("检查文字识别结果", self.review_ocr_texts))
+    ocr_layout.addWidget(self._button("保存校对项目…", self.save_review_project))
+    ocr_layout.addWidget(self._button("打开校对项目…", self.open_review_project))
+    ocr_layout.addWidget(self._button("补录未识别文字", self.recover_manual_text))
     layout.addWidget(ocr)
 
     scale = QGroupBox("输出设置", container)
@@ -124,7 +127,9 @@ def build_controls(self):
     self.tabs.removeTab(self.tabs.indexOf(self.preprocess_tabs))
     self.corrected_canvas.hide()
     self.preprocess_tabs.hide()
-    self.tabs.setTabText(self.tabs.indexOf(self.detected_canvas), "FINAL OUTPUT PREVIEW / CAD 预览")
+    self.tabs.setTabText(
+        self.tabs.indexOf(self.detected_canvas), "FINAL OUTPUT PREVIEW / CAD 预览"
+    )
     scroll = QScrollArea()
     scroll.setWidgetResizable(True)
     scroll.setWidget(container)

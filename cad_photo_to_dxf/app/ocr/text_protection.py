@@ -68,7 +68,11 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
             continue
         if not (0.06 <= aspect <= 10.0):
             continue
-        candidate_mask[labels == label] = 255
+        # Connected-component stats bound every pixel carrying this label.
+        # Restrict the equality scan to that exact box, without changing ink.
+        candidate_roi = candidate_mask[y : y + height, x : x + width]
+        label_roi = labels[y : y + height, x : x + width]
+        candidate_roi[label_roi == label] = 255
         candidate_boxes.append((x, y, width, height))
 
     if not candidate_boxes:
@@ -101,9 +105,7 @@ def detect_text_region_mask(binary_image: np.ndarray) -> TextProtectionResult:
     margin = scaled_int(4, scale, minimum=2)
     accepted_regions = 0
     for group_label in range(1, group_count):
-        x, y, width, height, area = (
-            int(value) for value in group_stats[group_label]
-        )
+        x, y, width, height, area = (int(value) for value in group_stats[group_label])
         if width < min_height and height < min_height:
             continue
         components_in_group = 0
@@ -180,13 +182,10 @@ def _line_mask_continuity(
     longest_run = float(np.max(run_lengths))
     long_continuation = longest_run >= max(minimum_run, line.length * 0.18)
     distributed_continuation = bool(
-        run_lengths.size >= 2
-        and outside_ratio >= 0.45
-        and longest_run >= minimum_run
+        run_lengths.size >= 2 and outside_ratio >= 0.45 and longest_run >= minimum_run
     )
     return bool(
-        outside_ratio >= 0.35
-        and (long_continuation or distributed_continuation)
+        outside_ratio >= 0.35 and (long_continuation or distributed_continuation)
     )
 
 
@@ -298,8 +297,7 @@ def filter_text_like_lines(
         tolerance=max(3.0, 3.0 * scale),
     )
     continuity = [
-        _line_mask_continuity(line, protection.mask, scale=scale)
-        for line in lines
+        _line_mask_continuity(line, protection.mask, scale=scale) for line in lines
     ]
     collinear_peers = [
         _collinear_peer_indices(lines, index, scale=scale)
@@ -312,8 +310,7 @@ def filter_text_like_lines(
     for index, line in enumerate(lines):
         coverage = _line_mask_coverage(line, protection.mask)
         structural_network = bool(
-            line.length >= network_minimum
-            and connection_counts[index] >= 2
+            line.length >= network_minimum and connection_counts[index] >= 2
         )
         continuation_network = bool(
             line.length >= network_minimum
@@ -324,8 +321,7 @@ def filter_text_like_lines(
             coverage >= 0.28 and line.length <= local_line_limit
         ) or coverage >= 0.72
         restoration_evidence = bool(
-            not structural_network
-            and (continuity[index] or continuation_network)
+            not structural_network and (continuity[index] or continuation_network)
         )
         if reject and not (structural_network or restoration_evidence):
             rejected += 1

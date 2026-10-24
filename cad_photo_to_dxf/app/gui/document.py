@@ -7,12 +7,23 @@ import numpy as np
 from PySide6.QtWidgets import QFileDialog, QMessageBox
 
 from app.ocr.auxiliary_recognition import confirmable_circles
-from app.core.image_loader import bounded_pdf_dpi, load_image, pdf_page_count, pdf_page_size_mm
+from app.core.image_loader import (
+    bounded_pdf_dpi,
+    load_image,
+    pdf_page_count,
+    pdf_page_size_mm,
+)
 from app.geometry.pdf_arc_evidence import pdf_geometry_binding
 from app.geometry.line_detect import render_line_preview
 from app.geometry.preprocess import PreprocessParams
 from app.core.preview import render_final_structure_preview
-from app.core.processing import ProcessingCacheKey, build_processing_cache_key, cache_key_matches, file_content_sha256, image_content_sha256
+from app.core.processing import (
+    ProcessingCacheKey,
+    build_processing_cache_key,
+    cache_key_matches,
+    file_content_sha256,
+    image_content_sha256,
+)
 from app.geometry.raster_trace import RasterTraceResult
 from app.core.scale_calibrator import ScaleCalibration
 from app.core.cache import load_trace_cache, save_trace_cache
@@ -48,6 +59,8 @@ def _current_trace_key(self) -> object:
 
 
 def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
+    if getattr(self, "_review_project", None) is not None:
+        return  # Saved review projects have one frozen physical page.
     if not self._native_pdf_mode or self.current_path is None:
         return
     if not 0 <= page_index < self._pdf_page_count:
@@ -169,20 +182,27 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
 
 
 def _load_trace_source_for_current_page(self):
+    if getattr(self, "_review_project", None) is not None:
+        self._review_project.validate_source()
+        return self._review_project.frame.copy()
     self._current_pdf_geometry = None
+    self._current_pdf_text_suggestions = None
     if not self._native_pdf_mode or self.current_path is None:
         if self.corrected_image is None:
             raise ValueError("当前页面尚未载入")
         return np.ascontiguousarray(self.corrected_image.copy())
     geometry = []
+    native_text = []
     image = load_image(
         self.current_path,
         page_index=self._current_pdf_page_index,
         pdf_dpi=self._processing_pdf_dpi(self._current_pdf_page_index),
         grayscale=True,
         pdf_geometry_sink=geometry,
+        pdf_text_sink=native_text,
     )
     self._current_pdf_geometry = geometry[0] if geometry else None
+    self._current_pdf_text_suggestions = native_text[0] if native_text else None
     width_mm, _height_mm = self._pdf_page_sizes_mm[self._current_pdf_page_index]
     self.calibration = ScaleCalibration(
         (0.0, 0.0), (float(max(1, image.shape[1] - 1)), 0.0), width_mm
@@ -256,6 +276,7 @@ def _restore_cached_trace_for_page(self, page_index: int) -> None:
     self._signature_regions = structure.signatures
     self.lines = list(structure.straight_lines)
     self._final_structure = structure
+    self._completed_trace_key = expected_key
     self._preview_structure_id = structure.structure_id
     self._cad_preview_binary = render_final_structure_preview(structure)
     self._dirty_trace_keys.discard(expected_key)
@@ -403,15 +424,23 @@ def _source_key(
             np.frombuffer(fallback.encode("utf-8"), dtype=np.uint8)
         )
     return build_processing_cache_key(
-        input_content_sha256=content_hash, page_index=page_index, config=config,
+        input_content_sha256=content_hash,
+        page_index=page_index,
+        config=config,
         pdf_geometry_binding=(
             pdf_geometry_binding(source_path, page_index, config.source_dpi)
-            if source_path is not None and source_path.suffix.lower() == '.pdf' and page_index is not None else None),
+            if source_path is not None
+            and source_path.suffix.lower() == ".pdf"
+            and page_index is not None
+            else None
+        ),
     )
 
 
 def _store_current_trace(self) -> Path | None:
     """Reuse an unchanged page cache instead of recompressing it at export."""
+    if getattr(self, "_review_project", None) is not None:
+        return self._review_project._cache_path
     structure = self._final_structure
     if structure is None:
         return None
@@ -464,6 +493,10 @@ def _store_current_trace(self) -> Path | None:
 
 
 def import_image(self) -> None:
+    from app.gui.review_project_actions import can_leave_review_project
+
+    if not can_leave_review_project(self):
+        return
     if self._is_processing():
         QMessageBox.information(self, "正在处理", "请先取消或等待当前任务完成。")
         return
@@ -479,6 +512,9 @@ def import_image(self) -> None:
     try:
         if file_path.suffix.lower() == ".pdf":
             count = pdf_page_count(file_path)
+            from app.gui.review_project_actions import detach_review_project
+
+            detach_review_project(self)
             self.current_path = file_path
             self._native_pdf_mode = True
             self._pdf_page_count = count

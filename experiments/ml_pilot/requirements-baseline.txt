@@ -1,0 +1,6 @@
+# Historical P3B CPU baseline pins. Preparation only; no real fit was run by P12-A.
+numpy==2.2.6
+scipy==1.15.3
+scikit-learn==1.7.2
+joblib==1.5.2
+threadpoolctl==3.6.0

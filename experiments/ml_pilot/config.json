@@ -1,0 +1,11 @@
+{
+  "experiment_version": "p12a-environment-v1",
+  "purpose": "ENVIRONMENT_ONLY",
+  "real_training_enabled": false,
+  "model": "linear-18-to-3",
+  "seed": 314159,
+  "batch_size": 6,
+  "learning_rate": 0.05,
+  "momentum": 0.9,
+  "maximum_steps": 8
+}
