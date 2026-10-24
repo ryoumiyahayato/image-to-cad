@@ -70,7 +70,9 @@
     "cad_photo_to_dxf/app/ocr/digit_input_evidence.py",
     "cad_photo_to_dxf/app/ocr/digit_reading_context.py",
     "cad_photo_to_dxf/app/ocr/rapidocr_direction_output.py",
-    "start-stable.ps1"
+    "start-stable.ps1",
+    "cad_photo_to_dxf/app/geometry/raster_trace.py",
+    "cad_photo_to_dxf/tests/test_scan_line_regularization.py"
   ],
   "research": [
     "experiments/research_goal01_native_dash/native_dash.py",
@@ -734,5 +736,8 @@
     "weights/checkpoints/environments/cache/full local-artifacts",
     "local commit ancestry: raw history retained privately, never pushed"
   ],
-  "existing_public_assets": "Preserved without deletion; existing runtime font and source fixture contracts remain unchanged"
+  "existing_public_assets": "Preserved without deletion; existing runtime font and source fixture contracts remain unchanged",
+  "public_compatibility_hunks": {
+    "cad_photo_to_dxf/tests/test_scan_line_regularization.py": "Only removesuffix -> replace from the existing local test, preserving the assertion and pre-existing public body; remaining private local changes withheld"
+  }
 }

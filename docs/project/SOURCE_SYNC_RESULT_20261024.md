@@ -67,8 +67,16 @@ Goal12/13/21/22 使用原有技术汇总版；详细真实逐项报告不公开�
 
 ## 检查与合并边界
 
-202 项相关产品检查最终通过，首次失败为旧测试替身缺少 source_structure_id，已补齐接口，断言未删改。改变文件的 Ruff 通过；格式化前后 AST 直接比较一致。保留 Qt 对象生存期，显式登记跨文件 fixture，移除无用导入并重命名歧义局部变量。生产模块导入及启动器 --version 通过。仓库现有卫生检查通过，finding_count=0；180 个选定 Python 文件完成内存编译检查，Goal22 保存合成比较返回 DIGIT_VALUE_EQUAL 且无自动写回权限。检查记录位于本轮独立工作目录；最终 SHA 的 CI 从 PR checks 读取，不能用文档检查点的 CI 代替。
+202 项相关产品检查最终通过，首次失败为旧测试替身缺少 source_structure_id，已补齐接口，断言未删改。改变文件的 Ruff 通过；格式化前后 AST 直接比较一致。保留 Qt 对象生存期，显式登记跨文件 fixture，移除无用导入并重命名歧义局部变量。生产模块导入及启动器 --version 通过。仓库现有卫生检查通过，finding_count=0；182 个选定 Python 文件完成内存编译检查，Goal22 保存合成比较返回 DIGIT_VALUE_EQUAL 且无自动写回权限。检查记录位于本轮独立工作目录；最终 SHA 的 CI 从 PR checks 读取，不能用文档检查点的 CI 代替。
 
 仍有公开边界阻塞：14 份依赖真实来源或含逐项真实几何的产品测试，以及 3 份未晋级活动测试留在私人恢复副本；新的真实区域 PNG、真实几何 JSON、完整 local-artifacts、详细报告、私人评审、权重及环境均未上传。保留远端已有合法字体、测试素材和历史证据合同，没有删除既有受跟踪文件。未取得私人材料的公开许可或等价检查条件前，Draft 不因上传成功而解除。
 
 本轮没有新算法、真实 OCR/整页转换、训练、GUI 验收、Release/tag 或下一阶段研发。最终远端 SHA、CI 结果和 main 是否更新由 PR 收口记录给出。
+
+## 首次源码 SHA 的 CI 与兼容修正
+
+首次源码候选 1036f82a9242aa5f46702b54e82293bee5b7daa2 的 Linux CI 为 942 passed、3 failed、8 skipped。三个失败分别是：P10-A preservation-current-p10a.json 的 algorithm_version 与当前运行基准不一致；残余层校对已传 native_fills，但 RasterTraceResult 尚无对应字段；旧缓存测试仅 removesuffix，当前算法身份又追加了后续阶段标记。
+
+后两项作为同步接口兼容修正：RasterTraceResult 补原生面积可选载荷，FinalStructure 适配器继续转交；缓存测试使用本地既有 replace 写法，保留“不相等”断言。17 项相关现有检查通过，涉及文件 Ruff 通过。公开测试只纳入该缓存断言兼容片段，不公开同文件的其他本地真实来源改动。
+
+P10-A 保存基线及 preservation_check.py 没有修改。未新建替代保存基线、删断言、放宽算法身份检查或增加跳过。该历史合同与当前算法身份尚未完成审查，继续阻塞合并。最终 SHA 的现有 CI 仍须按 PR 读回；首次源码 SHA 的结果不能代表后续提交。
