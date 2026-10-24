@@ -1,0 +1,494 @@
+{
+  "reference": "e5b80f9cbf9f64ead168f0255bc3b77c86e9f880 baseline-runtime",
+  "tracked_origin_files": 114,
+  "existing_untracked_ocr_dependencies": [
+    "digit_input_evidence.py",
+    "digit_reading_context.py",
+    "rapidocr_direction_output.py"
+  ],
+  "file_count": 117,
+  "files": [
+    {
+      "path": "cad_photo_to_dxf/app/__init__.py",
+      "bytes": 118
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/__init__.py",
+      "bytes": 0
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/arc_types.py",
+      "bytes": 9156
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/cache.py",
+      "bytes": 33650
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/cancellation.py",
+      "bytes": 1311
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/image_loader.py",
+      "bytes": 8320
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/manual_text_recovery.py",
+      "bytes": 20059
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/member_binding.py",
+      "bytes": 20300
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/native_fill.py",
+      "bytes": 5016
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/native_text_review.py",
+      "bytes": 3524
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/perspective.py",
+      "bytes": 13909
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/preview.py",
+      "bytes": 10817
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/processing.py",
+      "bytes": 13188
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/reporting.py",
+      "bytes": 3909
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/resolution.py",
+      "bytes": 3348
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/review_project.py",
+      "bytes": 39888
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/scale_calibrator.py",
+      "bytes": 2069
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/structure.py",
+      "bytes": 18538
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/structure_build.py",
+      "bytes": 3171
+    },
+    {
+      "path": "cad_photo_to_dxf/app/core/trace_types.py",
+      "bytes": 463
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/__init__.py",
+      "bytes": 0
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/debug_bundle.py",
+      "bytes": 19737
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/observability.py",
+      "bytes": 13026
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/performance_observability.py",
+      "bytes": 792
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/source_support_lifecycle.py",
+      "bytes": 30970
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/trace_verification.py",
+      "bytes": 4926
+    },
+    {
+      "path": "cad_photo_to_dxf/app/diagnostics/visual_acceptance.py",
+      "bytes": 21883
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/__init__.py",
+      "bytes": 0
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/contour_source_ref.py",
+      "bytes": 15879
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/document_export.py",
+      "bytes": 3915
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/dwg_converter.py",
+      "bytes": 13511
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/dxf_validator.py",
+      "bytes": 9326
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/line_source_ref.py",
+      "bytes": 11148
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/native_fill_entities.py",
+      "bytes": 2927
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/ocr_outline_export.py",
+      "bytes": 17149
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/portable_dxf.py",
+      "bytes": 7458
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/review_text.py",
+      "bytes": 19233
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/text_consistency.py",
+      "bytes": 7980
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/trace_document_export.py",
+      "bytes": 15641
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/trace_dxf_entities.py",
+      "bytes": 20422
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/trace_entity_writer.py",
+      "bytes": 11065
+    },
+    {
+      "path": "cad_photo_to_dxf/app/export/trace_single_export.py",
+      "bytes": 12849
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/__init__.py",
+      "bytes": 0
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/connectivity_safety.py",
+      "bytes": 19119
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/content_ownership.py",
+      "bytes": 62485
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/junction_v2_consumer.py",
+      "bytes": 46271
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/line_detect.py",
+      "bytes": 11037
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/native_arc_replacement.py",
+      "bytes": 16087
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/native_source_group.py",
+      "bytes": 35210
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/optimized_trace.py",
+      "bytes": 43189
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/pdf_arc_evidence.py",
+      "bytes": 36229
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/pdf_fill_evidence.py",
+      "bytes": 13024
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/pdf_text_suggestions.py",
+      "bytes": 21439
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/preprocess.py",
+      "bytes": 5717
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/raster_trace.py",
+      "bytes": 5929
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/reconciliation_geometry.py",
+      "bytes": 12859
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/scan_artifact_filter.py",
+      "bytes": 24379
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/scan_cleanup.py",
+      "bytes": 13066
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/scan_curve_retention.py",
+      "bytes": 10462
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/scan_line_regularization.py",
+      "bytes": 15970
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/source_presentation.py",
+      "bytes": 15992
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/source_stroke_reconciliation.py",
+      "bytes": 248512
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/straight_line_reconstruction.py",
+      "bytes": 84282
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry/structural_roi.py",
+      "bytes": 13056
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry_rules/junction_v2_geometry_rules_v1.json",
+      "bytes": 5569
+    },
+    {
+      "path": "cad_photo_to_dxf/app/geometry_rules/junction_v2_r4_saved_replay_v1.json",
+      "bytes": 19769
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/__init__.py",
+      "bytes": 45
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/controls.py",
+      "bytes": 5800
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/document.py",
+      "bytes": 21684
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/export_dialogs.py",
+      "bytes": 1772
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/export_worker.py",
+      "bytes": 14217
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/image_canvas.py",
+      "bytes": 10750
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/librecad_ocr_review.py",
+      "bytes": 10306
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/manual_text_dialog.py",
+      "bytes": 25941
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/ocr_review.py",
+      "bytes": 16392
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/page_export.py",
+      "bytes": 14889
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/processing.py",
+      "bytes": 11079
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/review_actions.py",
+      "bytes": 13688
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/review_async.py",
+      "bytes": 13361
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/review_project_actions.py",
+      "bytes": 13133
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/review_project_dialog.py",
+      "bytes": 14052
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/trace_paint.py",
+      "bytes": 7903
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/visual_acceptance_widget.py",
+      "bytes": 11282
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/window.py",
+      "bytes": 33778
+    },
+    {
+      "path": "cad_photo_to_dxf/app/gui/worker.py",
+      "bytes": 1205
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/__init__.py",
+      "bytes": 0
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/auxiliary_recognition.py",
+      "bytes": 1660
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/digit_input_evidence.py",
+      "bytes": 3207
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/digit_reading_context.py",
+      "bytes": 3057
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/engineering_symbols.py",
+      "bytes": 7879
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/font_library.py",
+      "bytes": 17879
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/librecad_lff.py",
+      "bytes": 19581
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/logo_detection.py",
+      "bytes": 9455
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/long_line_orientation.py",
+      "bytes": 3204
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_fast.py",
+      "bytes": 15033
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_layout.py",
+      "bytes": 40094
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_overlap.py",
+      "bytes": 2611
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_pipeline.py",
+      "bytes": 11247
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_recognition.py",
+      "bytes": 15071
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/ocr_tile_filter.py",
+      "bytes": 2406
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/rapidocr_direction_output.py",
+      "bytes": 1141
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/signature_overlay.py",
+      "bytes": 21600
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/single_glyph_display.py",
+      "bytes": 7877
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/source_row_display.py",
+      "bytes": 16719
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/text_output_contract.py",
+      "bytes": 12646
+    },
+    {
+      "path": "cad_photo_to_dxf/app/ocr/text_protection.py",
+      "bytes": 12384
+    },
+    {
+      "path": "cad_photo_to_dxf/app/quality/__init__.py",
+      "bytes": 79
+    },
+    {
+      "path": "cad_photo_to_dxf/app/quality/fidelity.py",
+      "bytes": 30664
+    },
+    {
+      "path": "cad_photo_to_dxf/app/quality/fidelity_report.py",
+      "bytes": 9061
+    },
+    {
+      "path": "cad_photo_to_dxf/app/version.py",
+      "bytes": 93
+    },
+    {
+      "path": "cad_photo_to_dxf/main.py",
+      "bytes": 7054
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/librecad-font.json",
+      "bytes": 457
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/librecad-font.lock.json",
+      "bytes": 394
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/manifest.json",
+      "bytes": 1922
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/WQY-LICENSE-Apache-2.0.txt",
+      "bytes": 11358
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.lff",
+      "bytes": 43436980
+    },
+    {
+      "path": "cad_photo_to_dxf/resources/fonts/wqy-unicode.zip",
+      "bytes": 8947414
+    }
+  ],
+  "observed_environment_versions": {
+    "numpy": "2.4.6",
+    "opencv-python": "4.14.0.94",
+    "ezdxf": "1.4.4",
+    "PySide6": "6.11.2",
+    "pypdfium2": "5.13.0",
+    "Pillow": "12.3.0",
+    "rapidocr": "3.9.2",
+    "onnxruntime": "1.29.0"
+  },
+  "original_launcher": "start-stable.ps1 loaded active cad_photo_to_dxf, including unpromoted P21-A",
+  "candidate_launcher": "start-stable.ps1 loads this checkout/cad_photo_to_dxf; Python executable is explicit or PATH",
+  "sync_changes": "Ruff formatting; unused imports; local variable naming; pytest fixture registration; mock source_structure_id compatibility. No algorithm promotion.",
+  "fingerprints_computed": false
+}

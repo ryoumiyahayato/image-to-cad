@@ -1,3 +1,10 @@
+## 源码同步候选 — 2026-10-24
+
+当前检出保存了本地 P11—P20 的既有运行基准，以及与生产入口隔离的研究 Goal01—22。版本仍为 0.3.0-dev。P21-A 活动入口修改与 P20-D 未晋级候选留在私人恢复分支；研究 NO_GO 不变。
+
+本轮是代码保全。合并和产品验收另行记录。PR #35 的最终 SHA 检查、未公开测试与恢复范围见 [同步结果](docs/project/SOURCE_SYNC_RESULT_20261024.md) 和 [文件选择](docs/project/SYNC_SELECTION_20261024.json)。start-stable.ps1 加载当前检出，使用 -Python 指定解释器；原活动树的同名脚本并不表示稳定。
+
+
 # Image to CAD — development preview
 
 Image to CAD converts scans, drawing photographs and PDF pages into editable CAD objects. The current version is **0.3.0-dev**, defined in `cad_photo_to_dxf/app/version.py`.

@@ -1,3 +1,6 @@
+2026-10-24 源码同步：五个工作树的提交对象、差异和工作文件已保全并异地恢复核对。候选使用 e5b80f9 的 baseline-runtime，未采用活动 P21-A 入口。隔离保存 Goal01—22 可公开代码，详细真实资料留私有副本。PR #35 保持 Draft；最后检查与未同步文件见 [SOURCE_SYNC_RESULT](SOURCE_SYNC_RESULT_20261024.md)。本轮无新产品收益验收。
+
+
 # Image to CAD project status
 
 Updated: 2026-10-14. Version: 0.3.0-dev. Development preview; no new release or release tag.

@@ -1,0 +1,738 @@
+{
+  "product": [
+    "cad_photo_to_dxf/app/core/cache.py",
+    "cad_photo_to_dxf/app/core/image_loader.py",
+    "cad_photo_to_dxf/app/core/manual_text_recovery.py",
+    "cad_photo_to_dxf/app/core/native_fill.py",
+    "cad_photo_to_dxf/app/core/native_text_review.py",
+    "cad_photo_to_dxf/app/core/preview.py",
+    "cad_photo_to_dxf/app/core/processing.py",
+    "cad_photo_to_dxf/app/core/review_project.py",
+    "cad_photo_to_dxf/app/core/structure.py",
+    "cad_photo_to_dxf/app/core/structure_build.py",
+    "cad_photo_to_dxf/app/export/contour_source_ref.py",
+    "cad_photo_to_dxf/app/export/document_export.py",
+    "cad_photo_to_dxf/app/export/line_source_ref.py",
+    "cad_photo_to_dxf/app/export/native_fill_entities.py",
+    "cad_photo_to_dxf/app/export/ocr_outline_export.py",
+    "cad_photo_to_dxf/app/export/portable_dxf.py",
+    "cad_photo_to_dxf/app/export/review_text.py",
+    "cad_photo_to_dxf/app/export/text_consistency.py",
+    "cad_photo_to_dxf/app/export/trace_document_export.py",
+    "cad_photo_to_dxf/app/export/trace_dxf_entities.py",
+    "cad_photo_to_dxf/app/export/trace_entity_writer.py",
+    "cad_photo_to_dxf/app/export/trace_single_export.py",
+    "cad_photo_to_dxf/app/geometry/content_ownership.py",
+    "cad_photo_to_dxf/app/geometry/native_source_group.py",
+    "cad_photo_to_dxf/app/geometry/optimized_trace.py",
+    "cad_photo_to_dxf/app/geometry/pdf_arc_evidence.py",
+    "cad_photo_to_dxf/app/geometry/pdf_fill_evidence.py",
+    "cad_photo_to_dxf/app/geometry/pdf_text_suggestions.py",
+    "cad_photo_to_dxf/app/geometry/scan_artifact_filter.py",
+    "cad_photo_to_dxf/app/geometry/scan_curve_retention.py",
+    "cad_photo_to_dxf/app/gui/controls.py",
+    "cad_photo_to_dxf/app/gui/document.py",
+    "cad_photo_to_dxf/app/gui/export_worker.py",
+    "cad_photo_to_dxf/app/gui/manual_text_dialog.py",
+    "cad_photo_to_dxf/app/gui/page_export.py",
+    "cad_photo_to_dxf/app/gui/processing.py",
+    "cad_photo_to_dxf/app/gui/review_actions.py",
+    "cad_photo_to_dxf/app/gui/review_async.py",
+    "cad_photo_to_dxf/app/gui/review_project_actions.py",
+    "cad_photo_to_dxf/app/gui/review_project_dialog.py",
+    "cad_photo_to_dxf/app/gui/window.py",
+    "cad_photo_to_dxf/app/ocr/auxiliary_recognition.py",
+    "cad_photo_to_dxf/app/ocr/long_line_orientation.py",
+    "cad_photo_to_dxf/app/ocr/ocr_layout.py",
+    "cad_photo_to_dxf/app/ocr/ocr_recognition.py",
+    "cad_photo_to_dxf/app/ocr/single_glyph_display.py",
+    "cad_photo_to_dxf/app/ocr/source_row_display.py",
+    "cad_photo_to_dxf/app/ocr/text_protection.py",
+    "cad_photo_to_dxf/app/quality/__init__.py",
+    "cad_photo_to_dxf/app/quality/fidelity.py",
+    "cad_photo_to_dxf/app/quality/fidelity_report.py",
+    "cad_photo_to_dxf/scripts/inspect_cad_fidelity.py",
+    "cad_photo_to_dxf/tests/test_fidelity_inspection.py",
+    "cad_photo_to_dxf/tests/test_line_source_ref.py",
+    "cad_photo_to_dxf/tests/test_line_source_ref_integrated_edges.py",
+    "cad_photo_to_dxf/tests/test_literal_caret_export.py",
+    "cad_photo_to_dxf/tests/test_long_line_orientation.py",
+    "cad_photo_to_dxf/tests/test_manual_text_recovery.py",
+    "cad_photo_to_dxf/tests/test_native_text_review.py",
+    "cad_photo_to_dxf/tests/test_p16_fault_controls.py",
+    "cad_photo_to_dxf/tests/test_p20a_native_polygon_fill.py",
+    "cad_photo_to_dxf/tests/test_pdf_fill_context.py",
+    "cad_photo_to_dxf/tests/test_persistent_text_review.py",
+    "cad_photo_to_dxf/tests/test_reconciliation_batch_boundaries.py",
+    "cad_photo_to_dxf/tests/test_review_async.py",
+    "cad_photo_to_dxf/tests/test_scan_artifact_root_scope.py",
+    "cad_photo_to_dxf/tests/test_text_export_consistency.py",
+    "cad_photo_to_dxf/app/ocr/digit_input_evidence.py",
+    "cad_photo_to_dxf/app/ocr/digit_reading_context.py",
+    "cad_photo_to_dxf/app/ocr/rapidocr_direction_output.py",
+    "start-stable.ps1"
+  ],
+  "research": [
+    "experiments/research_goal01_native_dash/native_dash.py",
+    "experiments/research_goal01_native_dash/native_dash_before_page_rotation.py",
+    "experiments/research_goal01_native_dash/dxf_prototype.py",
+    "experiments/research_goal01_native_dash/make_fixtures.py",
+    "experiments/research_goal01_native_dash/experiment1.py",
+    "experiments/research_goal01_native_dash/run_study.py",
+    "experiments/research_goal02_source_selection/selector.py",
+    "experiments/research_goal03_local_repair/repair.py",
+    "experiments/research_goal03_local_repair/repair_before_io_fix.py",
+    "experiments/research_goal03_local_repair/reference_p20d_native_stroke.py",
+    "experiments/research_goal03_local_repair/reference_p20d_preview.py",
+    "experiments/research_goal03_local_repair/readback.py",
+    "experiments/research_goal04_candidate_ownership/ownership.py",
+    "experiments/research_goal04_candidate_ownership/mechanism_examples.py",
+    "experiments/research_goal05_acceptance/gui_readback.py",
+    "experiments/research_goal05_acceptance/serialization_audit.py",
+    "experiments/research_goal06_cad_roundtrip/readback.py",
+    "experiments/research_goal06_cad_roundtrip/check_attributes.py",
+    "experiments/research_goal07_reference_cad/readback.py",
+    "experiments/research_goal08_numeric_consistency/prototype.py",
+    "experiments/research_goal08_numeric_consistency/prototype_v1.py",
+    "experiments/research_goal09_fraction_reading/prototype.py",
+    "experiments/research_goal09_fraction_reading/make_risk_fixtures.py",
+    "experiments/research_goal10_numeric_input_integrity/diagnose_inputs.py",
+    "experiments/research_goal11_formula_model/parse_formula.py",
+    "experiments/research_goal11_formula_model/infer_worker.py",
+    "experiments/research_goal11_formula_model/download_model.py",
+    "experiments/research_goal12_ocr_call_consistency/common.py",
+    "experiments/research_goal12_ocr_call_consistency/crop_policy.py",
+    "experiments/research_goal12_ocr_call_consistency/inspect_boundaries.py",
+    "experiments/research_goal12_ocr_call_consistency/run_controls.py",
+    "experiments/research_goal13_sampling_isolation/g13.py",
+    "experiments/research_goal13_sampling_isolation/orientation_bridge.py",
+    "experiments/research_goal14_numeric_consistency_task/task.py",
+    "experiments/research_goal14_numeric_consistency_task/generate.py",
+    "experiments/research_goal14_numeric_consistency_task/validate.py",
+    "experiments/research_goal15_numeric_consistency_pilot/common.py",
+    "experiments/research_goal15_numeric_consistency_pilot/model.py",
+    "experiments/research_goal15_numeric_consistency_pilot/worker.py",
+    "experiments/research_goal15_numeric_consistency_pilot/evaluate.py",
+    "experiments/research_goal15_numeric_consistency_pilot/prepare_data.py",
+    "experiments/research_goal15_numeric_consistency_pilot/check_data.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/common.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/runtime.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/model.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/train.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/prepare_data.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/check_data.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/check_implementation.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/coverage.py",
+    "experiments/research_goal16_numeric_fit_diagnosis/evaluate.py",
+    "experiments/research_goal17_frozen_numeric_probe/common.py",
+    "experiments/research_goal17_frozen_numeric_probe/infer.py",
+    "experiments/research_goal17_frozen_numeric_probe/evaluate.py",
+    "experiments/research_goal18_identity_supervision/common.py",
+    "experiments/research_goal18_identity_supervision/engine.py",
+    "experiments/research_goal18_identity_supervision/score.py",
+    "experiments/research_goal18_identity_supervision/train.py",
+    "experiments/research_goal18_identity_supervision/prepare.py",
+    "experiments/research_goal18_identity_supervision/evaluate.py",
+    "experiments/research_goal19_role_composition/common.py",
+    "experiments/research_goal19_role_composition/score.py",
+    "experiments/research_goal19_role_composition/prepare.py",
+    "experiments/research_goal19_role_composition/evaluate.py",
+    "experiments/research_goal20_pairing_structure/common.py",
+    "experiments/research_goal20_pairing_structure/engine.py",
+    "experiments/research_goal20_pairing_structure/score.py",
+    "experiments/research_goal20_pairing_structure/train.py",
+    "experiments/research_goal20_pairing_structure/prepare.py",
+    "experiments/research_goal20_pairing_structure/evaluate.py",
+    "experiments/research_goal21_role_digit_reading/common.py",
+    "experiments/research_goal21_role_digit_reading/candidate_contract.py",
+    "experiments/research_goal21_role_digit_reading/compare.py",
+    "experiments/research_goal21_role_digit_reading/model.py",
+    "experiments/research_goal21_role_digit_reading/infer.py",
+    "experiments/research_goal21_role_digit_reading/ocr_baseline.py",
+    "experiments/research_goal21_role_digit_reading/prepare_training.py",
+    "experiments/research_goal21_role_digit_reading/train.py",
+    "experiments/research_goal21_role_digit_reading/evaluate.py",
+    "experiments/research_goal22_automatic_role_binding/common.py",
+    "experiments/research_goal22_automatic_role_binding/candidate_contract.py",
+    "experiments/research_goal22_automatic_role_binding/comparison_contract.py",
+    "experiments/research_goal22_automatic_role_binding/compare_saved.py",
+    "experiments/research_goal22_automatic_role_binding/locator.py",
+    "experiments/research_goal22_automatic_role_binding/fixed_ocr.py",
+    "experiments/research_goal22_automatic_role_binding/run.py",
+    "experiments/research_goal22_automatic_role_binding/evaluate.py",
+    "experiments/research_goal22_automatic_role_binding/make_examples.py",
+    "experiments/research_goal22_automatic_role_binding/render_evidence.py",
+    "experiments/research_goal22_automatic_role_binding/summarize.py",
+    "experiments/ml_pilot/data.py",
+    "experiments/ml_pilot/evaluate.py",
+    "experiments/ml_pilot/pilot.py",
+    "experiments/ml_pilot/p12c_numeric_pilot.py",
+    "experiments/ml_pilot/test_pilot.py",
+    "experiments/ml_pilot/test_p12c_scaffold.py",
+    "experiments/ml_pilot/p21c_fraction_guard/common.py",
+    "experiments/ml_pilot/p21c_fraction_guard/generate.py",
+    "experiments/ml_pilot/p21c_fraction_guard/infer.py",
+    "experiments/ml_pilot/p21c_fraction_guard/train.py",
+    "experiments/ml_pilot/p21c_fraction_guard/risk.py",
+    "experiments/ml_pilot/p21d_stroke_support/common.py",
+    "experiments/ml_pilot/p21d_stroke_support/model.py",
+    "experiments/ml_pilot/p21d_stroke_support/scenes.py",
+    "experiments/ml_pilot/p21d_stroke_support/infer.py",
+    "experiments/ml_pilot/p21d_stroke_support/geometry_metrics.py",
+    "experiments/ml_pilot/p21d_stroke_support/train.py",
+    "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/mechanism.py",
+    "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/mechanism_v1.py",
+    "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/generate.py"
+  ],
+  "original_synthetic_examples": [
+    "experiments/research_goal22_automatic_role_binding/examples/examples.json",
+    "experiments/research_goal22_automatic_role_binding/examples/diagnostics.json",
+    "experiments/research_goal22_automatic_role_binding/examples/example-comparison.json",
+    "experiments/research_goal22_automatic_role_binding/examples/SYNTHETIC-v1/regions.json",
+    "experiments/research_goal22_automatic_role_binding/examples/SYNTHETIC-v1/readings.json",
+    "experiments/research_goal22_automatic_role_binding/examples/SYNTHETIC-v2/regions.json",
+    "experiments/research_goal22_automatic_role_binding/examples/SYNTHETIC-v2/readings.json"
+  ],
+  "research_support": [
+    "experiments/ml_pilot/AGENTS.md",
+    "experiments/ml_pilot/artificial-data.json",
+    "experiments/ml_pilot/config.json",
+    "experiments/ml_pilot/p12c_pilot_config.json",
+    "experiments/ml_pilot/supervised-plan.json",
+    "experiments/ml_pilot/requirements-baseline.txt",
+    "experiments/ml_pilot/requirements-cpu.txt",
+    "experiments/ml_pilot/requirements-numeric.txt"
+  ],
+  "private_tests": [
+    {
+      "path": "cad_photo_to_dxf/tests/test_ocr_batch_boundaries.py",
+      "reason": "Private real evidence/geometry dependency: real_regression/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p16f_target_and_contour.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p17a_fixed_execution.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p17b_text_deghost.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/, D:/programs/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p18a_native_fill_portable.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/, D:/programs/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p18a_portable_dxf.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_p19e_native_source_group.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/, D:/programs/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_scan_artifact_local_damage_scope.py",
+      "reason": "Private real evidence/geometry dependency: local-artifacts/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_scan_curve_retention.py",
+      "reason": "Private real evidence/geometry dependency: real_regression/, usda-isolated-curves"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_scan_line_regularization.py",
+      "reason": "Private real evidence/geometry dependency: real_regression/"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_single_glyph_display.py",
+      "reason": "Private real evidence/geometry dependency: real_regression/, usda-window-mark"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_text_rule_source_scope.py",
+      "reason": "Private real evidence/geometry dependency: real_regression/, redwood-storage-rule"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_text_source_bbox_scope.py",
+      "reason": "Private real evidence/geometry dependency: tasmanian-text-padding-fixture"
+    },
+    {
+      "path": "cad_photo_to_dxf/tests/test_review_glyph_collision.py",
+      "reason": "Embedded real W02 OCR observations and origin coordinates"
+    }
+  ],
+  "private_research_scripts": [
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/evaluate_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/evaluate_synthetic.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/fetch_fonts.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/freeze_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/prepare_real_sources.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21c_fraction_guard/recognize_new.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/accept_return.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/build_package.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/audit_saved.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/candidate_cooperation/summarize.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/evaluate_saved.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/freeze_targets.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/infer_once.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/prepare_cleanup.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/prepare_sources.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/cloud_challenge/register_inputs.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/export_results.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/preflight.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/prepare_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/real_eval.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/resource_challenge/finalize_review.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/resource_challenge/measure.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/resource_challenge/prepare_candidates.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/resource_challenge/write_inventory.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/ml_pilot/p21d_stroke_support/verify_local.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal01_native_dash/experiment2.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal01_native_dash/experiment3.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal01_native_dash/postprocess.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal02_source_selection/review.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal03_local_repair/cad_edit_roundtrip.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal03_local_repair/preview_goal03.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal03_local_repair/restore_block87.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal03_local_repair/restore_g38.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal03_local_repair/restore_minimal.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/closeout.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/inspect_c_source.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/replay_checks.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/restore_c.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/restore_index.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/restore_input_header.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/restore_input_member.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal04_candidate_ownership/style_revision_check.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/finalize.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/inspect_sources.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/prepare.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/recover_ledger.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/render_gui_roundtrip.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/restore_catalog.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/restore_header.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal05_acceptance/restore_members.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal06_cad_roundtrip/finalize.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal07_reference_cad/audit_edit.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal07_reference_cad/audit_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal07_reference_cad/prepare_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal07_reference_cad/render_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal07_reference_cad/restore_logo.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal08_numeric_consistency/collect_normal.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal08_numeric_consistency/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal08_numeric_consistency/source_diagnostic.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal09_fraction_reading/capability_probe.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal09_fraction_reading/collect_b_normal.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal09_fraction_reading/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal10_numeric_input_integrity/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal10_numeric_input_integrity/run_probes.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/collect_new_source.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/evaluate.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/freeze_existing.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/inspect_archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/restore_source.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal11_formula_model/run_monitor.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/archive_technical.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/disclose_metadata.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/finalize_files.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/make_figures.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/prepare.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/read_dxf.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/restore_source.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/run_candidate_a.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/summarize.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal12_ocr_call_consistency/trace_normal.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/analyze_saved.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/archive_local.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/capture.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/check_bridge.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/classifier_cross.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/classifier_diagnostic.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal13_sampling_isolation/controls.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal14_numeric_consistency_task/map_real.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal14_numeric_consistency_task/score.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal15_numeric_consistency_pilot/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal15_numeric_consistency_pilot/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal15_numeric_consistency_pilot/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal16_numeric_fit_diagnosis/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal16_numeric_fit_diagnosis/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal16_numeric_fit_diagnosis/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal17_frozen_numeric_probe/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal17_frozen_numeric_probe/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal17_frozen_numeric_probe/prepare.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal17_frozen_numeric_probe/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal18_identity_supervision/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal18_identity_supervision/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal18_identity_supervision/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal19_role_composition/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal19_role_composition/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal19_role_composition/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal20_pairing_structure/archive.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal20_pairing_structure/freeze.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal20_pairing_structure/report.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal21_role_digit_reading/prepare.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal21_role_digit_reading/prepare_sources.py",
+      "reason": "Real-case orchestration, embedded annotations, archive linkage, or dependency on private material; original retained in private snapshot"
+    },
+    {
+      "path": "experiments/research_goal06_cad_roundtrip/prepare.py",
+      "reason": "Real-derived specimen length and private drawing orchestration"
+    }
+  ],
+  "private_activity_changes": [
+    "cad_photo_to_dxf/app/core/processing.py",
+    "cad_photo_to_dxf/app/geometry/pdf_text_suggestions.py",
+    "cad_photo_to_dxf/app/ocr/raster_group_display.py",
+    "cad_photo_to_dxf/tests/test_p18b_oriented_digit_input.py",
+    "cad_photo_to_dxf/tests/test_p21a_raster_group_display.py",
+    "cad_photo_to_dxf/tests/test_source_row_display.py"
+  ],
+  "excluded_categories": [
+    "new real PDF/image/DXF/crop/array/annotation/per-item prediction",
+    "detailed local reports and private external review",
+    "private archive addresses and credentials",
+    "weights/checkpoints/environments/cache/full local-artifacts",
+    "local commit ancestry: raw history retained privately, never pushed"
+  ],
+  "existing_public_assets": "Preserved without deletion; existing runtime font and source fixture contracts remain unchanged"
+}

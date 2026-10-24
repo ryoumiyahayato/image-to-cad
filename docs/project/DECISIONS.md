@@ -127,3 +127,7 @@ Status: accepted (PR #34 closeout, 2026-10-14)
 Retain CPython 3.11 CI and its single complete pytest process. Linux PySide6/Shiboken 6.12.0 void wrappers lose one owned None reference per call: 256 QPainterPath.moveTo calls lose 256 references, and 8000 calls reproduce exit 134 without product code. With only the Qt binding pair changed to 6.11.2, the same interpreter/calls retain the reference count and exit normally. Requirements therefore exclude 6.12; the paired Shiboken version follows PySide6's exact dependency. A subprocess regression checks ownership and ordinary teardown. RapidOCR remains in its independently verified 3.9 range. No geometry policy or interpreter upgrade masks the fault.
 
 Keep the original compact snapshot and D-010 reference immutable. Authorized, source-proven behavior changes use a separate versioned current snapshot with algorithm/schema/cache identity and exact member/cache/DXF checks. The P10-A snapshot accounts for every old LINE difference and checks that each suppressed observation has no unique source ink outside its unchanged keeper. Missing independent geometry, changed source ownership or unreviewed additions fail. See docs/refactor/preservation-transition-p10a.md. This does not change frozen geometry contracts, the 94/50 split, P10-A's real-source findings or P10-B's paused status.
+
+## 2026-10-24：按白名单保存源码，保留未晋级候选
+
+远端干净基线建立新提交；本地旧历史和父树损坏索引只做恢复备份。产品入口保持实验前运行快照。私人测试与真实逐项资料不公开，Draft 和 NO_GO 各自保持。见 SOURCE_SYNC_RESULT_20261024.md。
