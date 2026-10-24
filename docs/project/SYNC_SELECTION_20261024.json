@@ -738,7 +738,8 @@
   ],
   "existing_public_assets": "Preserved without deletion; existing runtime font and source fixture contracts remain unchanged",
   "public_compatibility_hunks": {
-    "cad_photo_to_dxf/tests/test_scan_line_regularization.py": "Only removesuffix -> replace from the existing local test, preserving the assertion and pre-existing public body; remaining private local changes withheld"
+    "cad_photo_to_dxf/tests/test_scan_line_regularization.py": "Only removesuffix -> replace from the existing local test, preserving the assertion and pre-existing public body; remaining private local changes withheld",
+    "cad_photo_to_dxf/app/core/review_project.py": "Resolve both target and cache parent before the existing temporary-directory rejection; no guard removed"
   },
   "ci_configuration": [
     ".github/workflows/windows-build.yml"

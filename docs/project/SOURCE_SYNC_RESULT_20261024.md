@@ -86,3 +86,5 @@ P10-A 保存基线及 preservation_check.py 没有修改。未新建替代保存
 6e5660a193b695778ad55c00eb7032445b4b8e57 的 Linux CI 为 944 passed、1 failed、8 skipped，唯一失败仍是 P10-A algorithm_version 合同。该 SHA 的仓库卫生与 FreeCAD workflow 通过。未把 Linux 因前序失败而跳过的后续步骤记为通过。
 
 只读核对发现 Windows 现有 regression/static 步骤串行执行 pytest、Ruff、mypy、compileall，但没有逐条检查原生命令退出码。本轮为每条既有命令补失败即退出，不增加新检查，不改测试条件。最终 Windows workflow 的结果因此能够保留前序失败。最后提交的 SHA 与四项 workflow 结果见 PR #35 收口回执。
+
+Windows 在 48b0ac6932669bbff9e40e7b4e07d5a8d99e5e31 实际返回 943 passed、2 failed、8 skipped；失败分别为同一 P10-A 合同，以及临时目录保存保护。后者的目标路径已 resolve，缓存目录却未 resolve；本轮把缓存目录也解析后再做原有 is_relative_to 拒绝比较。既有 source/temporary overwrite 检查在本机通过，文件 Ruff 通过；没有删改断言或放宽路径保护。最终 Windows 结果继续按最后 SHA 读取。
