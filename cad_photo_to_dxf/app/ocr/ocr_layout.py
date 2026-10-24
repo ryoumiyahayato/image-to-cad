@@ -26,6 +26,21 @@ class VerifiedCellTextSource:
     row_masks: tuple[np.ndarray, ...]
 
 
+@dataclass(frozen=True)
+class LayoutRuleSource:
+    """Observed rule ink, including glyph contacts, outside TEXT authority.
+
+    The mask is not a new LINE or an exclusive physical-stroke assignment.
+    It keeps the original pixels for the existing visible contour fallback.
+    """
+
+    bounds: tuple[int, int, int, int]
+    mask: np.ndarray
+    text: TextCandidate
+    body_free_columns: int
+    layout_excluded_pixels: int
+
+
 def tile_regions(
     image_shape: tuple[int, int],
     *,
@@ -134,6 +149,152 @@ def _remove_long_rules(mask: np.ndarray) -> np.ndarray:
     )
     cleaned = cv2.subtract(mask, cv2.max(horizontal, vertical))
     return cleaned if cv2.countNonZero(cleaned) else mask
+
+
+def verified_layout_rule_sources(
+    image: np.ndarray,
+    binary: np.ndarray,
+    texts: Sequence[TextCandidate],
+) -> tuple[LayoutRuleSource, ...]:
+    """Retain a simple bottom rule excluded from the character-layout proof.
+
+    A long opening is only a seed. Source cross-sections in columns with no
+    glyph body must independently establish a thin rule band. Contacts in that
+    band stay visible; the rest of each glyph remains native TEXT. No source
+    pixel is added, extended, or attributed from a fitted line. Middle rules,
+    vertical rules, truncated boxes and ambiguous profiles are not handled.
+    Work is bounded to OCR crops, with no page scan per candidate.
+    """
+    if image.shape[:2] != binary.shape:
+        raise ValueError("Layout and suppression must use the same source pixels")
+    from app.ocr.text_output_contract import accepted_ocr_texts
+
+    output = []
+    remaining_pixels = 1_000_000
+    # Native TEXT emission and glyph-outline replacement are separate contracts.
+    # An unsafe glyph carrier can still have an independently proved rule that
+    # must remain visible outside its hidden SOURCE_TEXT_OUTLINE backup.
+    eligible = sorted(
+        accepted_ocr_texts(texts),
+        key=lambda t: (t.bbox, t.text, t.rotation_deg, t.character_boxes),
+    )
+    for text in eligible:
+        x, y, w, h = text.bbox
+        if (
+            text.reviewed
+            or abs(text.rotation_deg) > 8
+            or len(text.character_boxes) < 3
+            or x < 0
+            or y < 0
+            or x + w > binary.shape[1]
+            or y + h > binary.shape[0]
+            or min(w, h) <= 0
+            or w * h > min(65_536, remaining_pixels)
+        ):
+            continue
+        remaining_pixels -= w * h
+        crop = _gray(image[y : y + h, x : x + w])
+        _threshold, raw = cv2.threshold(
+            crop, 0, 255, cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU
+        )
+        cleaned = _remove_long_rules(raw)
+        excluded = cv2.subtract(raw, cleaned)
+        if not np.any(excluded):
+            continue
+        # Use the actual layout exclusion, not arbitrary horizontal glyph bars.
+        count, labels, stats, _ = cv2.connectedComponentsWithStats(
+            excluded, connectivity=8
+        )
+        seeds = [
+            i
+            for i in range(1, count)
+            if stats[i, cv2.CC_STAT_WIDTH] >= max(9, int(w * 0.55))
+        ]
+        if len(seeds) != 1:
+            continue
+        sx, sy, sw, sh, _ = (int(v) for v in stats[seeds[0]])
+        source = binary[y : y + h, x : x + w] < 128
+        seed = labels == seeds[0]
+        if np.any(seed & ~source):
+            continue
+        # Local Otsu can break a rule's weak shoulder while prepared source
+        # still supports it. Follow only the uninterrupted observed row, never
+        # bridge paper or extrapolate a fitted line across the glyph carrier.
+        for row in range(sy, sy + sh):
+            columns = np.flatnonzero(seed[row])
+            if not len(columns):
+                continue
+            left, right = int(columns[0]), int(columns[-1]) + 1
+            while left > 0 and source[row, left - 1]:
+                left -= 1
+            while right < w and source[row, right]:
+                right += 1
+            seed[row, left:right] = True
+        _seed_rows, seed_columns = np.nonzero(seed)
+        sx, sw = int(seed_columns.min()), int(np.ptp(seed_columns)) + 1
+        rows = np.flatnonzero(np.any(raw, axis=1))
+        if not rows.size:
+            continue
+        ink_height = int(rows[-1] - rows[0] + 1)
+        maximum_width = max(2, int(ceil(ink_height * 0.12)))
+        if sh > maximum_width or sy < rows[0] + ink_height * 0.65:
+            continue
+        crossed = sum(
+            cx < x + sx + sw and cx + cw > x + sx
+            for cx, _cy, cw, _ch in text.character_boxes
+        )
+        if crossed < 3:
+            continue
+        top, bottom = max(0, sy - maximum_width), min(h, sy + sh + maximum_width)
+        body = raw.copy()
+        body[top:bottom] = 0
+        free = np.flatnonzero(~np.any(body[:, sx : sx + sw], axis=0)) + sx
+        if len(free) < max(3, int(ceil(sw * 0.03))) or np.ptp(free) < sw * 0.25:
+            continue
+        profiles = []
+        for column in free:
+            on_seed = np.flatnonzero(seed[:, column])
+            if not len(on_seed):
+                continue
+            first, last = int(on_seed[0]), int(on_seed[-1]) + 1
+            while first > top and source[first - 1, column]:
+                first -= 1
+            while last < bottom and source[last, column]:
+                last += 1
+            if first == top or last == bottom or last - first > maximum_width:
+                profiles = []
+                break
+            profiles.append((first, last))
+        if len(profiles) < max(3, int(ceil(sw * 0.03))):
+            continue
+        band_top = min(a for a, _b in profiles)
+        band_bottom = max(b for _a, b in profiles)
+        if band_bottom - band_top > maximum_width:
+            continue
+        retained = np.zeros_like(raw)
+        # Only observed ink in the measured band survives. Short aligned end
+        # pieces may be separated by real paper; that paper is never bridged.
+        band = source[band_top:band_bottom].astype(np.uint8)
+        n, band_labels, band_stats, _ = cv2.connectedComponentsWithStats(
+            band, connectivity=8
+        )
+        for label in range(1, n):
+            if band_stats[label, cv2.CC_STAT_WIDTH] >= max(
+                3, int(ceil(ink_height * 0.2))
+            ):
+                retained[band_top:band_bottom][band_labels == label] = 255
+        if not np.any(retained):
+            continue
+        output.append(
+            LayoutRuleSource(
+                (x, y, x + w, y + h),
+                retained,
+                text,
+                len(profiles),
+                int(cv2.countNonZero(excluded)),
+            )
+        )
+    return tuple(output)
 
 
 def _binary_crop(image: np.ndarray, bounds: tuple[int, int, int, int]) -> np.ndarray:
@@ -372,7 +533,9 @@ def prepare_candidate_layout(
 
     try:
         mask = _text_mask(image, candidate.bbox)
-        character_boxes, safe, note = _horizontal_character_boxes(mask, candidate, verified_line=verified_line)
+        character_boxes, safe, note = _horizontal_character_boxes(
+            mask, candidate, verified_line=verified_line
+        )
         if _crosses_candidate_boundary(image, candidate.bbox):
             safe = False
             note = "识别框只覆盖了更大连通笔画的一部分，保留完整原轮廓等待人工确认"
@@ -384,13 +547,21 @@ def prepare_candidate_layout(
     # Keep the OCR bbox for ownership; only tighten the display quad when the
     # existing source-coverage checks confirm a horizontal printed line.
     content = "".join(candidate.text.split())
-    horizontal_quad = quad is None or (len(quad) == 4 and all(
-        abs(quad[a][axis] - quad[b][axis]) <= 0.5
-        for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
-    ))
-    if (safe and not candidate.reviewed and len(content) >= 2
-            and any("\u4e00" <= char <= "\u9fff" for char in content)
-            and abs(candidate.rotation_deg) <= 0.5 and horizontal_quad):
+    horizontal_quad = quad is None or (
+        len(quad) == 4
+        and all(
+            abs(quad[a][axis] - quad[b][axis]) <= 0.5
+            for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
+        )
+    )
+    if (
+        safe
+        and not candidate.reviewed
+        and len(content) >= 2
+        and any("\u4e00" <= char <= "\u9fff" for char in content)
+        and abs(candidate.rotation_deg) <= 0.5
+        and horizontal_quad
+    ):
         rows, columns = np.nonzero(mask)
         x, y, width, height = candidate.bbox
         # One source pixel accommodates edge antialiasing; the resulting quad
@@ -399,8 +570,12 @@ def prepare_candidate_layout(
         right = x + min(width, int(columns.max()) + 2)
         top = y + max(0, int(rows.min()) - 1)
         bottom = y + min(height, int(rows.max()) + 2)
-        quad = ((float(left), float(top)), (float(right), float(top)),
-                (float(right), float(bottom)), (float(left), float(bottom)))
+        quad = (
+            (float(left), float(top)),
+            (float(right), float(top)),
+            (float(right), float(bottom)),
+            (float(left), float(bottom)),
+        )
         note += "；文字显示框已按源墨迹范围定位"
     return replace(
         candidate,
@@ -482,6 +657,7 @@ def constrain_texts_to_table_cells(
     texts: Sequence[TextCandidate],
     *,
     verified_sources: list[VerifiedCellTextSource] | None = None,
+    display_cells: dict | None = None,
 ) -> tuple[TextCandidate, ...]:
     """Clip OCR placement boxes to enclosing ruled cells when all sides exist."""
 
@@ -546,7 +722,9 @@ def constrain_texts_to_table_cells(
         cell_right = min(rights) - 1
         cell_top = max(tops) + 2
         cell_bottom = min(bottoms) - 1
-        cell_groups.setdefault((cell_left, cell_top, cell_right, cell_bottom), []).append(len(constrained))
+        cell_groups.setdefault(
+            (cell_left, cell_top, cell_right, cell_bottom), []
+        ).append(len(constrained))
         new_left = max(x, cell_left)
         new_top = max(y, cell_top)
         new_right = min(x + width, cell_right)
@@ -560,18 +738,27 @@ def constrain_texts_to_table_cells(
             constrained.append(item)
             continue
         display_quad = (
-            (float(new_left), float(new_top)), (float(new_right), float(new_top)),
-            (float(new_right), float(new_bottom)), (float(new_left), float(new_bottom)),
+            (float(new_left), float(new_top)),
+            (float(new_right), float(new_top)),
+            (float(new_right), float(new_bottom)),
+            (float(new_left), float(new_bottom)),
         )
         if item.quad and all(
             abs(item.quad[a][axis] - item.quad[b][axis]) <= 0.5
             for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
         ):
             left, top = max(new_left, item.quad[0][0]), max(new_top, item.quad[0][1])
-            right, bottom = min(new_right, item.quad[2][0]), min(new_bottom, item.quad[2][1])
+            right, bottom = (
+                min(new_right, item.quad[2][0]),
+                min(new_bottom, item.quad[2][1]),
+            )
             if right > left and bottom > top:
-                display_quad = ((float(left), float(top)), (float(right), float(top)),
-                                (float(right), float(bottom)), (float(left), float(bottom)))
+                display_quad = (
+                    (float(left), float(top)),
+                    (float(right), float(top)),
+                    (float(right), float(bottom)),
+                    (float(left), float(bottom)),
+                )
         clipped_character_boxes: list[tuple[int, int, int, int]] = []
         for box_x, box_y, box_width, box_height in item.character_boxes:
             clipped_left = max(box_x, cell_left)
@@ -598,12 +785,20 @@ def constrain_texts_to_table_cells(
             )
         )
     for cell, indexes in cell_groups.items():
-        restored = _restore_cell_text_rows(binary, tuple(constrained[index] for index in indexes), cell,
-                                           verified_sources=verified_sources)
+        restored = _restore_cell_text_rows(
+            binary,
+            tuple(constrained[index] for index in indexes),
+            cell,
+            verified_sources=verified_sources,
+        )
         for index, item in zip(indexes, restored, strict=True):
             constrained[index] = item
-    return _restore_overlapping_printed_rows(binary, tuple(constrained),
-                                             verified_sources=verified_sources)
+        if display_cells is not None and len(indexes) == 1:
+            item = constrained[indexes[0]]
+            display_cells[(item.text, item.bbox)] = cell
+    return _restore_overlapping_printed_rows(
+        binary, tuple(constrained), verified_sources=verified_sources
+    )
 
 
 def _restore_overlapping_printed_rows(
@@ -618,20 +813,33 @@ def _restore_overlapping_printed_rows(
     have a unique row owner; shared rules, truncated strokes and connected rows
     leave the original candidates intact. No line spacing is manufactured.
     """
-    eligible = sorted((index for index, item in enumerate(texts)
-        if not item.reviewed and abs(item.rotation_deg) <= 0.5
-        and item.text.isascii() and sum(char.isalpha() for char in item.text) >= 2),
-        key=lambda index: (texts[index].bbox[1], texts[index].bbox[0], texts[index].text))
+    eligible = sorted(
+        (
+            index
+            for index, item in enumerate(texts)
+            if not item.reviewed
+            and abs(item.rotation_deg) <= 0.5
+            and item.text.isascii()
+            and sum(char.isalpha() for char in item.text) >= 2
+        ),
+        key=lambda index: (
+            texts[index].bbox[1],
+            texts[index].bbox[0],
+            texts[index].text,
+        ),
+    )
     neighbors = {index: set() for index in eligible}
     for position, index in enumerate(eligible):
         x, y, width, height = texts[index].bbox
-        for other in eligible[position + 1:]:
+        for other in eligible[position + 1 :]:
             bx, by, bw, bh = texts[other].bbox
             if by >= y + height:
                 break
             overlap = min(x + width, bx + bw) - max(x, bx)
-            if (overlap >= min(width, bw) * 0.65
-                    and abs((y + height * 0.5) - (by + bh * 0.5)) >= min(height, bh) * 0.35):
+            if (
+                overlap >= min(width, bw) * 0.65
+                and abs((y + height * 0.5) - (by + bh * 0.5)) >= min(height, bh) * 0.35
+            ):
                 neighbors[index].add(other)
                 neighbors[other].add(index)
     result = list(texts)
@@ -649,15 +857,26 @@ def _restore_overlapping_printed_rows(
         visited.update(group)
         if not 2 <= len(group) <= 6:
             continue
-        indexes = sorted(group, key=lambda value: (texts[value].bbox[1], texts[value].bbox[0]))
+        indexes = sorted(
+            group, key=lambda value: (texts[value].bbox[1], texts[value].bbox[0])
+        )
         rows = tuple(texts[value] for value in indexes)
         margin = max(4, int(round(max(item.bbox[3] for item in rows) * 0.3)))
-        bounds = (max(0, min(item.bbox[0] for item in rows) - margin),
-                  max(0, min(item.bbox[1] for item in rows) - margin),
-                  min(gray.shape[1], max(item.bbox[0] + item.bbox[2] for item in rows) + margin),
-                  min(gray.shape[0], max(item.bbox[1] + item.bbox[3] for item in rows) + margin))
-        restored = _restore_cell_text_rows(gray, rows, bounds,
-                         verified_sources=verified_sources, source_group=True)
+        bounds = (
+            max(0, min(item.bbox[0] for item in rows) - margin),
+            max(0, min(item.bbox[1] for item in rows) - margin),
+            min(
+                gray.shape[1],
+                max(item.bbox[0] + item.bbox[2] for item in rows) + margin,
+            ),
+            min(
+                gray.shape[0],
+                max(item.bbox[1] + item.bbox[3] for item in rows) + margin,
+            ),
+        )
+        restored = _restore_cell_text_rows(
+            gray, rows, bounds, verified_sources=verified_sources, source_group=True
+        )
         for value, item in zip(indexes, restored, strict=True):
             result[value] = item
     return tuple(result)
@@ -678,25 +897,44 @@ def _restore_cell_text_rows(
     rows. Uncertain character coverage retains the source-outline protection.
     """
     if not 2 <= len(texts) <= 6 or any(
-        item.reviewed or abs(item.rotation_deg) > 0.5 or len(item.text.strip()) < 2
-        or (not source_group and item.quad and not all(
-            abs(item.quad[a][axis] - item.quad[b][axis]) <= 0.5
-            for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
-        )) for item in texts
+        item.reviewed
+        or abs(item.rotation_deg) > 0.5
+        or len(item.text.strip()) < 2
+        or (
+            not source_group
+            and item.quad
+            and not all(
+                abs(item.quad[a][axis] - item.quad[b][axis]) <= 0.5
+                for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
+            )
+        )
+        for item in texts
     ):
         return texts
-    if not source_group and not (any(any("\u4e00" <= char <= "\u9fff" for char in item.text) for item in texts)
-            and any(item.text.isascii() and any(char.isalpha() for char in item.text) for item in texts)):
+    if not source_group and not (
+        any(any("\u4e00" <= char <= "\u9fff" for char in item.text) for item in texts)
+        and any(
+            item.text.isascii() and any(char.isalpha() for char in item.text)
+            for item in texts
+        )
+    ):
         return texts
-    if source_group and any(item.quad and (
+    if source_group and any(
+        item.quad
+        and (
             item.quad[1][0] <= item.quad[0][0]
             or item.quad[2][0] <= item.quad[3][0]
-            or item.quad[3][1] <= item.quad[0][1]) for item in texts):
+            or item.quad[3][1] <= item.quad[0][1]
+        )
+        for item in texts
+    ):
         return texts
     if not any(
         max(a.bbox[0], b.bbox[0]) < min(a.bbox[0] + a.bbox[2], b.bbox[0] + b.bbox[2])
-        and max(a.bbox[1], b.bbox[1]) < min(a.bbox[1] + a.bbox[3], b.bbox[1] + b.bbox[3])
-        for i, a in enumerate(texts) for b in texts[i + 1:]
+        and max(a.bbox[1], b.bbox[1])
+        < min(a.bbox[1] + a.bbox[3], b.bbox[1] + b.bbox[3])
+        for i, a in enumerate(texts)
+        for b in texts[i + 1 :]
     ):
         return texts
     left, top, right, bottom = cell
@@ -704,7 +942,9 @@ def _restore_cell_text_rows(
         return texts
     crop = binary[top:bottom, left:right]
     foreground = np.where(crop < 128, 255, 0).astype(np.uint8)
-    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(foreground, connectivity=8)
+    count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+        foreground, connectivity=8
+    )
     centers = [item.bbox[1] + item.bbox[3] * 0.5 for item in texts]
     owners: list[list[int]] = [[] for _ in texts]
     for label in range(1, count):
@@ -712,20 +952,38 @@ def _restore_cell_text_rows(
         # A narrow boundary rule may survive the existing cell inset. Do not
         # treat it as text; attached interior strokes make the cell uncertain.
         at_side = x == 0 or x + width == foreground.shape[1]
-        if not source_group and at_side and width <= 3 and height >= foreground.shape[0] * 0.8:
+        if (
+            not source_group
+            and at_side
+            and width <= 3
+            and height >= foreground.shape[0] * 0.8
+        ):
             continue
-        if x == 0 or y == 0 or x + width == foreground.shape[1] or y + height == foreground.shape[0]:
+        if (
+            x == 0
+            or y == 0
+            or x + width == foreground.shape[1]
+            or y + height == foreground.shape[0]
+        ):
             return texts
         center_y = top + y + height * 0.5
-        distances = sorted((abs(center_y - center), index) for index, center in enumerate(centers))
+        distances = sorted(
+            (abs(center_y - center), index) for index, center in enumerate(centers)
+        )
         distance, index = distances[0]
         item = texts[index]
         bx, by, bw, bh = item.bbox
-        if (distances[1][0] - distance < max(1.0, bh * 0.1)
-                or distance > bh * 0.75
-                or left + x < bx - bh * 1.5 or left + x + width > bx + bw + bh * 1.5
-                or any(top + y <= center <= top + y + height
-                       for other, center in enumerate(centers) if other != index)):
+        if (
+            distances[1][0] - distance < max(1.0, bh * 0.1)
+            or distance > bh * 0.75
+            or left + x < bx - bh * 1.5
+            or left + x + width > bx + bw + bh * 1.5
+            or any(
+                top + y <= center <= top + y + height
+                for other, center in enumerate(centers)
+                if other != index
+            )
+        ):
             return texts
         owners[index].append(label)
     if any(len(group) < 2 for group in owners):
@@ -749,48 +1007,90 @@ def _restore_cell_text_rows(
         # the original source pixels, without removing anything from the page.
         isolated = np.full(crop.shape, 255, dtype=np.uint8)
         isolated[owned] = crop[owned]
-        local = replace(item, bbox=(x - left, y - top, width, height),
-                        quad=((x - left, y - top), (x + width - left, y - top),
-                              (x + width - left, y + height - top), (x - left, y + height - top)),
-                        character_boxes=())
+        local = replace(
+            item,
+            bbox=(x - left, y - top, width, height),
+            quad=(
+                (x - left, y - top),
+                (x + width - left, y - top),
+                (x + width - left, y + height - top),
+                (x - left, y + height - top),
+            ),
+            character_boxes=(),
+        )
         # Only this complete-cell component proof may relax the connected-word
         # test. Coverage, cross-boundary and handwriting checks remain active.
-        joined_printed_line = (verified_sources is not None and item.text.isascii()
-                               and (all(char.isalpha() or char.isspace() for char in item.text)
-                                    or (source_group and item.text.isprintable())))
-        checked = offset_candidate(prepare_safe_candidate(isolated, local, verified_line=joined_printed_line),
-                                   offset_x=left, offset_y=top)
+        joined_printed_line = (
+            verified_sources is not None
+            and item.text.isascii()
+            and (
+                all(char.isalpha() or char.isspace() for char in item.text)
+                or (source_group and item.text.isprintable())
+            )
+        )
+        checked = offset_candidate(
+            prepare_safe_candidate(isolated, local, verified_line=joined_printed_line),
+            offset_x=left,
+            offset_y=top,
+        )
         # Line placement can be known even when per-character replacement is
         # unsafe (e.g. touching English letters). Keep that protection intact.
         display_quad = checked.quad
         if source_group:
             # Preserve the ordered reading basis, including the scan's slight
             # slope. Fit actual source pixel footprints in that local basis.
-            direction = (np.array(item.quad[1]) - item.quad[0]
-                         + np.array(item.quad[2]) - item.quad[3]) if item.quad else np.array([1., 0.])
+            direction = (
+                (
+                    np.array(item.quad[1])
+                    - item.quad[0]
+                    + np.array(item.quad[2])
+                    - item.quad[3]
+                )
+                if item.quad
+                else np.array([1.0, 0.0])
+            )
             along = direction / np.linalg.norm(direction)
             across = np.array([-along[1], along[0]])
             pixels = np.column_stack((xs + left + 0.5, ys + top + 0.5))
             u, v = pixels @ along, pixels @ across
             pad = (abs(along[0]) + abs(along[1])) * 0.5
-            u0, u1, v0, v1 = u.min()-pad, u.max()+pad, v.min()-pad, v.max()+pad
-            display_quad = tuple(tuple(map(float, along*a + across*b))
-                                 for a, b in ((u0,v0),(u1,v0),(u1,v1),(u0,v1)))
-        restored.append(replace(item, quad=display_quad,
-            character_boxes=checked.character_boxes if checked.replacement_safe else item.character_boxes,
-            replacement_safe=checked.replacement_safe,
-            review_note=checked.review_note + ("；已按独立源笔画恢复文字行显示范围" if source_group
-                                               else "；已按同单元格独立源笔画恢复文字行显示范围")))
+            u0, u1, v0, v1 = u.min() - pad, u.max() + pad, v.min() - pad, v.max() + pad
+            display_quad = tuple(
+                tuple(map(float, along * a + across * b))
+                for a, b in ((u0, v0), (u1, v0), (u1, v1), (u0, v1))
+            )
+        restored.append(
+            replace(
+                item,
+                quad=display_quad,
+                character_boxes=checked.character_boxes
+                if checked.replacement_safe
+                else item.character_boxes,
+                replacement_safe=checked.replacement_safe,
+                review_note=checked.review_note
+                + (
+                    "；已按独立源笔画恢复文字行显示范围"
+                    if source_group
+                    else "；已按同单元格独立源笔画恢复文字行显示范围"
+                ),
+            )
+        )
     # Preserve source-supported ordering, including genuine ascender/descender
     # overlap. Never use a uniform gap or move a table rule.
     order = sorted(range(len(texts)), key=lambda index: centers[index])
-    if any(row_bounds[a][1] >= row_bounds[b][1] or row_bounds[a][3] >= row_bounds[b][3]
-           for a, b in zip(order, order[1:])):
+    if any(
+        row_bounds[a][1] >= row_bounds[b][1] or row_bounds[a][3] >= row_bounds[b][3]
+        for a, b in zip(order, order[1:])
+    ):
         return texts
     if verified_sources is not None and all(item.replacement_safe for item in restored):
         from app.ocr.text_output_contract import accepted_ocr_texts
+
         if len(accepted_ocr_texts(restored)) == len(restored):
-            core = np.where(np.isin(labels, [label for group in owners for label in group]),
-                            255, 0).astype(np.uint8)
-            verified_sources.append(VerifiedCellTextSource(cell, core, tuple(restored), tuple(row_masks)))
+            core = np.where(
+                np.isin(labels, [label for group in owners for label in group]), 255, 0
+            ).astype(np.uint8)
+            verified_sources.append(
+                VerifiedCellTextSource(cell, core, tuple(restored), tuple(row_masks))
+            )
     return tuple(restored)

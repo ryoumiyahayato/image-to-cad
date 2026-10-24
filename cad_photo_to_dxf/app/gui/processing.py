@@ -11,7 +11,13 @@ from app.core.structure_build import final_structure_from_trace_result
 from app.core.image_loader import load_image
 from app.export.ocr_outline_export import accepted_ocr_texts
 from app.core.preview import render_final_structure_preview
-from app.core.processing import DEFAULT_IMAGE_DPI, ProcessingCacheKey, ProductionProcessingConfig, ProductionProcessingService, file_content_sha256
+from app.core.processing import (
+    DEFAULT_IMAGE_DPI,
+    ProcessingCacheKey,
+    ProductionProcessingConfig,
+    ProductionProcessingService,
+    file_content_sha256,
+)
 from app.geometry.raster_trace import RasterTraceResult
 from app.core.cache import save_trace_cache
 
@@ -25,7 +31,14 @@ def _apply_trace_result(
     started_at: datetime,
     duration: float,
     save_pdf_state: bool,
+    cache_key=None,
 ) -> None:
+    from app.gui.review_project_actions import detach_review_project
+
+    detach_review_project(self)  # Every new conversion needs new snapshot/TEXT UUIDs.
+    self._completed_trace_key = (
+        cache_key if cache_key is not None else self._current_trace_key()
+    )
     structure = final_structure_from_trace_result(result)
     self._final_structure = structure
     self._preview_structure_id = structure.structure_id
@@ -46,7 +59,9 @@ def _apply_trace_result(
     self._run_duration_seconds = duration
     self._last_warnings = structure.warnings
     self._cad_preview_binary = render_final_structure_preview(structure)
-    preview = self._scaled_for_preview(self._cad_preview_binary, target_shape=self._preview_shape())
+    preview = self._scaled_for_preview(
+        self._cad_preview_binary, target_shape=self._preview_shape()
+    )
     self.corrected_canvas.set_image(preview)
     self.detected_canvas.set_image(preview)
     self.tabs.setCurrentWidget(self.detected_canvas)
@@ -84,6 +99,11 @@ def _stage_text(stage: str) -> str:
 
 
 def batch_vectorize_pdf(self) -> None:
+    if getattr(self, "_review_project", None) is not None:
+        QMessageBox.information(
+            self, "保存快照", "校对项目只包含当前物理页。批量转换请重新导入PDF。"
+        )
+        return
     if not self._native_pdf_mode or self.current_path is None:
         return
     if self._is_processing():
@@ -124,12 +144,14 @@ def batch_vectorize_pdf(self) -> None:
                 )
                 continue
             geometry = []
+            native_text = []
             image = load_image(
                 source_path,
                 page_index=page_index,
                 pdf_dpi=self._processing_pdf_dpi(page_index),
                 grayscale=True,
                 pdf_geometry_sink=geometry,
+                pdf_text_sink=native_text,
             )
 
             def page_progress(stage: str, fraction: float) -> None:
@@ -139,8 +161,12 @@ def batch_vectorize_pdf(self) -> None:
                 )
 
             result = ProductionProcessingService.process_page(
-                image, config, cancellation_token=token, progress_callback=page_progress,
+                image,
+                config,
+                cancellation_token=token,
+                progress_callback=page_progress,
                 pdf_geometry=geometry[0] if geometry else None,
+                pdf_text_suggestions=native_text[0] if native_text else None,
             )
             cache_path = self._cache_path_for_key(key)
             save_trace_cache(cache_path, result, cache_key=key.payload())
@@ -196,6 +222,19 @@ def batch_vectorize_pdf(self) -> None:
 
 
 def detect_and_clean(self) -> None:
+    if self._is_processing():
+        QMessageBox.information(self, "正在处理", "请等待当前任务完成或取消。")
+        return
+    from app.gui.review_project_actions import (
+        can_leave_review_project,
+        detach_review_project,
+    )
+
+    if not can_leave_review_project(self):
+        return
+    if getattr(self, "_review_project", None) is not None:
+        detach_review_project(self)
+        self.statusBar().showMessage("新转换不会继承旧快照校对；旧项目仍保存在原路径")
     if self.corrected_image is None and (not self._require_corrected()):
         return
     if self._is_processing():
@@ -210,6 +249,7 @@ def detect_and_clean(self) -> None:
     started_at = datetime.now(timezone.utc)
     started = time.perf_counter()
     enable_ocr = self._ocr_enabled()
+    completed_cache_key = self._current_trace_key()
 
     def operation(token, progress) -> object:
         config = self._processing_config(
@@ -219,7 +259,12 @@ def detect_and_clean(self) -> None:
         return ProductionProcessingService.process_page(
             source,
             config,
-            pdf_geometry=getattr(self, '_current_pdf_geometry', None) if self._native_pdf_mode else None,
+            pdf_geometry=getattr(self, "_current_pdf_geometry", None)
+            if self._native_pdf_mode
+            else None,
+            pdf_text_suggestions=getattr(self, "_current_pdf_text_suggestions", None)
+            if self._native_pdf_mode
+            else None,
             cancellation_token=token,
             progress_callback=lambda stage, fraction: progress(
                 self._stage_text(stage), fraction
@@ -235,6 +280,7 @@ def detect_and_clean(self) -> None:
             started_at=started_at,
             duration=time.perf_counter() - started,
             save_pdf_state=self._native_pdf_mode,
+            cache_key=completed_cache_key,
         )
 
     self._start_processing(operation, completed, "正在处理当前页…")

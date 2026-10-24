@@ -7,13 +7,25 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from app import __version__
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from app.export.dwg_converter import DwgConversionUnavailable, convert_dxf_to_dwg
 from app.gui.export_dialogs import _select_output_path
 from app.core.reporting import REPORT_SCHEMA_VERSION, write_json_report
 from app.export.trace_document_export import export_trace_document_streaming
 from app.export.trace_dxf_entities import MAX_EDITABLE_POLYLINE_VERTICES
-from app.gui.export_worker import DEFAULT_PALETTE, TraceExportCompletion, _editable_text_strategy, _multi_page_output_directory, _resolve_converter_on_ui, _start_single_export
+from app.gui.export_worker import (
+    DEFAULT_PALETTE,
+    TraceExportCompletion,
+    _editable_text_strategy,
+    _multi_page_output_directory,
+    _resolve_converter_on_ui,
+    _start_single_export,
+)
 
 
 def _processed_page_indices(window: Any) -> tuple[int, ...]:
@@ -40,6 +52,9 @@ def export_current_page_from_window(window: Any) -> None:
 def export_processed_pages_from_window(window: Any) -> None:
     """Export every processed PDF page and skip pages that are not ready."""
 
+    if getattr(window, "_review_project", None) is not None:
+        _start_single_export(window)
+        return
     if window._is_processing():
         QMessageBox.information(window, "正在处理", "请等待当前任务完成或取消。")
         return
@@ -106,8 +121,7 @@ def _start_processed_pages_export(window: Any) -> None:
     )
     all_pages = tuple(window.document_pages_for_export())
     selected_pages = tuple(
-        (page_index, all_pages[page_index])
-        for page_index in processed_indices
+        (page_index, all_pages[page_index]) for page_index in processed_indices
     )
     source_path = Path(window.current_path)
     page_scales = tuple(
@@ -195,17 +209,14 @@ def _start_processed_pages_export(window: Any) -> None:
                         version=target_version,
                         converter_executable=(
                             converter_path
-                            if converter_path.name.lower()
-                            != "odafileconverter.exe"
+                            if converter_path.name.lower() != "odafileconverter.exe"
                             else None
                         ),
                     )
                     dwg_paths.append(page_dwg)
                 except DwgConversionUnavailable as exc:
                     page_error = str(exc)
-                    conversion_errors.append(
-                        f"第 {source_page_number} 页：{exc}"
-                    )
+                    conversion_errors.append(f"第 {source_page_number} 页：{exc}")
             elif requested_dwg and converter_error:
                 page_error = converter_error
 
@@ -213,9 +224,7 @@ def _start_processed_pages_export(window: Any) -> None:
                 {
                     "page": source_page_number,
                     "structure_id": (
-                        result.structure_ids[0]
-                        if result.structure_ids
-                        else None
+                        result.structure_ids[0] if result.structure_ids else None
                     ),
                     "dxf": str(result.path),
                     "dwg": str(page_dwg) if page_dwg is not None else None,
@@ -225,21 +234,18 @@ def _start_processed_pages_export(window: Any) -> None:
                     "ocr_text_line_count": result.text_count,
                     "ocr_candidate_count": result.ocr_candidate_count,
                     "text_fallback_outline_count": result.fallback_text_count,
-                    "source_text_outline_count": (
-                        result.source_text_outline_count
-                    ),
+                    "source_text_outline_count": (result.source_text_outline_count),
                     "residual_graphic_count": result.residual_graphic_count,
                     "logo_count": result.logo_count,
-                    "text_downgrade_reasons": dict(
-                        result.text_downgrade_reasons
-                    ),
+                    "text_downgrade_reasons": dict(result.text_downgrade_reasons),
                     "signature_overlays": [
                         str(signature_path)
-                        for signature_path in (*result.signature_paths, *result.graphic_paths)
+                        for signature_path in (
+                            *result.signature_paths,
+                            *result.graphic_paths,
+                        )
                     ],
-                    "scan_underlays": [
-                        str(path) for path in result.underlay_paths
-                    ],
+                    "scan_underlays": [str(path) for path in result.underlay_paths],
                     "dwg_error": page_error,
                 }
             )
@@ -266,9 +272,7 @@ def _start_processed_pages_export(window: Any) -> None:
                 "residual_count": total_residual_graphics,
                 "logo_count": total_logos,
                 "signature_count": total_signature_images,
-                "downgrade_reasons": dict(
-                    sorted(downgrade_reasons.items())
-                ),
+                "downgrade_reasons": dict(sorted(downgrade_reasons.items())),
             },
             "editable_entity_strategy": {
                 "one_dxf_per_pdf_page": True,
@@ -286,11 +290,7 @@ def _start_processed_pages_export(window: Any) -> None:
                 "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
                 "达到现有 OCR 内容合同的文字行均导出为原生 TEXT。",
                 "无法安全抑制的源字形保留在默认关闭的 SOURCE_TEXT_OUTLINE。",
-                *(
-                    [converter_error]
-                    if requested_dwg and converter_error
-                    else []
-                ),
+                *([converter_error] if requested_dwg and converter_error else []),
                 *conversion_errors,
             ],
         }
@@ -317,9 +317,7 @@ def _start_processed_pages_export(window: Any) -> None:
             source_text_outline_count=total_source_text_outlines,
             residual_graphic_count=total_residual_graphics,
             logo_count=total_logos,
-            text_downgrade_reasons=tuple(
-                sorted(downgrade_reasons.items())
-            ),
+            text_downgrade_reasons=tuple(sorted(downgrade_reasons.items())),
         )
 
     def completed(value: object) -> None:

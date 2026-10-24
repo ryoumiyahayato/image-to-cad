@@ -111,6 +111,7 @@ def fit_cubic_arc(points, stroke_width_px):
         3 * p[0] - 6 * p[1] + 3 * p[2],
         3 * (p[1] - p[0]),
     )
+
     def cross(u, v):
         return float(u[0] * v[1] - u[1] * v[0])
 
@@ -355,6 +356,9 @@ class PdfGeometryEvidence:
     rejections: tuple[dict, ...] = ()
     analysis: dict = field(default_factory=dict)
 
+    native_fills: tuple = ()
+    fill_analysis: dict = field(default_factory=dict)
+
     def for_crop(self, box):
         """Known translation only; partial curves retain raster representation."""
         left, top, right, bottom = box
@@ -388,6 +392,15 @@ class PdfGeometryEvidence:
             source_size_px=(right - left, bottom - top),
             page_to_pixel=matrix,
             candidates=tuple(candidates),
+            native_fills=tuple(
+                replace(
+                    f,
+                    points=tuple((x - left, y - top) for x, y in f.points),
+                    page_to_pixel=matrix,
+                )
+                for f in self.native_fills
+                if all(left <= x <= right and top <= y <= bottom for x, y in f.points)
+            ),
         )
 
 

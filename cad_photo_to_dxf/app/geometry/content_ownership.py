@@ -11,7 +11,12 @@ from app.geometry.line_detect import LineSegment
 from app.ocr.logo_detection import LogoRegion
 from app.core.resolution import image_resolution_scale
 from app.ocr.signature_overlay import SignatureRegion
-from app.ocr.text_output_contract import TextOutputState, accepted_ocr_texts, suppressible_ocr_texts, text_output_decisions
+from app.ocr.text_output_contract import (
+    TextOutputState,
+    accepted_ocr_texts,
+    suppressible_ocr_texts,
+    text_output_decisions,
+)
 
 
 def _mask_like(binary: np.ndarray) -> np.ndarray:
@@ -63,11 +68,16 @@ def _clip_box(
 def _candidate_region_mask(
     candidate: TextCandidate,
     shape: tuple[int, int],
+    *,
+    neighbor_bboxes: Sequence[tuple[int, int, int, int]] = (),
 ) -> np.ndarray:
-    """Rasterize the OCR footprint, never its enclosing table cell."""
-
+    """Keep the source footprint; exclude unsafe padding claimed by a neighbor."""
     mask = np.zeros(shape, dtype=np.uint8)
     if candidate.character_boxes:
+        source_bounds = _clip_box(candidate.bbox, shape)
+        if source_bounds is None:
+            return mask
+        source_left, source_top, source_right, source_bottom = source_bounds
         for box in candidate.character_boxes:
             clipped = _clip_box(box, shape)
             if clipped is None:
@@ -79,6 +89,24 @@ def _candidate_region_mask(
             right = min(shape[1], right + pad)
             bottom = min(shape[0], bottom + pad)
             mask[top:bottom, left:right] = 255
+        if not candidate.replacement_safe:
+            for neighbor in neighbor_bboxes:
+                bounds = _clip_box(neighbor, shape)
+                if bounds is None or bounds == source_bounds:
+                    continue
+                left, top, right, bottom = bounds
+                # Only padding outside this observation and inside another
+                # source observation is disputed. Preserve standalone symbols.
+                mask[top : min(bottom, source_top), left:right] = 0
+                mask[max(top, source_bottom) : bottom, left:right] = 0
+                mask[top:bottom, left : min(right, source_left)] = 0
+                mask[top:bottom, max(left, source_right) : right] = 0
+            # Independently observed character bodies are not extra padding.
+            for box in candidate.character_boxes:
+                clipped = _clip_box(box, shape)
+                if clipped is not None:
+                    left, top, right, bottom = clipped
+                    mask[top:bottom, left:right] = 255
         if cv2.countNonZero(mask):
             return mask
 
@@ -94,6 +122,18 @@ def _candidate_region_mask(
         left, top, right, bottom = clipped
         mask[top:bottom, left:right] = 255
     return mask
+
+
+def _candidate_region_window(candidate, shape, *, neighbor_bboxes=()):
+    """Crop the existing exact raster, retaining all its nonzero pixels.
+
+    Rasterization, clipping and neighbor padding rules remain authoritative.
+    Only the storage and subsequent source intersections become local.
+    """
+    region = _candidate_region_mask(candidate, shape, neighbor_bboxes=neighbor_bboxes)
+    x, y, width, height = cv2.boundingRect(region)
+    window = (slice(y, y + height), slice(x, x + width))
+    return window, region[window].copy()
 
 
 def signature_source_mask(
@@ -146,12 +186,9 @@ class ConnectionProtection:
 
     def payload(self) -> dict[str, object]:
         return {
-            "protected_categories": [
-                category for category, _mechanism in self.guards
-            ],
+            "protected_categories": [category for category, _mechanism in self.guards],
             "protection_guards": {
-                category: mechanism
-                for category, mechanism in self.guards
+                category: mechanism for category, mechanism in self.guards
             },
             "category_pixels": {
                 category: int(pixel_count)
@@ -174,9 +211,7 @@ def build_connection_protection(
     text_mask = _mask_like(binary)
     high_confidence_text_mask = _mask_like(binary)
     dimension_number_mask = _mask_like(binary)
-    accepted_text_ids = {
-        id(item) for item in accepted_ocr_texts(texts)
-    }
+    accepted_text_ids = {id(item) for item in accepted_ocr_texts(texts)}
     for item in texts:
         candidate_mask = _candidate_region_mask(item, binary.shape)
         text_mask[candidate_mask > 0] = 255
@@ -312,8 +347,10 @@ def editable_text_source_mask(
     source = _source_foreground(binary)
     owned = _mask_like(binary)
     for item in suppressible_ocr_texts(texts):
-        region = _candidate_region_mask(item, binary.shape)
-        owned[(region > 0) & (source > 0) & (excluded == 0)] = 255
+        window, region = _candidate_region_window(item, binary.shape)
+        owned[window][(region > 0) & (source[window] > 0) & (excluded[window] == 0)] = (
+            255
+        )
     return owned
 
 
@@ -326,8 +363,8 @@ def text_candidate_source_mask(
     source = _source_foreground(binary)
     candidates = _mask_like(binary)
     for item in texts:
-        region = _candidate_region_mask(item, binary.shape)
-        candidates[(region > 0) & (source > 0)] = 255
+        window, region = _candidate_region_window(item, binary.shape)
+        candidates[window][(region > 0) & (source[window] > 0)] = 255
     return candidates
 
 
@@ -452,12 +489,8 @@ class ContentOwnership:
             "conflict_pixels": int(cv2.countNonZero(self.ambiguous)),
             "conflict_object_count": len(self.conflicts),
             "conflicts": [conflict.payload() for conflict in self.conflicts],
-            "unresolved_conflict_pixels": int(
-                cv2.countNonZero(self.residual)
-            ),
-            "graphic_fallback_pixels": int(
-                cv2.countNonZero(self.graphic)
-            ),
+            "unresolved_conflict_pixels": int(cv2.countNonZero(self.residual)),
+            "graphic_fallback_pixels": int(cv2.countNonZero(self.graphic)),
             "final_owner_pixels": {
                 "structural_line": int(cv2.countNonZero(self.line)),
                 "text": int(cv2.countNonZero(self.text)),
@@ -486,15 +519,10 @@ class TextSemanticOwnership:
             self.uncertain_outline,
         )
         if any(mask.shape != source.shape for mask in masks):
-            raise AssertionError(
-                "Text semantic masks must use source coordinates"
-            )
+            raise AssertionError("Text semantic masks must use source coordinates")
         if any(mask.dtype != np.uint8 for mask in masks):
             raise AssertionError("Text semantic masks must be 8-bit")
-        if np.any(
-            (self.source_outline > 0)
-            & (self.uncertain_outline > 0)
-        ):
+        if np.any((self.source_outline > 0) & (self.uncertain_outline > 0)):
             raise AssertionError(
                 "One source pixel cannot be both editable backup and uncertain"
             )
@@ -503,17 +531,9 @@ class TextSemanticOwnership:
                 raise AssertionError(
                     "Text semantic ownership cannot invent source pixels"
                 )
-        if np.any(
-            (self.source_outline > 0)
-            & (self.editable_source == 0)
-        ):
-            raise AssertionError(
-                "Source outline backup must belong to editable text"
-            )
-        if not all(
-            bool(item["source_pixels_conserved"])
-            for item in self.candidates
-        ):
+        if np.any((self.source_outline > 0) & (self.editable_source == 0)):
+            raise AssertionError("Source outline backup must belong to editable text")
+        if not all(bool(item["source_pixels_conserved"]) for item in self.candidates):
             raise AssertionError(
                 "Every candidate source pixel must retain one final owner"
             )
@@ -521,22 +541,14 @@ class TextSemanticOwnership:
     def payload(self) -> dict[str, object]:
         return {
             "candidate_count": len(self.candidates),
-            "editable_source_pixels": int(
-                cv2.countNonZero(self.editable_source)
-            ),
-            "source_outline_pixels": int(
-                cv2.countNonZero(self.source_outline)
-            ),
-            "uncertain_outline_pixels": int(
-                cv2.countNonZero(self.uncertain_outline)
-            ),
+            "editable_source_pixels": int(cv2.countNonZero(self.editable_source)),
+            "source_outline_pixels": int(cv2.countNonZero(self.source_outline)),
+            "uncertain_outline_pixels": int(cv2.countNonZero(self.uncertain_outline)),
             "candidate_primary_semantic_unique": all(
-                bool(item["primary_semantic_unique"])
-                for item in self.candidates
+                bool(item["primary_semantic_unique"]) for item in self.candidates
             ),
             "candidate_source_pixels_conserved": all(
-                bool(item["source_pixels_conserved"])
-                for item in self.candidates
+                bool(item["source_pixels_conserved"]) for item in self.candidates
             ),
             "candidates": [dict(item) for item in self.candidates],
         }
@@ -557,10 +569,14 @@ def complete_verified_text_ownership(
     owner and no structural/graphic/conflicting owner shares the component.
     Components are never cropped or removed merely because boxes overlap.
     """
-    eligible = {(item.text, item.bbox, item.quad) for item in suppressible_ocr_texts(texts)}
+    eligible = {
+        (item.text, item.bbox, item.quad) for item in suppressible_ocr_texts(texts)
+    }
     completed = _mask_like(binary)
-    excluded = cv2.max(ownership.line, cv2.max(ownership.logo,
-                         cv2.max(ownership.signature, ownership.residual)))
+    excluded = cv2.max(
+        ownership.line,
+        cv2.max(ownership.logo, cv2.max(ownership.signature, ownership.residual)),
+    )
     for proof in verified_sources:
         eligible_core = np.zeros_like(proof.mask)
         for item, core in zip(proof.texts, proof.row_masks, strict=True):
@@ -569,28 +585,82 @@ def complete_verified_text_ownership(
         if not np.any(eligible_core):
             continue
         left, top, right, bottom = proof.bounds
-        foreground = np.where(binary[top:bottom, left:right] < 128, 255, 0).astype(np.uint8)
-        count, labels, stats, _centroids = cv2.connectedComponentsWithStats(foreground, connectivity=8)
+        foreground = np.where(binary[top:bottom, left:right] < 128, 255, 0).astype(
+            np.uint8
+        )
+        count, labels, stats, _centroids = cv2.connectedComponentsWithStats(
+            foreground, connectivity=8
+        )
         cores = source_gray[top:bottom, left:right] < 128
         protected = excluded[top:bottom, left:right] > 0
         local_completed = completed[top:bottom, left:right]
         for label in range(1, count):
             x, y, width, height, _area = (int(value) for value in stats[label])
-            if x == 0 or y == 0 or x + width == foreground.shape[1] or y + height == foreground.shape[0]:
+            if (
+                x == 0
+                or y == 0
+                or x + width == foreground.shape[1]
+                or y + height == foreground.shape[0]
+            ):
                 continue
             component = labels == label
             strong = component & cores
-            if (not np.any(strong) or np.any(strong & (eligible_core == 0))
-                    or np.any(component & protected)):
+            if (
+                not np.any(strong)
+                or np.any(strong & (eligible_core == 0))
+                or np.any(component & protected)
+            ):
                 continue
             local_completed[component] = 255
     if not np.any(completed):
         return ownership
-    result = replace(ownership,
+    result = replace(
+        ownership,
         text=cv2.max(ownership.text, completed),
-        graphic=np.where(completed > 0, 0, ownership.graphic).astype(np.uint8))
+        graphic=np.where(completed > 0, 0, ownership.graphic).astype(np.uint8),
+    )
     result.assert_valid()
     return result
+
+
+def _crossing_source_component_region(
+    source: np.ndarray,
+    bbox: tuple[int, int, int, int],
+    claimed_source: np.ndarray,
+    other_bboxes: Sequence[tuple[int, int, int, int]],
+) -> tuple[tuple[int, int, int, int], np.ndarray] | None:
+    """Keep crossing ink with another OCR source observation outside this bbox.
+
+    This is a local source-scope guard, not a whole-page component identity.
+    A lone clipped component is insufficient evidence to change its owner.
+    Complete components outside this observation retain their existing owners.
+    """
+    bounds = _clip_box(bbox, source.shape)
+    if bounds is None:
+        return None
+    left, top, right, bottom = bounds
+    x0, y0 = max(0, left - 1), max(0, top - 1)
+    x1, y1 = min(source.shape[1], right + 1), min(source.shape[0], bottom + 1)
+    local = np.ascontiguousarray(source[y0:y1, x0:x1] > 0, dtype=np.uint8)
+    count, labels = cv2.connectedComponents(local, connectivity=8)
+    outside = np.ones(local.shape, dtype=bool)
+    outside[top - y0 : bottom - y0, left - x0 : right - x0] = False
+    other_support = np.zeros(local.shape, dtype=bool)
+    for other_bbox in other_bboxes:
+        other_bounds = _clip_box(other_bbox, source.shape)
+        if other_bounds is None or other_bounds == bounds:
+            continue
+        ox0, oy0, ox1, oy1 = other_bounds
+        ox0, oy0, ox1, oy1 = max(x0, ox0), max(y0, oy0), min(x1, ox1), min(y1, oy1)
+        if ox1 > ox0 and oy1 > oy0:
+            other_support[oy0 - y0 : oy1 - y0, ox0 - x0 : ox1 - x0] = True
+    crossing = np.zeros(count, dtype=bool)
+    crossing[np.unique(labels[outside & other_support])] = True
+    claimed = np.zeros(count, dtype=bool)
+    claimed[np.unique(labels[claimed_source[y0:y1, x0:x1]])] = True
+    crossing &= claimed
+    crossing[0] = False
+    return (x0, y0, x1, y1), crossing[labels]
 
 
 def build_text_semantic_ownership(
@@ -598,38 +668,55 @@ def build_text_semantic_ownership(
     texts: Sequence[TextCandidate],
     *,
     ownership: ContentOwnership,
+    retained_rule_mask: np.ndarray | None = None,
 ) -> TextSemanticOwnership:
     """Route only candidate-owned source ink; never blank an enclosing bbox."""
 
     source = _source_foreground(binary)
     outline_owner = cv2.max(ownership.graphic, ownership.residual)
     source_outline = _mask_like(binary)
+    partial_component_source = _mask_like(binary)
     uncertain_outline = _mask_like(binary)
     decisions = text_output_decisions(texts)
-    candidate_regions: list[np.ndarray] = []
+    candidate_regions = []
+    source_bboxes = tuple(decision.candidate.bbox for decision in decisions)
 
     for decision in decisions:
-        region = _candidate_region_mask(
+        window, region = _candidate_region_window(
             decision.candidate,
             binary.shape,
+            neighbor_bboxes=source_bboxes,
         )
         candidate_source = np.where(
-            (region > 0) & (source > 0),
+            (region > 0) & (source[window] > 0),
             255,
             0,
         ).astype(np.uint8)
-        candidate_regions.append(candidate_source)
-        outline_pixels = (
-            (candidate_source > 0) & (outline_owner > 0)
-        )
-        if (
-            decision.text_emit_eligible
-            and not decision.source_outline_suppressible
-        ):
-            source_outline[outline_pixels] = 255
+        candidate_regions.append((window, candidate_source))
+        outline_pixels = (candidate_source > 0) & (outline_owner[window] > 0)
+        if retained_rule_mask is not None:
+            # Another overlapping OCR box cannot hide a verified visible rule
+            # as an editable text backup. Its glyph contacts stay on the rule.
+            outline_pixels &= retained_rule_mask[window] == 0
+        if decision.text_emit_eligible and not decision.source_outline_suppressible:
+            # The crossing proof consumes page coordinates. Its temporary
+            # full-page boolean is released before retaining the next crop.
+            crossing_claim = np.zeros(source.shape, dtype=bool)
+            crossing_claim[window] = outline_pixels
+            crossing = _crossing_source_component_region(
+                source, decision.candidate.bbox, crossing_claim, source_bboxes
+            )
+            del crossing_claim
+            if crossing is not None:
+                (x0, y0, x1, y1), crossing_pixels = crossing
+                partial_component_source[y0:y1, x0:x1][crossing_pixels] = 255
+            source_outline[window][outline_pixels] = 255
         elif decision.state is TextOutputState.TEXT_FALLBACK_OUTLINE:
-            uncertain_outline[outline_pixels] = 255
+            uncertain_outline[window][outline_pixels] = 255
 
+    # Evaluate all final candidates before hiding source backups, so input order
+    # cannot re-hide a crossing piece observed by another candidate.
+    source_outline[partial_component_source > 0] = 0
     uncertain_outline[source_outline > 0] = 0
     editable_source = cv2.max(ownership.text, source_outline)
     records: list[dict[str, object]] = []
@@ -641,42 +728,32 @@ def build_text_semantic_ownership(
         ),
     )
     other_visible = np.where(
-        (other_owner > 0)
-        & (source_outline == 0)
-        & (uncertain_outline == 0),
+        (other_owner > 0) & (source_outline == 0) & (uncertain_outline == 0),
         255,
         0,
     ).astype(np.uint8)
 
-    for index, (decision, candidate_source) in enumerate(
+    for index, (decision, (window, candidate_source)) in enumerate(
         zip(decisions, candidate_regions, strict=True)
     ):
         source_pixels = int(cv2.countNonZero(candidate_source))
         owner_counts = {
             "structural_line": int(
-                np.count_nonzero(
-                    (candidate_source > 0) & (ownership.line > 0)
-                )
+                np.count_nonzero((candidate_source > 0) & (ownership.line[window] > 0))
             ),
             "editable_text_suppressed_source": int(
-                np.count_nonzero(
-                    (candidate_source > 0) & (ownership.text > 0)
-                )
+                np.count_nonzero((candidate_source > 0) & (ownership.text[window] > 0))
             ),
             "source_text_outline_backup": int(
-                np.count_nonzero(
-                    (candidate_source > 0) & (source_outline > 0)
-                )
+                np.count_nonzero((candidate_source > 0) & (source_outline[window] > 0))
             ),
             "uncertain_text_outline": int(
                 np.count_nonzero(
-                    (candidate_source > 0) & (uncertain_outline > 0)
+                    (candidate_source > 0) & (uncertain_outline[window] > 0)
                 )
             ),
             "other_visible_source": int(
-                np.count_nonzero(
-                    (candidate_source > 0) & (other_visible > 0)
-                )
+                np.count_nonzero((candidate_source > 0) & (other_visible[window] > 0))
             ),
         }
         owned_pixels = sum(owner_counts.values())
@@ -685,9 +762,7 @@ def build_text_semantic_ownership(
                 "candidate_id": f"ocr-{index + 1:03d}",
                 "primary_semantic": decision.primary_semantic,
                 "primary_semantic_unique": True,
-                "text_emit_eligible": bool(
-                    decision.text_emit_eligible
-                ),
+                "text_emit_eligible": bool(decision.text_emit_eligible),
                 "source_outline_suppressible": bool(
                     decision.source_outline_suppressible
                 ),
@@ -714,6 +789,300 @@ def build_text_semantic_ownership(
     )
     result.assert_valid(source)
     return result
+
+
+def native_group_text_backups(
+    binary,
+    source_gray,
+    texts,
+    *,
+    ownership,
+    retained_rule_mask=None,
+    evidence=None,
+    source_binding=None,
+    clean_digital=False,
+    threshold=254,
+):
+    """Transfer whole source components only when joint native paint explains them.
+
+    No dilation, coverage fraction, bbox ownership or strong-pixel exemption.
+    The complete prepared component and its one-pixel boundary are evaluated
+    on the same source grid. Other paint remains an independent exclusion.
+    """
+    import base64
+    from pathlib import Path
+    from app.ocr.source_row_display import _complete_display_rows
+    from app.export.ocr_outline_export import native_text_placement
+
+    accepted = _mask_like(binary)
+    records = []
+    if not clean_digital or not evidence or not source_binding:
+        return accepted, records
+    if (
+        evidence.get("source_path") != str(Path(source_binding["document"]).resolve())
+        or evidence.get("physical_page") != source_binding["page_number"]
+        or evidence.get("dpi") != source_binding["requested_dpi"]
+        or evidence.get("source_size_px") != [binary.shape[1], binary.shape[0]]
+    ):
+        return accepted, records
+    groups = evidence.get("text_groups", ())
+    if not 0 < len(groups) <= 2:
+        return accepted, records
+    emitted = accepted_ocr_texts(texts)
+    try:
+        complete_rows = _complete_display_rows(evidence.get("display_rows", ()))
+    except (ValueError, TypeError, KeyError, IndexError, AttributeError):
+        return accepted, records
+    protected = cv2.max(
+        ownership.text,
+        cv2.max(ownership.line, cv2.max(ownership.logo, ownership.signature)),
+    )
+    if retained_rule_mask is not None:
+        protected = cv2.max(protected, retained_rule_mask)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        (binary < 128).astype(np.uint8), 8
+    )
+    for group in groups:
+        try:
+            if (
+                group.get("version") != "native-text-group-paint-v1"
+                or not group.get("restore_equal")
+                or group.get("canvas_size_px") != [binary.shape[1], binary.shape[0]]
+                or group.get("pixel_contract")
+                != "PDFIUM_GRAY_SAME_PARENT_CANVAS_INTEGER_PIXEL_CENTERS"
+            ):
+                continue
+            rows = group.get("rows", ())
+            if not 2 <= len(rows) <= 12:
+                continue
+            if any(
+                len(
+                    [
+                        r
+                        for r in complete_rows
+                        if r.get("layout_eligible") is True
+                        and r.get("status") == "NATIVE_TEXT_SUGGESTION"
+                        and r.get("rotation_deg") == 0
+                        and {key: r[key] for key in ("text", "bounds", "fragments")}
+                        == row
+                    ]
+                )
+                != 1
+                for row in rows
+            ):
+                continue
+            bound = []
+            members = []
+            for row in rows:
+                a, b, c, d = row["bounds"]
+                matches = [
+                    i
+                    for i, t in enumerate(texts)
+                    if t in emitted
+                    and t.text == row["text"]
+                    and abs(t.rotation_deg) <= 1
+                    and t.bbox[0] - 1 <= a < c <= t.bbox[0] + t.bbox[2] + 1
+                    and t.bbox[1] - 1 <= b < d <= t.bbox[1] + t.bbox[3] + 1
+                    and (c - a) / max(t.bbox[2], 1) >= 0.75
+                ]
+                if len(matches) != 1:
+                    break
+                placement = native_text_placement(
+                    texts[matches[0]],
+                    transform=lambda x, y: (float(x), binary.shape[0] - float(y)),
+                )
+                if (
+                    placement is None
+                    or placement.metrics.fallback_reason
+                    or placement.metrics.metric_source != "librecad-lff-visible-bounds"
+                ):
+                    break
+                bound.append(matches[0])
+                members.extend(f["object"] for f in row["fragments"])
+            if (
+                len(bound) != len(rows)
+                or len(set(bound)) != len(bound)
+                or len(members) > 1024
+                or len(set(members)) != len(members)
+                or sorted(members) != group.get("object_indices")
+            ):
+                continue
+            a, b, c, d = group["box"]
+            if not (
+                0 <= a < c <= binary.shape[1]
+                and 0 <= b < d <= binary.shape[0]
+                and (c - a) * (d - b) <= 600000
+            ):
+                continue
+            try:
+                images = [
+                    cv2.imdecode(
+                        np.frombuffer(
+                            base64.b64decode(group[key + "_png"], validate=True),
+                            np.uint8,
+                        ),
+                        0,
+                    )
+                    for key in ("all", "without", "only")
+                ]
+            except (ValueError, KeyError):
+                continue
+            if any(image is None or image.shape != (d - b, c - a) for image in images):
+                continue
+            all_ink, without, only = images
+            if not np.array_equal(all_ink, source_gray[b:d, a:c]) or not np.array_equal(
+                binary[b:d, a:c] < 128, all_ink <= threshold
+            ):
+                continue
+            component_records = []
+            staged = np.zeros((d - b, c - a), np.uint8)
+            for label in np.unique(labels[b:d, a:c][only < 255]):
+                if not label:
+                    continue
+                x, y, w, h, area = (int(v) for v in stats[label])
+                # Whole component plus boundary must fit; never truncate a carrier.
+                if not (a < x and b < y and x + w < c and y + h < d):
+                    continue
+                component = labels[y - 1 : y + h + 1, x - 1 : x + w + 1] == label
+                region = np.s_[y - 1 - b : y + h + 1 - b, x - 1 - a : x + w + 1 - a]
+                src = all_ink[region]
+                own = only[region]
+                other = without[region]
+                boundary = (
+                    cv2.dilate(component.astype(np.uint8), np.ones((3, 3), np.uint8))
+                    != 0
+                )
+                if (
+                    np.any(component & (own > threshold))
+                    or np.any(component & (own != src))
+                    or np.any(boundary & (other != 255))
+                    or np.any(
+                        component
+                        & (protected[y - 1 : y + h + 1, x - 1 : x + w + 1] != 0)
+                    )
+                ):
+                    continue
+                staged[region][component] = 255
+                component_records.append(
+                    dict(bounds=[x, y, x + w, y + h], source_pixels=area)
+                )
+            if component_records:
+                accepted[b:d, a:c] = cv2.max(accepted[b:d, a:c], staged)
+                records.append(
+                    dict(
+                        group_index=list(groups).index(group),
+                        text_indices=bound,
+                        object_indices=members,
+                        components=component_records,
+                        source_pixels=int(np.count_nonzero(staged)),
+                        authority="COMPLETE_NATIVE_GROUP_PAINT",
+                    )
+                )
+        except (
+            ValueError,
+            RuntimeError,
+            TypeError,
+            KeyError,
+            IndexError,
+            AttributeError,
+            cv2.error,
+        ):
+            continue
+    return accepted, records
+
+
+def route_native_group_text_backups(semantics, mask, binary, semantic_texts):
+    """Derive the existing backup partition atomically; keep source pixels."""
+    if mask.shape != binary.shape or np.any((mask > 0) & (binary >= 128)):
+        raise ValueError("Native text backup must be complete source foreground")
+    records = []
+    bboxes = tuple(t.bbox for t in semantic_texts)
+    for text, record in zip(semantic_texts, semantics.candidates, strict=True):
+        region = _candidate_region_mask(text, binary.shape, neighbor_bboxes=bboxes) > 0
+        moved = region & (mask > 0) & (semantics.source_outline == 0)
+        uncertain = int(np.count_nonzero(moved & (semantics.uncertain_outline > 0)))
+        total = int(np.count_nonzero(moved))
+        counts = dict(record["final_owner_pixels"])
+        counts["source_text_outline_backup"] += total
+        counts["uncertain_text_outline"] -= uncertain
+        counts["other_visible_source"] -= total - uncertain
+        if min(counts.values()) < 0:
+            raise ValueError("Native text backup cannot change another source owner")
+        records.append(
+            dict(
+                record,
+                final_owner_pixels=counts,
+                source_pixels_conserved=sum(counts.values()) == record["source_pixels"],
+            )
+        )
+    result = replace(
+        semantics,
+        source_outline=cv2.max(semantics.source_outline, mask),
+        editable_source=cv2.max(semantics.editable_source, mask),
+        uncertain_outline=np.where(mask > 0, 0, semantics.uncertain_outline).astype(
+            np.uint8
+        ),
+        candidates=tuple(records),
+    )
+    result.assert_valid(_source_foreground(binary))
+    return result
+
+
+def retain_layout_rule_ownership(
+    ownership: ContentOwnership,
+    proofs: Sequence[Any],
+) -> tuple[ContentOwnership, np.ndarray | None]:
+    """Narrow final TEXT suppression after row completion, before tracing.
+
+    Detection footprints remain protection regions, not suppression licences.
+    Committed LINE/IMAGE/logo/signature owners are never reassigned here.
+    """
+    if not proofs:
+        return ownership, None
+    retained = _mask_like(ownership.source)
+    for proof in proofs:
+        left, top, right, bottom = proof.bounds
+        local = retained[top:bottom, left:right]
+        graphic_or_text = cv2.max(
+            ownership.graphic[top:bottom, left:right],
+            ownership.text[top:bottom, left:right],
+        )
+        local[(proof.mask > 0) & (graphic_or_text > 0)] = 255
+    result = replace(
+        ownership,
+        text=np.where(retained > 0, 0, ownership.text).astype(np.uint8),
+        graphic=cv2.max(ownership.graphic, retained),
+    )
+    result.assert_valid()
+    return result, retained
+
+
+def retained_rule_contours(paths: Sequence[Any], retained: np.ndarray | None) -> tuple:
+    """Bind only whole final source contours contained in the measured rule ink.
+
+    Exact geometry survives contour reindexing (including later ARC commits).
+    A mixed carrier is never granted an export exemption by bbox overlap.
+    """
+    if retained is None:
+        return ()
+    approved = []
+    for path in paths:
+        if path.depth % 2 or len(path.points) < 3:
+            continue
+        points = np.asarray(path.points, dtype=np.int32)
+        if not np.all(retained[points[:, 1], points[:, 0]] > 0):
+            continue
+        left, top, width, height = cv2.boundingRect(points)
+        if width * height > 65_536:
+            continue
+        coverage = np.zeros((height, width), np.uint8)
+        cv2.fillPoly(coverage, [points - (left, top)], 255)
+        if np.any(
+            (coverage > 0) & (retained[top : top + height, left : left + width] == 0)
+        ):
+            continue
+        approved.append(tuple(path.points))
+    return tuple(approved)
 
 
 @dataclass(frozen=True)
@@ -760,9 +1129,7 @@ def _point_has_claim(
     right = min(mask.shape[1], x + radius + 1)
     bottom = min(mask.shape[0], y + radius + 1)
     return bool(
-        right > left
-        and bottom > top
-        and np.any(mask[top:bottom, left:right] > 0)
+        right > left and bottom > top and np.any(mask[top:bottom, left:right] > 0)
     )
 
 
@@ -850,9 +1217,7 @@ def _conflict_records(
             connectivity=8,
         )
         for label in range(1, count):
-            x, y, width, height, area = (
-                int(value) for value in stats[label]
-            )
+            x, y, width, height, area = (int(value) for value in stats[label])
             if area <= 0:
                 continue
             component = labels == label
@@ -885,9 +1250,7 @@ def _conflict_records(
                     conflict_reason=conflict_reason,
                     arbitration_rule=arbitration_rule,
                     final_category=final_category,
-                    residual_pixels=(
-                        area if final_category == "residual" else 0
-                    ),
+                    residual_pixels=(area if final_category == "residual" else 0),
                     downgrade_reason=downgrade_reason,
                 )
             )
@@ -993,11 +1356,7 @@ def partition_content(
         (source > 0)
         & (
             (forced > 0)
-            | (
-                (claim_count > 1)
-                & (line_resolved == 0)
-                & (text_resolved == 0)
-            )
+            | ((claim_count > 1) & (line_resolved == 0) & (text_resolved == 0))
         ),
         255,
         0,
@@ -1161,11 +1520,7 @@ def _arbitrate_lines(
         source_crop = ownership.source[top:bottom, left:right]
         owned_crop = ownership.line[top:bottom, left:right]
         conflicting_source_pixels = int(
-            np.count_nonzero(
-                (local_claim > 0)
-                & (source_crop > 0)
-                & (owned_crop == 0)
-            )
+            np.count_nonzero((local_claim > 0) & (source_crop > 0) & (owned_crop == 0))
         )
         if conflicting_source_pixels == 0:
             kept.append(line)
@@ -1198,10 +1553,10 @@ def _arbitrate_texts(
         if id(item) not in accepted_ids:
             output.append(item)
             continue
-        region = _candidate_region_mask(item, binary.shape)
-        claim = (region > 0) & (source > 0)
+        window, region = _candidate_region_window(item, binary.shape)
+        claim = (region > 0) & (source[window] > 0)
         conflicting_pixels = int(
-            np.count_nonzero(claim & (ownership.text == 0))
+            np.count_nonzero(claim & (ownership.text[window] == 0))
         )
         if conflicting_pixels == 0:
             output.append(item)
@@ -1215,9 +1570,7 @@ def _arbitrate_texts(
             replace(
                 item,
                 replacement_safe=False,
-                review_note=(
-                    explanation if not note else f"{note}; {explanation}"
-                ),
+                review_note=(explanation if not note else f"{note}; {explanation}"),
             )
         )
         downgrades.append(
@@ -1257,9 +1610,7 @@ def _arbitrate_masked_regions(
             255,
             0,
         ).astype(np.uint8)
-        removed_pixels = int(
-            np.count_nonzero((original > 0) & (final_mask == 0))
-        )
+        removed_pixels = int(np.count_nonzero((original > 0) & (final_mask == 0)))
         if cv2.countNonZero(final_mask):
             output.append(replace(item, mask=final_mask))
         if removed_pixels:
@@ -1272,9 +1623,7 @@ def _arbitrate_masked_regions(
                     "conflict_reason": "masked_object_source_not_exclusively_owned",
                     "arbitration_rule": "retain_only_exact_exclusive_source_mask",
                     "final_category": (
-                        category
-                        if cv2.countNonZero(final_mask)
-                        else "graphic"
+                        category if cv2.countNonZero(final_mask) else "graphic"
                     ),
                     "downgrade_reason": "conflicting_pixels_preserved_as_outline",
                 }
@@ -1318,10 +1667,7 @@ def arbitrate_content_candidates(
         logos=tuple(final_logos),
         signatures=tuple(final_signatures),
         downgrades=(
-            line_downgrades
-            + text_downgrades
-            + logo_downgrades
-            + signature_downgrades
+            line_downgrades + text_downgrades + logo_downgrades + signature_downgrades
         ),
     )
 
@@ -1393,14 +1739,10 @@ def candidate_specific_ownership_eligibility(
         raise ValueError("Candidate ownership support must use source coordinates")
     if np.any((exclusive_mask > 0) & (shared_mask > 0)):
         raise ValueError("Exclusive and shared candidate support must be disjoint")
-    if np.any(
-        ((exclusive_mask > 0) | (shared_mask > 0))
-        & (ownership.source == 0)
-    ):
+    if np.any(((exclusive_mask > 0) | (shared_mask > 0)) & (ownership.source == 0)):
         raise ValueError("Candidate eligibility cannot invent source ink")
     if np.any(
-        (shared_mask > 0)
-        & ((ownership.residual == 0) | (ownership.ambiguous == 0))
+        (shared_mask > 0) & ((ownership.residual == 0) | (ownership.ambiguous == 0))
     ):
         raise ValueError(
             "Managed shared cells must remain globally residual and ambiguous"

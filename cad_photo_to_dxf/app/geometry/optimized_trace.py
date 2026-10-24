@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+
 if TYPE_CHECKING:
     from app.diagnostics.observability import ObservationSink
     from app.diagnostics.source_support_lifecycle import SourceSupportLifecycle
@@ -10,26 +11,65 @@ from dataclasses import replace
 import cv2
 import numpy as np
 
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from app.geometry.connectivity_safety import DEFAULT_CONNECTION_DPI
-from app.geometry.content_ownership import arbitrate_content_candidates, binary_from_foreground, build_connection_protection, build_text_semantic_ownership, complete_verified_text_ownership, finalize_content_ownership, graphic_source_mask, partition_content, signature_source_mask, text_candidate_source_mask
+from app.geometry.content_ownership import (
+    arbitrate_content_candidates,
+    binary_from_foreground,
+    build_connection_protection,
+    build_text_semantic_ownership,
+    complete_verified_text_ownership,
+    finalize_content_ownership,
+    graphic_source_mask,
+    partition_content,
+    retain_layout_rule_ownership,
+    retained_rule_contours,
+    signature_source_mask,
+    text_candidate_source_mask,
+)
 from app.core.structure_build import build_final_structure
-from app.geometry.junction_v2_consumer import JunctionConsumptionResult, JunctionContract, consume_junction_contract
+from app.geometry.junction_v2_consumer import (
+    JunctionConsumptionResult,
+    JunctionContract,
+    consume_junction_contract,
+)
 from app.geometry.line_detect import LineSegment
 from app.ocr.logo_detection import detect_logo_regions, source_logo_objects
 from app.ocr.engineering_symbols import resolve_enclosure_relations
-from app.ocr.ocr_layout import constrain_texts_to_table_cells
+from app.ocr.ocr_layout import (
+    constrain_texts_to_table_cells,
+    verified_layout_rule_sources,
+)
+from app.ocr.single_glyph_display import refine_single_glyph_displays
 from app.ocr.ocr_overlap import collapse_overlapping_candidates
 from app.ocr.ocr_pipeline import recognize_text_candidates_optimized
-from app.diagnostics.performance_observability import PerformanceCallback, emit_performance, performance_clock, record_performance
+from app.diagnostics.performance_observability import (
+    PerformanceCallback,
+    emit_performance,
+    performance_clock,
+    record_performance,
+)
 from app.geometry.raster_trace import RasterTraceResult, trace_binary
 from app.core.resolution import image_resolution_scale
 from app.geometry.scan_artifact_filter import suppress_scan_artifact_traces
 from app.geometry.scan_cleanup import prepare_scan_page
-from app.ocr.signature_overlay import detect_signature_regions, signature_field_regions, source_ink_region
+from app.ocr.signature_overlay import (
+    detect_signature_regions,
+    signature_field_regions,
+    source_ink_region,
+)
 from app.geometry.source_stroke_reconciliation import ReconciliationLedger
 from app.geometry.straight_line_reconstruction import reconstruct_straight_lines
-from app.geometry.source_presentation import source_orientation_graphics, stroke_presentation, source_fill_records
+from app.geometry.source_presentation import (
+    source_orientation_graphics,
+    stroke_presentation,
+    source_fill_records,
+)
 from app.ocr.text_output_contract import text_output_decisions, text_output_summary
 
 
@@ -51,23 +91,43 @@ def _stable_audit_union(*groups):
 
 def _graphic_owns_text(candidate, source_binary, graphic_ink):
     x, y, w, h = candidate.bbox
-    roi = graphic_ink[y:y+h, x:x+w]
-    source = source_binary[y:y+h, x:x+w] < 128
-    return bool(roi.size and np.count_nonzero((roi > 0) & source)
-                > max(4, np.count_nonzero(source) * .55))
+    roi = graphic_ink[y : y + h, x : x + w]
+    source = source_binary[y : y + h, x : x + w] < 128
+    return bool(
+        roi.size
+        and np.count_nonzero((roi > 0) & source)
+        > max(4, np.count_nonzero(source) * 0.55)
+    )
 
 
 def _prefer_source_regions(existing, source_regions):
     """Replace overlapping provisional crops, retaining unrelated objects."""
+
     def overlaps(first, second):
         x, y, w, h = first.bbox
         a, b, c, d = second.bbox
-        intersection = max(0, min(x+w, a+c)-max(x,a)) * max(0, min(y+h,b+d)-max(y,b))
-        return intersection > min(w*h,c*d)*.5
-    return (*source_regions, *(r for r in existing if not any(overlaps(r,s) for s in source_regions)))
+        intersection = max(0, min(x + w, a + c) - max(x, a)) * max(
+            0, min(y + h, b + d) - max(y, b)
+        )
+        return intersection > min(w * h, c * d) * 0.5
+
+    return (
+        *source_regions,
+        *(r for r in existing if not any(overlaps(r, s) for s in source_regions)),
+    )
 
 
-def commit_source_objects(*, source_gray, contour_binary, source_candidates, texts, logos, signatures, text_semantics):
+def commit_source_objects(
+    *,
+    source_gray,
+    contour_binary,
+    source_candidates,
+    texts,
+    logos,
+    signatures,
+    text_semantics,
+    orientation_graphics=None,
+):
     """Commit representation from source evidence, without touching LINE authority.
 
     The production path and committed-model evidence replay use this one stage.
@@ -76,39 +136,63 @@ def commit_source_objects(*, source_gray, contour_binary, source_candidates, tex
     # Representation is committed AFTER line reconciliation. This stage never
     # supplies candidates to, removes, or rewrites structural LINE geometry.
     source_binary = np.where(source_gray < 128, 0, 255).astype(np.uint8)
-    source_logos = (*source_logo_objects(source_binary), *source_orientation_graphics(source_gray))
+    if orientation_graphics is None:
+        orientation_graphics = source_orientation_graphics(source_gray)
+    source_logos = (*source_logo_objects(source_binary), *orientation_graphics)
     source_signatures = signature_field_regions(source_binary, source_candidates)
     logos = _prefer_source_regions(logos, source_logos)
     signatures = _prefer_source_regions(signatures, source_signatures)
-    graphic_ink = cv2.max(graphic_source_mask(source_binary, logos),
-                         signature_source_mask(source_binary, signatures))
+    graphic_ink = cv2.max(
+        graphic_source_mask(source_binary, logos),
+        signature_source_mask(source_binary, signatures),
+    )
 
     def graphic_owned(candidate):
         return _graphic_owns_text(candidate, source_binary, graphic_ink)
 
     candidates = tuple(c for c in source_candidates if not graphic_owned(c))
     related = set()
-    related_texts, enclosure_paths, enclosure_records, fallback_graphics, enclosure_ink = (
-        resolve_enclosure_relations(source_binary, candidates,claimed_candidates=related)
+    (
+        related_texts,
+        enclosure_paths,
+        enclosure_records,
+        fallback_graphics,
+        enclosure_ink,
+    ) = resolve_enclosure_relations(
+        source_binary, candidates, claimed_candidates=related
     )
-    graphic_ink = cv2.max(graphic_ink, graphic_source_mask(source_binary, fallback_graphics))
+    graphic_ink = cv2.max(
+        graphic_ink, graphic_source_mask(source_binary, fallback_graphics)
+    )
     # Restore only source-supported enclosure text rejected by old ownership;
     # ordinary OCR arbitration and ordinary native TEXT stay unchanged.
     replaced_boxes = {candidates[i].bbox for i in related}
-    texts = tuple(c for c in texts if not graphic_owned(c) and c.bbox not in replaced_boxes)
-    texts += tuple(c for c in related_texts if c.source.endswith(':enclosure-relation'))
+    texts = tuple(
+        c for c in texts if not graphic_owned(c) and c.bbox not in replaced_boxes
+    )
+    texts += tuple(c for c in related_texts if c.source.endswith(":enclosure-relation"))
     logos = (*logos, *fallback_graphics)
     logos = tuple(source_ink_region(region, source_gray) for region in logos)
     signatures = tuple(source_ink_region(region, source_gray) for region in signatures)
     replacement_ink = cv2.max(graphic_ink, enclosure_ink)
     footprint = cv2.dilate(replacement_ink, np.ones((3, 3), np.uint8)) > 0
     contour_binary[footprint] = 255
-    text_semantics = replace(text_semantics, **{
-        name: np.where(footprint, 0, getattr(text_semantics, name)).astype(np.uint8)
-        for name in ('editable_source', 'source_outline', 'uncertain_outline')
-    })
-    return (contour_binary, texts, logos, signatures, text_semantics,
-            enclosure_paths, enclosure_records)
+    text_semantics = replace(
+        text_semantics,
+        **{
+            name: np.where(footprint, 0, getattr(text_semantics, name)).astype(np.uint8)
+            for name in ("editable_source", "source_outline", "uncertain_outline")
+        },
+    )
+    return (
+        contour_binary,
+        texts,
+        logos,
+        signatures,
+        text_semantics,
+        enclosure_paths,
+        enclosure_records,
+    )
 
 
 def _preserve_ownership_continuity(
@@ -136,9 +220,19 @@ def _preserve_ownership_continuity(
     return result
 
 
-def _assign_and_reconcile(binary, *, line_candidates, texts, logos, signatures,
-                          graphic_mask, signature_mask, reconciliation_ledger,
-                          late_restorations, performance_callback):
+def _assign_and_reconcile(
+    binary,
+    *,
+    line_candidates,
+    texts,
+    logos,
+    signatures,
+    graphic_mask,
+    signature_mask,
+    reconciliation_ledger,
+    late_restorations,
+    performance_callback,
+):
     """Arbitrate proposals, reconcile source identity, then enforce ownership veto.
 
     The second raster pass represents the changed committed set. It never
@@ -146,7 +240,9 @@ def _assign_and_reconcile(binary, *, line_candidates, texts, logos, signatures,
     """
     # Geometry preparation and stroke presentation must finish first. Removing
     # a detector observation earlier can change their representative selection.
-    line_candidates = reconciliation_ledger.consolidate_detector_aliases(line_candidates)
+    line_candidates = reconciliation_ledger.consolidate_detector_aliases(
+        line_candidates
+    )
     ownership_started = performance_clock()
     candidate_ownership = partition_content(
         binary,
@@ -254,6 +350,7 @@ def trace_image_optimized(
     junction_contract: JunctionContract | None = None,
     processing_contract: dict[str, object] | None = None,
     pdf_geometry=None,
+    pdf_text_suggestions=None,
     before_arc_replacement=None,
 ) -> RasterTraceResult:
     """Run OCR and tracing without constructing full-resolution UI overlays.
@@ -264,7 +361,12 @@ def trace_image_optimized(
     """
 
     if observation_sink is not None:
-        from app.diagnostics.observability import observe, rasterize_lines, rasterize_text_boxes, texts_payload
+        from app.diagnostics.observability import (
+            observe,
+            rasterize_lines,
+            rasterize_text_boxes,
+            texts_payload,
+        )
     checkpoint(cancellation_token)
     if (
         source_support_lifecycle is not None
@@ -306,9 +408,7 @@ def trace_image_optimized(
             image=prepared.binary,
             payload={
                 "threshold": int(prepared.threshold),
-                "foreground_pixels": int(
-                    np.count_nonzero(prepared.binary == 0)
-                ),
+                "foreground_pixels": int(np.count_nonzero(prepared.binary == 0)),
             },
         )
         observe(
@@ -362,12 +462,19 @@ def trace_image_optimized(
             )
 
     signatures = detect_signature_regions(prepared.binary)
-    logos = (*detect_logo_regions(prepared.binary), *source_orientation_graphics(prepared.gray))
+    orientation_graphics = source_orientation_graphics(prepared.gray)
+    logos = (*detect_logo_regions(prepared.binary), *orientation_graphics)
     verified_text_sources = []
+    display_cells = {}
     if texts:
         # OCR and source-row proofs use the original strong ink. The tracing
         # threshold can also include antialiasing bridges between those rows.
-        texts = constrain_texts_to_table_cells(prepared.gray, texts, verified_sources=verified_text_sources)
+        texts = constrain_texts_to_table_cells(
+            prepared.gray,
+            texts,
+            verified_sources=verified_text_sources,
+            display_cells=display_cells,
+        )
         texts = collapse_overlapping_candidates(texts)
     source_candidates = tuple(texts)
     if enable_ocr and observation_sink is not None:
@@ -427,17 +534,15 @@ def trace_image_optimized(
         protected_mask=protected_mask,
         scale=image_resolution_scale(prepared.binary.shape),
     )
-    report_progress(progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08)
+    report_progress(
+        progress_callback, "line-reconstruction", 0.47 if enable_ocr else 0.08
+    )
     late_restorations: list[LineSegment] = []
     scan_stroke_reviews = []
     line_candidates = reconstruct_straight_lines(
         prepared.binary,
         source_dpi=source_dpi,
-        scan_support_gray=(
-            None
-            if prepared.clean_digital
-            else prepared.gray
-        ),
+        scan_support_gray=(None if prepared.clean_digital else prepared.gray),
         protected_mask=protected_mask,
         protection_guards=dict(connection_protection.guards),
         cancellation_token=cancellation_token,
@@ -458,13 +563,22 @@ def trace_image_optimized(
     )
 
     line_candidates, stroke_decisions = stroke_presentation(
-        prepared.gray, line_candidates, float(source_dpi or DEFAULT_CONNECTION_DPI),
-        protected_mask=protected_mask)
+        prepared.gray,
+        line_candidates,
+        float(source_dpi or DEFAULT_CONNECTION_DPI),
+        protected_mask=protected_mask,
+    )
     reconciliation_result, ownership, texts, logos, signatures = _assign_and_reconcile(
-        prepared.binary, line_candidates=line_candidates, texts=texts,
-        logos=logos, signatures=signatures, graphic_mask=graphic_mask,
-        signature_mask=signature_mask, reconciliation_ledger=reconciliation_ledger,
-        late_restorations=late_restorations, performance_callback=performance_callback,
+        prepared.binary,
+        line_candidates=line_candidates,
+        texts=texts,
+        logos=logos,
+        signatures=signatures,
+        graphic_mask=graphic_mask,
+        signature_mask=signature_mask,
+        reconciliation_ledger=reconciliation_ledger,
+        late_restorations=late_restorations,
+        performance_callback=performance_callback,
     )
     straight_lines = reconciliation_result.lines
     junction_result: JunctionConsumptionResult | None = None
@@ -476,14 +590,58 @@ def trace_image_optimized(
         )
         straight_lines = junction_result.lines
         final_line_authority = junction_result
-    ownership = complete_verified_text_ownership(prepared.binary, prepared.gray, texts,
-        verified_text_sources, ownership=ownership)
+    ownership = complete_verified_text_ownership(
+        prepared.binary,
+        prepared.gray,
+        texts,
+        verified_text_sources,
+        ownership=ownership,
+    )
+    rule_started = performance_clock()
+    rule_sources = verified_layout_rule_sources(prepared.gray, prepared.binary, texts)
+    ownership, retained_rules = retain_layout_rule_ownership(ownership, rule_sources)
+    record_performance(performance_callback, "text-rule-source-scope", rule_started)
+    curve_review = None
+    if not prepared.clean_digital and not getattr(pdf_geometry, "candidates", ()):
+        from app.geometry.scan_curve_retention import retain_closed_scan_curves
+
+        curve_started = performance_clock()
+        ownership, curve_review = retain_closed_scan_curves(
+            prepared.binary,
+            prepared.gray,
+            ownership,
+            straight_lines,
+            protected_mask=protected_mask,
+        )
+        record_performance(
+            performance_callback, "isolated-scan-curve-source", curve_started
+        )
+    if observation_sink is not None:
+        observe(
+            observation_sink,
+            "text_candidate_mask",
+            image=retained_rules,
+            payload={
+                "role": "layout-excluded-rule-sources",
+                "rules": [
+                    {
+                        "text": p.text.text,
+                        "bbox": list(p.text.bbox),
+                        "source_pixels": int(cv2.countNonZero(p.mask)),
+                        "layout_excluded_pixels": p.layout_excluded_pixels,
+                        "body_free_columns": p.body_free_columns,
+                    }
+                    for p in rule_sources
+                ],
+            },
+        )
     text_decisions = text_output_decisions(texts)
     text_contract = text_output_summary(texts)
     text_semantics = build_text_semantic_ownership(
         prepared.binary,
         texts,
         ownership=ownership,
+        retained_rule_mask=retained_rules,
     )
     if observation_sink is not None:
         owner_map = np.zeros(prepared.binary.shape, dtype=np.uint8)
@@ -655,11 +813,54 @@ def trace_image_optimized(
     contour_binary = binary_from_foreground(
         cv2.max(residual_foreground, ownership.logo)
     )
-    (contour_binary, texts, logos, signatures, text_semantics,
-     enclosure_paths, enclosure_records) = commit_source_objects(
-        source_gray=prepared.gray, contour_binary=contour_binary,
-        source_candidates=source_candidates, texts=texts, logos=logos,
-        signatures=signatures, text_semantics=text_semantics)
+    semantic_texts = tuple(texts)
+    (
+        contour_binary,
+        texts,
+        logos,
+        signatures,
+        text_semantics,
+        enclosure_paths,
+        enclosure_records,
+    ) = commit_source_objects(
+        source_gray=prepared.gray,
+        contour_binary=contour_binary,
+        source_candidates=source_candidates,
+        texts=texts,
+        logos=logos,
+        signatures=signatures,
+        text_semantics=text_semantics,
+        orientation_graphics=orientation_graphics,
+    )
+    from app.geometry.content_ownership import (
+        native_group_text_backups,
+        route_native_group_text_backups,
+    )
+
+    native_group_outline, native_group_records = native_group_text_backups(
+        prepared.binary,
+        prepared.gray,
+        texts,
+        ownership=replace(
+            ownership,
+            logo=cv2.max(ownership.logo, graphic_source_mask(prepared.binary, logos)),
+            signature=cv2.max(
+                ownership.signature, signature_source_mask(prepared.binary, signatures)
+            ),
+        ),
+        retained_rule_mask=retained_rules,
+        evidence=pdf_text_suggestions,
+        source_binding=(pdf_geometry.binding if pdf_geometry is not None else None),
+        clean_digital=prepared.clean_digital,
+        threshold=prepared.threshold,
+    )
+    if native_group_records:
+        text_semantics = route_native_group_text_backups(
+            text_semantics, native_group_outline, prepared.binary, semantic_texts
+        )
+        contour_binary = np.where(native_group_outline > 0, 255, contour_binary).astype(
+            np.uint8
+        )
     text_contract = text_output_summary(texts)
     text_decisions = text_output_decisions(texts)
     if observation_sink is not None:
@@ -685,10 +886,7 @@ def trace_image_optimized(
                 "count": len(texts),
                 "output_contract": text_contract.payload(),
                 "semantic_ownership": text_semantics.payload(),
-                "decisions": [
-                    decision.payload()
-                    for decision in text_decisions
-                ],
+                "decisions": [decision.payload() for decision in text_decisions],
             },
         )
         observe(
@@ -719,22 +917,29 @@ def trace_image_optimized(
             None
             if progress_callback is None
             else (
-                (lambda stage, fraction: progress_callback(
-                    stage,
-                    0.72 + 0.28 * fraction,
-                ))
+                (
+                    lambda stage, fraction: progress_callback(
+                        stage,
+                        0.72 + 0.28 * fraction,
+                    )
+                )
                 if enable_ocr
-                else (lambda stage, fraction: progress_callback(
-                    stage,
-                    0.33 + 0.67 * fraction,
-                ))
+                else (
+                    lambda stage, fraction: progress_callback(
+                        stage,
+                        0.33 + 0.67 * fraction,
+                    )
+                )
             )
         ),
     )
-    enclosure_records = tuple(dict(record, contour_index=len(paths)+i)
-                              for i, record in enumerate(enclosure_records))
-    paths = tuple(paths) + tuple(replace(path, root=len(paths)+i)
-                                 for i, path in enumerate(enclosure_paths))
+    enclosure_records = tuple(
+        dict(record, contour_index=len(paths) + i)
+        for i, record in enumerate(enclosure_records)
+    )
+    paths = tuple(paths) + tuple(
+        replace(path, root=len(paths) + i) for i, path in enumerate(enclosure_paths)
+    )
     record_performance(
         performance_callback,
         "contour_tracing",
@@ -765,9 +970,7 @@ def trace_image_optimized(
             "RESIDUAL_GRAPHIC。"
         )
     if signatures:
-        warnings.append(
-            f"已提取 {len(signatures)} 个完整签名图像并置于前景图层。"
-        )
+        warnings.append(f"已提取 {len(signatures)} 个完整签名图像并置于前景图层。")
     junction_observations = (
         ()
         if junction_result is None
@@ -797,9 +1000,7 @@ def trace_image_optimized(
                 "node_incidence": [
                     dict(item) for item in junction_result.node_incidence
                 ],
-                "lineage": [
-                    item.payload() for item in junction_result.lineage
-                ],
+                "lineage": [item.payload() for item in junction_result.lineage],
             },
         )
     )
@@ -808,9 +1009,7 @@ def trace_image_optimized(
             "event": "ownership_partitioned",
             "ambiguous_pixels": int(cv2.countNonZero(ownership.ambiguous)),
             "residual_pixels": int(cv2.countNonZero(ownership.residual)),
-            "graphic_fallback_pixels": int(
-                cv2.countNonZero(ownership.graphic)
-            ),
+            "graphic_fallback_pixels": int(cv2.countNonZero(ownership.graphic)),
             "conflict_objects": len(ownership.conflicts),
             "downgrades": len(ownership.downgrades),
             "source_pixels": int(cv2.countNonZero(ownership.source)),
@@ -845,33 +1044,66 @@ def trace_image_optimized(
             "final_set_digest": reconciliation_result.final_set_digest,
         },
     }
+    if native_group_records:
+        final_provenance["native_text_group_backups"] = native_group_records
+    rule_contours = retained_rule_contours(paths, retained_rules)
+    if rule_contours:
+        final_provenance["text_rule_contours"] = rule_contours
     if enclosure_records:
-        final_provenance['engineering_enclosures'] = enclosure_records
+        final_provenance["engineering_enclosures"] = enclosure_records
     if scan_stroke_reviews:
         accepted_scan_ids = {sid for line in straight_lines for sid in line.source_ids}
         for review in scan_stroke_reviews:
-            for decision in review['decisions']:
-                if decision['decision'] == 'PROPOSED':
-                    decision['final_outcome'] = ('ACCEPTED' if decision['source_id'] in accepted_scan_ids
-                                                 else 'NOT_ACCEPTED_BY_RECONCILIATION')
-        final_provenance['scan_stroke_regularization'] = scan_stroke_reviews
+            for decision in review["decisions"]:
+                if decision["decision"] == "PROPOSED":
+                    decision["final_outcome"] = (
+                        "ACCEPTED"
+                        if decision["source_id"] in accepted_scan_ids
+                        else "NOT_ACCEPTED_BY_RECONCILIATION"
+                    )
+        final_provenance["scan_stroke_regularization"] = scan_stroke_reviews
     # Annotate the committed geometry; no coordinate edits after reconciliation.
     _, presentation = stroke_presentation(
-        prepared.gray, straight_lines, float(source_dpi or DEFAULT_CONNECTION_DPI),
-        allow_merge=False)
+        prepared.gray,
+        straight_lines,
+        float(source_dpi or DEFAULT_CONNECTION_DPI),
+        allow_merge=False,
+    )
     from app.geometry.scan_line_regularization import scan_stroke_line_record
+
     for index, line in enumerate(straight_lines):
-        record = scan_stroke_line_record(line, float(source_dpi or DEFAULT_CONNECTION_DPI))
+        record = scan_stroke_line_record(
+            line, float(source_dpi or DEFAULT_CONNECTION_DPI)
+        )
         if record is not None:
-            presentation['line_records'][index] = record
-    presentation['false_parallel_decisions'] = stroke_decisions['false_parallel_decisions']
-    presentation['fill_records'] = source_fill_records(
-        prepared.gray, paths, source_candidates,
-        excluded_indices=tuple(r['contour_index'] for r in enclosure_records))
-    presentation['graphic_ownership'] = [dict(region.payload(), reason=
-        'isolated circular perimeter, broad anisotropic filled core, no structural continuation')
-        for region in source_orientation_graphics(prepared.gray)]
-    final_provenance['stroke_presentation'] = presentation
+            presentation["line_records"][index] = record
+    presentation["false_parallel_decisions"] = stroke_decisions[
+        "false_parallel_decisions"
+    ]
+    presentation["fill_records"] = source_fill_records(
+        prepared.gray,
+        paths,
+        source_candidates,
+        excluded_indices=tuple(r["contour_index"] for r in enclosure_records),
+    )
+    if curve_review is not None:
+        from app.geometry.scan_curve_retention import (
+            bind_closed_curve_contours,
+            RECORD_KEY,
+        )
+
+        final_provenance["closed_scan_curve_review"] = curve_review
+        presentation[RECORD_KEY] = bind_closed_curve_contours(
+            paths, contour_binary, prepared.binary, curve_review["proofs"]
+        )
+    presentation["graphic_ownership"] = [
+        dict(
+            region.payload(),
+            reason="isolated circular perimeter, broad anisotropic filled core, no structural continuation",
+        )
+        for region in orientation_graphics
+    ]
+    final_provenance["stroke_presentation"] = presentation
     if processing_contract is not None:
         final_provenance["processing_contract"] = processing_contract
     if junction_result is not None:
@@ -884,14 +1116,23 @@ def trace_image_optimized(
             ),
             "contract_digest": junction_result.contract_digest,
             "ledger_digest": junction_result.ledger_digest,
-            "source_r4_final_set_digest": (
-                junction_result.source_r4_final_set_digest
-            ),
-            "source_r4_geometry_digest": (
-                junction_result.source_r4_geometry_digest
-            ),
+            "source_r4_final_set_digest": (junction_result.source_r4_final_set_digest),
+            "source_r4_geometry_digest": (junction_result.source_r4_geometry_digest),
             "output_set_digest": junction_result.output_set_digest,
         }
+    # Raster ownership, suppression and contours used the original footprints.
+    # This fit grants no source authority. ARC protection still uses the
+    # unchanged source masks and OCR bbox, independently of the display quad.
+    glyph_started = performance_clock()
+    texts, glyph_display = refine_single_glyph_displays(
+        prepared.gray,
+        texts,
+        display_cells,
+        protected_source_masks=(ownership.line, ownership.logo, ownership.signature),
+    )
+    if glyph_display:
+        final_provenance["single_glyph_display"] = glyph_display
+    record_performance(performance_callback, "single-glyph-display", glyph_started)
     final_structure = build_final_structure(
         source_size_px=(contour_binary.shape[1], contour_binary.shape[0]),
         contour_binary=contour_binary,
@@ -911,10 +1152,20 @@ def trace_image_optimized(
     )
     if pdf_geometry is not None:
         from app.geometry.native_arc_replacement import apply_pdf_arc_evidence
+
         if before_arc_replacement is not None:
             before_arc_replacement(final_structure)
         checkpoint(cancellation_token)
         final_structure = apply_pdf_arc_evidence(final_structure, image, pdf_geometry)
+        from app.geometry.pdf_fill_evidence import apply_pdf_fill_evidence
+
+        final_structure = apply_pdf_fill_evidence(final_structure, pdf_geometry)
+        from app.geometry.native_source_group import apply_native_source_groups
+
+        final_structure = apply_native_source_groups(
+            final_structure, image, pdf_geometry
+        )
+        straight_lines = list(final_structure.straight_lines)
         contour_binary, paths = final_structure.contour_binary, final_structure.contours
         foreground_pixels = int(np.count_nonzero(contour_binary == 0))
         vertex_count = sum(len(p.points) for p in paths)

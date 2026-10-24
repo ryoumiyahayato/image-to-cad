@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING, Mapping
 import numpy as np
 from app.core.structure import FinalStructure
 from app.core.arc_types import ArcSegment
+from app.core.native_fill import NativeFill
+
 if TYPE_CHECKING:
     from app.ocr.auxiliary_recognition import TextCandidate
     from app.geometry.line_detect import LineSegment
@@ -10,6 +12,7 @@ if TYPE_CHECKING:
     from app.geometry.raster_trace import RasterTraceResult
     from app.core.trace_types import TracePath
     from app.ocr.signature_overlay import SignatureRegion
+
 
 def build_final_structure(
     *,
@@ -29,6 +32,7 @@ def build_final_structure(
     provenance: Mapping[str, object] | None = None,
     observations: tuple[Mapping[str, object], ...] = (),
     arcs: tuple[ArcSegment, ...] = (),
+    native_fills: tuple[NativeFill, ...] = (),
 ) -> FinalStructure:
     structure = FinalStructure(
         source_size_px=source_size_px,
@@ -47,6 +51,7 @@ def build_final_structure(
         provenance=provenance or {},
         observations=observations,
         arcs=arcs,
+        native_fills=native_fills,
     )
     if "draftsman_output_v1" in structure.provenance:
         # Import here: the resolver consumes FinalStructure and must not own a

@@ -107,6 +107,11 @@ def _get_rapidocr_engine() -> Any:
         _RAPID_OCR_ENGINE = RapidOCR(params=params)
     except (TypeError, ValueError):
         _RAPID_OCR_ENGINE = RapidOCR()
+    from app.ocr.long_line_orientation import LongLineOrientationClassifier
+
+    classifier = getattr(_RAPID_OCR_ENGINE, "text_cls", None)
+    if callable(classifier):
+        _RAPID_OCR_ENGINE.text_cls = LongLineOrientationClassifier(classifier)
     return _RAPID_OCR_ENGINE
 
 
@@ -242,23 +247,42 @@ def _review_single_digit_orientation(
         if candidate.quad is None or abs(candidate.rotation_deg) > 10.0:
             continue
         points = np.asarray(candidate.quad, dtype=np.float32)
-        width = int(max(np.linalg.norm(points[0] - points[1]),
-                        np.linalg.norm(points[2] - points[3])))
-        height = int(max(np.linalg.norm(points[0] - points[3]),
-                         np.linalg.norm(points[1] - points[2])))
+        width = int(
+            max(
+                np.linalg.norm(points[0] - points[1]),
+                np.linalg.norm(points[2] - points[3]),
+            )
+        )
+        height = int(
+            max(
+                np.linalg.norm(points[0] - points[3]),
+                np.linalg.norm(points[1] - points[2]),
+            )
+        )
         if width < 2 or not 8 <= height <= 96 or height / width < 1.5:
             continue
-        target = np.asarray(((0, 0), (width, 0), (width, height), (0, height)),
-                            dtype=np.float32)
+        target = np.asarray(
+            ((0, 0), (width, 0), (width, height), (0, height)), dtype=np.float32
+        )
         crop = cv2.warpPerspective(
-            image, cv2.getPerspectiveTransform(points, target), (width, height),
-            flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE,
+            image,
+            cv2.getPerspectiveTransform(points, target),
+            (width, height),
+            flags=cv2.INTER_CUBIC,
+            borderMode=cv2.BORDER_REPLICATE,
         )
         if crop.ndim == 2:
             crop = cv2.cvtColor(crop, cv2.COLOR_GRAY2BGR)
         padding = max(2, int(round(height * 0.08)))
-        padded = cv2.copyMakeBorder(crop, padding, padding, padding, padding,
-                                   cv2.BORDER_CONSTANT, value=(255, 255, 255))
+        padded = cv2.copyMakeBorder(
+            crop,
+            padding,
+            padding,
+            padding,
+            padding,
+            cv2.BORDER_CONSTANT,
+            value=(255, 255, 255),
+        )
         indices.append(index)
         crops.extend((crop, padded))
     if not crops:
@@ -274,14 +298,24 @@ def _review_single_digit_orientation(
         resolved = list(candidates)
         for pair, index in enumerate(indices):
             first, second = (str(texts[2 * pair + offset]).strip() for offset in (0, 1))
-            confidence = float(np.minimum(float(scores[2 * pair]), float(scores[2 * pair + 1])))
-            if (len(first) != 1 or first not in "0123456789" or first != second
-                    or not np.isfinite(confidence) or confidence < 0.90):
+            confidence = float(
+                np.minimum(float(scores[2 * pair]), float(scores[2 * pair + 1]))
+            )
+            if (
+                len(first) != 1
+                or first not in "0123456789"
+                or first != second
+                or not np.isfinite(confidence)
+                or confidence < 0.90
+            ):
                 continue
             if first != candidates[index].text:
-                resolved[index] = replace(candidates[index], text=first,
-                                          confidence=confidence,
-                                          source="rapidocr-line-upright-digit")
+                resolved[index] = replace(
+                    candidates[index],
+                    text=first,
+                    confidence=confidence,
+                    source="rapidocr-line-upright-digit",
+                )
         return resolved
     except Exception:
         return candidates
@@ -308,27 +342,48 @@ def _review_rotated_line_orientation(
     crops: list[np.ndarray] = []
     for index, candidate in enumerate(candidates):
         compact = "".join(candidate.text.split())
-        if (candidate.reviewed or candidate.quad is None or not compact.isascii()
-                or sum(character.isalnum() for character in compact) < 2):
+        if (
+            candidate.reviewed
+            or candidate.quad is None
+            or not compact.isascii()
+            or sum(character.isalnum() for character in compact) < 2
+        ):
             continue
         points = np.asarray(candidate.quad, dtype=np.float32)
-        width = int(max(np.linalg.norm(points[0] - points[1]),
-                        np.linalg.norm(points[2] - points[3])))
-        height = int(max(np.linalg.norm(points[0] - points[3]),
-                         np.linalg.norm(points[1] - points[2])))
+        width = int(
+            max(
+                np.linalg.norm(points[0] - points[1]),
+                np.linalg.norm(points[2] - points[3]),
+            )
+        )
+        height = int(
+            max(
+                np.linalg.norm(points[0] - points[3]),
+                np.linalg.norm(points[1] - points[2]),
+            )
+        )
         if width < 2 or height / width < 1.5:
             continue
-        target = np.asarray(((0, 0), (width, 0), (width, height), (0, height)),
-                            dtype=np.float32)
+        target = np.asarray(
+            ((0, 0), (width, 0), (width, height), (0, height)), dtype=np.float32
+        )
         crop = cv2.warpPerspective(
-            image, cv2.getPerspectiveTransform(points, target), (width, height),
-            flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE,
+            image,
+            cv2.getPerspectiveTransform(points, target),
+            (width, height),
+            flags=cv2.INTER_CUBIC,
+            borderMode=cv2.BORDER_REPLICATE,
         )
         if crop.ndim == 2:
             crop = cv2.cvtColor(crop, cv2.COLOR_GRAY2BGR)
         indices.append(index)
-        crops.extend((crop, np.ascontiguousarray(np.rot90(crop)),
-                      np.ascontiguousarray(np.rot90(crop, 3))))
+        crops.extend(
+            (
+                crop,
+                np.ascontiguousarray(np.rot90(crop)),
+                np.ascontiguousarray(np.rot90(crop, 3)),
+            )
+        )
     if not crops:
         return candidates
 
@@ -338,24 +393,38 @@ def _review_rotated_line_orientation(
         recognition = recognize(crops)
         texts = _as_sequence(getattr(recognition, "txts", None))
         scores = _as_sequence(getattr(recognition, "scores", None))
-        if len(labels) != len(indices) or len(texts) != len(crops) or len(scores) != len(crops):
+        if (
+            len(labels) != len(indices)
+            or len(texts) != len(crops)
+            or len(scores) != len(crops)
+        ):
             return candidates
         resolved = list(candidates)
         for pair, index in enumerate(indices):
             label, direction_confidence = labels[pair]
-            if str(label) not in {"0", "180"} or not np.isfinite(float(direction_confidence)):
+            if str(label) not in {"0", "180"} or not np.isfinite(
+                float(direction_confidence)
+            ):
                 continue
             if float(direction_confidence) < 0.95:
                 continue
             selected = 1 if str(label) == "0" else 2
             expected = "".join(candidates[index].text.split())
-            readings = ["".join(str(texts[3 * pair + offset]).split()) for offset in range(3)]
+            readings = [
+                "".join(str(texts[3 * pair + offset]).split()) for offset in range(3)
+            ]
             confidences = [float(scores[3 * pair + offset]) for offset in range(3)]
-            if (not all(np.isfinite(confidence) for confidence in confidences)
-                    or readings[selected] != expected or confidences[selected] < 0.90):
+            if (
+                not all(np.isfinite(confidence) for confidence in confidences)
+                or readings[selected] != expected
+                or confidences[selected] < 0.90
+            ):
                 continue
-            if any(readings[offset] == expected and confidences[offset] >= 0.90
-                   for offset in range(3) if offset != selected):
+            if any(
+                readings[offset] == expected and confidences[offset] >= 0.90
+                for offset in range(3)
+                if offset != selected
+            ):
                 continue
             # Cyclic ordering changes the reading basis, never the source
             # polygon, bbox, string, confidence or source replacement authority.
@@ -363,8 +432,11 @@ def _review_rotated_line_orientation(
             assert quad is not None
             start = 1 if selected == 1 else 3
             oriented = tuple(quad[(start + offset) % 4] for offset in range(4))
-            resolved[index] = replace(candidates[index], quad=oriented,
-                                      rotation_deg=_rotation_from_quad(oriented))
+            resolved[index] = replace(
+                candidates[index],
+                quad=oriented,
+                rotation_deg=_rotation_from_quad(oriented),
+            )
         return resolved
     except Exception:
         # Local orientation review cannot discard a successful page detection.

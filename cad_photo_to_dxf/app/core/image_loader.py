@@ -85,6 +85,7 @@ def _load_pdf_page(
     *,
     grayscale: bool = False,
     pdf_geometry_sink: list | None = None,
+    pdf_text_sink: list | None = None,
 ) -> np.ndarray:
     if pdf_dpi < 72 or pdf_dpi > 1200:
         raise ValueError("PDF 渲染 DPI 必须在 72 到 1200 之间")
@@ -97,9 +98,7 @@ def _load_pdf_page(
     try:
         page_count = len(document)
         if not 0 <= page_index < page_count:
-            raise IndexError(
-                f"PDF 页码超出范围：{page_index + 1}/{page_count}"
-            )
+            raise IndexError(f"PDF 页码超出范围：{page_index + 1}/{page_count}")
         page = document[page_index]
         try:
             width_points, height_points = page.get_size()
@@ -112,20 +111,84 @@ def _load_pdf_page(
                 pil_image = bitmap.to_pil().convert("L" if grayscale else "RGB")
                 rendered = np.asarray(pil_image, dtype=np.uint8)
                 if pdf_geometry_sink is not None:
-                    from app.geometry.pdf_arc_evidence import PdfGeometryEvidence, extract_pdf_arc_evidence, pdf_geometry_binding
-                    gray = rendered if grayscale else cv2.cvtColor(rendered, cv2.COLOR_RGB2GRAY)
+                    from app.geometry.pdf_arc_evidence import (
+                        PdfGeometryEvidence,
+                        extract_pdf_arc_evidence,
+                        pdf_geometry_binding,
+                    )
+
+                    gray = (
+                        rendered
+                        if grayscale
+                        else cv2.cvtColor(rendered, cv2.COLOR_RGB2GRAY)
+                    )
                     try:
-                        evidence = extract_pdf_arc_evidence(file_path, page_index, page, bitmap, gray, scale, pdf_dpi)
+                        evidence = extract_pdf_arc_evidence(
+                            file_path, page_index, page, bitmap, gray, scale, pdf_dpi
+                        )
                     except Exception as exc:
                         # Optional evidence failure never invalidates a readable page.
-                        evidence = PdfGeometryEvidence(pdf_geometry_binding(file_path, page_index, pdf_dpi),
-                            (gray.shape[1], gray.shape[0]), (), (),
-                            ({'reason': 'PDF_EVIDENCE_UNAVAILABLE', 'detail': str(exc),
-                              'stage': 'extraction', 'category': 'unavailable',
-                              'decision': 'NOT_EVALUATED'},),
-                            {'status': 'LIMITED', 'review_complete': False,
-                             'traversal_complete': False, 'cache_reusable': False})
+                        evidence = PdfGeometryEvidence(
+                            pdf_geometry_binding(file_path, page_index, pdf_dpi),
+                            (gray.shape[1], gray.shape[0]),
+                            (),
+                            (),
+                            (
+                                {
+                                    "reason": "PDF_EVIDENCE_UNAVAILABLE",
+                                    "detail": str(exc),
+                                    "stage": "extraction",
+                                    "category": "unavailable",
+                                    "decision": "NOT_EVALUATED",
+                                },
+                            ),
+                            {
+                                "status": "LIMITED",
+                                "review_complete": False,
+                                "traversal_complete": False,
+                                "cache_reusable": False,
+                            },
+                        )
+                    from dataclasses import replace
+                    from app.geometry.pdf_fill_evidence import extract_pdf_fills
+
+                    fills, fill_analysis = extract_pdf_fills(
+                        file_path, page_index, page, bitmap, scale, pdf_dpi
+                    )
+                    evidence = replace(
+                        evidence, native_fills=fills, fill_analysis=fill_analysis
+                    )
                     pdf_geometry_sink.append(evidence)
+                if pdf_text_sink is not None:
+                    from app.geometry.pdf_text_suggestions import (
+                        extract_pdf_text_suggestions,
+                    )
+
+                    gray = (
+                        rendered
+                        if grayscale
+                        else cv2.cvtColor(rendered, cv2.COLOR_RGB2GRAY)
+                    )
+                    # Optional suggestions never change OCR, source masks or
+                    # geometry. Failure leaves the existing conversion intact.
+                    try:
+                        text_evidence = extract_pdf_text_suggestions(
+                            file_path,
+                            page_index,
+                            page,
+                            bitmap,
+                            gray,
+                            scale,
+                            pdf_dpi,
+                            include_display_rows=True,
+                        )
+                    except Exception as exc:
+                        text_evidence = {
+                            "status": "UNAVAILABLE",
+                            "rows": [],
+                            "reason": str(exc),
+                        }
+                    pdf_text_sink.append(text_evidence)
             finally:
                 bitmap.close()
         finally:
@@ -147,6 +210,7 @@ def load_image(
     pdf_dpi: int = DEFAULT_PDF_DPI,
     grayscale: bool = False,
     pdf_geometry_sink: list | None = None,
+    pdf_text_sink: list | None = None,
 ) -> np.ndarray:
     """Load a raster image or render one page of a scanned PDF.
 
@@ -167,6 +231,7 @@ def load_image(
             pdf_dpi,
             grayscale=grayscale,
             pdf_geometry_sink=pdf_geometry_sink,
+            pdf_text_sink=pdf_text_sink,
         )
 
     data = np.fromfile(str(file_path), dtype=np.uint8)

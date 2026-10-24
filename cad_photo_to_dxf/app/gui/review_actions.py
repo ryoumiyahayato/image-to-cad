@@ -10,16 +10,24 @@ import numpy as np
 from PySide6.QtWidgets import QDialog, QLabel, QMessageBox, QPushButton
 
 from app.core.structure import metadata_to_jsonable
-from app.core.structure_build import build_final_structure, final_structure_from_trace_result
+from app.core.structure_build import (
+    build_final_structure,
+    final_structure_from_trace_result,
+)
 from app.ocr.font_library import default_font_face
 from app.core.image_loader import load_image
-from app.gui.librecad_ocr_review import LibreCadLffOcrReviewDialog as _BaseOcrReviewDialog
+from app.gui.librecad_ocr_review import (
+    LibreCadLffOcrReviewDialog as _BaseOcrReviewDialog,
+)
 from app.export.ocr_outline_export import accepted_ocr_texts
 from app.core.preview import render_final_structure_preview
 from app.geometry.raster_trace import RasterTraceResult, trace_binary
 from app.ocr.text_output_contract import text_output_summary
 from app.gui.trace_paint import TracePaintDialog
-from app.diagnostics.trace_verification import TraceVerificationResult, verify_trace_paths
+from app.diagnostics.trace_verification import (
+    TraceVerificationResult,
+    verify_trace_paths,
+)
 from app.diagnostics.visual_acceptance import default_visual_acceptance_root
 
 
@@ -76,6 +84,11 @@ def _preview_shape(self) -> tuple[int, int] | None:
 
 
 def _refresh_visual_acceptance(self) -> None:
+    if getattr(self, "_review_project", None) is not None:
+        # Legacy VQA has no review overlay input; the emitted CAD preview above
+        # is authoritative for this snapshot, never show a stale OCR VQA image.
+        self.visual_acceptance.clear_result()
+        return
     if self.tabs.currentWidget() is not self.visual_acceptance:
         return
     structure = self._final_structure
@@ -91,7 +104,7 @@ def _refresh_visual_acceptance(self) -> None:
         structure,
         source_label=Path(self.current_path).name,
         page_label=page_label,
-        commit='UNKNOWN',
+        commit="UNKNOWN",
         output_root=default_visual_acceptance_root(repository_root),
     )
     self.tabs.setCurrentWidget(self.visual_acceptance)
@@ -99,6 +112,8 @@ def _refresh_visual_acceptance(self) -> None:
 
 
 def _replace_final_structure_texts(self, texts):
+    if getattr(self, "_review_project", None) is not None:
+        raise ValueError("Saved snapshots require explicit correction journal events")
     structure = self._final_structure
     if structure is None:
         raise ValueError("Current page has no FinalStructure")
@@ -136,6 +151,7 @@ def _replace_final_structure_texts(self, texts):
         contours=structure.contours,
         straight_lines=structure.straight_lines,
         arcs=structure.arcs,
+        native_fills=structure.native_fills,
         texts=texts,
         logos=structure.logos,
         signatures=structure.signatures,
@@ -197,11 +213,14 @@ def _visual_acceptance_source(self):
     return source
 
 
-
-
-
-
 def review_layers(self) -> None:
+    if getattr(self, "_review_project", None) is not None:
+        QMessageBox.information(
+            self,
+            "保存快照",
+            "校对项目只修改文字内容。几何修改需要重新转换，原校对不会自动套用。",
+        )
+        return
     if self.binary_image is None:
         QMessageBox.warning(self, "尚无处理结果", "请先处理当前页。")
         return
@@ -232,14 +251,19 @@ def review_layers(self) -> None:
             texts=tuple(self._ocr_texts),
             signatures=tuple(self._signature_regions),
             arcs=previous_structure.arcs if previous_structure is not None else (),
+            native_fills=previous_structure.native_fills
+            if previous_structure is not None
+            else (),
         )
         if result.arcs:
             rebuilt = final_structure_from_trace_result(result)
             provenance = metadata_to_jsonable(rebuilt.provenance)
-            provenance['native_arc_replacements'] = metadata_to_jsonable(
-                previous_structure.provenance.get('native_arc_replacements', ())
+            provenance["native_arc_replacements"] = metadata_to_jsonable(
+                previous_structure.provenance.get("native_arc_replacements", ())
             )
-            result = replace(result, final_structure=replace(rebuilt, provenance=provenance))
+            result = replace(
+                result, final_structure=replace(rebuilt, provenance=provenance)
+            )
         return result
 
     def completed(value: object) -> None:
@@ -257,6 +281,14 @@ def review_layers(self) -> None:
 
 
 def review_ocr_texts(self) -> None:
+    if getattr(self, "_review_project", None) is not None or (
+        getattr(self, "_final_structure", None) is not None
+        and getattr(self, "current_path", None) is not None
+    ):
+        from app.gui.review_project_actions import review_snapshot_texts
+
+        review_snapshot_texts(self)
+        return
     if not self._ocr_texts:
         QMessageBox.warning(self, "尚无文字结果", "请先处理当前页。")
         return

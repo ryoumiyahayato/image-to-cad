@@ -9,12 +9,20 @@ from tempfile import NamedTemporaryFile
 import numpy as np
 
 from app.ocr.auxiliary_recognition import TextCandidate
-from app.core.structure import FINAL_STRUCTURE_SCHEMA_VERSION, FinalStructure, metadata_to_jsonable
-from app.core.structure_build import build_final_structure, final_structure_from_trace_result
+from app.core.structure import (
+    FINAL_STRUCTURE_SCHEMA_VERSION,
+    FinalStructure,
+    metadata_to_jsonable,
+)
+from app.core.structure_build import (
+    build_final_structure,
+    final_structure_from_trace_result,
+)
 from app.geometry.line_detect import LineSegment
 from app.ocr.logo_detection import LogoRegion
 from app.core.trace_types import TracePath
 from app.core.arc_types import ArcSegment
+from app.core.native_fill import NativeFill
 from app.geometry.raster_trace import RasterTraceResult
 from app.ocr.signature_overlay import SignatureRegion
 
@@ -82,14 +90,15 @@ def _deserialize_lines(value: str) -> tuple[LineSegment, ...]:
                     width=float(item.get("width", 1.0)),
                     confidence=float(item.get("confidence", 1.0)),
                     layer=str(item.get("layer", "DETAIL")),
-                    source_ids=tuple(str(value) for value in item.get("source_ids", ())),
+                    source_ids=tuple(
+                        str(value) for value in item.get("source_ids", ())
+                    ),
                     history=tuple(str(value) for value in item.get("history", ())),
                     classification_confidence=float(
                         item.get("classification_confidence", 1.0)
                     ),
                     classification_reasons=tuple(
-                        str(value)
-                        for value in item.get("classification_reasons", ())
+                        str(value) for value in item.get("classification_reasons", ())
                     ),
                 )
             )
@@ -117,6 +126,11 @@ def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
                 "character_boxes": [list(box) for box in item.character_boxes],
                 "replacement_safe": item.replacement_safe,
                 "review_note": item.review_note,
+                **(
+                    {"display_quad": [list(p) for p in item.display_quad]}
+                    if item.display_quad is not None
+                    else {}
+                ),
             }
             for item in texts
         ],
@@ -165,6 +179,11 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
                 character_boxes=character_boxes,
                 replacement_safe=bool(item.get("replacement_safe", True)),
                 review_note=str(item.get("review_note", "")),
+                display_quad=(
+                    tuple(tuple(float(v) for v in p) for p in item["display_quad"])
+                    if item.get("display_quad") is not None
+                    else None
+                ),
             )
         )
     return tuple(results)
@@ -237,8 +256,12 @@ def _unpack_foreground(
 def _packed_signatures(
     signatures: tuple[SignatureRegion, ...],
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    bboxes = np.asarray([item.bbox for item in signatures], dtype=np.int32).reshape(-1, 4)
-    shapes = np.asarray([item.mask.shape for item in signatures], dtype=np.int32).reshape(-1, 2)
+    bboxes = np.asarray([item.bbox for item in signatures], dtype=np.int32).reshape(
+        -1, 4
+    )
+    shapes = np.asarray(
+        [item.mask.shape for item in signatures], dtype=np.int32
+    ).reshape(-1, 2)
     offsets = np.zeros(len(signatures) + 1, dtype=np.int64)
     chunks: list[np.ndarray] = []
     cursor = 0
@@ -250,11 +273,7 @@ def _packed_signatures(
         chunks.append(packed)
         cursor += len(packed)
         offsets[index + 1] = cursor
-    payload = (
-        np.concatenate(chunks)
-        if chunks
-        else np.empty((0,), dtype=np.uint8)
-    )
+    payload = np.concatenate(chunks) if chunks else np.empty((0,), dtype=np.uint8)
     return bboxes, shapes, offsets, payload
 
 
@@ -333,7 +352,9 @@ def _unpack_logos(
             structural_score=float(values[index, 0]),
             hole_count=int(round(values[index, 1])),
             contour_count=int(round(values[index, 2])),
-            visual_kind=str(visual_kinds[index]) if visual_kinds is not None else 'graphic_mark',
+            visual_kind=str(visual_kinds[index])
+            if visual_kinds is not None
+            else "graphic_mark",
         )
         for index, region in enumerate(regions)
     )
@@ -345,11 +366,15 @@ def _restore_graphic_alpha(regions, alpha):
         return regions
     values = np.asarray(alpha, dtype=np.uint8)
     if values.ndim != 1 or len(values) != sum(region.mask.size for region in regions):
-        raise ValueError('Trace cache graphic alpha lengths do not match')
+        raise ValueError("Trace cache graphic alpha lengths do not match")
     restored, offset = [], 0
     for region in regions:
         count = region.mask.size
-        restored.append(replace(region, mask=values[offset:offset+count].reshape(region.mask.shape)))
+        restored.append(
+            replace(
+                region, mask=values[offset : offset + count].reshape(region.mask.shape)
+            )
+        )
         offset += count
     return tuple(restored)
 
@@ -372,9 +397,11 @@ def save_trace_cache(
     structure = final_structure_from_trace_result(result)
     # Keep the saved member set, including already committed ARCs. A transient
     # deadline/unavailable PDF analysis must not be reused as a completed trace.
-    if any(o.get('event') == 'native_pdf_arcs' and
-           o.get('analysis', {}).get('cache_reusable') is False
-           for o in structure.observations):
+    if any(
+        o.get("event") == "native_pdf_arcs"
+        and o.get("analysis", {}).get("cache_reusable") is False
+        for o in structure.observations
+    ):
         cache_key = None
     path_count = len(structure.contours)
     offsets = np.zeros(path_count + 1, dtype=np.int64)
@@ -505,33 +532,15 @@ def save_trace_cache(
                 ),
                 preview_packed=preview_packed,
                 preview_shape=preview_shape,
-                editable_text_source_present=(
-                    editable_text_source_present
-                ),
-                editable_text_source_packed=(
-                    editable_text_source_packed
-                ),
-                editable_text_source_shape=(
-                    editable_text_source_shape
-                ),
-                source_text_outline_present=(
-                    source_text_outline_present
-                ),
-                source_text_outline_packed=(
-                    source_text_outline_packed
-                ),
-                source_text_outline_shape=(
-                    source_text_outline_shape
-                ),
-                uncertain_text_outline_present=(
-                    uncertain_text_outline_present
-                ),
-                uncertain_text_outline_packed=(
-                    uncertain_text_outline_packed
-                ),
-                uncertain_text_outline_shape=(
-                    uncertain_text_outline_shape
-                ),
+                editable_text_source_present=(editable_text_source_present),
+                editable_text_source_packed=(editable_text_source_packed),
+                editable_text_source_shape=(editable_text_source_shape),
+                source_text_outline_present=(source_text_outline_present),
+                source_text_outline_packed=(source_text_outline_packed),
+                source_text_outline_shape=(source_text_outline_shape),
+                uncertain_text_outline_present=(uncertain_text_outline_present),
+                uncertain_text_outline_packed=(uncertain_text_outline_packed),
+                uncertain_text_outline_shape=(uncertain_text_outline_shape),
                 points=all_points,
                 offsets=offsets,
                 parent=parent,
@@ -553,7 +562,23 @@ def save_trace_cache(
                 cache_key_json=cache_key_json,
                 texts_json=texts_json,
                 lines_json=lines_json,
-                arcs_json=np.asarray([json.dumps([a.payload() for a in structure.arcs], allow_nan=False)], dtype=str),
+                native_fills_json=np.asarray(
+                    [
+                        json.dumps(
+                            [f.payload() for f in structure.native_fills],
+                            allow_nan=False,
+                        )
+                    ],
+                    dtype=str,
+                ),
+                arcs_json=np.asarray(
+                    [
+                        json.dumps(
+                            [a.payload() for a in structure.arcs], allow_nan=False
+                        )
+                    ],
+                    dtype=str,
+                ),
                 signature_bboxes=signature_bboxes,
                 signature_shapes=signature_shapes,
                 signature_offsets=signature_offsets,
@@ -563,9 +588,19 @@ def save_trace_cache(
                 logo_offsets=logo_offsets,
                 logo_packed=logo_packed,
                 logo_metadata=logo_metadata,
-                logo_visual_kinds=np.asarray([item.visual_kind for item in structure.logos], dtype=str),
-                logo_alpha=np.concatenate([item.mask.ravel() for item in structure.logos]) if structure.logos else np.empty(0,np.uint8),
-                signature_alpha=np.concatenate([item.mask.ravel() for item in structure.signatures]) if structure.signatures else np.empty(0,np.uint8),
+                logo_visual_kinds=np.asarray(
+                    [item.visual_kind for item in structure.logos], dtype=str
+                ),
+                logo_alpha=np.concatenate(
+                    [item.mask.ravel() for item in structure.logos]
+                )
+                if structure.logos
+                else np.empty(0, np.uint8),
+                signature_alpha=np.concatenate(
+                    [item.mask.ravel() for item in structure.signatures]
+                )
+                if structure.signatures
+                else np.empty(0, np.uint8),
             )
         temporary_path.replace(target)
     finally:
@@ -609,11 +644,7 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 f"({cache_version})"
             )
         structure_schema_version = (
-            int(
-                np.asarray(
-                    archive["final_structure_schema_version"]
-                ).reshape(-1)[0]
-            )
+            int(np.asarray(archive["final_structure_schema_version"]).reshape(-1)[0])
             if "final_structure_schema_version" in archive.files
             else 0
         )
@@ -622,13 +653,23 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 "Trace cache FinalStructure identity schema is stale; "
                 "recompute the page"
             )
-        if cache_version == 11 and 'arcs_json' not in archive.files:
-            raise ValueError('ARC-aware trace cache is missing arcs_json')
-        arc_payload = json.loads(str(archive['arcs_json'].reshape(-1)[0])) if 'arcs_json' in archive.files else []
+        if cache_version == 11 and "arcs_json" not in archive.files:
+            raise ValueError("ARC-aware trace cache is missing arcs_json")
+        fill_payload = (
+            json.loads(str(archive["native_fills_json"].reshape(-1)[0]))
+            if "native_fills_json" in archive.files
+            else []
+        )
+        native_fills = tuple(NativeFill.from_payload(v) for v in fill_payload)
+        arc_payload = (
+            json.loads(str(archive["arcs_json"].reshape(-1)[0]))
+            if "arcs_json" in archive.files
+            else []
+        )
         if not isinstance(arc_payload, list):
-            raise ValueError('Trace cache arcs must be an array')
+            raise ValueError("Trace cache arcs must be an array")
         if structure_schema_version == 3 and arc_payload:
-            raise ValueError('Legacy trace cache cannot contain ARC')
+            raise ValueError("Legacy trace cache cannot contain ARC")
         arcs = tuple(ArcSegment.from_payload(item) for item in arc_payload)
         if "binary_packed" in archive.files and "binary_shape" in archive.files:
             binary = _unpack_binary(
@@ -700,9 +741,7 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         depth = np.asarray(archive["depth"], dtype=np.int32)
         root = np.asarray(archive["root"], dtype=np.int32)
         threshold = int(np.asarray(archive["threshold"]).reshape(-1)[0])
-        foreground_pixels = int(
-            np.asarray(archive["foreground_pixels"]).reshape(-1)[0]
-        )
+        foreground_pixels = int(np.asarray(archive["foreground_pixels"]).reshape(-1)[0])
         vertex_count = int(np.asarray(archive["vertex_count"]).reshape(-1)[0])
         warnings = tuple(str(value) for value in archive["warnings"].tolist())
         texts = (
@@ -737,7 +776,9 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 archive["logo_offsets"],
                 archive["logo_packed"],
                 archive["logo_metadata"],
-                archive['logo_visual_kinds'] if 'logo_visual_kinds' in archive.files else None,
+                archive["logo_visual_kinds"]
+                if "logo_visual_kinds" in archive.files
+                else None,
             )
             if {
                 "logo_bboxes",
@@ -748,8 +789,13 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
             }.issubset(archive.files)
             else ()
         )
-        logos = _restore_graphic_alpha(logos, archive['logo_alpha'] if 'logo_alpha' in archive.files else None)
-        signatures = _restore_graphic_alpha(signatures, archive['signature_alpha'] if 'signature_alpha' in archive.files else None)
+        logos = _restore_graphic_alpha(
+            logos, archive["logo_alpha"] if "logo_alpha" in archive.files else None
+        )
+        signatures = _restore_graphic_alpha(
+            signatures,
+            archive["signature_alpha"] if "signature_alpha" in archive.files else None,
+        )
         stored_structure_id = (
             str(np.asarray(archive["structure_id"]).reshape(-1)[0])
             if "structure_id" in archive.files
@@ -777,8 +823,7 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                     isinstance(item, dict) for item in value
                 ):
                     raise ValueError(
-                        "Trace cache observations metadata must be an array "
-                        "of objects"
+                        "Trace cache observations metadata must be an array of objects"
                     )
                 observations = tuple(value)
             except json.JSONDecodeError as exc:
@@ -793,14 +838,10 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
                 )
                 if value:
                     if not isinstance(value, dict):
-                        raise ValueError(
-                            "Trace cache key metadata must be an object"
-                        )
+                        raise ValueError("Trace cache key metadata must be an object")
                     cache_key = value
             except json.JSONDecodeError as exc:
-                raise ValueError(
-                    "Trace cache key metadata is invalid JSON"
-                ) from exc
+                raise ValueError("Trace cache key metadata is invalid JSON") from exc
 
     path_count = len(parent)
     if offsets.shape != (path_count + 1,):
@@ -838,6 +879,7 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
         contours=tuple(paths),
         straight_lines=straight_lines,
         arcs=arcs,
+        native_fills=native_fills,
         texts=texts,
         logos=logos,
         signatures=signatures,
@@ -852,7 +894,8 @@ def load_trace_cache(path: str | Path) -> StoredTrace:
     )
     if (
         stored_structure_id is not None
-        and stored_structure_id != final_structure.identity_for_schema(structure_schema_version)
+        and stored_structure_id
+        != final_structure.identity_for_schema(structure_schema_version)
     ):
         raise ValueError("Trace cache final structure fingerprint does not match")
     return StoredTrace(

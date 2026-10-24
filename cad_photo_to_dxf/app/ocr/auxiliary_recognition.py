@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-
-
 MIN_CIRCLE_EXPORT_CONFIDENCE = 0.90
 
 
@@ -32,6 +30,8 @@ class TextCandidate:
     character_boxes: tuple[tuple[int, int, int, int], ...] = ()
     replacement_safe: bool = True
     review_note: str = ""
+    # Display only. Never source ownership, suppression or OCR evidence.
+    display_quad: tuple[tuple[float, float], ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -48,15 +48,6 @@ class AuxiliaryRecognitionResult:
     dimension_texts: list[TextCandidate]
     symbols: list[SymbolCandidate]
     warnings: list[str]
-
-
-
-
-
-
-
-
-
 
 
 def confirmable_circles(

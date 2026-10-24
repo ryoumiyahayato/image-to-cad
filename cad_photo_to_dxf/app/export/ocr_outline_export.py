@@ -10,7 +10,12 @@ from PySide6.QtGui import QFontMetricsF
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.ocr.font_library import ensure_dxf_font_style, find_font_face, qfont_for_face
-from app.ocr.librecad_lff import LIBRECAD_STYLE_NAME, ensure_librecad_dxf_style, librecad_font_available, librecad_text_metrics
+from app.ocr.librecad_lff import (
+    LIBRECAD_STYLE_NAME,
+    ensure_librecad_dxf_style,
+    librecad_font_available,
+    librecad_text_metrics,
+)
 from app.ocr.text_output_contract import accepted_ocr_texts
 
 PointTransform = Callable[[float, float], tuple[float, float]]
@@ -76,9 +81,7 @@ class NativeTextGeometry:
             "character_height": float(self.character_height),
             "raw_width_factor": float(self.raw_width_factor),
             "width_factor": float(self.width_factor),
-            "width_factor_clamped": bool(
-                self.width_factor_clamped
-            ),
+            "width_factor_clamped": bool(self.width_factor_clamped),
             "metric_source": self.metric_source,
             "metric_fallback_reason": self.metric_fallback_reason,
         }
@@ -95,15 +98,8 @@ class NativeTextPlacement:
 
 def _candidate_quad(text: TextCandidate) -> tuple[tuple[float, float], ...]:
     if text.quad and len(text.quad) == 4:
-        quad = tuple(
-            (float(point[0]), float(point[1]))
-            for point in text.quad
-        )
-        if all(
-            isfinite(value)
-            for point in quad
-            for value in point
-        ):
+        quad = tuple((float(point[0]), float(point[1])) for point in text.quad)
+        if all(isfinite(value) for point in quad for value in point):
             top_left, top_right, bottom_right, bottom_left = quad
             width = (
                 hypot(
@@ -140,6 +136,17 @@ def _normalised_content(value: str) -> str:
     return " ".join(value.replace("\r", " ").replace("\n", " ").split())
 
 
+def native_text_file_content(content: str) -> str:
+    """Encode literal carets for DXF TEXT without changing logical content.
+
+    TEXT uses ``^ `` for a literal caret. A bare trailing caret is removed
+    by ezdxf's one-line TEXT validator; ``^I`` also denotes a control code.
+    Source/XDATA and font placement continue to use the logical string.
+    This is TEXT caret notation, not MTEXT formatting.
+    """
+    return content.replace("^", "^ ")
+
+
 def _portable_text_extent(
     doc,
     candidate: TextCandidate,
@@ -159,11 +166,7 @@ def _portable_text_extent(
     min_y = -float(bounds.bottom())
     max_y = -float(bounds.top())
     values = (min_x, min_y, max_x, max_y)
-    if (
-        all(isfinite(value) for value in values)
-        and max_x > min_x
-        and max_y > min_y
-    ):
+    if all(isfinite(value) for value in values) and max_x > min_x and max_y > min_y:
         return FontExtent(
             style_name,
             min_x,
@@ -248,10 +251,7 @@ def _line_placement_from_quad(
     transform: PointTransform,
     metrics: FontExtent,
 ) -> NativeTextGeometry | None:
-    transformed = tuple(
-        transform(float(x), float(y))
-        for x, y in quad
-    )
+    transformed = tuple(transform(float(x), float(y)) for x, y in quad)
     top_left, top_right, bottom_right, bottom_left = transformed
     top_dx = top_right[0] - top_left[0]
     top_dy = top_right[1] - top_left[1]
@@ -260,19 +260,12 @@ def _line_placement_from_quad(
     baseline_dx = (top_dx + bottom_dx) * 0.5
     baseline_dy = (top_dy + bottom_dy) * 0.5
     baseline_length = hypot(baseline_dx, baseline_dy)
-    target_width = (
-        hypot(top_dx, top_dy)
-        + hypot(bottom_dx, bottom_dy)
-    ) * 0.5
+    target_width = (hypot(top_dx, top_dy) + hypot(bottom_dx, bottom_dy)) * 0.5
     left_height = hypot(top_left[0] - bottom_left[0], top_left[1] - bottom_left[1])
     right_height = hypot(top_right[0] - bottom_right[0], top_right[1] - bottom_right[1])
     target_height = (left_height + right_height) * 0.5
     if (
-        not all(
-            isfinite(value)
-            for point in transformed
-            for value in point
-        )
+        not all(isfinite(value) for point in transformed for value in point)
         or baseline_length <= 0.0
         or target_width <= 0.0
         or target_height <= 0.0
@@ -294,9 +287,7 @@ def _line_placement_from_quad(
         1e-6,
         target_height * metrics.em_height / metrics.height,
     )
-    natural_width = (
-        character_height * metrics.width / metrics.em_height
-    )
+    natural_width = character_height * metrics.width / metrics.em_height
     raw_width_factor = target_width / max(natural_width, 1e-12)
     if not isfinite(raw_width_factor) or raw_width_factor <= 0.0:
         return None
@@ -306,9 +297,7 @@ def _line_placement_from_quad(
     width_factor = raw_width_factor
     width_factor_clamped = False
     rendered_width = natural_width * width_factor
-    rendered_height = (
-        character_height * metrics.height / metrics.em_height
-    )
+    rendered_height = character_height * metrics.height / metrics.em_height
     local_center_x = (
         (metrics.min_x + metrics.max_x)
         * 0.5
@@ -317,27 +306,16 @@ def _line_placement_from_quad(
         * width_factor
     )
     local_center_y = (
-        (metrics.min_y + metrics.max_y)
-        * 0.5
-        * character_height
-        / metrics.em_height
+        (metrics.min_y + metrics.max_y) * 0.5 * character_height / metrics.em_height
     )
     insert = (
-        target_center[0]
-        - unit_x * local_center_x
-        - up_x * local_center_y,
-        target_center[1]
-        - unit_y * local_center_x
-        - up_y * local_center_y,
+        target_center[0] - unit_x * local_center_x - up_x * local_center_y,
+        target_center[1] - unit_y * local_center_x - up_y * local_center_y,
     )
     rotation = degrees(atan2(baseline_dy, baseline_dx)) % 360.0
     rendered_center = (
-        insert[0]
-        + unit_x * local_center_x
-        + up_x * local_center_y,
-        insert[1]
-        + unit_y * local_center_x
-        + up_y * local_center_y,
+        insert[0] + unit_x * local_center_x + up_x * local_center_y,
+        insert[1] + unit_y * local_center_x + up_y * local_center_y,
     )
     center_error = hypot(
         rendered_center[0] - target_center[0],
@@ -390,7 +368,11 @@ def native_text_placement(
     else:
         metrics = _font_strategy(doc, candidate, content)
     geometry = _line_placement_from_quad(
-        _candidate_quad(candidate),
+        (
+            candidate.display_quad
+            if candidate.display_quad is not None
+            else _candidate_quad(candidate)
+        ),
         transform=transform,
         metrics=metrics,
     )
@@ -414,7 +396,7 @@ def _add_text_entity(
     candidate: TextCandidate,
 ):
     entity = layout.add_text(
-        text,
+        native_text_file_content(text),
         height=geometry.character_height,
         dxfattribs={
             "layer": layer_name,
@@ -461,10 +443,7 @@ def _add_text_entity(
             (1000, f"metric_source={geometry.metric_source}"[:250]),
             (
                 1000,
-                (
-                    "metric_fallback="
-                    f"{geometry.metric_fallback_reason or 'none'}"
-                )[:250],
+                (f"metric_fallback={geometry.metric_fallback_reason or 'none'}")[:250],
             ),
             (1040, float(geometry.target_center[0])),
             (1040, float(geometry.target_center[1])),
@@ -491,6 +470,7 @@ def add_ocr_outline_blocks(
     layer_name: str = "OCR_TEXT",
     block_prefix: str = "OCR_LINE",
     minimum_confidence: float = 0.48,
+    text_review=None,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
     """Write each recognized source line as one native editable TEXT entity."""
 
@@ -508,7 +488,9 @@ def add_ocr_outline_blocks(
     approved = accepted_ocr_texts(texts, minimum_confidence=minimum_confidence)
 
     for line_index, candidate in enumerate(approved, start=1):
-        placement = native_text_placement(
+        placement = (
+            text_review.placement if text_review is not None else native_text_placement
+        )(
             candidate,
             transform=transform,
             doc=doc,
@@ -518,21 +500,20 @@ def add_ocr_outline_blocks(
                 "Eligible OCR candidate has no finite DXF placement: "
                 f"{candidate.bbox!r}"
             )
-        entities.append(
-            _add_text_entity(
-                layout,
-                text=placement.content,
-                geometry=placement.geometry,
-                layer_name=layer_name,
-                style_name=placement.metrics.style_name,
-                line_index=line_index,
-                candidate=candidate,
-            )
+        entity = _add_text_entity(
+            layout,
+            text=placement.content,
+            geometry=placement.geometry,
+            layer_name=layer_name,
+            style_name=placement.metrics.style_name,
+            line_index=line_index,
+            candidate=candidate,
         )
+        if text_review is not None:
+            text_review.annotate(entity, candidate)
+        entities.append(entity)
         bounds.extend(placement.geometry.transformed_quad)
 
     if len(entities) != len(approved):
-        raise AssertionError(
-            "Native TEXT count differs from text_emit_eligible count"
-        )
+        raise AssertionError("Native TEXT count differs from text_emit_eligible count")
     return len(entities), entities, bounds

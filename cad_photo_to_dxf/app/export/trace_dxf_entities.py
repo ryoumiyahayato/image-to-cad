@@ -6,7 +6,12 @@ from dataclasses import dataclass
 from math import hypot
 
 from app.ocr.auxiliary_recognition import TextCandidate
-from app.core.cancellation import CancellationToken, ProgressCallback, checkpoint, report_progress
+from app.core.cancellation import (
+    CancellationToken,
+    ProgressCallback,
+    checkpoint,
+    report_progress,
+)
 from app.geometry.line_detect import LineSegment
 from app.core.trace_types import TracePath
 from app.core.arc_types import ArcSegment, transformed_arc
@@ -25,6 +30,7 @@ class TracePalette:
 
 
 TRACE_LAYER_STYLES = {
+    "NATIVE_PDF_FILL": {"color": 7, "lineweight": 0},
     "LOGO_GRAPHIC": {"color": 7, "lineweight": 0},
     "ENGINEERING_SYMBOL": {"color": 7, "lineweight": 13},
     "TRACE_STRAIGHT": {"color": 5, "lineweight": 0},
@@ -74,7 +80,9 @@ def _classify_region(
         directions.append((int(round(dx / norm)), int(round(dy / norm))))
 
     turns = sum(
-        1 for index, direction in enumerate(directions) if direction != directions[index - 1]
+        1
+        for index, direction in enumerate(directions)
+        if direction != directions[index - 1]
     )
     turn_density = turns / max(len(directions), 1)
 
@@ -91,9 +99,7 @@ def _classify_region(
         and (turns >= 8 or hole_count > 0 or turn_density >= 0.025)
     )
     tiny_symbol_region = (
-        relative_height <= 0.018
-        and relative_width <= 0.06
-        and turns >= 4
+        relative_height <= 0.018 and relative_width <= 0.06 and turns >= 4
     )
     if small_text_region or tiny_symbol_region:
         return "TRACE_TEXT_SYMBOL"
@@ -126,7 +132,9 @@ def _path_matches_ocr(
         right = float(x + box_width) + margin_x
         bottom = float(y + box_height) + margin_y
         center_inside = left <= center_x <= right and top <= center_y <= bottom
-        size_compatible = width <= (right - left) * 1.35 and height <= (bottom - top) * 1.45
+        size_compatible = (
+            width <= (right - left) * 1.35 and height <= (bottom - top) * 1.45
+        )
         if center_inside and size_compatible:
             return True
 
@@ -195,9 +203,13 @@ def _add_editable_contour(
     *,
     layer_name: str,
     color: int,
+    source_curve=None,
 ) -> list[object]:
     entities: list[object] = []
-    for chunk, close in _editable_polyline_chunks(points):
+    chunks = (
+        [(list(points), True)] if source_curve else _editable_polyline_chunks(points)
+    )
+    for chunk, close in chunks:
         entities.append(
             layout.add_lwpolyline(
                 chunk,
@@ -205,6 +217,24 @@ def _add_editable_contour(
                 dxfattribs={"layer": layer_name, "color": color},
             )
         )
+        if source_curve:
+            proof, depth = source_curve
+            if "SCANNED_CURVE_SOURCE" not in layout.doc.appids:
+                layout.doc.appids.add("SCANNED_CURVE_SOURCE")
+            entities[-1].set_xdata(
+                "SCANNED_CURVE_SOURCE",
+                [
+                    (1070, 1),
+                    (1000, proof["policy"]),
+                    (1000, proof["source_id"]),
+                    (1000, "ORIGINAL_SOURCE_BOUNDARY"),
+                    (1070, int(depth)),
+                    *[(1071, int(v)) for v in proof["source_box"]],
+                    (1071, int(proof["source_pixels"])),
+                    (1071, int(proof["released_line_pixels"])),
+                    (1000, "CLOSED_SOURCE_WITHOUT_EXTERNAL_CONTACTS"),
+                ],
+            )
     return entities
 
 
@@ -223,12 +253,15 @@ def add_straight_line_entities(
     layer_name: str = "TRACE_STRAIGHT",
     color: int = 5,
     line_records=(),
+    line_source_refs=None,
 ) -> tuple[int, list[object], list[tuple[float, float]]]:
     """Write reconstructed structural strokes as native DXF LINE entities."""
 
     entities: list[object] = []
     bounds: list[tuple[float, float]] = []
     resolved_color = _resolved_color(color, 5)
+    if line_source_refs is not None and len(line_source_refs) != len(lines):
+        raise ValueError("LINE source refs must bind every source line index")
     for index, line in enumerate(lines):
         if line.length <= 1e-6:
             continue
@@ -240,10 +273,18 @@ def add_straight_line_entities(
         attributes = {"layer": layer_name, "color": resolved_color}
         if record:
             from app.geometry.source_presentation import LINEWEIGHTS
-            weight = int(record['cad_lineweight'])
+
+            weight = int(record["cad_lineweight"])
             if weight not in LINEWEIGHTS.values():
-                raise ValueError('Stroke lineweight is outside the bounded vocabulary')
-            attributes['lineweight'] = weight
+                raise ValueError("Stroke lineweight is outside the bounded vocabulary")
+            attributes["lineweight"] = weight
+            if "source_rgb" in record:
+                rgb = record["source_rgb"]
+                if len(rgb) != 3 or any(
+                    type(v) is not int or not 0 <= v <= 255 for v in rgb
+                ):
+                    raise ValueError("Native source stroke RGB is invalid")
+                attributes["true_color"] = (rgb[0] << 16) | (rgb[1] << 8) | rgb[2]
         entities.append(
             layout.add_line(
                 start,
@@ -252,42 +293,74 @@ def add_straight_line_entities(
             )
         )
         if record:
-            if 'P3A_STROKE' not in layout.doc.appids:
-                layout.doc.appids.add('P3A_STROKE')
-            entities[-1].set_xdata('P3A_STROKE', [(1000, str(record['category'])),
-                (1040, float(record['source_width_px'])), (1040, float(record['source_dpi']))])
+            if "P3A_STROKE" not in layout.doc.appids:
+                layout.doc.appids.add("P3A_STROKE")
+            entities[-1].set_xdata(
+                "P3A_STROKE",
+                [
+                    (1000, str(record["category"])),
+                    (1040, float(record["source_width_px"])),
+                    (1040, float(record["source_dpi"])),
+                ],
+            )
+        if line_source_refs is not None:
+            from app.export.line_source_ref import attach_line_source_ref
+
+            attach_line_source_ref(entities[-1], line_source_refs[index])
         bounds.extend((start, end))
     return len(entities), entities, bounds
 
 
-def add_arc_entities(layout, arcs: Sequence[ArcSegment], *, transform: PointTransform,
-                     layer_names=None, color=6):
+def add_arc_entities(
+    layout,
+    arcs: Sequence[ArcSegment],
+    *,
+    transform: PointTransform,
+    layer_names=None,
+    color=6,
+):
     # Validate all transforms before emitting a member. No polyline fallback:
     # suppressed source members must never outlive a silently omitted ARC.
     geometry = [transformed_arc(arc, transform) for arc in arcs]
     paper_scales = []
     for arc, (_, radius, *_rest) in zip(arcs, geometry):
-        mm_per_pixel = radius/arc.radius if layout.doc.units == 4 else 25.4/arc.source_dpi
+        mm_per_pixel = (
+            radius / arc.radius if layout.doc.units == 4 else 25.4 / arc.source_dpi
+        )
         arc.round_stroke_error_px(mm_per_pixel)
         paper_scales.append(mm_per_pixel)
     entities, bounds = [], []
-    for arc, (center, radius, start, end, extrema), mm_per_pixel in zip(arcs, geometry, paper_scales):
+    for arc, (center, radius, start, end, extrema), mm_per_pixel in zip(
+        arcs, geometry, paper_scales
+    ):
         layer = _layer_name(arc.layer, layer_names)
         if layer not in layout.doc.layers:
             layout.doc.layers.add(layer, color=_resolved_color(color, 6))
-        entity = layout.add_arc(center, radius, start, end,
-                                dxfattribs={'layer': layer, 'color': _resolved_color(color, 6),
-                                            'lineweight': arc.lineweight})
-        if 'P9_ARC' not in layout.doc.appids:
-            layout.doc.appids.add('P9_ARC')
-        tags = [(1000, arc.object_id), (1040, arc.stroke_width_px), (1040, arc.source_dpi)]
-        if arc.stroke_cap == 'round':
+        entity = layout.add_arc(
+            center,
+            radius,
+            start,
+            end,
+            dxfattribs={
+                "layer": layer,
+                "color": _resolved_color(color, 6),
+                "lineweight": arc.lineweight,
+            },
+        )
+        if "P9_ARC" not in layout.doc.appids:
+            layout.doc.appids.add("P9_ARC")
+        tags = [
+            (1000, arc.object_id),
+            (1040, arc.stroke_width_px),
+            (1040, arc.source_dpi),
+        ]
+        if arc.stroke_cap == "round":
             # DXF ARC keeps a centerline and ISO lineweight. Normal CAD object
             # lineweight ends are round; retain the checked presentation for
             # our saved-DXF preview without changing other entities' end styles.
-            tags.extend([(1000, 'round'), (1040, mm_per_pixel)])
-            layout.doc.header['$LWDISPLAY'] = True
-        entity.set_xdata('P9_ARC', tags)
+            tags.extend([(1000, "round"), (1040, mm_per_pixel)])
+            layout.doc.header["$LWDISPLAY"] = True
+        entity.set_xdata("P9_ARC", tags)
         entities.append(entity)
         bounds.extend(extrema)
     return len(entities), entities, bounds
@@ -302,6 +375,7 @@ def add_exact_trace_entities(
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
     ocr_texts: Sequence[TextCandidate] = (),
+    text_rule_contours: Sequence = (),
     source_outline_ocr_texts: Sequence[TextCandidate] = (),
     fallback_ocr_texts: Sequence[TextCandidate] = (),
     residual_ocr_texts: Sequence[TextCandidate] = (),
@@ -312,6 +386,9 @@ def add_exact_trace_entities(
     bound_members: Mapping[int, object] | None = None,
     excluded_indices: Sequence[int] = (),
     fill_records=None,
+    closed_curve_records=(),
+    contour_source_refs=None,
+    contour_source_expectations=None,
 ) -> tuple[int, int, list[object], list[tuple[float, float]]]:
     """Write residual editable geometry without OCR glyph or hollow child outlines."""
 
@@ -334,6 +411,14 @@ def add_exact_trace_entities(
     entities: list[object] = []
     bounds = [float("inf"), float("inf"), float("-inf"), float("-inf")]
     total_black = max(len(black_indices), 1)
+    retained_rules = {
+        tuple(tuple(point) for point in points) for points in text_rule_contours
+    }
+    complete_curves = {
+        int(member["index"]): (record["proof"], member["depth"])
+        for record in closed_curve_records
+        for member in record["members"]
+    }
     exported_path_count = 0
     exported_vertex_count = 0
 
@@ -369,6 +454,12 @@ def add_exact_trace_entities(
             # The committed resolver decision takes precedence over OCR region
             # matching and heuristic region classification.
             base_layer_name = str(bound_member.layer)
+        elif tuple(trace_path.points) in retained_rules:
+            # Final source ownership proved this complete contour is a rule,
+            # not a glyph. A nearby OCR rectangle cannot revoke that proof.
+            base_layer_name = _classify_region(
+                trace_path, source_size=source_size, hole_count=len(hole_indices)
+            )
         elif _path_matches_ocr(
             trace_path,
             residual_ocr_texts,
@@ -410,9 +501,13 @@ def add_exact_trace_entities(
         if len(root_points) < 3:
             continue
         fill = (fill_records or {}).get(str(index))
-        if fill and base_layer_name not in {'SOURCE_TEXT_OUTLINE', 'TEXT_FALLBACK_OUTLINE', 'RESIDUAL_GRAPHIC'}:
-            hatch = layout.add_hatch(dxfattribs={'layer': resolved_layer_name})
-            gray = int(fill['source_gray'])
+        if fill and base_layer_name not in {
+            "SOURCE_TEXT_OUTLINE",
+            "TEXT_FALLBACK_OUTLINE",
+            "RESIDUAL_GRAPHIC",
+        }:
+            hatch = layout.add_hatch(dxfattribs={"layer": resolved_layer_name})
+            gray = int(fill["source_gray"])
             hatch.dxf.true_color = (gray << 16) | (gray << 8) | gray
             hatch.paths.add_polyline_path(root_points, is_closed=True)
             entities.append(hatch)
@@ -420,14 +515,25 @@ def add_exact_trace_entities(
             exported_path_count += 1
             exported_vertex_count += len(trace_path.points)
             continue
-        entities.extend(
-            _add_editable_contour(
-                layout,
-                root_points,
-                layer_name=resolved_layer_name,
-                color=entity_color,
-            )
+        created = _add_editable_contour(
+            layout,
+            root_points,
+            layer_name=resolved_layer_name,
+            color=entity_color,
+            source_curve=complete_curves.get(index),
         )
+        if contour_source_refs and index in contour_source_refs:
+            if len(created) != 1:
+                raise ValueError(
+                    "Source-bound contour must emit one complete native LWP"
+                )
+            from app.export.contour_source_ref import attach_contour_source_ref
+
+            record = attach_contour_source_ref(
+                created[0], contour_source_refs[index], transform
+            )
+            contour_source_expectations.append((created[0], record))
+        entities.extend(created)
         _expand_bounds(root_points, bounds)
         exported_path_count += 1
         exported_vertex_count += len(trace_path.points)
@@ -445,6 +551,7 @@ def add_exact_trace_entities(
                     child_points,
                     layer_name=resolved_layer_name,
                     color=entity_color,
+                    source_curve=complete_curves.get(child_index),
                 )
             )
             _expand_bounds(child_points, bounds)

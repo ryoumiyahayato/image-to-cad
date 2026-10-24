@@ -8,8 +8,10 @@ from app.geometry.line_detect import LineSegment
 from app.core.trace_types import TracePath
 from app.ocr.signature_overlay import SignatureRegion
 from app.core.image_loader import load_image
+
 if TYPE_CHECKING:
     from app.core.structure import FinalStructure
+
 
 @dataclass(frozen=True)
 class ExportResult:
@@ -39,6 +41,7 @@ class ExportResult:
     signature_count: int = 0
     text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
     arc_count: int = 0
+    hatch_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -67,6 +70,7 @@ class DocumentPage:
     trace_color: int = 7
     signatures: tuple[SignatureRegion, ...] = field(default_factory=tuple)
     final_structure: FinalStructure | None = None
+    text_review: object | None = None
 
 
 @dataclass(frozen=True)
@@ -92,6 +96,7 @@ class DocumentExportResult:
     signature_count: int = 0
     text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
     arc_count: int = 0
+    hatch_count: int = 0
 
 
 def _resolve_raster(page: DocumentPage) -> np.ndarray:
@@ -108,4 +113,3 @@ def _resolve_raster(page: DocumentPage) -> np.ndarray:
     if raster.ndim not in (2, 3) or raster.size == 0:
         raise ValueError(f"Page {page.page_number} has no raster image")
     return raster
-
