@@ -1,0 +1,46 @@
+name: Native-first tools and authorized consolidation
+on:
+  push:
+    branches: [main, maintenance/native-first-20261024]
+    paths:
+      - 'tools/native_first/**'
+      - 'maintenance/archive_branches_20261024.py'
+      - 'docs/project/BRANCH_ARCHIVE_20261024.json'
+      - '.github/workflows/native-first.yml'
+  pull_request:
+    paths: ['tools/native_first/**', '.github/workflows/native-first.yml']
+permissions:
+  contents: read
+jobs:
+  tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r tools/native_first/requirements.txt pytest
+      - run: python -m pytest -q tools/native_first/tests
+      - run: python -m compileall -q tools/native_first maintenance/archive_branches_20261024.py
+  archive-retired-branches:
+    if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, '[archive-20261024]')
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fetch all existing branches for recovery
+        run: git fetch origin '+refs/heads/*:refs/remotes/origin/*'
+      - name: Archive verified tips, close superseded PR33, delete only leased branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python maintenance/archive_branches_20261024.py --expected-main '${{ github.sha }}' --execute

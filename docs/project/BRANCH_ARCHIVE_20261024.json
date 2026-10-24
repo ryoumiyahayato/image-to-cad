@@ -1,0 +1,88 @@
+{
+  "operation": "user-authorized-retire-non-main-branches",
+  "main_before": "b7ba356182701d21a0ae9c71acc5c74b4e8c4763",
+  "archive_prefix": "refs/tags/archive/20261024/",
+  "archive_is_not_a_product_release": true,
+  "retired_branches": [
+    {
+      "branch": "backup/main-before-local-sync-20261014",
+      "sha": "c566d5f59391b851b0bd9e9ad6d999359bfe8282",
+      "ahead_of_main": 0,
+      "behind_main": 20
+    },
+    {
+      "branch": "backup/main-before-source-sync-20261024",
+      "sha": "76b4c8c3ce27daec0d49796ba7737b6197a4c849",
+      "ahead_of_main": 0,
+      "behind_main": 13
+    },
+    {
+      "branch": "draftsman/cloud-baseline-20260908",
+      "sha": "163d605c2f33dc3dc8d5557e374074a55c2265f8",
+      "ahead_of_main": 85,
+      "behind_main": 21
+    },
+    {
+      "branch": "fix/non-destructive-editable-text",
+      "sha": "c4b724fa5a2929cdd1a63d47cdaa928cd5e0792b",
+      "ahead_of_main": 58,
+      "behind_main": 21
+    },
+    {
+      "branch": "fix/vqa-s1-check",
+      "sha": "af23f30e60ecc1f9e7461ea3d3b120d36275e817",
+      "ahead_of_main": 91,
+      "behind_main": 21
+    },
+    {
+      "branch": "fix/vqa-s1-check2",
+      "sha": "3976eb451a1e0dec94d1aee9c1b8dbe861c2440a",
+      "ahead_of_main": 95,
+      "behind_main": 21
+    },
+    {
+      "branch": "fix/vqa-s1-check3",
+      "sha": "fb26e4d9588769092e0486d9e99620195f51b38f",
+      "ahead_of_main": 96,
+      "behind_main": 21
+    },
+    {
+      "branch": "fix/vqa-s1-visual-acceptance-workbench",
+      "sha": "98a21ac7be4b7ee8aa53c0356d7d5e4725439764",
+      "ahead_of_main": 95,
+      "behind_main": 21
+    },
+    {
+      "branch": "local-sync/main",
+      "sha": "78585a863e00841cef67090702ff28a07a9ad3ac",
+      "ahead_of_main": 8,
+      "behind_main": 85
+    },
+    {
+      "branch": "publication/code-only",
+      "sha": "93f851c18405e82bae70f36591296df6d28a8fd8",
+      "ahead_of_main": 1,
+      "behind_main": 20
+    },
+    {
+      "branch": "sync/current-product-20261014",
+      "sha": "9406c602bfe7f03be948df6a26d2299c9843245c",
+      "ahead_of_main": 0,
+      "behind_main": 14
+    },
+    {
+      "branch": "sync/research-checkpoint-20261024",
+      "sha": "02cfefba1b6daef4b3371019631ca2ad426567c2",
+      "ahead_of_main": 0,
+      "behind_main": 1
+    },
+    {
+      "branch": "vqa-s1-visual-acceptance-workbench",
+      "sha": "eebfacab42e27878a604283ae5746244245bb61c",
+      "ahead_of_main": 88,
+      "behind_main": 21
+    }
+  ],
+  "integration_branch": "maintenance/native-first-20261024",
+  "integration_expected_head": "same SHA as tested fast-forwarded main; verified at execution"
+}

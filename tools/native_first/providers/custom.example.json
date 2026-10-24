@@ -1,0 +1,9 @@
+{
+  "api_format": "openai_chat",
+  "base_url": "https://YOUR_PROVIDER.example/v1",
+  "model": "YOUR_IMAGE_CAPABLE_MODEL",
+  "api_key_env": "CAD_PROVIDER_API_KEY",
+  "vision": true,
+  "max_tokens": 4096,
+  "timeout_seconds": 90
+}

@@ -1,75 +1,31 @@
-# Current project status — 2026-10-24
+# 当前项目状态 — 2026-10-24
 
-Version remains `0.3.0-dev`; this is a development preview, with no new release.
-The current source includes the pre-P21-A P11–P20 runtime and isolated public
-Goal01–22 research. The reviewed scope, remaining private-test limits and
-merge conditions are in [PR35_REVIEW](PR35_REVIEW_20261024.md). Final workflow
-results and main integration are recorded on [PR #35](https://github.com/ryoumiyahayato/image-to-cad/pull/35).
+版本 0.3.0-dev；未发布新 Release。
 
-The P10-A contract mismatch was investigated by replaying old main and the
-candidate in the same environment. Drawing records and historical source
-obligations agree; the sole identity difference is an empty scan-curve
-metadata list. A separate current contract now checks this narrow extension
-without overwriting the old baseline. See the
-[preservation transition](../refactor/preservation-transition-20261024.md).
+## 当前主线
 
-Product scope and source selection remain as documented in
-[SOURCE_SYNC_RESULT](SOURCE_SYNC_RESULT_20261024.md). Research `NO_GO`, no
-independent C acceptance, unmeasured human net labor and pending full-CAD
-editor compatibility remain unchanged. Source integration does not promote
-research candidates or establish new formal CAD benefit. No new Goal starts
-as part of this merge.
+S0 矢量目录页的 B 默认外观优于正常链路。主要机制是保留 PDF 原路径及原字形，而不是训练出新的工程识别模型。
+近期优先级改为原生来源保真 + 按需语义编辑 + 可替换模型建议；暂停追加小型数值专用训练。
 
-The following older status is retained as history, not as the current work queue.
+新增 `tools/native_first` 为独立 CLI：原生路径导入离线执行；BYOK 接口只提供未经认证的文字建议。
+现有生产 GUI、扫描处理、OCR、FinalStructure、缓存、来源保护及保存机制未被替换。
+真实供应商效果比较、自动文字替换 GUI、复杂 PDF、扫描语义重建、目标编辑器回存及真人净收益均未完成。
 
-# Historical project status — 2026-10-14 (retained)
+详见 [当前决定](NATIVE_FIRST_20261024.md) 与 [工具说明](../../tools/native_first/README_ZH.md)。
 
-Updated: 2026-10-14. Version: 0.3.0-dev. Development preview; no new release or release tag.
+## 保留的事实
 
-## Product baseline
+- PR #35 已审查并合入 P11—P20 基准和隔离 Goal01—22；源码合并不等于研究晋级。
+- Goal21 停止新数字读取器，保留独立读数比较原型。
+- Goal22 在正常父框内取得有限定位/绑定证据，无新增读取收益和正式 CAD 改善。
+- S0 B 的默认文字仍为轮廓，89 条替代 TEXT 默认关闭；保真和语义编辑不可合并为同一通过项。
+- 本次通用化导入的 S0 几何与 B 首版在 1e-9 mm 舍入下相同；没有新的 GUI/真人验证。
 
-The synchronization candidate is the actual `instrumented-e03` working tree on `codex/source-support-lifecycle-instrumentation`, based on `20b2247fdfdf90fbe10e6daacffe5e339d19cb13`, including previously uncommitted product work. HEAD alone did not represent the product. The original remote main was `c566d5f59391b851b0bd9e9ad6d999359bfe8282`. Remote-only changes were README translations. The old main is retained at `backup/main-before-local-sync-20261014`.
+## 版本与恢复
 
-Current production: normal loader → ProductionProcessingService → image recognition/source ownership/reconciliation → immutable FinalStructure → save/read → existing DXF export → saved-DXF preview. FinalStructure schema 4; trace cache format 11. Optional PDF evidence preserves ordinary raster/scanned input support.
+用户已报告本地程序删除。不能再假定旧工作树、完整本地备份或未提交文件存在。
+当前 Git 跟踪内容从 main 恢复，旧分支头先固定为归档标签，再清理分支。
+私人原件、真实输入、模型和环境按已有独立归档恢复，覆盖范围必须核对。
+见 [恢复边界](RESTORE_AFTER_LOCAL_REMOVAL.md) 与 [分支原 SHA 清单](BRANCH_ARCHIVE_20261024.json)。
 
-## Verified stage results
-
-| Stage | Current result and scope |
-|---|---|
-| Architecture | Refactor closed. Existing preservation and retirement records are retained under docs/refactor. |
-| P1 | Reproduced duplicate-line and break defects closed for the inspected cases. |
-| P2A/P2B | Specific Chinese layout, source-outline ownership, graphic, signature and logo fixes implemented. General native-CAD font/UAT limits remain. |
-| P3B | Maintenance only. Existing formal 94/50 split and review records preserved. No training is authorized or started. |
-| P4 | Same-track Hough/LSD duplicate observations consolidated; distinct boundaries retained. |
-| P5 | Verified PDF/source text reading direction reaches native text. No blanket rotation inference. |
-| P6 | USDA scanned-page no-output timeout fixed; per-record route parsing is reused. |
-| P7 | Specific USDA foundation-note overlap/source-text ownership fixed. |
-| P8 | Closed as EVIDENCE_ONLY. Physical same-source ink does not authorize whole-object merge when cap/node/edit obligations remain unresolved. |
-| P9/P9-B | Formal native ARC chain and Tiny House p9 full normal-entry replacement verified; cache, save/reopen, export and preview retain ARC. |
-| P9-C | Complex-page layered admission implemented. Complete page context remains available; resource-incomplete evidence fails closed. |
-| P9-D | Round-cap presentation and verified integer-canvas mapping errors supported. Tasmanian p3 geometry can pass, but visibility/cap-sharing prevents safe real replacement. No independent-source real ARC success is claimed. |
-| P10-A | IMPLEMENTED. USDA p4 has two whole isolated scan strokes restored as LINE, retaining adjacent structure and source coverage. Final normal 240-DPI/OCR run: 160.637 s; 755 LINE, 3815 LWPOLYLINE, 6 CIRCLE, 220 TEXT, 4 IMAGE. Only two former contours differ from the P7 actual DXF. |
-
-P9 policy remains `pdf-simple-arc-evidence-v3-round-cap`. Unsupported clipping, arbitrary cubics and true native anisotropy retain their refusals. P9 is in maintenance; Tasmanian occlusion work is not continued.
-
-P10-A's mechanism reviews rejected LSD white-edge locators against a complete isolated thin source component, fits all station centers without axis snapping, checks caps/foreign ink/protection, then uses existing ownership and reconciliation. It does not merge wall sides, cut mixed contours or alter accepted endpoints. Width is retained through existing CAD lineweight records. See D-012 and [P10-A report](../product-fix-p10a-20261014.md).
-
-## Verification and limits
-
-The P10-A completion record contains 35 directly related passing tests and two bounded fullpage runs. The first run exposed a missing lineweight record; only the final second run is the delivered result. New-process reopen/re-export and native LINE edits persist; DXF audits have zero errors/fixes. LibreCAD was not available, so these checks are not GUI acceptance.
-
-P9-D retained 76 related passing checks and Tiny's saved real ARC. The engineering index distinguishes contract fixtures, real local studies and normal fullpage runs. Historical pass counts are not a new full-repository run.
-
-USDA has no original design CAD truth. Its changes are supported by the scan and known object relationships. Only USDA establishes a scan-positive source; Quanzhou/Tiny provide boundary and ARC guards, not independent scan-positive generalization. No all-page quality or release acceptance is asserted.
-
-Raw PDFs and `local-artifacts` are not distributed. Small tracked region fixtures support portable regression tests. The engineering index retains P1–P10-A records and the synchronization follow-up. Historical DXF inventory records and their Git recovery references remain nonempty and auditable. Font licensing and exact approved-asset checks remain in force.
-
-Synchronization follow-up (2026-10-14): PDFium output pointers use the binding's declared FPDF_BOOL; RapidOCR remains in the source-direction-verified 3.9 range. D-011 schema/cache version assertions and current test doubles are aligned. The remaining Linux exit-134 fault is independently reproduced by PySide6 6.12.0 QPainterPath void calls losing None references. In the same Ubuntu/CPython 3.11.17 environment, Qt/Shiboken 6.11.2 keeps the references and exits normally. Requirements exclude the faulty 6.12 range; normal pytest process exit is still mandatory.
-
-The historical compact snapshot remains unchanged. An archived 20b2247 replay exactly matches it. Current code with only detector-alias consolidation bypassed reproduces every historical LINE payload. The first admission difference is the existing source-bound alias step: six groups remove seven output records, and one group removes one gap-case record. Each has zero unique source-pixel loss, unchanged width and an already-existing keeper geometry. Sample-test geometry remains unchanged. A separate versioned current snapshot retains exact structure/cache/DXF checks plus explicit transition source claims; it passes locally, together with 12 related guards. Linux's 61 related ARC/native/transition checks pass with the compatible Qt pair. D-013 and docs/refactor/preservation-transition-p10a.md record the scope. A clean Linux checkout with Python 3.11.17 and Qt/Shiboken 6.11.2 completed the full suite: 743 passed, 8 skipped in 74.18 seconds, with process exit 0. Preservation, Ruff, four-file mypy and compileall also pass locally. Ruff now explicitly retains the existing 0.12 E4/E7/E9/F policy rather than inheriting expanded 0.17 defaults. Final CI and merge state must be verified on PR #34; local successes alone do not close synchronization.
-
-## Work planned at that historical checkpoint
-
-P10-B is authorized but waits for GitHub main synchronization. No independent-source P10-B material processing has started. The existing CURRENT_TASK and NEXT_TASK records govern this pause. P10-A need not be restarted: its documented scope is complete.
-
-[Engineering evidence](ENGINEERING_EVIDENCE_INDEX.jsonl) · [Decisions](DECISIONS.md) · [Historical UAT](REAL_WORLD_UAT.md) · [Refactor closeout](../refactor/closeout-report.md)
+历史报告与限制保留于 [PR35 审查](PR35_REVIEW_20261024.md)、[同步结果](SOURCE_SYNC_RESULT_20261024.md)、[决策记录](DECISIONS.md)和工程证据索引。

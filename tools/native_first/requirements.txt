@@ -1,0 +1,5 @@
+# Optional CLI dependencies, separate from the production GUI environment.
+# Check upstream PyMuPDF distribution terms before redistributing a product.
+PyMuPDF>=1.26.6,<1.27
+ezdxf>=1.4.4,<2
+Pillow>=12,<13

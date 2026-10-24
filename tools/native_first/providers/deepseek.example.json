@@ -1,0 +1,9 @@
+{
+  "api_format": "openai_chat",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "api_key_env": "DEEPSEEK_API_KEY",
+  "vision": true,
+  "max_tokens": 4096,
+  "timeout_seconds": 90
+}

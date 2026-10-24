@@ -1,0 +1,9 @@
+{
+  "api_format": "anthropic_messages",
+  "base_url": "https://api.anthropic.com/v1",
+  "model": "SET_A_SUPPORTED_IMAGE_MODEL",
+  "api_key_env": "ANTHROPIC_API_KEY",
+  "vision": true,
+  "max_tokens": 4096,
+  "timeout_seconds": 90
+}

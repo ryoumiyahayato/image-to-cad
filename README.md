@@ -1,57 +1,62 @@
-## 已审查的开发基准 — 2026-10-24
+# Image to CAD — source-first development preview
 
-当前检出保存了本地 P11—P20 的既有运行基准，以及与生产入口隔离的研究 Goal01—22。版本仍为 0.3.0-dev。P21-A 活动入口修改与 P20-D 未晋级候选留在私人恢复分支；研究 NO_GO 不变。
+当前版本 **0.3.0-dev**。目标仍是高保真、合理可编辑的二维 CAD，并减少人工核查和修正。
 
-本轮完成源码审查与保存合同迁移；主分支整合以 [PR #35](https://github.com/ryoumiyahayato/image-to-cad/pull/35) 的最终检查及合并记录为准。产品验收仍单独进行。审查范围与限制见 [审查记录](docs/project/PR35_REVIEW_20261024.md)，原同步与恢复过程见 [同步结果](docs/project/SOURCE_SYNC_RESULT_20261024.md) 和 [文件选择](docs/project/SYNC_SELECTION_20261024.json)。start-stable.ps1 加载当前检出，使用 -Python 指定解释器；原活动树的同名脚本并不表示稳定。
+## 最新状态：2026-10-24
 
+S0 A/B 对照中，直接保留 PDF 原路径和原字形的 B 方案明显改善默认显示。近期重点转为**先保留原生来源，再按需添加语义编辑**，暂停小型数值模型的追加训练。
+这不是任意扫描图、完整工程对象理解或真人净省时已完成的声明。
 
-# Image to CAD — development preview
+新增 [native-first 工具](tools/native_first/README_ZH.md)：
+- 离线 PDF 路径导入不调用 OCR/大模型，不需要 API Key。
+- 可选文字建议支持用户自带模型、端点和 API Key；默认不联网，不自动改写 CAD。
+- 现有 GUI/扫描处理路径保持。新路径是显式选择的独立 CLI，尚未接入 GUI 或完成跨编辑器验收。
 
-Image to CAD converts scans, drawing photographs and PDF pages into editable CAD objects. The current version is **0.3.0-dev**, defined in `cad_photo_to_dxf/app/version.py`.
+[本轮整合与证据](docs/project/NATIVE_FIRST_20261024.md) · [本地删除后的恢复](docs/project/RESTORE_AFTER_LOCAL_REMOVAL.md) · [旧分支归档清单](docs/project/BRANCH_ARCHIVE_20261024.json)
 
-当前产品输出原生 `LINE`、轮廓 `LWPOLYLINE`、可信 OCR `TEXT`，以及有完整源证据的 PDF `ARC`。签名与部分图形使用独立 IMAGE；扫描底图可选，正常预览直接来自保存的 DXF。DWG 依赖用户安装的 ODA File Converter。
+## 运行
 
-This is a development preview, not recovery of the original DWG or unknown design dimensions. Source pixels, ownership, endpoints and protected objects constrain every replacement. Uncertain content keeps its existing representation.
-
-## Historical product checkpoint — 2026-10-14
-
-- P1–P7: verified fixes for specific line, ownership, text-layout and scan-performance defects. These are scoped results, not complete acceptance of every drawing.
-- P8: same physical ink does not authorize merging whole CAD objects with unresolved endpoints or nodes.
-- P9: native ARC representation, atomic replacement, cache/save/reopen, DXF export and preview are implemented. Tiny House p9 has a verified fullpage replacement. Round caps and tracked integer-canvas mapping errors are supported; Tasmanian p3 still has no safe real replacement because source visibility/cap sharing fails. P9 is in maintenance.
-- P10-A: implemented. USDA p4 replaces two complete isolated scan contours with native LINE objects. The final normal 240-DPI/OCR run took 160.64 seconds. Other scan sources have not established a positive generalization result.
-- P3B: maintenance only. No training or new labeling is started.
-
-See [current project status](docs/project/PROJECT_STATUS.md), [decisions](docs/project/DECISIONS.md) and the append-only [engineering evidence index](docs/project/ENGINEERING_EVIDENCE_INDEX.jsonl). The [application guide](cad_photo_to_dxf/README.md) describes normal operation. Historical July UAT and architecture records remain evidence, not the current task queue.
-
-## Run
-
-Python 3.11 is the verified environment. The application uses Qt, OpenCV, PDFium, ezdxf and RapidOCR/ONNX Runtime.
+现有 GUI（已验收环境为 Python 3.11）：
 
 ```powershell
 Set-Location .\cad_photo_to_dxf
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-python main.py --version
-python main.py
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
 ```
 
-PDF pages load through the normal PDF loader. The GUI can process the current page or processed pages and export per-page results. Images also use the normal raster route. Coordinate modes are paper millimetres, independently calibrated model millimetres, or uncalibrated pixels; no automatic design-scale recovery is claimed.
-
-For editable CJK TEXT, the repository retains the existing licensed `wqy-unicode.lff` and its license. No additional font binary is required by this sync. Deliver IMAGE sidecars with the DXF when signatures or graphics are present.
-
-## Development and verification
-
-Run only checks relevant to the change. For example:
+新增独立导入工具（在仓库根目录）：
 
 ```powershell
-python -m pip install -r requirements-test.txt
-python -m pytest -q tests/test_native_arc_pipeline.py tests/test_scan_line_regularization.py
-python scripts/check_repository_hygiene.py --repository-root ..
+python -m venv .venv-native
+.\.venv-native\Scripts\python.exe -m pip install -r tools/native_first/requirements.txt
+.\.venv-native\Scripts\python.exe -m tools.native_first.import_pdf input.pdf --page 1 --inspect
+.\.venv-native\Scripts\python.exe -m tools.native_first.import_pdf input.pdf --page 1 --output local-artifacts/native/page.dxf
 ```
 
-The retained DXF evidence inventory is [repository-hygiene/inventory.json](cad_photo_to_dxf/validation/repository-hygiene/inventory.json). It contains 93 historical DXF records and recovery references; generated DXF outputs are not new source fixtures. Historical source files remain recoverable from Git history and the sync backup branch. Existing legitimate runtime fonts and test inputs are retained under the repository policy.
+支持范围、局限及 BYOK 示例见工具 README。默认纸面毫米坐标，不推断未知设计比例。输出图像依赖应与 DXF 一同交付。
 
-Raw material libraries, `local-artifacts/`, model weights, virtual environments, personal settings and generated run caches are local. A fresh clone does not contain every historical real-page run. Tests using tracked small region fixtures are portable; external real-PDF studies require the user's source materials. GUI acceptance and full drawing-set acceptance remain separate from programmatic DXF checks.
+## 历史工程资产与验收
 
-No release is published by this synchronization. P10-A is complete for the documented two strokes. Further geometry work requires a new task.
+PR #35 已合入 P11—P20 已审查运行基准及隔离 Goal01—22 研究。相关来源、缓存、保存合同、校对和回归设施继续保留，研究代码不因存入 main 自动晋级。
+
+[PR35 审查](docs/project/PR35_REVIEW_20261024.md) · [同步范围](docs/project/SOURCE_SYNC_RESULT_20261024.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [工程证据](docs/project/ENGINEERING_EVIDENCE_INDEX.jsonl)
+
+现有正常入口是 `ProductionProcessingService`；保存后的 DXF 才是预览依据。
+`start-stable.ps1` 使用当前检出，可通过 `-Python` 指定解释器。旧活动工作树里的同名脚本并不自动代表稳定版本。
+
+本次独立工具有自己的测试与 Windows/Linux 工作流：
+
+```text
+python -m pytest -q tools/native_first/tests
+```
+
+现有核心 CI、保存行为、仓库卫生和构建流程保持。CI 成功不替代真实图纸、编辑器往返和人工劳动测量。
+
+## 文件与恢复
+
+main 是日常入口。被删除旧分支的提交先保存在 `archive/20261024/<原分支名>` 标签，归档标签不是产品 Release。
+本地程序被用户报告删除；未跟踪且未归档的真实材料、详细记录、模型和环境不保证可以从 GitHub 恢复。
+私人技术小包不是全部资料备份。已有合法跟踪字体和测试素材保留，不把新真实图纸、API Key、环境或运行结果提交到公开仓库。
+
+本次没有发布新版本或 Release。详细恢复命令见上述恢复文档。

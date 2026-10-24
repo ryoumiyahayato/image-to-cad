@@ -33,3 +33,7 @@ cad_photo_to_dxf/validation/user-pdf-check/*.dxf
 /docs/product-fix-p3b/*-contact-sheets/
 /docs/product-fix-p3b/*preview*.png
 /docs/product-fix-p3b/representative-samples.png
+
+# Native-first local environment and credential-free user overrides.
+.venv-native/
+/tools/native_first/providers/*.local.json
