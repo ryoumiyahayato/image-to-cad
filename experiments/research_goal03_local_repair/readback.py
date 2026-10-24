@@ -92,4 +92,3 @@ def main():
     save(case/'independent-readback.json',{'annotation':qa['annotation'],'independent_process':True,'score_uses_saved_dxf_geometry':True,'results':results})
     print(json.dumps({k:{x:v[x] for x in ['entities','new_paths','complete_edges','changed_original_entities','aligned_duplicate_intervals']} for k,v in results.items()}))
 if __name__=='__main__':main()
-
