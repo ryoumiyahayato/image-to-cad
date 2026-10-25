@@ -232,3 +232,63 @@ def test_whole_carrier_is_not_suppressed_when_source_or_structure_is_shared(bloc
     assert count > 1 and labels[py, px] != 0
     assert np.array_equal(completed.text[component], owner.text[component])
     assert np.array_equal(completed.line, owner.line)
+
+
+def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(tmp_path):
+    from app.core.cache import load_trace_cache
+    from tools.drafting_rules.source_adapter import validate_with_source
+    from tools.drafting_rules.source_study import make_case
+
+    args = make_case(
+        tmp_path / "cell", (4080, 2200, 4390, 2410), candidates(),
+        ("专业负责人", "专业负责者"),
+    )
+    report = validate_with_source(**args)
+    row = next(r for r in report["source_ledger"]["rows"]
+               if r["recognized_text"] == "专业负责人")
+    # The old whole-row downgrade leaves 54 rendered source-core pixels here.
+    assert row["residual_owned_core_pixels"] == 0
+    assert report["summary"] == {"PASS": 7, "ABSTAIN": 5}
+    assert row["unowned_pixels"] == 23  # Do not claim the shared carrier complete.
+    assert [r["unowned_pixels"] for r in report["source_ledger"]["rows"][1:]] == [5, 5]
+
+    structure = load_trace_cache(args["cache"]).final_structure
+    chinese = next(c for c in structure.texts if c.text == "专业负责人")
+    assert not chinese.replacement_safe  # The structural conflict still applies.
+    gray, _ = local_region()
+    restored = constrain_texts_to_table_cells(gray, structure.texts, verified_sources=(proofs := []))
+    owner = partition_content(
+        structure.preview_binary, lines=structure.straight_lines, texts=restored,
+        logos=structure.logos, signatures=structure.signatures,
+    )
+    owned = complete_verified_text_ownership(
+        structure.preview_binary, gray, restored, proofs, ownership=owner,
+    )
+    known = np.zeros(gray.shape, dtype=bool)
+    for y, x0, x1 in row["core_runs"]:
+        known[y, x0:x1] = True
+    known &= owned.text > 0
+    assert not np.any(structure.contour_binary[known] < 128)
+    assert not np.any(structure.source_text_outline_mask[known])
+    assert not np.any(structure.uncertain_text_outline_mask[known])
+
+    cached_dxf = tmp_path / "cached.dxf"
+    export_final_structure_dxf(structure, cached_dxf)
+    saved = ezdxf.readfile(cached_dxf)
+    text = next(e for e in saved.modelspace().query("TEXT") if e.dxf.text == chinese.text)
+    text.dxf.text = "专业负责者"
+    saved.saveas(tmp_path / "cached-edited.dxf")
+    reopened = ezdxf.readfile(tmp_path / "cached-edited.dxf")
+    assert reopened.entitydb[text.dxf.handle].dxf.text == "专业负责者"
+    assert [e.dxf.text for e in reopened.modelspace().query("TEXT")][1:] == [
+        "Discipline", "Responsible",
+    ]
+    visible_geometry = [e for e in reopened.modelspace() if e.dxftype() != "TEXT"
+                        and not reopened.layers.get(e.dxf.layer).is_off()
+                        and not reopened.layers.get(e.dxf.layer).is_frozen()]
+    from tools.drafting_rules.source_adapter import DocumentView
+
+    ink = render_emitted_dxf_preview(
+        DocumentView(reopened, visible_geometry), tmp_path, structure.source_size_px,
+    ) < 255
+    assert not np.any(ink & known)

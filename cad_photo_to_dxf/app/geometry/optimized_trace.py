@@ -27,6 +27,7 @@ from app.geometry.content_ownership import (
     finalize_content_ownership,
     graphic_source_mask,
     partition_content,
+    preserve_verified_text_members,
     retain_layout_rule_ownership,
     retained_rule_contours,
     signature_source_mask,
@@ -232,6 +233,7 @@ def _assign_and_reconcile(
     reconciliation_ledger,
     late_restorations,
     performance_callback,
+    verified_text_sources=(),
 ):
     """Arbitrate proposals, reconcile source identity, then enforce ownership veto.
 
@@ -332,6 +334,10 @@ def _assign_and_reconcile(
         initial_ownership,
         ownership,
         initial_downgrades=initial_downgrades,
+    )
+    ownership = preserve_verified_text_members(
+        binary, texts, verified_text_sources,
+        previous=candidate_ownership, ownership=ownership,
     )
     return reconciliation_result, ownership, texts, logos, signatures
 
@@ -579,6 +585,7 @@ def trace_image_optimized(
         reconciliation_ledger=reconciliation_ledger,
         late_restorations=late_restorations,
         performance_callback=performance_callback,
+        verified_text_sources=verified_text_sources,
     )
     straight_lines = reconciliation_result.lines
     junction_result: JunctionConsumptionResult | None = None

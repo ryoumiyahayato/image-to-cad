@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import cv2
 import numpy as np
+import pytest
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.geometry.content_ownership import arbitrate_content_candidates, binary_from_foreground, build_text_semantic_ownership, finalize_content_ownership, graphic_source_mask, partition_content
@@ -349,6 +352,63 @@ def test_true_structure_line_downgrades_overlapping_editable_text() -> None:
         (semantics.source_outline > 0) & (final.line > 0)
     )
     assert semantics.candidates[0]["source_pixels_conserved"]
+
+
+@pytest.mark.parametrize("blocker", [
+    None, "text", "bbox", "quad", "character_boxes", "source",
+    "protected-core", "missing-proof", "never-owned",
+])
+def test_verified_members_survive_only_with_matching_proof_and_exclusive_source(blocker):
+    from app.geometry.content_ownership import preserve_verified_text_members
+    from app.ocr.ocr_layout import VerifiedCellTextSource
+
+    binary = np.full((80, 140), 255, np.uint8)
+    cv2.line(binary, (5, 20), (130, 20), 0, 1)
+    binary[42:54, 42:66] = 0
+    text = TextCandidate(
+        "AB", (30, 18, 70, 42), 0.99, "text_candidate", source="verified-cell",
+        approved=True, replacement_safe=True,
+        quad=((30, 18), (100, 18), (100, 60), (30, 60)),
+        character_boxes=((30, 18, 70, 42),),
+    )
+    line = LineSegment(5, 20, 130, 20, width=1)
+    previous = partition_content(binary, lines=(line,), texts=(text,), signatures=())
+    arbitrated = arbitrate_content_candidates(
+        binary, lines=(line,), texts=(text,), logos=(), signatures=(), ownership=previous,
+    )
+    current = arbitrated.texts[0]
+    assert not current.replacement_safe
+    ownership = finalize_content_ownership(binary, candidates=previous, arbitrated=arbitrated)
+    assert ownership.graphic[45, 45] and previous.text[45, 45]
+    core = np.zeros_like(binary)
+    core[42:54, 42:66] = 255
+    proof = VerifiedCellTextSource((0, 0, 140, 80), core, (text,), (core,))
+    if blocker in {"text", "bbox", "quad", "character_boxes", "source"}:
+        current = replace(current, **{blocker: {
+            "text": "AC", "bbox": (31, 18, 70, 42),
+            "quad": ((31, 18), (101, 18), (101, 60), (31, 60)),
+            "character_boxes": ((31, 18, 70, 42),), "source": "other-source",
+        }[blocker]})
+    if blocker == "protected-core":
+        owned_line, graphic = ownership.line.copy(), ownership.graphic.copy()
+        owned_line[45, 45], graphic[45, 45] = 255, 0
+        ownership = replace(ownership, line=owned_line, graphic=graphic)
+    if blocker == "never-owned":
+        previous = replace(previous, text=np.zeros_like(binary),
+                           graphic=cv2.max(previous.graphic, previous.text))
+    result = preserve_verified_text_members(
+        binary, (current,), () if blocker == "missing-proof" else (proof,),
+        previous=previous, ownership=ownership,
+    )
+    result.assert_valid()
+    assert np.array_equal(result.line, ownership.line)
+    assert np.array_equal(result.residual, ownership.residual)
+    if blocker is None:
+        assert np.array_equal(result.text, previous.text)
+        assert not result.graphic[45, 45]
+    else:
+        assert np.array_equal(result.text, ownership.text)
+        assert np.array_equal(result.graphic, ownership.graphic)
 
 
 def test_logo_text_conflict_preserves_only_exact_overlap_as_residual() -> None:

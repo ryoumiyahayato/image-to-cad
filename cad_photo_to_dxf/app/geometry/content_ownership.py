@@ -623,6 +623,55 @@ def complete_verified_text_ownership(
     return result
 
 
+def preserve_verified_text_members(
+    binary: np.ndarray,
+    texts: Sequence[TextCandidate],
+    verified_sources: Sequence[Any],
+    *,
+    previous: ContentOwnership,
+    ownership: ContentOwnership,
+) -> ContentOwnership:
+    """Keep proven, already-owned members when a whole OCR row is downgraded.
+
+    A replacement_safe downgrade protects conflicting pixels; it must not
+    revoke independent text members whose native replacement still exists.
+    This carries only the earlier exclusive text mask, never completes a
+    carrier or transfers structural/background/conflicting source pixels.
+    """
+    def identity(item):
+        return (item.text, item.bbox, item.quad, item.character_boxes, item.source)
+
+    emitted = {identity(item) for item in accepted_ocr_texts(texts)}
+    protected = cv2.max(
+        ownership.line,
+        cv2.max(ownership.logo, cv2.max(ownership.signature, ownership.residual)),
+    )
+    retained = _mask_like(binary)
+    for proof in verified_sources:
+        if (any(identity(item) not in emitted for item in proof.texts)
+                or len(suppressible_ocr_texts(proof.texts)) != len(proof.texts)):
+            continue
+        left, top, right, bottom = proof.bounds
+        for item, core in zip(proof.texts, proof.row_masks, strict=True):
+            # A proof touching an actual protected strong source is insufficient.
+            if np.any((core > 0) & (protected[top:bottom, left:right] > 0)):
+                continue
+            window, region = _candidate_region_window(item, binary.shape)
+            members = ((region > 0) & (previous.text[window] > 0)
+                       & (ownership.graphic[window] > 0)
+                       & (protected[window] == 0))
+            retained[window][members] = 255
+    if not np.any(retained):
+        return ownership
+    result = replace(
+        ownership,
+        text=cv2.max(ownership.text, retained),
+        graphic=np.where(retained > 0, 0, ownership.graphic).astype(np.uint8),
+    )
+    result.assert_valid()
+    return result
+
+
 def _crossing_source_component_region(
     source: np.ndarray,
     bbox: tuple[int, int, int, int],
