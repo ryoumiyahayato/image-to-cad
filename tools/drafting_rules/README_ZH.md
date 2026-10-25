@@ -93,3 +93,9 @@ Logo/签名保护、`text_output_contract`、`review_text.ReviewLayoutGuard` 和
 见 [REPORT_ZH.md](REPORT_ZH.md) 和 `evidence/` 的小型结果与失败报告。
 程序测试不能证明真人编辑成功；LibreCAD 打开、中文/英文/数字改字、移动、保存、完全关闭后重开、字体表现、撤销、Logo/签名稳定、DWG 往返均需分别验收。
 本版未计真人节省时间，也未宣称实现整张图纸的自动修正。
+
+## 真实来源证据适配
+
+新增只读 `source_adapter` 和独立 `source_study`，不修改上述 0.1.1 原入口或报告。
+它消费实际生产缓存、原 PDF 和保存 DXF，重放来源归属；完整正例可通过，明确残留失败，不完整来源继续弃判。
+使用方式、原 W02 的实际残留失败、同页干净对照、逐项比较及保留弃判见 [来源适配阶段报告](SOURCE_ADAPTER_ZH.md)。

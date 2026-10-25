@@ -2,6 +2,13 @@
 
 版本 0.3.0-dev；未发布新 Release。
 
+## 真实来源适配阶段 CLOSED（2026-10-25）
+
+新增只读 `tools/drafting_rules/source_adapter.py`，使用真实 PDF、生产缓存、既有来源归属及保存 DXF；不修改生产链和 0.1.1 原引擎/规则。
+同页既有“施工图”对照的 585 个源像素已验证退出；原 W02 中文行从弃判转为有证据的残留失败，英文/背景/表线仍弃判。
+71 项包测试、113 项相关旧回归、EXACT 保真检查通过。有限接入目标闭合，生产残留未修复，真人 CAD/DWG/净劳动仍未验收。
+见 [来源接入报告与运行方式](../../tools/drafting_rules/SOURCE_ADAPTER_ZH.md)。
+
 ## 独立制图规则原型（2026-10-25）
 
 新增 `tools/drafting_rules`，现为 `cn-sheet-text-table@0.1.1`，独立只读检查六类窄合同；0.1.1 修正了镜像 OCS 表线误判。

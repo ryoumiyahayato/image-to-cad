@@ -1,0 +1,87 @@
+{
+  "stage": "CLOSED",
+  "base_main": "e333dc48e98aeebbda373d3d00c7779448e9a3d1",
+  "adapter": "verified-source-carriers-v1",
+  "adapter_sha256": "d046994a822a879dc2947464bba88365d32d80222643b5743de5b4eb9b81b3f6",
+  "source": "cad_photo_to_dxf/tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+  "source_sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+  "generated_from": "local-artifacts/drafting-rules/source-stage-closed-evidence",
+  "checks": {
+    "pack_tests": {
+      "tests": 71,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "related_regressions": {
+      "tests": 113,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "preservation_check": "EXACT: 2026-10-24 baseline; P10-A identity and historical LINE obligations",
+  "ruff": "PASS",
+  "compileall": "PASS",
+  "cad_editor": "NOT_RUN",
+  "dwg_roundtrip": "NOT_RUN",
+  "human_time_saved": "NOT_RUN",
+  "reproduction": "See ../../SOURCE_ADAPTER_ZH.md; use a new output directory. DXF/cache byte hashes may change on regeneration; comparisons use the same files for both validators.",
+  "artifacts": [
+    {
+      "file": "summary.json",
+      "sha256": "9175f62c6d0d37fa167ce83fbe2ec29a27a564f9730ba7d7237d1d4d373aedb7",
+      "bytes": 755
+    },
+    {
+      "file": "w02-cell.legacy.json",
+      "sha256": "ab04d8af56950ec46efb88dd4c3971460eeb10e0dfd961d94e61061bcaaec186",
+      "bytes": 3639
+    },
+    {
+      "file": "w02-cell.source.json",
+      "sha256": "56e3df1b53dfc710ebb57797aec41f18332b9e8ce508f61938dfdaf65e8ca64b",
+      "bytes": 23103
+    },
+    {
+      "file": "w02-cell.comparison.json",
+      "sha256": "4043ca7e74c2a760b84dd66ae96002069862af9d680e6bb3d06541498fccb8a6",
+      "bytes": 5324
+    },
+    {
+      "file": "w02-single.legacy.json",
+      "sha256": "28f551f4910e5d4b4bd82ef22e6eef91e01eddb37fad4f129307547c84369962",
+      "bytes": 2233
+    },
+    {
+      "file": "w02-single.source.json",
+      "sha256": "0d9d437c1dfdeb395f047c79e19db51f20248f79be458542c687ac4c4e7432b9",
+      "bytes": 8799
+    },
+    {
+      "file": "w02-single.comparison.json",
+      "sha256": "eea5a55dae5b9c1c1f9592dbbef3f9a9a92bbf2ba1633f3c68b3ad676c340df5",
+      "bytes": 2885
+    },
+    {
+      "file": "control.source-restored.json",
+      "sha256": "1ebbdd2911bf533b0825073942e64789ed053866ab7312e9538eadf56baf6258",
+      "bytes": 9303
+    },
+    {
+      "file": "control.mixed-member.json",
+      "sha256": "6aec0ce7aec633763afc6e06b2e585e9e9e43a27ae948635e50d1dac4d810881",
+      "bytes": 8884
+    },
+    {
+      "file": "control.context-missing.json",
+      "sha256": "f1ac4a8e846445da9f6d45e85f149a753677ff3d25c4ae780783af460955cfc0",
+      "bytes": 8805
+    },
+    {
+      "file": "control.identity-mismatch.json",
+      "sha256": "e84dbeb959fec52edc8f70af52c7624c7d83ff78ed6659a5611762b572aabe0d",
+      "bytes": 73
+    }
+  ]
+}
