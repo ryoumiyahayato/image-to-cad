@@ -882,6 +882,71 @@ def _restore_overlapping_printed_rows(
     return tuple(result)
 
 
+def _restore_verified_character_tops(
+    item: TextCandidate,
+    gray: np.ndarray,
+    core: np.ndarray,
+    bounds: tuple[int, int, int, int],
+) -> TextCandidate:
+    """Recover filtered glyph tips from independently verified row members.
+
+    Require one complete, interior strong component per CJK character, with a
+    unique existing horizontal scope and contact with its existing body. Only
+    the observed top changes. Detached or foreign ink in the added footprint
+    prevents recovery; no line-removal or replacement-safety rule is relaxed.
+    """
+    content = "".join(item.text.split())
+    if (not content or not all("\u4e00" <= c <= "\u9fff" for c in content)
+            or len(item.character_boxes) != len(content)):
+        return item
+    from app.geometry.content_ownership import _candidate_region_mask
+
+    left, top, _right, _bottom = bounds
+    local = offset_candidate(item, offset_x=-left, offset_y=-top)
+    boxes = list(local.character_boxes)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        (core > 0).astype(np.uint8), connectivity=8,
+    )
+    if count - 1 != len(boxes):
+        return item
+    owners = {}
+    for label in range(1, count):
+        x, y, width, height, _area = map(int, stats[label])
+        matches = [i for i, (bx, _by, bw, _bh) in enumerate(boxes)
+                   if x < bx + bw and x + width > bx]
+        if (len(matches) != 1 or x == 0 or y == 0
+                or x + width == core.shape[1] or y + height == core.shape[0]):
+            return item
+        index = matches[0]
+        bx, by, bw, bh = boxes[index]
+        if (index in owners or x < bx or x + width > bx + bw
+                or y + height > by + bh
+                or not np.any(labels[max(0, by):by + bh, max(0, bx):bx + bw] == label)):
+            return item
+        owners[index] = label
+        new_top = min(by, y)
+        boxes[index] = (bx, new_top, bw, by + bh - new_top)
+    for index, (before, after) in enumerate(zip(local.character_boxes, boxes, strict=True)):
+        if before == after:
+            continue
+        old_region = _candidate_region_mask(replace(local, character_boxes=(before,)), core.shape)
+        new_region = _candidate_region_mask(replace(local, character_boxes=(after,)), core.shape)
+        added_ink = (new_region > 0) & (old_region == 0) & (gray < 255)
+        _, weak_labels = cv2.connectedComponents(
+            ((new_region > 0) & (gray < 255)).astype(np.uint8), connectivity=8,
+        )
+        for label in set(np.unique(weak_labels[added_ink])) - {0}:
+            member = weak_labels == label
+            if (not np.any(member & (labels == owners[index]))
+                    or np.any(member & (gray < 128) & (core == 0))):
+                return item
+    restored = tuple((x + left, y + top, w, h) for x, y, w, h in boxes)
+    if restored == item.character_boxes:
+        return item
+    return replace(item, character_boxes=restored,
+                   review_note=item.review_note + "；逐字上界已按完整行独立连通笔画恢复")
+
+
 def _restore_cell_text_rows(
     binary: np.ndarray,
     texts: tuple[TextCandidate, ...],
@@ -1087,6 +1152,10 @@ def _restore_cell_text_rows(
         from app.ocr.text_output_contract import accepted_ocr_texts
 
         if len(accepted_ocr_texts(restored)) == len(restored):
+            restored = [
+                _restore_verified_character_tops(item, crop, row, cell)
+                for item, row in zip(restored, row_masks, strict=True)
+            ]
             core = np.where(
                 np.isin(labels, [label for group in owners for label in group]), 255, 0
             ).astype(np.uint8)

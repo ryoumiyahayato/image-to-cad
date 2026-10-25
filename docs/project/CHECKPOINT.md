@@ -1,5 +1,70 @@
 # 检查点
 
+2026-10-25：W02 中文顶部来源边界修复。基线为可访问的 `ece85a401a93f12743e493ac050929bbfd5a8da5` / `delivery/w02-member-lifecycle-rebuilt`；独立分支 `fix/w02-glyph-source-boundary`，工作树 `/workspace/work/w02-glyph-boundary`。原 `work@900511b`、`fix/w02-member-lifecycle-rebuilt@ece85a4` 及其工作树保持干净，未更新 main。804d488 与历史句柄关系不是本轮前置条件。
+
+## 本轮根因与生产来源判定
+
+- `ocr_layout._binary_crop` 的 `_remove_long_rules` 对排版遮罩做长线形态学去除。“业”的竖笔被一并削掉顶部，随后逐字框只见清理后的笔画：本例第二字框为 `(96,83,21,15)`。完整行来源 `row_masks` 却保有未经此过滤的连通字形，含遗漏的 6 个强墨迹像素；生产阈值下对应 14 个像素的可见成员因此落在原字符归属范围外。
+- 唯一生产修改在 `ocr_layout.py`：新增 `_restore_verified_character_tops`，只在 `_restore_cell_text_rows` 已通过完整行/单元格来源、全部行替换安全及原生 TEXT 资格检查后，恢复可证明的字符上界，再登记同一 `VerifiedCellTextSource`。
+- 证据完全来自实际栅格和已有行证明：每个 CJK 字符须有一个完整、未触及证明边界的强墨迹连通成员；该成员只与一个已有字符横向范围相交，完整落在该范围内，并实际接触原字符主体。只把上界恢复到该成员的真实最小 y；横向范围、下界、OCR bbox、显示 quad 均保持。
+- 新增覆盖区按现有 `_candidate_region_mask` 栅格化，使用原始灰度的非白墨迹检查：新增区内每个弱墨迹连通部分须连接该字强源核；遇到分离墨迹或连到行证明以外的强源核，保持原范围。跨字连通、多分量/分离小点、证明边界格线及无主体接触也不恢复。不使用固定边距、PDF PATH 编号、图纸坐标或对象句柄作为生产条件。
+- 本例五个强字形成员分别落入五个原有横向范围，第二字的实际源顶端为 y=80；该字框恢复为 `(96,80,21,18)`。其余四字框不变。该位置是测量结果，不是生产常量。
+- `preserve_verified_text_members`、结构/共享保护和完整载体补全规则未修改。新的范围先进入原有独占归属，再由 ece85a4 的退场链消费；没有令该函数直接吸收未证明的像素。`source_adapter` 保持只读且源码未改。
+
+## 本轮实测
+
+复用同一 PDF 第 2 页、136 DPI、原转录与原裁片。来源图像逐像素相同，三行完整 `core_runs` / `source_member_runs` 与 ece85a4 一致：中文涉及载体仍为 1,840，英文共享载体仍为 1,132，中文强源核仍为 582。没有剔除统计像素或改变完整性规则。
+
+| 本轮案例 | PASS | FAIL | ABSTAIN | 归属与残留 |
+| --- | --- | --- | --- | --- |
+| W02 / Discipline→DisciplineA | 7 | 0 | 5 | 顶部新增支持 14/14；载体/缓存缺口 23/23→9/9；已证明源核残留仍 0 |
+| 中文改单字局部回归 | 7 | 0 | 5 | “专业负责人→专业负责者”，缓存重导出、保存读回正确；整行结构冲突标记仍保留 |
+| 施工图→施工表 | 3 | 0 | 3 | 原 585 像素载体退出，来源/缓存缺口及残留均 0 |
+
+- 顶部恢复为 6 个强墨迹＋8 个弱边缘，共 14 个生产源像素；没有丢失此前文字成员支持。局部 `[y,x0,x1)` 为 `[80,103,106)`、`[80,107,110)`、`[81,103,111)`，仅用于记录实际测量。
+- 从 ece85a4 实际缓存的 `contour_binary` 提取与新增支持相交的成员，得到一个完整连通成员，其 14 个像素与新增支持逐像素相等；对应独立闭合轮廓没有其他源像素或共享成员。再以缓存源顶点与 DXF 顶点的坐标变换绑定实体；本轮基线工件的局部句柄为 E0，没有据此假定历史身份。
+- 该轮廓退出可见层及所有隐藏层，未进入 `source_text_outline_mask` 或 `uncertain_text_outline_mask`。缓存重导出、改字保存、新进程重开及再次保存后均未出现。完整 582 个已证明中文强源核与可见几何交集为 0，包含先前已修复的 54 个残留覆盖像素。
+- 原 114 个非退场可见几何中，本轮单独列出上述一个应退出目标。其余 **113 个**按实际坐标、属性和笔宽元数据逐一匹配：其他缺失 0、新增 0，21 条 LINE 保持。三个原生 TEXT 的原始几何也相同；没有把 114 设为目标数量。
+- 缓存内字符框与新进程来源重放的字符框一致。新进程读取再保存、另一个进程重开：TEXT 10C 为“专业负责者”，英文 Discipline / Responsible 正确；正常英文编辑副本为 DisciplineA。当前句柄只用于各自工件内的检查。
+- 剩余 **9** 为受格线归属带保护的中文弱边缘 6，加英文弱边缘 3，处理均未改变。英文另报的 5 仍为 `[79,144,146)` 的两个中文弱边缘与 `[113,125,128)` 的三个英文弱边缘；它们全部包含在剩余 9 内，不重复相加。
+- 此前 23→9 是实际新增来源支持的结果，不是预设门槛。完整载体退出仍 ABSTAIN；历史旧 E3→新 E0 及 804d488 关系仍未核实，本轮当前成员已独立建立来源关联，不依赖这些历史关系。
+
+## 本轮命令与检查
+
+已读取 AGENTS、当前及基线 CHECKPOINT、交接报告与产品/执行约束。确认远端基线后执行：
+
+```bash
+git worktree add -b fix/w02-glyph-source-boundary /workspace/work/w02-glyph-boundary ece85a401a93f12743e493ac050929bbfd5a8da5
+```
+
+新增真实边界回归在生产修改前先失败，确认完整行源核仍有未被逐字支持覆盖的顶部；修改后通过。新增 8 个纯栅格分量用例包括正例、分离弱点、外来强源、弱连接的外来强源、跨字共享、边界格线、无主体接触及 ASCII。上一轮新增的真实退场回归只按本轮实际来源结果更新剩余缺口断言；0.1.1 原测试、报告、基线与冻结证据未改。
+
+```bash
+QT_QPA_PLATFORM=offscreen PYTHONPATH="$PWD:$PWD/cad_photo_to_dxf" \
+/workspace/work/.venv/bin/python -m pytest -q \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_verified_character_tops_cover_unfiltered_glyph_ink_without_expanding_neighbors \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_verified_character_top_keeps_detached_shared_and_foreign_source \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_normal_processing_export_preview_and_edit_roundtrip \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_full_line_source_proof_preserves_layout_and_owns_complete_ink_carriers \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_uncertain_cells_do_not_invent_row_positions \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_whole_carrier_is_not_suppressed_when_source_or_structure_is_shared \
+ cad_photo_to_dxf/tests/test_table_text_layout.py::test_real_cell_recovers_complete_separate_source_rows_without_approving_touching_letters \
+ cad_photo_to_dxf/tests/test_source_text_layout.py::test_cell_clipping_preserves_tight_source_quad_and_clips_at_rule \
+ cad_photo_to_dxf/tests/test_content_ownership.py::test_true_structure_line_downgrades_overlapping_editable_text
+/workspace/work/.venv/bin/python -m ruff check --config cad_photo_to_dxf/ruff.toml cad_photo_to_dxf/app/ocr/ocr_layout.py cad_photo_to_dxf/tests/test_table_text_layout.py
+/workspace/work/.venv/bin/python -m compileall -q cad_photo_to_dxf/app/ocr/ocr_layout.py cad_photo_to_dxf/tests/test_table_text_layout.py
+git diff --check
+```
+
+结果：**22 passed**；2 个修改 Python 文件 Ruff/编译通过，diff 检查通过。只运行受影响入口，没有运行全量测试、全仓库回归或历史测试全集。
+
+真实研究继续使用前节已记录的 `source_study.make_case`、`source_adapter.validate_with_source` 两案例循环，输出目录换为 `/workspace/work/w02-top-study`；另在全新 Python 进程调用同一只读校验接口，仍为 7 PASS / 0 FAIL / 5 ABSTAIN，来源/缓存缺口均为 9/5/5。缓存使用 `load_trace_cache` → `export_final_structure_dxf`，TEXT 按原字符串定位后保存，独立进程用 ezdxf 重开、再保存、再重开并复查。临时产物仅留 work，没有新验证脚本或证据包。
+
+独立分支提交，并提供相对 ece85a4 的完整补丁；交付分支为 `delivery/w02-glyph-source-boundary`，不更新 main、不创建 PR、不触发仓库 main/fix/** 的全量 CI。补丁通过 `git format-patch --stdout ece85a4..HEAD` 生成，在另一个干净 ece85a4 工作树运行 `git apply --check`；提交及可访问链接随最终交付给出。
+
+LibreCAD GUI、DWG 往返、真人验收均 **NOT_RUN**。不新增门禁、验收矩阵、证据包、验证框架及对应脚本；没有独立计算/比对哈希或生成指纹清单，工具自带来源完整性校验保持。局部边界和轮廓退出不代表完整载体、完整表线、整页或整体 CAD 交付验收通过。
+
 2026-10-25：W02 成员生命周期最小修复，**从 81f364f 重新实现，未恢复 804d488**。本轮用户取消了必须取得 804d488 的前置要求。
 
 ## 恢复、范围与根因

@@ -177,6 +177,69 @@ def verified_cell():
     return gray, binary, resolved, proofs, owner
 
 
+def test_verified_character_tops_cover_unfiltered_glyph_ink_without_expanding_neighbors():
+    from app.geometry.content_ownership import _candidate_region_mask
+
+    gray, binary, texts, proofs, _ = verified_cell()
+    legacy = constrain_texts_to_table_cells(
+        gray, tuple(prepare_safe_candidate(gray, item) for item in local_region()[1]),
+    )
+    proof = proofs[0]
+    left, top, right, bottom = proof.bounds
+    core = np.zeros_like(gray)
+    core[top:bottom, left:right] = proof.row_masks[0]
+    before = _candidate_region_mask(legacy[0], gray.shape)
+    after = _candidate_region_mask(texts[0], gray.shape)
+    # The legacy line-removal mask lost strong tips still present in this row proof.
+    assert not np.any((core > 0) & (after == 0))
+    added = (binary < 128) & (after > 0) & (before == 0)
+    assert np.count_nonzero(added) == 14
+    assert texts[0].bbox == legacy[0].bbox and texts[0].quad == legacy[0].quad
+    assert [(x, w, y + h) for x, y, w, h in texts[0].character_boxes] == [
+        (x, w, y + h) for x, y, w, h in legacy[0].character_boxes
+    ]
+    assert texts[0].character_boxes[:1] == legacy[0].character_boxes[:1]
+    assert texts[0].character_boxes[2:] == legacy[0].character_boxes[2:]
+
+
+@pytest.mark.parametrize("neighbor", [
+    None, "detached-weak", "foreign-strong", "foreign-strong-connected",
+    "shared-character", "boundary-rule", "no-body-contact", "ascii",
+])
+def test_verified_character_top_keeps_detached_shared_and_foreign_source(neighbor):
+    from app.ocr.ocr_layout import _restore_verified_character_tops
+
+    gray = np.full((64, 72), 255, np.uint8)
+    core = np.zeros_like(gray)
+    core[12:33, 14:24] = 255
+    core[18:33, 42:52] = 255
+    item = TextCandidate(
+        "中文", (8, 8, 55, 30), 0.99, "text_candidate", source="verified-row",
+        approved=True, replacement_safe=True,
+        quad=((8, 8), (63, 8), (63, 38), (8, 38)),
+        character_boxes=((10, 18, 19, 18), (38, 18, 19, 18)),
+    )
+    if neighbor == "shared-character":
+        core[22:24, 24:43] = 255
+    elif neighbor == "boundary-rule":
+        core[:13, 18:20] = 255
+    elif neighbor == "no-body-contact":
+        core[15:33, 14:24] = 0
+    elif neighbor == "ascii":
+        item = replace(item, text="AB")
+    gray[core > 0] = 0
+    if neighbor in {"detached-weak", "foreign-strong", "foreign-strong-connected"}:
+        gray[13, 28] = 200 if neighbor == "detached-weak" else 0
+    if neighbor == "foreign-strong-connected":
+        gray[13, 24:28] = 200
+    restored = _restore_verified_character_tops(item, gray, core, (0, 0, 72, 64))
+    assert restored.bbox == item.bbox and restored.quad == item.quad
+    if neighbor is None:
+        assert restored.character_boxes == ((10, 12, 19, 24), item.character_boxes[1])
+    else:
+        assert restored.character_boxes == item.character_boxes
+
+
 def test_full_line_source_proof_preserves_layout_and_owns_complete_ink_carriers():
     gray, binary, texts, proofs, owner = verified_cell()
     legacy = constrain_texts_to_table_cells(
@@ -249,7 +312,7 @@ def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(t
     # The old whole-row downgrade leaves 54 rendered source-core pixels here.
     assert row["residual_owned_core_pixels"] == 0
     assert report["summary"] == {"PASS": 7, "ABSTAIN": 5}
-    assert row["unowned_pixels"] == 23  # Do not claim the shared carrier complete.
+    assert row["unowned_pixels"] == 9  # Protected Chinese and shared English edges remain.
     assert [r["unowned_pixels"] for r in report["source_ledger"]["rows"][1:]] == [5, 5]
 
     structure = load_trace_cache(args["cache"]).final_structure
