@@ -1,5 +1,9 @@
 # 后续方向 — 2026-10-25
 
+本轮因 LibreCAD 与可操作桌面缺失，GUI 未运行。下一项仅为在实际目标 LibreCAD 对已交付的 W02-unedited.dxf / construction-unedited.dxf 完成记录版本、GUI 改字、另存、退出和重开；再对未经脚本重写的 GUI 输出做只读关联核对。不要把 98de5e4 的程序结果当作 GUI 保存后的通过。具体步骤和下载见 [CHECKPOINT](CHECKPOINT.md)。本轮停止，不自动开展来源研究、DWG 或其他验收。
+
+## 上一轮后续方向（保留历史）
+
 本轮六个误覆盖中文边缘及三个连带英文边缘已按生产来源解决；不再建议重复该调查。W02 文字完整载体规则已通过，背景和完整表线仍保持来源不足的 ABSTAIN。仅建议后续由用户在 LibreCAD 对本轮 DXF 做改字、保存和重开验收；DWG/真人验收仍 NOT_RUN。本轮停止，不自动执行下一项。完整边界与结果见 [CHECKPOINT](CHECKPOINT.md)。
 
 ## 上一轮后续方向（保留历史）

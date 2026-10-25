@@ -1,5 +1,9 @@
 # 当前任务 — 2026-10-25
 
+本轮核对 LibreCAD GUI 条件：应用未安装，桌面会话和 GUI 控制能力不可用。按用户回退要求从 98de5e4 原生产缓存准备两份可下载未改字 DXF，与旧 before.dxf 的实体/几何/XDATA 逐对象一致；未运行 OCR、未改生产或测试。GUI 编辑/保存/重开及保存后只读检查、真人和 DWG 仍 NOT_RUN；背景/完整表线 ABSTAIN 保持。输入、字体下载及最短人工步骤见 [CHECKPOINT](CHECKPOINT.md)。独立 `delivery/w02-librecad-handoff` 交付，不修改 main。
+
+## 上一轮来源修复（保留历史）
+
 本轮完成 W02 弱边缘来源修复：6 个中文边缘来自真实格线容差带误覆盖，线候选未误分类；按实际源连通支持释放后，原链补全连带阻断的英文 3 像素。唯一缺口 9→0，缓存/新进程/保存读回成立。W02 为 10 PASS / 0 FAIL / 2 ABSTAIN；施工图→施工表仍 3 PASS / 0 FAIL / 3 ABSTAIN。113 个非 TEXT 几何与 21 LINE 逐对象保持，英文 TEXT 不变，54 残留及顶部 14 问题未重现。修正分区后重复框选抑制以保护邻格小轮廓。60 个不同局部用例及修改文件 Ruff/编译/diff 检查通过。独立分支交付，不修改 main；细节见 [CHECKPOINT](CHECKPOINT.md)。GUI/DWG/真人均 NOT_RUN。
 
 ## 上一轮顶部来源修复（保留历史）

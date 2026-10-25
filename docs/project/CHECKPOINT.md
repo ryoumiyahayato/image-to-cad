@@ -1,5 +1,51 @@
 # 检查点
 
+2026-10-25：W02 LibreCAD GUI 环境核对及可下载输入交接。执行基线 `98de5e4e63371a5ddfb98c86a61f691f203e0fab`，远端 `delivery/w02-weak-edge-source` 经 `git ls-remote --heads` 核实一致。原 `work@81f364f` 和 `fix/w02-weak-edge-source@98de5e4` 工作树均干净、保留不动；本轮从该提交新建 `delivery/w02-librecad-handoff`，工作树 `/workspace/work/w02-librecad-handoff`，未修改/合并 main。
+
+## 环境事实与本轮停止点
+
+- 环境检查实际结果：`librecad` 不在 PATH，`/usr`、`/opt` 及可用共享目录中未发现 LibreCAD/QCAD 可执行程序或 LibreCAD desktop/AppImage。`DISPLAY`、`WAYLAND_DISPLAY`、`XDG_SESSION_TYPE` 均未设置，`/tmp/.X11-unix` 不存在，`/run/user` 为空；进程列表无桌面、X11/Wayland 服务。只有 `/usr/bin/Xorg` 可执行文件，没有运行中的桌面会话。Xvfb、xdotool、wmctrl、x11vnc 均不可用，当前工具也没有桌面 GUI 控制能力。
+- **LibreCAD 版本：NOT_AVAILABLE（未安装）**。本轮没有打开 CAD、选中文字、GUI 改字、保存、关闭或重开操作；没有 GUI 保存文件、没有 GUI 截图，也没有格式转换、字体或实体兼容提示可记录。没有以 ezdxf 改字或无界面截图代替 GUI。
+- 根据用户“图形环境不足时”的明确回退要求，只准备实际可下载的未改字输入和人工操作说明。GUI 自动操作、GUI 保存后只读检查、GUI 保存后 source_adapter 规则结果均 **NOT_RUN**。不能将上一轮的 W02 10 PASS/0 FAIL/2 ABSTAIN、对照 3 PASS/0 FAIL/3 ABSTAIN 写成本轮 LibreCAD 保存后的结果。
+- **真人参与：NOT_RUN；DWG 往返：NOT_RUN。** 没有发现可复现的 LibreCAD 导出/兼容缺陷，因为尚未实际运行 LibreCAD；未据环境缺少应用认定生产代码有问题。
+
+## 实际保留的两个输入
+
+优先核对上一轮 `/workspace/work/w02-weak-final/{cell,single}/before.dxf` 和 `trace.npz`。在干净的 98de5e4 派生分支、尚未修改文档时，通过既有 `load_trace_cache` → `export_final_structure_dxf` 从这两份生产缓存导出未改字文件；没有重跑 OCR 模型、没有改转录、PDF 或冻结证据。按实体类型、全部 DXF 属性（排除文件局部 handle/owner）、所有 LWPOLYLINE 顶点及完整 XDATA 与原 before.dxf 逐对象顺序比较，两个输入均完全相同。此检查只用于确认交付输入的出处，不作为 GUI 验证。
+
+- `docs/project/librecad-inputs/W02-unedited.dxf`：86,812 字节，AC1024（DXF 2010），310×210 源像素窗口，原 PDF 第 2 页、136 DPI、裁片 `[4080,2200,4390,2410]`。116 个实体，3 个原生 TEXT 为“专业负责人 / Discipline / Responsible”，113 个非 TEXT，含 21 LINE。
+- `docs/project/librecad-inputs/construction-unedited.dxf`：41,083 字节，AC1024，129×101 源像素窗口，同 PDF 第 2 页、136 DPI、裁片 `[4463,2558,4592,2659]`。6 个实体，原生 TEXT 为“施工图”，3 LINE。
+- 实际原件仍为仓库既有 `warehouse-electrical-vector.pdf`；两输入由 **98de5e4** 的生产导出代码生成。没有复制上一轮的脚本改字 after.dxf 或 cached-chinese-edited.dxf 冒充 GUI 文件；原输入及旧工作树全部保留。
+- 两输入全部 TEXT 保有 `OCR_TEXT_LINE`、`OCR_TEXT_GEOMETRY`、`TEXT_OUTPUT_CONTRACT`，全部 LINE 分别保有 21/3 份 `P16_LINE_SOURCE`。TEXT 样式为 `wqy-unicode`，字体为 `wqy-unicode.lff`。这些仅是输入字段；LibreCAD 保存后是否保留尚未验证。
+- 字体已在基线仓库 `cad_photo_to_dxf/resources/fonts/wqy-unicode.lff`（43,436,980 字节）。不重复添加大字体文件。目标 LibreCAD 如未具备该字体，应先把既有字体加入其字体搜索目录并重启；缺字/替代字体应先记录实际字体与环境，不能直接认定为生产缺陷。
+
+可下载输入（独立交付分支；不要求用户访问云端临时目录）：
+
+- [W02 未改字 DXF](https://raw.githubusercontent.com/ryoumiyahayato/image-to-cad/refs/heads/delivery/w02-librecad-handoff/docs/project/librecad-inputs/W02-unedited.dxf)
+- [施工图未改字 DXF](https://raw.githubusercontent.com/ryoumiyahayato/image-to-cad/refs/heads/delivery/w02-librecad-handoff/docs/project/librecad-inputs/construction-unedited.dxf)
+- [98de5e4 既有 LFF 字体](https://raw.githubusercontent.com/ryoumiyahayato/image-to-cad/98de5e4e63371a5ddfb98c86a61f691f203e0fab/cad_photo_to_dxf/resources/fonts/wqy-unicode.lff)
+
+## 最短人工 GUI 操作
+
+1. 在目标 LibreCAD 的“帮助→关于”记录版本。打开 W02-unedited.dxf，缩放至全部；先另存为 **W02-gui-edited.dxf**，保留输入。确认中文和两行英文可见，双击文字或使用“修改→属性”打开原生文字编辑框。
+2. 在 GUI 中把“专业负责人”改为“专业负责者”，把“Discipline”改为“DisciplineA”，Responsible 保持。保留字体、字号、位置、角度和对齐。出现转换/字体/兼容提示时记录原文及实际选择，不转换 DWG。
+3. 保存，关闭文档并退出 LibreCAD；重新启动后打开 W02-gui-edited.dxf。检查两个修改仍在，无重叠旧字、缺字、乱码或意外字体替换，文字位置/角度/大小及邻近格线、小轮廓保持。
+4. 对 construction-unedited.dxf 在 GUI 中把“施工图”改为“施工表”，另存 **construction-gui-edited.dxf**，同样关闭 LibreCAD 后重开，检查文字和邻近几何。保留两份 GUI 输出的原始字节，后续只能以只读工具检查，不用脚本重写。
+
+后续 GUI 保存文件可用既有适配器核对其能支持的项目；需按实际几何和来源关联处理句柄重建，检查上述 XDATA、文字几何、格线端点/笔宽、邻格轮廓及隐藏层。必要来源字段丢失时应具体报告并保持相应 ABSTAIN，不能按外观或数量宣布通过。本轮没有 GUI 输出，因此没有伪造带新字符串/新文件摘要的侧车或来源报告。
+
+## 本轮检查与交付边界
+
+必要命令为 `git status --short --branch`、`git worktree list`、`git ls-remote --heads origin delivery/w02-weak-edge-source`、应用/会话/进程检查，以及：
+
+```bash
+git worktree add -b delivery/w02-librecad-handoff /workspace/work/w02-librecad-handoff 98de5e4e63371a5ddfb98c86a61f691f203e0fab
+```
+
+导出使用 `QT_QPA_PLATFORM=offscreen PYTHONPATH="$PWD:$PWD/cad_photo_to_dxf" /workspace/work/.venv/bin/python` 调用上述两个既有函数；offscreen 仅供生产导出依赖加载，不是 LibreCAD GUI。本轮没有新增源码、测试、验证脚本或证据包，不运行测试全集或重复历史无界面来源研究；文档变更的 `git diff --cached --check -- docs/project/*.md` 通过。全暂存区 `git diff --cached --check` 对两份原生 DXF 各报两行内置 Dot 线型描述的尾随空格（2076/2106 行），属于 ezdxf 原样输出的数据；不为消除文本 lint 提示而改写交付输入。未主动计算/比对哈希，没有指纹清单，缓存加载器及导出器自带完整性机制保持。
+
+原文字来源/缓存缺口、54/14 像素与几何保持结论仍是 98de5e4 的已有自动化证据，**本轮未取得 LibreCAD 保存后的新证明**。背景保护与完整表线仍缺少独立来源角色及完整集合对应证明，保持原 ABSTAIN；不扩大为整页或整体 CAD 交付验收。本轮只提交两份必要输入及既有项目文档，提供可下载链接，工作区完成后保持干净。
+
 2026-10-25：W02 弱边缘结构来源最小修复。基线 `c0671df319be467582c00354f1307a52c0116a3f`，远端 `delivery/w02-glyph-source-boundary` 经 fetch 和 ls-remote 核实仍指向该提交。原 `/workspace/image-to-cad` 为干净 `work@81f364f`，保留不动；独立分支 `fix/w02-weak-edge-source`，工作树 `/workspace/work/w02-weak-edge-source`。交付到独立远端 `delivery/w02-weak-edge-source`，不修改/合并 main，不创建 PR，不触发 main/fix/** 的历史全量 CI。
 
 ## 本轮来源事实与实际致错环节
