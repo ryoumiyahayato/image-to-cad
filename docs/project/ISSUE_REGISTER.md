@@ -59,3 +59,11 @@ Automated protection checks and human UAT agree that catastrophic unsafe lines a
 No issue is marked resolved by P1A. Existing routing, structure, color, OCR and full-UAT statuses are unchanged.
 
 2026-10-13: the bounded P1–P7 and cross-source evidence index is [ENGINEERING_EVIDENCE_INDEX.jsonl](ENGINEERING_EVIDENCE_INDEX.jsonl). It records specific closed cases, fresh local observations, counterexamples and recovery limits. Historical issue rows above remain unchanged; the index does not claim global UAT acceptance.
+
+## Executable-rule prototype evidence — 2026-10-25
+
+- KP-001 (open, automated/code): the W02 cell's existing DXF lacks a complete source-outline/background/table member mapping consumable by the new standalone checker. Five rule evaluations abstain; synthetic mapping tests do not close this real-source evidence gap.
+- KP-002 (open, environment observation): official standard portals returned proxy CONNECT 403; no standard clause or current edition was verified. Official rules remain candidates. Required research domains are saved in the environment draft, not proven active.
+- CAD-001/CAD-005/CAD-008 remain open for human acceptance. The new read-only rule pack detects controlled overflow and collateral edits on a real cell; it does not certify the production output or override earlier user UAT.
+
+Evidence and precise boundaries: [drafting-rule report](../../tools/drafting_rules/REPORT_ZH.md). No production fix or follow-on phase is authorized by this note.

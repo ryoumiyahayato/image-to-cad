@@ -1,0 +1,70 @@
+{
+  "old_version": "0.1.0",
+  "new_version": "0.1.0",
+  "old_pack_sha256": "4f04a69eee81b8c0c908893e78ccf93666b3ac4c746b79ea1ba6e33d8bc3dc26",
+  "new_pack_sha256": "4f04a69eee81b8c0c908893e78ccf93666b3ac4c746b79ea1ba6e33d8bc3dc26",
+  "old_dxf_sha256": "2f344729d9de1e8ff0f2a86e7f519a15ca088bc8fc587cdf28fb89a1c0c5715e",
+  "new_dxf_sha256": "7a3b4e734c77b70f6c260bf55b3a5d7cbba2544d7e917d9f1f794cd7a5611315",
+  "old_implementation_sha256": "f6376a740a3149bd3f40bd6d338fb94d5f17bafa4b1752f528540c9e390d53ec",
+  "new_implementation_sha256": "f6376a740a3149bd3f40bd6d338fb94d5f17bafa4b1752f528540c9e390d53ec",
+  "changes": [
+    {
+      "rule": "cell-fit",
+      "target": "row-1",
+      "before": {
+        "rule": "cell-fit",
+        "target": "row-1",
+        "status": "PASS",
+        "reason": "INK_INSIDE_CELL",
+        "classification": "EXPERIMENTAL_HEURISTIC",
+        "sources": [
+          "product-intent",
+          "warehouse-cell",
+          "geometry-policy"
+        ],
+        "details": {
+          "bounds": [
+            102.0,
+            97.0,
+            154.77593109304865,
+            110.0
+          ],
+          "cell": [
+            74,
+            81,
+            178,
+            132
+          ],
+          "tolerance": 1e-06
+        }
+      },
+      "after": {
+        "rule": "cell-fit",
+        "target": "row-1",
+        "status": "FAIL",
+        "reason": "INK_OUTSIDE_CELL",
+        "classification": "EXPERIMENTAL_HEURISTIC",
+        "sources": [
+          "product-intent",
+          "warehouse-cell",
+          "geometry-policy"
+        ],
+        "details": {
+          "bounds": [
+            102.0,
+            97.0,
+            489.97379594807705,
+            110.0
+          ],
+          "cell": [
+            74,
+            81,
+            178,
+            132
+          ],
+          "tolerance": 1e-06
+        }
+      }
+    }
+  ]
+}

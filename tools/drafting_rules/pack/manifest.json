@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "id": "cn-sheet-text-table",
+  "version": "0.1.0",
+  "license": "Repository terms; source drawing redistribution not authorized.",
+  "scope": "Read-only local ordinary-text/title-block/table checks; source evidence supplied explicitly. No semantic engineering recognition, automatic conversion or repair.",
+  "dependencies": [
+    "Python >=3.11",
+    "ezdxf >=1.4.4,<2",
+    "jsonschema >=4.23,<5",
+    "production packaged LFF metrics (optional for cell-fit)"
+  ],
+  "parameters": {
+    "cell_tolerance": 1e-06,
+    "line_endpoint_tolerance": 1e-06
+  },
+  "sources": [
+    {
+      "id": "product-intent",
+      "kind": "PROJECT_REQUIREMENT",
+      "location": "docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md",
+      "locator": "§2, §4.3–4.6, §8",
+      "verification": "Read from main 900511b5a884421bc372a39fc7f59ded18639ac9; explicitly confirmed by this task."
+    },
+    {
+      "id": "gates",
+      "kind": "PROJECT_REQUIREMENT",
+      "location": "docs/project/ACCEPTANCE_GATES.md",
+      "locator": "G2, G4, G5",
+      "verification": "Read from the same main; program checks do not close G3/G4 human gates."
+    },
+    {
+      "id": "warehouse-cell",
+      "kind": "REAL_DRAWING_OBSERVATION",
+      "location": "cad_photo_to_dxf/tests/real_regression/assets/sources/warehouse-electrical-vector.pdf",
+      "locator": "Physical p2, 136 DPI crop [4080,2200,4390,2410]; prior test_table_text_layout.py",
+      "verification": "Existing internal-use fixture; inherited OCR transcription, not new OCR accuracy evidence. See study.json for current source hash. Redistribution not authorized."
+    },
+    {
+      "id": "geometry-policy",
+      "kind": "EXPERIMENTAL_POLICY",
+      "location": "tools/drafting_rules/engine.py",
+      "locator": "cell-fit; unmatched_segments",
+      "verification": "Numeric tolerances are experimental numerical comparison policies in declared CAD units, not standard text heights or spacing."
+    },
+    {
+      "id": "title-block",
+      "kind": "OFFICIAL_STANDARD_CANDIDATE",
+      "location": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p2=GB/T%2010609.1-2008",
+      "locator": "技术制图 标题栏（待官方目录及全文核验）",
+      "verification": "2026-10-25: HTTPS CONNECT rejected by proxy, 403. Neither current status nor full text verified; no clause asserted.",
+      "verified_full_text": false,
+      "edition": "GB/T 10609.1-2008",
+      "clause": null
+    },
+    {
+      "id": "lettering",
+      "kind": "OFFICIAL_STANDARD_CANDIDATE",
+      "location": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p2=GB/T%2014691-1993",
+      "locator": "技术制图 字体（待官方目录及全文核验）",
+      "verification": "2026-10-25: HTTPS CONNECT rejected by proxy, 403. Neither current status nor full text verified; no clause asserted.",
+      "verified_full_text": false,
+      "edition": "GB/T 14691-1993",
+      "clause": null
+    }
+  ],
+  "rules": [
+    {
+      "id": "editable-text",
+      "classification": "PRODUCT_REQUIREMENT",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "contract": "Mapped ordinary text is default-visible modelspace TEXT/MTEXT with the supplied expected string.",
+      "abstain": "No target mapping; never infer correct transcription from entity type."
+    },
+    {
+      "id": "cell-fit",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "warehouse-cell",
+        "geometry-policy"
+      ],
+      "contract": "Exact packaged LFF ink AABB stays within supplied axis-aligned cell. Positive TEXT height/width; only 0/90/180/270-degree, left-baseline placement.",
+      "abstain": "Unknown cell, font, glyph, MTEXT, arbitrary angle, alignment, oblique or generation flags. No national standard font size asserted."
+    },
+    {
+      "id": "source-glyph-exit",
+      "classification": "PRODUCT_REQUIREMENT",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "contract": "Every source-outline handle in the caller-attested complete ownership mapping is removed or default hidden after replacement.",
+      "abstain": "Incomplete ownership proof, empty or missing source members. Does not prove absence of unmapped/re-created strokes."
+    },
+    {
+      "id": "background-protection",
+      "classification": "PRODUCT_REQUIREMENT",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "contract": "Mapped background has independent handles; entity and resolved layer/style/linetype/unit fingerprints stay identical.",
+      "abstain": "Missing mapping or unresolved BLOCK/IMAGE/HATCH dependencies. Role is supplied evidence, not automatic logo detection."
+    },
+    {
+      "id": "table-line-parity",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "geometry-policy"
+      ],
+      "contract": "Visible straight LINE/straight LWPOLYLINE segments on a dedicated complete table layer match supplied source segment multiset, including multiplicity and endpoints.",
+      "abstain": "Incomplete source mapping or unsupported layer members. Split/merged segments fail narrow representation contract; no invented bridge or auto-deletion."
+    },
+    {
+      "id": "edit-isolation",
+      "classification": "PRODUCT_REQUIREMENT",
+      "state": "IMPLEMENTED",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "contract": "Every non-target modelspace handle and supported resource fingerprint remains unchanged; unapproved additions fail.",
+      "abstain": "No edit scope, invalid scope or unresolved non-target dependencies. No DWG/GUI conclusion."
+    },
+    {
+      "id": "standard-title-block",
+      "classification": "OFFICIAL_STANDARD",
+      "state": "CANDIDATE",
+      "sources": [
+        "title-block"
+      ],
+      "contract": "Candidate only: title-block fields, dimensions and layout await accessible official text with edition and clause.",
+      "abstain": "No verified standard full text."
+    },
+    {
+      "id": "standard-lettering",
+      "classification": "OFFICIAL_STANDARD",
+      "state": "CANDIDATE",
+      "sources": [
+        "lettering"
+      ],
+      "contract": "Candidate only: standard lettering dimensions/ratios await accessible official text.",
+      "abstain": "No verified standard full text."
+    },
+    {
+      "id": "glyph-overlap-and-alignment",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "state": "CANDIDATE",
+      "sources": [
+        "warehouse-cell"
+      ],
+      "contract": "Candidate only: neighboring row AABBs may overlap without glyph collision; requires glyph-path and source alignment evidence.",
+      "abstain": "No automatic verdict from overlapping rectangles."
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+name: Executable drafting rules
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/drafting_rules/**'
+      - 'cad_photo_to_dxf/app/**'
+      - 'cad_photo_to_dxf/tests/test_table_text_layout.py'
+      - '.github/workflows/drafting-rules.yml'
+  pull_request:
+    paths:
+      - 'tools/drafting_rules/**'
+      - 'cad_photo_to_dxf/app/**'
+      - 'cad_photo_to_dxf/tests/test_table_text_layout.py'
+      - '.github/workflows/drafting-rules.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONPATH: ${{ github.workspace }}/cad_photo_to_dxf
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Qt runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0
+      - name: Install supported dependencies
+        run: python -m pip install -r cad_photo_to_dxf/requirements.txt -r cad_photo_to_dxf/requirements-test.txt 'ruff>=0.8,<1'
+      - name: Check rules and real saved DXF
+        run: python -m pytest -q tools/drafting_rules/tests --junitxml=local-artifacts/drafting-rules/tests.xml
+      - name: Static checks
+        run: |
+          python -m ruff check --config cad_photo_to_dxf/ruff.toml tools/drafting_rules
+          python -m compileall -q tools/drafting_rules
+      - name: Retain test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drafting-rule-tests
+          path: local-artifacts/drafting-rules/tests.xml
+          if-no-files-found: warn

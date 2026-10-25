@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-25",
+  "state": "NETWORK_DENIED_BEFORE_ORIGIN",
+  "observations": [
+    {
+      "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=GB%2FT%2010609.1-2008",
+      "result": "URLError: Tunnel connection failed: 403 Forbidden"
+    },
+    {
+      "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p2=GB%2FT%2014691-1993",
+      "result": "URLError: Tunnel connection failed: 403 Forbidden"
+    },
+    {
+      "url": "https://www.mohurd.gov.cn/gongkai/zhengce/zhengcefilelib/201710/20171013_233600.html",
+      "result": "URLError: Tunnel connection failed: 403 Forbidden"
+    }
+  ],
+  "conclusions": [
+    "No official full text or clause acquired.",
+    "No claim about current standard status or existence of the attempted MOHURD page.",
+    "Required hostnames saved in environment draft; runtime access still denied after saving."
+  ]
+}

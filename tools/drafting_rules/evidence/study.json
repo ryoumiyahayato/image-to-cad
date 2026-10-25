@@ -1,0 +1,41 @@
+{
+  "source": {
+    "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+    "page": 2,
+    "region": [
+      4080,
+      2200,
+      4390,
+      2410
+    ],
+    "authority": "main test_table_text_layout.local_region; saved OCR observations; inner cell source window [74,78,178,129]",
+    "units": "source_pixel"
+  },
+  "baseline_entities": {
+    "LINE": 21,
+    "LWPOLYLINE": 106,
+    "TEXT": 3
+  },
+  "positive": {
+    "PASS": 7,
+    "ABSTAIN": 5
+  },
+  "overflow": {
+    "PASS": 6,
+    "ABSTAIN": 5,
+    "FAIL": 1
+  },
+  "collateral": {
+    "PASS": 5,
+    "ABSTAIN": 5,
+    "FAIL": 2
+  },
+  "baseline_dxf_sha256": "fe1eb54bc3a82268d42432580e60c14e932a8fd097efd1cd395c586f17a24d50",
+  "edited_dxf_sha256": "2f344729d9de1e8ff0f2a86e7f519a15ca088bc8fc587cdf28fb89a1c0c5715e",
+  "recognition": "NOT_RUN; reused saved OCR observations",
+  "editor": "NOT_RUN",
+  "production_entry": "UNCHANGED",
+  "source_glyph_coverage": "ABSTAIN; no complete saved member mapping",
+  "background": "ABSTAIN; no independent background mapping",
+  "table_lines": "ABSTAIN; no complete source segment mapping"
+}
