@@ -297,7 +297,7 @@ def test_whole_carrier_is_not_suppressed_when_source_or_structure_is_shared(bloc
     assert np.array_equal(completed.line, owner.line)
 
 
-def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(tmp_path):
+def test_real_cell_exits_owned_members_after_source_arbitration_and_cache_roundtrip(tmp_path):
     from app.core.cache import load_trace_cache
     from tools.drafting_rules.source_adapter import validate_with_source
     from tools.drafting_rules.source_study import make_case
@@ -311,13 +311,13 @@ def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(t
                if r["recognized_text"] == "专业负责人")
     # The old whole-row downgrade leaves 54 rendered source-core pixels here.
     assert row["residual_owned_core_pixels"] == 0
-    assert report["summary"] == {"PASS": 7, "ABSTAIN": 5}
-    assert row["unowned_pixels"] == 9  # Protected Chinese and shared English edges remain.
-    assert [r["unowned_pixels"] for r in report["source_ledger"]["rows"][1:]] == [5, 5]
+    assert report["summary"] == {"PASS": 10, "ABSTAIN": 2}
+    assert all(r["unowned_pixels"] == r["cache_uncovered_pixels"] == 0
+               for r in report["source_ledger"]["rows"])
 
     structure = load_trace_cache(args["cache"]).final_structure
     chinese = next(c for c in structure.texts if c.text == "专业负责人")
-    assert not chinese.replacement_safe  # The structural conflict still applies.
+    assert chinese.replacement_safe
     gray, _ = local_region()
     restored = constrain_texts_to_table_cells(gray, structure.texts, verified_sources=(proofs := []))
     owner = partition_content(
@@ -327,6 +327,17 @@ def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(t
     owned = complete_verified_text_ownership(
         structure.preview_binary, gray, restored, proofs, ownership=owner,
     )
+    from app.geometry.content_ownership import _rasterize_line_claims
+
+    band = _rasterize_line_claims(structure.straight_lines, shape=gray.shape)
+    released = (band > 0) & (structure.preview_binary < 128) & (owner.line == 0)
+    # Six disconnected Chinese edges leave line ownership first. Only then
+    # can the existing complete-carrier proof absorb the three English edges.
+    assert np.count_nonzero(released) == 6
+    assert np.all(owned.text[released])
+    assert np.count_nonzero((owned.text > 0) & (owner.text == 0)) == 3
+    assert np.array_equal(owned.text, structure.editable_text_source_mask)
+    owned.assert_valid()
     known = np.zeros(gray.shape, dtype=bool)
     for y, x0, x1 in row["core_runs"]:
         known[y, x0:x1] = True
@@ -346,6 +357,16 @@ def test_real_cell_exits_owned_members_after_row_downgrade_and_cache_roundtrip(t
     assert [e.dxf.text for e in reopened.modelspace().query("TEXT")][1:] == [
         "Discipline", "Responsible",
     ]
+    from app.export.trace_dxf_entities import _path_matches_ocr
+
+    independent = [p for p in structure.contours if p.depth % 2 == 0
+                   and _path_matches_ocr(p, (chinese,))]
+    assert independent  # Nearby rule ink that the old bbox filter would drop.
+    exported = [tuple(e.get_points("xy")) for e in reopened.modelspace().query("LWPOLYLINE")]
+    for path in independent:
+        assert all(not structure.editable_text_source_mask[round(y), round(x)]
+                   for x, y in path.points)
+        assert tuple((x, gray.shape[0] - y) for x, y in path.points) in exported
     visible_geometry = [e for e in reopened.modelspace() if e.dxftype() != "TEXT"
                         and not reopened.layers.get(e.dxf.layer).is_off()
                         and not reopened.layers.get(e.dxf.layer).is_frozen()]

@@ -173,7 +173,9 @@ def write_page_entities(
             color=trace_color,
             source_size=source_size,
             palette=palette,
-            ocr_texts=suppressible_texts,
+            # Source masks already removed the owned glyphs. Reapplying a
+            # text-box test can suppress nearby independent rule contours.
+            ocr_texts=(() if semantic_outlines_prepartitioned else suppressible_texts),
             text_rule_contours=text_rule_contours,
             source_outline_ocr_texts=(
                 () if semantic_outlines_prepartitioned else source_outline_texts

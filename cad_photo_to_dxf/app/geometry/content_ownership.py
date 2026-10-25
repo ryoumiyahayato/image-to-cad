@@ -332,8 +332,44 @@ def line_source_mask(
     """Claim only source ink underneath independent line candidates."""
 
     source = _source_foreground(binary)
-    band = _rasterize_line_claims(lines, shape=binary.shape)
-    return np.where((band > 0) & (source > 0), 255, 0).astype(np.uint8)
+    owned = _mask_like(binary)
+    if not lines:
+        return owned
+    _, labels = cv2.connectedComponents(source, connectivity=8)
+    scale = image_resolution_scale(binary.shape)
+    for line in lines:
+        window, claim = _supported_line_claim(source, labels, line, scale=scale)
+        owned[window] = cv2.max(owned[window], claim)
+    return owned
+
+
+def _supported_line_claim(source, labels, line, *, scale):
+    """Keep tolerance-band ink only on source connected to the nominal stroke.
+
+    The band still has its original width and caps. A separate ink island is
+    not evidence for this line merely because tolerance reaches it. Connectivity
+    uses the whole source raster, so touching strokes and connections outside
+    the band remain protected. Without nominal source support, fail closed and
+    keep the old claim. This does not authorize text ownership or suppression.
+    """
+    thickness = _line_claim_thickness(line, scale=scale)
+    padding = max(1, (thickness + 1) // 2 + 1)
+    left = max(0, int(np.floor(min(line.x1, line.x2))) - padding)
+    top = max(0, int(np.floor(min(line.y1, line.y2))) - padding)
+    right = min(source.shape[1], int(np.ceil(max(line.x1, line.x2))) + padding + 1)
+    bottom = min(source.shape[0], int(np.ceil(max(line.y1, line.y2))) + padding + 1)
+    window = (slice(top, bottom), slice(left, right))
+    band = np.zeros((bottom - top, right - left), np.uint8)
+    start = (int(round(line.x1)) - left, int(round(line.y1)) - top)
+    end = (int(round(line.x2)) - left, int(round(line.y2)) - top)
+    cv2.line(band, start, end, 255, thickness, cv2.LINE_8)
+    claim = (band > 0) & (source[window] > 0)
+    nominal = np.zeros_like(band)
+    cv2.line(nominal, start, end, 255, max(1, int(round(line.width))), cv2.LINE_8)
+    supported = np.unique(labels[window][claim & (nominal > 0)])
+    if supported.size:
+        claim &= np.isin(labels[window], supported)
+    return window, np.where(claim, 255, 0).astype(np.uint8)
 
 
 def editable_text_source_mask(
@@ -1188,8 +1224,7 @@ def _strong_structural_line_mask(
     *,
     other_semantic_claims: np.ndarray,
 ) -> np.ndarray:
-    source = _source_foreground(binary)
-    band = _mask_like(binary)
+    strong = []
     scale = image_resolution_scale(binary.shape)
     for line in lines:
         thickness = _line_claim_thickness(line, scale=scale)
@@ -1204,15 +1239,8 @@ def _strong_structural_line_mask(
             radius=radius,
         ):
             continue
-        cv2.line(
-            band,
-            (int(round(line.x1)), int(round(line.y1))),
-            (int(round(line.x2)), int(round(line.y2))),
-            255,
-            thickness,
-            cv2.LINE_8,
-        )
-    return np.where((band > 0) & (source > 0), 255, 0).astype(np.uint8)
+        strong.append(line)
+    return line_source_mask(binary, strong)
 
 
 def _conflict_records(
@@ -1529,47 +1557,14 @@ def _arbitrate_lines(
     kept: list[LineSegment] = []
     downgrades: list[dict[str, object]] = []
     scale = image_resolution_scale(ownership.source.shape)
+    _, labels = cv2.connectedComponents(ownership.source, connectivity=8)
     for index, line in enumerate(lines):
-        thickness = _line_claim_thickness(line, scale=scale)
-        padding = max(1, (thickness + 1) // 2 + 1)
-        left = max(
-            0,
-            int(np.floor(min(line.x1, line.x2))) - padding,
+        window, local_claim = _supported_line_claim(
+            ownership.source, labels, line, scale=scale,
         )
-        top = max(
-            0,
-            int(np.floor(min(line.y1, line.y2))) - padding,
-        )
-        right = min(
-            ownership.source.shape[1],
-            int(np.ceil(max(line.x1, line.x2))) + padding + 1,
-        )
-        bottom = min(
-            ownership.source.shape[0],
-            int(np.ceil(max(line.y1, line.y2))) + padding + 1,
-        )
-        local_claim = np.zeros(
-            (bottom - top, right - left),
-            dtype=np.uint8,
-        )
-        cv2.line(
-            local_claim,
-            (
-                int(round(line.x1)) - left,
-                int(round(line.y1)) - top,
-            ),
-            (
-                int(round(line.x2)) - left,
-                int(round(line.y2)) - top,
-            ),
-            255,
-            thickness,
-            cv2.LINE_8,
-        )
-        source_crop = ownership.source[top:bottom, left:right]
-        owned_crop = ownership.line[top:bottom, left:right]
+        owned_crop = ownership.line[window]
         conflicting_source_pixels = int(
-            np.count_nonzero((local_claim > 0) & (source_crop > 0) & (owned_crop == 0))
+            np.count_nonzero((local_claim > 0) & (owned_crop == 0))
         )
         if conflicting_source_pixels == 0:
             kept.append(line)

@@ -14,6 +14,41 @@ from app.ocr.signature_overlay import mark_graphic_texts
 from app.ocr.text_output_contract import decide_text_output
 
 
+@pytest.mark.parametrize("contact", ["separate", "touching", "shared-outside-band", "no-seed"])
+def test_line_tolerance_islands_require_independent_source_support(contact):
+    binary = np.full((90, 160), 255, np.uint8)
+    binary[40, 10:151] = 0
+    binary[42:56, 70:82] = 0
+    if contact == "touching":
+        binary[41, 75] = 0
+    elif contact == "shared-outside-band":
+        # Connectivity outside the local line band is still shared source.
+        binary[40:61, 150] = 0
+        binary[60, 75:151] = 0
+        binary[55:61, 75] = 0
+    elif contact == "no-seed":
+        binary[40, :] = 255
+    line = LineSegment(10, 40, 150, 40, width=2)
+    text = TextCandidate(
+        "A", (69, 42, 14, 15), 0.99, "text_candidate", source="test",
+        approved=True, replacement_safe=True,
+    )
+    owner = partition_content(binary, lines=(line,), texts=(text,), signatures=())
+    result = arbitrate_content_candidates(
+        binary, lines=(line,), texts=(text,), logos=(), signatures=(), ownership=owner,
+    )
+    owner.assert_valid()
+    assert result.lines == (line,)
+    if contact == "separate":
+        assert not np.any(owner.line[42:56, 70:82])
+        assert result.texts[0].replacement_safe
+    else:
+        assert np.all(owner.line[42, 70:82])
+        assert not result.texts[0].replacement_safe
+    if contact != "no-seed":
+        assert np.all(owner.line[40, 10:151])
+
+
 def test_every_source_pixel_gets_exactly_one_owner() -> None:
     binary = np.full((180, 320), 255, dtype=np.uint8)
     cv2.rectangle(binary, (10, 20), (310, 160), 0, 3)

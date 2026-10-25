@@ -1,5 +1,92 @@
 # 检查点
 
+2026-10-25：W02 弱边缘结构来源最小修复。基线 `c0671df319be467582c00354f1307a52c0116a3f`，远端 `delivery/w02-glyph-source-boundary` 经 fetch 和 ls-remote 核实仍指向该提交。原 `/workspace/image-to-cad` 为干净 `work@81f364f`，保留不动；独立分支 `fix/w02-weak-edge-source`，工作树 `/workspace/work/w02-weak-edge-source`。交付到独立远端 `delivery/w02-weak-edge-source`，不修改/合并 main，不创建 PR，不触发 main/fix/** 的历史全量 CI。
+
+## 本轮来源事实与实际致错环节
+
+以下为代码及真实输入重放事实，不以 line 标签、灰度强弱或文字框位置单独判定角色。复用原 PDF 第 2 页、136 DPI、原两裁片和原转录，未运行 OCR 模型。
+
+- 生产路径为 `prepare_scan_page` 原始灰度/254 阈值二值源 → `reconstruct_straight_lines` 的 LSD/Hough 来源与支持裁剪 → `stroke_presentation` → `_assign_and_reconcile` 中候选分区/仲裁、来源协调、重新分区与成员保留 → `complete_verified_text_ownership` → 语义源遮罩/轮廓 → FinalStructure → 缓存与 DXF。只读适配器从实际 PDF、缓存、保存 DXF 重放同一来源判断；其源码和完整性标准未改。
+- 定位到的真实横格线为 LSD-000189，生产源端点 `(76.87464141845703,76.61250305175781)`—`(176.8750762939453,76.6488265991211)`，测得宽度 `1.909999966621399`；原 `_line_claim_thickness` 形成 4 像素栅格厚度的容差归属带。结构优先证据原先仅检查线端附近无其他语义认领；它不能证明宽带内每个断开的墨迹都支持这条线。
+- 该线的真实横向墨迹位于 y=75/76，在目标字符上方 y=77/78 连续全白。原宽带与源相交形成一个格线支持分量和三个断开的文字边缘分量；这些边缘的全源 8 连通分量也不与格线相连。线候选本身确有独立连续来源，**没有发现线候选误分类**；错误是把容差带内不支持该线的独立字形墨迹也认领为结构。
+- 6 个中文像素的实际测量 `[y,x0,x1)`：`[79,85,87)`（灰度 247/217，完整源分量 179 像素、108 强源）、`[79,123,125)`（228/242，分量 409、248 强源）、`[79,144,146)`（217/244，分量 1,132、702 强源）。三者均是有现有文字来源证明的字形载体边缘，与真实横格线不连通，均不属于该线的名义笔宽源支持；前两者独立于英文，第三者通过生产阈值保留的抗锯齿墨迹与两行英文共享载体。以上数值/坐标/候选编号仅作定位，生产修复没有这些常量。
+- 3 个英文弱边缘 `[113,125,128)` 没有独立格线认领。它们与最后两个中文弱边缘同处上述 1,132 像素载体：旧 `complete_verified_text_ownership` 因该载体含受保护中文边缘而整体拒绝补全；不是英文另有缺失的来源证明。相关三行的完整来源证明及原生 TEXT 资格均能满足原规则。
+
+## 最小修改与保护
+
+1. 只在 `content_ownership.py` 的格线来源认领/仲裁处增加 `_supported_line_claim`：仍使用原始归属带及端帽，按候选已有笔宽栅格的实际源像素取得名义支持，再保留与该支持属于同一个**完整生产二值源**连通分量的带内墨迹。分量使用全源连通关系，带外绕行连接、真实文字贴线或交叉仍保护；名义笔宽无源支持时保留原认领，不能据此解除保护。既不按灰度阈值另行忽略浅色结构，也不直接把任何像素指定为 text。
+2. `line_source_mask`、结构优先掩膜和 `_arbitrate_lines` 使用同一来源判定，避免一处释放、另一处仍按旧宽带否决。没有改变候选几何、线宽、保护带或容差参数，没有修改完整载体补全、外来强源/共享冲突检查或旧成员保留算法。释放到文字需走原仲裁与完整来源证明；不满足者仍留 graphic/冲突及 ABSTAIN。
+3. 实测线来源认领为 1,841→1,835，唯一差集正是上述 6 像素，没有新增线认领；六者由原文字分区取得独占归属，既有完整载体链再补入英文 3 像素。最终 editable mask 比基线增加 9、减少 0，来源互斥和像素守恒断言通过。
+4. 必须同时修正直接暴露的导出连带问题：中文行恢复 `replacement_safe=True` 后，`trace_entity_writer` 对已经按语义源遮罩分区的剩余轮廓又执行文字框匹配，额外省略邻格线头的小轮廓。现与已有 source-outline/fallback 路由一致：`semantic_outlines_prepartitioned` 时不再重复按 TEXT 框抑制。旧式未分区入口仍按旧规则处理。真实回归从缓存中动态定位会被旧框过滤匹配的独立源轮廓，并逐顶点确认保存读回仍在；没有指定某个句柄作生产豁免。
+
+## 本轮自动化与保存实测
+
+临时产物 `/workspace/work/w02-weak-baseline`（实际修改前生产输出）、`/workspace/work/w02-weak-final/{cell,single}`（最终两案例）及缓存重导出/中文编辑副本均仅留 work；没有新增验证脚本、证据包或验收框架。
+
+| 真实案例 | PASS | FAIL | ABSTAIN | 完整载体 / 来源缺口 / 缓存缺口 |
+| --- | --- | --- | --- | --- |
+| W02，Discipline→DisciplineA | 10 | 0 | 2 | 中文 1,840/0/0，英文各 1,132/0/0 |
+| 中文回归，专业负责人→专业负责者 | 10 | 0 | 2 | 同上，保存的单字修改正确 |
+| 施工图→施工表 | 3 | 0 | 3 | 585/0/0 |
+
+- 修改前实际 W02 为 7 PASS / 0 FAIL / 5 ABSTAIN，三行缺口为 9/5/5。各行缺口集用**同一完整载体**与基线缓存遮罩计算：中文含三组中文边缘＋英文 3；两行英文各为最后两个中文边缘＋英文 3。三对交集及三重交集均为 5，并集仅为 9。最终三行缺口和各交集均为空，唯一剩余像素总数 **0**；没有把多个行报告当作多个最终所有者。
+- 适配器最终三行 `boundary_truncated=False`、`all_shared_rows_selected=True`，`residual_owned_core_pixels=0`；对应 source-glyph-exit 均由原规则给出 `VERIFIED_SOURCE_CARRIER_EXITED`。背景与完整表线两项继续 `NO_INDEPENDENT_SOURCE_ROLE_OR_COLLECTION_PROOF` / ABSTAIN，未据局部像素归零解除其他弃判。
+- 生产 FinalStructure 的 editable mask 与只读重放得到的完整文字归属逐像素相等，缓存来源上下文校验保持。另一个全新 Python 进程重放两个最终案例，仍为 10 PASS/2 ABSTAIN 和 3 PASS/3 ABSTAIN，全部来源/缓存缺口 0。
+- 英文 3 像素对应的旧缓存轮廓为 `(125,113),(128,113),(128,114),(125,114)`；完整轮廓从缓存退出，无新增缓存轮廓，89→88。它在本轮 c0671df 保存 DXF 中已受既有英文过滤而未导出，因此不声称又删掉一个可见 CAD 实体。中文 6 像素原为错误 line 来源且未产生独立可见字形轮廓；它们不再作为线归属存活。全部隐藏备份遮罩均为 0，没有转入隐藏轮廓、删除共享 PATH 或缩小统计域。
+- **原 113 个可见非 TEXT 几何全部保持**：按实际 DXF 实体类型、完整坐标/顶点、属性、笔宽 XDATA 和来源字段逐一匹配，缺失 0、新增 0；不是只检查数量。21 个生产 LineSegment 的所有字段逐对象完全一致，保存 LINE 的端点、图层、颜色、线重、笔宽元数据及来源身份亦一致。唯一正常重建的元数据是随整体语义源变化生成的 `P16_LINE_SOURCE.source.structure_id`，没有把此字段变化误报为线几何变化。
+- 三个 TEXT 的内容与全部 DXF 几何属性保持，Discipline/Responsible 的 XDATA 也完全一致；中文只有 `TEXT_OUTPUT_CONTRACT` 随来源安全性恢复而改变。缓存重导出与最终 before.dxf 的全部实体逐属性相等；再改单字、保存、读回、另进程重开/再次保存重开后均为“专业负责者 / Discipline / Responsible”，DXF audit 错误 0。正常英文编辑副本为 DisciplineA。
+- 已修复的 54 像素残留不重现：全部已证明源核与可见非 TEXT 渲染、缓存 contour_binary、隐藏源轮廓的交集均为 0。顶部 14/14 仍有文字支持，之前对应独立轮廓未回来；逐字框、原始 bbox、quad 与 c0671df 一致。
+
+## 必要命令与局部检查
+
+```bash
+git fetch origin delivery/w02-glyph-source-boundary
+git worktree add -b fix/w02-weak-edge-source /workspace/work/w02-weak-edge-source c0671df319be467582c00354f1307a52c0116a3f
+git ls-remote --heads origin delivery/w02-glyph-source-boundary
+```
+
+环境原无依赖，在 work 新建 `.venv`，按仓库 `requirements.txt` / `requirements-test.txt` 安装依赖；未修改依赖文件。
+新增实际根因用例修改前 1 FAIL / 3 PASS（独立文字岛被格线误认领）；修改后该正例及贴线、带外共享连接、无名义支持保护三个反例全部通过。真实回归新增直接检查六个线归属差集、随后三像素完整载体补全、缓存相等和独立邻格轮廓保持。只更新本轮影响的生产回归，0.1.1 原测试、报告、基线及冻结证据未改。
+
+在独立工作树执行：
+
+```bash
+export QT_QPA_PLATFORM=offscreen
+export PYTHONPATH="$PWD:$PWD/cad_photo_to_dxf"
+/workspace/work/.venv/bin/python -m pytest -q  cad_photo_to_dxf/tests/test_content_ownership.py  cad_photo_to_dxf/tests/test_table_text_layout.py::test_real_cell_exits_owned_members_after_source_arbitration_and_cache_roundtrip  cad_photo_to_dxf/tests/test_table_text_layout.py::test_whole_carrier_is_not_suppressed_when_source_or_structure_is_shared  cad_photo_to_dxf/tests/test_table_text_layout.py::test_full_line_source_proof_preserves_layout_and_owns_complete_ink_carriers  cad_photo_to_dxf/tests/test_table_text_layout.py::test_verified_character_tops_cover_unfiltered_glyph_ink_without_expanding_neighbors  cad_photo_to_dxf/tests/test_table_text_layout.py::test_verified_character_top_keeps_detached_shared_and_foreign_source  cad_photo_to_dxf/tests/test_table_text_layout.py::test_normal_processing_export_preview_and_edit_roundtrip  cad_photo_to_dxf/tests/test_ownership_commit_veto.py
+# 38 passed
+/workspace/work/.venv/bin/python -m pytest -q  cad_photo_to_dxf/tests/test_table_text_layout.py::test_real_cell_exits_owned_members_after_source_arbitration_and_cache_roundtrip  cad_photo_to_dxf/tests/test_text_output_contract.py  cad_photo_to_dxf/tests/test_text_export_consistency.py  cad_photo_to_dxf/tests/test_source_text_layout.py::test_cell_clipping_preserves_tight_source_quad_and_clips_at_rule
+# 导出修正后：23 passed；两批合计 60 个不同用例。
+/workspace/work/.venv/bin/python -m ruff check --config cad_photo_to_dxf/ruff.toml  cad_photo_to_dxf/app/geometry/content_ownership.py  cad_photo_to_dxf/app/export/trace_entity_writer.py  cad_photo_to_dxf/tests/test_content_ownership.py cad_photo_to_dxf/tests/test_table_text_layout.py
+/workspace/work/.venv/bin/python -m compileall -q  cad_photo_to_dxf/app/geometry/content_ownership.py  cad_photo_to_dxf/app/export/trace_entity_writer.py  cad_photo_to_dxf/tests/test_content_ownership.py cad_photo_to_dxf/tests/test_table_text_layout.py
+git diff --check
+```
+
+真实案例复用原入口（仅使用其自带的完整性校验，没有独立计算/比对哈希或生成指纹清单）：
+
+```python
+from pathlib import Path
+from tools.drafting_rules.source_study import make_case
+from tools.drafting_rules.source_adapter import validate_with_source
+from tests.test_table_text_layout import candidates
+from tests.test_source_text_layout import _candidate
+for name, crop, texts, edit in (
+    ('cell', (4080,2200,4390,2410), candidates(), ('Discipline','DisciplineA')),
+    ('single', (4463,2558,4592,2659),
+     (_candidate('施工图',(4493,2588,69,41)),), ('施工图','施工表')),
+):
+    args = make_case(Path('/workspace/work/w02-weak-final') / name, crop, texts, edit)
+    print(name, validate_with_source(**args)['summary'])
+```
+
+新进程以相同 `before/after/source/evidence_path/cache/dpi` 参数再次调用 `validate_with_source`；`load_trace_cache` → `export_final_structure_dxf` → ezdxf 修改 TEXT/保存/读回；再另起进程重开并保存读回。没有修改适配器或完整性判定以获得 PASS。
+
+## 剩余限制与交付
+
+只证明这两个实际来源窗口和受影响局部合同；全量测试、全仓库回归、历史测试全集均未运行。真实共享/贴线或缺少名义支持时仍保持保护；本例现有二值源的白色分隔、完整行强源与来源重放足以区分六个误覆盖，不需要人工指定归属。背景、完整表线等其他项目保持原结论。LibreCAD GUI、DWG 往返、真人验收继续 **NOT_RUN**。
+
+本轮完成后不自动开展新研究。一个独立 conventional commit 包含必要源码、局部回归及本 CHECKPOINT/CURRENT_TASK/NEXT_TASK；提供可访问提交及相对 c0671df 的完整补丁。保留所有既有工作树、未提交内容和恢复证据。
+
 2026-10-25：W02 中文顶部来源边界修复。基线为可访问的 `ece85a401a93f12743e493ac050929bbfd5a8da5` / `delivery/w02-member-lifecycle-rebuilt`；独立分支 `fix/w02-glyph-source-boundary`，工作树 `/workspace/work/w02-glyph-boundary`。原 `work@900511b`、`fix/w02-member-lifecycle-rebuilt@ece85a4` 及其工作树保持干净，未更新 main。804d488 与历史句柄关系不是本轮前置条件。
 
 ## 本轮根因与生产来源判定
