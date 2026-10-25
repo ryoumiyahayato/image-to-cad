@@ -53,12 +53,16 @@ def snapshot(path):
             item["bounds"] = lff_bounds(e, doc) if kind == "TEXT" else None
         if kind == "LINE" and e.dxf.start.z == e.dxf.end.z == 0:
             item["segments"] = [[e.dxf.start.x, e.dxf.start.y, e.dxf.end.x, e.dxf.end.y]]
-        elif kind == "LWPOLYLINE" and not e.dxf.elevation:
+        elif kind == "LWPOLYLINE":
             points = list(e.get_points("xyb"))
-            if not any(p[2] for p in points):
-                pairs = list(zip(points, points[1:]))
+            # LWPOLYLINE stores OCS vertices. A flipped normal mirrors X in WCS;
+            # comparing its raw local numbers can falsely approve a moved rule.
+            world = list(e.vertices_in_wcs())
+            if (not any(p[2] for p in points)
+                    and all(p.z == 0 and all(isfinite(v) for v in p) for p in world)):
+                pairs = list(zip(world, world[1:]))
                 if e.closed and len(points) > 1:
-                    pairs.append((points[-1], points[0]))
+                    pairs.append((world[-1], world[0]))
                 item["segments"] = [[a[0], a[1], b[0], b[1]] for a, b in pairs]
         entities[e.dxf.handle] = item
     # DXF unit changes invalidate every numerical position, even unchanged tags.

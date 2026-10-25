@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "pack_id": "cn-sheet-text-table",
+  "pack_version": "0.1.1",
+  "source": {
+    "sha256": "8967fc042f4979f017ca4d27d25e66e7c9fbb2e46d840d0fd81e68268af31017",
+    "page": 2,
+    "region": [
+      4080,
+      2200,
+      4390,
+      2410
+    ],
+    "authority": "main test_table_text_layout.local_region; saved OCR observations; inner cell source window [74,78,178,129]",
+    "units": "source_pixel"
+  },
+  "results": [
+    {
+      "rule": "editable-text",
+      "target": "row-0",
+      "status": "PASS",
+      "reason": "NATIVE_CONTENT_PRESENT",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {
+        "handle": "11A"
+      }
+    },
+    {
+      "rule": "cell-fit",
+      "target": "row-0",
+      "status": "PASS",
+      "reason": "INK_INSIDE_CELL",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "sources": [
+        "product-intent",
+        "warehouse-cell",
+        "geometry-policy"
+      ],
+      "details": {
+        "bounds": [
+          78.0,
+          112.0,
+          173.0,
+          130.0
+        ],
+        "cell": [
+          74,
+          81,
+          178,
+          132
+        ],
+        "tolerance": 1e-06
+      }
+    },
+    {
+      "rule": "source-glyph-exit",
+      "target": "row-0",
+      "status": "ABSTAIN",
+      "reason": "COMPLETE_OUTLINE_MAPPING_UNAVAILABLE",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {}
+    },
+    {
+      "rule": "editable-text",
+      "target": "row-1",
+      "status": "PASS",
+      "reason": "NATIVE_CONTENT_PRESENT",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {
+        "handle": "11B"
+      }
+    },
+    {
+      "rule": "cell-fit",
+      "target": "row-1",
+      "status": "FAIL",
+      "reason": "INK_OUTSIDE_CELL",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "sources": [
+        "product-intent",
+        "warehouse-cell",
+        "geometry-policy"
+      ],
+      "details": {
+        "bounds": [
+          102.0,
+          97.0,
+          489.97379594807705,
+          110.0
+        ],
+        "cell": [
+          74,
+          81,
+          178,
+          132
+        ],
+        "tolerance": 1e-06
+      }
+    },
+    {
+      "rule": "source-glyph-exit",
+      "target": "row-1",
+      "status": "ABSTAIN",
+      "reason": "COMPLETE_OUTLINE_MAPPING_UNAVAILABLE",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {}
+    },
+    {
+      "rule": "editable-text",
+      "target": "row-2",
+      "status": "PASS",
+      "reason": "NATIVE_CONTENT_PRESENT",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {
+        "handle": "11C"
+      }
+    },
+    {
+      "rule": "cell-fit",
+      "target": "row-2",
+      "status": "PASS",
+      "reason": "INK_INSIDE_CELL",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "sources": [
+        "product-intent",
+        "warehouse-cell",
+        "geometry-policy"
+      ],
+      "details": {
+        "bounds": [
+          100.0,
+          84.0,
+          151.0,
+          98.0
+        ],
+        "cell": [
+          74,
+          81,
+          178,
+          132
+        ],
+        "tolerance": 1e-06
+      }
+    },
+    {
+      "rule": "source-glyph-exit",
+      "target": "row-2",
+      "status": "ABSTAIN",
+      "reason": "COMPLETE_OUTLINE_MAPPING_UNAVAILABLE",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {}
+    },
+    {
+      "rule": "background-protection",
+      "target": "scope",
+      "status": "ABSTAIN",
+      "reason": "NO_BACKGROUND_MAPPING",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {}
+    },
+    {
+      "rule": "table-line-parity",
+      "target": "scope",
+      "status": "ABSTAIN",
+      "reason": "SOURCE_TABLE_MAPPING_UNAVAILABLE",
+      "classification": "EXPERIMENTAL_HEURISTIC",
+      "sources": [
+        "product-intent",
+        "geometry-policy"
+      ],
+      "details": {}
+    },
+    {
+      "rule": "edit-isolation",
+      "target": "scope",
+      "status": "PASS",
+      "reason": "NON_TARGET_MEMBERS_UNCHANGED",
+      "classification": "PRODUCT_REQUIREMENT",
+      "sources": [
+        "product-intent",
+        "gates"
+      ],
+      "details": {}
+    }
+  ],
+  "summary": {
+    "PASS": 6,
+    "ABSTAIN": 5,
+    "FAIL": 1
+  },
+  "cad_editor": "NOT_RUN",
+  "dwg_roundtrip": "NOT_RUN",
+  "human_time_saved": "NOT_RUN",
+  "pack_sha256": "18ad4eea23a31eac6f4ea936e5398ee167a3cf08281ccb3feef1ce29ed11585d",
+  "evidence_sha256": "2c8abc4563ff9799feef0c3ea6c3f37e36777e738f9ead3bafeeef11ae2a0c62",
+  "before_sha256": "eff5c47f9e15b4a032e79cc1c696cc9f8c8cd0690b1fbc817fd4f9ac161a735d",
+  "after_sha256": "28b079d803e3a1bf61631a67863bde7447a4617f4c502613305aa9562267506a",
+  "implementation_sha256": "1377fe756babbacd8ead56065105022d43ba33d423ecae89c13576496266409b",
+  "font_sha256": "3c97e1dc9732578fe42fca6329bd2369d17b798405b14443b0b9d41e0bacc201",
+  "runtime": {
+    "python": "3.12.14",
+    "ezdxf": "1.4.5",
+    "PySide6": "6.11.2",
+    "jsonschema": "4.26.0"
+  }
+}

@@ -1,23 +1,86 @@
 {
   "date": "2026-10-25",
-  "state": "NETWORK_DENIED_BEFORE_ORIGIN",
-  "observations": [
+  "state": "TITLE_FULL_TEXT_READ_FONT_METADATA_ONLY",
+  "previous_attempt": {
+    "date": "2026-10-25",
+    "state": "NETWORK_DENIED_BEFORE_ORIGIN",
+    "observations": [
+      {
+        "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=GB%2FT%2010609.1-2008",
+        "result": "URLError: Tunnel connection failed: 403 Forbidden"
+      },
+      {
+        "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p2=GB%2FT%2014691-1993",
+        "result": "URLError: Tunnel connection failed: 403 Forbidden"
+      },
+      {
+        "url": "https://www.mohurd.gov.cn/gongkai/zhengce/zhengcefilelib/201710/20171013_233600.html",
+        "result": "URLError: Tunnel connection failed: 403 Forbidden"
+      }
+    ],
+    "conclusions": [
+      "No official full text or clause acquired.",
+      "No claim about current standard status or existence of the attempted MOHURD page.",
+      "Required hostnames saved in environment draft; runtime access still denied after saving."
+    ]
+  },
+  "sources": [
     {
-      "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p90=circulation_date&p.p91=desc&p.p2=GB%2FT%2010609.1-2008",
-      "result": "URLError: Tunnel connection failed: 403 Forbidden"
+      "edition": "GB/T 10609.1-2008",
+      "title": "技术制图 标题栏",
+      "url": "https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=0F8577CB9AB82D5819048A87920CABAB",
+      "status_as_observed": "现行",
+      "issued": "2008-06-26",
+      "effective": "2009-01-01",
+      "metadata_sha256": "45803f8c090e6c348fee55f295dabd9a1c7a14f39484338c37dc1139ef0df0a5",
+      "full_text": {
+        "method": "Official public online viewer; normal Referer/cookie navigation; literal CSS rectangles rendered from the viewer image. No download CAPTCHA submitted or bypassed.",
+        "pages": 5,
+        "cover_edition_verified": true,
+        "preview_html_sha256": "45c85e0b08c35276da155c5c9fb4693347b38c8dfcc6a3bba82277c016081bc6",
+        "viewer_image_sha256": "7eaeaad9b41a193b908487d7175c8de372b26547ac980debe05a1c9ab34d1112",
+        "rendered_page_sha256": [
+          "c8b08072861496254e5739016d8bd2e39c72b692fe1d074d44333edcb9675a28",
+          "1faf4f9e6dff58080f91e06fe99f00467d4dc3c054bbe8f2bd01118f1b658e58",
+          "bdd3b711867e0f1607c10db9d46350a27352baadd0fac5bc2ac05d9617256ff1",
+          "063f57eb066b0278d1b2f0b559570610da2af775556c9d026605771a817738ce",
+          "e09cd9da11f84dfbd1b724a2f5d95271464d2dcbd7dd7dd3ff857bc30f1e8970"
+        ],
+        "read_clauses": [
+          "1",
+          "3.1",
+          "3.3",
+          "4.1",
+          "4.1.1–4.1.4",
+          "4.2",
+          "5.1–5.2",
+          "Annex A (informative)"
+        ]
+      },
+      "findings": [
+        "§3.1 requires a title block on each technical drawing; presence alone is a candidate until scope and mapping are evidenced.",
+        "§3.3 refers non-signature lettering to GB/T 14691, with an explicit signature exception; no font dimensions guessed.",
+        "§4.1 describes usual subdivisions and permits additions/removals as needed.",
+        "Annex A is informative; its example is not forced onto an architectural/electrical source."
+      ]
     },
     {
-      "url": "https://openstd.samr.gov.cn/bzgk/gb/std_list?p.p1=0&p.p2=GB%2FT%2014691-1993",
-      "result": "URLError: Tunnel connection failed: 403 Forbidden"
-    },
-    {
-      "url": "https://www.mohurd.gov.cn/gongkai/zhengce/zhengcefilelib/201710/20171013_233600.html",
-      "result": "URLError: Tunnel connection failed: 403 Forbidden"
+      "edition": "GB/T 14691-1993",
+      "title": "技术制图 字体",
+      "url": "https://openstd.samr.gov.cn/bzgk/gb/newGbInfo?hcno=44F8A8E5B9D37004AB8445B42992B1BC",
+      "status_as_observed": "现行",
+      "issued": "1993-11-09",
+      "effective": "1994-07-01",
+      "metadata_sha256": "085ab2bc5772c631f648aad4a4ff329660a4ff3ef8a0adbeff4d0b097e61ac1b",
+      "verified_full_text": false,
+      "clause": null,
+      "reason": "Official site says adopted international/foreign standard copyright prevents text reading. No full-text font rule asserted."
     }
   ],
   "conclusions": [
-    "No official full text or clause acquired.",
-    "No claim about current standard status or existence of the attempted MOHURD page.",
-    "Required hostnames saved in environment draft; runtime access still denied after saving."
+    "Prior proxy denial no longer describes SAMR access. MOHURD root retry returned proxy 502; no MOHURD clause read.",
+    "No OFFICIAL_STANDARD executable rule added; the verified title-block-presence clause remains a scoped candidate.",
+    "Unknown-font standards research is not classified as an OFFICIAL_STANDARD candidate rule.",
+    "Original full standards and preview images retained only under ignored local-artifacts; no redistribution of full text."
   ]
 }

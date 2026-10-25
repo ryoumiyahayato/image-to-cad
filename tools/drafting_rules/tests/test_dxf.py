@@ -136,7 +136,19 @@ def test_stale_hash_bad_schema_and_nan_rejected(tmp_path):
 
 def test_official_executable_requires_full_text_and_clause(tmp_path):
     pack = load_pack()
-    pack["rules"][0].update(classification="OFFICIAL_STANDARD", sources=["title-block"])
+    pack["rules"][0].update(classification="OFFICIAL_STANDARD", sources=["lettering"])
+    path = tmp_path / "pack.json"
+    write_json(path, pack)
+    with pytest.raises(ValueError, match="verified edition and clause"):
+        load_pack(path)
+
+
+def test_official_candidate_also_requires_a_verified_clause(tmp_path):
+    pack = load_pack()
+    rule = next(r for r in pack["rules"] if r["id"] == "standard-title-block")
+    assert rule["state"] == "CANDIDATE"
+    assert next(s for s in pack["sources"] if s["id"] == "title-block")["clause"] == "3.1"
+    rule["sources"] = ["lettering"]
     path = tmp_path / "pack.json"
     write_json(path, pack)
     with pytest.raises(ValueError, match="verified edition and clause"):
@@ -206,3 +218,37 @@ def test_cli_input_errors_are_persisted_and_never_reported_as_pass(tmp_path, inv
     result = subprocess.run(args, capture_output=True, text=True)
     assert result.returncode == 2, result.stderr
     assert json.loads(output.read_text())["status"] == "INPUT_ERROR"
+
+
+@pytest.mark.parametrize("case,expected", [
+    ("mirror-mismatch", "FAIL"), ("mirror-matches-source", "PASS"),
+    ("tilted", "ABSTAIN"), ("elevated", "ABSTAIN"),
+])
+def test_table_polyline_uses_world_coordinates(tmp_path, case, expected):
+    before, after, source, path, evidence, line_handle = fixture(tmp_path)
+    doc = ezdxf.readfile(after)
+    doc.modelspace().delete_entity(doc.entitydb[line_handle])
+    points, attrs = [(0, 0), (60, 0)], {"layer": "TABLE", "extrusion": (0, 0, -1)}
+    if case == "mirror-matches-source":
+        original = ezdxf.readfile(before)
+        original.entitydb[line_handle].dxf.end = (-60, 0, 0)
+        original.saveas(before)
+        evidence["before_sha256"] = sha256(before)
+        evidence["table"]["source_segments"] = [[0, 0, -60, 0]]
+    elif case == "tilted":
+        points = [(0, 0), (0, 60)]
+        attrs["extrusion"] = (0, 1, 1)
+    elif case == "elevated":
+        attrs["elevation"] = 1
+    polyline = doc.modelspace().add_lwpolyline(points, dxfattribs=attrs)
+    doc.saveas(after)
+    evidence["after_sha256"] = sha256(after)
+    write_json(path, evidence)
+    result = next(r for r in validate_files(before, after, source, path)["results"]
+                  if r["rule"] == "table-line-parity")
+    assert result["status"] == expected
+    if case == "mirror-mismatch":
+        assert result["details"]["missing"] == [[0, 0, 60, 0]]
+        assert result["details"]["unexpected"] == [[0, 0, -60, 0]]
+    if expected == "ABSTAIN":
+        assert snapshot(after)[polyline.dxf.handle].get("segments") is None

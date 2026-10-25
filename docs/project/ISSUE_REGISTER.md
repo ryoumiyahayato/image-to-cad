@@ -67,3 +67,9 @@ No issue is marked resolved by P1A. Existing routing, structure, color, OCR and 
 - CAD-001/CAD-005/CAD-008 remain open for human acceptance. The new read-only rule pack detects controlled overflow and collateral edits on a real cell; it does not certify the production output or override earlier user UAT.
 
 Evidence and precise boundaries: [drafting-rule report](../../tools/drafting_rules/REPORT_ZH.md). No production fix or follow-on phase is authorized by this note.
+
+### 0.1.1 follow-up — 2026-10-25
+
+- KP-002 partly resolved (official-source observation): SAMR detail pages now load; GB/T 10609.1-2008 all five public preview pages were read and clause 3.1 verified. GB/T 14691-1993 remains metadata-only because the official source withholds adopted-standard text for copyright. Prior proxy denial remains historical evidence, not the current SAMR status.
+- KP-003 verified (code/automated, synthetic DXF): old table parity compared LWPOLYLINE local OCS numbers against world-coordinate source segments and falsely passed a mirrored rule. Version 0.1.1 uses ezdxf WCS vertices and abstains for out-of-plane geometry. Four coordinate controls pass; old/new reports use the exact same saved synthetic DXF. No claim that this defect occurred in W02.
+- KP-001 and the human UAT issues remain open; W02 still has five abstentions. Evidence in `tools/drafting_rules/evidence/v0.1.1/` supplements, rather than replaces, the original reports.

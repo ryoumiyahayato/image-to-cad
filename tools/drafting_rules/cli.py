@@ -36,10 +36,10 @@ def load_pack(path=DATA / "manifest.json"):
     for rule in pack["rules"]:
         if not all(s in sources for s in rule["sources"]):
             raise ValueError("Unresolved rule source")
-        if rule["state"] == "IMPLEMENTED" and rule["classification"] == "OFFICIAL_STANDARD":
+        if rule["classification"] == "OFFICIAL_STANDARD":
             if not all(sources[s].get("verified_full_text") and sources[s].get("edition")
                        and sources[s].get("clause") for s in rule["sources"]):
-                raise ValueError("Executable standard requires verified edition and clause")
+                raise ValueError("Official standard rule requires verified edition and clause")
     required = {"editable-text", "cell-fit", "source-glyph-exit", "background-protection",
                 "table-line-parity", "edit-isolation"}
     if {r["id"] for r in pack["rules"] if r["state"] == "IMPLEMENTED"} != required:
