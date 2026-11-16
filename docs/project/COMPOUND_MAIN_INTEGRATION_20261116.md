@@ -28,10 +28,12 @@ generators are **not** installed in this application branch.
   content, retained interfaces, continuous ink/paper correspondence and native
   ink/paper correspondence remain mandatory. Corrected square-cap bounds and
   unnormalized endpoint-plane comparisons add no center-state tolerance.
-- Actual partial members use ordinary LINE or open LWPOLYLINE, with exact
-  residual native-cell HATCH and full hidden source backups. The record states
-  that this is a partial representation, with no whole-object movement or
-  electrical-connection claim.
+- The normal wrapper currently proposes short straight parts with exactly two
+  endpoints and emits LINE. The exporter separately supports open LWPOLYLINE
+  under its explicit long-part contract; that does not establish curved
+  recovery through this wrapper. Both retain exact residual native-cell HATCH
+  and full hidden source backups. This is a partial representation, with no
+  whole-object movement or electrical-connection claim.
 - The normal wrapper validates the entire record before retiring source and
   checks contact against previously accepted parents.
 
