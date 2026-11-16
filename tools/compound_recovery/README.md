@@ -42,16 +42,43 @@ Neither failed method entered the prior 49 controls or A2. Complete distinctions
 frozen evidence digests and the separate compatibility repair are recorded in
 [`compound_source_continuation_20261116.md`](../../docs/research/compound_source_continuation_20261116.md).
 
-The subsequent frozen three-parameter global-circle proposal passed all 12
-curve-control and 98 prior-control evaluations under independent review. Its
-complete original 24-parent A2 plus historical-parent queue then returned zero
-candidates in all 50 calls, with no source retirement or runtime exception.
-No real circle solver was reached: source eligibility or initial source-plane
-construction stopped the proposals. This does not prove global infeasibility,
-and it provides no real-page editing gain. The next separate proposal studies
-two globally coupled straight-line parameters constrained by original black and
-white source centers. Neither these research methods nor their saved control
-outputs have been registered for production export.
+The frozen three-parameter global-circle proposal passed all 12 curve-control
+and 98 prior-control evaluations under independent review. Its complete
+original 24-parent A2 plus historical-parent queue returned zero candidates in
+all 50 calls, with no source retirement, runtime exception or circle solver call.
+
+The subsequent two-parameter global-LINE composite also passed all 12 and 98
+independent control evaluations. Its new LINE branch made 38 control solver
+calls and added 26 control LINEs. The original producer prior-control report
+remains **96 PASS / 2 FAIL**: both false failures compared a fallback source in
+the wrong coordinate domain after deliberate registration errors were correctly
+rejected. A separate independently reviewed read-only correction checks all
+98 saved results, preserves the original FAIL report and reruns no method.
+
+The complete real queue still produced **zero candidates, zero source
+retirement and zero exceptions in 50 calls**. Twenty LINE solver calls made
+7,114 geometry-valid constraint evaluations but did not satisfy the complete
+original black/white constraints; none reached new-LINE terminal trials or the
+final nine-style gate. All 52 frozen dependencies remained unchanged. Control
+recovery is not real-page editing gain.
+
+A separate exact-integer diagnosis certified all 20 saved complete mandatory
+black domains: each black-center convex hull contains a true original white
+center. Independent construction and per-certificate integer cross-checks
+passed. These are 8 parents, 12 parent-owner identities and 19 distinct domains
+from one scan, not 20 independent drawings. The proof excludes a single convex
+pen covering each complete fixed domain while avoiding that white center; it
+does not exclude smaller source parts, retained residue or non-convex curves.
+
+The next source-only presegmentation proposal is **design only**. It has not
+been implemented or evaluated on new controls or A2. Source-defined conflicts
+and their guards would remain visible as exact source-cell residue; any local
+part must still satisfy the existing 2 mm, 12-section, aspect-8, fixed-width,
+ownership, interface and nine-style gates. Failed-fit coordinates, reference
+solutions and symbol semantics cannot choose its source intervals. None of the
+global-circle, global-LINE or presegmentation research has been registered for
+production export. Aggregate evidence and integration boundaries are recorded
+in the continuation document linked above.
 
 ## Representation and permission
 
