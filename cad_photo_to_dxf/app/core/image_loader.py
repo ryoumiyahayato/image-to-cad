@@ -1,14 +1,49 @@
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
 import numpy as np
 
-SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".pdf"}
+SUPPORTED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".pdf"}
 DEFAULT_PDF_DPI = 300
 MAX_PDF_RENDER_PIXELS = 80_000_000
+MM_PER_PDF_POINT = 25.4 / 72
+
+
+@dataclass(frozen=True)
+class PdfRender:
+    size_px: tuple[int, int]
+    page_size_mm: tuple[float, float]
+    rotation: int
+    requested_dpi: float
+    render_dpi: float
+
+
+def effective_pdf_dpi(page_size_mm: tuple[float, float], requested_dpi: float) -> float:
+    """Limit the actual rounded bitmap, not just its continuous area."""
+    width, height = (value / 25.4 for value in page_size_mm)
+    if any(not math.isfinite(value) or value <= 0 for value in (width, height, requested_dpi)):
+        raise ValueError("PDF page dimensions and DPI must be positive and finite")
+
+    def fits(dpi: float) -> bool:
+        return math.ceil(width * dpi) * math.ceil(height * dpi) <= MAX_PDF_RENDER_PIXELS
+
+    if fits(requested_dpi):
+        return float(requested_dpi)
+    lo, hi = 0., min(requested_dpi, math.sqrt(MAX_PDF_RENDER_PIXELS / (width * height)))
+    if fits(hi):
+        return hi * (1 - 1e-12)
+    for _ in range(48):
+        middle = (lo + hi) / 2
+        if fits(middle):
+            lo = middle
+        else:
+            hi = middle
+    # Keep ceil() on the same side of an integer after the point/DPI conversion.
+    return lo * (1 - 1e-12)
 
 
 def bounded_pdf_dpi(
@@ -29,6 +64,10 @@ def bounded_pdf_dpi(
     pixel_limit = max(512, int(max_dimension_px))
     bounded = math.floor((pixel_limit - 8) * 25.4 / longest_mm)
     return max(lower_bound, min(requested, int(bounded)))
+
+
+def processing_pdf_dpi(page_size_mm: tuple[float, float]) -> int:
+    return bounded_pdf_dpi(page_size_mm, preferred_dpi=240, max_dimension_px=4800)
 
 
 def pdf_page_count(path: str | Path) -> int:
@@ -74,18 +113,18 @@ def pdf_page_size_mm(path: str | Path, page_index: int) -> tuple[float, float]:
             page.close()
     finally:
         document.close()
-    factor = 25.4 / 72.0
-    return float(width_points) * factor, float(height_points) * factor
+    return width_points * MM_PER_PDF_POINT, height_points * MM_PER_PDF_POINT
 
 
 def _load_pdf_page(
     file_path: Path,
     page_index: int,
-    pdf_dpi: int,
+    pdf_dpi: float,
     *,
     grayscale: bool = False,
     pdf_geometry_sink: list | None = None,
     pdf_text_sink: list | None = None,
+    pdf_render_sink: list[PdfRender] | None = None,
 ) -> np.ndarray:
     if pdf_dpi < 72 or pdf_dpi > 1200:
         raise ValueError("PDF 渲染 DPI 必须在 72 到 1200 之间")
@@ -102,19 +141,24 @@ def _load_pdf_page(
         page = document[page_index]
         try:
             width_points, height_points = page.get_size()
-            scale = float(pdf_dpi) / 72.0
-            estimated_pixels = width_points * height_points * scale * scale
-            if estimated_pixels > MAX_PDF_RENDER_PIXELS:
-                scale *= math.sqrt(MAX_PDF_RENDER_PIXELS / estimated_pixels)
+            paper_size = (width_points * MM_PER_PDF_POINT, height_points * MM_PER_PDF_POINT)
+            render_dpi = effective_pdf_dpi(paper_size, pdf_dpi)
+            scale = render_dpi / 72.0
             bitmap = page.render(scale=scale, grayscale=grayscale)
             try:
                 pil_image = bitmap.to_pil().convert("L" if grayscale else "RGB")
                 rendered = np.asarray(pil_image, dtype=np.uint8)
+                if pdf_render_sink is not None:
+                    pdf_render_sink.append(PdfRender(
+                        (bitmap.width, bitmap.height), paper_size, page.get_rotation(),
+                        float(pdf_dpi), render_dpi,
+                    ))
                 if pdf_geometry_sink is not None:
                     from app.geometry.pdf_arc_evidence import (
                         PdfGeometryEvidence,
                         extract_pdf_arc_evidence,
                         pdf_geometry_binding,
+                        bitmap_page_mapping,
                     )
 
                     gray = (
@@ -124,14 +168,14 @@ def _load_pdf_page(
                     )
                     try:
                         evidence = extract_pdf_arc_evidence(
-                            file_path, page_index, page, bitmap, gray, scale, pdf_dpi
+                            file_path, page_index, page, bitmap, gray, scale, render_dpi
                         )
                     except Exception as exc:
                         # Optional evidence failure never invalidates a readable page.
                         evidence = PdfGeometryEvidence(
-                            pdf_geometry_binding(file_path, page_index, pdf_dpi),
+                            pdf_geometry_binding(file_path, page_index, render_dpi),
                             (gray.shape[1], gray.shape[0]),
-                            (),
+                            bitmap_page_mapping(page, bitmap)[0],
                             (),
                             (
                                 {
@@ -179,7 +223,7 @@ def _load_pdf_page(
                             bitmap,
                             gray,
                             scale,
-                            pdf_dpi,
+                            render_dpi,
                             include_display_rows=True,
                         )
                     except Exception as exc:
@@ -207,10 +251,11 @@ def load_image(
     path: str | Path,
     *,
     page_index: int = 0,
-    pdf_dpi: int = DEFAULT_PDF_DPI,
+    pdf_dpi: float = DEFAULT_PDF_DPI,
     grayscale: bool = False,
     pdf_geometry_sink: list | None = None,
     pdf_text_sink: list | None = None,
+    pdf_render_sink: list[PdfRender] | None = None,
 ) -> np.ndarray:
     """Load a raster image or render one page of a scanned PDF.
 
@@ -232,6 +277,7 @@ def load_image(
             grayscale=grayscale,
             pdf_geometry_sink=pdf_geometry_sink,
             pdf_text_sink=pdf_text_sink,
+            pdf_render_sink=pdf_render_sink,
         )
 
     data = np.fromfile(str(file_path), dtype=np.uint8)

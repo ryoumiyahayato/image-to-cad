@@ -55,7 +55,10 @@ def test_scan_artifact_filter_removes_tape_tear_and_sparse_flight() -> None:
     gray, binary = _synthetic_damaged_scan()
     paths = trace_binary(binary)
 
-    result = suppress_scan_artifact_traces(gray, binary, paths)
+    # This fixture describes a full physical paper page, not a drawing crop.
+    result = suppress_scan_artifact_traces(
+        gray, binary, paths, paper_boundary_verified=True
+    )
 
     assert result.removed_root_count >= 3
     assert result.binary[45, 110] == 255
@@ -89,7 +92,9 @@ def test_scan_artifact_filter_removes_corner_tape_joined_to_page_border() -> Non
     cv2.line(binary, (30, 135), (125, 28), 0, 5)
 
     paths = trace_binary(binary)
-    result = suppress_scan_artifact_traces(gray, binary, paths)
+    result = suppress_scan_artifact_traces(
+        gray, binary, paths, paper_boundary_verified=True
+    )
 
     assert result.removed_root_count >= 1
     assert result.binary[70, 105] == 255
@@ -146,12 +151,35 @@ def test_direct_damage_wins_over_structural_provenance() -> None:
         gray,
         binary,
         paths,
+        paper_boundary_verified=True,
         source_support_lifecycle=lifecycle,
     )
 
-    plain = suppress_scan_artifact_traces(gray, binary, paths)
+    plain = suppress_scan_artifact_traces(
+        gray, binary, paths, paper_boundary_verified=True
+    )
     assert np.array_equal(result.binary, plain.binary)
 
     assert result.binary[45, 110] == 255
     assert result.binary[360, 432] == 255
     assert result.binary[180, 350] == 255
+
+
+def test_unverified_crop_keeps_cut_strokes_on_all_four_edges() -> None:
+    gray = np.full((100, 110), 235, dtype=np.uint8)
+    binary = np.full_like(gray, 255)
+    for image, tone in ((gray, 35), (binary, 0)):
+        for start, end in (
+            ((0, 8), (22, 8)), ((88, 91), (109, 91)),
+            ((8, 0), (8, 22)), ((101, 78), (101, 99)),
+        ):
+            cv2.line(image, start, end, tone, 3)
+    result = suppress_scan_artifact_traces(gray, binary, trace_binary(binary))
+    assert np.array_equal(result.binary, binary)
+
+
+def test_unverified_extent_still_runs_non_edge_artifact_rejection() -> None:
+    gray, binary = _synthetic_damaged_scan()
+    result = suppress_scan_artifact_traces(gray, binary, trace_binary(binary))
+    assert result.binary[180, 350] == 255  # Interior sparse flight.
+    assert result.binary[130, 500] == 0  # Independent structural rule.

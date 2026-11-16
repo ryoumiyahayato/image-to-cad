@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import cv2
 import numpy as np
+import pytest
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.geometry.content_ownership import arbitrate_content_candidates, binary_from_foreground, build_text_semantic_ownership, finalize_content_ownership, graphic_source_mask, partition_content
@@ -9,6 +12,68 @@ from app.geometry.line_detect import LineSegment
 from app.ocr.logo_detection import LogoRegion
 from app.ocr.signature_overlay import mark_graphic_texts
 from app.ocr.text_output_contract import decide_text_output
+
+
+@pytest.mark.parametrize("outside", [
+    (8, 2), (2, 6), (8, 6), (-1, 2), (2, -1), (-.1, 2),
+    (2, float("nan")), (float("inf"), 2), (2**40, 2),
+])
+def test_retained_rule_contours_never_index_outside_pixel_domain(outside):
+    from app.core.trace_types import TracePath
+    from app.geometry.content_ownership import retained_rule_contours
+
+    retained = np.full((6, 8), 255, np.uint8)
+    points = ((1, 1), (4, 1), outside, (1, 4))
+    path = TracePath(points, None, 0, 0)
+    assert retained_rule_contours((path,), retained) == ()
+    assert path.points == points
+
+
+def test_retained_rule_contours_keep_last_pixel_and_check_interior():
+    from app.core.trace_types import TracePath
+    from app.geometry.content_ownership import retained_rule_contours
+
+    retained = np.full((6, 8), 255, np.uint8)
+    path = TracePath(((0, 0), (7, 0), (7, 5), (0, 5)), None, 0, 0)
+    assert retained_rule_contours((path,), retained) == (path.points,)
+    retained[2, 3] = 0
+    assert retained_rule_contours((path,), retained) == ()
+    assert retained_rule_contours((path,), np.zeros((0, 0), np.uint8)) == ()
+
+
+@pytest.mark.parametrize("contact", ["separate", "touching", "shared-outside-band", "no-seed"])
+def test_line_tolerance_islands_require_independent_source_support(contact):
+    binary = np.full((90, 160), 255, np.uint8)
+    binary[40, 10:151] = 0
+    binary[42:56, 70:82] = 0
+    if contact == "touching":
+        binary[41, 75] = 0
+    elif contact == "shared-outside-band":
+        # Connectivity outside the local line band is still shared source.
+        binary[40:61, 150] = 0
+        binary[60, 75:151] = 0
+        binary[55:61, 75] = 0
+    elif contact == "no-seed":
+        binary[40, :] = 255
+    line = LineSegment(10, 40, 150, 40, width=2)
+    text = TextCandidate(
+        "A", (69, 42, 14, 15), 0.99, "text_candidate", source="test",
+        approved=True, replacement_safe=True,
+    )
+    owner = partition_content(binary, lines=(line,), texts=(text,), signatures=())
+    result = arbitrate_content_candidates(
+        binary, lines=(line,), texts=(text,), logos=(), signatures=(), ownership=owner,
+    )
+    owner.assert_valid()
+    assert result.lines == (line,)
+    if contact == "separate":
+        assert not np.any(owner.line[42:56, 70:82])
+        assert result.texts[0].replacement_safe
+    else:
+        assert np.all(owner.line[42, 70:82])
+        assert not result.texts[0].replacement_safe
+    if contact != "no-seed":
+        assert np.all(owner.line[40, 10:151])
 
 
 def test_every_source_pixel_gets_exactly_one_owner() -> None:
@@ -349,6 +414,63 @@ def test_true_structure_line_downgrades_overlapping_editable_text() -> None:
         (semantics.source_outline > 0) & (final.line > 0)
     )
     assert semantics.candidates[0]["source_pixels_conserved"]
+
+
+@pytest.mark.parametrize("blocker", [
+    None, "text", "bbox", "quad", "character_boxes", "source",
+    "protected-core", "missing-proof", "never-owned",
+])
+def test_verified_members_survive_only_with_matching_proof_and_exclusive_source(blocker):
+    from app.geometry.content_ownership import preserve_verified_text_members
+    from app.ocr.ocr_layout import VerifiedCellTextSource
+
+    binary = np.full((80, 140), 255, np.uint8)
+    cv2.line(binary, (5, 20), (130, 20), 0, 1)
+    binary[42:54, 42:66] = 0
+    text = TextCandidate(
+        "AB", (30, 18, 70, 42), 0.99, "text_candidate", source="verified-cell",
+        approved=True, replacement_safe=True,
+        quad=((30, 18), (100, 18), (100, 60), (30, 60)),
+        character_boxes=((30, 18, 70, 42),),
+    )
+    line = LineSegment(5, 20, 130, 20, width=1)
+    previous = partition_content(binary, lines=(line,), texts=(text,), signatures=())
+    arbitrated = arbitrate_content_candidates(
+        binary, lines=(line,), texts=(text,), logos=(), signatures=(), ownership=previous,
+    )
+    current = arbitrated.texts[0]
+    assert not current.replacement_safe
+    ownership = finalize_content_ownership(binary, candidates=previous, arbitrated=arbitrated)
+    assert ownership.graphic[45, 45] and previous.text[45, 45]
+    core = np.zeros_like(binary)
+    core[42:54, 42:66] = 255
+    proof = VerifiedCellTextSource((0, 0, 140, 80), core, (text,), (core,))
+    if blocker in {"text", "bbox", "quad", "character_boxes", "source"}:
+        current = replace(current, **{blocker: {
+            "text": "AC", "bbox": (31, 18, 70, 42),
+            "quad": ((31, 18), (101, 18), (101, 60), (31, 60)),
+            "character_boxes": ((31, 18, 70, 42),), "source": "other-source",
+        }[blocker]})
+    if blocker == "protected-core":
+        owned_line, graphic = ownership.line.copy(), ownership.graphic.copy()
+        owned_line[45, 45], graphic[45, 45] = 255, 0
+        ownership = replace(ownership, line=owned_line, graphic=graphic)
+    if blocker == "never-owned":
+        previous = replace(previous, text=np.zeros_like(binary),
+                           graphic=cv2.max(previous.graphic, previous.text))
+    result = preserve_verified_text_members(
+        binary, (current,), () if blocker == "missing-proof" else (proof,),
+        previous=previous, ownership=ownership,
+    )
+    result.assert_valid()
+    assert np.array_equal(result.line, ownership.line)
+    assert np.array_equal(result.residual, ownership.residual)
+    if blocker is None:
+        assert np.array_equal(result.text, previous.text)
+        assert not result.graphic[45, 45]
+    else:
+        assert np.array_equal(result.text, ownership.text)
+        assert np.array_equal(result.graphic, ownership.graphic)
 
 
 def test_logo_text_conflict_preserves_only_exact_overlap_as_residual() -> None:

@@ -17,9 +17,9 @@ import numpy as np
 from jsonschema import ValidationError
 
 from tools.drafting_rules.cli import read_json, validate_files
-from tools.drafting_rules.dxf_adapter import digest, sha256, snapshot
+from tools.drafting_rules.dxf_adapter import digest, sha256, snapshot, solid_hatch_loops
 
-ADAPTER_VERSION = "verified-source-carriers-v1"
+ADAPTER_VERSION = "verified-source-carriers-v2-solid-hatch"
 
 
 class DocumentView:
@@ -52,6 +52,8 @@ def renderable(entity):
     if kind == "LWPOLYLINE":
         return (not d.elevation and tuple(d.extrusion) == (0, 0, 1)
                 and not d.const_width and not any(a or b or c for _, _, a, b, c in entity.get_points()))
+    if kind == "HATCH":
+        return solid_hatch_loops(entity) is not None
     return False  # Never let the old preview's local OCS renderer undo WCS safety.
 
 
@@ -61,6 +63,21 @@ def may_cover(entity, carrier, doc):
     An envelope overlap without rendered ink is uncertain, never evidence of
     absence. This deliberately sacrifices recall for unsupported fine geometry.
     """
+    if entity.dxftype() == "HATCH":
+        loops = solid_hatch_loops(entity)
+        if loops is None:
+            return True
+        # Cover the entire filled area, not only its boundary segments. Loop
+        # bounding rectangles deliberately over-approximate concavities/holes;
+        # a subpixel overlap remains ABSTAIN even if the preview misses it.
+        height, canvas_width = carrier.shape
+        for loop in loops:
+            xs, ys = zip(*loop)
+            x0, x1 = max(0, floor(min(xs) - 1)), min(canvas_width, ceil(max(xs) + 1))
+            y0, y1 = max(0, floor(height - max(ys) - 1)), min(height, ceil(height - min(ys) + 1))
+            if x1 > x0 and y1 > y0 and np.any(carrier[y0:y1, x0:x1]):
+                return True
+        return False
     if entity.dxftype() == "LINE":
         points = [(entity.dxf.start.x, entity.dxf.start.y), (entity.dxf.end.x, entity.dxf.end.y)]
     else:

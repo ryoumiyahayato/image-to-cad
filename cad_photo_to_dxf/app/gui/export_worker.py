@@ -165,20 +165,8 @@ def _start_single_export(window: Any) -> None:
         getattr(window, "include_underlay_checkbox", None)
         and window.include_underlay_checkbox.isChecked()
     )
-    multiplier_getter = getattr(window, "_export_drawing_multiplier", None)
-    drawing_multiplier = (
-        float(project.manifest["export_settings"]["drawing_multiplier"])
-        if project is not None
-        else float(
-            multiplier_getter()
-            if callable(multiplier_getter)
-            else window._drawing_scale()
-        )
-    )
-    selected_ratio = float(window._drawing_scale())
-    explicit_model_calibration = bool(
-        getattr(window, "_has_explicit_model_calibration", lambda: False)()
-    )
+    scale = window._export_scale_decision()
+    drawing_multiplier = scale.multiplier
     calibration = project.calibration if project is not None else window.calibration
     raster_image = window.corrected_image.copy() if include_underlay else None
     source_path = Path(window.current_path) if window.current_path is not None else None
@@ -211,11 +199,13 @@ def _start_single_export(window: Any) -> None:
         )
         if dwg_path is not None:
             result = replace(result, dwg_path=dwg_path, output_format="DWG")
-        scale_description = (
-            "已知长度两点标定"
-            if explicit_model_calibration
-            else f"1:{int(selected_ratio)}"
-        )
+        coordinate_space = scale.coordinate_space
+        scale_description = {
+            "pixel": "未标定",
+            "paper_mm": "纸面尺寸",
+            "model_mm": "已知长度两点标定" if drawing_multiplier == 1. else f"1:{int(drawing_multiplier)}",
+        }[coordinate_space]
+        vertical_pitch = getattr(calibration, "vertical_mm_per_pixel", None)
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
@@ -252,7 +242,13 @@ def _start_single_export(window: Any) -> None:
             },
             "scale_source": scale_description,
             "drawing_multiplier": drawing_multiplier,
-            "model_mm_per_pixel": result.mm_per_pixel,
+            "coordinate_space": coordinate_space,
+            "scale_notes": [asdict(note) for note in scale.notes],
+            "model_mm_per_pixel": result.mm_per_pixel if coordinate_space == "model_mm" else None,
+            "output_units_per_pixel_xy": (
+                result.mm_per_pixel,
+                vertical_pitch * drawing_multiplier if vertical_pitch else result.mm_per_pixel,
+            ),
             "editable_entity_strategy": {
                 "page_block_wrappers": False,
                 "groups": False,
@@ -279,6 +275,7 @@ def _start_single_export(window: Any) -> None:
                 "dwg_path": str(result.dwg_path) if result.dwg_path else None,
             },
             "warnings": [
+                *([scale.warning] if scale.warning else []),
                 "达到现有 OCR 内容合同的文字均作为可编辑 TEXT 导出。",
                 "无法安全抑制的源字形保留在默认关闭的 SOURCE_TEXT_OUTLINE，低可靠文字保留在 TEXT_FALLBACK_OUTLINE。",
                 "标题栏签名作为透明顶层图像导出，并与边框分层。",
@@ -298,7 +295,7 @@ def _start_single_export(window: Any) -> None:
             scale_description=scale_description,
             text_count=result.text_count,
             arc_count=result.arc_count,
-            signature_count=len(result.signature_paths),
+            signature_count=result.signature_count,
             ocr_candidate_count=result.ocr_candidate_count,
             fallback_text_count=result.fallback_text_count,
             source_text_outline_count=(result.source_text_outline_count),
@@ -323,6 +320,7 @@ def _start_single_export(window: Any) -> None:
             f"签名图像：{len(result.signature_paths)}",
             f"图形顶点：{result.trace_vertex_count}",
             f"输出比例：{completion.scale_description}",
+            *([scale.warning] if scale.warning else []),
             "文字方式：每个识别文字行一个可编辑 TEXT",
             f"处理报告：{completion.report_path}",
         ]

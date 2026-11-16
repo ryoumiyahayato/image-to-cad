@@ -50,6 +50,61 @@ def test_trace_binary_does_not_drop_nested_holes() -> None:
     assert verify_trace_paths(binary, paths).exact
 
 
+def test_degenerate_raster_runs_keep_exact_source_cells_in_saved_dxf(tmp_path) -> None:
+    import ezdxf
+    from app.export.trace_single_export import export_exact_trace_dxf
+
+    binary = np.full((24, 32), 255, dtype=np.uint8)
+    binary[3, 4] = 0
+    binary[12, 17:20] = 0
+    binary[[6, 7, 8], [8, 9, 10]] = 0
+    paths = trace_binary(binary)
+    assert sorted(len(path.points) for path in paths) == [1, 2, 2]
+    assert verify_trace_paths(binary, paths).exact
+
+    saved = tmp_path / "raster-runs.dxf"
+    export_exact_trace_dxf(paths, saved, binary.shape[0])
+    doc = ezdxf.readfile(saved)
+    layer = doc.layers.get("UNRESOLVED_RASTER_INK")
+    assert not layer.is_off() and not layer.is_frozen()
+    hatches = tuple(doc.modelspace().query("HATCH"))
+    assert len(hatches) == 3
+    assert not doc.modelspace().query("LWPOLYLINE")
+    seen_cells = set()
+    for hatch in hatches:
+        tags = [tag.value for tag in hatch.get_xdata("RASTER_INK_SOURCE")]
+        assert tags[0] == "UNRESOLVED"
+        for boundary in hatch.paths:
+            xs, ys, _ = zip(*boundary.vertices)
+            for y in range(binary.shape[0] - int(max(ys)), binary.shape[0] - int(min(ys))):
+                for x in range(int(min(xs)), int(max(xs))):
+                    seen_cells.add((y, x))
+    assert seen_cells == set(map(tuple, np.argwhere(binary == 0)))
+
+
+def test_raster_point_with_committed_symbol_owner_uses_its_saved_layer(tmp_path) -> None:
+    import ezdxf
+    from types import SimpleNamespace
+    from app.export.trace_dxf_entities import add_exact_trace_entities
+
+    binary = np.full((8, 8), 255, dtype=np.uint8)
+    binary[2, 4] = 0
+    doc = ezdxf.new()
+    doc.layers.add("ENGINEERING_SYMBOL")
+    add_exact_trace_entities(
+        doc.modelspace(), trace_binary(binary), transform=lambda x, y: (x, y),
+        bound_members={0: SimpleNamespace(layer="ENGINEERING_SYMBOL", emit_mode="EMIT_SELF")},
+    )
+    saved = tmp_path / "owned-point.dxf"
+    doc.saveas(saved)
+
+    point = ezdxf.readfile(saved).modelspace().query("HATCH").first
+    assert point.dxf.layer == "ENGINEERING_SYMBOL"
+    assert [t.value for t in point.get_xdata("RASTER_INK_SOURCE")] == [
+        "ASSIGNED_SOURCE", 4, 2, 4, 2,
+    ]
+
+
 def test_collinear_compression_reduces_vertices_without_pixel_difference() -> None:
     binary = np.full((220, 420), 255, dtype=np.uint8)
     cv2.rectangle(binary, (10, 10), (410, 210), 0, 3)

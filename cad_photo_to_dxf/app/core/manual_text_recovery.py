@@ -555,7 +555,10 @@ def xdata_values(project, record):
     ]
 
 
-def emit(review, doc, modelspace, transform, names, guard):
+def emit(review, doc, modelspace, transform, names, guard, *, source_transform=None):
+    # Text placement uses pixel edges; raster contour vertices use pixel centers.
+    # Keep both explicit rather than widening the complete-boundary matcher.
+    source_transform = source_transform or transform
     project = review._project
     layer = names["OCR_TEXT"] + "_MANUAL"
     if layer not in doc.layers:
@@ -601,7 +604,7 @@ def emit(review, doc, modelspace, transform, names, guard):
         if r["source_transfer"] == "HIDDEN_FROZEN_BACKUP":
             # Match the COMPLETE ordered boundary. Never select by bounding box.
             source = r["evidence"]["contours"][0]
-            target = [transform(x, y) for x, y in source["points"]]
+            target = [source_transform(x, y) for x, y in source["points"]]
             matches = []
             for other in modelspace.query("LWPOLYLINE"):
                 if other.dxf.layer != names["TRACE_TEXT_SYMBOL"]:

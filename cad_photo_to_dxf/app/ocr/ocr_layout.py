@@ -8,7 +8,7 @@ from unicodedata import east_asian_width
 import cv2
 import numpy as np
 
-from app.ocr.auxiliary_recognition import TextCandidate
+from app.ocr.auxiliary_recognition import TextCandidate, TextObservation
 from app.geometry.structural_roi import verified_structural_rule_masks
 
 
@@ -658,6 +658,7 @@ def constrain_texts_to_table_cells(
     *,
     verified_sources: list[VerifiedCellTextSource] | None = None,
     display_cells: dict | None = None,
+    display_row_cells: dict | None = None,
 ) -> tuple[TextCandidate, ...]:
     """Clip OCR placement boxes to enclosing ruled cells when all sides exist."""
 
@@ -669,7 +670,14 @@ def constrain_texts_to_table_cells(
 
     constrained: list[TextCandidate] = []
     cell_groups: dict[tuple[int, int, int, int], list[int]] = {}
-    for item in texts:
+    for index, item in enumerate(texts):
+        if item.pre_cell_observation is None:
+            try:
+                observation = TextObservation.capture(item, index)
+            except Exception:
+                # Observation bookkeeping cannot fail the OCR/business result.
+                observation = None
+            item = replace(item, pre_cell_observation=observation)
         if item.kind not in {"text_candidate", "dimension_text_candidate"}:
             constrained.append(item)
             continue
@@ -743,21 +751,23 @@ def constrain_texts_to_table_cells(
             (float(new_right), float(new_bottom)),
             (float(new_left), float(new_bottom)),
         )
-        if item.quad and all(
-            abs(item.quad[a][axis] - item.quad[b][axis]) <= 0.5
-            for a, b, axis in ((0, 1, 1), (2, 3, 1), (0, 3, 0), (1, 2, 0))
+        if item.quad and len(item.quad) == 4 and all(
+            min(abs(item.quad[a][0] - item.quad[b][0]),
+                abs(item.quad[a][1] - item.quad[b][1])) <= 0.5
+            for a, b in ((0, 1), (1, 2), (2, 3), (3, 0))
         ):
-            left, top = max(new_left, item.quad[0][0]), max(new_top, item.quad[0][1])
-            right, bottom = (
-                min(new_right, item.quad[2][0]),
-                min(new_bottom, item.quad[2][1]),
-            )
+            xs, ys = zip(*item.quad)
+            left, top = max(new_left, min(xs)), max(new_top, min(ys))
+            right, bottom = min(new_right, max(xs)), min(new_bottom, max(ys))
             if right > left and bottom > top:
-                display_quad = (
-                    (float(left), float(top)),
-                    (float(right), float(top)),
-                    (float(right), float(bottom)),
-                    (float(left), float(bottom)),
+                # A quad's cyclic start is the observed reading basis. Cell
+                # clipping may shorten its extent, but must not reset 90/180/
+                # 270-degree text to horizontal. No direction is inferred here.
+                center_x, center_y = (min(xs)+max(xs))/2, (min(ys)+max(ys))/2
+                display_quad = tuple(
+                    (float(left if px < center_x else right),
+                     float(top if py < center_y else bottom))
+                    for px, py in item.quad
                 )
         clipped_character_boxes: list[tuple[int, int, int, int]] = []
         for box_x, box_y, box_width, box_height in item.character_boxes:
@@ -780,11 +790,23 @@ def constrain_texts_to_table_cells(
                 bbox=(new_left, new_top, new_width, new_height),
                 quad=display_quad,
                 character_boxes=tuple(clipped_character_boxes),
+                pre_cell_observation=(
+                    replace(item.pre_cell_observation,
+                            cell_clip_bbox=(new_left, new_top, new_width, new_height),
+                            cell_clip_quad=display_quad)
+                    if item.pre_cell_observation is not None
+                    and item.pre_cell_observation.cell_clip_bbox is None
+                    else item.pre_cell_observation
+                ),
                 review_note=(f"{item.review_note}；" if item.review_note else "")
                 + "文字位置已限制在检测到的表格单元格内",
             )
         )
     for cell, indexes in cell_groups.items():
+        if display_row_cells is not None:
+            display_row_cells[cell] = tuple(
+                (constrained[i].text, constrained[i].bbox) for i in indexes
+            )
         restored = _restore_cell_text_rows(
             binary,
             tuple(constrained[index] for index in indexes),
@@ -880,6 +902,71 @@ def _restore_overlapping_printed_rows(
         for value, item in zip(indexes, restored, strict=True):
             result[value] = item
     return tuple(result)
+
+
+def _restore_verified_character_tops(
+    item: TextCandidate,
+    gray: np.ndarray,
+    core: np.ndarray,
+    bounds: tuple[int, int, int, int],
+) -> TextCandidate:
+    """Recover filtered glyph tips from independently verified row members.
+
+    Require one complete, interior strong component per CJK character, with a
+    unique existing horizontal scope and contact with its existing body. Only
+    the observed top changes. Detached or foreign ink in the added footprint
+    prevents recovery; no line-removal or replacement-safety rule is relaxed.
+    """
+    content = "".join(item.text.split())
+    if (not content or not all("\u4e00" <= c <= "\u9fff" for c in content)
+            or len(item.character_boxes) != len(content)):
+        return item
+    from app.geometry.content_ownership import _candidate_region_mask
+
+    left, top, _right, _bottom = bounds
+    local = offset_candidate(item, offset_x=-left, offset_y=-top)
+    boxes = list(local.character_boxes)
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        (core > 0).astype(np.uint8), connectivity=8,
+    )
+    if count - 1 != len(boxes):
+        return item
+    owners = {}
+    for label in range(1, count):
+        x, y, width, height, _area = map(int, stats[label])
+        matches = [i for i, (bx, _by, bw, _bh) in enumerate(boxes)
+                   if x < bx + bw and x + width > bx]
+        if (len(matches) != 1 or x == 0 or y == 0
+                or x + width == core.shape[1] or y + height == core.shape[0]):
+            return item
+        index = matches[0]
+        bx, by, bw, bh = boxes[index]
+        if (index in owners or x < bx or x + width > bx + bw
+                or y + height > by + bh
+                or not np.any(labels[max(0, by):by + bh, max(0, bx):bx + bw] == label)):
+            return item
+        owners[index] = label
+        new_top = min(by, y)
+        boxes[index] = (bx, new_top, bw, by + bh - new_top)
+    for index, (before, after) in enumerate(zip(local.character_boxes, boxes, strict=True)):
+        if before == after:
+            continue
+        old_region = _candidate_region_mask(replace(local, character_boxes=(before,)), core.shape)
+        new_region = _candidate_region_mask(replace(local, character_boxes=(after,)), core.shape)
+        added_ink = (new_region > 0) & (old_region == 0) & (gray < 255)
+        _, weak_labels = cv2.connectedComponents(
+            ((new_region > 0) & (gray < 255)).astype(np.uint8), connectivity=8,
+        )
+        for label in set(np.unique(weak_labels[added_ink])) - {0}:
+            member = weak_labels == label
+            if (not np.any(member & (labels == owners[index]))
+                    or np.any(member & (gray < 128) & (core == 0))):
+                return item
+    restored = tuple((x + left, y + top, w, h) for x, y, w, h in boxes)
+    if restored == item.character_boxes:
+        return item
+    return replace(item, character_boxes=restored,
+                   review_note=item.review_note + "；逐字上界已按完整行独立连通笔画恢复")
 
 
 def _restore_cell_text_rows(
@@ -1087,6 +1174,10 @@ def _restore_cell_text_rows(
         from app.ocr.text_output_contract import accepted_ocr_texts
 
         if len(accepted_ocr_texts(restored)) == len(restored):
+            restored = [
+                _restore_verified_character_tops(item, crop, row, cell)
+                for item, row in zip(restored, row_masks, strict=True)
+            ]
             core = np.where(
                 np.isin(labels, [label for group in owners for label in group]), 255, 0
             ).astype(np.uint8)

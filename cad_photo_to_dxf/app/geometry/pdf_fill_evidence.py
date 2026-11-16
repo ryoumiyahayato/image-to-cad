@@ -14,6 +14,7 @@ from app.core.native_fill import (
 )
 
 MAX_FILLS = 16
+MAX_PAGE_OBJECTS = 65_536
 MAX_LOCAL_PIXELS = 1_000_000
 MAX_TOTAL_PIXELS = 8_000_000
 
@@ -37,11 +38,11 @@ def extract_pdf_fills(path, page_index, page, bitmap, scale, dpi):
     mapping = (inverse[0, 0], inverse[1, 0], inverse[0, 1], inverse[1, 1], *offset)
     objects = []
     for obj in page.get_objects(max_depth=1):
-        if len(objects) >= 32768 or obj.type == raw.FPDF_PAGEOBJ_FORM:
+        if len(objects) >= MAX_PAGE_OBJECTS or obj.type == raw.FPDF_PAGEOBJ_FORM:
             return (), {"reason": "FILL_FORM_OR_OBJECT_BUDGET", "accepted": 0}
         objects.append(obj)
     rejected, accepted, facts = [], [], []
-    if len(objects) > 32768 or any(o.type == raw.FPDF_PAGEOBJ_FORM for o in objects):
+    if len(objects) > MAX_PAGE_OBJECTS or any(o.type == raw.FPDF_PAGEOBJ_FORM for o in objects):
         return (), {"reason": "FILL_FORM_OR_OBJECT_BUDGET", "accepted": 0}
     states = []
     for obj in objects:
@@ -57,15 +58,61 @@ def extract_pdf_fills(path, page_index, page, bitmap, scale, dpi):
         finally:
             image.close()
 
-    def reference_polygon(points, rgba, crop):
-        """Independent unclipped geometry on the identical integer parent grid."""
+    reference_frame_verified = False
+
+    def reference_polygon(points, rgba, crop, matrix):
+        """Unclipped candidate geometry on the ORIGINAL physical PDF parent.
+
+        Integer bitmap dimensions divided by nominal scale are not page sizes:
+        PDFium's float page storage can ceil-render one extra row. Preserve the
+        actual page boxes/rotation, and map the candidate back through both
+        parent and object matrices rather than silently changing its grid.
+        """
+        nonlocal reference_frame_verified
         document = pdfium.PdfDocument.new()
-        reference = document.new_page(width / scale, height / scale)
+        reference = None
         shape = None
         try:
-            vertices = [
-                (float(x / scale), float((height - y) / scale)) for x, y in points
-            ]
+            media = page.get_mediabox(fallback_ok=False)
+            cropbox = page.get_cropbox(fallback_ok=False)
+            if media is None:
+                raise ValueError("FILL_REFERENCE_MEDIA_UNRESOLVED")
+            # PDFium's box helpers do not resolve inherited boxes. Native bbox
+            # does; use that effective crop when no explicit crop is readable,
+            # never the helper's invented ANSI-A fallback. Grid proof follows.
+            if cropbox is None:
+                cropbox = page.get_bbox()
+            if not all(np.isfinite(box).all() and box[2] > box[0]
+                       and box[3] > box[1] for box in (media, cropbox)):
+                raise ValueError("FILL_REFERENCE_BOX_UNRESOLVED")
+            reference = document.new_page(media[2] - media[0], media[3] - media[1])
+            reference.set_mediabox(*media)
+            reference.set_cropbox(*cropbox)
+            reference.set_rotation(page.get_rotation())
+            if (reference.get_size() != page.get_size()
+                    or reference.get_mediabox(fallback_ok=False) != media
+                    or reference.get_cropbox(fallback_ok=False) != cropbox
+                    or reference.get_rotation() != page.get_rotation()):
+                raise ValueError("FILL_REFERENCE_PARENT_CHANGED")
+            if not reference_frame_verified:
+                grid = reference.render(scale=scale)
+                try:
+                    if (grid.width, grid.height) != (width, height):
+                        raise ValueError("FILL_REFERENCE_PARENT_CHANGED")
+                    reference_pos = grid.get_posconv(reference)
+                    for xy in ((0, 0), (width, 0), (0, height)):
+                        if reference_pos.to_page(*xy) != pos.to_page(*xy):
+                            raise ValueError("FILL_REFERENCE_PARENT_CHANGED")
+                finally:
+                    grid.close()
+                reference_frame_verified = True
+            a, b, c, d, e, f = matrix.get()
+            linear = np.array(((a, c), (b, d)))
+            pdf_points = (basis @ np.asarray(points).T).T + origin
+            vertices = np.linalg.solve(linear, (pdf_points - (e, f)).T).T
+            roundtrip = (inverse @ (((linear @ vertices.T).T + (e, f)) - origin).T).T
+            if not np.allclose(roundtrip, points, atol=1e-7, rtol=0):
+                raise ValueError("FILL_REFERENCE_TRANSFORM_UNRESOLVED")
             shape = raw.FPDFPageObj_CreateNewPath(*vertices[0])
             if not shape:
                 raise ValueError("FILL_REFERENCE_PATH_UNAVAILABLE")
@@ -78,6 +125,7 @@ def extract_pdf_fills(path, page_index, page, bitmap, scale, dpi):
                 and raw.FPDFPath_SetDrawMode(shape, raw.FPDF_FILLMODE_WINDING, 0)
             ):
                 raise ValueError("FILL_REFERENCE_STYLE_UNAVAILABLE")
+            raw.FPDFPageObj_Transform(shape, *matrix.get())
             raw.FPDFPage_InsertObject(reference, shape)
             shape = None  # The temporary page now owns this object.
             image = reference.render(scale=scale, crop=crop)
@@ -88,7 +136,8 @@ def extract_pdf_fills(path, page_index, page, bitmap, scale, dpi):
         finally:
             if shape:
                 raw.FPDFPageObj_Destroy(shape)
-            reference.close()
+            if reference is not None:
+                reference.close()
             document.close()
 
     def switch(index=None, without=False):
@@ -219,7 +268,7 @@ def extract_pdf_fills(path, page_index, page, bitmap, scale, dpi):
                 only = render(crop)
                 switch(index, without=True)
                 without = render(crop)
-                reference = reference_polygon(points, rgba, crop)
+                reference = reference_polygon(points, rgba, crop, matrix)
                 if (
                     full.shape != (y1 - y0, x1 - x0, 3)
                     or only.shape != full.shape
@@ -334,22 +383,57 @@ def apply_pdf_fill_evidence(structure, evidence):
         return structure
     if any(f.page_to_pixel != tuple(evidence.page_to_pixel) for f in fills):
         raise ValueError("FILL_TRANSFORM_BINDING_MISMATCH")
+    from app.geometry.pdf_fill_ownership import qualify_pdf_fill_ownership
+
     existing = {f.object_id: f for f in structure.native_fills}
     for fill in fills:
-        if (
-            fill.source.document != evidence.binding["document"]
-            or fill.source.page_number != evidence.binding["page_number"]
-        ):
+        if (fill.source.document != evidence.binding["document"]
+                or fill.source.page_number != evidence.binding["page_number"]):
             raise ValueError("FILL_SOURCE_BINDING_MISMATCH")
         if fill.object_id in existing and existing[fill.object_id] != fill:
             raise ValueError("FILL_SOURCE_CHANGED")
+    new_fills = tuple(f for f in fills if f.object_id not in existing)
+    if not new_fills:
+        return structure  # Exact repeated application is idempotent.
+    evidence = replace(evidence, native_fills=new_fills)
+    # Existing native areas are fixed, not candidates to be eliminated by the
+    # largest-new-area policy. Also veto overlap with raster SOURCE_FILL using
+    # current final contour indexes after ARC remapping, never stale scan IDs.
+    occupied = []
+    for fill in structure.native_fills:
+        p = np.asarray(fill.points, dtype=float)
+        occupied.append((*p.min(axis=0), *p.max(axis=0)))
+    try:
+        records = structure.provenance.get("stroke_presentation", {}).get("fill_records", {})
+        for key in records:
+            index = int(key)
+            if not 0 <= index < len(structure.contours):
+                return structure
+            p = np.asarray(structure.contours[index].points, dtype=float)
+            if p.ndim != 2 or p.shape[1] != 2 or not np.isfinite(p).all():
+                return structure
+            occupied.append((*p.min(axis=0), *p.max(axis=0)))
+    except (AttributeError, TypeError, ValueError, IndexError):
+        return structure
+    qualified = qualify_pdf_fill_ownership(
+        evidence, texts=structure.texts,
+        protected_masks=(structure.editable_text_source_mask,
+                         structure.source_text_outline_mask,
+                         structure.uncertain_text_outline_mask),
+        protected_regions=(*structure.logos, *structure.signatures),
+        occupied_boxes=occupied, stage="final-export",
+    )
+    fills = qualified.native_fills
+    if not fills:
+        return structure
+    for fill in fills:
         existing[fill.object_id] = fill
     return replace(
         structure,
         native_fills=tuple(existing.values()),
         provenance={
             **structure.provenance,
-            "native_fill_evidence_v1": evidence.fill_analysis,
+            "native_fill_evidence_v1": qualified.fill_analysis,
         },
     )
 

@@ -47,6 +47,39 @@ def test_default_layout_profile_is_explicit_and_disabled() -> None:
         LayoutProfileSelection(enabled=False, name="title-block-a")
 
 
+def test_paper_boundary_context_is_explicit_in_processing_payload() -> None:
+    config = ProductionProcessingConfig()
+    assert config.payload()["paper_boundary_verified"] is False
+    assert replace(config, paper_boundary_verified=True).payload()[
+        "paper_boundary_verified"
+    ] is True
+    with pytest.raises(ValueError, match="boolean"):
+        replace(config, paper_boundary_verified="crop")
+
+
+def test_gui_only_verifies_paper_edges_after_perspective_corners() -> None:
+    from types import SimpleNamespace
+    from app.gui.processing import _processing_config
+
+    window = SimpleNamespace(
+        _native_pdf_mode=False, _review_project=None,
+        _perspective_metadata=None, _ocr_enabled=lambda: True,
+        _processing_pdf_dpi=lambda _page: 136,
+        _pdf_page_sizes_mm={0: (297., 210.)},
+    )
+    assert not _processing_config(window, None).paper_boundary_verified
+    window._perspective_metadata = {
+        "applied": True,
+        "corners": np.array(((0, 0), (10, 0), (10, 10), (0, 10))),
+    }
+    assert _processing_config(window, None).paper_boundary_verified
+    window._native_pdf_mode = True
+    assert not _processing_config(window, 0).paper_boundary_verified
+    window._native_pdf_mode = False
+    window._review_project = object()
+    assert not _processing_config(window, None).paper_boundary_verified
+
+
 def test_cache_key_contains_every_required_reproducibility_field() -> None:
     content_hash = "a" * 64
     key = _key(content_hash)

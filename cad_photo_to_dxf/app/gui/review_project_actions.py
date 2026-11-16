@@ -20,6 +20,7 @@ from app.gui.review_async import (
 def _refresh_review_project(window, *, preview=None, render=True):
     project = window._review_project
     window._final_structure = project.baseline
+    window._update_scale_label()
     window._preview_structure_id = project._manifest["structure_id"]
     window._ocr_texts = project.baseline.texts  # Original facts are never overwritten.
     window.tabs.setCurrentWidget(window.detected_canvas)

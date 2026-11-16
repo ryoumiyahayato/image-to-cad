@@ -193,6 +193,7 @@ def _text_payload(text: Any) -> dict[str, object]:
             if text.display_quad is not None
             else {}
         ),
+        **({"logical_line": text.logical_line} if text.logical_line is not None else {}),
     }
 
 
@@ -473,6 +474,10 @@ class FinalStructure:
             if schema_version < 4:
                 raise ValueError("Legacy identity cannot contain native fills")
             payload["native_fills_v1"] = [f.payload() for f in self.native_fills]
+        if self.provenance.get("native_pdf_path_geometry_v1"):
+            payload["native_pdf_path_geometry_v1"] = metadata_to_jsonable(
+                self.provenance["native_pdf_path_geometry_v1"]
+            )
         if self.provenance.get("native_source_group_replacements_v1"):
             payload["native_source_group_replacements_v1"] = metadata_to_jsonable(
                 self.provenance["native_source_group_replacements_v1"]

@@ -15,7 +15,7 @@ from time import perf_counter
 import numpy as np
 
 from app.core.structure import metadata_to_jsonable
-from app.geometry.line_detect import LineSegment
+from app.geometry.line_detect import LineSegment, NATIVE_OPEN_STROKE
 
 POLICY = "pdf-area-open-stroke-source-group-v1"
 KEY = "native_source_group_replacements_v1"
@@ -835,7 +835,7 @@ def plan_source_group(structure, group):
             width=path["width_px"],
             layer=old.layer,
             source_ids=(sid,),
-            history=(POLICY, "complete-visible-native-open-stroke"),
+            history=(POLICY, NATIVE_OPEN_STROKE),
         )
         equivalents = [
             line

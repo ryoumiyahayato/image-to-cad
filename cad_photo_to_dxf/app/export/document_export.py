@@ -10,6 +10,7 @@ from app.ocr.signature_overlay import SignatureRegion
 from app.core.image_loader import load_image
 
 if TYPE_CHECKING:
+    from app.core.scale_calibrator import DrawingScaleDecision
     from app.core.structure import FinalStructure
 
 
@@ -52,6 +53,8 @@ class DocumentPage:
     reloads ``source_path`` and ``source_page_index`` only when export starts,
     which avoids keeping several large PDF pages in memory while the user adds
     other files to the same document queue.
+
+    With ``model_calibrated``, ``page_size_mm`` already represents model dimensions.
     """
 
     page_number: int
@@ -71,6 +74,7 @@ class DocumentPage:
     signatures: tuple[SignatureRegion, ...] = field(default_factory=tuple)
     final_structure: FinalStructure | None = None
     text_review: object | None = None
+    model_calibrated: bool = False
 
 
 @dataclass(frozen=True)
@@ -97,6 +101,7 @@ class DocumentExportResult:
     text_downgrade_reasons: tuple[tuple[str, int], ...] = ()
     arc_count: int = 0
     hatch_count: int = 0
+    page_scales: tuple[DrawingScaleDecision, ...] = ()
 
 
 def _resolve_raster(page: DocumentPage) -> np.ndarray:

@@ -64,6 +64,12 @@ def _candidate_fact(candidate):
     fact = asdict(candidate)
     if fact.get("display_quad") is None:
         fact.pop("display_quad", None)
+    if candidate.logical_line is None:
+        fact.pop("logical_line", None)
+    if candidate.pre_cell_observation is None:
+        fact.pop("pre_cell_observation", None)
+    else:
+        fact["pre_cell_observation"] = candidate.pre_cell_observation.payload()
     return json.loads(_json(fact))
 
 

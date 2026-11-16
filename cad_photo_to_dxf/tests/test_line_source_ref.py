@@ -68,7 +68,7 @@ def _expected(tiny):
     return ref.expected_line_source_records(tiny, lambda x, y: (x, 165 - y))
 
 
-@pytest.mark.parametrize("exporter", ["single", "document"])
+@pytest.mark.parametrize("exporter", ["single", "document", "document_scaled"])
 def test_formal_exporter_carries_sources(tiny, tmp_path, exporter):
     """Both formal exporters retain the accepted member source facts."""
     if exporter == "single":
@@ -76,19 +76,38 @@ def test_formal_exporter_carries_sources(tiny, tmp_path, exporter):
         expected = _expected(tiny)
     else:
         path = tmp_path / "formal-document.dxf"
+        scaled = exporter == "document_scaled"
+        page_size_mm = (300, 82.5) if scaled else (150, 165)
+        drawing_scale = 3 if scaled else 1
         export_trace_document_streaming(
-            (DocumentPage(9, None, (150, 165), final_structure=tiny),),
+            (DocumentPage(9, None, page_size_mm, final_structure=tiny,
+                          drawing_scale=drawing_scale),),
             path,
             total_pages=1,
         )
         doc = ezdxf.readfile(path)
+        # Paper dimensions describe the raster's outer edges. Observed LINE
+        # coordinates are pixel centers, so their half-pixel offset scales
+        # with each paper pitch. The uncalibrated single-page frame is legacy.
+        sx, sy = (6, 1.5) if scaled else (1, 1)
         expected = ref.expected_line_source_records(
             tiny,
-            lambda x, y: (x, 165 - y),
+            lambda x, y: ((x + 0.5) * sx, (165 - y - 0.5) * sy),
             layer_name="PAGE_001_TRACE_STRAIGHT",
             page_slot=1,
             physical_page=9,
         )
+        edge_snapshot = ref.expected_line_source_records(
+            tiny,
+            lambda x, y: (x * sx, (165 - y) * sy),
+            layer_name="PAGE_001_TRACE_STRAIGHT",
+            page_slot=1,
+            physical_page=9,
+        )
+        with pytest.raises(ValueError, match="trusted snapshot"):
+            ref.validate_line_source_refs(
+                doc.modelspace().query("LINE"), expected=edge_snapshot
+            )
     assert (
         ref.validate_line_source_refs(
             doc.modelspace().query("LINE"), expected=expected

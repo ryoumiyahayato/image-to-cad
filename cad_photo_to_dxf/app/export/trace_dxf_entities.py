@@ -3,7 +3,8 @@ from __future__ import annotations
 from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
-from math import hypot
+import json
+from math import hypot, isclose
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.core.cancellation import (
@@ -12,8 +13,9 @@ from app.core.cancellation import (
     checkpoint,
     report_progress,
 )
-from app.geometry.line_detect import LineSegment
+from app.geometry.line_detect import LineSegment, NATIVE_OPEN_STROKE
 from app.core.trace_types import TracePath
+from app.core.structure import metadata_to_jsonable
 from app.core.arc_types import ArcSegment, transformed_arc
 
 PointTransform = Callable[[float, float], tuple[float, float]]
@@ -39,8 +41,11 @@ TRACE_LAYER_STYLES = {
     "SOURCE_TEXT_OUTLINE": {"color": 2, "lineweight": 0},
     "TEXT_FALLBACK_OUTLINE": {"color": 2, "lineweight": 0},
     "RESIDUAL_GRAPHIC": {"color": 3, "lineweight": 0},
+    "UNRESOLVED_RASTER_INK": {"color": 7, "lineweight": 0},
     "OCR_TEXT": {"color": 6, "lineweight": 0},
     "SIGNATURE_OVERLAY": {"color": 6, "lineweight": 0},
+    "STAMP_OVERLAY": {"color": 7, "lineweight": 0},
+    "SIGNING_SHARED_INK": {"color": 7, "lineweight": 0},
 }
 
 
@@ -170,6 +175,64 @@ def _expand_bounds(
         bounds[3] = max(bounds[3], y)
 
 
+def _add_raster_run(layout, path, *, transform, layer, color, state, bounds):
+    """Fill occupied cells while leaving the rest of a diagonal's box empty."""
+    (x0, y0), (x1, y1) = path.points[0], path.points[-1]
+    if not all(float(value).is_integer() for value in (x0, y0, x1, y1)):
+        raise ValueError("Raster run endpoints must lie on the source pixel grid")
+    x0, y0, x1, y1 = map(int, (x0, y0, x1, y1))
+    dx, dy = x1 - x0, y1 - y0
+    if dx == 0 or dy == 0:
+        cells = ((min(x0, x1), min(y0, y1), max(x0, x1) + 1, max(y0, y1) + 1),)
+    elif abs(dx) == abs(dy):
+        sx, sy = (1 if dx > 0 else -1), (1 if dy > 0 else -1)
+        cells = (
+            (x, y, x + 1, y + 1)
+            for x, y in ((x0 + sx * i, y0 + sy * i) for i in range(abs(dx) + 1))
+        )
+    else:
+        raise ValueError("Raster run must be horizontal, vertical, or 45 degrees")
+
+    hatch = layout.add_hatch(color=color, dxfattribs={"layer": layer})
+    for left, top, right, bottom in cells:
+        vertices = [
+            transform(x, y)
+            for x, y in ((left, top), (right, top), (right, bottom), (left, bottom))
+        ]
+        hatch.paths.add_polyline_path(vertices, is_closed=True, flags=1)
+        _expand_bounds(vertices, bounds)
+    appid = "RASTER_INK_SOURCE"
+    if appid not in layout.doc.appids:
+        layout.doc.appids.new(appid)
+    hatch.set_xdata(appid, [
+        (1000, state), (1071, x0), (1071, y0), (1071, x1), (1071, y1),
+    ])
+    return hatch
+
+
+def add_source_filled_marks(layout, records, *, transform, layer):
+    """Emit one filled object per accepted source footprint, ahead of its leads."""
+    appid = "SOURCE_FILLED_MARK"
+    if records and appid not in layout.doc.appids:
+        layout.doc.appids.new(appid)
+    coordinates = []
+    for record in records:
+        entity = layout.add_hatch(color=7, dxfattribs={"layer": layer})
+        for boundary in record["fill_paths_px"]:
+            points = [transform(x, y) for x, y in boundary]
+            entity.paths.add_polyline_path(points, is_closed=True, flags=1)
+            coordinates.extend(points)
+        evidence = metadata_to_jsonable({
+            key: value for key, value in record.items() if key != "fill_paths_px"
+        })
+        payload = json.dumps(evidence, separators=(",", ":"))
+        entity.set_xdata(appid, [
+            (1000, "OBSERVED_RASTER_FILL_V1"),
+            *((1000, payload[i:i+240]) for i in range(0, len(payload), 240)),
+        ])
+    return coordinates
+
+
 def _editable_polyline_chunks(
     points: Sequence[tuple[float, float]],
     *,
@@ -250,6 +313,7 @@ def add_straight_line_entities(
     lines: Sequence[LineSegment],
     *,
     transform: PointTransform,
+    pixel_edge_transform: PointTransform | None = None,
     layer_name: str = "TRACE_STRAIGHT",
     color: int = 5,
     line_records=(),
@@ -265,8 +329,13 @@ def add_straight_line_entities(
     for index, line in enumerate(lines):
         if line.length <= 1e-6:
             continue
-        start = transform(float(line.x1), float(line.y1))
-        end = transform(float(line.x2), float(line.y2))
+        map_point = (
+            pixel_edge_transform
+            if pixel_edge_transform is not None and NATIVE_OPEN_STROKE in line.history
+            else transform
+        )
+        start = map_point(float(line.x1), float(line.y1))
+        end = map_point(float(line.x2), float(line.y2))
         if hypot(end[0] - start[0], end[1] - start[1]) <= 1e-9:
             continue
         record = line_records[index] if line_records else None
@@ -275,7 +344,11 @@ def add_straight_line_entities(
             from app.geometry.source_presentation import LINEWEIGHTS
 
             weight = int(record["cad_lineweight"])
-            if weight not in LINEWEIGHTS.values():
+            from ezdxf.lldxf.const import VALID_DXF_LINEWEIGHTS
+            source_bound = record.get("category") == "NATIVE_PDF_SOURCE_WIDTH" and record.get("pdf_path_aliases")
+            if source_bound:
+                attributes["color"] = 7
+            if weight not in (VALID_DXF_LINEWEIGHTS if source_bound else LINEWEIGHTS.values()):
                 raise ValueError("Stroke lineweight is outside the bounded vocabulary")
             attributes["lineweight"] = weight
             if "source_rgb" in record:
@@ -311,6 +384,30 @@ def add_straight_line_entities(
     return len(entities), entities, bounds
 
 
+def affine_ellipse(center, radius, start, sweep, transform):
+    """Keep a circular source locus under unequal page pixel pitches."""
+    from ezdxf.math import ConstructionEllipse, Matrix44
+
+    ox, oy = transform(0., 0.)
+    ux, uy = transform(1., 0.)
+    vx, vy = transform(0., -1.)
+    sx, sy = hypot(ux - ox, uy - oy), hypot(vx - ox, vy - oy)
+    if isclose(sx, sy, rel_tol=1e-6):
+        return None, (sx, sy)
+    matrix = Matrix44((
+        ux - ox, uy - oy, 0, 0,
+        vx - ox, vy - oy, 0, 0,
+        0, 0, 1, 0,
+        ox, oy, 0, 1,
+    ))
+    ellipse = ConstructionEllipse.from_arc(
+        (center[0], -center[1]), radius,
+        start_angle=start, end_angle=start + sweep, ccw=sweep > 0,
+    )
+    ellipse.transform(matrix)
+    return ellipse, (sx, sy)
+
+
 def add_arc_entities(
     layout,
     arcs: Sequence[ArcSegment],
@@ -319,34 +416,31 @@ def add_arc_entities(
     layer_names=None,
     color=6,
 ):
-    # Validate all transforms before emitting a member. No polyline fallback:
-    # suppressed source members must never outlive a silently omitted ARC.
-    geometry = [transformed_arc(arc, transform) for arc in arcs]
-    paper_scales = []
-    for arc, (_, radius, *_rest) in zip(arcs, geometry):
-        mm_per_pixel = (
-            radius / arc.radius if layout.doc.units == 4 else 25.4 / arc.source_dpi
+    geometry = []
+    for arc in arcs:
+        ellipse, pitches = affine_ellipse(
+            arc.center, arc.radius, arc.start_angle_deg, arc.sweep_angle_deg, transform,
         )
-        arc.round_stroke_error_px(mm_per_pixel)
-        paper_scales.append(mm_per_pixel)
+        if layout.doc.units != 4:
+            pitches = (25.4 / arc.source_dpi,) * 2
+        for pitch in pitches:
+            arc.round_stroke_error_px(pitch)
+        circle = transformed_arc(arc, transform) if ellipse is None else None
+        geometry.append((circle, ellipse, pitches[0]))
     entities, bounds = [], []
-    for arc, (center, radius, start, end, extrema), mm_per_pixel in zip(
-        arcs, geometry, paper_scales
-    ):
+    for arc, (circle, ellipse, mm_per_pixel) in zip(arcs, geometry):
         layer = _layer_name(arc.layer, layer_names)
         if layer not in layout.doc.layers:
             layout.doc.layers.add(layer, color=_resolved_color(color, 6))
-        entity = layout.add_arc(
-            center,
-            radius,
-            start,
-            end,
-            dxfattribs={
-                "layer": layer,
-                "color": _resolved_color(color, 6),
-                "lineweight": arc.lineweight,
-            },
-        )
+        attrs = {"layer": layer, "color": _resolved_color(color, 6),
+                 "lineweight": arc.lineweight}
+        if ellipse is None:
+            center, radius, start, end, extrema = circle
+            entity = layout.add_arc(center, radius, start, end, dxfattribs=attrs)
+        else:
+            entity = layout.new_entity("ELLIPSE", {**attrs, **ellipse.dxfattribs()})
+            extrema = [(p.x, p.y) for p in
+                       (ellipse.start_point, ellipse.end_point, *ellipse.main_axis_points())]
         if "P9_ARC" not in layout.doc.appids:
             layout.doc.appids.add("P9_ARC")
         tags = [
@@ -371,6 +465,7 @@ def add_exact_trace_entities(
     trace_paths: Sequence[TracePath],
     *,
     transform: PointTransform,
+    pixel_edge_transform: PointTransform | None = None,
     color: int = 7,
     source_size: tuple[int, int] | None = None,
     palette: TracePalette | None = None,
@@ -429,6 +524,7 @@ def add_exact_trace_entities(
             checkpoint(cancellation_token)
             report_progress(progress_callback, "cad-entities", position / total_black)
         trace_path = trace_paths[index]
+        is_raster_run = len(trace_path.points) in (1, 2)
         bound_member = None if bound_members is None else bound_members.get(index)
         if bound_members is not None and (
             bound_member is None
@@ -454,6 +550,10 @@ def add_exact_trace_entities(
             # The committed resolver decision takes precedence over OCR region
             # matching and heuristic region classification.
             base_layer_name = str(bound_member.layer)
+        elif is_raster_run:
+            # A raster run alone proves no OCR or symbol identity. Keep it
+            # visible even when an OCR box is nearby.
+            base_layer_name = "UNRESOLVED_RASTER_INK"
         elif tuple(trace_path.points) in retained_rules:
             # Final source ownership proved this complete contour is a rule,
             # not a glyph. A nearby OCR rectangle cannot revoke that proof.
@@ -497,6 +597,17 @@ def add_exact_trace_entities(
             entity_color = _resolved_color(selected_palette.curve, 3)
         resolved_layer_name = _layer_name(base_layer_name, layer_names)
 
+        if is_raster_run:
+            entities.append(_add_raster_run(
+                layout, trace_path, transform=pixel_edge_transform or transform, layer=resolved_layer_name,
+                color=7 if base_layer_name == "UNRESOLVED_RASTER_INK" else entity_color,
+                state=("UNRESOLVED" if base_layer_name == "UNRESOLVED_RASTER_INK"
+                       else "ASSIGNED_SOURCE"),
+                bounds=bounds,
+            ))
+            exported_path_count += 1
+            exported_vertex_count += len(trace_path.points)
+            continue
         root_points = [transform(float(x), float(y)) for x, y in trace_path.points]
         if len(root_points) < 3:
             continue
@@ -508,7 +619,10 @@ def add_exact_trace_entities(
         }:
             hatch = layout.add_hatch(dxfattribs={"layer": resolved_layer_name})
             gray = int(fill["source_gray"])
-            hatch.dxf.true_color = (gray << 16) | (gray << 8) | gray
+            if fill.get("cad_foreground_source_black") and gray == 0:
+                hatch.dxf.color = 7
+            else:
+                hatch.dxf.true_color = (gray << 16) | (gray << 8) | gray
             hatch.paths.add_polyline_path(root_points, is_closed=True)
             entities.append(hatch)
             _expand_bounds(root_points, bounds)

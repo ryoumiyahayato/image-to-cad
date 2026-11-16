@@ -2047,7 +2047,7 @@ class ReconciliationLedger:
                 "state": "VALIDATED",
             }
         )
-        base_ledger_digest = _digest_payload(_payload_without_gap_extent(payload))
+        base_ledger_digest = _digest_without_gap_extent(payload)
         extension = _build_gap_extent_v2_record(
             payload,
             base_ledger_digest=base_ledger_digest,
@@ -2079,9 +2079,7 @@ class ReconciliationLedger:
         transaction.update(checks)
         internal_payload = payload
         payload = _closed_v1_payload(internal_payload)
-        closed_base_ledger_digest = _digest_payload(
-            _payload_without_gap_extent(payload)
-        )
+        closed_base_ledger_digest = _digest_without_gap_extent(payload)
         closed_extension = _build_gap_extent_v2_record(
             internal_payload,
             base_ledger_digest=closed_base_ledger_digest,
@@ -2216,6 +2214,43 @@ def _payload_without_gap_extent(
         if isinstance(measurements, dict):
             measurements.pop(GAP_EXTENT_MEASUREMENT_SLOT, None)
     return copied
+
+
+
+def _digest_without_gap_extent(payload: Mapping[str, object]) -> str:
+    """Hash a read-only projection without copying the complete source ledger.
+
+    Only the extension slot is excluded from the base digest, as before.
+    Containers on that path are copied; all other members are read exclusively
+    by the canonical encoder.  The view never escapes this call, so callers
+    cannot mutate the borrowed evidence through it.  Producers and decoders of
+    these closed ledger payloads use JSON object keys (strings).
+    """
+    view = dict(payload)
+    evidence = payload.get("evidence")
+    if isinstance(evidence, (list, tuple)):
+        projected = []
+        for item in evidence:
+            if (
+                isinstance(item, dict)
+                and item.get("artifact") == "runtime-route-ledger-snapshot"
+                and isinstance(item.get("measurements"), dict)
+            ):
+                item = dict(item)
+                measurements = dict(item["measurements"])
+                if GAP_EXTENT_MEASUREMENT_SLOT in measurements:
+                    # The previous JSON round-trip rejected invalid values even
+                    # inside the excluded slot. Preserve that failure contract.
+                    excluded = measurements.pop(GAP_EXTENT_MEASUREMENT_SLOT)
+                    encoder = json.JSONEncoder(
+                        sort_keys=True, separators=(",", ":"), allow_nan=False
+                    )
+                    for _chunk in encoder.iterencode(excluded):
+                        pass
+                item["measurements"] = measurements
+            projected.append(item)
+        view["evidence"] = projected
+    return _digest_payload(view)
 
 
 def _set_gap_extent_extension(
@@ -3071,7 +3106,7 @@ def _gap_extent_semantic_errors(
                 evidence_cache=context.evidence_cache,
             )
         base_digest = (
-            _digest_payload(_payload_without_gap_extent(payload))
+            _digest_without_gap_extent(payload)
             if check_digest
             else str(extension.get("base_ledger_digest", ""))
         )
@@ -4102,7 +4137,7 @@ def _validate_closed_transaction_semantics(
         or extension.get("ownership_snapshot_digest") != expected_ownership_digest
         or extension.get("protection_snapshot_digest") != expected_protection_digest
         or extension.get("base_ledger_digest")
-        != _digest_payload(_payload_without_gap_extent(payload))
+        != _digest_without_gap_extent(payload)
     ):
         raise AssertionError("V2 accounting is not bound to the sealed authority snapshot")
     transaction = extension.get("transaction")
@@ -5964,10 +5999,15 @@ def _lines_digest(lines: Sequence[LineSegment]) -> str:
 
 
 def _digest_payload(payload: object) -> str:
-    encoded = json.dumps(
-        payload,
-        sort_keys=True,
-        separators=(",", ":"),
-        allow_nan=False,
-    ).encode("utf-8")
-    return hashlib.sha256(encoded).hexdigest()
+    """Hash the same canonical JSON without a whole-document byte buffer.
+
+    No evidence is dropped or normalized differently.  iterencode preserves
+    sorting, separators, ASCII escaping and the existing non-finite rejection.
+    The original one-shot encoding simultaneously held payload, JSON text and
+    encoded bytes while validating large, complete provenance ledgers.
+    """
+    digest = hashlib.sha256()
+    encoder = json.JSONEncoder(sort_keys=True, separators=(",", ":"), allow_nan=False)
+    for chunk in encoder.iterencode(payload):
+        digest.update(chunk.encode("utf-8"))
+    return digest.hexdigest()

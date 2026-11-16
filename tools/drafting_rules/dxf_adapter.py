@@ -7,6 +7,7 @@ from math import cos, sin, radians, isfinite
 from pathlib import Path
 
 import ezdxf
+from ezdxf.entities.boundary_paths import PolylinePath
 from ezdxf.lldxf.tagwriter import TagCollector
 
 
@@ -21,6 +22,42 @@ def digest(value):
 
 def tags(entity):
     return [(tag.code, str(tag.value)) for tag in TagCollector.dxftags(entity)]
+
+
+def solid_hatch_loops(entity):
+    """Return self-contained planar straight SOLID loops, or abstain.
+
+    The source renderer handles closed polyline boundaries with the normal
+    odd-even island rule. Other HATCH presentations or dependency graphs need
+    their own adapter; a SOLID name alone is not sufficient evidence.
+    """
+    if entity.dxftype() != "HATCH":
+        return None
+    d = entity.dxf
+    if (d.get("solid_fill", 0) != 1 or d.get("pattern_name", "") != "SOLID"
+            or entity.pattern is not None or entity.gradient is not None
+            or d.get("associative", 0) or d.get("hatch_style", 0) != 0
+            or tuple(d.get("elevation", (0, 0, 0))) != (0, 0, 0)
+            or tuple(d.get("extrusion", (0, 0, 1))) != (0, 0, 1)
+            or entity.has_extension_dict
+            or any(d.hasattr(name) for name in (
+                "material_handle", "plotstyle_handle", "visualstyle_handle"))):
+        return None
+    loops = []
+    for boundary in entity.paths:
+        if (not isinstance(boundary, PolylinePath) or not boundary.is_closed
+                or boundary.source_boundary_objects
+                or boundary.path_type_flags & ~(1 | 2 | 16)):
+            return None
+        points = list(boundary.vertices)
+        if (len(points) < 3 or any(len(p) != 3 for p in points)
+                or any(not all(isfinite(v) for v in p) or p[2] for p in points)):
+            return None
+        loop = [(float(x), float(y)) for x, y, _ in points]
+        if len(set(loop)) < 3:
+            return None
+        loops.append(loop)
+    return tuple(loops) if loops else None
 
 
 def snapshot(path):
@@ -41,10 +78,13 @@ def snapshot(path):
         if ltype in doc.linetypes:
             resources.append(tags(doc.linetypes.get(ltype)))
         supported = kind in simple
+        if kind == "HATCH":
+            supported = solid_hatch_loops(e) is not None
         if kind in {"TEXT", "MTEXT"}:
             resources.append(tags(doc.styles.get(e.dxf.style)))
-        # BLOCK, IMAGE, HATCH, dimensions and other resource graphs need their
-        # own adapter. Unchanged outer tags cannot prove unchanged contents.
+        # A supported HATCH is self-contained: tags include every boundary,
+        # fill property and source reference, while resources bind its layer
+        # and linetype. BLOCK, IMAGE and other graphs still need an adapter.
         item = dict(kind=kind, layer=e.dxf.layer,
                     visible=not (layer.is_off() or layer.is_frozen() or e.dxf.get("invisible", 0)),
                     supported=supported, fingerprint=digest([tags(e), resources]))

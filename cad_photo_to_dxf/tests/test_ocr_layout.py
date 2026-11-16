@@ -4,6 +4,7 @@ from dataclasses import replace
 
 import cv2
 import numpy as np
+import pytest
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.ocr.ocr_layout import constrain_texts_to_table_cells, prepare_candidate_layout, tile_regions
@@ -126,6 +127,34 @@ def test_grossly_wide_text_box_is_still_clipped_to_its_cell() -> None:
 
     assert constrained.bbox[0] > 160
     assert constrained.bbox[0] + constrained.bbox[2] < 280
+
+
+@pytest.mark.parametrize('start', range(4))
+@pytest.mark.parametrize('content', ['ROOM 12', '12.5 mm', '竖排说明'])
+def test_cell_clipping_keeps_existing_reading_corner_order(start, content):
+    from math import atan2, degrees
+    binary = np.full((220, 320), 255, dtype=np.uint8)
+    for x in (40, 160, 280):
+        cv2.line(binary, (x, 30), (x, 190), 0, 2)
+    for y in (30, 100, 190):
+        cv2.line(binary, (40, y), (280, y), 0, 2)
+    corners = ((55.,45.), (180.,45.), (180.,85.), (55.,85.))
+    quad = corners[start:] + corners[:start]
+    angle = degrees(atan2(quad[1][1]-quad[0][1], quad[1][0]-quad[0][0]))
+    original = TextCandidate(content, (55,45,125,40), .99, 'text_candidate',
+        rotation_deg=angle, quad=quad, source='rapidocr-line', replacement_safe=False)
+    actual = constrain_texts_to_table_cells(binary, (original,))[0]
+    assert actual.bbox != original.bbox  # Exercise the clipping path.
+    # Corner order carries the existing reading basis, independent of text.
+    before = np.asarray(quad[1])-quad[0]
+    after = np.asarray(actual.quad[1])-actual.quad[0]
+    assert before[0]*after[1]-before[1]*after[0] == pytest.approx(0.)
+    assert np.dot(before, after) > 0
+    assert actual.text == original.text
+    assert actual.rotation_deg == original.rotation_deg
+    assert actual.replacement_safe == original.replacement_safe
+    x,y,w,h = actual.bbox
+    assert all(x <= px <= x+w and y <= py <= y+h for px,py in actual.quad)
 
 
 def test_text_policy_does_not_depend_on_page_margin_position() -> None:

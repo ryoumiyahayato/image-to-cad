@@ -8,7 +8,7 @@ import pytest
 
 from app.core.arc_types import ArcSegment, PdfPathReference, transformed_arc
 from app.core.cache import load_trace_cache, save_trace_cache
-from app.core.preview import render_final_structure_preview
+from app.core.preview import render_emitted_dxf_preview, render_final_structure_preview
 from app.core.processing import ProductionProcessingConfig, build_processing_cache_key
 from app.core.structure import FinalStructure
 from app.export.document_export import DocumentPage
@@ -101,6 +101,29 @@ def test_saved_arc_locus_and_preview(tmp_path, start, sweep):
     )
     assert reread.dxf.radius == 36.25
     assert reread.dxf.start_angle == 297
+
+
+@pytest.mark.parametrize("kind", ["ARC", "CIRCLE"])
+def test_curve_preview_uses_same_pixel_width_at_both_dxf_scales(tmp_path, kind):
+    views = []
+    for unit in (1.0, 25.4 / 240):
+        doc = ezdxf.new()
+        space = doc.modelspace()
+        center = (72.13 * unit, 76.59 * unit)
+        attrs = {"lineweight": 25}
+        if kind == "ARC":
+            curve = space.add_arc(center, 14.2 * unit, 90, 270, dxfattribs=attrs)
+        else:
+            curve = space.add_circle(center, 7 * unit, dxfattribs=attrs)
+        curve.set_xdata("P3A_STROKE", [
+            (1000, "NATIVE_PDF_SOURCE_WIDTH"), (1040, 2.4), (1040, 240.0),
+        ])
+        views.append(render_emitted_dxf_preview(
+            doc, tmp_path, (160, 160), roi=(35, 48, 90, 84), output_scale=2,
+            units_per_source_pixel=unit,
+        ))
+    assert views[0].min() < 128
+    np.testing.assert_array_equal(views[0], views[1])
 
 
 def test_arc_extrema_include_interior_cardinal_and_output_extents(tmp_path):
@@ -203,7 +226,7 @@ def test_pdf_evidence_presence_changes_cache_identity():
     assert plain != native
 
 
-def test_document_export_consumes_arc_and_refuses_ellipse_transform(tmp_path):
+def test_document_export_consumes_arc(tmp_path):
     s = _structure((_arc(),))
     page = DocumentPage(1, None, (160, 160), final_structure=s)
     output = export_trace_document_streaming(
@@ -218,13 +241,65 @@ def test_document_export_consumes_arc_and_refuses_ellipse_transform(tmp_path):
     assert tuple(doc.header["$EXTMAX"])[:2] == pytest.approx(
         (115, 80 + 35 * 3**0.5 / 2)
     )
-    with pytest.raises(ValueError, match="uniform"):
-        export_trace_document_streaming(
-            (replace(page, page_size_mm=(320, 160)),),
-            tmp_path / "anisotropic.dxf",
-            total_pages=1,
-        )
-    assert not (tmp_path / "anisotropic.dxf").exists()
+
+
+@pytest.mark.parametrize("page_size_mm", [(320, 160), (160, 320)])
+@pytest.mark.parametrize("start,sweep", [(300, 120), (30, -90), (45, 270)])
+def test_document_unequal_paper_pitches_preserve_arc_locus_as_ellipse(
+    tmp_path, page_size_mm, start, sweep
+):
+    """Paper mapping changes the entity type without changing the source locus.
+
+    The circular-only transformed_arc API still rejects non-similarities in
+    test_mirror_rotation_and_anisotropic_rejection. Formal paper export has an
+    explicit ELLIPSE branch for unequal raster pitches.
+    """
+    arc = _arc(start_angle_deg=start, sweep_angle_deg=sweep)
+    page = DocumentPage(1, None, page_size_mm, final_structure=_structure((arc,)))
+    output = export_trace_document_streaming(
+        (page,), tmp_path / "anisotropic.dxf", total_pages=1
+    )
+    assert output.arc_count == 1
+
+    # Independently map the analytic source circle into paper coordinates.
+    # Native PDF curves use edge coordinates, without the raster LINE offset.
+    sx, sy = page_size_mm[0] / 160, page_size_mm[1] / 160
+    fractions = np.linspace(0.0, 1.0, 17)
+    if sweep < 0:
+        fractions = 1.0 - fractions  # DXF stores the same locus CCW.
+    angles = np.deg2rad(start + sweep * fractions)
+    expected = np.column_stack((
+        sx * (80 + 35 * np.cos(angles)),
+        sy * (80 + 35 * np.sin(angles)),
+    ))
+    cardinal = [angle for angle in (0, 90, 180, 270)
+                if ((angle - start) * (1 if sweep > 0 else -1)) % 360 <= abs(sweep)]
+    extent_angles = np.deg2rad([start, start + sweep, *cardinal])
+    extrema = np.column_stack((
+        sx * (80 + 35 * np.cos(extent_angles)),
+        sy * (80 + 35 * np.sin(extent_angles)),
+    ))
+
+    reread_path = tmp_path / "anisotropic-reread.dxf"
+    ezdxf.readfile(output.path).saveas(reread_path)
+    for path in (output.path, reread_path):
+        doc = ezdxf.readfile(path)
+        assert len(doc.modelspace()) == 1
+        (entity,) = doc.modelspace().query("ELLIPSE")
+        assert entity.dxf.layer == "PAGE_001_TRACE_CURVE"
+        assert entity.dxf.lineweight == arc.lineweight
+        assert list(entity.get_xdata("P9_ARC")) == [
+            (1000, arc.object_id), (1040, arc.stroke_width_px),
+            (1040, arc.source_dpi),
+        ]
+        ellipse = entity.construction_tool()
+        actual = np.array([tuple(point)[:2] for point in
+                           ellipse.vertices(ellipse.params(len(fractions)))])
+        np.testing.assert_allclose(actual, expected, rtol=0, atol=1e-9)
+        np.testing.assert_allclose(tuple(doc.header["$EXTMIN"])[:2],
+                                   extrema.min(axis=0), rtol=0, atol=1e-9)
+        np.testing.assert_allclose(tuple(doc.header["$EXTMAX"])[:2],
+                                   extrema.max(axis=0), rtol=0, atol=1e-9)
 
 
 def test_duplicate_final_member_and_frozen_composite_are_explicit_errors():

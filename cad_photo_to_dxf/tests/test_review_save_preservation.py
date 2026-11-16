@@ -144,14 +144,17 @@ def test_text_review_rebuild_preserves_formal_arc_and_replacement_relation():
             ]
         },
     )
+    scale_refreshes = []
     window = SimpleNamespace(
         _final_structure=structure,
+        _update_scale_label=lambda: scale_refreshes.append(True),
         detected_canvas=SimpleNamespace(set_image=lambda _: None),
         _dirty_trace_keys=set(),
         _current_trace_key=lambda: "contract",
         _refresh_visual_acceptance=lambda: None,
     )
     updated = gui_review_actions._replace_final_structure_texts(window, ())
+    assert scale_refreshes == [True]
     assert updated.arcs == (arc,)
     assert (
         updated.provenance["native_arc_replacements"]

@@ -1,18 +1,50 @@
 """Protect long OCR crops from anisotropic direction classification.
 
 This adapter only cancels a 180-degree flip when two disjoint native-aspect
-edge windows independently say upright. It never edits recognized strings.
+native-aspect windows independently say upright. Extra non-edge votes also
+require stable whole-line recognition. It never edits recognized strings.
 """
 
 from copy import copy
 from math import isfinite
 
+import cv2
 import numpy as np
 
 
 class LongLineOrientationClassifier:
-    def __init__(self, classifier):
+    def __init__(self, classifier, recognize=None):
         self.classifier = classifier
+        self.recognize = recognize
+
+    def _stable_upright_reading(self, crop):
+        """Corroborate a non-edge vote pair; never accept a score alone.
+
+        The same source-oriented line must survive a white-margin change. This
+        is model consistency evidence, not an independent ground-truth oracle.
+        No dictionary, expected string, page name or target coordinate is used.
+        """
+        if not callable(self.recognize):
+            return False
+        try:
+            pad = max(2, int(round(crop.shape[0] * 0.10)))
+            padded = cv2.copyMakeBorder(
+                crop, pad, pad, pad, pad, cv2.BORDER_CONSTANT,
+                value=255 if crop.ndim == 2 else (255,) * crop.shape[2],
+            )
+            review = self.recognize([crop.copy(), padded])
+            texts = review.txts
+            scores = review.scores
+            if len(texts) != 2 or len(scores) != 2:
+                return False
+            first, second = (" ".join(str(value).split()) for value in texts)
+            return (
+                first == second
+                and sum(char.isalnum() for char in first) >= 4
+                and all(isfinite(float(value)) and float(value) >= 0.95 for value in scores)
+            )
+        except (AttributeError, TypeError, ValueError, IndexError, RuntimeError):
+            return False
 
     def __getattr__(self, name):
         return getattr(self.classifier, name)
@@ -60,17 +92,33 @@ class LongLineOrientationClassifier:
                     for label, score in votes
                 ):
                     continue
-                if any(
-                    str(votes[edge][0]) != "0" or float(votes[edge][1]) < threshold
-                    for edge in (0, 2)
-                ):
+                if any(str(label) == "180" and float(score) >= threshold for label, score in votes):
                     continue
-                if str(votes[1][0]) == "180" and float(votes[1][1]) >= threshold:
+                height, width = crops[index].shape[:2]
+                window_width = int(round(height * model_width / model_height))
+                starts = (0, (width - window_width) // 2, width - window_width)
+                supporting = [
+                    position for position, (label, score) in enumerate(votes)
+                    if str(label) == "0" and float(score) >= threshold
+                ]
+                disjoint = [
+                    (first, second) for first in supporting for second in supporting
+                    if first < second and starts[second] - starts[first] >= window_width
+                ]
+                if not disjoint:
                     continue
+                # Preserve the existing edge contract. An additional middle+edge
+                # pair cannot override orientation without a stable whole-line
+                # read; overlapping windows are not independent votes.
+                if (0, 2) in disjoint:
+                    pair = (0, 2)
+                else:
+                    if not self._stable_upright_reading(crops[index]):
+                        continue
+                    pair = max(disjoint, key=lambda value: min(float(votes[k][1]) for k in value))
                 updated_images[index] = crops[index].copy()
                 updated_labels[index] = (
-                    "0",
-                    min(float(votes[0][1]), float(votes[2][1])),
+                    "0", min(float(votes[k][1]) for k in pair),
                 )
             updated = copy(result)
             updated.img_list = updated_images

@@ -8,7 +8,7 @@ from tempfile import NamedTemporaryFile
 
 import numpy as np
 
-from app.ocr.auxiliary_recognition import TextCandidate
+from app.ocr.auxiliary_recognition import TextCandidate, TextObservation
 from app.core.structure import (
     FINAL_STRUCTURE_SCHEMA_VERSION,
     FinalStructure,
@@ -131,6 +131,12 @@ def _serialize_texts(texts: tuple[TextCandidate, ...]) -> str:
                     if item.display_quad is not None
                     else {}
                 ),
+                **(
+                    {"pre_cell_observation": item.pre_cell_observation.payload()}
+                    if item.pre_cell_observation is not None
+                    else {}
+                ),
+                **({"logical_line": item.logical_line} if item.logical_line is not None else {}),
             }
             for item in texts
         ],
@@ -184,6 +190,8 @@ def _deserialize_texts(value: str) -> tuple[TextCandidate, ...]:
                     if item.get("display_quad") is not None
                     else None
                 ),
+                pre_cell_observation=TextObservation.from_payload(item.get("pre_cell_observation")),
+                logical_line=tuple(item["logical_line"]) if item.get("logical_line") else None,
             )
         )
     return tuple(results)

@@ -20,8 +20,10 @@ from app.export.document_export import (
     _resolve_raster,
 )
 from app.core.image_loader import save_image
+from app.core.scale_calibrator import ScaleCalibration, raster_to_cad, resolve_drawing_scale
 from app.export.trace_entity_writer import write_page_entities, semantic_paths
 from app.export.trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette
+from app.ocr.logo_detection import LOGO_VISUAL_KINDS
 from app.core.member_binding import resolve_draftsman_output
 from app.export.line_source_ref import make_line_source_refs
 from app.export.text_consistency import TextConsistencyGuard
@@ -53,8 +55,11 @@ def _page_layer_names(index: int) -> dict[str, str]:
         "SOURCE_TEXT_OUTLINE": f"{prefix}_SOURCE_TEXT_OUTLINE",
         "TEXT_FALLBACK_OUTLINE": (f"{prefix}_TEXT_FALLBACK_OUTLINE"),
         "RESIDUAL_GRAPHIC": f"{prefix}_RESIDUAL_GRAPHIC",
+        "UNRESOLVED_RASTER_INK": f"{prefix}_UNRESOLVED_RASTER_INK",
         "OCR_TEXT": f"{prefix}_OCR_TEXT",
         "SIGNATURE_OVERLAY": f"{prefix}_SIGNATURE_OVERLAY",
+        "STAMP_OVERLAY": f"{prefix}_STAMP_OVERLAY",
+        "SIGNING_SHARED_INK": f"{prefix}_SIGNING_SHARED_INK",
         "LOGO_GRAPHIC": f"{prefix}_LOGO_GRAPHIC",
         "ENGINEERING_SYMBOL": f"{prefix}_ENGINEERING_SYMBOL",
     }
@@ -140,6 +145,7 @@ def export_trace_document_streaming(
     downgrade_reasons: Counter[str] = Counter()
     page_count = 0
     structure_ids: list[str] = []
+    page_scales = []
     expected_pages = max(int(total_pages or 0), 1)
     origin_y = 0.0
     first_page_view: tuple[float, float] | None = None
@@ -178,6 +184,8 @@ def export_trace_document_streaming(
             lines = structure.straight_lines
             arcs = structure.arcs
             native_fills = structure.native_fills
+            if structure.provenance.get("native_pdf_path_geometry_v1", {}).get("status") == "APPLIED":
+                raise ValueError("Experimental source paths require the single-page exporter; multipage output is not yet supported")
             texts = structure.texts
             signatures = structure.signatures
             logos = structure.logos
@@ -238,10 +246,19 @@ def export_trace_document_streaming(
             raise ValueError(f"Page {page.page_number} has no trace coordinate size")
         vector_width, vector_height = vector_size
 
-        width_units = page_width_mm * page.drawing_scale
-        height_units = page_height_mm * page.drawing_scale
-        scale_x = width_units / max(float(vector_width), 1.0)
-        scale_y = height_units / max(float(vector_height), 1.0)
+        scale = resolve_drawing_scale(
+            texts,
+            page.drawing_scale,
+            coordinate_space="model_mm" if page.model_calibrated else "paper_mm",
+        )
+        page_scales.append(scale)
+        multiplier = scale.multiplier
+        width_units = page_width_mm * multiplier
+        height_units = page_height_mm * multiplier
+        frame = raster_to_cad(
+            vector_size, ScaleCalibration.for_paper(vector_size, page.page_size_mm),
+            multiplier=multiplier, origin_y=origin_y,
+        )
         layer_names = _ensure_page_layers(doc, index, native_fills)
         if first_page_view is None:
             first_page_view = (width_units, height_units)
@@ -276,14 +293,6 @@ def export_trace_document_streaming(
                 page_base + page_span * fraction,
             )
 
-        page_origin = origin_y
-
-        def transform(x: float, y: float) -> tuple[float, float]:
-            return (
-                x * scale_x,
-                page_origin + (vector_height - y) * scale_y,
-            )
-
         (
             current_line_count,
             current_path_count,
@@ -301,12 +310,14 @@ def export_trace_document_streaming(
             straight_lines=lines,
             line_source_refs=line_source_refs,
             contour_source_refs=contour_source_refs,
+            source_structure=structure,
             contour_consistency=contour_consistency,
             arcs=arcs,
             native_fills=native_fills,
             texts=texts,
             signatures=signatures,
-            transform=transform,
+            transform=frame.edge,
+            center_transform=frame.center,
             text_review=page.text_review,
             text_consistency=text_consistency,
             logos=logos,
@@ -335,7 +346,7 @@ def export_trace_document_streaming(
         page_bounds = list(_bounds)
         if include_underlay:
             page_bounds.extend(
-                ((0.0, page_origin), (width_units, page_origin + height_units))
+                ((0.0, origin_y), (width_units, origin_y + height_units))
             )
         if page_bounds:
             xs, ys = zip(*page_bounds)
@@ -360,11 +371,12 @@ def export_trace_document_streaming(
         fallback_text_count += text_summary.fallback_outline_count
         source_text_outline_count += text_summary.source_outline_backup_count
         residual_graphic_count += text_summary.residual_graphic_count
-        logo_count += len(structure.logos) if structure is not None else 0
+        if structure is not None:
+            logo_count += sum(r.visual_kind in LOGO_VISUAL_KINDS for r in structure.logos)
         signature_count += current_signature_count
         downgrade_reasons.update(dict(text_summary.downgrade_reasons))
 
-        gap_units = max(1.0, float(modelspace_gap_mm) * page.drawing_scale)
+        gap_units = max(1.0, float(modelspace_gap_mm) * multiplier)
         origin_y -= height_units + gap_units
         del raster
 
@@ -424,4 +436,5 @@ def export_trace_document_streaming(
         logo_count=logo_count,
         signature_count=signature_count,
         text_downgrade_reasons=tuple(sorted(downgrade_reasons.items())),
+        page_scales=tuple(page_scales),
     )

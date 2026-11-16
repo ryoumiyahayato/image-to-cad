@@ -22,6 +22,7 @@ PointTransform = Callable[[float, float], tuple[float, float]]
 _XDATA_APP = "OCR_TEXT_LINE"
 _CONTRACT_XDATA_APP = "TEXT_OUTPUT_CONTRACT"
 _GEOMETRY_XDATA_APP = "OCR_TEXT_GEOMETRY"
+_LOGICAL_LINE_XDATA_APP = "OCR_LOGICAL_LINE"
 # Deprecated audit reference only; canonical export must not clamp to it.
 _DEPRECATED_MIN_READABLE_WIDTH_FACTOR = 0.72
 _WIDTH_WARNING_NARROW = 0.20
@@ -421,6 +422,15 @@ def _add_text_entity(
             (1040, float(candidate.font_match_score)),
         ],
     )
+    if candidate.logical_line is not None:
+        appids = layout.doc.appids
+        if _LOGICAL_LINE_XDATA_APP not in appids:
+            appids.add(_LOGICAL_LINE_XDATA_APP)
+        key, order, count = candidate.logical_line
+        entity.set_xdata(
+            _LOGICAL_LINE_XDATA_APP,
+            [(1000, f"{layer_name}:{key}"), (1070, order), (1070, count)],
+        )
     entity.set_xdata(
         _CONTRACT_XDATA_APP,
         [

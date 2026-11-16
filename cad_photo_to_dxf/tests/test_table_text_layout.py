@@ -177,6 +177,69 @@ def verified_cell():
     return gray, binary, resolved, proofs, owner
 
 
+def test_verified_character_tops_cover_unfiltered_glyph_ink_without_expanding_neighbors():
+    from app.geometry.content_ownership import _candidate_region_mask
+
+    gray, binary, texts, proofs, _ = verified_cell()
+    legacy = constrain_texts_to_table_cells(
+        gray, tuple(prepare_safe_candidate(gray, item) for item in local_region()[1]),
+    )
+    proof = proofs[0]
+    left, top, right, bottom = proof.bounds
+    core = np.zeros_like(gray)
+    core[top:bottom, left:right] = proof.row_masks[0]
+    before = _candidate_region_mask(legacy[0], gray.shape)
+    after = _candidate_region_mask(texts[0], gray.shape)
+    # The legacy line-removal mask lost strong tips still present in this row proof.
+    assert not np.any((core > 0) & (after == 0))
+    added = (binary < 128) & (after > 0) & (before == 0)
+    assert np.count_nonzero(added) == 14
+    assert texts[0].bbox == legacy[0].bbox and texts[0].quad == legacy[0].quad
+    assert [(x, w, y + h) for x, y, w, h in texts[0].character_boxes] == [
+        (x, w, y + h) for x, y, w, h in legacy[0].character_boxes
+    ]
+    assert texts[0].character_boxes[:1] == legacy[0].character_boxes[:1]
+    assert texts[0].character_boxes[2:] == legacy[0].character_boxes[2:]
+
+
+@pytest.mark.parametrize("neighbor", [
+    None, "detached-weak", "foreign-strong", "foreign-strong-connected",
+    "shared-character", "boundary-rule", "no-body-contact", "ascii",
+])
+def test_verified_character_top_keeps_detached_shared_and_foreign_source(neighbor):
+    from app.ocr.ocr_layout import _restore_verified_character_tops
+
+    gray = np.full((64, 72), 255, np.uint8)
+    core = np.zeros_like(gray)
+    core[12:33, 14:24] = 255
+    core[18:33, 42:52] = 255
+    item = TextCandidate(
+        "中文", (8, 8, 55, 30), 0.99, "text_candidate", source="verified-row",
+        approved=True, replacement_safe=True,
+        quad=((8, 8), (63, 8), (63, 38), (8, 38)),
+        character_boxes=((10, 18, 19, 18), (38, 18, 19, 18)),
+    )
+    if neighbor == "shared-character":
+        core[22:24, 24:43] = 255
+    elif neighbor == "boundary-rule":
+        core[:13, 18:20] = 255
+    elif neighbor == "no-body-contact":
+        core[15:33, 14:24] = 0
+    elif neighbor == "ascii":
+        item = replace(item, text="AB")
+    gray[core > 0] = 0
+    if neighbor in {"detached-weak", "foreign-strong", "foreign-strong-connected"}:
+        gray[13, 28] = 200 if neighbor == "detached-weak" else 0
+    if neighbor == "foreign-strong-connected":
+        gray[13, 24:28] = 200
+    restored = _restore_verified_character_tops(item, gray, core, (0, 0, 72, 64))
+    assert restored.bbox == item.bbox and restored.quad == item.quad
+    if neighbor is None:
+        assert restored.character_boxes == ((10, 12, 19, 24), item.character_boxes[1])
+    else:
+        assert restored.character_boxes == item.character_boxes
+
+
 def test_full_line_source_proof_preserves_layout_and_owns_complete_ink_carriers():
     gray, binary, texts, proofs, owner = verified_cell()
     legacy = constrain_texts_to_table_cells(
@@ -232,3 +295,101 @@ def test_whole_carrier_is_not_suppressed_when_source_or_structure_is_shared(bloc
     assert count > 1 and labels[py, px] != 0
     assert np.array_equal(completed.text[component], owner.text[component])
     assert np.array_equal(completed.line, owner.line)
+
+
+def test_real_cell_exits_owned_members_after_source_arbitration_and_cache_roundtrip(tmp_path):
+    from app.core.cache import load_trace_cache
+    from tools.drafting_rules.source_adapter import validate_with_source
+    from tools.drafting_rules.source_study import make_case
+
+    args = make_case(
+        tmp_path / "cell", (4080, 2200, 4390, 2410), candidates(),
+        ("专业负责人", "专业负责者"),
+    )
+    report = validate_with_source(**args)
+    row = next(r for r in report["source_ledger"]["rows"]
+               if r["recognized_text"] == "专业负责人")
+    # The old whole-row downgrade leaves 54 rendered source-core pixels here.
+    assert row["residual_owned_core_pixels"] == 0
+    assert report["summary"] == {"PASS": 10, "ABSTAIN": 2}
+    assert all(r["unowned_pixels"] == r["cache_uncovered_pixels"] == 0
+               for r in report["source_ledger"]["rows"])
+
+    structure = load_trace_cache(args["cache"]).final_structure
+    chinese = next(c for c in structure.texts if c.text == "专业负责人")
+    assert chinese.replacement_safe
+    gray, _ = local_region()
+    restored = constrain_texts_to_table_cells(gray, structure.texts, verified_sources=(proofs := []))
+    owner = partition_content(
+        structure.preview_binary, lines=structure.straight_lines, texts=restored,
+        logos=structure.logos, signatures=structure.signatures,
+    )
+    owned = complete_verified_text_ownership(
+        structure.preview_binary, gray, restored, proofs, ownership=owner,
+    )
+    from app.geometry.content_ownership import _rasterize_line_claims
+
+    band = _rasterize_line_claims(structure.straight_lines, shape=gray.shape)
+    released = (band > 0) & (structure.preview_binary < 128) & (owner.line == 0)
+    # Six disconnected Chinese edges leave line ownership first. Only then
+    # can the existing complete-carrier proof absorb the three English edges.
+    assert np.count_nonzero(released) == 6
+    assert np.all(owned.text[released])
+    assert np.count_nonzero((owned.text > 0) & (owner.text == 0)) == 3
+    assert np.array_equal(owned.text, structure.editable_text_source_mask)
+    owned.assert_valid()
+    known = np.zeros(gray.shape, dtype=bool)
+    for y, x0, x1 in row["core_runs"]:
+        known[y, x0:x1] = True
+    known &= owned.text > 0
+    assert not np.any(structure.contour_binary[known] < 128)
+    assert not np.any(structure.source_text_outline_mask[known])
+    assert not np.any(structure.uncertain_text_outline_mask[known])
+
+    cached_dxf = tmp_path / "cached.dxf"
+    export_final_structure_dxf(structure, cached_dxf)
+    saved = ezdxf.readfile(cached_dxf)
+    text = next(e for e in saved.modelspace().query("TEXT") if e.dxf.text == chinese.text)
+    text.dxf.text = "专业负责者"
+    saved.saveas(tmp_path / "cached-edited.dxf")
+    reopened = ezdxf.readfile(tmp_path / "cached-edited.dxf")
+    assert reopened.entitydb[text.dxf.handle].dxf.text == "专业负责者"
+    assert [e.dxf.text for e in reopened.modelspace().query("TEXT")][1:] == [
+        "Discipline", "Responsible",
+    ]
+    # r12 retains degenerate source contours as actual raster runs, rather
+    # than inventing a four-vertex bbox. This real two-pixel neighbor lies in
+    # the old OCR box margin and must survive as visible exact source cells.
+    raster_runs = [p for p in structure.contours if len(p.points) in (1, 2)]
+    assert ((180.0, 75.0), (180.0, 76.0)) in [p.points for p in raster_runs]
+    hatches = [e for e in reopened.modelspace().query("HATCH") if e.has_xdata("RASTER_INK_SOURCE")]
+    for path in raster_runs:
+        a, b = path.points[0], path.points[-1]
+        steps = int(max(abs(b[0] - a[0]), abs(b[1] - a[1]))) + 1
+        cells = np.linspace(a, b, steps).astype(int)
+        assert np.all(structure.contour_binary[cells[:, 1], cells[:, 0]] < 128)
+        assert not np.any(structure.editable_text_source_mask[cells[:, 1], cells[:, 0]])
+        matches = [e for e in hatches if [tag.value for tag in e.get_xdata("RASTER_INK_SOURCE")]
+                   == ["UNRESOLVED", *map(int, a), *map(int, b)]]
+        assert len(matches) == 1
+        hatch = matches[0]
+        assert hatch.dxf.layer == "UNRESOLVED_RASTER_INK"
+        assert not reopened.layers.get(hatch.dxf.layer).is_off()
+        assert not reopened.layers.get(hatch.dxf.layer).is_frozen()
+        assert a[0] == b[0] or a[1] == b[1]  # These three real source runs are axial.
+        left, right = min(a[0], b[0]), max(a[0], b[0]) + 1
+        top, bottom = min(a[1], b[1]), max(a[1], b[1]) + 1
+        assert len(hatch.paths) == 1 and hatch.paths[0].is_closed
+        assert list(hatch.paths[0].vertices) == [
+            (left, gray.shape[0] - top, 0), (right, gray.shape[0] - top, 0),
+            (right, gray.shape[0] - bottom, 0), (left, gray.shape[0] - bottom, 0),
+        ]
+    visible_geometry = [e for e in reopened.modelspace() if e.dxftype() != "TEXT"
+                        and not reopened.layers.get(e.dxf.layer).is_off()
+                        and not reopened.layers.get(e.dxf.layer).is_frozen()]
+    from tools.drafting_rules.source_adapter import DocumentView
+
+    ink = render_emitted_dxf_preview(
+        DocumentView(reopened, visible_geometry), tmp_path, structure.source_size_px,
+    ) < 255
+    assert not np.any(ink & known)
