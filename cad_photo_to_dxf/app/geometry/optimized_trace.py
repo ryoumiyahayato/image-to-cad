@@ -561,6 +561,20 @@ def trace_image_optimized(
     checkpoint(cancellation_token)
     report_progress(progress_callback, "prepare-image", 0.02)
     compound_enabled = (processing_contract or {}).get("experimental_compound_strokes") is True
+    region_enabled = "experimental_native_source_region_manifest" in (processing_contract or {})
+    region_source_identity = None
+    if region_enabled:
+        if pdf_geometry is not None:
+            raise ValueError("Explicit native source regions require aligned raster input")
+        if compound_enabled:
+            raise ValueError("Explicit source region and compound stroke trials are separate")
+        from app.geometry.observed_source_regions import source_region_input_identity
+        from app.geometry.source_region_selection import parse_source_region_selection
+
+        region_manifest = parse_source_region_selection(
+            processing_contract["experimental_native_source_region_manifest"]
+        )
+        region_source_identity = source_region_input_identity(image, source_dpi)
     compound_source_identity = None
     if compound_enabled:
         import hashlib
@@ -1493,6 +1507,24 @@ def trace_image_optimized(
         )
         enclosure_paths = (*enclosure_paths, *open_paths)
         enclosure_records = (*enclosure_records, *open_records)
+    source_region_review = None
+    if region_enabled:
+        from app.geometry.observed_source_regions import recover_explicit_native_source_regions
+
+        contour_binary, region_paths, region_records, source_region_review = recover_explicit_native_source_regions(
+            prepared.gray, prepared.binary, contour_binary,
+            selection_manifest=region_manifest,
+            protected_masks=(ownership.line, ownership.text, ownership.logo, ownership.signature,
+                text_semantics.editable_source, text_semantics.source_outline,
+                text_semantics.uncertain_outline,
+                graphic_source_mask(prepared.binary, logos),
+                signature_source_mask(prepared.binary, signatures)),
+            dpi=float(source_dpi), registered_original_scan=registered_original_scan,
+            source_crop=source_crop, source_identity=region_source_identity,
+            cancellation_token=cancellation_token,
+        )
+        enclosure_paths = (*enclosure_paths, *region_paths)
+        enclosure_records = (*enclosure_records, *region_records)
     compound_review = None
     if compound_enabled:
         if scan_symbol_source:
@@ -1773,6 +1805,8 @@ def trace_image_optimized(
         final_provenance["engineering_enclosures"] = enclosure_records
     if compound_review is not None:
         final_provenance["compound_stroke_recovery"] = compound_review
+    if source_region_review is not None:
+        final_provenance["explicit_source_region_recovery"] = source_region_review
     if scan_stroke_reviews:
         accepted_scan_ids = {sid for line in straight_lines for sid in line.source_ids}
         for review in scan_stroke_reviews:

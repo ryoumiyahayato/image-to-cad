@@ -145,6 +145,7 @@ class ProductionProcessingConfig:
     experimental_observed_text_display: bool = False
     experimental_native_source_row: bool = False
     experimental_compound_strokes: bool = False
+    experimental_native_source_region_manifest: str | None = None
     experimental_pdf_native_text: str = "off"
     experimental_pdf_native_geometry: bool = False
     experimental_protected_graphics: str = "legacy"
@@ -153,6 +154,19 @@ class ProductionProcessingConfig:
     def __post_init__(self) -> None:
         if not isinstance(self.experimental_compound_strokes, bool):
             raise ValueError('Compound stroke trial flag must be boolean')
+        if self.experimental_native_source_region_manifest is not None:
+            from app.geometry.source_region_selection import canonical_source_region_selection
+
+            if not isinstance(self.experimental_native_source_region_manifest, str):
+                raise ValueError("Source region selection must be immutable JSON text")
+            if self.experimental_compound_strokes:
+                raise ValueError("Source region and compound stroke trials are separate")
+            if self.experimental_pdf_native_text != "off" or self.experimental_pdf_native_geometry:
+                raise ValueError("Source region selection requires an aligned raster input")
+            object.__setattr__(
+                self, "experimental_native_source_region_manifest",
+                canonical_source_region_selection(self.experimental_native_source_region_manifest),
+            )
         if self.experimental_protected_graphics not in (
             "legacy", "source-image", "native-alpha", "adaptive-source-image"
         ):
@@ -241,6 +255,13 @@ class ProductionProcessingConfig:
             from app.geometry.observed_compound_strokes import VERSION as compound_version
             payload['experimental_compound_strokes'] = True
             payload['compound_stroke_version'] = compound_version
+        if self.experimental_native_source_region_manifest is not None:
+            from app.geometry.source_region_selection import VERSION as source_region_version
+
+            manifest = self.experimental_native_source_region_manifest
+            payload["experimental_native_source_region_manifest"] = json.loads(manifest)
+            payload["native_source_region_selection_sha256"] = sha256(manifest.encode("utf-8")).hexdigest()
+            payload["native_source_region_version"] = source_region_version
         if self.experimental_pdf_native_text != "off":
             payload["experimental_pdf_native_text"] = self.experimental_pdf_native_text
             payload["pdf_native_text_version"] = "embedded-cmap-visible-native-text-v7-stable-cell-source"

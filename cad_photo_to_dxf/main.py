@@ -81,6 +81,10 @@ def build_parser() -> argparse.ArgumentParser:
         '--experimental-compound-strokes', action='store_true',
         help='Trial: recover source-supported partial strokes with a verified original scan',
     )
+    parser.add_argument(
+        "--experimental-native-source-region-manifest", type=Path,
+        help="Trial: select one complete native source component using a content-bound JSON manifest",
+    )
     return parser
 
 
@@ -94,6 +98,22 @@ def run_headless(args: argparse.Namespace) -> int:
         raise SystemExit("--blank-paper requires --original-scan")
     if is_pdf and args.original_scan is not None:
         raise ValueError("--original-scan requires an aligned raster input")
+    source_region_json = None
+    source_region_path = getattr(args, "experimental_native_source_region_manifest", None)
+    if source_region_path is not None:
+        if is_pdf or args.original_scan is None or args.source_dpi is None:
+            raise ValueError("Source region selection requires raster --source-dpi and --original-scan")
+        if getattr(args, "experimental_compound_strokes", False):
+            raise ValueError("Source region and compound stroke trials are separate")
+        from app.geometry.source_region_selection import (
+            MAX_MANIFEST_BYTES, canonical_source_region_selection,
+        )
+
+        with source_region_path.open("rb") as stream:
+            raw_selection = stream.read(MAX_MANIFEST_BYTES + 1)
+        if len(raw_selection) > MAX_MANIFEST_BYTES:
+            raise ValueError("Source region selection exceeds the manifest byte budget")
+        source_region_json = canonical_source_region_selection(raw_selection.decode("utf-8"))
     from app.core.image_loader import load_image, pdf_page_size_mm, processing_pdf_dpi, save_image
     from app.core.perspective import MIN_AUTOMATIC_PAPER_CONFIDENCE, auto_correct, resolve_paper_aspect_ratio, resolve_paper_dimensions_mm
     from app.core.processing import DEFAULT_IMAGE_DPI, ProductionProcessingConfig, ProductionProcessingService
@@ -205,6 +225,7 @@ def run_headless(args: argparse.Namespace) -> int:
         source_dpi=pdf_render.render_dpi if pdf_render else args.source_dpi or DEFAULT_IMAGE_DPI,
         enable_ocr=args.ocr,
         experimental_compound_strokes=getattr(args, "experimental_compound_strokes", False),
+        experimental_native_source_region_manifest=source_region_json,
     )
     result = ProductionProcessingService.process_page(
         image, config, progress_callback=progress,
@@ -282,6 +303,12 @@ def run_headless(args: argparse.Namespace) -> int:
             'compound_stroke_recovery': metadata_to_jsonable(
                 structure.provenance.get('compound_stroke_recovery', {})
             ),
+            **({
+                "explicit_source_region_recovery": metadata_to_jsonable(
+                    structure.provenance.get("explicit_source_region_recovery", {})
+                ),
+                "source_structure_id": structure.source_structure_id,
+            } if source_region_json is not None else {}),
             "boxed_label_source_members": metadata_to_jsonable(
                 structure.provenance.get("boxed_label_source_members", {})
             ),

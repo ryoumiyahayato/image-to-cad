@@ -28,6 +28,15 @@ def semantic_paths(mask: np.ndarray | None) -> tuple[TracePath, ...]:
     return tuple(trace_binary(np.where(mask > 0, 0, 255).astype(np.uint8)))
 
 
+def _is_source_region_record(record):
+    version = record.get("version")
+    return (
+        "native_source_region_partition" in record
+        or record.get("kind") == "explicit_native_source_region"
+        or (isinstance(version, str) and version.startswith("explicit-native-source-region-"))
+    )
+
+
 def write_page_entities(
     doc,
     modelspace,
@@ -69,6 +78,33 @@ def write_page_entities(
     """The shared DXF entity serializer. Coordinates/identities are read-only."""
     names = layer_names or {name: name for name in TRACE_LAYER_STYLES}
     center_transform = center_transform or transform
+    # This preflight must precede both contour suppression and any DXF mutation.
+    # An explicit source selection is an atomic replacement, never a best-effort
+    # partial record that can fall through to another enclosure serializer.
+    region_plans = {}
+    region_records = [record for record in enclosure_records if _is_source_region_record(record)]
+    if region_records:
+        from app.export.source_region_entities import (
+            preflight_source_region, preflight_source_region_document,
+        )
+
+        if len(region_records) != 1:
+            raise ValueError("Source region trial supports exactly one explicit selection per page")
+        if contour_source_refs or (
+            source_structure is not None
+            and source_structure.provenance.get("draftsman_output_v1") is not None
+        ):
+            raise ValueError("Source region selection cannot rewrite frozen contour bindings")
+        for record in region_records:
+            index = record.get("contour_index")
+            if type(index) is not int or not 0 <= index < len(trace_paths):
+                raise ValueError("Source region requires a valid contour index")
+            if sum(other.get("contour_index") == index for other in enclosure_records) != 1:
+                raise ValueError("Source region contour index conflicts with another enclosure")
+            if resolved_output is not None and index not in resolved_output.emitted_indices("contours"):
+                raise ValueError("Source region replacement cannot be partially suppressed")
+            region_plans[index] = preflight_source_region(record, edge_transform=transform)
+        preflight_source_region_document(doc, tuple(region_plans.values()))
     coordinates = []
     from app.export.native_pdf_path_entities import add_native_path_entities
     coordinates.extend(add_native_path_entities(doc, modelspace, native_paths, transform))
@@ -261,6 +297,20 @@ def write_page_entities(
     native_scan_symbols = []
     for record in enclosure_records:
         index = record.get("contour_index")
+        if _is_source_region_record(record):
+            from app.export.source_region_entities import emit_source_region_plan
+
+            member, residual, _backup, bounds = emit_source_region_plan(
+                doc, modelspace, region_plans[index],
+            )
+            coordinates.extend(bounds)
+            trace_path_count += 2
+            trace_vertex_count += sum(
+                len(boundary.vertices)
+                for entity in (member, residual)
+                for boundary in entity.paths
+            )
+            continue
         if index is not None and contour_members is not None and int(index) not in resolved_output.emitted_indices(
             "contours"
         ):
