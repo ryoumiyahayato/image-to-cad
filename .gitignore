@@ -37,3 +37,8 @@ cad_photo_to_dxf/validation/user-pdf-check/*.dxf
 # Native-first local environment and credential-free user overrides.
 .venv-native/
 /tools/native_first/providers/*.local.json
+
+# Rebuildable drafting-rule processing reports; immutable originals are indexed
+# by tools/drafting_rules/evidence/HISTORICAL_REPORTS.json.
+/tools/drafting_rules/evidence/*.report.json
+/tools/drafting_rules/evidence/v0.1.1/*.report.json

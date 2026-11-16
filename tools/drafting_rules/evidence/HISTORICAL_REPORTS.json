@@ -1,0 +1,70 @@
+{
+  "format": "drafting-rule-historical-report-recovery-v1",
+  "reason": "Generated reports remain immutable in Git history and the private evidence package; stop tracking rebuildable outputs. No checker allowlist or historical result was changed.",
+  "reports": [
+    {
+      "path": "tools/drafting_rules/evidence/edited.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "5b1f592a581b04eb39afb876485907f57644ee62e9ad1dc39cbb30ec068ee1b3",
+      "bytes": 5448,
+      "blob": "f450bf302d7ab5decae5acb0c7bbc11cfe6db3cb",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/edited.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/overflow.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "d388719b11d89dd8d68e430f83fccbb986228ed19dff3a13be4c4026e8001471",
+      "bytes": 5464,
+      "blob": "b804e6b3476d8a0d2ec3eea72608561db8001fee",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/overflow.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/unrelated-change.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "6b7cd463101ff708c7d2f73d621b0d0893fde03de1e4627fcf11d1273e5860dc",
+      "bytes": 5561,
+      "blob": "0eee369bf6cdb1807c2bece845b22ce56fa0491c",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/unrelated-change.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/v0.1.1/coordinate.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "82cd22fbb2a9b03a0c513e4611f8b5436039f5488a4a3ec9bbfe4bc80235d4d2",
+      "bytes": 2550,
+      "blob": "51255a96ba2df860ab666c4275d523379f1a621f",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/coordinate.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/v0.1.1/edited.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "417e30db7d4e901f747be7229a340d46258ab976c85380c1a585e6f0de587bba",
+      "bytes": 5448,
+      "blob": "d7fc459644440a5abdd77394f6da6f86230bdab8",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/edited.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/v0.1.1/old-coordinate.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "1eae6aa6aa246520ab938da0e8ab4c176e717f1ae238c10de6cc46a52d5fdfff",
+      "bytes": 2290,
+      "blob": "ad96040bf62f6305da64a3abda08c4d7086d69a3",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/old-coordinate.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/v0.1.1/overflow.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "342cc5079f5d3950bfdbe1aad82ab832245f545494a291cf5da9b93aeed8dcdc",
+      "bytes": 5464,
+      "blob": "55c0da948c8583288e90973321af5ec682c532f0",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/overflow.report.json"
+    },
+    {
+      "path": "tools/drafting_rules/evidence/v0.1.1/unrelated-change.report.json",
+      "commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+      "sha256": "fa45510b76ccb3c68cd216412d1090131f9ace8a1c763e35e147766095b66395",
+      "bytes": 5561,
+      "blob": "385095debe720791a73e6c6753c5b78ff67c7b8f",
+      "url": "https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/unrelated-change.report.json"
+    }
+  ]
+}
