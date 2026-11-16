@@ -7,7 +7,7 @@ import ezdxf
 import pytest
 
 from tools.drafting_rules.cli import load_pack, validate_files
-from tools.drafting_rules.dxf_adapter import sha256, snapshot
+from tools.drafting_rules.dxf_adapter import sha256, snapshot, solid_hatch_loops
 
 
 def write_json(path, data):
@@ -200,6 +200,77 @@ def test_block_contents_cannot_hide_behind_unchanged_outer_handle(tmp_path):
     report = validate_files(before, after, source, path)
     assert next(r for r in report["results"] if r["rule"] == "background-protection")["status"] == "ABSTAIN"
     assert next(r for r in report["results"] if r["rule"] == "edit-isolation")["status"] == "ABSTAIN"
+
+
+@pytest.mark.parametrize("mutation", ["outer-boundary", "inner-boundary", "layer"])
+def test_solid_hatch_complete_boundaries_and_resources_are_fingerprinted(tmp_path, mutation):
+    before, after, source, path, evidence, _ = fixture(tmp_path)
+    doc = ezdxf.readfile(before)
+    doc.layers.new("FILL_BACKGROUND")
+    hatch = doc.modelspace().add_hatch(dxfattribs={"layer": "FILL_BACKGROUND"})
+    hatch.paths.add_polyline_path([(35, 3), (55, 3), (55, 17), (35, 17)], is_closed=True)
+    hatch.paths.add_polyline_path([(40, 8), (45, 8), (45, 12), (40, 12)], is_closed=True, flags=0)
+    doc.saveas(before)
+    doc.entitydb[evidence["texts"][0]["handle"]].dxf.text = "水电"
+    doc.layers.get("OLD").off()
+    doc.layers.get("OLD").freeze()
+    doc.saveas(after)
+    evidence.update(before_sha256=sha256(before), after_sha256=sha256(after))
+    write_json(path, evidence)
+    assert snapshot(after)[hatch.dxf.handle]["supported"]
+    report = validate_files(before, after, source, path)
+    assert next(r for r in report["results"] if r["rule"] == "edit-isolation")["status"] == "PASS"
+
+    if mutation == "layer":
+        doc.layers.get("FILL_BACKGROUND").dxf.color = 6
+    else:
+        boundary = hatch.paths[0 if mutation == "outer-boundary" else 1]
+        x, y, bulge = boundary.vertices[0]
+        boundary.vertices[0] = (x + 0.25, y, bulge)
+    doc.saveas(after)
+    evidence["after_sha256"] = sha256(after)
+    write_json(path, evidence)
+    report = validate_files(before, after, source, path)
+    result = next(r for r in report["results"] if r["rule"] == "edit-isolation")
+    assert result["status"] == "FAIL"
+    assert hatch.dxf.handle in result["details"]["changed_handles"]
+
+
+@pytest.mark.parametrize("unsupported", [
+    "pattern", "gradient", "associative", "boundary-reference", "mirror",
+    "tilted", "elevated", "open", "bulge", "edge-path", "extension-dictionary",
+])
+def test_solid_name_does_not_authorize_unsupported_hatch_geometry(unsupported):
+    from tools.drafting_rules.source_adapter import renderable
+
+    doc = ezdxf.new("R2010")
+    hatch = doc.modelspace().add_hatch()
+    boundary = hatch.paths.add_polyline_path([(1, 1), (9, 1), (9, 9), (1, 9)], is_closed=True)
+    assert solid_hatch_loops(hatch) is not None
+    if unsupported == "pattern":
+        hatch.set_pattern_fill("ANSI31")
+    elif unsupported == "gradient":
+        hatch.set_gradient()
+    elif unsupported == "associative":
+        hatch.dxf.associative = 1
+    elif unsupported == "boundary-reference":
+        boundary.source_boundary_objects = [doc.modelspace().add_line((0, 0), (1, 1)).dxf.handle]
+    elif unsupported == "mirror":
+        hatch.dxf.extrusion = (0, 0, -1)
+    elif unsupported == "tilted":
+        hatch.dxf.extrusion = (0, 1, 1)
+    elif unsupported == "elevated":
+        hatch.dxf.elevation = (0, 0, 1)
+    elif unsupported == "open":
+        boundary.is_closed = False
+    elif unsupported == "bulge":
+        boundary.vertices[0] = (1, 1, 0.25)
+    elif unsupported == "edge-path":
+        hatch.paths.add_edge_path().add_line((0, 0), (1, 1))
+    else:
+        hatch.new_extension_dict()
+    assert solid_hatch_loops(hatch) is None
+    assert not renderable(hatch)
 
 
 @pytest.mark.parametrize("invalid", ["schema", "region", "units"])

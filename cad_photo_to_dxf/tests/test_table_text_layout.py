@@ -357,16 +357,33 @@ def test_real_cell_exits_owned_members_after_source_arbitration_and_cache_roundt
     assert [e.dxf.text for e in reopened.modelspace().query("TEXT")][1:] == [
         "Discipline", "Responsible",
     ]
-    from app.export.trace_dxf_entities import _path_matches_ocr
-
-    independent = [p for p in structure.contours if p.depth % 2 == 0
-                   and _path_matches_ocr(p, (chinese,))]
-    assert independent  # Nearby rule ink that the old bbox filter would drop.
-    exported = [tuple(e.get_points("xy")) for e in reopened.modelspace().query("LWPOLYLINE")]
-    for path in independent:
-        assert all(not structure.editable_text_source_mask[round(y), round(x)]
-                   for x, y in path.points)
-        assert tuple((x, gray.shape[0] - y) for x, y in path.points) in exported
+    # r12 retains degenerate source contours as actual raster runs, rather
+    # than inventing a four-vertex bbox. This real two-pixel neighbor lies in
+    # the old OCR box margin and must survive as visible exact source cells.
+    raster_runs = [p for p in structure.contours if len(p.points) in (1, 2)]
+    assert ((180.0, 75.0), (180.0, 76.0)) in [p.points for p in raster_runs]
+    hatches = [e for e in reopened.modelspace().query("HATCH") if e.has_xdata("RASTER_INK_SOURCE")]
+    for path in raster_runs:
+        a, b = path.points[0], path.points[-1]
+        steps = int(max(abs(b[0] - a[0]), abs(b[1] - a[1]))) + 1
+        cells = np.linspace(a, b, steps).astype(int)
+        assert np.all(structure.contour_binary[cells[:, 1], cells[:, 0]] < 128)
+        assert not np.any(structure.editable_text_source_mask[cells[:, 1], cells[:, 0]])
+        matches = [e for e in hatches if [tag.value for tag in e.get_xdata("RASTER_INK_SOURCE")]
+                   == ["UNRESOLVED", *map(int, a), *map(int, b)]]
+        assert len(matches) == 1
+        hatch = matches[0]
+        assert hatch.dxf.layer == "UNRESOLVED_RASTER_INK"
+        assert not reopened.layers.get(hatch.dxf.layer).is_off()
+        assert not reopened.layers.get(hatch.dxf.layer).is_frozen()
+        assert a[0] == b[0] or a[1] == b[1]  # These three real source runs are axial.
+        left, right = min(a[0], b[0]), max(a[0], b[0]) + 1
+        top, bottom = min(a[1], b[1]), max(a[1], b[1]) + 1
+        assert len(hatch.paths) == 1 and hatch.paths[0].is_closed
+        assert list(hatch.paths[0].vertices) == [
+            (left, gray.shape[0] - top, 0), (right, gray.shape[0] - top, 0),
+            (right, gray.shape[0] - bottom, 0), (left, gray.shape[0] - bottom, 0),
+        ]
     visible_geometry = [e for e in reopened.modelspace() if e.dxftype() != "TEXT"
                         and not reopened.layers.get(e.dxf.layer).is_off()
                         and not reopened.layers.get(e.dxf.layer).is_frozen()]
