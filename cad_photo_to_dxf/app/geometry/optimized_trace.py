@@ -560,6 +560,15 @@ def trace_image_optimized(
         )
     checkpoint(cancellation_token)
     report_progress(progress_callback, "prepare-image", 0.02)
+    compound_enabled = (processing_contract or {}).get("experimental_compound_strokes") is True
+    compound_source_identity = None
+    if compound_enabled:
+        import hashlib
+
+        compound_source_identity = {
+            "input_pixels_sha256": hashlib.sha256(np.ascontiguousarray(image).tobytes()).hexdigest(),
+            "input_shape": tuple(map(int, image.shape)),
+        }
     has_pdf_evidence = pdf_geometry is not None
     pdf_content = getattr(pdf_geometry, "page_content", None)
     mixed_vector_gray = getattr(pdf_geometry, "mixed_vector_gray", None)
@@ -1484,6 +1493,27 @@ def trace_image_optimized(
         )
         enclosure_paths = (*enclosure_paths, *open_paths)
         enclosure_records = (*enclosure_records, *open_records)
+    compound_review = None
+    if compound_enabled:
+        if scan_symbol_source:
+            from app.geometry.observed_compound_strokes import recover_observed_compound_strokes
+
+            contour_binary, compound_paths, compound_records, compound_review = recover_observed_compound_strokes(
+                prepared.gray, prepared.binary, contour_binary,
+                protected_masks=(ownership.line, ownership.logo, ownership.signature,
+                    text_semantics.editable_source, text_semantics.source_outline,
+                    text_semantics.uncertain_outline,
+                    graphic_source_mask(prepared.binary, logos),
+                    signature_source_mask(prepared.binary, signatures)),
+                dpi=float(source_dpi or DEFAULT_CONNECTION_DPI),
+                registered_original_scan=registered_original_scan, source_crop=source_crop,
+                source_identity=compound_source_identity, cancellation_token=cancellation_token,
+            )
+            enclosure_paths = (*enclosure_paths, *compound_paths)
+            enclosure_records = (*enclosure_records, *compound_records)
+        else:
+            compound_review = {"status": "SKIPPED_NON_SCAN_SOURCE", "accepted_parents": 0,
+                               "accepted_parts": 0, "creates_connection": False}
     text_contract = text_output_summary(texts)
     text_decisions = text_output_decisions(texts)
     if observation_sink is not None:
@@ -1741,6 +1771,8 @@ def trace_image_optimized(
         final_provenance["text_rule_contours"] = rule_contours
     if enclosure_records:
         final_provenance["engineering_enclosures"] = enclosure_records
+    if compound_review is not None:
+        final_provenance["compound_stroke_recovery"] = compound_review
     if scan_stroke_reviews:
         accepted_scan_ids = {sid for line in straight_lines for sid in line.source_ids}
         for review in scan_stroke_reviews:

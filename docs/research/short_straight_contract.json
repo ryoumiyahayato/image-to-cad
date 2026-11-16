@@ -1,0 +1,50 @@
+{
+  "version": "short-straight-compound-parts-v1",
+  "frozen_before_A2_short_fit": true,
+  "status": "EXPERIMENTAL_CONTRACT_NOT_PRODUCT_ACCEPTANCE",
+  "scope": "Straight exclusive parts inside a source compound; never inferred electrical or complete movable object",
+  "registration": {
+    "native_original_bitonal": true,
+    "integer_scale_min": 2,
+    "mapping": "native=(work+0.5)*scale-0.5",
+    "verify_box_downsample": "exact PIL BOX, or abs difference <= 1 with identical gray<254 foreground",
+    "full_input_hashes_required_by_caller": true
+  },
+  "geometry": {
+    "line_only": true,
+    "skeleton_role": "proposal only; distinct chains/junction pixels are never merged",
+    "source_ownership_distance_uncertainty_margin_work_px": 1.4142135623730951,
+    "minimum_original_cross_sections": 12,
+    "minimum_cross_section_spacing_native_px": 1,
+    "minimum_interior_length_mm": 2.0,
+    "minimum_interior_length_width_ratio": 8.0,
+    "maximum_pen_edge_shift_work_px": 0.25,
+    "maximum_bidirectional_boundary_error_work_px": 1.0,
+    "maximum_bidirectional_boundary_error_native_px": 1.0,
+    "maximum_width_variation_work_px": 1.5,
+    "minimum_width_work_px": 0.5,
+    "collar_length_work_px": "max(2, pen_width_work_px + sqrt(0.5))",
+    "artificial_end_extension_native_px": 0,
+    "native_centerline_white_cell_intrusion": 0
+  },
+  "mandatory_output_checks": {
+    "input_immutable": true,
+    "source_ledger_partition_exact": true,
+    "source_retirement_overlap": 0,
+    "native_original_white_gap_bridging": 0,
+    "new_non_interface_contact": 0,
+    "component_and_hole_counts_preserved": true,
+    "cap_styles": ["round", "butt", "square"],
+    "parent_protected_or_previously_claimed_source": "whole parent rejected",
+    "remaining_source": "exact native source pixel cells including cut collars"
+  },
+  "controls_before_A2": {
+    "rotations_degrees": [0, 15, 30, 45, 60, 75, 90],
+    "native_pen_widths_pixels": [1, 2, 3, 4, 6],
+    "native_arm_lengths_pixels": [12, 20, 32, 48, 64],
+    "native_white_gap_pixels": [1, 2, 3, 4],
+    "separate_close_junctions_pixels": [2, 3, 4, 6, 10],
+    "mandatory_shapes": ["T", "cross", "two_close_junctions", "parallel", "gap", "loop_with_tail", "real_short_spur", "protected_member", "wrong_native_registration"]
+  },
+  "unchanged": ["r13 source code", "r13 complete isolated stroke 10 mm gate", "OCR identity rejection", "whole parent source protection", "historical baseline"]
+}

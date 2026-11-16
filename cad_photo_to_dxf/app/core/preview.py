@@ -180,6 +180,15 @@ def render_emitted_dxf_preview(
                 if weight == -1:
                     weight = layer.dxf.lineweight
                 pen_width = max(0.1, weight / 100 * float(tags[2].value) / 25.4)
+            if (entity.has_xdata("OBSERVED_COMPOUND_PART_SOURCE")
+                    and kind in {"LINE", "LWPOLYLINE"}
+                    and int(entity.get_xdata("OBSERVED_COMPOUND_PART_SOURCE")[2].value) > 0):
+                tags = entity.get_xdata("OBSERVED_COMPOUND_PART_SOURCE")
+                dpi = float(tags[3].value)
+                weight = entity.dxf.lineweight
+                if weight <= 0 or not np.isfinite(dpi) or dpi <= 0:
+                    raise ValueError("Invalid emitted compound paper pen")
+                pen_width = weight*dpi/2540.
             if entity.has_xdata("P9_ARC"):
                 tags = entity.get_xdata("P9_ARC")
                 pen_width = max(0.1, float(tags[1].value))
@@ -195,6 +204,11 @@ def render_emitted_dxf_preview(
                         raise ValueError("Invalid emitted round ARC width")
                     arc_cap = Qt.PenCapStyle.RoundCap
             painter.setPen(QPen(QColor("black"), pen_width * unit))
+            if entity.has_xdata("OBSERVED_COMPOUND_PART_SOURCE"):
+                pen = painter.pen()
+                pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+                painter.setPen(pen)
             if entity.has_xdata("P3A_STROKE") and entity.get_xdata("P3A_STROKE")[0].value == "OBSERVED_SYMBOL_STROKE":
                 pen = painter.pen()
                 pen.setCapStyle(Qt.PenCapStyle.RoundCap)

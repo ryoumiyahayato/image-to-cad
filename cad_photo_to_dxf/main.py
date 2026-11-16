@@ -77,6 +77,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Run optional production OCR",
     )
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument(
+        '--experimental-compound-strokes', action='store_true',
+        help='Trial: recover source-supported partial strokes with a verified original scan',
+    )
     return parser
 
 
@@ -200,6 +204,7 @@ def run_headless(args: argparse.Namespace) -> int:
     config = ProductionProcessingConfig(
         source_dpi=pdf_render.render_dpi if pdf_render else args.source_dpi or DEFAULT_IMAGE_DPI,
         enable_ocr=args.ocr,
+        experimental_compound_strokes=getattr(args, "experimental_compound_strokes", False),
     )
     result = ProductionProcessingService.process_page(
         image, config, progress_callback=progress,
@@ -273,6 +278,9 @@ def run_headless(args: argparse.Namespace) -> int:
             ),
             "observed_open_stroke_recovery": metadata_to_jsonable(
                 structure.provenance.get("observed_open_stroke_recovery", {})
+            ),
+            'compound_stroke_recovery': metadata_to_jsonable(
+                structure.provenance.get('compound_stroke_recovery', {})
             ),
             "boxed_label_source_members": metadata_to_jsonable(
                 structure.provenance.get("boxed_label_source_members", {})

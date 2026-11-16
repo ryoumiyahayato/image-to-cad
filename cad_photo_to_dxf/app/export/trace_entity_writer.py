@@ -266,6 +266,20 @@ def write_page_entities(
         ):
             continue
         attributes = {"layer": names["ENGINEERING_SYMBOL"]}
+        if record.get("native_source_compound_strokes"):
+            from app.export.compound_stroke_entities import add_compound_stroke_entities
+
+            native, _residual, bounds = add_compound_stroke_entities(
+                doc, modelspace, record, center_transform=center_transform,
+            )
+            coordinates.extend(bounds)
+            for entity in native:
+                if entity.dxftype() == "LINE":
+                    line_count += 1
+                else:
+                    trace_path_count += 1
+                    trace_vertex_count += len(entity)
+            continue
         if record.get("native_source_open_stroke"):
             from app.export.observed_open_stroke_entities import add_observed_open_stroke
 

@@ -144,12 +144,15 @@ class ProductionProcessingConfig:
     draftsman_behavior_manifest_digest: str | None = None
     experimental_observed_text_display: bool = False
     experimental_native_source_row: bool = False
+    experimental_compound_strokes: bool = False
     experimental_pdf_native_text: str = "off"
     experimental_pdf_native_geometry: bool = False
     experimental_protected_graphics: str = "legacy"
     recover_pdf_native_text_omissions: bool = True
 
     def __post_init__(self) -> None:
+        if not isinstance(self.experimental_compound_strokes, bool):
+            raise ValueError('Compound stroke trial flag must be boolean')
         if self.experimental_protected_graphics not in (
             "legacy", "source-image", "native-alpha", "adaptive-source-image"
         ):
@@ -234,6 +237,9 @@ class ProductionProcessingConfig:
         if self.experimental_native_source_row:
             payload["experimental_native_source_row"] = True
             payload["native_source_row_version"] = "native-row-before-ownership-v4"
+        if self.experimental_compound_strokes:
+            payload['experimental_compound_strokes'] = True
+            payload['compound_stroke_version'] = 'registered-native-compound-parts-v1'
         if self.experimental_pdf_native_text != "off":
             payload["experimental_pdf_native_text"] = self.experimental_pdf_native_text
             payload["pdf_native_text_version"] = "embedded-cmap-visible-native-text-v7-stable-cell-source"
