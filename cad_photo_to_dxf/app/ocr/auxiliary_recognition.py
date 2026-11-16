@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from math import isfinite
+from typing import Any, cast
 
 
 MIN_CIRCLE_EXPORT_CONFIDENCE = 0.90
@@ -29,8 +30,8 @@ class TextObservation:
     cell_clip_bbox: tuple[int, int, int, int] | None = None
     cell_clip_quad: tuple[tuple[float, float], ...] | None = None
 
-    def payload(self):
-        result = {
+    def payload(self) -> dict[str, object]:
+        result: dict[str, object] = {
             "stage": "pre-table-cell-v1", "candidate_index": self.candidate_index,
             "text": self.text, "bbox": list(self.bbox),
             "quad": [list(p) for p in self.quad] if self.quad is not None else None,
@@ -38,12 +39,14 @@ class TextObservation:
             "rotation_deg": self.rotation_deg, "source": self.source,
         }
         if self.cell_clip_bbox is not None:
+            if self.cell_clip_quad is None:
+                raise ValueError("Cell clip bbox requires a matching quad")
             result["cell_clip_bbox"] = list(self.cell_clip_bbox)
             result["cell_clip_quad"] = [list(p) for p in self.cell_clip_quad]
         return result
 
     @classmethod
-    def from_payload(cls, value):
+    def from_payload(cls, value: Any) -> TextObservation | None:
         # Missing/invalid observations are unavailable; never manufacture one
         # from the already constrained candidate or discard that candidate.
         try:
@@ -69,13 +72,16 @@ class TextObservation:
                         or any(len(p) != 2 for p in clip_quad)
                         or not all(isfinite(v) for p in clip_quad for v in p)):
                     return None
+            # Lengths were validated above; the cast only communicates the
+            # fixed-size tuple contract to the type checker.
+            character_boxes = cast(tuple[tuple[int, int, int, int], ...], boxes)
             return cls(int(value["candidate_index"]), str(value["text"]), bbox,
-                       quad, boxes, rotation, str(value["source"]), clip_bbox, clip_quad)
+                       quad, character_boxes, rotation, str(value["source"]), clip_bbox, clip_quad)
         except (AttributeError, KeyError, TypeError, ValueError, OverflowError):
             return None
 
     @classmethod
-    def capture(cls, item, index):
+    def capture(cls, item: TextCandidate, index: int) -> TextObservation | None:
         try:
             return cls.from_payload({
                 "stage": "pre-table-cell-v1", "candidate_index": index,

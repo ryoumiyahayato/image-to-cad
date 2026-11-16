@@ -92,7 +92,10 @@ def raster_to_cad(
         # Existing callers and saved two-point calibrations retain their frame.
         return RasterToCad(sx, sx, 0., origin_y + height * sx, False)
 
-    sy = multiplier * float(calibration.vertical_mm_per_pixel)
+    vertical_pitch = calibration.vertical_mm_per_pixel
+    if vertical_pitch is None:
+        raise ValueError("Invalid vertical paper calibration")
+    sy = multiplier * float(vertical_pitch)
     if not math.isfinite(sy) or sy <= 0:
         raise ValueError("Invalid vertical paper calibration")
     page_width, page_height = calibration.paper_size_px
@@ -138,6 +141,7 @@ def _scale_notes(texts: Iterable[TextCandidate]) -> Iterable[ScaleNote]:
         subject = candidate.text[:match.start()].strip(" \t:–-")
         subject = re.sub(r"\s+(?:IS|ARE)$", "", subject, flags=re.I)
         suffix = candidate.text[match.end():].strip(" .")
+        scope: Literal["sheet", "view", "unknown"]
         if _SHEET_SUBJECT.fullmatch(subject) and not suffix:
             scope = "sheet"
         elif _VIEW_SUBJECT.match(subject):
@@ -164,7 +168,7 @@ def resolve_drawing_scale(
             else "发现 N.T.S. 或 SCALE NONE 注记。缺少视图分区证据，导出保留纸面坐标。"
         )
         return DrawingScaleDecision(1., "paper_mm", notes, warning)
-    space = "paper_mm" if requested_multiplier == 1. else "model_mm"
+    space: CoordinateSpace = "paper_mm" if requested_multiplier == 1. else "model_mm"
     return DrawingScaleDecision(requested_multiplier, space, notes)
 
 
