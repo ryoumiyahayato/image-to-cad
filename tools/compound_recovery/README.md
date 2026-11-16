@@ -5,6 +5,15 @@ symbol recovery and not a product acceptance result. The baseline is commit
 `d5c05642de7150b254ccccafb8716bf7dfbab503`. Default processing, OCR identity gates,
 and `observed_open_strokes.py` are unchanged.
 
+**Current continuation:** automatic compound retirement now also requires
+preservation of every observed native black/white pixel center under all tested
+caps, for every registered contract. See
+[`compound_native_center_policy.md`](../../docs/research/compound_native_center_policy.md).
+The earlier A2 positive described below is historical and fails this stronger
+condition; it receives no exception. Native-grid research passed its fixed
+controls but recovered zero parts in the complete motivating real cohort, and
+has not been registered in the production entry.
+
 ## Representation and permission
 
 The normal production service accepts `--experimental-compound-strokes`. It
@@ -92,7 +101,7 @@ seccomp. The delivered DXF can be opened directly for the minimal target-CAD
 review without rerunning OCR. CAD GUI behavior, DWG interchange, and actual
 human time saved must be reported separately from automated DXF checks.
 
-## Completed cloud checkpoint (2026-11-16)
+## Earlier cloud checkpoint (2026-11-16; historical bounded-fit evidence)
 
 The final related test selection passed **177 tests**; the independent frozen
 short-part controls passed 19 cases. All three baseline/candidate page pairs

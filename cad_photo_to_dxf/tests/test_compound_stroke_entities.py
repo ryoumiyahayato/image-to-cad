@@ -8,12 +8,14 @@ import cv2
 import ezdxf
 import numpy as np
 import pytest
+from PIL import Image
 from shapely.geometry import LineString, box
 
 from app.export.compound_stroke_entities import (
     APPID, BACKUP_LAYER, CLASSIFICATION, RESIDUAL_LAYER, VISIBLE_LAYER,
     LONG_CONTRACT, LONG_CONTRACT_SHA256, LONG_CONTRACT_VERSION,
     SHORT_CONTRACT_SHA256, SHORT_CONTRACT_VERSION,
+    SOURCE_PRESERVATION_POLICY_VERSION,
     add_compound_stroke_entities,
     validate_compound_stroke_record, _cells, _continuous_region_relation,
     _native_pen_mask, _native_raster_relation, _topology,
@@ -69,6 +71,7 @@ def compound_record():
         "classification": CLASSIFICATION, "native_source_compound_strokes": True,
         "creates_connection": False, "full_object_movable": False,
         "electrical_semantics": "NOT_INFERRED", "dpi": 100., "native_scale": 2,
+        "source_shape": (181, 181), "native_shape": (362, 362),
         "origin_work_px": (0., 0.), "parts": parts,
         "native_source_runs_y_x0_x1": native_runs(source),
         "native_residual_runs_y_x0_x1": native_runs(residual),
@@ -88,6 +91,69 @@ def document():
 
 def transform(x, y):
     return x*.254, (181-y)*.254
+
+
+def source_feature_record(profile, feature):
+    """One original native black spur or open white notch in an owned arm.
+
+    Both variants passed the earlier numeric/ledger/region-identity gates for
+    both registered legacy contracts. Neither modifies the frozen controls.
+    """
+    record = compound_record()
+
+    def native_mask(source_runs):
+        value = np.zeros((362, 362), bool)
+        for y, a, b in source_runs:
+            value[y, a:b] = True
+        return value
+
+    left = record["parts"][1]
+    y = 179 if feature == "black_spur" else 180
+    for owner, key in ((record, "native_source_runs_y_x0_x1"),
+                       (left, "native_supporting_source_runs_y_x0_x1"),
+                       (left, "native_retired_source_runs_y_x0_x1")):
+        value = native_mask(owner[key])
+        value[y, 130] = feature == "black_spur"
+        owner[key] = runs(value)
+    parent = native_mask(record["native_source_runs_y_x0_x1"])
+    native_gray = np.where(parent, 0, 255).astype(np.uint8)
+    work = np.array(Image.fromarray(native_gray).resize((181, 181), Image.Resampling.BOX)) < 254
+    record["original_boundary_paths_px"] = tuple(p.points for p in
+        trace_binary(np.where(work, 0, 255).astype(np.uint8)))
+    left["source_to_pen_error_px"] = .3 if feature == "black_spur" else 0.
+    left["pen_to_source_error_px"] = .3 if feature == "white_notch" else 0.
+    if profile == "short":
+        # Recompute actual original short-fit proofs. A contract label alone is
+        # not enough to manufacture a short record from a long fixture.
+        from app.geometry.compound_straight_parts import _native_line_fit
+        parts, residual = [], parent.copy()
+        for previous in record["parts"]:
+            support = native_mask(previous["native_supporting_source_runs_y_x0_x1"])
+            fit, reason = _native_line_fit(native_gray, support, scale=2, dpi=100.)
+            assert fit is not None, reason
+            fit = {k: v for k, v in fit.items() if not k.startswith("_")}
+            fit.update(part_id=previous["part_id"], creates_connection=False)
+            parts.append(fit)
+            residual &= ~native_mask(fit["native_retired_source_runs_y_x0_x1"])
+        record.update(version=SHORT_CONTRACT_VERSION, contract_sha256=SHORT_CONTRACT_SHA256,
+            parts=parts, native_residual_runs_y_x0_x1=runs(residual),
+            native_forbidden_runs_y_x0_x1=(), source_shape=(181, 181), native_shape=(362, 362))
+    return record
+
+
+@pytest.mark.parametrize("profile", ["short", "long"])
+@pytest.mark.parametrize("feature", ["black_spur", "white_notch"])
+def test_known_legacy_contract_cannot_erase_native_black_or_white_feature(profile, feature):
+    record = source_feature_record(profile, feature)
+    message = "Native retired centers" if feature == "black_spur" else "Native original ink/paper centers"
+    with pytest.raises(ValueError, match=message):
+        validate_compound_stroke_record(record, center_transform=transform)
+    doc = document()
+    before = (len(doc.entitydb), len(doc.layers), len(doc.appids), len(doc.modelspace()))
+    with pytest.raises(ValueError, match=message):
+        add_compound_stroke_entities(doc, doc.modelspace(), record, center_transform=transform)
+    assert (len(doc.entitydb), len(doc.layers), len(doc.appids), len(doc.modelspace())) == before
+    assert doc.modelspace().query("TEXT")[0].dxf.text == "keep 01"
 
 
 def test_long_export_contract_is_explicitly_frozen():
@@ -150,6 +216,11 @@ def test_long_geometry_cannot_bypass_unknown_or_incomplete_contract(damage):
 
 def test_actual_native_parts_residual_backup_and_roundtrip(tmp_path):
     doc = document()
+    proof = validate_compound_stroke_record(compound_record(), center_transform=transform)
+    assert proof["source_preservation_policy_version"] == SOURCE_PRESERVATION_POLICY_VERSION
+    assert proof["native_binary_centers_preserved"] is True
+    assert len(proof["retired_center_coverage_audit"]) == 12
+    assert all(a["uncovered_retired_native_centers"] == 0 for a in proof["retired_center_coverage_audit"])
     native, residual, bounds = add_compound_stroke_entities(
         doc, doc.modelspace(), compound_record(), center_transform=transform)
     assert len(native) == 4 and all(e.dxftype() == "LINE" for e in native)
@@ -176,7 +247,8 @@ def test_actual_native_parts_residual_backup_and_roundtrip(tmp_path):
 
 
 @pytest.mark.parametrize("damage", ["missing_retirement", "source_overlap", "unsupported_path",
-                                    "stale_pen", "invalid_last_backup", "complete_object_claim"])
+                                    "stale_pen", "invalid_last_backup", "complete_object_claim",
+                                    "missing_native_grid"])
 def test_invalid_record_fails_before_any_dxf_mutation(damage):
     record = copy.deepcopy(compound_record())
     if damage == "missing_retirement":
@@ -191,6 +263,9 @@ def test_invalid_record_fails_before_any_dxf_mutation(damage):
         record["original_boundary_paths_px"] += (((0., 0.), (float("nan"), 1.)),)
     elif damage == "complete_object_claim":
         record["full_object_movable"] = True
+    elif damage == "missing_native_grid":
+        record.pop("source_shape")
+        record.pop("native_shape")
     doc = document()
     before = (len(doc.entitydb), len(doc.layers), len(doc.appids), len(doc.modelspace()))
     with pytest.raises(ValueError):
@@ -268,6 +343,43 @@ def test_native_white_hole_can_disappear_while_continuous_hole_count_stays_equal
         proof = _native_raster_relation(source, output)
         assert proof["source_holes"] == 1 and proof["output_holes"] == 0
         assert not proof["paper_overlap_bijection"] and not proof["passed"]
+
+
+def _full_tile_straight_pen(points, radius_work, scale, shape, cap):
+    """Independent full-tile distance oracle; no pen/path bbox is used."""
+    a, b = (np.asarray(points, dtype=float)+.5)*scale-.5
+    yy, xx = np.indices(shape)
+    samples = np.stack((xx, yy), axis=-1)
+    edge = b-a
+    length = np.linalg.norm(edge)
+    parameter = (samples-a)@edge / (edge@edge)
+    radius = radius_work*scale
+    if cap == "round":
+        nearest = a+np.clip(parameter, 0., 1.)[..., None]*edge
+        return np.sum((samples-nearest)**2, axis=-1) <= radius*radius
+    delta = samples-a-parameter[..., None]*edge
+    margin = radius/length if cap == "square" else 0.
+    return ((parameter >= -margin) & (parameter <= 1.+margin)
+            & (np.sum(delta*delta, axis=-1) <= radius*radius))
+
+
+@pytest.mark.parametrize("cap", ["round", "flat", "square"])
+@pytest.mark.parametrize("points,code,shape", [
+    (((20., 20.), (60., 60.)), 100, (300, 300)),
+    (((20., 20.), (24., 21.)), 211, (128, 128)),
+    (((1., 1.), (15., 18.)), 100, (80, 80)),
+    (((18., 1.), (1., 18.)), 100, (80, 80)),
+], ids=["wide_diagonal", "wide_short_diagonal", "tile_border", "reverse_tile_border"])
+def test_native_pen_sampling_matches_full_tile_oracle(points, code, shape, cap):
+    radius_work = code*100./5080.
+    expected = _full_tile_straight_pen(points, radius_work, 4, shape, cap)
+    actual = _native_pen_mask(points, radius_work, 4, shape, cap)
+    assert np.array_equal(actual, expected)
+    if shape == (300, 300) and cap == "square":
+        # The previous path-bbox-plus-radius implementation omitted 8 centers,
+        # including this white-center location outside the round-cap bounds.
+        assert np.count_nonzero(expected) == 3944
+        assert expected[71, 81] and actual[71, 81]
 
 
 def test_native_equal_component_totals_do_not_hide_merge_and_new_island():

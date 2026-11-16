@@ -238,8 +238,9 @@ class ProductionProcessingConfig:
             payload["experimental_native_source_row"] = True
             payload["native_source_row_version"] = "native-row-before-ownership-v4"
         if self.experimental_compound_strokes:
+            from app.geometry.observed_compound_strokes import VERSION as compound_version
             payload['experimental_compound_strokes'] = True
-            payload['compound_stroke_version'] = 'registered-native-compound-parts-v1'
+            payload['compound_stroke_version'] = compound_version
         if self.experimental_pdf_native_text != "off":
             payload["experimental_pdf_native_text"] = self.experimental_pdf_native_text
             payload["pdf_native_text_version"] = "embedded-cmap-visible-native-text-v7-stable-cell-source"

@@ -32,6 +32,7 @@ MAX_RUNS = 100_000
 EPSILON = 1.e-9
 SHORT_CONTRACT_VERSION = "short-straight-compound-parts-v1"
 SHORT_CONTRACT_SHA256 = "b2678b460fcf5bb73d1d26df1a3a281d555db23c5f458a5a5db8c4f6ed10ebfc"
+SOURCE_PRESERVATION_POLICY_VERSION = "compound-native-center-preservation-v1"
 LONG_CONTRACT_VERSION = "native-compound-long-export-v1"
 # The original long emitter fixtures had no version. Register their existing
 # native export gates explicitly; the earlier working-grid prototype's version
@@ -184,10 +185,14 @@ used, and a polygon approximation cannot hide a source-center white gap.
     points = (np.asarray(points, dtype=float)+.5)*scale-.5
     radius *= scale
     out = np.zeros(shape, bool)
-    x0 = max(0, int(math.floor(points[:, 0].min()-radius))-1)
-    x1 = min(shape[1], int(math.ceil(points[:, 0].max()+radius))+2)
-    y0 = max(0, int(math.floor(points[:, 1].min()-radius))-1)
-    y1 = min(shape[0], int(math.ceil(points[:, 1].max()+radius))+2)
+    # A rotated square terminal corner can extend sqrt(2)*radius along a
+    # native grid axis. Sampling only radius around the path would silently
+    # omit its outer white centers for sufficiently wide diagonal strokes.
+    padding = radius*math.sqrt(2.) if cap == "square" else radius
+    x0 = max(0, int(math.floor(points[:, 0].min()-padding))-1)
+    x1 = min(shape[1], int(math.ceil(points[:, 0].max()+padding))+2)
+    y0 = max(0, int(math.floor(points[:, 1].min()-padding))-1)
+    y1 = min(shape[0], int(math.ceil(points[:, 1].max()+padding))+2)
     if x0 >= x1 or y0 >= y1:
         return out
     yy, xx = np.mgrid[y0:y1, x0:x1]
@@ -195,12 +200,15 @@ used, and a polygon approximation cannot hide a source-center white gap.
     for index, (a, b) in enumerate(zip(points, points[1:])):
         edge = b-a
         length = float(np.linalg.norm(edge))
+        length_squared = float(edge@edge)
         direction = edge/length
         dx, dy = xx-a[0], yy-a[1]
-        along = dx*direction[0]+dy*direction[1]
+        # Compare endpoint planes before normalizing the tangent. Dividing
+        # first can move an exactly-on-plane center just past a flat cap.
+        along = dx*edge[0]+dy*edge[1]
         normal = -dx*direction[1]+dy*direction[0]
-        lo = -radius if cap == "square" and index == 0 else 0.
-        hi = length+radius if cap == "square" and index == len(points)-2 else length
+        lo = -radius*length if cap == "square" and index == 0 else 0.
+        hi = length_squared+(radius*length if cap == "square" and index == len(points)-2 else 0.)
         target |= (along >= lo) & (along <= hi) & (normal*normal <= radius*radius)
     disks = points if cap == "round" else points[1:-1]
     for point in disks:
@@ -309,6 +317,7 @@ class _Plan:
     residual_pixels: int
     native_raster_audit: tuple[dict, ...]
     continuous_region_audit: tuple[dict, ...]
+    retired_center_coverage_audit: tuple[dict, ...]
 
 
 @dataclass(frozen=True)
@@ -349,19 +358,19 @@ def _validate(record, center_transform, doc) -> _Plan:
                          ("native_retired_source_pixels", len(source_set)-len(residual_set))):
         if name in record and _integer(record[name], name) != actual:
             raise ValueError("Stale native source accounting")
-    if "source_shape" in record or "native_shape" in record:
-        shape = record.get("source_shape", ())
-        native_shape = record.get("native_shape", ())
-        if (len(shape) != 2 or len(native_shape) != 2
-                or tuple(_integer(n, "native shape", 1) for n in native_shape)
-                != tuple(scale*_integer(n, "working shape", 1) for n in shape)
-                or any(y >= native_shape[0] or b > native_shape[1]
-                       for y, a, b in (*source_runs, *residual_runs, *foreign_runs, *forbidden_runs))):
-            raise ValueError("Native source runs differ from the registered tile dimensions")
-        grid_shape = tuple(map(int, native_shape))
-    else:
-        all_runs = (*source_runs, *residual_runs, *foreign_runs, *forbidden_runs)
-        grid_shape = (max(row[0] for row in all_runs)+3, max(row[2] for row in all_runs)+3)
+    # A bounding box inferred from source runs can omit observed white cells.
+    # The shared center-state policy always evaluates the complete declared
+    # registered tile, including for the legacy long export contract.
+    shape = record.get("source_shape", ())
+    native_shape = record.get("native_shape", ())
+    if (not isinstance(shape, (tuple, list)) or not isinstance(native_shape, (tuple, list))
+            or len(shape) != 2 or len(native_shape) != 2
+            or tuple(_integer(n, "native shape", 1) for n in native_shape)
+            != tuple(scale*_integer(n, "working shape", 1) for n in shape)
+            or any(y >= native_shape[0] or b > native_shape[1]
+                   for y, a, b in (*source_runs, *residual_runs, *foreign_runs, *forbidden_runs))):
+        raise ValueError("Complete registered native and working tile dimensions are required")
+    grid_shape = tuple(map(int, native_shape))
     if grid_shape[0]*grid_shape[1] > MAX_NATIVE_PIXELS:
         raise ValueError("Native raster topology exceeds the bounded tile budget")
     source_shape, residual_shape = _cells(source_runs, scale), _cells(residual_runs, scale)
@@ -375,6 +384,7 @@ def _validate(record, center_transform, doc) -> _Plan:
     retired_union, support_union, part_ids = set(), set(), set()
     pens_by_cap = {cap: [] for cap in ("round", "flat", "square")}
     prepared = []
+    retired_runs_by_part = {}
     for part in parts:
         if not isinstance(part, Mapping):
             raise ValueError("Compound part record must be a mapping")
@@ -477,18 +487,40 @@ def _validate(record, center_transform, doc) -> _Plan:
                 raise ValueError("Distinct partial pens must not create a direct connection")
             prior_pens.append(pen)
         prepared.append((part_id, points, code, len(support), len(retired), len(retained)))
+        retired_runs_by_part[part_id] = retired_runs
     if retired_union & residual_set or retired_union | residual_set != source_set:
         raise ValueError("Compound native source has missing or overlapping retirement")
     original_native = _native_mask(source_runs, grid_shape)
     retained_native = _native_mask(residual_runs, grid_shape)
-    native_raster_audit, continuous_region_audit = [], []
+    native_raster_audit, continuous_region_audit, retired_center_coverage_audit = [], [], []
     canvas = box(-.5-1./scale, -.5-1./scale,
                  (grid_shape[1]+1)/scale-.5, (grid_shape[0]+1)/scale-.5)
     for cap, pen_shapes in pens_by_cap.items():
         rendered_native = retained_native.copy()
-        for _identifier, points, code, _support, _retired, _retained in prepared:
-            rendered_native |= _native_pen_mask(points, code*dpi/5080., scale, grid_shape, cap)
+        for identifier, points, code, _support, retired_count, _retained in prepared:
+            part_native = _native_pen_mask(points, code*dpi/5080., scale, grid_shape, cap)
+            uncovered = sum(int(np.count_nonzero(~part_native[y, a:b]))
+                            for y, a, b in retired_runs_by_part[identifier])
+            coverage = {"part_id": identifier, "cap_style": cap,
+                        "retired_native_source_pixels": retired_count,
+                        "uncovered_retired_native_centers": uncovered}
+            # This policy is common to every registered geometry contract.
+            # A legacy version, prior positive or another member's pen cannot
+            # excuse erasing a source cell attributed to this member.
+            if uncovered:
+                raise ValueError("Native retired centers are not covered by their own pen: "
+                                 + json.dumps(coverage, sort_keys=True))
+            retired_center_coverage_audit.append(coverage)
+            rendered_native |= part_native
         raster_relation = _native_raster_relation(original_native, rendered_native)
+        # Source accounting and region identity do not preserve a tiny open
+        # black spur or white notch. Require exact observed native center state
+        # as an additional conservative adoption condition, without epsilon.
+        # Foreign-source contact is independently forbidden above, so this also
+        # forbids covering a center outside this parent's original black cells.
+        if raster_relation["new_ink_center_pixels"] or raster_relation["missing_ink_center_pixels"]:
+            raise ValueError("Native original ink/paper centers changed: "
+                + json.dumps({"cap_style": cap, **raster_relation}, sort_keys=True))
         if not raster_relation["passed"]:
             raise ValueError("Native-grid ink/paper overlap identity changed: "
                 + json.dumps({"cap_style": cap, **raster_relation}, sort_keys=True))
@@ -551,7 +583,8 @@ def _validate(record, center_transform, doc) -> _Plan:
         sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return _Plan(identity, dpi, scale, native, residual_polygons, backup_polygons,
                  tuple(original), bounds, len(source_set), len(residual_set),
-                 tuple(native_raster_audit), tuple(continuous_region_audit))
+                 tuple(native_raster_audit), tuple(continuous_region_audit),
+                 tuple(retired_center_coverage_audit))
 
 
 def validate_compound_stroke_record(record, *, center_transform, units=4):
@@ -565,12 +598,15 @@ default ``units=4`` means millimetres; ``units=0`` is the internal source previe
     units = _integer(units, "output units")
     plan = _validate(record, center_transform, _UnitContext(units))
     return {"version": VERSION, "source_digest": plan.source_digest,
+            "source_preservation_policy_version": SOURCE_PRESERVATION_POLICY_VERSION,
             "native_parts": len(plan.parts), "native_source_pixels": plan.source_pixels,
             "native_residual_pixels": plan.residual_pixels,
             "native_retired_pixels": plan.source_pixels-plan.residual_pixels,
             "source_partition_exact": True, "native_caps_checked": ("round", "butt", "square"),
             "native_raster_audit": plan.native_raster_audit,
             "continuous_region_audit": plan.continuous_region_audit,
+            "retired_center_coverage_audit": plan.retired_center_coverage_audit,
+            "native_binary_centers_preserved": True,
             "full_object_movable": False, "electrical_semantics": "NOT_INFERRED"}
 
 

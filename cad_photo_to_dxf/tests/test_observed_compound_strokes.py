@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from app.core.processing import ProductionProcessingConfig
-from app.geometry.observed_compound_strokes import recover_observed_compound_strokes
+from app.geometry.observed_compound_strokes import VERSION, recover_observed_compound_strokes
 from app.geometry.scan_dust import RegisteredOriginalScan
 
 
@@ -102,7 +102,8 @@ def test_feature_is_opt_in_and_changes_processing_contract_identity():
     assert default == explicit_off
     assert 'experimental_compound_strokes' not in default
     assert enabled['experimental_compound_strokes'] is True
-    assert enabled['compound_stroke_version'] == 'registered-native-compound-parts-v1'
+    assert enabled['compound_stroke_version'] == VERSION
+    assert enabled['compound_stroke_version'] != 'registered-native-compound-parts-v1'
     restored = copy.deepcopy(enabled)
     del restored['experimental_compound_strokes'], restored['compound_stroke_version']
     assert restored == default

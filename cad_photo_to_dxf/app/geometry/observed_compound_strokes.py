@@ -20,7 +20,7 @@ from app.core.trace_types import TracePath
 from app.geometry.observed_open_strokes import _runs
 from app.geometry.raster_trace import trace_binary
 
-VERSION = "registered-native-compound-parts-v1"
+VERSION = "registered-native-compound-parts-v2-center-preservation"
 MAX_COMPONENT_PIXELS = 8192
 MAX_LOCAL_PIXELS = 100000
 MAX_NATIVE_LOCAL_PIXELS = 1000000
