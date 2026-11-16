@@ -58,7 +58,8 @@ def test_whole_parent_permissions_and_original_evidence_fail_closed(reason):
         scan.pixels[180, 30] = 1
     else:
         gray = np.roll(gray, -9, axis=1)
-        binary = gray.copy(); visible = gray.copy()
+        binary = gray.copy()
+        visible = gray.copy()
         scan = RegisteredOriginalScan(np.repeat(np.repeat(gray, 2, 0), 2, 1), 200., 2)
     expected = visible.copy()
     output, paths, records, review = recover_observed_compound_strokes(

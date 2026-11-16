@@ -129,7 +129,8 @@ def _runs(value, label, *, allow_empty=False):
         if b <= a or (previous is not None and
                      (y < previous[0] or (y == previous[0] and a <= previous[2]))):
             raise ValueError(f"{label} must be sorted maximal disjoint runs")
-        result.append((y, a, b)); previous = (y, a, b)
+        result.append((y, a, b))
+        previous = (y, a, b)
         pixels += b-a
         if pixels > MAX_NATIVE_PIXELS:
             raise ValueError(f"{label} exceeds the bounded native source budget")
@@ -461,7 +462,8 @@ def _validate(record, center_transform, doc) -> _Plan:
                 raise ValueError("Stale native part accounting")
         if short_contract and _integer(part.get("source_pixels"), "native fit support count", 1) != len(support):
             raise ValueError("Short-part fit support count differs from its original source")
-        support_union |= support; retired_union |= retired
+        support_union |= support
+        retired_union |= retired
         support_shape, interface_shape = _cells(support_runs, scale), _cells(retained_runs, scale)
         if not _inside(line, support_shape):
             raise ValueError("Native centerline enters a source white cell")
@@ -632,7 +634,9 @@ the original working-grid boundaries.
         if name not in doc.layers:
             doc.layers.new(name, dxfattribs={"color": 7, "lineweight": 0})
     backup = doc.layers.get(BACKUP_LAYER)
-    backup.off(); backup.freeze(); backup.lock()
+    backup.off()
+    backup.freeze()
+    backup.lock()
     common = [(1000, CLASSIFICATION), (1000, plan.source_digest),
               (1071, 0), (1040, plan.dpi), (1000, "PARTIAL_OBJECT_NOT_COMPLETE_MOVABLE_OBJECT"),
               (1000, "ELECTRICAL_SEMANTICS_NOT_INFERRED"), (1000, "EXPERIMENTAL_CANDIDATE")]

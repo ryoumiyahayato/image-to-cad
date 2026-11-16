@@ -54,7 +54,8 @@ def recover_observed_compound_strokes(
             max_local_pixels=MAX_LOCAL_PIXELS, max_native_local_pixels=MAX_NATIVE_LOCAL_PIXELS,
             max_checks=MAX_CHECKS, max_total_local_pixels=MAX_TOTAL_LOCAL_PIXELS),
     )
-    unchanged = lambda: (visible_binary, (), (), review)
+    def unchanged():
+        return visible_binary, (), (), review
     if (not isinstance(gray, np.ndarray) or gray.ndim != 2 or gray.dtype != np.uint8
             or not isinstance(binary, np.ndarray) or binary.shape != gray.shape
             or not isinstance(visible_binary, np.ndarray) or visible_binary.shape != gray.shape
