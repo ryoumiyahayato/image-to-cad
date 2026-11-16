@@ -65,6 +65,7 @@ def test_gui_only_verifies_paper_edges_after_perspective_corners() -> None:
         _native_pdf_mode=False, _review_project=None,
         _perspective_metadata=None, _ocr_enabled=lambda: True,
         _processing_pdf_dpi=lambda _page: 136,
+        _pdf_page_sizes_mm={0: (297., 210.)},
     )
     assert not _processing_config(window, None).paper_boundary_verified
     window._perspective_metadata = {

@@ -1469,6 +1469,21 @@ def trace_image_optimized(
         )
         enclosure_paths = (*enclosure_paths, *frame_paths)
         enclosure_records = (*enclosure_records, *frame_records)
+    open_stroke_review = None
+    if not prepared.clean_digital and scan_symbol_source:
+        from app.geometry.observed_open_strokes import recover_observed_open_strokes
+
+        contour_binary, open_paths, open_records, open_stroke_review = recover_observed_open_strokes(
+            prepared.gray, prepared.binary, contour_binary,
+            protected_masks=(ownership.line, ownership.logo, ownership.signature,
+                text_semantics.editable_source, text_semantics.source_outline,
+                text_semantics.uncertain_outline,
+                graphic_source_mask(prepared.binary, logos),
+                signature_source_mask(prepared.binary, signatures)),
+            dpi=float(source_dpi or DEFAULT_CONNECTION_DPI),
+        )
+        enclosure_paths = (*enclosure_paths, *open_paths)
+        enclosure_records = (*enclosure_records, *open_records)
     text_contract = text_output_summary(texts)
     text_decisions = text_output_decisions(texts)
     if observation_sink is not None:
@@ -1706,6 +1721,8 @@ def trace_image_optimized(
         final_provenance["scanned_glyph_review"] = scanned_glyph_records
     if frame_review is not None:
         final_provenance["observed_frame_recovery"] = frame_review
+    if open_stroke_review is not None:
+        final_provenance["observed_open_stroke_recovery"] = open_stroke_review
     if boxed_label_records:
         final_provenance["boxed_label_source_members"] = {
             "version": "observed-boxed-label-members-v1", "decisions": boxed_label_records,

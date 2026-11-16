@@ -424,11 +424,16 @@ def prepare_scan_page(
         binary = 255 - binary
     unconfirmed_noise_runs = ()
     removed_noise_runs = ()
-    if not clean_digital and foreground_threshold is None:
-        proposed_cleanup = _suppress_dense_speckle(binary)
-        if not speckle_only:
-            proposed_cleanup = _suppress_long_low_contrast_artifacts(gray, proposed_cleanup)
-        suspect = (binary == 0) & (proposed_cleanup != 0)
+    # A raster appearance heuristic can propose cleanup, but cannot revoke an
+    # independently confirmed source mask. Explicit thresholds and authoritative
+    # vector-only pages keep their existing no-cleanup contract.
+    if foreground_threshold is None and pdf_content != "vector":
+        suspect = np.zeros(gray.shape, dtype=bool)
+        if not clean_digital:
+            proposed_cleanup = _suppress_dense_speckle(binary)
+            if not speckle_only:
+                proposed_cleanup = _suppress_long_low_contrast_artifacts(gray, proposed_cleanup)
+            suspect = (binary == 0) & (proposed_cleanup != 0)
         if (
             pdf_content == "mixed"
             and mixed_vector_gray is not None

@@ -271,6 +271,9 @@ def run_headless(args: argparse.Namespace) -> int:
             "observed_frame_recovery": metadata_to_jsonable(
                 structure.provenance.get("observed_frame_recovery", {})
             ),
+            "observed_open_stroke_recovery": metadata_to_jsonable(
+                structure.provenance.get("observed_open_stroke_recovery", {})
+            ),
             "boxed_label_source_members": metadata_to_jsonable(
                 structure.provenance.get("boxed_label_source_members", {})
             ),

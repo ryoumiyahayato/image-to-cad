@@ -266,6 +266,18 @@ def write_page_entities(
         ):
             continue
         attributes = {"layer": names["ENGINEERING_SYMBOL"]}
+        if record.get("native_source_open_stroke"):
+            from app.export.observed_open_stroke_entities import add_observed_open_stroke
+
+            entity, bounds = add_observed_open_stroke(doc, modelspace, record,
+                                                     center_transform=center_transform)
+            coordinates.extend(bounds)
+            if entity.dxftype() == "LINE":
+                line_count += 1
+            else:
+                trace_path_count += 1
+                trace_vertex_count += len(entity)
+            continue
         if record.get("native_source_frame"):
             from app.export.observed_frame_entities import add_observed_frame
 
@@ -367,7 +379,8 @@ def write_page_entities(
         from app.core.manual_text_recovery import emit as emit_manual_text
 
         manual_entities, manual_bounds = emit_manual_text(
-            text_review, doc, modelspace, transform, names, text_consistency
+            text_review, doc, modelspace, transform, names, text_consistency,
+            source_transform=center_transform,
         )
         text_entities.extend(manual_entities)
         text_count += len(manual_entities)

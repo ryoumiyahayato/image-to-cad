@@ -122,7 +122,7 @@ def test_source_rejection_also_applies_to_pen_profile(kind):
 
 def test_production_recovery_explicitly_uses_persistent_pen():
     sourcefile=Path(__file__).parents[1]/'app/geometry/optimized_trace.py'
-    assert 'stroke_profile="librecad_paper_pen"' in sourcefile.read_text()
+    assert 'stroke_profile="librecad_paper_pen"' in sourcefile.read_text(encoding="utf-8")
 
 
 def test_unsupported_profile_rejects_before_mutation():

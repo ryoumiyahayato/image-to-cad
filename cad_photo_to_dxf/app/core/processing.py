@@ -68,6 +68,7 @@ DISABLED_LAYOUT_PROFILE = "disabled"
 DEFAULT_IMAGE_DPI = 240.0
 PRODUCTION_ALGORITHM_VERSION += "-observed-boxed-label-members-v1"
 PRODUCTION_ALGORITHM_VERSION += "-observed-label-frame-geometry-v2-paper-pen"
+PRODUCTION_ALGORITHM_VERSION += "-observed-isolated-open-strokes-v1"
 
 
 def _sha256_hex(value: str, label: str) -> str:
