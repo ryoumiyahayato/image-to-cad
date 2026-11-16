@@ -1,0 +1,647 @@
+{
+  "format": "compact-r13-raster-transition-20261116-v1",
+  "old_commit": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+  "candidate_commit": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+  "cases": {
+    "sample-test": {
+      "before_id": "7e8f3fe8dcdd8bcdae7b0330f476fab0c88c6bc6f8461c65d48bc3298fe4c757",
+      "after_id": "62263d27ff70fc2067a8277b5d046d8adfe3c700e3b080c82e8e00ebcdd9e310",
+      "mask": {
+        "removed_black_pixels": 0,
+        "restored_black_pixels": 55476,
+        "before_sha256": "e891a625b8bc671c9a3a70a1016e889cf985f179d64333f9168d46ff8436fc5b",
+        "after_sha256": "5a23f846cd08f58c52a5e9ee63914b5438090d52aeec6bcfae51aabccd9c19f1",
+        "border_width_px": 9,
+        "shape": [
+          1250,
+          1850
+        ],
+        "raw_source_gray_min": 67,
+        "raw_source_gray_max": 76,
+        "raw_source_white_pixels": 0,
+        "source_file_sha256": "526e0d7fd9a5cdeb1d25764b93ce9c655688364eb762f47898d850aded14b8af"
+      },
+      "contours": [
+        {
+          "index": 0,
+          "before": {
+            "points": [
+              [
+                9.0,
+                9.0
+              ],
+              [
+                9.0,
+                1240.0
+              ],
+              [
+                1840.0,
+                1240.0
+              ],
+              [
+                1840.0,
+                9.0
+              ]
+            ],
+            "parent": null,
+            "depth": 0,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1249.0
+              ],
+              [
+                1849.0,
+                1249.0
+              ],
+              [
+                1849.0,
+                0.0
+              ]
+            ],
+            "parent": null,
+            "depth": 0,
+            "root": 0
+          }
+        },
+        {
+          "index": 15,
+          "before": {
+            "points": [
+              [
+                1248.0,
+                980.0
+              ],
+              [
+                1250.0,
+                980.0
+              ],
+              [
+                1250.0,
+                981.0
+              ],
+              [
+                1248.0,
+                981.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                1248.0,
+                980.0
+              ],
+              [
+                1249.0,
+                980.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 17,
+          "before": {
+            "points": [
+              [
+                1649.0,
+                964.0
+              ],
+              [
+                1651.0,
+                964.0
+              ],
+              [
+                1651.0,
+                965.0
+              ],
+              [
+                1649.0,
+                965.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                1649.0,
+                964.0
+              ],
+              [
+                1650.0,
+                964.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 27,
+          "before": {
+            "points": [
+              [
+                305.0,
+                774.0
+              ],
+              [
+                306.0,
+                774.0
+              ],
+              [
+                306.0,
+                775.0
+              ],
+              [
+                305.0,
+                775.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                305.0,
+                774.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 29,
+          "before": {
+            "points": [
+              [
+                808.0,
+                753.0
+              ],
+              [
+                820.0,
+                753.0
+              ],
+              [
+                820.0,
+                754.0
+              ],
+              [
+                808.0,
+                754.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                808.0,
+                753.0
+              ],
+              [
+                819.0,
+                753.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 36,
+          "before": {
+            "points": [
+              [
+                309.0,
+                732.0
+              ],
+              [
+                310.0,
+                732.0
+              ],
+              [
+                310.0,
+                738.0
+              ],
+              [
+                309.0,
+                738.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                309.0,
+                732.0
+              ],
+              [
+                309.0,
+                737.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 48,
+          "before": {
+            "points": [
+              [
+                314.0,
+                640.0
+              ],
+              [
+                315.0,
+                640.0
+              ],
+              [
+                315.0,
+                644.0
+              ],
+              [
+                314.0,
+                644.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                314.0,
+                640.0
+              ],
+              [
+                314.0,
+                643.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 65,
+          "before": {
+            "points": [
+              [
+                692.0,
+                592.0
+              ],
+              [
+                693.0,
+                592.0
+              ],
+              [
+                693.0,
+                594.0
+              ],
+              [
+                692.0,
+                594.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                692.0,
+                592.0
+              ],
+              [
+                692.0,
+                593.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 85,
+          "before": {
+            "points": [
+              [
+                549.0,
+                509.0
+              ],
+              [
+                550.0,
+                509.0
+              ],
+              [
+                550.0,
+                510.0
+              ],
+              [
+                549.0,
+                510.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                549.0,
+                509.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 90,
+          "before": {
+            "points": [
+              [
+                884.0,
+                494.0
+              ],
+              [
+                891.0,
+                494.0
+              ],
+              [
+                891.0,
+                495.0
+              ],
+              [
+                884.0,
+                495.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                884.0,
+                494.0
+              ],
+              [
+                890.0,
+                494.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 91,
+          "before": {
+            "points": [
+              [
+                1010.0,
+                488.0
+              ],
+              [
+                1020.0,
+                488.0
+              ],
+              [
+                1020.0,
+                489.0
+              ],
+              [
+                1010.0,
+                489.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                1010.0,
+                488.0
+              ],
+              [
+                1019.0,
+                488.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 103,
+          "before": {
+            "points": [
+              [
+                327.0,
+                393.0
+              ],
+              [
+                328.0,
+                393.0
+              ],
+              [
+                328.0,
+                399.0
+              ],
+              [
+                327.0,
+                399.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                327.0,
+                393.0
+              ],
+              [
+                327.0,
+                398.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 111,
+          "before": {
+            "points": [
+              [
+                330.0,
+                341.0
+              ],
+              [
+                331.0,
+                341.0
+              ],
+              [
+                331.0,
+                342.0
+              ],
+              [
+                330.0,
+                342.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                330.0,
+                341.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 128,
+          "before": {
+            "points": [
+              [
+                593.0,
+                269.0
+              ],
+              [
+                594.0,
+                269.0
+              ],
+              [
+                594.0,
+                270.0
+              ],
+              [
+                593.0,
+                270.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                593.0,
+                269.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        },
+        {
+          "index": 129,
+          "before": {
+            "points": [
+              [
+                573.0,
+                269.0
+              ],
+              [
+                581.0,
+                269.0
+              ],
+              [
+                581.0,
+                270.0
+              ],
+              [
+                573.0,
+                270.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          },
+          "after": {
+            "points": [
+              [
+                573.0,
+                269.0
+              ],
+              [
+                580.0,
+                269.0
+              ]
+            ],
+            "parent": 1,
+            "depth": 2,
+            "root": 0
+          }
+        }
+      ],
+      "dxf_entities_before": {
+        "LINE": 229,
+        "LWPOLYLINE": 209
+      },
+      "dxf_entities_after": {
+        "LINE": 229,
+        "LWPOLYLINE": 195,
+        "HATCH": 14
+      },
+      "raster_run_cells": 63,
+      "unchanged_saved_entities": 423,
+      "unchanged_saved_entity_sequence_sha256": "2a2f6702ce96d0270ecee286b04286dcce479af3a3234b6150e28ec704392b48"
+    }
+  }
+}

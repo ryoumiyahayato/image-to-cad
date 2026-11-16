@@ -8,6 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import cv2
 
 from app.core.processing import ProductionProcessingConfig, ProductionProcessingService
 from tests.test_processing_contract import _page
@@ -66,3 +67,78 @@ def test_current_contract_rejects_unreviewed_storage_versions(monkeypatch, name,
     monkeypatch.setattr(module, name, 999)
     with pytest.raises(AssertionError, match=message):
         module.load_current_baseline()
+
+
+@pytest.fixture(scope="module")
+def raster_sample():
+    image = cv2.imread(str(ROOT / "cad_photo_to_dxf/samples/test.jpg"))
+    result = ProductionProcessingService.process_page(image, ProductionProcessingConfig(enable_ocr=False))
+    return image, result.final_structure
+
+
+def test_reviewed_raster_transition_keeps_every_other_historical_identity_field(raster_sample):
+    image, structure = raster_sample
+    historical = json.loads((ROOT / "docs/refactor/preservation-baseline.json").read_text())
+    baseline = module.load_current_baseline()
+    module.verify_transition("sample-test", image, structure, baseline, historical)
+    module.verify_p10a_identity("sample-test", structure)
+    assert structure.structure_id == baseline["cases"]["sample-test"]["id"]
+
+    # An extra point/length change is not the reviewed bbox -> source-run change.
+    paths = list(structure.contours)
+    index = next(i for i, path in enumerate(paths) if len(path.points) == 2)
+    path = paths[index]
+    paths[index] = replace(path, points=(path.points[0], (path.points[-1][0] + 1, path.points[-1][1])))
+    with pytest.raises(AssertionError, match="unreviewed raster contour geometry"):
+        module.verify_p10a_identity("sample-test", replace(structure, contours=tuple(paths)))
+
+    # Counts can stay identical while a single original edge pixel disappears.
+    binary = structure.contour_binary.copy()
+    binary[0, 0] = 255
+    with pytest.raises(AssertionError, match="unreviewed raster source mask"):
+        module.verify_p10a_identity("sample-test", replace(structure, contour_binary=binary))
+
+    # Nor can a changed source image borrow this specimen's dark-edge evidence.
+    wrong_source = image.copy()
+    wrong_source[0, 0] = 255
+    with pytest.raises(AssertionError, match="restored edge lacks original black source"):
+        module.verify_transition("sample-test", wrong_source, structure, baseline, historical)
+
+
+@pytest.mark.parametrize("mutation,message", [
+    ("move", "raster HATCH differs from actual source cells"),
+    ("crossed", "raster HATCH boundary is not a simple rectangle"),
+    ("white", "raster HATCH display changed"),
+    ("hidden", "raster HATCH display changed"),
+    ("transparent", "raster HATCH display changed"),
+])
+def test_saved_raster_hatch_requires_exact_source_cells_not_just_same_entity_count(raster_sample, tmp_path, mutation, message):
+    import ezdxf
+    from app.export.trace_single_export import export_final_structure_dxf
+
+    _, structure = raster_sample
+    path = tmp_path / "reviewed-source-runs.dxf"
+    export_final_structure_dxf(structure, path)
+    document = ezdxf.readfile(path)
+    module.verify_raster_export("sample-test", structure, document)
+    hatches = list(document.modelspace().query("HATCH"))
+    assert len(hatches) == 14
+    # All mutations preserve entity count and source tags. A boundary's vertex
+    # set also stays equal in the crossed case, but its filled area does not.
+    hatch = hatches[0]
+    if mutation == "move":
+        for boundary in hatch.paths:
+            boundary.vertices = [(x + 1, y, bulge) for x, y, bulge in boundary.vertices]
+    elif mutation == "crossed":
+        boundary = hatch.paths[0]
+        points = boundary.vertices
+        boundary.vertices = [points[i] for i in (0, 2, 1, 3)]
+    elif mutation == "white":
+        hatch.dxf.true_color = 0xFFFFFF
+    elif mutation == "hidden":
+        hatch.dxf.invisible = 1
+    else:
+        hatch.transparency = 1.0
+    document.saveas(path)
+    with pytest.raises(AssertionError, match=message):
+        module.verify_raster_export("sample-test", structure, ezdxf.readfile(path))
