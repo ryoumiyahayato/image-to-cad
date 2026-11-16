@@ -10,6 +10,9 @@ from app.core.cancellation import CancellationToken, ProgressCallback, checkpoin
 from app.core.resolution import image_resolution_scale, scaled_int
 
 
+NATIVE_OPEN_STROKE = "complete-visible-native-open-stroke"
+
+
 @dataclass(frozen=True)
 class LineSegment:
     x1: float

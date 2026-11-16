@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
 from hashlib import sha256
 from pathlib import Path
 
@@ -8,10 +9,10 @@ from PySide6.QtWidgets import QFileDialog, QMessageBox
 
 from app.ocr.auxiliary_recognition import confirmable_circles
 from app.core.image_loader import (
-    bounded_pdf_dpi,
     load_image,
     pdf_page_count,
     pdf_page_size_mm,
+    processing_pdf_dpi,
 )
 from app.geometry.pdf_arc_evidence import pdf_geometry_binding
 from app.geometry.line_detect import render_line_preview
@@ -27,11 +28,10 @@ from app.core.processing import (
 from app.geometry.raster_trace import RasterTraceResult
 from app.core.scale_calibrator import ScaleCalibration
 from app.core.cache import load_trace_cache, save_trace_cache
+from app.export.document_export import DocumentPage
 
 UNSCALED_LABEL = "比例：未校准（1 px = 1 个无单位图形单位）"
 PDF_VIEW_DPI = 200
-PROCESS_PDF_MAX_SIDE = 4800
-TRACE_PDF_DPI = 240
 
 
 @staticmethod
@@ -68,6 +68,8 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
     if save_current:
         self._save_current_pdf_state()
     image = load_image(self.current_path, page_index=page_index, pdf_dpi=PDF_VIEW_DPI)
+    self._final_structure = None
+    self._preview_structure_id = None
     self._current_pdf_page_index = page_index
     self._current_pdf_page = page_index + 1
     self.original_image = image
@@ -86,9 +88,8 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
     self._last_preprocess_params = state.get(
         "last_preprocess_params", PreprocessParams()
     )
-    width_mm, _height_mm = self._pdf_page_sizes_mm[page_index]
-    self.calibration = ScaleCalibration(
-        (0.0, 0.0), (float(max(1, image.shape[1] - 1)), 0.0), width_mm
+    self.calibration = ScaleCalibration.for_paper(
+        image.shape[:2][::-1], self._pdf_page_sizes_mm[page_index],
     )
     self._perspective_metadata = {
         "applied": True,
@@ -149,7 +150,7 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
     if hasattr(self, "drawing_scale_spin"):
         self.drawing_scale_spin.blockSignals(True)
         self.drawing_scale_spin.setValue(
-            int(round(state.get("drawing_scale", self._drawing_scale())))
+            int(round(state.get("drawing_scale", 1.0)))
         )
         self.drawing_scale_spin.blockSignals(False)
     if hasattr(self, "trace_color_combo"):
@@ -165,7 +166,6 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
         self.corrected_canvas.set_image(self.binary_image)
         self.detected_canvas.set_image(self.binary_image)
         self.tabs.setCurrentWidget(self.detected_canvas)
-    self._update_scale_label()
     if self._native_pdf_mode:
         try:
             self._restore_cached_trace_for_page(page_index)
@@ -175,6 +175,7 @@ def _load_pdf_page(self, page_index: int, *, save_current: bool = True) -> None:
                 "读取 CAD 轮廓缓存失败",
                 f"第 {page_index + 1} 页需要重新生成。\n{exc}",
             )
+    self._update_scale_label()
     if self._native_pdf_mode and hasattr(self, "page_summary_label"):
         self.page_summary_label.setText(
             f"已载入 {self._pdf_page_count} 页。可生成当前页，也可一次生成全部页面。"
@@ -203,9 +204,8 @@ def _load_trace_source_for_current_page(self):
     )
     self._current_pdf_geometry = geometry[0] if geometry else None
     self._current_pdf_text_suggestions = native_text[0] if native_text else None
-    width_mm, _height_mm = self._pdf_page_sizes_mm[self._current_pdf_page_index]
-    self.calibration = ScaleCalibration(
-        (0.0, 0.0), (float(max(1, image.shape[1] - 1)), 0.0), width_mm
+    self.calibration = ScaleCalibration.for_paper(
+        image.shape[:2][::-1], self._pdf_page_sizes_mm[self._current_pdf_page_index],
     )
     self._update_scale_label()
     return image
@@ -229,11 +229,7 @@ def _previous_pdf_page(self) -> None:
 
 
 def _processing_pdf_dpi(self, page_index: int) -> int:
-    return bounded_pdf_dpi(
-        self._pdf_page_sizes_mm[page_index],
-        preferred_dpi=TRACE_PDF_DPI,
-        max_dimension_px=PROCESS_PDF_MAX_SIDE,
-    )
+    return processing_pdf_dpi(self._pdf_page_sizes_mm[page_index])
 
 
 def _restore_cached_trace_for_page(self, page_index: int) -> None:
@@ -288,11 +284,9 @@ def _restore_cached_trace_for_page(self, page_index: int) -> None:
     self.corrected_canvas.set_image(preview)
     self.detected_canvas.set_image(preview)
     self.tabs.setCurrentWidget(self.detected_canvas)
-    width_mm, _height_mm = self._pdf_page_sizes_mm[page_index]
-    self.calibration = ScaleCalibration(
-        (0.0, 0.0), (float(max(1, stored.binary.shape[1] - 1)), 0.0), width_mm
+    self.calibration = ScaleCalibration.for_paper(
+        structure.source_size_px, self._pdf_page_sizes_mm[page_index],
     )
-    self._update_scale_label()
     if self._final_structure is not None:
         self._refresh_visual_acceptance()
 
@@ -358,6 +352,50 @@ def _save_current_pdf_state(self) -> None:
     state.pop("trace_paths", None)
 
 
+def document_pages_for_export(
+    self, page_indices: tuple[int, ...],
+) -> Iterator[DocumentPage]:
+    """Capture the selected page settings now and load their caches in the worker."""
+    source_path = Path(self.current_path)
+    requests = tuple(
+        (
+            index,
+            dict(self._pdf_page_states[index]),
+            self._pdf_page_sizes_mm[index],
+            self._processing_pdf_dpi(index),
+        )
+        for index in page_indices
+    )
+
+    def pages() -> Iterator[DocumentPage]:
+        for index, state, paper_size, dpi in requests:
+            page_number = index + 1
+            stored = load_trace_cache(Path(state["trace_cache_path"]))
+            if (key_payload := state.get("trace_cache_key")) is not None:
+                expected = ProcessingCacheKey.from_payload(key_payload)
+                if (
+                    expected.page_number != page_number
+                    or not cache_key_matches(stored.cache_key, expected)
+                ):
+                    raise ValueError(f"第 {page_number} 页的缓存与保存的页面状态不一致。")
+            structure = stored.final_structure
+            if structure is None:
+                raise ValueError(f"第 {page_number} 页的缓存缺少 FinalStructure。")
+            yield DocumentPage(
+                page_number=page_number,
+                raster=None,
+                page_size_mm=paper_size,
+                source_path=source_path,
+                source_page_index=index,
+                raster_dpi=dpi,
+                drawing_scale=float(state.get("drawing_scale", 1.0)),
+                trace_color=int(state.get("trace_color", 7)),
+                final_structure=structure,
+            )
+
+    return pages()
+
+
 def _set_pdf_controls_enabled(self, enabled: bool) -> None:
     for widget_name in (
         "previous_page_button",
@@ -392,6 +430,7 @@ def _set_single_image_state(self, image, *, corrected: bool) -> None:
     self.tabs.setCurrentWidget(self.original_canvas)
     self._reviewed_circles = []
     self._clear_trace_state()
+    self._update_scale_label()
     self._dirty_trace_keys.clear()
     self._ocr_texts = ()
     self._signature_regions = ()

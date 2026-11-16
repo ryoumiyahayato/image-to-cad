@@ -165,6 +165,7 @@ def _replace_final_structure_texts(self, texts):
         observations=observations,
     )
     self._final_structure = updated
+    self._update_scale_label()
     self._preview_structure_id = updated.structure_id
     self._ocr_texts = updated.texts
     self._cad_preview_binary = render_final_structure_preview(updated)

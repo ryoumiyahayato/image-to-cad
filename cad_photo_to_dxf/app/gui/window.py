@@ -35,7 +35,9 @@ from app.core.perspective import (
 )
 from app.geometry.preprocess import PreprocessParams
 from app.core.trace_types import TracePath
-from app.core.scale_calibrator import ScaleCalibration, create_calibration
+from app.core.scale_calibrator import (
+    DrawingScaleDecision, ScaleCalibration, create_calibration, resolve_drawing_scale,
+)
 from app.gui.visual_acceptance_widget import VisualAcceptanceWidget
 from app.gui.worker import ProcessingWorker
 
@@ -67,6 +69,7 @@ class MainWindow(QMainWindow):
         _set_single_image_state,
         _source_key,
         _store_current_trace,
+        document_pages_for_export,
         import_image,
     )
     from app.gui.processing import (
@@ -224,10 +227,8 @@ class MainWindow(QMainWindow):
             self.calibration = None
             self.info_label.setText("坐标：未校准的无单位像素坐标")
             return
-        self.calibration = ScaleCalibration(
-            (0.0, 0.0),
-            (float(max(1, self.corrected_image.shape[1] - 1)), 0.0),
-            dimensions[0],
+        self.calibration = ScaleCalibration.for_paper(
+            self.corrected_image.shape[:2][::-1], dimensions, corners_at_centers=True,
         )
         self.info_label.setText(
             f"坐标：纸面毫米 {self.calibration.mm_per_pixel:.6f} mm/px；不是工程模型尺寸"
@@ -316,12 +317,27 @@ class MainWindow(QMainWindow):
         spin = getattr(self, "drawing_scale_spin", None)
         return float(spin.value()) if spin is not None else 1.0
 
-    def _export_drawing_multiplier(self) -> float:
+    def _export_scale_decision(self) -> DrawingScaleDecision:
         if self._has_explicit_model_calibration():
-            return 1.0
-        if self.calibration is None:
-            return 1.0
-        return self._drawing_scale()
+            coordinate_space = "model_mm"
+        elif self.calibration is None:
+            coordinate_space = "pixel"
+        else:
+            coordinate_space = "paper_mm"
+        structure = getattr(self, "_final_structure", None)
+        project = getattr(self, "_review_project", None)
+        requested_multiplier = (
+            float(project.manifest["export_settings"]["drawing_multiplier"])
+            if project is not None else self._drawing_scale()
+        )
+        return resolve_drawing_scale(
+            structure.texts if structure is not None else (),
+            requested_multiplier,
+            coordinate_space=coordinate_space,
+        )
+
+    def _export_drawing_multiplier(self) -> float:
+        return self._export_scale_decision().multiplier
 
     def _fit_view(self) -> None:
         canvas = self._active_canvas()
@@ -329,7 +345,7 @@ class MainWindow(QMainWindow):
             canvas.fit_image()
 
     def _has_explicit_model_calibration(self) -> bool:
-        if self._native_pdf_mode or self.calibration is None:
+        if self.calibration is None:
             return False
         try:
             _source, coordinate_space, _warnings = self._calibration_semantics()
@@ -614,7 +630,15 @@ class MainWindow(QMainWindow):
                 f"工程模型坐标：{self.calibration.mm_per_pixel:.6f} mm/px；{self.calibration.pixel_distance:.2f} px = {self.calibration.actual_length_mm:.3f} mm"
             )
             return
-        ratio = self._drawing_scale()
+        scale = self._export_scale_decision()
+        ratio = scale.multiplier
+        if scale.coordinate_space == "paper_mm":
+            sx = self.calibration.mm_per_pixel
+            sy = self.calibration.vertical_mm_per_pixel or sx
+            text = f"纸面坐标：{sx:.6f} × {sy:.6f} mm/px"
+            label.setText(f"{text}。{scale.warning}" if scale.warning else text)
+            self.info_label.setText(label.text())
+            return
         model_mm_per_pixel = self.calibration.mm_per_pixel * ratio
         label.setText(
             f"输出比例 1:{int(ratio)}；{model_mm_per_pixel:.6f} 模型 mm/px （纸面 {self.calibration.mm_per_pixel:.6f} mm/px）"
@@ -807,6 +831,10 @@ class MainWindow(QMainWindow):
         if self.calibration is None:
             warnings.append("未校准尺寸；导出坐标仍为像素图形单位。")
             return ("uncalibrated", "pixel", warnings)
+        if self.calibration.known_length:
+            return ("explicit", "model_mm", warnings)
+        if self.calibration.paper_size_px is not None or self._native_pdf_mode:
+            return ("paper_dimensions", "paper_mm", warnings)
         paper_size, orientation = self.paper_size_combo.currentData()
         dimensions = resolve_paper_dimensions_mm(
             paper_size,

@@ -72,20 +72,6 @@ def _deduplicate_points(
     return tuple(result)
 
 
-def _fallback_box(contour: np.ndarray) -> tuple[tuple[float, float], ...]:
-    x, y, width, height = cv2.boundingRect(contour)
-    x -= 1
-    y -= 1
-    width = max(1, width)
-    height = max(1, height)
-    return (
-        (float(x), float(y)),
-        (float(x + width), float(y)),
-        (float(x + width), float(y + height)),
-        (float(x), float(y + height)),
-    )
-
-
 def trace_binary(
     binary: np.ndarray,
     *,
@@ -98,7 +84,8 @@ def trace_binary(
     same horizontal, vertical, or diagonal run. It does not apply an epsilon,
     curve fit, Hough transform, or semantic simplification. Filling the retained
     contour tree reconstructs the same pixel mask while reducing CAD vertices
-    and export memory substantially.
+    and export memory substantially. One or two retained points encode actual
+    source samples along a straight raster run, including diagonal runs.
     """
 
     if binary is None or binary.size == 0 or binary.ndim != 2:
@@ -126,7 +113,7 @@ def trace_binary(
     if hierarchy is None or not contours:
         return ()
 
-    raw_paths: list[tuple[tuple[float, float], ...] | None] = []
+    paths: list[TracePath] = []
     total = len(contours)
     for index, contour in enumerate(contours):
         if index % 512 == 0:
@@ -140,40 +127,13 @@ def trace_binary(
         points = _deduplicate_points(
             (float(x - 1), float(y - 1)) for x, y in reshaped
         )
-        if len(points) < 3:
-            points = _fallback_box(contour)
-        raw_paths.append(points if len(points) >= 3 else None)
-
-    old_to_new: dict[int, int] = {}
-    kept_old_indices: list[int] = []
-    for old_index, points in enumerate(raw_paths):
-        if points is not None:
-            old_to_new[old_index] = len(kept_old_indices)
-            kept_old_indices.append(old_index)
-
-    def nearest_kept_parent(old_index: int) -> int | None:
-        parent = int(hierarchy[0][old_index][3])
-        while parent >= 0 and parent not in old_to_new:
-            parent = int(hierarchy[0][parent][3])
-        return old_to_new[parent] if parent >= 0 else None
-
-    paths: list[TracePath] = []
-    for old_index in kept_old_indices:
-        new_parent = nearest_kept_parent(old_index)
-        depth = 0
-        ancestor = new_parent
-        while ancestor is not None:
-            depth += 1
-            ancestor = paths[ancestor].parent
-        root = new_parent if new_parent is not None else len(paths)
-        while new_parent is not None and paths[root].parent is not None:
-            root = paths[root].parent  # type: ignore[assignment]
+        parent = int(hierarchy[0][index][3])
         paths.append(
             TracePath(
-                points=raw_paths[old_index] or (),
-                parent=new_parent,
-                depth=depth,
-                root=root,
+                points=points,
+                parent=parent if parent >= 0 else None,
+                depth=paths[parent].depth + 1 if parent >= 0 else 0,
+                root=paths[parent].root if parent >= 0 else index,
             )
         )
 

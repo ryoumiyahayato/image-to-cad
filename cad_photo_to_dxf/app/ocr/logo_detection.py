@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import cv2
 import numpy as np
@@ -189,7 +189,93 @@ def detect_logo_regions(binary: np.ndarray) -> tuple[LogoRegion, ...]:
     return tuple(regions)
 
 
-def source_logo_objects(binary: np.ndarray) -> tuple[LogoRegion, ...]:
+def _outlined_row(ink: np.ndarray) -> bool:
+    """Require enclosed outline ink, not just rows of similarly sized glyphs."""
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(ink)
+    outlined_pixels = 0
+    outlined_components = 0
+    for index in range(1, count):
+        x, y, w, h, area = stats[index]
+        if area < 8:
+            continue
+        component = np.uint8(labels[y:y+h, x:x+w] == index)
+        _, holes = _contour_holes(component)
+        if holes:
+            outlined_components += 1
+            outlined_pixels += area
+    return outlined_components >= 4 and outlined_pixels >= .85 * np.count_nonzero(ink)
+
+
+def source_logo_lockup(mark: LogoRegion, gray: np.ndarray, *, line_ink=None,
+                       text_candidates=()) -> LogoRegion:
+    """Extend a proved interleaved mark to its isolated stacked wordmark."""
+    x, y, w, h = mark.bbox
+    left, right = x - round(.7*h), x + w + round(.7*h)
+    top, bottom = y - round(.16*h), y + h + round(1.1*h)
+    if left < 0 or top < 0 or right > gray.shape[1] or bottom > gray.shape[0]:
+        return mark
+    window = gray[top:bottom, left:right]
+    ink = window < 255
+    edges = np.flatnonzero(np.diff(np.any(ink, axis=1), prepend=False, append=False))
+    if len(edges) != 6:
+        return mark
+    mark_top, mark_bottom, upper_top, upper_bottom, lower_top, lower_bottom = edges
+    if not (mark_top >= .07*h and len(ink)-lower_bottom >= .18*h
+            and .12*h <= upper_top-mark_bottom <= .34*h
+            and .035*h <= lower_top-upper_bottom <= .15*h
+            and .20*h <= upper_bottom-upper_top <= .40*h
+            and .08*h <= lower_bottom-lower_top <= .22*h):
+        return mark
+
+    strong = window < 128
+    mark_crop = strong[y-top:y-top+h, x-left:x-left+w]
+    if (not np.array_equal(mark_crop, mark.mask >= 128)
+            or np.count_nonzero(strong[mark_top:mark_bottom]) != np.count_nonzero(mark_crop)):
+        return mark
+
+    widths = []
+    for start, stop in ((upper_top, upper_bottom), (lower_top, lower_bottom)):
+        row = strong[start:stop]
+        columns = np.flatnonzero(np.any(row, axis=0))
+        if not len(columns) or not _outlined_row(row.astype(np.uint8)):
+            return mark
+        first, last = columns[0]+left, columns[-1]+left+1
+        if abs((first+last)/2 - (x+w/2)) > .08*w:
+            return mark
+        widths.append(last-first)
+    upper_width, lower_width = widths
+    if not (1.05*w <= upper_width <= 1.55*w and .7*upper_width <= lower_width <= upper_width):
+        return mark
+
+    columns = np.flatnonzero(np.any(ink, axis=0))
+    start, stop = columns[0], columns[-1]+1
+    if min(start, window.shape[1]-stop) < .07*h:
+        return mark
+    if line_ink is not None and np.any(ink & (line_ink[top:bottom, left:right] > 0)):
+        return mark
+
+    # The late ownership step must be able to retire a whole text candidate.
+    # Keep the old representation when the candidate also covers foreign ink.
+    for candidate in text_candidates:
+        cx, cy, cw, ch = candidate.bbox
+        l, t = max(left, cx), max(top, cy)
+        r, b = min(right, cx+cw), min(bottom, cy+ch)
+        if l >= r or t >= b:
+            continue
+        claimed = np.count_nonzero(strong[t-top:b-top, l-left:r-left])
+        if claimed and claimed != np.count_nonzero(gray[cy:cy+ch, cx:cx+cw] < 128):
+            return mark
+
+    local = np.uint8(ink[mark_top:lower_bottom, start:stop]) * 255
+    contours, holes = _contour_holes(local)
+    return replace(mark, bbox=(int(left+start), int(top+mark_top),
+                               int(stop-start), int(lower_bottom-mark_top)),
+                   mask=local, visual_kind="wordmark", hole_count=holes,
+                   contour_count=len(contours), density=np.count_nonzero(local)/local.size)
+
+
+def source_logo_objects(binary: np.ndarray, *, source_gray=None, line_ink=None,
+                        text_candidates=()) -> tuple[LogoRegion, ...]:
     """Recover whole marks from source components, after LINE authority commits.
 
     A filled, patterned diamond or interleaved large outline components supply
@@ -262,5 +348,9 @@ def source_logo_objects(binary: np.ndarray) -> tuple[LogoRegion, ...]:
             lx, ly, lw, lh, area = stats[label]
             if area >= 8 and x-h*.25 <= lx <= x+w+h*.55 and y <= ly and ly+lh <= y+h+2:
                 selected.append(label)
-        regions.append(region_for(sorted(set(selected))))
+        mark = region_for(sorted(set(selected)))
+        if source_gray is not None:
+            mark = source_logo_lockup(mark, source_gray, line_ink=line_ink,
+                                      text_candidates=text_candidates)
+        regions.append(mark)
     return tuple(sorted(regions, key=lambda r: (r.bbox[1], r.bbox[0])))

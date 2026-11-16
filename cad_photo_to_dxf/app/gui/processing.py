@@ -8,7 +8,7 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from app.core.structure_build import final_structure_from_trace_result
-from app.core.image_loader import load_image
+from app.core.image_loader import effective_pdf_dpi, load_image
 from app.export.ocr_outline_export import accepted_ocr_texts
 from app.core.preview import render_final_structure_preview
 from app.core.processing import (
@@ -20,9 +20,6 @@ from app.core.processing import (
 )
 from app.geometry.raster_trace import RasterTraceResult
 from app.core.cache import save_trace_cache
-
-TRACE_PDF_DPI = 240
-
 
 def _apply_trace_result(
     self,
@@ -82,11 +79,24 @@ def _processing_config(
 ) -> ProductionProcessingConfig:
     resolved_ocr = self._ocr_enabled() if enable_ocr is None else bool(enable_ocr)
     dpi = (
-        self._processing_pdf_dpi(page_index)
+        effective_pdf_dpi(self._pdf_page_sizes_mm[page_index], self._processing_pdf_dpi(page_index))
         if self._native_pdf_mode and page_index is not None
         else DEFAULT_IMAGE_DPI
     )
-    return ProductionProcessingConfig(source_dpi=float(dpi), enable_ocr=resolved_ocr)
+    perspective = getattr(self, "_perspective_metadata", None) or {}
+    corners = perspective.get("corners")
+    paper_boundary_verified = bool(
+        not self._native_pdf_mode
+        and getattr(self, "_review_project", None) is None
+        and perspective.get("applied")
+        and corners is not None
+        and len(corners) == 4
+    )
+    return ProductionProcessingConfig(
+        source_dpi=float(dpi),
+        enable_ocr=resolved_ocr,
+        paper_boundary_verified=paper_boundary_verified,
+    )
 
 
 @staticmethod
@@ -114,7 +124,6 @@ def batch_vectorize_pdf(self) -> None:
     page_count = self._pdf_page_count
     started_at = datetime.now(timezone.utc)
     started = time.perf_counter()
-    drawing_scale = self._drawing_scale()
     enable_ocr = self._ocr_enabled()
 
     def operation(token, progress) -> object:
@@ -186,12 +195,12 @@ def batch_vectorize_pdf(self) -> None:
                 "trace_foreground_pixels": result.foreground_pixels,
                 "trace_vertex_count": result.vertex_count,
                 "ocr_text_count": len(result.texts),
-                "processing_dpi": self._processing_pdf_dpi(page_index),
+                "processing_dpi": config.source_dpi,
                 "processing_config": config.payload(),
                 "trace_cache_key": key.payload(),
                 "trace_cache_key_digest": key.digest,
                 "structure_id": structure.structure_id,
-                "drawing_scale": drawing_scale,
+                "drawing_scale": old_state.get("drawing_scale", 1.0),
                 "trace_color": 7,
             }
             del image

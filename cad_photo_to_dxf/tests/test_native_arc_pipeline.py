@@ -8,7 +8,7 @@ import pytest
 
 from app.core.arc_types import ArcSegment, PdfPathReference, transformed_arc
 from app.core.cache import load_trace_cache, save_trace_cache
-from app.core.preview import render_final_structure_preview
+from app.core.preview import render_emitted_dxf_preview, render_final_structure_preview
 from app.core.processing import ProductionProcessingConfig, build_processing_cache_key
 from app.core.structure import FinalStructure
 from app.export.document_export import DocumentPage
@@ -101,6 +101,29 @@ def test_saved_arc_locus_and_preview(tmp_path, start, sweep):
     )
     assert reread.dxf.radius == 36.25
     assert reread.dxf.start_angle == 297
+
+
+@pytest.mark.parametrize("kind", ["ARC", "CIRCLE"])
+def test_curve_preview_uses_same_pixel_width_at_both_dxf_scales(tmp_path, kind):
+    views = []
+    for unit in (1.0, 25.4 / 240):
+        doc = ezdxf.new()
+        space = doc.modelspace()
+        center = (72.13 * unit, 76.59 * unit)
+        attrs = {"lineweight": 25}
+        if kind == "ARC":
+            curve = space.add_arc(center, 14.2 * unit, 90, 270, dxfattribs=attrs)
+        else:
+            curve = space.add_circle(center, 7 * unit, dxfattribs=attrs)
+        curve.set_xdata("P3A_STROKE", [
+            (1000, "NATIVE_PDF_SOURCE_WIDTH"), (1040, 2.4), (1040, 240.0),
+        ])
+        views.append(render_emitted_dxf_preview(
+            doc, tmp_path, (160, 160), roi=(35, 48, 90, 84), output_scale=2,
+            units_per_source_pixel=unit,
+        ))
+    assert views[0].min() < 128
+    np.testing.assert_array_equal(views[0], views[1])
 
 
 def test_arc_extrema_include_interior_cardinal_and_output_extents(tmp_path):

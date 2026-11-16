@@ -87,6 +87,7 @@ def _path_metrics(
     binary: np.ndarray,
     damage_mask: np.ndarray,
     scale: float,
+    paper_boundary_verified: bool = False,
 ) -> _RootMetrics | None:
     points = np.asarray(path.points, dtype=np.float32)
     if len(points) < 3:
@@ -134,7 +135,8 @@ def _path_metrics(
         )
     )
     edge_damage = (
-        touched_edges >= 2
+        paper_boundary_verified
+        and touched_edges >= 2
         and maximum_span >= scaled_int(35.0, scale, minimum=24)
         and minimum_span >= scaled_int(18.0, scale, minimum=12)
         and median_tone >= 145.0
@@ -430,14 +432,18 @@ def suppress_scan_artifact_traces(
     binary: np.ndarray,
     paths: tuple[TracePath, ...],
     *,
+    paper_boundary_verified: bool = False,
     source_support_lifecycle: SourceSupportLifecycle | None = None,
 ) -> ScanArtifactSuppressionResult:
     """Remove fold/tape/tear contours that survived scan normalization.
 
     This pass is intentionally limited to scanned pages. It removes both direct
     paper-damage roots and nearby high-tone fragments belonging to the same tear.
-    Very long, sparse residual contours crossing otherwise empty regions are
-    rejected independently because they are the characteristic CAD "flying line"
+    Edge-band and corner erasure require an independently established physical
+    paper boundary. An image extent, PDF page, or review ROI alone is not one.
+    Interior damage and sparse-flight checks still run for unverified extents.
+    Very long, sparse residual contours are rejected independently because they
+    are the characteristic CAD "flying line"
     left after structural rules have already been reconstructed.
     """
 
@@ -456,15 +462,19 @@ def suppress_scan_artifact_traces(
 
     scale = image_resolution_scale(binary.shape)
     damage_mask = _bright_damage_mask(gray, scale)
-    edge_cleaned_binary, edge_band_removed = _remove_scan_edge_band(
-        binary,
-        scale=scale,
-    )
-    working_binary, corner_region_count = _remove_corner_damage_clusters(
-        edge_cleaned_binary,
-        damage_mask,
-        scale,
-    )
+    working_binary = binary
+    edge_band_removed = False
+    corner_region_count = 0
+    if paper_boundary_verified:
+        edge_cleaned_binary, edge_band_removed = _remove_scan_edge_band(
+            binary,
+            scale=scale,
+        )
+        working_binary, corner_region_count = _remove_corner_damage_clusters(
+            edge_cleaned_binary,
+            damage_mask,
+            scale,
+        )
     prefiltered_region_count = corner_region_count + int(edge_band_removed)
     if source_support_lifecycle is not None and prefiltered_region_count:
         prefilter_removed_mask = np.where(
@@ -497,6 +507,7 @@ def suppress_scan_artifact_traces(
             binary=working_binary,
             damage_mask=damage_mask,
             scale=scale,
+            paper_boundary_verified=paper_boundary_verified,
         )
         if item is None:
             continue

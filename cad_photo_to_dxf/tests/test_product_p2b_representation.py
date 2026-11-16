@@ -22,7 +22,7 @@ from app.geometry.optimized_trace import _graphic_owns_text
 from app.geometry.raster_trace import RasterTraceResult
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.ocr.engineering_symbols import resolve_enclosure_relations
-from app.ocr.logo_detection import source_logo_objects
+from app.ocr.logo_detection import LogoRegion, source_logo_objects
 from app.ocr.signature_overlay import signature_field_regions, signature_rgba, source_ink_region
 
 HERE = Path(__file__).parent
@@ -101,11 +101,57 @@ def test_real_logo_whole_object_and_not_text_s(uid, bbox, tmp_path):
     result = export_final_structure_dxf(object_structure(marks[0]), tmp_path/'logo.dxf')
     doc = ezdxf.readfile(result.path)
     assert len(doc.modelspace().query('IMAGE')) == 1
+    assert doc.modelspace().query('IMAGE').first.dxf.layer == "LOGO_GRAPHIC"
     assert not doc.modelspace().query('TEXT')
     assert result.graphic_paths and not doc.audit().has_errors
 
 
-def test_w03_signatures_and_printed_names_have_separate_ownership(tmp_path):
+def test_engineering_image_reuses_only_observed_ink_at_the_crop_edge(tmp_path):
+    from PIL import Image
+    from app.geometry.raster_trace import trace_binary
+
+    mask = np.zeros((6, 6), dtype=np.uint8)
+    cv2.rectangle(mask, (0, 0), (5, 5), 255, 1)
+    mask[2:4, 2] = 255
+    region = LogoRegion((8, 6, 6, 6), mask, .95, 1, 2, visual_kind="engineering_graphic")
+    contours = np.full((24, 24), 255, dtype=np.uint8)
+    contours[9, 16:20] = 0
+    contours[3, 9:13] = 0  # Nearby line has white paper between it and the symbol.
+    uncertain = np.zeros_like(contours)
+    uncertain[9, 15] = 255  # Existing visible fallback is a continuation witness.
+    source = contours.copy()
+    source[6:12, 8:14][mask > 0] = 0
+    source[9, 14:16] = 0
+    structure = build_final_structure(
+        source_size_px=(24, 24), contour_binary=contours,
+        contours=trace_binary(contours), preview_binary=source, logos=(region,),
+        uncertain_text_outline_mask=uncertain,
+    )
+
+    saved = export_final_structure_dxf(structure, tmp_path / "engineering.dxf")
+    doc = ezdxf.readfile(saved.path)
+    symbol = doc.modelspace().query("IMAGE").first
+    assert saved.logo_count == 0
+    assert symbol.dxf.layer == "ENGINEERING_SYMBOL"
+    assert [tag.value for tag in symbol.get_xdata("ENGINEERING_GRAPHIC_SOURCE")] == [
+        "OBSERVED_SOURCE_INK", "ELECTRICAL_CONNECTIVITY_UNRESOLVED",
+        "8,6,6,6", "14,9,1,1,1",
+    ]
+    with Image.open(saved.graphic_paths[0]) as image:
+        alpha = np.asarray(image)[:, :, 3]
+    assert np.array_equal(alpha[:, :6], mask)
+    assert np.argwhere(alpha[:, 6:] > 0).tolist() == [[3, 0]]
+    page = DocumentPage(1, None, (24, 24), final_structure=structure)
+    document = export_trace_document_streaming((page,), tmp_path / "pages.dxf", total_pages=1)
+    streamed = ezdxf.readfile(document.path).modelspace().query("IMAGE").first
+    assert streamed.dxf.layer == "PAGE_001_ENGINEERING_SYMBOL"
+    assert streamed.get_xdata("ENGINEERING_GRAPHIC_SOURCE") == symbol.get_xdata(
+        "ENGINEERING_GRAPHIC_SOURCE"
+    )
+
+
+@pytest.mark.parametrize("presentation", ["legacy", "adaptive-source-image"])
+def test_w03_signatures_and_printed_names_have_separate_ownership(tmp_path, presentation):
     regions = signatures()
     assert len(regions) == 7
     mask = signature_source_mask(source('W03'), regions)
@@ -116,12 +162,45 @@ def test_w03_signatures_and_printed_names_have_separate_ownership(tmp_path):
     assert all(_graphic_owns_text(c, source('W03'), mask) for c in handwriting)
     blank = np.full_like(source('W03'), 255)
     structure = build_final_structure(source_size_px=blank.shape[::-1], contour_binary=blank,
-        contours=(), texts=tuple(names), signatures=regions)
+        contours=(), texts=tuple(names), signatures=regions,
+        provenance={'protected_graphic_presentation': presentation})
     result = export_final_structure_dxf(structure, tmp_path/'signature.dxf')
     doc = ezdxf.readfile(result.path)
-    assert len(doc.modelspace().query('IMAGE')) == 7
-    assert len(doc.modelspace().query('TEXT')) == 7
-    assert all(e.get_xdata('IMAGE_TO_CAD')[0].value == 'SIGNATURE' for e in doc.modelspace().query('IMAGE'))
+    # The product contract is seven intact, separate signatures and seven
+    # editable printed names, not the historical choice of top-level IMAGE.
+    # Legacy uses HATCH; adaptive-source-image uses a native-ink/tonal block.
+    entities = [e for e in doc.modelspace() if e.has_xdata('IMAGE_TO_CAD')
+                and e.get_xdata('IMAGE_TO_CAD')[0].value == 'SIGNATURE']
+    assert len(entities) == 7
+    assert {e.dxftype() for e in entities} == (
+        {'HATCH'} if presentation == 'legacy' else {'INSERT'}
+    )
+    assert sorted(e.dxf.text for e in doc.modelspace().query('TEXT')) == sorted(c.text for c in names)
+    from PIL import Image
+    expected = {','.join(map(str,r.bbox)): r for r in regions}
+    page_height = blank.shape[0]
+    for entity in entities:
+        tags = [t.value for t in entity.get_xdata('IMAGE_TO_CAD')]
+        r = expected.pop(tags[1])
+        x,y,w,h = r.bbox
+        with Image.open(result.path.parent/tags[2]) as image:
+            assert np.array_equal(np.asarray(image)[:,:,3],r.mask)
+        members = list(doc.blocks[entity.dxf.name]) if entity.dxftype() == 'INSERT' else [entity]
+        coverage = np.zeros((h,w),np.uint16)
+        for hatch in (e for e in members if e.dxftype() == 'HATCH'):
+            for path in hatch.paths:
+                assert len(path.vertices) == 4
+                assert all(v[2] == 0 for v in path.vertices)
+                xs=[v[0] for v in path.vertices];ys=[page_height-v[1] for v in path.vertices]
+                assert all(abs(v-round(v)) < 1e-7 for v in (*xs,*ys))
+                l,rr=round(min(xs))-x,round(max(xs))-x
+                t,b=round(min(ys))-y,round(max(ys))-y
+                assert 0 <= l < rr <= w and 0 <= t < b <= h
+                coverage[t:b,l:rr] += 1
+        assert int(coverage.max()) == 1
+        assert np.array_equal(coverage > 0, r.mask > 0)
+    assert not expected
+    assert not doc.audit().has_errors
 
 
 def test_transparent_foreground_keeps_native_line_visible_and_no_paper(tmp_path):

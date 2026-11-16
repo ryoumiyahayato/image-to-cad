@@ -696,7 +696,8 @@ def export_review_document(window):
     try:
         review = project.validated_review()
         source = project.manifest["source"]
-        if Path(source["path"]).suffix.lower() == ".pdf":
+        model_calibrated = window._has_explicit_model_calibration()
+        if Path(source["path"]).suffix.lower() == ".pdf" and not model_calibrated:
             size = pdf_page_size_mm(source["path"], source["physical_page"] - 1)
         elif project.calibration is not None:
             scale = project.calibration.mm_per_pixel
@@ -728,6 +729,7 @@ def export_review_document(window):
                         drawing_scale=project.manifest["export_settings"][
                             "drawing_multiplier"
                         ],
+                        model_calibrated=model_calibrated,
                     )
                 ],
                 path,
@@ -736,7 +738,9 @@ def export_review_document(window):
             )
 
         def completed(result):
-            QMessageBox.information(window, "文档DXF已导出", str(result.path))
+            warning = result.page_scales[0].warning
+            message = f"{result.path}\n{warning}" if warning else str(result.path)
+            QMessageBox.information(window, "文档DXF已导出", message)
 
         window._start_processing(operation, completed, "正在导出校对项目文档DXF…")
     except (OSError, ValueError) as exc:

@@ -369,13 +369,16 @@ def rois_payload(
 def rasterize_lines(
     lines: Sequence[Any],
     image_shape: tuple[int, int],
+    *,
+    origin: tuple[int, int] = (0, 0),
 ) -> np.ndarray:
     mask = np.zeros(image_shape, dtype=np.uint8)
+    left, top = origin
     for line in lines:
         cv2.line(
             mask,
-            (int(round(float(line.x1))), int(round(float(line.y1)))),
-            (int(round(float(line.x2))), int(round(float(line.y2)))),
+            (int(round(float(line.x1))) - left, int(round(float(line.y1))) - top),
+            (int(round(float(line.x2))) - left, int(round(float(line.y2))) - top),
             255,
             max(1, int(round(float(line.width)))),
             cv2.LINE_8,

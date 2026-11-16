@@ -36,10 +36,38 @@ from app.geometry.straight_line_reconstruction import (
 )
 from app.ocr.text_output_contract import DEFAULT_MINIMUM_TEXT_CONFIDENCE
 
-PRODUCTION_ALGORITHM_VERSION = "optimized-trace-phase11-p2b-representation-v2-upright-digits-v1-source-text-bounds-v1-cell-rows-v1-text-carriers-v1-source-raster-alias-v1-reading-basis-v1-printed-rows-v1-isolated-scan-stroke-v1-text-rule-source-scope-v1-single-glyph-display-v1-native-pdf-review-suggestions-v1-isolated-scan-curve-source-v1-long-line-orientation-v1-text-backup-source-scope-v2-artifact-component-scope-v1-artifact-local-damage-scope-v1-source-row-target-only-v1-source-row-ink-display-v1-native-text-group-backup-v1-native-pdf-fill-v1-native-source-group-v1-native-simple-polygon-fill-v2"
+PRODUCTION_ALGORITHM_VERSION = "optimized-trace-phase11-p2b-representation-v2-upright-digits-v1-source-text-bounds-v1-cell-rows-v1-text-carriers-v1-source-raster-alias-v1-reading-basis-v1-printed-rows-v1-isolated-scan-stroke-v1-text-rule-source-scope-v1-single-glyph-display-v1-native-pdf-review-suggestions-v1-isolated-scan-curve-source-v1-long-line-orientation-v1-disjoint-window-reading-v2-text-backup-source-scope-v2-artifact-component-scope-v1-artifact-local-damage-scope-v1-source-row-target-only-v1-source-row-ink-display-v1-native-text-group-backup-v1-native-pdf-fill-v1-native-source-group-v1-native-simple-polygon-fill-v2"
+PRODUCTION_ALGORITHM_VERSION += "-verified-paper-boundary-v1"
+PRODUCTION_ALGORITHM_VERSION += "-signing-field-source-protection-v1"
+PRODUCTION_ALGORITHM_VERSION += "-pixel-domain-rule-bounds-v1-signing-rules-v1"
+PRODUCTION_ALGORITHM_VERSION += "-ruled-cell-row-display-v1"
+PRODUCTION_ALGORITHM_VERSION += "-verified-row-source-member-retirement-v1"
+PRODUCTION_ALGORITHM_VERSION += "-complete-row-group-display-v1"
+PRODUCTION_ALGORITHM_VERSION += "-pdf-parent-fill-ownership-v1"
+PRODUCTION_ALGORITHM_VERSION += "-cell-reading-basis-v1"
+PRODUCTION_ALGORITHM_VERSION += "-pre-cell-observation-v1"
+PRODUCTION_ALGORITHM_VERSION += "-scan-content-classification-v1"
+PRODUCTION_ALGORITHM_VERSION += "-scan-speckle-source-ink-v1"
+PRODUCTION_ALGORITHM_VERSION += "-scan-noise-review-v1"
+PRODUCTION_ALGORITHM_VERSION += "-original-scan-dust-v1"
+PRODUCTION_ALGORITHM_VERSION += "-source-raster-runs-v1"
+PRODUCTION_ALGORITHM_VERSION += "-source-filled-marks-v1"
+PRODUCTION_ALGORITHM_VERSION += "-signing-ink-ownership-v1"
+PRODUCTION_ALGORITHM_VERSION += "-scanned-title-row-layout-v1"
+PRODUCTION_ALGORITHM_VERSION += "-compact-printed-cell-rows-v1"
+PRODUCTION_ALGORITHM_VERSION += "-observed-scan-circle-symbols-v1"
+PRODUCTION_ALGORITHM_VERSION += "-isolated-pdf-dimension-omission-v1"
+PRODUCTION_ALGORITHM_VERSION += "-native-pdf-text-omissions-v1"
+PRODUCTION_ALGORITHM_VERSION += "-shared-signing-members-fixed-v1"
+PRODUCTION_ALGORITHM_VERSION += "-aligned-original-glyph-review-v1-online-fullpage-r2-enclosure-recheck-r3"
+PRODUCTION_ALGORITHM_VERSION += "-signing-source-domain-v1"
+PRODUCTION_ALGORITHM_VERSION += "-source-token-glyph-review-v1"
+PRODUCTION_ALGORITHM_VERSION += "-dimension-chain-disjoint-members-v2"
 PRODUCTION_MODEL_VERSION = "rapidocr-runtime-and-geometry-rules-v1"
 DISABLED_LAYOUT_PROFILE = "disabled"
 DEFAULT_IMAGE_DPI = 240.0
+PRODUCTION_ALGORITHM_VERSION += "-observed-boxed-label-members-v1"
+PRODUCTION_ALGORITHM_VERSION += "-observed-label-frame-geometry-v2-paper-pen"
 
 
 def _sha256_hex(value: str, label: str) -> str:
@@ -107,13 +135,38 @@ class ProductionProcessingConfig:
     source_dpi: float = DEFAULT_CONNECTION_DPI
     enable_ocr: bool = True
     foreground_threshold: int | None = None
+    paper_boundary_verified: bool = False
     layout_profile: LayoutProfileSelection = LayoutProfileSelection()
     algorithm_version: str = PRODUCTION_ALGORITHM_VERSION
     model_version: str = PRODUCTION_MODEL_VERSION
     junction_contract: JunctionContract | None = None
     draftsman_behavior_manifest_digest: str | None = None
+    experimental_observed_text_display: bool = False
+    experimental_native_source_row: bool = False
+    experimental_pdf_native_text: str = "off"
+    experimental_pdf_native_geometry: bool = False
+    experimental_protected_graphics: str = "legacy"
+    recover_pdf_native_text_omissions: bool = True
 
     def __post_init__(self) -> None:
+        if self.experimental_protected_graphics not in (
+            "legacy", "source-image", "native-alpha", "adaptive-source-image"
+        ):
+            raise ValueError('Unknown protected graphic representation')
+        if not isinstance(self.experimental_pdf_native_geometry, bool):
+            raise ValueError("Native PDF geometry flag must be boolean")
+        if self.experimental_pdf_native_text not in ("off", "matched", "independent"):
+            raise ValueError("Unknown experimental PDF native text route")
+        if self.experimental_pdf_native_text != "off" and self.experimental_observed_text_display:
+            raise ValueError("Native text entry and G35 display trials are separate")
+        if not isinstance(self.paper_boundary_verified, (bool, np.bool_)):
+            raise ValueError("Paper boundary verification must be boolean")
+        if not isinstance(self.experimental_observed_text_display, (bool, np.bool_)):
+            raise ValueError("Experimental observed display must be boolean")
+        if not isinstance(self.experimental_native_source_row, (bool, np.bool_)):
+            raise ValueError("Experimental native source row must be boolean")
+        if self.experimental_native_source_row and self.experimental_observed_text_display:
+            raise ValueError("Experimental source-row and G35 display runs are separate")
         if (
             isinstance(self.source_dpi, (bool, np.bool_))
             or not isfinite(float(self.source_dpi))
@@ -158,11 +211,13 @@ class ProductionProcessingConfig:
             "source_dpi": float(self.source_dpi),
             "enable_ocr": bool(self.enable_ocr),
             "foreground_threshold": self.foreground_threshold,
+            "paper_boundary_verified": bool(self.paper_boundary_verified),
             "layout_profile": self.layout_profile.payload(),
             "algorithm_version": self.algorithm_version,
             "model_version": self.model_version,
             "final_structure_schema_version": (FINAL_STRUCTURE_SCHEMA_VERSION),
             "critical_thresholds": self.threshold_summary(),
+            "recover_pdf_native_text_omissions": self.recover_pdf_native_text_omissions,
         }
         if self.junction_contract is not None:
             authority = validate_junction_contract_authority(self.junction_contract)
@@ -172,6 +227,29 @@ class ProductionProcessingConfig:
             payload["draftsman_behavior_manifest_digest"] = (
                 self.draftsman_behavior_manifest_digest.strip().lower()
             )
+        if self.experimental_observed_text_display:
+            payload["experimental_observed_text_display"] = True
+            payload["observed_display_version"] = "observed-source-components-display-v2"
+        if self.experimental_native_source_row:
+            payload["experimental_native_source_row"] = True
+            payload["native_source_row_version"] = "native-row-before-ownership-v4"
+        if self.experimental_pdf_native_text != "off":
+            payload["experimental_pdf_native_text"] = self.experimental_pdf_native_text
+            payload["pdf_native_text_version"] = "embedded-cmap-visible-native-text-v7-stable-cell-source"
+        if self.experimental_pdf_native_text == "independent":
+            from app.ocr.observed_text_display import PDF_LABEL_DISPLAY_VERSION
+
+            payload["pdf_path_digit_review_version"] = "isolated-vertical-digits-v2"
+            payload["pdf_path_callout_review_version"] = "isolated-leader-full-label-bounds-v2"
+            payload["pdf_label_display_version"] = PDF_LABEL_DISPLAY_VERSION
+        if self.experimental_pdf_native_geometry:
+            from app.geometry.native_pdf_paths import POLICY
+
+            payload["experimental_pdf_native_geometry"] = POLICY
+        if self.experimental_protected_graphics != 'legacy':
+            payload['experimental_protected_graphics']=self.experimental_protected_graphics
+        if self.experimental_protected_graphics == 'adaptive-source-image':
+            payload['protected_graphics_version'] = 'source-logo-lockup-signature-crossings-v4'
         return payload
 
 
@@ -293,6 +371,12 @@ class ProductionProcessingService:
         pdf_geometry=None,
         pdf_text_suggestions=None,
         before_arc_replacement=None,
+        confirmed_noise: np.ndarray | None = None,
+        source_crop: tuple[int, int, int, int] | None = None,
+        original_scan_features: Mapping[str, object] | None = None,
+        registered_original_scan=None,
+        original_scan_requested: bool = False,
+        unreviewed_dust: np.ndarray | None = None,
     ) -> RasterTraceResult:
         if config.layout_profile.enabled:
             raise ValueError(
@@ -303,6 +387,7 @@ class ProductionProcessingService:
             foreground_threshold=config.foreground_threshold,
             enable_ocr=config.enable_ocr,
             source_dpi=config.source_dpi,
+            paper_boundary_verified=config.paper_boundary_verified,
             cancellation_token=cancellation_token,
             progress_callback=progress_callback,
             performance_callback=performance_callback,
@@ -312,6 +397,12 @@ class ProductionProcessingService:
             pdf_geometry=pdf_geometry,
             pdf_text_suggestions=pdf_text_suggestions,
             before_arc_replacement=before_arc_replacement,
+            confirmed_noise=confirmed_noise,
+            source_crop=source_crop,
+            original_scan_features=original_scan_features,
+            registered_original_scan=registered_original_scan,
+            original_scan_requested=original_scan_requested,
+            unreviewed_dust=unreviewed_dust,
         )
         if pdf_text_suggestions is not None and result.final_structure is not None:
             from app.geometry.pdf_text_suggestions import SUGGESTION_KEY
@@ -334,4 +425,74 @@ class ProductionProcessingService:
                 ),
             )
             result = replace(result, final_structure=structure, texts=structure.texts)
+        if config.enable_ocr and result.final_structure is not None:
+            from app.geometry.scan_cleanup import _to_gray
+            from app.ocr.proven_row_group_display import refine_proven_row_group_displays
+
+            # Late display-only consumer: all source ownership/retirement and
+            # structural geometry are already final and cannot be modified here.
+            display_source = image
+            if source_crop is not None:
+                left, top, right, bottom = source_crop
+                display_source = image[top:bottom, left:right]
+            structure = refine_proven_row_group_displays(_to_gray(display_source), result.final_structure)
+            result = replace(result, final_structure=structure, texts=structure.texts)
+        if config.enable_ocr and result.final_structure is not None:
+            from app.ocr.observed_text_display import refine_source_supported_scan_displays
+            from app.geometry.scan_cleanup import _to_gray
+            display_source = image
+            if source_crop is not None:
+                left, top, right, bottom = source_crop
+                display_source = image[top:bottom, left:right]
+            structure = refine_source_supported_scan_displays(_to_gray(display_source), result.final_structure)
+            result = replace(result, final_structure=structure, texts=structure.texts)
+        if config.enable_ocr and config.experimental_observed_text_display and result.final_structure is not None:
+            from app.geometry.scan_cleanup import _to_gray
+            from app.ocr.observed_text_display import refine_observed_text_displays
+
+            # Last operation: no ownership, fill, retirement or structural
+            # consumer sees this experimental display suggestion.
+            structure = refine_observed_text_displays(_to_gray(image), result.final_structure)
+            result = replace(result, final_structure=structure, texts=structure.texts)
+        if config.experimental_pdf_native_geometry and result.final_structure is not None:
+            from app.geometry.native_pdf_paths import apply_native_pdf_paths
+            from app.geometry.scan_cleanup import _to_gray
+            structure = apply_native_pdf_paths(result.final_structure, _to_gray(image), pdf_geometry, config.source_dpi)
+            result = replace(result, final_structure=structure, paths=structure.contours,
+                             binary=structure.contour_binary, straight_lines=structure.straight_lines,
+                             arcs=structure.arcs, native_fills=structure.native_fills,
+                             vertex_count=sum(len(p.points) for p in structure.contours),
+                             foreground_pixels=int(np.count_nonzero(structure.contour_binary == 0)))
+        if result.final_structure is not None and config.experimental_protected_graphics != 'legacy':
+            structure=replace(result.final_structure,provenance={**result.final_structure.provenance,
+                'protected_graphic_presentation':config.experimental_protected_graphics})
+            result=replace(result,final_structure=structure)
+        structure = result.final_structure
+        if (
+            config.enable_ocr
+            and config.experimental_pdf_native_text == "independent"
+            and pdf_geometry is not None
+            and structure is not None
+            and structure.provenance.get("clean_digital")
+        ):
+            from app.diagnostics.observability import rasterize_lines
+            from app.geometry.content_ownership import graphic_source_mask, signature_source_mask
+            from app.geometry.scan_cleanup import _to_gray
+            from app.ocr.observed_text_display import refine_unfitted_pdf_labels
+
+            gray = _to_gray(image)
+            if gray.shape[::-1] != structure.source_size_px:
+                return result
+            protected = (
+                rasterize_lines(structure.straight_lines, gray.shape),
+                graphic_source_mask(gray, structure.logos),
+                signature_source_mask(gray, structure.signatures),
+                structure.uncertain_text_outline_mask,
+            )
+            texts = refine_unfitted_pdf_labels(
+                gray, structure.texts, protected_source_masks=protected
+            )
+            if texts != structure.texts:
+                structure = replace(structure, texts=texts)
+                result = replace(result, final_structure=structure, texts=texts)
         return result

@@ -23,8 +23,9 @@ from app.geometry.line_detect import LineSegment
 from app.core.arc_types import ArcSegment
 from app.core.trace_types import TracePath
 from app.export.trace_entity_writer import write_page_entities, semantic_paths
-from app.core.scale_calibrator import ScaleCalibration
+from app.core.scale_calibrator import ScaleCalibration, raster_to_cad
 from app.ocr.signature_overlay import SignatureRegion
+from app.ocr.logo_detection import LOGO_VISUAL_KINDS
 from app.export.trace_dxf_entities import TRACE_LAYER_STYLES, TracePalette
 from app.core.member_binding import ResolvedDraftsmanOutput, resolve_draftsman_output
 from app.export.line_source_ref import make_line_source_refs
@@ -48,6 +49,8 @@ def export_exact_trace_dxf(
     straight_lines: tuple[LineSegment, ...] = (),
     arcs: tuple[ArcSegment, ...] = (),
     native_fills=(),
+    native_paths=(),
+    protected_graphics_mode="legacy",
     texts: tuple[TextCandidate, ...] = (),
     source_text_outline_paths: tuple[TracePath, ...] = (),
     uncertain_text_outline_paths: tuple[TracePath, ...] = (),
@@ -66,6 +69,7 @@ def export_exact_trace_dxf(
     text_review=None,
     line_source_refs=None,
     contour_source_refs=None,
+    source_structure: FinalStructure | None = None,
 ) -> ExportResult:
     if image_height <= 0:
         raise ValueError("Image height must be greater than zero")
@@ -75,9 +79,11 @@ def export_exact_trace_dxf(
         and not straight_lines
         and not arcs
         and not native_fills
+        and not native_paths
         and not texts
         and not signatures
         and not logos
+        and not (stroke_presentation or {}).get("local_filled_marks")
     ):
         raise ValueError("At least one CAD entity is required")
     multiplier = float(drawing_multiplier)
@@ -131,12 +137,22 @@ def export_exact_trace_dxf(
             + 1,
         )
     resolved_width = max(1, resolved_width)
+    source_crop = (
+        source_structure.provenance.get("scan_classification", {}).get("source_crop")
+        if source_structure is not None else None
+    )
+    frame = raster_to_cad(
+        (resolved_width, image_height), calibration, multiplier=multiplier, crop=source_crop,
+    )
 
     if raster_image is not None:
         if raster_image.size == 0 or raster_image.ndim not in (2, 3):
             raise ValueError("Raster underlay must be a non-empty image")
         raster_height, raster_width = raster_image.shape[:2]
-        if raster_height != image_height:
+        paper_grid = calibration is not None and calibration.paper_size_px is not None
+        if source_crop is not None and (raster_width, raster_height) != (resolved_width, image_height):
+            raise ValueError("Raster underlay must use the cropped image grid")
+        if raster_height != image_height and not paper_grid:
             raise ValueError("Raster underlay height does not match trace coordinates")
         underlay_path = (
             Path(raster_output_path)
@@ -155,20 +171,22 @@ def export_exact_trace_dxf(
             quality=1,
             units="mm" if calibration is not None else "none",
         )
+        # A full-page GUI preview may use a different render DPI from tracing.
+        # Its raster cells still occupy the same physical page bounds.
+        width_px = resolved_width if paper_grid else raster_width
+        left, bottom = frame.edge(0., image_height)
+        right, top = frame.edge(width_px, 0.)
         modelspace.add_image(
             image_def=image_def,
-            insert=(0.0, 0.0),
-            size_in_units=(raster_width * scale, raster_height * scale),
+            insert=(left, bottom),
+            size_in_units=(right - left, top - bottom),
             rotation=0.0,
             dxfattribs={"layer": "SCAN_UNDERLAY"},
         )
-        coordinates.extend(((0.0, 0.0), (raster_width * scale, raster_height * scale)))
+        coordinates.extend(((left, bottom), (right, top)))
 
     def entity_progress(stage: str, fraction: float) -> None:
         report_progress(progress_callback, stage, 0.05 + 0.80 * fraction)
-
-    def transform(x: float, y: float) -> tuple[float, float]:
-        return (x * scale, (image_height - y) * scale)
 
     text_consistency = TextConsistencyGuard()
     contour_consistency = ContourConsistencyGuard()
@@ -189,6 +207,8 @@ def export_exact_trace_dxf(
         straight_lines=straight_lines,
         arcs=arcs,
         native_fills=native_fills,
+        native_paths=native_paths,
+        protected_graphics_mode=protected_graphics_mode,
         stroke_presentation=stroke_presentation,
         text_rule_contours=text_rule_contours,
         text_review=text_review,
@@ -196,9 +216,11 @@ def export_exact_trace_dxf(
         line_source_refs=line_source_refs,
         contour_source_refs=contour_source_refs,
         contour_consistency=contour_consistency,
+        source_structure=source_structure,
         texts=texts,
         signatures=signatures,
-        transform=transform,
+        transform=frame.edge,
+        center_transform=frame.center,
         output_path=path,
         logos=logos,
         enclosure_records=enclosure_records,
@@ -274,7 +296,7 @@ def export_exact_trace_dxf(
         fallback_text_count=text_summary.fallback_outline_count,
         source_text_outline_count=(text_summary.source_outline_backup_count),
         residual_graphic_count=text_summary.residual_graphic_count,
-        signature_count=len(signature_paths),
+        signature_count=signature_count,
         text_downgrade_reasons=text_summary.downgrade_reasons,
     )
 
@@ -322,8 +344,11 @@ def export_final_structure_dxf(
         straight_lines=structure.straight_lines,
         line_source_refs=make_line_source_refs(structure),
         contour_source_refs=make_contour_source_refs(structure),
+        source_structure=structure,
         arcs=structure.arcs,
         native_fills=structure.native_fills,
+        native_paths=structure.provenance.get("native_pdf_path_geometry_v1", {}).get("accepted", ()),
+        protected_graphics_mode=structure.provenance.get('protected_graphic_presentation','legacy'),
         texts=structure.texts,
         source_text_outline_paths=semantic_paths(structure.source_text_outline_mask),
         uncertain_text_outline_paths=semantic_paths(
@@ -346,6 +371,5 @@ def export_final_structure_dxf(
     return replace(
         result,
         structure_id=structure.structure_id,
-        logo_count=len(structure.logos),
-        signature_count=len(structure.signatures),
+        logo_count=sum(r.visual_kind in LOGO_VISUAL_KINDS for r in structure.logos),
     )

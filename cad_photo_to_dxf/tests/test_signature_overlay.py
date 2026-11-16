@@ -15,6 +15,64 @@ from app.ocr.signature_overlay import SignatureRegion, detect_signature_regions,
 from app.export.trace_single_export import export_exact_trace_dxf
 
 
+@pytest.mark.parametrize("scale", [1, 2])
+def test_labelled_field_retains_long_pen_stroke_and_rejects_guessed_text(scale):
+    from app.geometry.content_ownership import TextSemanticOwnership, signature_source_mask
+    from app.geometry.optimized_trace import commit_source_objects
+    from app.ocr.signature_overlay import signature_field_sources
+
+    page = np.full((240, 440), 255, dtype=np.uint8)
+    for x in (20, 140, 260, 380):
+        cv2.line(page, (x, 20), (x, 210), 0, 2)
+    for y in (20, 60, 110, 160, 210):
+        cv2.line(page, (20, y), (380, y), 0, 2)
+    ink = np.zeros_like(page)
+    cv2.line(ink, (244, 98), (361, 83), 255, 4)
+    cv2.polylines(ink, [np.array([(285, 76), (303, 103), (326, 78), (350, 103)])], False, 255, 3)
+    page[ink > 0] = 0
+    cv2.putText(page, "NAME", (160, 95), cv2.FONT_HERSHEY_SIMPLEX, .5, 0, 1)
+    page = cv2.resize(page, None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+    ink = cv2.resize(ink, None, fx=scale, fy=scale, interpolation=cv2.INTER_NEAREST)
+    def candidate(text, box):
+        return TextCandidate(text, tuple(v*scale for v in box), .9999, "text_candidate")
+    heading = candidate("Signature", (275, 30, 85, 20))
+    guessed = candidate("guessed handwriting", (264, 72, 100, 33))
+    printed = candidate("NAME", (158, 80, 70, 20))
+    regions, rules = signature_field_sources(page, (heading, guessed, printed))
+    owned = signature_source_mask(page, regions)
+    assignments = np.zeros_like(page, dtype=np.int32)
+    for region in regions:
+        x, y, w, h = region.bbox
+        assignments[y:y+h, x:x+w] += region.mask > 0
+    assert assignments.max() <= 1
+    # Ignore the actual table intersection, whose ownership is shared.
+    pen = ink > 0
+    pen[:, 257*scale:264*scale] = False
+    assert np.count_nonzero(pen & (owned == 0)) == 0
+    assert np.count_nonzero(owned[80*scale:100*scale, 158*scale:228*scale]) == 0
+    empty = np.zeros_like(page)
+    result = commit_source_objects(
+        source_gray=page, contour_binary=page.copy(),
+        source_candidates=(heading, guessed, printed), texts=(heading, guessed, printed),
+        logos=(), signatures=(), orientation_graphics=(),
+        text_semantics=TextSemanticOwnership(empty, empty, empty, ()),
+    )
+    assert [c.text for c in result[1]] == ["Signature", "NAME"]
+    assert result[3]
+    assert np.any(rules)
+    assert np.array_equal(result[0][rules > 0], page[rules > 0])
+    # An earlier erroneous OCR suppression may already have erased the rule.
+    common = dict(source_gray=page, source_candidates=(heading, guessed, printed),
+                  texts=(heading, guessed, printed), logos=(), signatures=(),
+                  text_semantics=TextSemanticOwnership(empty, empty, empty, ()))
+    absent = np.full_like(page, 255)
+    restored = commit_source_objects(contour_binary=absent.copy(), **common)
+    assert np.array_equal(restored[0][rules > 0], page[rules > 0])
+    # Do not duplicate source ink already held by a reconciled native LINE.
+    represented = commit_source_objects(contour_binary=absent.copy(), line_ink=rules, **common)
+    assert np.all(represented[0][rules > 0] == 255)
+
+
 def _title_block() -> tuple[np.ndarray, tuple[TextCandidate, ...]]:
     binary = np.full((300, 400), 255, dtype=np.uint8)
     for x in (200, 260, 320, 380):
@@ -141,7 +199,7 @@ def test_text_suppression_keeps_table_rules() -> None:
     assert cleaned[260, 230] == 0
 
 
-def test_signature_is_exported_as_transparent_top_image(tmp_path: Path) -> None:
+def test_signature_exports_native_adaptive_ink_and_unchanged_source_png(tmp_path: Path) -> None:
     binary, texts = _title_block()
     regions = detect_signature_regions(binary, texts)[:1]
     vector_binary = suppress_signature_strokes(binary, regions)
@@ -164,13 +222,86 @@ def test_signature_is_exported_as_transparent_top_image(tmp_path: Path) -> None:
     assert 0 < np.count_nonzero(rgba[:, :, 3]) < rgba.shape[0] * rgba.shape[1]
     document = ezdxf.readfile(result.path)
     modelspace = document.modelspace()
-    images = list(modelspace.query("IMAGE"))
-    assert len(images) == 1
-    assert images[0].dxf.layer == "SIGNATURE_OVERLAY"
-    assert int(images[0].dxf.flags) & 8
+    assert not list(modelspace.query("IMAGE"))
+    hatches = list(modelspace.query('HATCH[layer=="SIGNATURE_OVERLAY"]'))
+    assert len(hatches) == 1
+    assert hatches[0].dxf.color == 7 and hatches[0].rgb is None
+    assert document.layers.get("SIGNATURE_OVERLAY").is_locked()
+    assert np.array_equal(rgba, signature_rgba(regions[0]))
     redraw_order = dict(modelspace.get_redraw_order())
-    assert redraw_order[images[0].dxf.handle] == "0"
+    assert int(redraw_order[hatches[0].dxf.handle], 16) < min(
+        int(redraw_order[e.dxf.handle], 16) for e in modelspace.query("LWPOLYLINE")
+    )
     assert not document.audit().errors
+
+
+def test_shared_signing_fragments_have_no_independent_insert(tmp_path):
+    from app.core.preview import render_emitted_dxf_preview
+    from app.core.structure_build import build_final_structure
+    from app.export.trace_single_export import export_final_structure_dxf
+    from app.ocr.logo_detection import LogoRegion
+
+    mask = np.array([[255, 0], [160, 75]], np.uint8)
+    whole = SignatureRegion((3, 3, 2, 2), mask)
+    fragment = SignatureRegion((11, 5, 2, 2), mask)
+    stamp = LogoRegion((17, 7, 2, 2), mask, 1., 0, 0, visual_kind="stamp")
+    shared = LogoRegion((13, 5, 2, 2), mask, 1., 0, 0, visual_kind="shared_signing_ink")
+    size = (24, 14)
+    images = []
+    for name, fixed in (("separate", ()), ("fixed", (fragment.bbox, stamp.bbox))):
+        structure = build_final_structure(
+            source_size_px=size, contour_binary=np.full(size[::-1], 255, np.uint8),
+            contours=(), signatures=(whole, fragment), logos=(stamp, shared),
+            provenance={"raster_signing": {
+                "signature_boxes": (whole.bbox, fragment.bbox),
+                "fixed_member_boxes": fixed,
+            }},
+        )
+        result = export_final_structure_dxf(structure, tmp_path / f"{name}.dxf")
+        doc = ezdxf.readfile(result.path)
+        images.append(render_emitted_dxf_preview(doc, tmp_path, size))
+        assert not doc.audit().errors
+    assert np.array_equal(*images)
+    assert result.signature_count == 1
+    independent, composite = doc.modelspace().query("INSERT")
+    assert independent.dxf.layer == "SIGNATURE_OVERLAY"
+    assert composite.dxf.layer == "SIGNING_SHARED_INK"
+    layer = doc.layers.get(composite.dxf.layer)
+    assert layer.is_locked() and not layer.is_off() and not layer.is_frozen()
+    fixed_block = doc.blocks[composite.dxf.name]
+    assert not fixed_block.query("INSERT")
+    _, partial_image, stamp_image = fixed_block.query("IMAGE")
+    for image in (partial_image, stamp_image):
+        assert image.get_xdata("SIGNING_SOURCE")[0].value == "UNRESOLVED_MEMBER_FIXED"
+    assert [tag.value for tag in composite.get_xdata("SIGNING_SOURCE")].count("FIXED_MEMBER") == 2
+
+
+@pytest.mark.parametrize("transform", [
+    lambda x, y: (x, -y),
+    lambda x, y: (50+2*y, 80+2*x),
+])
+def test_native_signature_ink_exactly_tiles_source_cells_including_holes(transform):
+    from app.ocr.signature_overlay import _signature_ink_hatch
+
+    mask = np.zeros((9, 12), np.uint8)
+    mask[1:8, 1:11] = 255
+    mask[3:6, 4:8] = 0
+    mask[0, 0] = 128
+    region = SignatureRegion((13, 21, 12, 9), mask)
+    doc = ezdxf.new()
+    doc.layers.new("signature")
+    hatch = _signature_ink_hatch(doc.modelspace(), region, transform, "signature")
+    origin = np.array(transform(0, 0))
+    matrix = np.column_stack((np.array(transform(1, 0))-origin,
+                              np.array(transform(0, 1))-origin))
+    coverage = np.zeros_like(mask, dtype=int)
+    for path in hatch.paths:
+        points = (np.linalg.inv(matrix) @ (np.array(path.vertices)[:, :2]-origin).T).T
+        a, b = np.rint(points.min(axis=0)).astype(int)
+        c, d = np.rint(points.max(axis=0)).astype(int)
+        coverage[b-21:d-21, a-13:c-13] += 1
+    assert np.array_equal(coverage, (mask > 0).astype(int))
+    assert np.array_equal(region.mask, mask)
 
 
 def test_freeform_signature_beside_long_label_is_preserved() -> None:

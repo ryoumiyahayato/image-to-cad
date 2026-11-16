@@ -111,7 +111,7 @@ def _get_rapidocr_engine() -> Any:
 
     classifier = getattr(_RAPID_OCR_ENGINE, "text_cls", None)
     if callable(classifier):
-        _RAPID_OCR_ENGINE.text_cls = LongLineOrientationClassifier(classifier)
+        _RAPID_OCR_ENGINE.text_cls = LongLineOrientationClassifier(classifier, _RAPID_OCR_ENGINE.recognize_txt)
     return _RAPID_OCR_ENGINE
 
 

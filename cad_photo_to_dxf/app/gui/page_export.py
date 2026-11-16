@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -119,25 +120,9 @@ def _start_processed_pages_export(window: Any) -> None:
         getattr(window, "include_underlay_checkbox", None)
         and window.include_underlay_checkbox.isChecked()
     )
-    all_pages = tuple(window.document_pages_for_export())
-    selected_pages = tuple(
-        (page_index, all_pages[page_index]) for page_index in processed_indices
-    )
+    selected_pages = window.document_pages_for_export(processed_indices)
     source_path = Path(window.current_path)
-    page_scales = tuple(
-        float(
-            window._pdf_page_states.get(page_index, {}).get(
-                "drawing_scale",
-                1.0,
-            )
-        )
-        for page_index in processed_indices
-    )
-    scale_description = (
-        "1:1"
-        if all(abs(value - 1.0) < 1e-9 for value in page_scales)
-        else "per-page setting"
-    )
+    scale_warnings: list[str] = []
 
     def operation(
         token: CancellationToken,
@@ -159,14 +144,12 @@ def _start_processed_pages_export(window: Any) -> None:
         total_residual_graphics = 0
         total_logos = 0
         downgrade_reasons: Counter[str] = Counter()
-        selected_count = len(selected_pages)
+        selected_count = len(processed_indices)
 
-        for position, (source_index, page) in enumerate(
-            selected_pages,
-            start=1,
-        ):
+        for position in range(1, selected_count + 1):
             token.checkpoint()
-            source_page_number = source_index + 1
+            page = next(selected_pages)
+            source_page_number = page.page_number
             page_dxf = output_directory / f"page-{source_page_number:03d}.dxf"
             page_base = (position - 1) / max(selected_count, 1)
             page_span = 0.88 / max(selected_count, 1)
@@ -198,6 +181,9 @@ def _start_processed_pages_export(window: Any) -> None:
             total_residual_graphics += result.residual_graphic_count
             total_logos += result.logo_count
             downgrade_reasons.update(dict(result.text_downgrade_reasons))
+            scale = result.page_scales[0]
+            if scale.warning:
+                scale_warnings.append(f"第 {source_page_number} 页：{scale.warning}")
 
             page_dwg: Path | None = None
             page_error: str | None = None
@@ -223,6 +209,10 @@ def _start_processed_pages_export(window: Any) -> None:
             page_records.append(
                 {
                     "page": source_page_number,
+                    "drawing_multiplier": scale.multiplier,
+                    "coordinate_space": scale.coordinate_space,
+                    "scale_notes": [asdict(note) for note in scale.notes],
+                    "scale_warning": scale.warning,
                     "structure_id": (
                         result.structure_ids[0] if result.structure_ids else None
                     ),
@@ -252,6 +242,11 @@ def _start_processed_pages_export(window: Any) -> None:
 
         checkpoint(token)
         report_progress(progress, "写入已处理页面导出清单", 0.97)
+        scale_description = (
+            "纸面尺寸"
+            if all(item["coordinate_space"] == "paper_mm" for item in page_records)
+            else "逐页设置"
+        )
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
@@ -285,6 +280,7 @@ def _start_processed_pages_export(window: Any) -> None:
                 ),
             },
             "warnings": [
+                *scale_warnings,
                 "只导出本次选择时已经完成处理的页面。",
                 "未处理页面被跳过，不会阻止其他页面独立导出。",
                 "每个 PDF 页面生成一个独立 DXF；页面之间不存在坐标或图层叠加。",
@@ -334,7 +330,10 @@ def _start_processed_pages_export(window: Any) -> None:
             f"不可编辑文字轮廓：{completion.fallback_text_count}",
             f"隐藏源字形备份：{completion.source_text_outline_count}",
             f"处理报告：{completion.report_path}",
+            *scale_warnings[:8],
         ]
+        if len(scale_warnings) > 8:
+            summary.append(f"其余 {len(scale_warnings) - 8} 页的尺度提示见处理报告。")
         if completion.dwg_error:
             summary.append(f"部分或全部 DWG 未生成：{completion.dwg_error}")
             QMessageBox.warning(

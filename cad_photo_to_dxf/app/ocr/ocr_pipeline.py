@@ -291,15 +291,40 @@ def recognize_text_candidates_optimized(
         )
     candidates = _mark_cross_pass_consensus(candidates)
     deduplicated = collapse_overlapping_candidates(deduplicate_candidates(candidates))
+    # The ruling is segmentation evidence, not new geometric deletion authority.
+    from app.ocr.dimension_chain_review import review_dimension_chains, preserve_disjoint_dimension_members
+    deduplicated, chain_records = review_dimension_chains(
+        _gray(image), deduplicated, checkpoint=lambda: checkpoint(cancellation_token),
+    )
+    if chain_records:
+        warnings.append(f"按局部尺寸线与独立墨迹分离 {len(chain_records)} 个误合并文字框；未确认数值保留来源。")
+        if observation_sink is not None:
+            observe(observation_sink, "ocr_dimension_chain_review",
+                    payload={"stage":"dimension-chain-source-islands-v1", "records":chain_records})
     resolved: list[TextCandidate] = []
     for index, item in enumerate(deduplicated):
         checkpoint(cancellation_token)
-        resolved.append(prepare_safe_candidate(image, item))
+        prepared = prepare_safe_candidate(image, item)
+        prepared = preserve_disjoint_dimension_members(_gray(image), item, prepared)
+        resolved.append(prepared)
         if index % 64 == 0:
             report_progress(
                 progress_callback,
                 "ocr-safety",
                 0.86 + 0.13 * index / max(len(deduplicated), 1),
+            )
+    # Recheck source-separated short tokens only after normal detection and
+    # layout; this never changes geometry or grants source-retirement rights.
+    from app.ocr.source_token_review import review_source_tokens
+    resolved, token_review = review_source_tokens(
+        _gray(image), resolved, checkpoint=lambda: checkpoint(cancellation_token),
+    )
+    if token_review:
+        warnings.append(f"原灰阶短串与独立字形一致性复核修正 {len(token_review)} 行；来源归属仍须原有检查。")
+        if observation_sink is not None:
+            observe(
+                observation_sink, "ocr_source_token_review",
+                payload={"stage": "source-token-glyph-review-v1", "records": token_review},
             )
     if not resolved and not warnings:
         warnings.append("未找到可确认的文字。")

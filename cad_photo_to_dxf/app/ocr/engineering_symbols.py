@@ -10,6 +10,71 @@ from app.ocr.logo_detection import LogoRegion
 from app.ocr.text_output_contract import text_output_decisions
 
 
+def observed_graphic_attachments(region, structure):
+    """Retain source ink across a short crop seam, without inferring a network."""
+    if structure is None or structure.preview_binary is None:
+        return region, ()
+    from app.diagnostics.observability import rasterize_lines
+
+    x, y, width, height = region.bbox
+    page_width, page_height = structure.source_size_px
+    # Search two source pixels beyond the stored crop and leave one more
+    # pixel of context for a witness in the surviving exterior contours.
+    left, top = max(0, x - 3), max(0, y - 3)
+    right, bottom = min(page_width, x + width + 3), min(page_height, y + height + 3)
+    window = np.s_[top:bottom, left:right]
+    source = structure.preview_binary[window] < 128
+    visible = structure.contour_binary[window] < 128
+    if structure.uncertain_text_outline_mask is not None:
+        # The shared writer emits this fallback mask on a visible layer.
+        visible |= structure.uncertain_text_outline_mask[window] > 0
+    interior = np.s_[y-top:y-top+height, x-left:x-left+width]
+    exterior = np.ones_like(source)
+    exterior[interior] = False
+    ink = np.zeros(source.shape, np.uint8)
+    ink[interior] = region.mask
+    kernel = np.ones((3, 3), np.uint8)
+    owned_source = np.uint8((ink > 0) & source)
+    adjacent = cv2.dilate(owned_source, kernel) > 0
+    candidates = source & exterior & ~visible
+    candidates &= cv2.dilate(owned_source, kernel, iterations=2) > 0
+    for mask in (
+        structure.editable_text_source_mask, structure.source_text_outline_mask,
+    ):
+        if mask is not None:
+            candidates &= mask[window] == 0
+    candidates &= rasterize_lines(
+        structure.straight_lines, source.shape, origin=(left, top)
+    ) == 0
+    for other in (*structure.logos, *structure.signatures):
+        if other is region:
+            continue
+        ox, oy, ow, oh = other.bbox
+        a, b, c, d = max(left, ox), max(top, oy), min(right, ox + ow), min(bottom, oy + oh)
+        if a < c and b < d:
+            candidates[b-top:d-top, a-left:c-left] &= other.mask[b-oy:d-oy, a-ox:c-ox] == 0
+
+    count, labels, stats, _ = cv2.connectedComponentsWithStats(
+        np.uint8(candidates), connectivity=8
+    )
+    witness = cv2.dilate(np.uint8(source & exterior & visible), kernel) > 0
+    shared = np.intersect1d(labels[adjacent], labels[witness])
+    accepted = shared[(shared > 0) & (shared < count)]
+    if not accepted.size:
+        return region, ()
+
+    restored = np.isin(labels, accepted)
+    ink[restored] = 255
+    records = tuple(
+        (left + int(a), top + int(b), int(w), int(h), int(pixels))
+        for a, b, w, h, pixels in stats[accepted]
+    )
+    ys, xs = np.nonzero(restored)
+    a, b = min(x-left, int(xs.min())), min(y-top, int(ys.min()))
+    c, d = max(x-left+width, int(xs.max())+1), max(y-top+height, int(ys.max())+1)
+    return replace(region, bbox=(left+a, top+b, c-a, d-b), mask=ink[b:d, a:c]), records
+
+
 def _text_part(candidate, content, box):
     x, y, w, h = (int(v) for v in box)
     return replace(candidate, text=content, bbox=(x, y, w, h),

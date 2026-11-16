@@ -118,7 +118,8 @@ def plan_arc_replacement(structure, candidate, index=None):
     index = index or _ContourIndex(structure.contours)
     selected, masks = [], []
     child_parents = {p.parent for p in structure.contours if p.parent is not None}
-    enclosure_indices = {int(r['contour_index']) for r in structure.provenance.get('engineering_enclosures', ())}
+    enclosure_indices = {int(r['contour_index']) for r in structure.provenance.get('engineering_enclosures', ())
+                         if 'contour_index' in r}
     tolerance = candidate.stroke_width_px/2 + 2**.5  # contour edge raster quantization
     for i in index.query(candidate.box):
         path = structure.contours[i]
@@ -247,7 +248,10 @@ def commit_arc_replacement(structure, plan):
     if presentation is not None:
         presentation['fill_records'] = {str(remap[int(k)]): v for k, v in presentation.get('fill_records', {}).items() if int(k) in remap}
     if provenance.get('engineering_enclosures'):
-        provenance['engineering_enclosures'] = [dict(r, contour_index=remap[int(r['contour_index'])]) for r in provenance['engineering_enclosures']]
+        provenance['engineering_enclosures'] = [
+            dict(r, contour_index=remap[int(r['contour_index'])]) if 'contour_index' in r else r
+            for r in provenance['engineering_enclosures']
+        ]
     provenance['native_arc_replacements'] = [*provenance.get('native_arc_replacements', ()),
         dict(object_id=arc.object_id, replaced_members=list(arc.replaced_members), **plan.proof)]
     return replace(structure, contours=tuple(paths), contour_binary=binary,

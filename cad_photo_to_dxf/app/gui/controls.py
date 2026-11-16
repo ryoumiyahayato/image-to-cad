@@ -74,13 +74,13 @@ def build_controls(self):
     self.drawing_scale_spin.setRange(1, 10000)
     self.drawing_scale_spin.setValue(1)
     self.drawing_scale_spin.setToolTip(
-        "默认按 1:1 输出。只有明确需要按图纸比例还原模型尺寸时才修改。"
+        "默认输出纸面毫米。比例适用于整页时填写。存在 N.T.S. 或 SCALE NONE 注记时，请查看输出坐标提示。"
     )
     self.drawing_scale_spin.valueChanged.connect(self._scale_changed)
     form.addRow("图纸比例 1:", self.drawing_scale_spin)
     self.scale_result_label = QLabel(scale)
     self.scale_result_label.setWordWrap(True)
-    form.addRow("模型坐标", self.scale_result_label)
+    form.addRow("输出坐标", self.scale_result_label)
     palette = QLabel("不同内容使用不同颜色，便于检查。", scale)
     palette.setWordWrap(True)
     form.addRow("自动分层颜色", palette)

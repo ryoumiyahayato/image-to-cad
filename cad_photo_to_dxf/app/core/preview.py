@@ -148,10 +148,20 @@ def render_emitted_dxf_preview(
     painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
     painter.scale(density / unit, density / unit)
     painter.translate(-left * unit, -top * unit)
+    source_view = QTransform.fromScale(density, density)
+    source_view.translate(-left, -top)
     painter.setPen(QPen(QColor("black"), 1.0))
     images = []
     try:
-        for entity in doc.modelspace():
+        def expanded(entities):
+            for entity in entities:
+                if entity.dxftype() == 'INSERT' and entity.has_xdata('PDF_PATH_ALIASES'):
+                    layer = doc.layers.get(entity.dxf.layer)
+                    if not layer.is_off() and not layer.is_frozen():
+                        yield from entity.virtual_entities()
+                    continue
+                yield entity
+        for entity in expanded(doc.modelspace()):
             checkpoint(cancellation_token)
             layer = doc.layers.get(entity.dxf.layer)
             if layer.is_off() or layer.is_frozen():
@@ -161,6 +171,7 @@ def render_emitted_dxf_preview(
                 images.append(entity)
                 continue
             path = QPainterPath()
+            painter.setOpacity(1.0-entity.transparency)
             pen_width = 1.0
             arc_cap = Qt.PenCapStyle.FlatCap
             if entity.has_xdata("P3A_STROKE"):
@@ -184,6 +195,16 @@ def render_emitted_dxf_preview(
                         raise ValueError("Invalid emitted round ARC width")
                     arc_cap = Qt.PenCapStyle.RoundCap
             painter.setPen(QPen(QColor("black"), pen_width * unit))
+            if entity.has_xdata("P3A_STROKE") and entity.get_xdata("P3A_STROKE")[0].value == "OBSERVED_SYMBOL_STROKE":
+                pen = painter.pen()
+                pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+                painter.setPen(pen)
+            if entity.has_xdata("PDF_PATH_SOURCE"):
+                pen = painter.pen()
+                pen.setCapStyle(Qt.PenCapStyle.RoundCap)
+                pen.setJoinStyle(Qt.PenJoinStyle.RoundJoin)
+                painter.setPen(pen)
             if kind == "LINE":
                 a, b = entity.dxf.start, entity.dxf.end
                 path.moveTo(a.x, height - a.y)
@@ -197,31 +218,36 @@ def render_emitted_dxf_preview(
                     path.lineTo(x, height - y)
                 if entity.closed:
                     path.closeSubpath()
-            elif kind == "CIRCLE":
-                center, radius = entity.dxf.center, entity.dxf.radius
-                path.addEllipse(QPointF(center.x, height - center.y), radius, radius)
-            elif kind == "ARC":
+            elif kind in {"CIRCLE", "ARC"}:
+                # Qt strokes curved paths in painter coordinates. Use source
+                # pixels so a millimetre export and the default preview have
+                # the same curve and pen scale at the same zoom.
+                center = entity.dxf.center
+                x, y = center.x / unit, source_height - center.y / unit
+                radius = entity.dxf.radius / unit
                 pen = painter.pen()
-                pen.setCapStyle(arc_cap)
-                painter.setPen(pen)
-                center, radius = entity.dxf.center, entity.dxf.radius
-                start, end = entity.dxf.start_angle, entity.dxf.end_angle
-                if (
-                    radius <= 0
-                    or not np.isfinite([center.x, center.y, radius, start, end]).all()
-                ):
-                    raise ValueError("Invalid emitted ARC")
-                sweep = (end - start) % 360
-                if sweep == 0:
-                    raise ValueError("Emitted ARC must have a nonzero sweep")
-                rect = (
-                    center.x - radius,
-                    height - center.y - radius,
-                    2 * radius,
-                    2 * radius,
-                )
-                path.arcMoveTo(*rect, start)
-                path.arcTo(*rect, start, sweep)
+                pen.setWidthF(pen_width)
+                if kind == "CIRCLE":
+                    path.addEllipse(QPointF(x, y), radius, radius)
+                else:
+                    pen.setCapStyle(arc_cap)
+                    start, end = entity.dxf.start_angle, entity.dxf.end_angle
+                    if radius <= 0 or not np.isfinite([x, y, radius, start, end]).all():
+                        raise ValueError("Invalid emitted ARC")
+                    sweep = (end - start) % 360
+                    if sweep == 0:
+                        raise ValueError("Emitted ARC must have a nonzero sweep")
+                    rect = (x - radius, y - radius, 2 * radius, 2 * radius)
+                    path.arcMoveTo(*rect, start)
+                    path.arcTo(*rect, start, sweep)
+                painter.save()
+                try:
+                    painter.setWorldTransform(source_view)
+                    painter.setPen(pen)
+                    painter.drawPath(path)
+                finally:
+                    painter.restore()
+                continue
             elif kind == "TEXT":
                 metrics = librecad_text_metrics(entity.dxf.text)
                 transform = QTransform()
@@ -231,6 +257,14 @@ def render_emitted_dxf_preview(
                 scale = entity.dxf.height / metrics.em_height
                 transform.scale(scale * entity.dxf.width, scale)
                 path = transform.map(librecad_text_path(entity.dxf.text))
+            elif kind == "SPLINE":
+                points = np.asarray(entity.control_points, dtype=float)
+                if (entity.dxf.degree != 3 or points.shape != (4,3)
+                        or not np.isfinite(points).all()
+                        or list(entity.knots) != [0,0,0,0,1,1,1,1]):
+                    raise ValueError("Preview supports explicit cubic Bezier SPLINE only")
+                path.moveTo(points[0,0], height-points[0,1])
+                path.cubicTo(points[1,0], height-points[1,1], points[2,0], height-points[2,1], points[3,0], height-points[3,1])
             elif kind == "HATCH":
                 for boundary in entity.paths:
                     points = boundary.vertices

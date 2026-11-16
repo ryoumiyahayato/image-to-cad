@@ -14,9 +14,11 @@ from collections import Counter
 from time import perf_counter
 from sys import getsizeof
 
+import cv2
 import numpy as np
 
 from app.core.arc_types import ArcSegment, PdfPathReference
+from app.geometry.pdf_page_content import PdfPageContent, classify_pdf_page_content
 
 POLICY = "pdf-simple-arc-evidence-v3-round-cap"
 MAX_PAGE_OBJECTS = 32768
@@ -33,6 +35,8 @@ MAX_SAMPLES = 16385
 
 
 def pdf_geometry_binding(path, page_index, dpi):
+    # The historical key records the DPI used to request this evidence render.
+    # For a capped render the loader supplies the resolved DPI.
     return dict(
         policy=POLICY,
         document=Path(path).resolve().as_posix(),
@@ -51,6 +55,23 @@ def pdf_geometry_binding(path, page_index, dpi):
             seconds=MAX_EVIDENCE_SECONDS,
             curve_samples=MAX_SAMPLES,
         ),
+    )
+
+
+def bitmap_page_mapping(page, bitmap):
+    """Return the actual rotated PDF-to-edge mapping and its calculation basis."""
+    pos = bitmap.get_posconv(page)
+    width, height = bitmap.width, bitmap.height
+    origin = np.array(pos.to_page(0, 0))
+    dx = (np.array(pos.to_page(width, 0)) - origin) / width
+    dy = (np.array(pos.to_page(0, height)) - origin) / height
+    inverse = np.linalg.inv(np.column_stack((dx, dy)))
+    offset = -inverse @ origin
+    return (
+        (float(inverse[0, 0]), float(inverse[1, 0]),
+         float(inverse[0, 1]), float(inverse[1, 1]),
+         float(offset[0]), float(offset[1])),
+        inverse, origin,
     )
 
 
@@ -358,6 +379,8 @@ class PdfGeometryEvidence:
 
     native_fills: tuple = ()
     fill_analysis: dict = field(default_factory=dict)
+    page_content: PdfPageContent | None = None
+    mixed_vector_gray: np.ndarray | None = field(default=None, repr=False, compare=False)
 
     def for_crop(self, box):
         """Known translation only; partial curves retain raster representation."""
@@ -392,6 +415,10 @@ class PdfGeometryEvidence:
             source_size_px=(right - left, bottom - top),
             page_to_pixel=matrix,
             candidates=tuple(candidates),
+            mixed_vector_gray=(
+                self.mixed_vector_gray[top:bottom, left:right]
+                if self.mixed_vector_gray is not None else None
+            ),
             native_fills=tuple(
                 replace(
                     f,
@@ -513,21 +540,8 @@ def extract_pdf_arc_evidence(
     started = perf_counter()
     h, w = source_gray.shape
     binding = pdf_geometry_binding(path, page_index, requested_dpi)
-    pos = bitmap.get_posconv(page)
-    origin = np.array(pos.to_page(0, 0))
-    dx = (np.array(pos.to_page(w, 0)) - origin) / w
-    dy = (np.array(pos.to_page(0, h)) - origin) / h
-    inverse = np.linalg.inv(np.column_stack((dx, dy)))
+    page_matrix, inverse, origin = bitmap_page_mapping(page, bitmap)
     mapping = _bitmap_rounding_mapping(page.get_size(), (w, h), scale, inverse)
-    offset = -inverse @ origin
-    page_matrix = (
-        float(inverse[0, 0]),
-        float(inverse[1, 0]),
-        float(inverse[0, 1]),
-        float(inverse[1, 1]),
-        float(offset[0]),
-        float(offset[1]),
-    )
     empty = PdfGeometryEvidence(binding, (w, h), page_matrix)
     counts = dict(
         objects_visited=0,
@@ -640,6 +654,46 @@ def extract_pdf_arc_evidence(
     if not traversal_complete:
         # Missing leaves cannot be safely disabled for isolated rendering.
         return finish()
+
+    try:
+        empty = replace(empty, page_content=classify_pdf_page_content(page, objects))
+    except (ValueError, pdfium.PdfiumError):
+        # Optional content evidence falls back to the raster classifier.
+        pass
+
+    if empty.page_content == "mixed" and not expired("mixed-vector-ink"):
+        disabled_images = []
+        try:
+            for obj in objects:
+                if obj.type != raw.FPDF_PAGEOBJ_IMAGE:
+                    continue
+                active = raw.FPDF_BOOL()
+                if not raw.FPDFPageObj_GetIsActive(obj, active):
+                    raise ValueError("Unable to read PDF image visibility")
+                if active.value:
+                    if not set_active(obj, 0):
+                        raise ValueError("Unable to isolate mixed PDF vector ink")
+                    disabled_images.append(obj)
+            grayscale = bitmap.format == raw.FPDFBitmap_Gray
+            isolated = page.render(scale=scale, grayscale=grayscale)
+            try:
+                if grayscale:
+                    vector_gray = np.array(isolated.to_pil().convert("L"))
+                else:
+                    rgb = np.asarray(isolated.to_pil().convert("RGB"))
+                    vector_gray = cv2.cvtColor(rgb, cv2.COLOR_RGB2GRAY)
+            finally:
+                isolated.close()
+            if vector_gray.shape == source_gray.shape:
+                vector_gray[vector_gray != source_gray] = 255
+                vector_gray.setflags(write=False)
+                empty = replace(empty, mixed_vector_gray=vector_gray)
+        except (ValueError, pdfium.PdfiumError):
+            reject("MIXED_VECTOR_INK_UNAVAILABLE", "mixed-vector-ink", "unavailable")
+        finally:
+            restored = [set_active(obj, 1) for obj in disabled_images]
+            if not all(restored):
+                raise ValueError("Unable to restore mixed PDF image visibility")
 
     records = []
     phase = perf_counter()
