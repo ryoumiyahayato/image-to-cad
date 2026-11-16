@@ -124,3 +124,20 @@ pipeline. The native-hole rejection is proved separately by local diagnostic
 replay; neither observation is a second-source positive. The 24 motivating
 short-slash compounds remain unrecovered. Target-CAD editing and cold reopen,
 DWG roundtrip, blind generalization, and human net time savings remain untested.
+
+## Explicit export contract dispatch (continuation, 2026-11-16)
+
+The exporter now rejects missing or unknown contract versions and hashes before
+any DXF mutation. An unrecognized short/proposal record must not silently enter
+the older 10 mm long-part branch. The previously unversioned long emitter
+fixtures use the explicitly frozen `native-compound-long-export-v1` contract
+(canonical JSON SHA256
+`854460e1c9fd1f9baad07e9de386c1d453e583a2490e3b5440d52aad7a57b3df`).
+The existing short contract and its numeric geometry gates are unchanged.
+
+New proposal declarations require their own explicit registration. The current
+dispatcher accepts neither unknown proposals nor the early working-grid
+research schema as a long-export alias. This tightening does not certify any
+new native-grid algorithm. The related regression selection passes 193 tests,
+including pre-write rejection of long members carrying incomplete or unknown
+contracts, and the previous actual A2 record still passes validation.

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+from hashlib import sha256
+import json
 
 import cv2
 import ezdxf
@@ -10,6 +12,8 @@ from shapely.geometry import LineString, box
 
 from app.export.compound_stroke_entities import (
     APPID, BACKUP_LAYER, CLASSIFICATION, RESIDUAL_LAYER, VISIBLE_LAYER,
+    LONG_CONTRACT, LONG_CONTRACT_SHA256, LONG_CONTRACT_VERSION,
+    SHORT_CONTRACT_SHA256, SHORT_CONTRACT_VERSION,
     add_compound_stroke_entities,
     validate_compound_stroke_record, _cells, _continuous_region_relation,
     _native_pen_mask, _native_raster_relation, _topology,
@@ -61,7 +65,8 @@ def compound_record():
             "native_supporting_source_runs_y_x0_x1": native_runs(support),
             "native_retired_source_runs_y_x0_x1": native_runs(retired),
             "native_retained_interface_runs_y_x0_x1": native_runs(collar)})
-    return {"classification": CLASSIFICATION, "native_source_compound_strokes": True,
+    return {"version": LONG_CONTRACT_VERSION, "contract_sha256": LONG_CONTRACT_SHA256,
+        "classification": CLASSIFICATION, "native_source_compound_strokes": True,
         "creates_connection": False, "full_object_movable": False,
         "electrical_semantics": "NOT_INFERRED", "dpi": 100., "native_scale": 2,
         "origin_work_px": (0., 0.), "parts": parts,
@@ -83,6 +88,64 @@ def document():
 
 def transform(x, y):
     return x*.254, (181-y)*.254
+
+
+def test_long_export_contract_is_explicitly_frozen():
+    canonical = json.dumps(LONG_CONTRACT, sort_keys=True, separators=(",", ":")).encode()
+    assert sha256(canonical).hexdigest() == LONG_CONTRACT_SHA256
+    assert LONG_CONTRACT["version"] == LONG_CONTRACT_VERSION
+
+
+@pytest.mark.parametrize("damage", [
+    "missing_version", "missing_hash", "unknown_version", "unknown_version_valid_short_hash",
+    "old_prototype_version", "nonstr_version", "wrong_long_hash", "wrong_short_hash",
+    "mixed_short_and_long_contract", "unknown_proposal", "unknown_proposal_id",
+    "proposal_hash_only", "proposal_version_only", "null_proposal", "proposal_alias",
+])
+def test_long_geometry_cannot_bypass_unknown_or_incomplete_contract(damage):
+    record = compound_record()
+    # All four members are 19.812 mm. The previous unknown-version fallback
+    # silently accepted these records through the >= 10 mm long branch.
+    assert all(np.linalg.norm(np.subtract(p["points_px"][1], p["points_px"][0]))*.254 > 10.
+               for p in record["parts"])
+    if damage == "missing_version":
+        record.pop("version")
+    elif damage == "missing_hash":
+        record.pop("contract_sha256")
+    elif damage == "unknown_version":
+        record.update(version="short-straight-compound-parts-v999", contract_sha256="bad")
+    elif damage == "unknown_version_valid_short_hash":
+        record.update(version=SHORT_CONTRACT_VERSION+"-typo", contract_sha256=SHORT_CONTRACT_SHA256)
+    elif damage == "old_prototype_version":
+        record["version"] = "compound-exclusive-part-research-v2-collar"
+    elif damage == "nonstr_version":
+        record["version"] = [LONG_CONTRACT_VERSION]
+    elif damage == "wrong_long_hash":
+        record["contract_sha256"] = "0"*64
+    elif damage == "wrong_short_hash":
+        record.update(version=SHORT_CONTRACT_VERSION, contract_sha256="0"*64)
+    elif damage == "mixed_short_and_long_contract":
+        record["contract_sha256"] = SHORT_CONTRACT_SHA256
+    elif damage == "unknown_proposal":
+        record.update(proposal_version="unregistered-native-grid", proposal_contract_sha256="0"*64)
+    elif damage == "unknown_proposal_id":
+        record["proposal_id"] = "native-lattice-native-cell-margin-v1"
+    elif damage == "proposal_hash_only":
+        record["proposal_contract_sha256"] = "0"*64
+    elif damage == "proposal_version_only":
+        record["proposal_version"] = "unregistered-native-grid"
+    elif damage == "null_proposal":
+        record.update(proposal_version=None, proposal_contract_sha256=None)
+    elif damage == "proposal_alias":
+        record["proposal"] = {"version": "unregistered-native-grid"}
+    with pytest.raises(ValueError, match="Unregistered compound"):
+        validate_compound_stroke_record(record, center_transform=transform)
+    doc = document()
+    before = (len(doc.entitydb), len(doc.layers), len(doc.appids), len(doc.modelspace()))
+    with pytest.raises(ValueError, match="Unregistered compound"):
+        add_compound_stroke_entities(doc, doc.modelspace(), record, center_transform=transform)
+    assert (len(doc.entitydb), len(doc.layers), len(doc.appids), len(doc.modelspace())) == before
+    assert doc.modelspace().query("TEXT")[0].dxf.text == "keep 01"
 
 
 def test_actual_native_parts_residual_backup_and_roundtrip(tmp_path):

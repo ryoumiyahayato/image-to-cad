@@ -32,6 +32,64 @@ MAX_RUNS = 100_000
 EPSILON = 1.e-9
 SHORT_CONTRACT_VERSION = "short-straight-compound-parts-v1"
 SHORT_CONTRACT_SHA256 = "b2678b460fcf5bb73d1d26df1a3a281d555db23c5f458a5a5db8c4f6ed10ebfc"
+LONG_CONTRACT_VERSION = "native-compound-long-export-v1"
+# The original long emitter fixtures had no version. Register their existing
+# native export gates explicitly; the earlier working-grid prototype's version
+# is a different schema and is deliberately not an accepted alias.
+LONG_CONTRACT = {
+    "version": LONG_CONTRACT_VERSION,
+    "status": "EXPERIMENTAL_EXPORT_CONTRACT_NOT_PRODUCT_ACCEPTANCE",
+    "scope": "Explicit registration of the formerly unversioned native long-part emitter; not the old working-grid proposal schema",
+    "geometry": {
+        "path_types": ["LINE", "OPEN_LWPOLYLINE"], "simple_open": True,
+        "minimum_length_mm": 10.0, "minimum_width_work_px": 0.5,
+        "maximum_pen_edge_shift_work_px": 0.25,
+        "maximum_bidirectional_boundary_error_work_px": 1.0,
+        "centerline_white_cell_intrusion": 0,
+        "paper_lineweight": "standard_hundredth_mm",
+        "cap_styles": ["round", "butt", "square"],
+    },
+    "source": {
+        "native_scale_min": 2, "native_scale_max": 16,
+        "native_center_mapping": "native=(work+0.5)*scale-0.5",
+        "support_partition": "support=retired disjoint_union retained_interface",
+        "parent_partition": "parent=all_retired disjoint_union residual",
+        "retained_interface_in_residual": True, "support_members_disjoint": True,
+        "foreign_or_forbidden_contact": 0, "non_interface_residual_contact": 0,
+        "direct_part_contact": 0,
+        "native_ink8_paper4_region_overlap_bijection": True,
+        "continuous_ink_paper_region_overlap_bijection": True,
+        "remaining_source": "exact native pixel cells",
+        "original_backup": "full native cells and original working boundaries",
+    },
+    "output": {
+        "classification": CLASSIFICATION, "full_object_movable": False,
+        "creates_connection": False, "electrical_semantics": "NOT_INFERRED",
+        "coordinate_contract": "isotropic source-DPI paper millimetres or unitless source preview",
+        "input_validation_before_dxf_mutation": True,
+    },
+}
+# SHA-256 of the UTF-8 canonical JSON: sort_keys=True, separators=(",", ":").
+LONG_CONTRACT_SHA256 = "854460e1c9fd1f9baad07e9de386c1d453e583a2490e3b5440d52aad7a57b3df"
+_EXPORT_CONTRACTS = {
+    SHORT_CONTRACT_VERSION: (SHORT_CONTRACT_SHA256, True),
+    LONG_CONTRACT_VERSION: (LONG_CONTRACT_SHA256, False),
+}
+
+
+def _short_contract(record):
+    """Resolve a registered proof contract; unknown input never selects long."""
+    version = record.get("version")
+    registered = _EXPORT_CONTRACTS.get(version) if isinstance(version, str) else None
+    if registered is None or record.get("contract_sha256") != registered[0]:
+        raise ValueError("Unregistered compound export contract version or hash")
+    # Both registered contracts describe their legacy inputs, which predate an
+    # explicit proposal declaration. A new generator/ownership claim requires
+    # separate registration; a known geometry label must not ignore that claim.
+    if any(isinstance(key, str) and (key == "proposal" or key.startswith("proposal_"))
+           for key in record):
+        raise ValueError("Unregistered compound proposal contract")
+    return registered[1]
 
 
 def _integer(value, label, minimum=0):
@@ -267,9 +325,7 @@ def _validate(record, center_transform, doc) -> _Plan:
             or record.get("creates_connection") is not False
             or record.get("electrical_semantics") != "NOT_INFERRED"):
         raise ValueError("Compound output requires an explicit partial-source contract")
-    short_contract = record.get("version") == SHORT_CONTRACT_VERSION
-    if short_contract and record.get("contract_sha256") != SHORT_CONTRACT_SHA256:
-        raise ValueError("Unrecognized frozen short-part contract")
+    short_contract = _short_contract(record)
     dpi = _finite(record.get("dpi"), "working source DPI", positive=True)
     scale = _integer(record.get("native_scale"), "native scale", 2)
     if scale > 16:
