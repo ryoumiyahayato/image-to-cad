@@ -1,0 +1,265 @@
+name: Apply verified r13 integration delta
+on:
+  push:
+    branches: [sync/verified-online-r12-20261116]
+    paths: [.github/workflows/apply-verified-r13-delta.yml]
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.event.head_commit.message == 'chore: apply verified r13 integration delta'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Apply source delta with before and after identities
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib, pathlib, subprocess
+          def git(*args):
+              return subprocess.check_output(['git', *args], text=True).strip()
+          assert git('rev-parse', 'HEAD^') == '82b82de780fe60090b3921794ead608b2fe02d1f'
+          assert git('diff', '--name-only', 'HEAD^', 'HEAD') == '.github/workflows/apply-verified-r13-delta.yml'
+          checks = [
+              ('cad_photo_to_dxf/app/core/manual_text_recovery.py','0ae9ef745918443208782800b5d3d3fc59d544d3','4473c2ecd4578c525bcbbae766f8686798e5aea6b3bba81cd0096ae13b9e2e74'),
+              ('cad_photo_to_dxf/app/core/processing.py','3864586bc27c0ab0e80c307acf0df17623a868ba','801099d96149952638a7b4104b66b33f0e30b96b20320c16782d169142fb0683'),
+              ('cad_photo_to_dxf/app/export/trace_entity_writer.py','04df0adbd32ef3f9ced1381595887ff312b30aac','3d5c53706f2d62862acecc0e4bf51d0838d534e7d89da809426d2d7c10d2890d'),
+              ('cad_photo_to_dxf/app/geometry/optimized_trace.py','95662fb90839229fd3882b6b72d2c043b01389fd','d723835a372f42909379fb0567c11d6165df4716d6d8d90207d2036f7e58608a'),
+              ('cad_photo_to_dxf/app/geometry/scan_cleanup.py','c5a86227c8e6c8912a8c10431bde177287e142d2','f57f6484dd720d3ae235e7be3658b40641afaf64f1909b4f1cde5a4e61360aaf'),
+              ('cad_photo_to_dxf/main.py','968103e00bee0ce8256bb80eea538f055184708f','9ba077ca8f4f5882f97a67676370212d9a5875c5e6894ba6e4ba9434e465cf97'),
+              ('cad_photo_to_dxf/tests/test_frame_paper_pen.py','b62a0823fd083475a9e5d8ae8ecf5fc31f277eca','66c12105409afa2f4c04fb11d6acd8c63a5f253baf1a61cb278361fa7a0c802d'),
+              ('cad_photo_to_dxf/tests/test_processing_contract.py','565ba9348a327e776d347ef3d7cbe18bef5988d7','8a2ed14d3330c1f7bd507552253e56f7cb99a6ab9c2d4794e42851b3b6c69e4b'),
+              ('cad_photo_to_dxf/tests/test_review_save_preservation.py','6708ff0fd840b79b4b24d0f6c407cc4460f52704','3d438b897570811aa383e1722845789d9ab7f6001d99f804c2a5764e54fd50a4'),
+              ('pytest.ini','da0353b86f7a600e2f86a6c83220d6fc9d6310a3','1a153d293567e67d1e0a54609c06866716c98c85f2fac12d4ec162deccbc90d8'),
+          ]
+          new_files = {
+              'cad_photo_to_dxf/app/export/observed_open_stroke_entities.py':'cbae62d789ada7264ad4dabdabb6991f8c9b405de954b6921fdfb4692735880a',
+              'cad_photo_to_dxf/app/geometry/observed_open_strokes.py':'77325908dec00335c4690824e99e6db49a5da0b77b957b5fc51e8c2f817b47fe',
+              'cad_photo_to_dxf/tests/test_observed_open_strokes.py':'182cd7d960419819816d9d55aea351fa4b1e2de6e8f3e3d7a553b39a7894bad4',
+              'cad_photo_to_dxf/tests/test_authorized_dust_dispatch.py':'753e614b2658978be6ddd01b108f17e54dade05ea47912769c994e04548074d8',
+              'cad_photo_to_dxf/tests/test_manual_source_coordinate_frame.py':'7aeead5e0a5c2c2c87edba9bb8168210fc5afbc2acacfc94acee0eba8939cd19',
+          }
+          for path, before, after in checks:
+              assert git('rev-parse', 'HEAD:'+path) == before, path
+          for path, digest in new_files.items():
+              assert hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest() == digest, path
+          patch = r'''diff --git a/cad_photo_to_dxf/app/core/manual_text_recovery.py b/cad_photo_to_dxf/app/core/manual_text_recovery.py
+          index 0ae9ef745918443208782800b5d3d3fc59d544d3..92133410ca38377491efe1242019dd5fa66cc9a8 100644
+          --- a/cad_photo_to_dxf/app/core/manual_text_recovery.py
+          +++ b/cad_photo_to_dxf/app/core/manual_text_recovery.py
+          @@ -555,7 +555,10 @@ def xdata_values(project, record):
+               ]
+           
+           
+          -def emit(review, doc, modelspace, transform, names, guard):
+          +def emit(review, doc, modelspace, transform, names, guard, *, source_transform=None):
+          +    # Text placement uses pixel edges; raster contour vertices use pixel centers.
+          +    # Keep both explicit rather than widening the complete-boundary matcher.
+          +    source_transform = source_transform or transform
+               project = review._project
+               layer = names["OCR_TEXT"] + "_MANUAL"
+               if layer not in doc.layers:
+          @@ -601,7 +604,7 @@ def emit(review, doc, modelspace, transform, names, guard):
+                   if r["source_transfer"] == "HIDDEN_FROZEN_BACKUP":
+                       # Match the COMPLETE ordered boundary. Never select by bounding box.
+                       source = r["evidence"]["contours"][0]
+          -            target = [transform(x, y) for x, y in source["points"]]
+          +            target = [source_transform(x, y) for x, y in source["points"]]
+                       matches = []
+                       for other in modelspace.query("LWPOLYLINE"):
+                           if other.dxf.layer != names["TRACE_TEXT_SYMBOL"]:
+          diff --git a/cad_photo_to_dxf/app/core/processing.py b/cad_photo_to_dxf/app/core/processing.py
+          index 3864586bc27c0ab0e80c307acf0df17623a868ba..3eb47e31318f14cdec1e5852c46970a8e8186667 100644
+          --- a/cad_photo_to_dxf/app/core/processing.py
+          +++ b/cad_photo_to_dxf/app/core/processing.py
+          @@ -68,6 +68,7 @@ DISABLED_LAYOUT_PROFILE = "disabled"
+           DEFAULT_IMAGE_DPI = 240.0
+           PRODUCTION_ALGORITHM_VERSION += "-observed-boxed-label-members-v1"
+           PRODUCTION_ALGORITHM_VERSION += "-observed-label-frame-geometry-v2-paper-pen"
+          +PRODUCTION_ALGORITHM_VERSION += "-observed-isolated-open-strokes-v1"
+           
+           
+           def _sha256_hex(value: str, label: str) -> str:
+          diff --git a/cad_photo_to_dxf/app/export/trace_entity_writer.py b/cad_photo_to_dxf/app/export/trace_entity_writer.py
+          index 04df0adbd32ef3f9ced1381595887ff312b30aac..1c20e53a2b0ebadc227261c6a0a0a0213ba07ce6 100644
+          --- a/cad_photo_to_dxf/app/export/trace_entity_writer.py
+          +++ b/cad_photo_to_dxf/app/export/trace_entity_writer.py
+          @@ -266,6 +266,18 @@ def write_page_entities(
+                   ):
+                       continue
+                   attributes = {"layer": names["ENGINEERING_SYMBOL"]}
+          +        if record.get("native_source_open_stroke"):
+          +            from app.export.observed_open_stroke_entities import add_observed_open_stroke
+          +
+          +            entity, bounds = add_observed_open_stroke(doc, modelspace, record,
+          +                                                     center_transform=center_transform)
+          +            coordinates.extend(bounds)
+          +            if entity.dxftype() == "LINE":
+          +                line_count += 1
+          +            else:
+          +                trace_path_count += 1
+          +                trace_vertex_count += len(entity)
+          +            continue
+                   if record.get("native_source_frame"):
+                       from app.export.observed_frame_entities import add_observed_frame
+           
+          @@ -367,7 +379,8 @@ def write_page_entities(
+                   from app.core.manual_text_recovery import emit as emit_manual_text
+           
+                   manual_entities, manual_bounds = emit_manual_text(
+          -            text_review, doc, modelspace, transform, names, text_consistency
+          +            text_review, doc, modelspace, transform, names, text_consistency,
+          +            source_transform=center_transform,
+                   )
+                   text_entities.extend(manual_entities)
+                   text_count += len(manual_entities)
+          diff --git a/cad_photo_to_dxf/app/geometry/optimized_trace.py b/cad_photo_to_dxf/app/geometry/optimized_trace.py
+          index 95662fb90839229fd3882b6b72d2c043b01389fd..d6a77af55240fe6f83e76211c519a918c57e670d 100644
+          --- a/cad_photo_to_dxf/app/geometry/optimized_trace.py
+          +++ b/cad_photo_to_dxf/app/geometry/optimized_trace.py
+          @@ -1469,6 +1469,21 @@ def trace_image_optimized(
+                   )
+                   enclosure_paths = (*enclosure_paths, *frame_paths)
+                   enclosure_records = (*enclosure_records, *frame_records)
+          +    open_stroke_review = None
+          +    if not prepared.clean_digital and scan_symbol_source:
+          +        from app.geometry.observed_open_strokes import recover_observed_open_strokes
+          +
+          +        contour_binary, open_paths, open_records, open_stroke_review = recover_observed_open_strokes(
+          +            prepared.gray, prepared.binary, contour_binary,
+          +            protected_masks=(ownership.line, ownership.logo, ownership.signature,
+          +                text_semantics.editable_source, text_semantics.source_outline,
+          +                text_semantics.uncertain_outline,
+          +                graphic_source_mask(prepared.binary, logos),
+          +                signature_source_mask(prepared.binary, signatures)),
+          +            dpi=float(source_dpi or DEFAULT_CONNECTION_DPI),
+          +        )
+          +        enclosure_paths = (*enclosure_paths, *open_paths)
+          +        enclosure_records = (*enclosure_records, *open_records)
+               text_contract = text_output_summary(texts)
+               text_decisions = text_output_decisions(texts)
+               if observation_sink is not None:
+          @@ -1706,6 +1721,8 @@ def trace_image_optimized(
+                   final_provenance["scanned_glyph_review"] = scanned_glyph_records
+               if frame_review is not None:
+                   final_provenance["observed_frame_recovery"] = frame_review
+          +    if open_stroke_review is not None:
+          +        final_provenance["observed_open_stroke_recovery"] = open_stroke_review
+               if boxed_label_records:
+                   final_provenance["boxed_label_source_members"] = {
+                       "version": "observed-boxed-label-members-v1", "decisions": boxed_label_records,
+          diff --git a/cad_photo_to_dxf/app/geometry/scan_cleanup.py b/cad_photo_to_dxf/app/geometry/scan_cleanup.py
+          index c5a86227c8e6c8912a8c10431bde177287e142d2..cc66bafaadc8abae42c90b5c3b11f9b4125a22b4 100644
+          --- a/cad_photo_to_dxf/app/geometry/scan_cleanup.py
+          +++ b/cad_photo_to_dxf/app/geometry/scan_cleanup.py
+          @@ -424,11 +424,16 @@ def prepare_scan_page(
+                   binary = 255 - binary
+               unconfirmed_noise_runs = ()
+               removed_noise_runs = ()
+          -    if not clean_digital and foreground_threshold is None:
+          -        proposed_cleanup = _suppress_dense_speckle(binary)
+          -        if not speckle_only:
+          -            proposed_cleanup = _suppress_long_low_contrast_artifacts(gray, proposed_cleanup)
+          -        suspect = (binary == 0) & (proposed_cleanup != 0)
+          +    # A raster appearance heuristic can propose cleanup, but cannot revoke an
+          +    # independently confirmed source mask. Explicit thresholds and authoritative
+          +    # vector-only pages keep their existing no-cleanup contract.
+          +    if foreground_threshold is None and pdf_content != "vector":
+          +        suspect = np.zeros(gray.shape, dtype=bool)
+          +        if not clean_digital:
+          +            proposed_cleanup = _suppress_dense_speckle(binary)
+          +            if not speckle_only:
+          +                proposed_cleanup = _suppress_long_low_contrast_artifacts(gray, proposed_cleanup)
+          +            suspect = (binary == 0) & (proposed_cleanup != 0)
+                   if (
+                       pdf_content == "mixed"
+                       and mixed_vector_gray is not None
+          diff --git a/cad_photo_to_dxf/main.py b/cad_photo_to_dxf/main.py
+          index 968103e00bee0ce8256bb80eea538f055184708f..351540bc84b37c193c839d810d3ba1f0ce85c659 100644
+          --- a/cad_photo_to_dxf/main.py
+          +++ b/cad_photo_to_dxf/main.py
+          @@ -271,6 +271,9 @@ def run_headless(args: argparse.Namespace) -> int:
+                       "observed_frame_recovery": metadata_to_jsonable(
+                           structure.provenance.get("observed_frame_recovery", {})
+                       ),
+          +            "observed_open_stroke_recovery": metadata_to_jsonable(
+          +                structure.provenance.get("observed_open_stroke_recovery", {})
+          +            ),
+                       "boxed_label_source_members": metadata_to_jsonable(
+                           structure.provenance.get("boxed_label_source_members", {})
+                       ),
+          diff --git a/cad_photo_to_dxf/tests/test_frame_paper_pen.py b/cad_photo_to_dxf/tests/test_frame_paper_pen.py
+          index b62a0823fd083475a9e5d8ae8ecf5fc31f277eca..35f9d160eab0992fd947ef721304d7682081bd14 100644
+          --- a/cad_photo_to_dxf/tests/test_frame_paper_pen.py
+          +++ b/cad_photo_to_dxf/tests/test_frame_paper_pen.py
+          @@ -122,7 +122,7 @@ def test_source_rejection_also_applies_to_pen_profile(kind):
+           
+           def test_production_recovery_explicitly_uses_persistent_pen():
+               sourcefile=Path(__file__).parents[1]/'app/geometry/optimized_trace.py'
+          -    assert 'stroke_profile="librecad_paper_pen"' in sourcefile.read_text()
+          +    assert 'stroke_profile="librecad_paper_pen"' in sourcefile.read_text(encoding="utf-8")
+           
+           
+           def test_unsupported_profile_rejects_before_mutation():
+          diff --git a/cad_photo_to_dxf/tests/test_processing_contract.py b/cad_photo_to_dxf/tests/test_processing_contract.py
+          index 565ba9348a327e776d347ef3d7cbe18bef5988d7..38270451f1a440ef4de69919c28f0ded9d545e54 100644
+          --- a/cad_photo_to_dxf/tests/test_processing_contract.py
+          +++ b/cad_photo_to_dxf/tests/test_processing_contract.py
+          @@ -65,6 +65,7 @@ def test_gui_only_verifies_paper_edges_after_perspective_corners() -> None:
+                   _native_pdf_mode=False, _review_project=None,
+                   _perspective_metadata=None, _ocr_enabled=lambda: True,
+                   _processing_pdf_dpi=lambda _page: 136,
+          +        _pdf_page_sizes_mm={0: (297., 210.)},
+               )
+               assert not _processing_config(window, None).paper_boundary_verified
+               window._perspective_metadata = {
+          diff --git a/cad_photo_to_dxf/tests/test_review_save_preservation.py b/cad_photo_to_dxf/tests/test_review_save_preservation.py
+          index 6708ff0fd840b79b4b24d0f6c407cc4460f52704..d928fea455e411c766ee0fdc885906a95267acb6 100644
+          --- a/cad_photo_to_dxf/tests/test_review_save_preservation.py
+          +++ b/cad_photo_to_dxf/tests/test_review_save_preservation.py
+          @@ -144,14 +144,17 @@ def test_text_review_rebuild_preserves_formal_arc_and_replacement_relation():
+                       ]
+                   },
+               )
+          +    scale_refreshes = []
+               window = SimpleNamespace(
+                   _final_structure=structure,
+          +        _update_scale_label=lambda: scale_refreshes.append(True),
+                   detected_canvas=SimpleNamespace(set_image=lambda _: None),
+                   _dirty_trace_keys=set(),
+                   _current_trace_key=lambda: "contract",
+                   _refresh_visual_acceptance=lambda: None,
+               )
+               updated = gui_review_actions._replace_final_structure_texts(window, ())
+          +    assert scale_refreshes == [True]
+               assert updated.arcs == (arc,)
+               assert (
+                   updated.provenance["native_arc_replacements"]
+          diff --git a/pytest.ini b/pytest.ini
+          index da0353b86f7a600e2f86a6c83220d6fc9d6310a3..515e4ae459869580ac1468036e193b923ea05dae 100644
+          --- a/pytest.ini
+          +++ b/pytest.ini
+          @@ -1,3 +1,7 @@
+           [pytest]
+           # Preserve pytest's normal exclusions; generated fixture output is not source.
+           norecursedirs = *.egg .* _darcs build CVS dist node_modules venv {arch} test-output history-archive
+          +
+          +# Repository tools are imported by source-evidence tests even when pytest runs
+          +# from cad_photo_to_dxf (the CI working directory). Do not depend on cwd.
+          +pythonpath = . cad_photo_to_dxf
+          '''
+          p = pathlib.Path('/tmp/r13-verified-delta.patch')
+          p.write_text(patch, encoding='utf-8')
+          subprocess.run(['git','apply','--check',str(p)], check=True)
+          subprocess.run(['git','apply','--index',str(p)], check=True)
+          assert set(git('diff','--cached','--name-only').splitlines()) == {x[0] for x in checks}
+          for path, before, after in checks:
+              assert hashlib.sha256(pathlib.Path(path).read_bytes()).hexdigest() == after, path
+          subprocess.run(['git','config','user.name','github-actions[bot]'], check=True)
+          subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'], check=True)
+          subprocess.run(['git','commit','-m','fix: integrate accepted r13 with source-safe compatibility repairs'], check=True)
+          subprocess.run(['git','push','origin','HEAD:sync/verified-online-r12-20261116'], check=True)
+          PY
