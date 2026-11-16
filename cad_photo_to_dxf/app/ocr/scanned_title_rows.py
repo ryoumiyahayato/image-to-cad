@@ -209,7 +209,8 @@ def refine_scanned_title_rows(gray, binary, texts, cells, *, visible, protected_
             if len(found) == 1 and id(texts[found[0]]) in accepted and _eligible(texts[found[0]]):
                 columns.setdefault((left, right), set()).add(found[0])
     replacements, records = {}, []
-    transform = lambda x, y: (x, gray.shape[0]-y)
+    def transform(x, y):
+        return (x, gray.shape[0]-y)
     for indexes in columns.values():
         ordered = sorted(indexes, key=lambda i: texts[i].bbox[1])
         for triple in zip(ordered, ordered[1:], ordered[2:]):

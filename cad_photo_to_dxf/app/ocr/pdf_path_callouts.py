@@ -168,9 +168,9 @@ def _clear_quad(glyphs, foreign, left, top):
     occupied = cv2.dilate(np.uint8(occupied[:, None]), np.ones((3, 1), np.uint8))[:, 0]
     if np.any(occupied[y:y+h]):
         return None
-    l, r = left+x, left+x+w
+    left_coord, r = left+x, left+x+w
     t, b = top+y, top+y+h
-    return ((l, t), (r, t), (r, b), (l, b))
+    return ((left_coord, t), (r, t), (r, b), (left_coord, b))
 
 
 def _review(page, gray, strokes, vertices, text):
@@ -304,8 +304,8 @@ def apply_callout_texts(texts, proofs, retired, contour_binary, protected_masks,
     records = []
     for index, proof in changes.items():
         text = texts[index]
-        l, t, r, b = proof.bounds
-        window = np.s_[t:b, l:r]
+        left_coord, t, r, b = proof.bounds
+        window = np.s_[t:b, left_coord:r]
         owned = (proof.glyphs > 0) & (contour_binary[window] < 128)
         for mask in protected_masks:
             owned &= mask[window] == 0

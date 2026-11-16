@@ -258,11 +258,11 @@ def source_logo_lockup(mark: LogoRegion, gray: np.ndarray, *, line_ink=None,
     # Keep the old representation when the candidate also covers foreign ink.
     for candidate in text_candidates:
         cx, cy, cw, ch = candidate.bbox
-        l, t = max(left, cx), max(top, cy)
+        left_coord, t = max(left, cx), max(top, cy)
         r, b = min(right, cx+cw), min(bottom, cy+ch)
-        if l >= r or t >= b:
+        if left_coord >= r or t >= b:
             continue
-        claimed = np.count_nonzero(strong[t-top:b-top, l-left:r-left])
+        claimed = np.count_nonzero(strong[t-top:b-top, left_coord-left:r-left])
         if claimed and claimed != np.count_nonzero(gray[cy:cy+ch, cx:cx+cw] < 128):
             return mark
 

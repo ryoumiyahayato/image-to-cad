@@ -12,7 +12,7 @@ import pytest
 
 from tools.drafting_rules.cli import read_json, validate_files
 from tools.drafting_rules.dxf_adapter import sha256
-from tools.drafting_rules.source_adapter import validate_with_source, runs
+from tools.drafting_rules.source_adapter import DocumentView, may_cover, renderable, validate_with_source, runs
 from tools.drafting_rules.source_study import run, SOURCE
 
 
@@ -65,21 +65,26 @@ def test_real_source_positive_binds_recognized_original_and_saved_edited_text(re
     assert all(sha256(p) == value for p, value in hashes.items())
 
 
-def test_original_w02_retained_residue_is_failure_partial_rows_still_abstain(real_cases):
+def test_current_w02_complete_carriers_exit_without_residual_fill(real_cases):
     root, summary = real_cases
     case = summary["cases"]["w02-cell"]
     assert case["legacy"] == {"PASS": 7, "ABSTAIN": 5}
-    assert [r["status"] for r in case["glyph"]] == ["FAIL", "ABSTAIN", "ABSTAIN"]
+    assert [r["status"] for r in case["glyph"]] == ["PASS", "PASS", "PASS"]
     report = read_json(root / "w02-cell/source.report.json")
     rows = report["source_ledger"]["rows"]
-    assert rows[0]["residual_owned_core_pixels"] > 0
-    assert rows[0]["residual_handles"]
-    assert rows[1]["shared_with"] and rows[1]["unowned_pixels"] > 0
+    # Current production source arbitration completes the observed carrier;
+    # historical FAIL/ABSTAIN reports remain separate frozen evidence.
+    assert rows[0]["carrier_pixels"] == 1840
+    assert all(r["carrier_pixels"] > 0 and r["source_member_runs"] for r in rows)
+    assert all(r["residual_owned_core_pixels"] == 0 and not r["residual_handles"] for r in rows)
+    assert all(r["unowned_pixels"] == r["cache_uncovered_pixels"] == 0 for r in rows)
+    assert rows[1]["shared_with"] and rows[1]["source_member_id"] == rows[2]["source_member_id"]
     assert next(r for r in report["results"] if r["rule"] == "background-protection")["status"] == "ABSTAIN"
     assert next(r for r in report["results"] if r["rule"] == "table-line-parity")["status"] == "ABSTAIN"
 
 
-def test_source_glyph_reintroduced_from_real_cache_is_detected(real_cases, tmp_path):
+@pytest.mark.parametrize("representation", ["outline", "solid_hatch"])
+def test_source_glyph_reintroduced_from_real_cache_is_detected(real_cases, tmp_path, representation):
     from app.core.cache import load_trace_cache
     from app.export.trace_entity_writer import semantic_paths
     args = copy_case(real_cases, tmp_path)
@@ -87,11 +92,35 @@ def test_source_glyph_reintroduced_from_real_cache_is_detected(real_cases, tmp_p
     originals = semantic_paths(structure.editable_text_source_mask)
     def restore(doc):
         for path in originals:
-            doc.modelspace().add_lwpolyline([(x, structure.source_size_px[1] - y) for x, y in path.points], close=True)
+            points = [(x, structure.source_size_px[1] - y) for x, y in path.points]
+            if representation == "outline":
+                doc.modelspace().add_lwpolyline(points, close=True)
+            else:
+                doc.modelspace().add_hatch().paths.add_polyline_path(points, is_closed=True)
     change_dxf(args, restore)
     report = validate_with_source(**args)
     assert glyph(report)[0]["status"] == "FAIL"
     assert report["source_ledger"]["rows"][0]["residual_owned_core_pixels"] > 0
+
+
+def test_solid_hatch_render_and_conservative_cover_include_filled_interior(tmp_path):
+    from app.core.preview import render_emitted_dxf_preview
+
+    doc = ezdxf.new("R2010")
+    hatch = doc.modelspace().add_hatch()
+    hatch.paths.add_polyline_path([(2, 2), (28, 2), (28, 28), (2, 28)], is_closed=True)
+    carrier = np.zeros((30, 30), bool)
+    carrier[15, 15] = True  # More than a pen envelope away from every boundary.
+    assert renderable(hatch)
+    assert may_cover(hatch, carrier, doc)
+    ink = render_emitted_dxf_preview(DocumentView(doc, [hatch]), tmp_path, (30, 30)) < 255
+    assert ink[15, 15]
+
+    hatch.paths.add_polyline_path([(12, 12), (18, 12), (18, 18), (12, 18)], is_closed=True, flags=0)
+    ink = render_emitted_dxf_preview(DocumentView(doc, [hatch]), tmp_path, (30, 30)) < 255
+    assert not ink[15, 15]  # Normal island style keeps the complete inner loop.
+    assert ink[8, 8]
+    assert may_cover(hatch, carrier, doc)  # Bounding fill envelope is conservative.
 
 
 def test_missing_native_replacement_cannot_claim_verified_replacement_exit(real_cases, tmp_path):
@@ -134,13 +163,35 @@ def test_source_identity_rejected_before_ownership_claims(real_cases, tmp_path, 
         validate_with_source(**args)
 
 
-def test_boolean_flags_cannot_manufacture_complete_source_evidence(real_cases, tmp_path):
+@pytest.mark.parametrize("damage", ["missing-cache-ownership", "restored-source"])
+def test_boolean_flags_cannot_manufacture_complete_source_evidence(real_cases, tmp_path, damage):
+    from dataclasses import replace
+    from app.core.cache import load_trace_cache
+    from app.export.trace_entity_writer import semantic_paths
+
     args = copy_case(real_cases, tmp_path, "w02-cell")
     evidence = read_json(args["evidence_path"])
     for row in evidence["texts"]:
         row.update(outline_mapping_complete=True, ownership_ref="pretend complete", source_outline_handles=[])
     save_evidence(args["evidence_path"], evidence)
-    assert [r["status"] for r in glyph(validate_with_source(**args))] == ["FAIL", "ABSTAIN", "ABSTAIN"]
+    stored = load_trace_cache(args["cache"])
+    if damage == "missing-cache-ownership":
+        partial = replace(stored, final_structure=replace(stored.final_structure, editable_text_source_mask=None))
+        with patch("app.core.cache.load_trace_cache", return_value=partial):
+            report = validate_with_source(**args)
+        assert [r["status"] for r in glyph(report)] == ["ABSTAIN"] * 3
+        assert all(r["cache_uncovered_pixels"] > 0 for r in report["source_ledger"]["rows"])
+    else:
+        structure = stored.final_structure
+        def restore(doc):
+            for path in semantic_paths(structure.editable_text_source_mask):
+                points = [(x, structure.source_size_px[1] - y) for x, y in path.points]
+                doc.modelspace().add_hatch().paths.add_polyline_path(points, is_closed=True)
+        change_dxf(args, restore)
+        report = validate_with_source(**args)
+        assert [r["status"] for r in glyph(report)] == ["FAIL"] * 3
+        assert all(r["residual_owned_core_pixels"] > 0 and r["residual_handles"]
+                   for r in report["source_ledger"]["rows"])
 
 
 def test_manual_background_and_table_claims_cannot_remove_abstentions(real_cases, tmp_path):

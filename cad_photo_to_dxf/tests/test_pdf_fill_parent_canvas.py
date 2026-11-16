@@ -1,5 +1,5 @@
 """QA-only native PDF parent-grid and source-role preservation contracts."""
-import ctypes as ct
+
 import hashlib
 
 import numpy as np

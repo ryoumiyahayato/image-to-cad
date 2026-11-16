@@ -145,7 +145,8 @@ def refine_unfitted_pdf_labels(gray, texts, *, protected_source_masks):
     """Tighten padded OCR labels in place using complete, separated source ink."""
     if not librecad_font_available():
         return texts
-    transform = lambda x, y: (x, gray.shape[0]-y)
+    def transform(x, y):
+        return (x, gray.shape[0]-y)
     accepted = {id(t) for t in accepted_ocr_texts(texts)}
     placements = {
         i: native_text_placement(t, transform=transform)
@@ -303,7 +304,8 @@ def refine_source_supported_scan_displays(gray, structure):
         return structure
     from PySide6.QtCore import QPointF
     from PySide6.QtGui import QPainterPath, QPainterPathStroker
-    transform = lambda x, y: (float(x), float(gray.shape[0]-y))
+    def transform(x, y):
+        return (float(x), float(gray.shape[0]-y))
     texts = structure.texts
     accepted = {id(t) for t in accepted_ocr_texts(texts)}
     originals, placements = {}, {}
@@ -316,7 +318,8 @@ def refine_source_supported_scan_displays(gray, structure):
     for line in structure.straight_lines:
         path = QPainterPath(QPointF(*transform(line.x1,line.y1)))
         path.lineTo(QPointF(*transform(line.x2,line.y2)))
-        pen = QPainterPathStroker(); pen.setWidth(max(1.0,float(line.width)))
+        pen = QPainterPathStroker()
+        pen.setWidth(max(1.0,float(line.width)))
         stroke = pen.createStroke(path)
         fixed.append((stroke, stroke.boundingRect()))
     for obj in (*structure.logos, *structure.signatures):
@@ -352,7 +355,8 @@ def refine_source_supported_scan_displays(gray, structure):
             if any(not legal.contains(QPointF(*point)) for point in visible_corners(new)):
                 raise ValueError("OUTSIDE_EXISTING_DISPLAY_BOX")
             path = glyph_footprint(new)
-            added = path.subtracted(originals[i]); bounds=added.boundingRect()
+            added = path.subtracted(originals[i])
+            bounds=added.boundingRect()
             if any(bounds.intersects(box) and added.intersects(obstacle) for obstacle,box in fixed):
                 raise ValueError("NEW_FIXED_OBJECT_CONTACT")
             if any(j != i and not originals[i].intersects(other)
@@ -366,7 +370,8 @@ def refine_source_supported_scan_displays(gray, structure):
         except (ValueError,TypeError,cv2.error) as exc:
             skipped.append(dict(index=i,reason=str(exc)))
     blocked=_joint_conflicts(proposals, originals)
-    for i in blocked:proposals.pop(i,None)
+    for i in blocked:
+        proposals.pop(i,None)
     if not proposals:
         return structure
     records=[r for r in records if r["index"] in proposals]

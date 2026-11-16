@@ -102,8 +102,8 @@ DXF 文件有生成时间/身份元数据，字节摘要可以变化；来源摘
 | 超长文字反例 | 6 | 1 | 5 | 越出单元格 |
 | 再加无关轮廓移动 | 5 | 2 | 5 | 越框及旁及修改 |
 
-本版逐项数值、句柄和失败原因见 [正常报告](evidence/v0.1.1/edited.report.json)、[越界失败报告](evidence/v0.1.1/overflow.report.json)、
-[旁及修改失败报告](evidence/v0.1.1/unrelated-change.report.json)、[判定变化](evidence/v0.1.1/comparison.json) 和 [运行摘要](evidence/v0.1.1/study.json)。
+本版逐项数值、句柄和失败原因见 [正常报告](https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/edited.report.json)、[越界失败报告](https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/overflow.report.json)、
+[旁及修改失败报告](https://github.com/ryoumiyahayato/image-to-cad/blob/d5c05642de7150b254ccccafb8716bf7dfbab503/tools/drafting_rules/evidence/v0.1.1/unrelated-change.report.json)、[判定变化](evidence/v0.1.1/comparison.json) 和 [运行摘要](evidence/v0.1.1/study.json)。
 另见 [镜像表线版本差异](evidence/v0.1.1/coordinate-version-comparison.json) 和 [真实单元格版本比较](evidence/v0.1.1/real-version-comparison.json)。0.1.0 的原报告保留未改。
 原 DXF 没有本检查器所需的完整原字形成员映射、独立背景映射和来源表线段集，故 3 个字形检查＋背景＋表线合计 5 ABSTAIN。
 这是真实的证据缺口；配置一个完整性布尔值不等于验证了物理归属，后续需要现有来源证明的薄适配器。
@@ -122,3 +122,7 @@ DXF 文件有生成时间/身份元数据，字节摘要可以变化；来源摘
 `openstd.samr.gov.cn`、`std.samr.gov.cn`、`www.mohurd.gov.cn`；保留原网络预设，不添加任何密钥要求。
 当前实例支持离线开发、局部真实 DXF 生成与检查；SAMR 的官方元数据和标题栏公开预览已实际读取成功，字体正文由来源版权政策限制。
 保存草稿不等于发布或新任务恢复验证；需在环境设置中审阅并保存，再发布环境。未验证新实例恢复。
+
+## 2026-11-16 历史报告保存位置
+
+8 份可重建的 `*.report.json` 已停止在当前源码树跟踪，原始内容和失败结果仍在上述固定提交链接中。完整路径、Git blob、字节数和 SHA-256 见 [恢复索引](evidence/HISTORICAL_REPORTS.json)。这是仓库卫生修复；没有重写本页历史数值、修改历史文件或给生成报告添加检查豁免。新报告应写入本地结果目录。

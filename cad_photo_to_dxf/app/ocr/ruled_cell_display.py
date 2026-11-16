@@ -95,7 +95,8 @@ def refine_ruled_cell_row_displays(
             continue
         if all(p.display_quad == t.quad for p, t in zip(proposals, rows, strict=True)):
             continue
-        transform = lambda x, y: (x, gray.shape[0] - y)
+        def transform(x, y):
+            return (x, gray.shape[0] - y)
         placements = [native_text_placement(t, transform=transform) for t in proposals]
         if any(p is None or p.metrics.fallback_reason for p in placements):
             continue
@@ -193,11 +194,11 @@ def _source_row_boxes(gray, rows, cell):
     for row, group in zip(rows, groups, strict=True):
         if len(group) < 2:
             return ()
-        l, t = np.min(group, axis=0)[:2]
+        left_coord, t = np.min(group, axis=0)[:2]
         r, b = np.max(group, axis=0)[2:]
-        if r-l < row.bbox[2]*.60 or b-t < row.bbox[3]*.42:
+        if r-left_coord < row.bbox[2]*.60 or b-t < row.bbox[3]*.42:
             return ()
-        boxes.append([float(l), float(t), float(r), float(b)])
+        boxes.append([float(left_coord), float(t), float(r), float(b)])
     # Different letters can occupy adjacent rows without sharing pixels. A
     # one-pixel descender overlap can be fitted to the measured common border.
     for upper, lower in zip(boxes, boxes[1:]):
@@ -206,7 +207,7 @@ def _source_row_boxes(gray, rows, cell):
         if upper[3] >= lower[1]:
             middle = (upper[3] + lower[1])/2
             upper[3], lower[1] = middle-.5, middle+.5
-    return tuple(((l, t), (r, t), (r, b), (l, b)) for l, t, r, b in boxes)
+    return tuple(((left_coord, t), (r, t), (r, b), (left_coord, b)) for left_coord, t, r, b in boxes)
 
 
 def refine_bilingual_source_bands(gray, texts, cells, *, protected_source_masks=()):
@@ -218,7 +219,8 @@ def refine_bilingual_source_bands(gray, texts, cells, *, protected_source_masks=
         keys.setdefault((text.text, text.bbox), []).append(i)
     accepted = {id(t) for t in accepted_ocr_texts(texts)}
     output, changed = list(texts), []
-    transform = lambda x, y: (x, gray.shape[0]-y)
+    def transform(x, y):
+        return (x, gray.shape[0]-y)
     for cell, members in cells.items():
         if not 2 <= len(members) <= 3 or any(len(keys.get(k, ())) != 1 for k in members):
             continue
@@ -238,8 +240,8 @@ def refine_bilingual_source_bands(gray, texts, cells, *, protected_source_masks=
         quads = _source_row_boxes(gray, rows, cell)
         if not quads:
             continue
-        if any(mask[int(t):int(np.ceil(b)), int(l):int(np.ceil(r))].any()
-               for ((l, t), _, (r, b), _) in quads for mask in protected_source_masks):
+        if any(mask[int(t):int(np.ceil(b)), int(left_coord):int(np.ceil(r))].any()
+               for ((left_coord, t), _, (r, b), _) in quads for mask in protected_source_masks):
             continue
         proposals = [replace(t, display_quad=q) for t, q in zip(rows, quads, strict=True)]
         placements = [native_text_placement(t, transform=transform) for t in proposals]

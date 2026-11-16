@@ -64,10 +64,10 @@ def sample(tmp_path, *, angle=0, shifted=False, extra=None, page_rotation=0):
         elif extra == "white-occlusion":
             tp = page.get_textpage()
             try:
-                l,b,r,t = tp.get_charbox(2)
+                left_coord,b,r,t = tp.get_charbox(2)
             finally:
                 tp.close()
-            shape = raw.FPDFPageObj_CreateNewRect(l-1,b-1,r-l+2,t-b+2)
+            shape = raw.FPDFPageObj_CreateNewRect(left_coord-1,b-1,r-left_coord+2,t-b+2)
             assert raw.FPDFPageObj_SetFillColor(shape, 255, 255, 255, 255)
             assert raw.FPDFPath_SetDrawMode(shape, raw.FPDF_FILLMODE_WINDING, 0)
             raw.FPDFPage_InsertObject(page, shape)
@@ -88,18 +88,18 @@ def sample(tmp_path, *, angle=0, shifted=False, extra=None, page_rotation=0):
             bitmap.close()
         page.close()
     ys, xs = np.nonzero(baseline < 255)
-    l,t,r,b = int(xs.min())-5,int(ys.min())-5,int(xs.max())+6,int(ys.max())+6
-    corners = ((l,t),(r,t),(r,b),(l,b))
+    left_coord,t,r,b = int(xs.min())-5,int(ys.min())-5,int(xs.max())+6,int(ys.max())+6
+    corners = ((left_coord,t),(r,t),(r,b),(left_coord,b))
     start = {0:0,90:3,180:2,270:1}[angle]
     quad = tuple(tuple(map(float,corners[(start+i)%4])) for i in range(4))
-    original = TextCandidate("SAMPLE TEXT", (l,t,r-l,b-t), .99, "text_candidate",
+    original = TextCandidate("SAMPLE TEXT", (left_coord,t,r-left_coord,b-t), .99, "text_candidate",
                              quad=quad, source="rapidocr-test", replacement_safe=False)
     if angle in (0,180):
-        clip = (l,t,(r-l)//2,b-t)
+        clip = (left_coord,t,(r-left_coord)//2,b-t)
     else:
-        clip = (l,t,r-l,(b-t)//2)
+        clip = (left_coord,t,r-left_coord,(b-t)//2)
     x,y,w,h=clip
-    clipped_quad=tuple((float(x if px<(l+r)/2 else x+w),float(y if py<(t+b)/2 else y+h)) for px,py in quad)
+    clipped_quad=tuple((float(x if px<(left_coord+r)/2 else x+w),float(y if py<(t+b)/2 else y+h)) for px,py in quad)
     obs = replace(TextObservation.capture(original,0),cell_clip_bbox=clip,cell_clip_quad=clipped_quad)
     clipped=replace(original,bbox=clip,quad=clipped_quad,pre_cell_observation=obs)
     evidence=SimpleNamespace(binding=pdf_geometry_binding(path,0,144))
@@ -123,7 +123,8 @@ def test_complete_native_source_is_recovered_in_observed_direction(tmp_path,angl
     assert path.read_bytes()==before
     claim=(_candidate_region_mask(new,gray.shape)>0)&(gray<=254)
     proved=np.zeros(gray.shape,bool)
-    for y,l,r in records[0]["source_runs"]: proved[y,l:r]=True
+    for y,left_coord,r in records[0]["source_runs"]:
+        proved[y,left_coord:r]=True
     assert np.array_equal(claim,proved)
     repeated=[]
     assert recover_native_source_rows(gray,output,evidence,threshold=254,records=repeated)==output

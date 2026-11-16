@@ -151,7 +151,8 @@ def test_late_elapsed_budget_discards_all_prepared_layouts(monkeypatch,late_phas
     if late_phase=="hash":
         real=module.sha256
         def late_hash(data):
-            result=real(data);clock["value"]=31.0
+            result=real(data)
+            clock["value"]=31.0
             return result
         monkeypatch.setattr(module,"sha256",late_hash)
     else:
@@ -175,7 +176,8 @@ def test_unknown_formal_geometry_abstains(monkeypatch):
     gray,before=sample()
     real=module.ReviewLayoutGuard
     def unknown(structure):
-        guard=real(structure);guard.unknown.add("unsupported fixture entity")
+        guard=real(structure)
+        guard.unknown.add("unsupported fixture entity")
         return guard
     monkeypatch.setattr(module,"ReviewLayoutGuard",unknown)
     assert module.refine_proven_row_group_displays(gray,before) is before
@@ -186,7 +188,8 @@ def test_cache_and_actual_dxf_keep_native_strings_source_and_layout(tmp_path):
     from app.geometry.raster_trace import RasterTraceResult
     from app.export.trace_single_export import export_final_structure_dxf
     import ezdxf
-    gray,before=sample();after=module.refine_proven_row_group_displays(gray,before)
+    gray,before=sample()
+    after=module.refine_proven_row_group_displays(gray,before)
     result=RasterTraceResult(binary=after.contour_binary,stages={},paths=(),threshold=128,
                              foreground_pixels=0,vertex_count=0,texts=after.texts,final_structure=after)
     save_trace_cache(tmp_path/"cache.npz",result)

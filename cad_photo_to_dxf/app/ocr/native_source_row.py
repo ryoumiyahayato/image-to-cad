@@ -266,8 +266,8 @@ def recover_native_source_rows(gray, texts, pdf_geometry, *, threshold, records,
             for char_index in chars:
                 if chr(raw.FPDFText_GetUnicode(tp,char_index)).isspace():
                     continue
-                l,b,r,t=tp.get_charbox(char_index)
-                corners=[pos.to_bitmap(a,c) for a,c in ((l,b),(l,t),(r,b),(r,t))]
+                left_coord,b,r,t=tp.get_charbox(char_index)
+                corners=[pos.to_bitmap(a,c) for a,c in ((left_coord,b),(left_coord,t),(r,b),(r,t))]
                 left,top=np.min(corners,axis=0)
                 right,bottom=np.max(corners,axis=0)
                 boxes.append((int(left),int(top),max(1,int(right-left+1)),max(1,int(bottom-top+1))))
@@ -281,7 +281,8 @@ def recover_native_source_rows(gray, texts, pdf_geometry, *, threshold, records,
             if np.any(old_claim & ~changed):
                 record["reason"] = "OLD_CARRIER_CONTAINS_UNPROVEN_MEMBER"
                 continue
-            transform=lambda x,y:(x,gray.shape[0]-y)
+            def transform(x, y):
+                return (x,gray.shape[0]-y)
             placement=native_text_placement(candidate,transform=transform)
             before=native_text_placement(text,transform=transform)
             if placement is None or before is None or placement.metrics.fallback_reason:

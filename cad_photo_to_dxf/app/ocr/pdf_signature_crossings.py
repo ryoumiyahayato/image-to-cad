@@ -39,12 +39,12 @@ def _rule_objects(page, size, bounds, rules, scale):
             and raw.FPDF_PageToDevice(page, 0, 0, *size, 0, c, d, ct.byref(u), ct.byref(v))
         ):
             continue
-        l, r = sorted((x.value, u.value))
+        left_coord, r = sorted((x.value, u.value))
         t, z = sorted((y.value, v.value))
-        box = (max(left, l-1), max(top, t-1), min(right, r+1), min(bottom, z+1))
+        box = (max(left, left_coord-1), max(top, t-1), min(right, r+1), min(bottom, z+1))
         if box[2]-box[0] < 2 or box[3]-box[1] < 2:
             continue
-        vertical = z-t > r-l
+        vertical = z-t > r-left_coord
         support = (rules[_window(box)] > 0).any(axis=1 if vertical else 0)
         if support.size < 32 or support.mean() < .8:
             continue
@@ -63,7 +63,7 @@ def _rule_objects(page, size, bounds, rules, scale):
                                          ct.byref(x), ct.byref(y)):
                 break
             vertices.append((y.value, x.value) if vertical else (x.value, y.value))
-        length = z-t if vertical else r-l
+        length = z-t if vertical else r-left_coord
         if len(vertices) != len(segments) or not any(
             a[1] == b[1] and abs(a[0]-b[0]) >= .9*length for a, b in zip(vertices, vertices[1:])
         ):
@@ -72,13 +72,13 @@ def _rule_objects(page, size, bounds, rules, scale):
 
 
 def _crossing_labels(labels, seed, local_box, band, vertical):
-    l, t, r, b = local_box
+    left_coord, t, r, b = local_box
     x, y, u, v = band
     if vertical:
         labels, seed = labels.T, seed.T
-        l, t, r, b, x, y, u, v = t, l, b, r, y, x, v, u
+        left_coord, t, r, b, x, y, u, v = t, left_coord, b, r, y, x, v, u
     start, stop = y-t, v-t
-    first, last = max(0, x-l), min(r-l, u-l)
+    first, last = max(0, x-left_coord), min(r-left_coord, u-left_coord)
     if not (1 <= start < stop < b-t and first < last):
         return set()
     near = labels[max(0, start-2):start, first:last]
@@ -150,12 +150,12 @@ def restore_pdf_signature_crossings(gray, regions, rules, binding, *, protected_
     for i, region in enumerate(regions, 1):
         x, y, w, h = region.bbox
         x, y = x-left, y-top
-        l, t = max(0, x-padding), max(0, y-padding)
+        left_coord, t = max(0, x-padding), max(0, y-padding)
         r, b = min(right-left, x+w+padding), min(bottom-top, y+h+padding)
-        local_box = (l, t, r, b)
+        local_box = (left_coord, t, r, b)
         win = _window(local_box)
-        old = np.zeros((b-t, r-l), dtype=np.uint8)
-        old[y-t:y-t+h, x-l:x-l+w] = region.mask
+        old = np.zeros((b-t, r-left_coord), dtype=np.uint8)
+        old[y-t:y-t+h, x-left_coord:x-left_coord+w] = region.mask
         other = (owner[win] != 0) & (owner[win] != i)
         allowed = (usable[win] | (old > 0)) & ~other & consistent[win]
         pen = exposed[win]
@@ -173,7 +173,7 @@ def restore_pdf_signature_crossings(gray, regions, rules, binding, *, protected_
             fringe = cv2.dilate(np.uint8(core), np.ones((3, 3), np.uint8)) > 0
             near_rule = cv2.dilate(np.uint8(in_band[win]), np.ones((5, 5), np.uint8)) > 0
             outside = np.ones(old.shape, dtype=bool)
-            outside[y-t:y-t+h, x-l:x-l+w] = False
+            outside[y-t:y-t+h, x-left_coord:x-left_coord+w] = False
             recovered = fringe & allowed & (pen < 255) & (
                 in_band[win] | ((old == 0) & (near_rule | outside))
             )
@@ -182,12 +182,12 @@ def restore_pdf_signature_crossings(gray, regions, rules, binding, *, protected_
         proposals.append((region, local_box, alpha, old))
     output = []
     for region, box, alpha, old in proposals:
-        l, t, _, _ = box
+        left_coord, t, _, _ = box
         alpha[(claims[_window(box)] != 1) & (old == 0)] = 0
         if np.array_equal(alpha, old) or not alpha.any():
             output.append(region)
             continue
         x, y, w, h = cv2.boundingRect(alpha)
-        output.append(replace(region, bbox=(left+l+x, top+t+y, w, h),
+        output.append(replace(region, bbox=(left+left_coord+x, top+t+y, w, h),
                               mask=alpha[y:y+h, x:x+w].copy()))
     return tuple(output)

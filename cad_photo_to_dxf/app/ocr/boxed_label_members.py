@@ -55,7 +55,8 @@ def observe_boxed_members(gray, candidate):
             continue
         if not (fx < x-left+w*.5 < fx+fw and fy < y-top+h*.5 < fy+fh):
             continue
-        area=float(cv2.contourArea(contour));perim=float(cv2.arcLength(contour,True))
+        area=float(cv2.contourArea(contour))
+        perim=float(cv2.arcLength(contour,True))
         corners=cv2.approxPolyDP(contour, .025*perim, True).reshape(-1,2)
         if len(corners)!=4 or area < .85*(fw-1)*(fh-1):
             continue
@@ -80,30 +81,41 @@ def observe_boxed_members(gray, candidate):
             continue
         # Full connected components must be contained; no breaking a touching
         # arrow/frame, dropping a dot, or silently clipping a partial glyph.
-        found=[];bad=False
+        found=[]
+        bad=False
         for lab in np.unique(labels[(interior>0)&(ink>0)]):
             lab=int(lab)
-            if lab==0 or lab in boundary_labels:continue
+            if lab==0 or lab in boundary_labels:
+                continue
             gx,gy,gw,gh,pixels=map(int,stats[lab])
             if (gx<=fx or gy<=fy or gx+gw>=fx+fw or gy+gh>=fy+fh
                     or np.any((labels==lab)&(interior==0))
                     or not np.any((labels==lab)&(crop<128))):
-                bad=True;break
+                bad=True
+                break
             found.append((lab,gx,gy,gw,gh,pixels))
-        if bad or len(found)!=len(text):continue
-        found.sort(key=lambda z:z[1]);heights=[z[4] for z in found]
-        if min(heights)<max(4,fh*.35) or max(heights)>1.5*min(heights):continue
-        if any(a[1]+a[3]>=b[1] for a,b in zip(found,found[1:])):continue
+        if bad or len(found)!=len(text):
+            continue
+        found.sort(key=lambda z:z[1])
+        heights=[z[4] for z in found]
+        if min(heights)<max(4,fh*.35) or max(heights)>1.5*min(heights):
+            continue
+        if any(a[1]+a[3]>=b[1] for a,b in zip(found,found[1:])):
+            continue
         boxes=tuple((left+gx,top+gy,gw,gh) for _,gx,gy,gw,gh,_ in found)
-        bx=min(b[0] for b in boxes);by=min(b[1] for b in boxes)
-        ex=max(b[0]+b[2] for b in boxes);ey=max(b[1]+b[3] for b in boxes)
+        bx=min(b[0] for b in boxes)
+        by=min(b[1] for b in boxes)
+        ex=max(b[0]+b[2] for b in boxes)
+        ey=max(b[1]+b[3] for b in boxes)
         # This correction may shrink an observed window, never find extra text
         # outside it. Border inflation, not content identity, is being corrected.
-        if bx<x or by<y or ex>x+w or ey>y+h or ey-by>h-2:continue
+        if bx<x or by<y or ex>x+w or ey>y+h or ey-by>h-2:
+            continue
         owned=np.isin(labels,[z[0] for z in found])
         # One blank-pixel separation keeps the tightened placement off the frame.
         if np.any((cv2.dilate(np.uint8(owned),np.ones((3,3),np.uint8))>0)
-                  & np.isin(labels,list(boundary_labels))):continue
+                  & np.isin(labels,list(boundary_labels))):
+            continue
         choices.append(dict(frame_bbox=[left+fx,top+fy,fw,fh],
                             bbox=(bx,by,ex-bx,ey-by),character_boxes=boxes,
                             member_pixels=int(np.count_nonzero(owned)),
@@ -112,7 +124,8 @@ def observe_boxed_members(gray, candidate):
     # Duplicate contour approximations of the same inner ring do not grant
     # selection among genuinely different/nested enclosures.
     unique={tuple(c['frame_bbox']):c for c in choices}
-    if len(unique)!=1:return None
+    if len(unique)!=1:
+        return None
     return next(iter(unique.values()))
 
 
@@ -120,26 +133,38 @@ def refine_boxed_label_members(gray, texts, *, protected_masks=(), verified_sour
     if (gray.ndim != 2 or gray.dtype != np.uint8 or gray.size>32_000_000
             or len(texts)>512):
         return tuple(texts), ()
-    output=list(texts);records=[];budget=1_048_576
+    output=list(texts)
+    records=[]
+    budget=1_048_576
     for i,t in enumerate(texts):
-        x,y,w,h=t.bbox;budget-=(w+h+8)*(h*2+8)
-        if budget<0:break
+        x,y,w,h=t.bbox
+        budget-=(w+h+8)*(h*2+8)
+        if budget<0:
+            break
         proof=observe_boxed_members(gray,t)
-        if proof is None:continue
+        if proof is None:
+            continue
         fx,fy,fw,fh=proof['frame_bbox']
-        if any(m is not None and np.any(m[fy:fy+fh,fx:fx+fw]) for m in protected_masks):continue
+        if any(m is not None and np.any(m[fy:fy+fh,fx:fx+fw]) for m in protected_masks):
+            continue
         # A unique candidate is required inside the observed frame.
         if any(j!=i and fx<o.bbox[0]+o.bbox[2]/2<fx+fw
-               and fy<o.bbox[1]+o.bbox[3]/2<fy+fh for j,o in enumerate(texts)):continue
-        bx,by,bw,bh=proof['bbox'];quad=((float(bx),float(by)),(float(bx+bw),float(by)),
+               and fy<o.bbox[1]+o.bbox[3]/2<fy+fh for j,o in enumerate(texts)):
+            continue
+        bx,by,bw,bh=proof['bbox']
+        quad=((float(bx),float(by)),(float(bx+bw),float(by)),
                                      (float(bx+bw),float(by+bh)),(float(bx),float(by+bh)))
         # Reuse the normal source-safety contract on an exact isolated-member
         # observation. The frame is not erased from the production raster.
         from app.ocr.ocr_fast import prepare_safe_candidate
         from app.ocr.ocr_layout import VerifiedCellTextSource, offset_candidate
-        margin=3; lx=max(0,fx-margin); ly=max(0,fy-margin)
-        rx=min(gray.shape[1],fx+fw+margin); ry=min(gray.shape[0],fy+fh+margin)
-        crop=gray[ly:ry,lx:rx]; core=np.zeros(crop.shape,np.uint8)
+        margin=3
+        lx=max(0,fx-margin)
+        ly=max(0,fy-margin)
+        rx=min(gray.shape[1],fx+fw+margin)
+        ry=min(gray.shape[0],fy+fh+margin)
+        crop=gray[ly:ry,lx:rx]
+        core=np.zeros(crop.shape,np.uint8)
         for cx,cy,cw,ch in proof['character_boxes']:
             win=np.s_[cy-ly:cy-ly+ch,cx-lx:cx-lx+cw]
             core[win]=np.uint8(crop[win]<254)*255

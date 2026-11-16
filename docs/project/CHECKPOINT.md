@@ -52,6 +52,16 @@ A2原扫分账1360＝42退场＋1318保留；3个墨迹分量/5个孔及连续�
 
 # 检查点
 
+## 2026-11-16：PR #36 兼容主体与来源账本补充
+
+独立兼容分支基底 `d5c0564`，六项主体提交保存至 `593b23e1330588ca67040506982147c6caf1d518`，完整来源账本补充保存至 `57719e0fd5e05164e003d20fabcfb757dbe66979`。最终支持环境 Python 3.11.18 / pytest 8.4.2：unit 1,728 PASS / 26 SKIP、未变 drafting 代码的 88 PASS 保持有效，EXACT/Ruff/mypy/compileall/卫生检查通过；296 文件运行前后相同，inventory `08197e42eedfc8c9fa85aa7f31550c0b805da72d5482f47d954f3300ff2b97aa`。实际启动为 `593b23e` 加未提交同字节补充，不误标启动提交。原 Python 3.12 / PySide6 6.11.3 的 True-ref 失败未被宣称修复。
+
+三份旧 baseline 字节不变；15 条 contour 的有限迁移保留 55,476 个边缘原黑像素及 63 个退化 run 源格。结构身份仅保护其实际 payload，完整 LINE 来源另以 ledger 锁定，合同 SHA `48b7636501cf61e433101f61897b7d57286a722368cab13198999eee20d0aa76`，独立 15 项变异和 3 项缺字段均拒绝。八份历史报告按固定 d5c0564 提交及 SHA 恢复。详见 [兼容证据](PR36_COMPATIBILITY_20261116.md)。独立精度检查点 `210817bb43f711d9985acba992cfde66e329f137` 保留；没有新 GUI/DWG 或精度验收，线上结果以 PR #36 实际 CI 为准。
+
+以下历史检查点原样保留。
+
+---
+
 2026-10-25：真实来源接入阶段 CLOSED，入口 main `e333dc4`。新增只读 `verified-source-carriers-v1`；0.1.1 原规则、引擎、报告和旧基线未改。
 W02 三行同文件比较：7 PASS / 5 ABSTAIN → 7 PASS / 1 FAIL / 4 ABSTAIN；中文源核残留已可判，未修生产。既有同页“施工图”干净对照的 585 个源像素验证退出 PASS。
 71 项包测试、113 项相关旧回归和 EXACT 保真检查通过；完整证据见 [本轮报告](../../tools/drafting_rules/SOURCE_ADAPTER_ZH.md)。GUI/DWG/真人净收益仍 NOT_RUN。

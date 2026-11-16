@@ -136,7 +136,8 @@ def _round_pen_errors(mask, corners, width):
     forward = float(np.maximum(_segment_distances(source, corners)-radius, 0.).max())
     probes = []
     for a,b in zip(corners, np.roll(corners,-1,axis=0)):
-        edge = b-a; length = np.linalg.norm(edge)
+        edge = b-a
+        length = np.linalg.norm(edge)
         normal = np.array([-edge[1], edge[0]])/length
         samples = np.linspace(a,b,max(3,int(np.ceil(length*4))+1))
         probes.extend((samples+normal*radius, samples-normal*radius, samples))
@@ -206,49 +207,66 @@ def recover_observed_label_frames(gray, binary, visible_binary, proofs, *, prote
             or visible_binary.shape != gray.shape or not math.isfinite(dpi) or dpi <= 0):
         review['status']='SKIPPED_INPUT_CONTRACT'
         return visible_binary,(),(),review
-    output=visible_binary; paths=[]; records=[]; seen=set(); budget=MAX_TOTAL_PIXELS
+    output=visible_binary
+    paths=[]
+    records=[]
+    seen=set()
+    budget=MAX_TOTAL_PIXELS
     for proof in tuple(proofs)[:MAX_CHECKS]:
         box=tuple(map(int,proof.get('frame_component_bbox',())))
-        if len(box)!=4 or box in seen: continue
-        seen.add(box);x,y,w,h=box
-        item=dict(bbox=box,decision='REJECTED');review['decisions'].append(item)
+        if len(box)!=4 or box in seen:
+            continue
+        seen.add(box)
+        x,y,w,h=box
+        item=dict(bbox=box,decision='REJECTED')
+        review['decisions'].append(item)
         def reject(reason): item['reason']=reason
         size=(w+4)*(h+4)
         if (min(w,h)<10 or size>MAX_LOCAL_PIXELS or budget<size
                 or x<2 or y<2 or x+w+2>gray.shape[1] or y+h+2>gray.shape[0]):
-            reject('BUDGET_OR_PAGE_EDGE');continue
+            reject('BUDGET_OR_PAGE_EDGE')
+            continue
         budget-=size
         crop=gray[y-2:y+h+2,x-2:x+w+2]
         _,labels,stats,_=cv2.connectedComponentsWithStats(np.uint8(crop<254),connectivity=8)
         ids=[i for i in range(1,len(stats)) if tuple(map(int,stats[i,:4]))==(2,2,w,h)]
         if len(ids)!=1:
-            reject('INCOMPLETE_OR_ATTACHED_COMPONENT');continue
+            reject('INCOMPLETE_OR_ATTACHED_COMPONENT')
+            continue
         component=labels[2:-2,2:-2]==ids[0]
         if int(component.sum())!=int(proof.get('frame_component_pixels',-1)):
-            reject('SOURCE_OBSERVATION_MISMATCH');continue
+            reject('SOURCE_OBSERVATION_MISMATCH')
+            continue
         contours,hierarchy=cv2.findContours(np.uint8(component),cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)
         if hierarchy is None or len(contours)!=2 or sorted(map(int,hierarchy[0,:,3]))!=[-1,0]:
-            reject('NOT_A_COMPLETE_SINGLE_HOLE_RING');continue
+            reject('NOT_A_COMPLETE_SINGLE_HOLE_RING')
+            continue
         if np.any(component & (binary[y:y+h,x:x+w]>=128)):
-            reject('SOURCE_NOT_IN_CURRENT_FOREGROUND');continue
+            reject('SOURCE_NOT_IN_CURRENT_FOREGROUND')
+            continue
         if np.any(component & (visible_binary[y:y+h,x:x+w]>=128)):
-            reject('SOURCE_ALREADY_CLAIMED');continue
+            reject('SOURCE_ALREADY_CLAIMED')
+            continue
         if any(m is not None and np.any(component & (m[y:y+h,x:x+w]>0)) for m in protected_masks):
-            reject('PROTECTED_OR_SHARED_SOURCE');continue
+            reject('PROTECTED_OR_SHARED_SOURCE')
+            continue
         trim=max(3,int(math.ceil(min(w,h)*.12)))
         sides=[_fit_side(component,gray[y:y+h,x:x+w],a,f,trim)
                for a,f in ((0,False),(1,True),(0,True),(1,False))]
         if any(s is None for s in sides):
-            reject('INCOMPLETE_VARIABLE_OR_NONLINEAR_SIDE');continue
+            reject('INCOMPLETE_VARIABLE_OR_NONLINEAR_SIDE')
+            continue
         top,right,bottom,left=sides
         corners=np.array([_corner(top,left),_corner(top,right),_corner(bottom,right),_corner(bottom,left)])
         widths=[s['width_px'] for s in sides]
         if (not np.isfinite(corners).all() or np.any(corners<-.5)
                 or np.any(corners>np.array((w-.5,h-.5)))):
-            reject('CORNER_OUTSIDE_SOURCE');continue
+            reject('CORNER_OUTSIDE_SOURCE')
+            continue
         forward,reverse=_support_errors(component,corners,widths)
         if max(forward,reverse)>MAX_BOUNDARY_ERROR+1e-9:
-            reject('BIDIRECTIONAL_SUPPORT_FAILED');continue
+            reject('BIDIRECTIONAL_SUPPORT_FAILED')
+            continue
         # A good fit to the frame alone is insufficient: the new filled band
         # must not touch an unrelated source pixel or another owner's claim.
         # Check the complete surrounding crop, not just the frame bbox.
@@ -267,14 +285,16 @@ def recover_observed_label_frames(gray, binary, visible_binary, proofs, *, prote
             distance=(-od if od<0 else (ind if ind>0 else 0.))
             clearance=min(clearance,distance)
         if clearance <= math.sqrt(.5):
-            reject('FITTED_STROKE_ENTERS_OTHER_SOURCE_OR_OWNER');continue
+            reject('FITTED_STROKE_ENTERS_OTHER_SOURCE_OR_OWNER')
+            continue
         pen = None
         if stroke_profile == PEN_PROFILE:
             fy,fx = np.nonzero(foreign)
             foreign_points = np.column_stack((fx-2,fy-2)).astype(float)
             pen = choose_verified_paper_pen(component,corners,widths,foreign_points,dpi)
             if pen is None:
-                reject('NO_SOURCE_FAITHFUL_PERSISTENT_PEN');continue
+                reject('NO_SOURCE_FAITHFUL_PERSISTENT_PEN')
+                continue
         absolute=corners+(x,y)
         oldpaths=trace_binary(np.where(component,0,255).astype(np.uint8))
         backup=tuple(tuple((px+x,py+y) for px,py in p.points) for p in oldpaths)
@@ -291,11 +311,14 @@ def recover_observed_label_frames(gray, binary, visible_binary, proofs, *, prote
         if pen is not None:
             record['persistent_pen'] = pen
             item['persistent_pen'] = pen
-        paths.append(TracePath(tuple(map(tuple,absolute)),None,0,len(paths)));records.append(record)
-        if output is visible_binary: output=visible_binary.copy()
+        paths.append(TracePath(tuple(map(tuple,absolute)),None,0,len(paths)))
+        records.append(record)
+        if output is visible_binary:
+            output=visible_binary.copy()
         output[y:y+h,x:x+w][component]=255
         item.update(decision='ACCEPTED',reason='COMPLETE_UNCONTESTED_SOURCE_RING',
                     source_pixels=record['source_pixels'],source_to_geometry_error_px=forward,
                     geometry_to_source_error_px=reverse)
-        review['accepted']+=1;review['source_pixels']+=record['source_pixels']
+        review['accepted']+=1
+        review['source_pixels']+=record['source_pixels']
     return output,tuple(paths),tuple(records),review

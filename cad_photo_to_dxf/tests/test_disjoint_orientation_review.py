@@ -52,7 +52,8 @@ class Recognition:
     [('0',.99),('0',.98),('180',.53)],
 ])
 def test_additional_disjoint_pair_needs_stable_unrotated_source(votes):
-    src = _source(401); rec = Recognition()
+    src = _source(401)
+    rec = Recognition()
     out = LongLineOrientationClassifier(Classifier(votes), rec)([src])
     assert out.cls_res == [('0',.98)]
     assert np.array_equal(out.img_list[0], src)
@@ -71,14 +72,16 @@ def test_additional_disjoint_pair_needs_stable_unrotated_source(votes):
     (('',''),(.999,.999)),
 ])
 def test_disagreement_or_insufficient_reading_preserves_original_decision(texts,scores):
-    src=_source(); rec=Recognition(texts,scores)
+    src=_source()
+    rec=Recognition(texts,scores)
     out=LongLineOrientationClassifier(Classifier([('180',.53),('0',.99),('0',.98)]),rec)([src])
     assert out.cls_res == [('180',.999)]
     assert np.array_equal(out.img_list[0], cv2.rotate(src,cv2.ROTATE_180))
 
 
 def test_overlap_is_not_two_independent_votes():
-    src=_source(300);rec=Recognition()
+    src=_source(300)
+    rec=Recognition()
     out=LongLineOrientationClassifier(Classifier([('180',.53),('0',.99),('0',.98)]),rec)([src])
     assert out.cls_res == [('180',.999)]
     assert not rec.calls
@@ -90,7 +93,8 @@ def test_overlap_is_not_two_independent_votes():
     [('180',.99),('180',.99),('180',.99)],
 ])
 def test_confident_reverse_window_is_not_overridden(votes):
-    src=_source();rec=Recognition()
+    src=_source()
+    rec=Recognition()
     out=LongLineOrientationClassifier(Classifier(votes),rec)([src])
     assert out.cls_res == [('180',.999)]
     assert not rec.calls
@@ -98,7 +102,8 @@ def test_confident_reverse_window_is_not_overridden(votes):
 
 def test_recognition_failure_preserves_original():
     def broken(_): raise RuntimeError('optional recognizer unavailable')
-    src=_source();out=LongLineOrientationClassifier(Classifier([('180',.53),('0',.99),('0',.98)]),broken)([src])
+    src=_source()
+    out=LongLineOrientationClassifier(Classifier([('180',.53),('0',.99),('0',.98)]),broken)([src])
     assert out.cls_res == [('180',.999)]
 
 

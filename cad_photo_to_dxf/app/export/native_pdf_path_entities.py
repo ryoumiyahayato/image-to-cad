@@ -224,7 +224,8 @@ def add_native_path_entities(doc, space, paths, transform):
     from app.export.source_component import source_component
     for fact in paths:
         union=fact.get('fill_union')
-        if not union or not union.get('component_block'):continue
+        if not union or not union.get('component_block'):
+            continue
         sources=union['source_ids']
         perimeter = perimeters.get(fact["id"], ())
         entities = [e for member in perimeter for e in emitted.get(member["id"], ())]

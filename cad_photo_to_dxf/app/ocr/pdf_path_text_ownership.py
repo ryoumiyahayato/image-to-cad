@@ -68,8 +68,8 @@ def bind_isolated_path_text(page, size, active_objects, facts, path_bounds, text
             continue
         candidates = []
         for fact in facts:
-            l, t, r, b = path_bounds[fact["object_index"]]
-            if x <= l and y <= t and r <= right and b <= bottom:
+            left_coord, t, r, b = path_bounds[fact["object_index"]]
+            if x <= left_coord and y <= t and r <= right and b <= bottom:
                 candidates.append(fact)
         if not 1 <= len(candidates) <= 32 or any(not _independent_strokes(f) for f in candidates):
             continue

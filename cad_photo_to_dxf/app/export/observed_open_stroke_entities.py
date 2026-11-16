@@ -37,16 +37,24 @@ def add_observed_open_stroke(doc, layout, record, *, center_transform):
     transformed=[center_transform(float(x),float(y)) for x,y in path]
     if not np.isfinite(np.asarray(transformed)).all():
         raise ValueError('Nonfinite transformed open stroke')
-    if APPID not in doc.appids:doc.appids.add(APPID)
-    if VISIBLE_LAYER not in doc.layers:doc.layers.new(VISIBLE_LAYER,dxfattribs={'color':7})
-    if BACKUP_LAYER not in doc.layers:doc.layers.new(BACKUP_LAYER,dxfattribs={'color':7})
-    backup=doc.layers.get(BACKUP_LAYER);backup.off();backup.freeze();backup.lock()
+    if APPID not in doc.appids:
+        doc.appids.add(APPID)
+    if VISIBLE_LAYER not in doc.layers:
+        doc.layers.new(VISIBLE_LAYER,dxfattribs={'color':7})
+    if BACKUP_LAYER not in doc.layers:
+        doc.layers.new(BACKUP_LAYER,dxfattribs={'color':7})
+    backup=doc.layers.get(BACKUP_LAYER)
+    backup.off()
+    backup.freeze()
+    backup.lock()
     tags=[(1000,'OBSERVED_ISOLATED_OPEN_STROKE'),(1000,','.join(map(str,record['bbox']))),
           (1071,int(record['source_pixels'])),(1070,int(code)),
           (1000,'HISTORICAL_IDENTITY_NOT_PROVEN'),(1000,'NO_NEW_CONNECTION')]
     attrs={'layer':VISIBLE_LAYER,'lineweight':int(code)}
-    if len(transformed)==2:entity=layout.add_line(*transformed,dxfattribs=attrs)
-    else:entity=layout.add_lwpolyline(transformed,close=False,dxfattribs=attrs)
+    if len(transformed)==2:
+        entity=layout.add_line(*transformed,dxfattribs=attrs)
+    else:
+        entity=layout.add_lwpolyline(transformed,close=False,dxfattribs=attrs)
     entity.set_xdata(APPID,tags)
     for source_path in boundary:
         points=np.asarray(source_path,dtype=float)

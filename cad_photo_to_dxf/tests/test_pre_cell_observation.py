@@ -60,10 +60,12 @@ def test_observation_error_does_not_change_cell_business_or_native_placement(mon
     assert observed.pre_cell_observation.cell_clip_bbox == observed.bbox
     assert observed.pre_cell_observation.cell_clip_quad == observed.quad
     a, b = asdict(observed), asdict(fallback)
-    a.pop("pre_cell_observation"); b.pop("pre_cell_observation")
+    a.pop("pre_cell_observation")
+    b.pop("pre_cell_observation")
     assert a == b
     assert observed == fallback
-    transform = lambda x, y: (x, 100-y)
+    def transform(x, y):
+        return (x, 100-y)
     assert native_text_placement(observed, transform=transform) == native_text_placement(fallback, transform=transform)
 
 
