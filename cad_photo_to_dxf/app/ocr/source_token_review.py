@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import replace
 import json
 from math import ceil, isfinite
-from typing import Any, Callable, Sequence
+from typing import Callable, Sequence
 
 import cv2
 import numpy as np

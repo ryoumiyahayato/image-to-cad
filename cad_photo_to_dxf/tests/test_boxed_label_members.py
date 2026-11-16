@@ -22,24 +22,30 @@ def fixture(dx=0,dy=0,scale=1,text='234'):
 
 @pytest.mark.parametrize('text',['234','578','ABC','R23','111','000'])
 def test_complete_source_members_without_content_guess(text):
-    im,c=fixture(text=text);before=im.copy();proofs=[]
+    im,c=fixture(text=text)
+    before=im.copy()
+    proofs=[]
     result,records=refine_boxed_label_members(im,(c,),verified_sources=proofs)
     assert len(records)==1
-    t=result[0];assert t.text==c.text and t.confidence==c.confidence
+    t=result[0]
+    assert t.text==c.text and t.confidence==c.confidence
     assert t.reviewed==c.reviewed and t.approved==c.approved and t.source==c.source
     assert t.bbox[3]<c.bbox[3] and len(t.character_boxes)==len(text)
     assert t.pre_cell_observation.bbox==c.bbox
     assert t.replacement_safe and len(proofs)==1
     assert np.array_equal(before,im)
-    p=proofs[0]; lx,ly,rx,ry=p.bounds
+    p=proofs[0]
+    lx,ly,rx,ry=p.bounds
     assert np.all(im[ly:ry,lx:rx][p.mask>0]<254)
     assert not np.any(p.mask[40-ly,:])
 
 
 @pytest.mark.parametrize('dx,dy',[(0,0),(17,11),(51,23),(73,41)])
 def test_translation_preserves_members(dx,dy):
-    im,c=fixture();a=observe_boxed_members(im,c)
-    im,t=fixture(dx,dy);b=observe_boxed_members(im,t)
+    im,c=fixture()
+    a=observe_boxed_members(im,c)
+    im,t=fixture(dx,dy)
+    b=observe_boxed_members(im,t)
     assert a and b
     assert tuple((x-dx,y-dy,w,h) for x,y,w,h in b['character_boxes'])==a['character_boxes']
 
@@ -47,14 +53,24 @@ def test_translation_preserves_members(dx,dy):
 @pytest.mark.parametrize('kind',['open','dot','touch','extra','cropped','white','counter','skew'])
 def test_unproved_context_is_not_removed(kind):
     im,c=fixture()
-    if kind=='open':im[38:44,100:106]=255
-    if kind=='dot':im[47,70]=0
-    if kind=='touch':cv2.line(im,(60,55),(80,55),0,1)
-    if kind=='extra':cv2.putText(im,'7',(140,65),cv2.FONT_HERSHEY_SIMPLEX,.5,0,1)
-    if kind=='cropped':im=im[:,150:];c=replace(c,bbox=(0,37,100,44),quad=((0,37),(100,37),(100,81),(0,81)))
-    if kind=='white':im[:]=255
-    if kind=='counter':im[:]=255;cv2.putText(im,'00',(65,75),cv2.FONT_HERSHEY_SIMPLEX,1,0,1)
-    if kind=='skew':c=replace(c,quad=((57,37),(159,39),(159,83),(57,81)))
+    if kind=='open':
+        im[38:44,100:106]=255
+    if kind=='dot':
+        im[47,70]=0
+    if kind=='touch':
+        cv2.line(im,(60,55),(80,55),0,1)
+    if kind=='extra':
+        cv2.putText(im,'7',(140,65),cv2.FONT_HERSHEY_SIMPLEX,.5,0,1)
+    if kind=='cropped':
+        im=im[:,150:]
+        c=replace(c,bbox=(0,37,100,44),quad=((0,37),(100,37),(100,81),(0,81)))
+    if kind=='white':
+        im[:]=255
+    if kind=='counter':
+        im[:]=255
+        cv2.putText(im,'00',(65,75),cv2.FONT_HERSHEY_SIMPLEX,1,0,1)
+    if kind=='skew':
+        c=replace(c,quad=((57,37),(159,39),(159,83),(57,81)))
     result,records=refine_boxed_label_members(im,(c,))
     assert not records and result==(c,)
 
@@ -66,14 +82,16 @@ def test_unproved_context_is_not_removed(kind):
  {'confidence':.01},{'approved':False},
 ])
 def test_not_eligible_unchanged(kwargs):
-    im,c=fixture();c=replace(c,**kwargs)
+    im,c=fixture()
+    c=replace(c,**kwargs)
     result,records=refine_boxed_label_members(im,(c,))
     assert not records and result==(c,)
 
 
 @pytest.mark.parametrize('axis',[0,1])
 def test_protected_frame_stops_claim(axis):
-    im,c=fixture();protected=np.zeros_like(im)
+    im,c=fixture()
+    protected=np.zeros_like(im)
     protected[50,80] =255
     masks=(protected,None) if axis==0 else (None,protected)
     result,records=refine_boxed_label_members(im,(c,),protected_masks=masks)
@@ -81,20 +99,23 @@ def test_protected_frame_stops_claim(axis):
 
 
 def test_two_candidates_cannot_share_frame():
-    im,c=fixture();other=replace(c,text='789')
+    im,c=fixture()
+    other=replace(c,text='789')
     out,records=refine_boxed_label_members(im,(c,other))
     assert not records and out==(c,other)
 
 
 def test_idempotent_no_shrinking_loop():
-    im,c=fixture();out,recs=refine_boxed_label_members(im,(c,))
+    im,c=fixture()
+    out,recs=refine_boxed_label_members(im,(c,))
     assert recs
     twice,recs2=refine_boxed_label_members(im,out)
     assert twice==out and not recs2
 
 
 def test_source_identity_is_not_inferred():
-    im,c=fixture();wrong=replace(c,text='999')
+    im,c=fixture()
+    wrong=replace(c,text='999')
     out,recs=refine_boxed_label_members(im,(wrong,))
     # A source-member proof changes layout/ownership, not content identity.
     assert out[0].text=='999' and out[0].confidence==wrong.confidence

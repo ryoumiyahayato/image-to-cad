@@ -213,7 +213,7 @@ def review_pdf_path_digits(gray, texts, binding):
                     rotation_deg=-90.0 if bottom_up else 90.0,
                     display_quad=vertical_quad(min(b[0] for b in bands), bands[0][1],
                                                max(b[2] for b in bands), bands[-1][3]),
-                    character_boxes=tuple((l, t, r-l, b-t) for l, t, r, b in ordered),
+                    character_boxes=tuple((left_coord, t, r-left_coord, b-t) for left_coord, t, r, b in ordered),
                 )
                 records.append(dict(before=text.text, text=reading, bbox=list(text.bbox),
                                     objects=list(indices[::-1] if bottom_up else indices),

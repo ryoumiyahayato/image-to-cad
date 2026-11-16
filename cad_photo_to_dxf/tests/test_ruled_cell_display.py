@@ -66,12 +66,15 @@ def test_uncertain_source_or_existing_contract_is_untouched(unsafe):
                    'rotated':dict(rotation_deg=90),
                    'existing-display':dict(display_quad=((22,18),(107,18),(107,54),(22,54)))}
         texts=(replace(texts[0],**changes[unsafe]),texts[1])
-        cell=next(iter(cells));cells={cell:tuple((t.text,t.bbox) for t in texts)}
+        cell=next(iter(cells))
+        cells={cell:tuple((t.text,t.bbox) for t in texts)}
     elif unsafe == 'missing-member':
         texts=texts[:1]
     masks=[]
     if unsafe == 'protected':
-        mask=np.zeros_like(image);mask[25:44,28:43]=255;masks=[mask]
+        mask=np.zeros_like(image)
+        mask[25:44,28:43]=255
+        masks=[mask]
     result,proofs=refine_ruled_cell_row_displays(image,texts,cells,protected_source_masks=masks)
     assert result == texts and not proofs
 
@@ -84,7 +87,8 @@ def test_substituted_glyph_does_not_touch_protected_source_paper():
     image, texts, cells = sample()
     proposed, proofs = refine_ruled_cell_row_displays(image, texts, cells)
     assert len(proofs) == 2
-    transform = lambda x, y: (x, image.shape[0] - y)
+    def transform(x, y):
+        return (x, image.shape[0] - y)
     new = glyph_footprint(native_text_placement(proposed[0], transform=transform))
     old = glyph_footprint(native_text_placement(texts[0], transform=transform))
     pixel = next((x, y) for y in range(20, 50) for x in range(25, 105)

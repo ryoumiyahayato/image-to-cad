@@ -4,6 +4,11 @@ import json
 import random
 import pytest
 from app.geometry.source_stroke_reconciliation import _digest_payload
+from app.geometry.source_stroke_reconciliation import (
+    _digest_without_gap_extent,
+    _payload_without_gap_extent,
+    GAP_EXTENT_MEASUREMENT_SLOT,
+)
 
 
 def reference(value):
@@ -28,16 +33,22 @@ def test_identical_canonical_sha256(value):
 
 @pytest.mark.parametrize('value',[float('nan'),float('inf'),-float('inf'),{'nested':[float('nan')]},set([1,2]),object()])
 def test_same_invalid_input_rejection(value):
-    try:reference(value)
-    except Exception as error:expected=type(error)
-    else:raise AssertionError('invalid reference fixture')
-    with pytest.raises(expected):_digest_payload(value)
+    try:
+        reference(value)
+    except Exception as error:
+        expected=type(error)
+    else:
+        raise AssertionError('invalid reference fixture')
+    with pytest.raises(expected):
+        _digest_payload(value)
 
 
 def test_circular_reference_rejected():
-    value=[];value.append(value)
+    value=[]
+    value.append(value)
     for function in (reference,_digest_payload):
-        with pytest.raises(ValueError):function(value)
+        with pytest.raises(ValueError):
+            function(value)
 
 
 def test_no_one_shot_serialization(monkeypatch):
@@ -47,11 +58,7 @@ def test_no_one_shot_serialization(monkeypatch):
     monkeypatch.setattr(json,'dumps',forbidden)
     assert _digest_payload(value)==expected
 
-from app.geometry.source_stroke_reconciliation import (
-    _digest_without_gap_extent,
-    _payload_without_gap_extent,
-    GAP_EXTENT_MEASUREMENT_SLOT,
-)
+
 
 @pytest.mark.parametrize('count',[0,1,9,125,1000])
 def test_projected_base_digest_identical_without_mutating_evidence(count):
@@ -82,10 +89,13 @@ def test_projection_does_not_roundtrip_entire_ledger(monkeypatch):
 
 def test_projection_keeps_invalid_value_rejection():
     payload={'evidence':[], 'invalid':float('inf')}
-    with pytest.raises(ValueError):_digest_without_gap_extent(payload)
+    with pytest.raises(ValueError):
+        _digest_without_gap_extent(payload)
 
 @pytest.mark.parametrize("value", [float("inf"), float("nan"), {"a":set([1])}])
 def test_invalid_excluded_extension_is_still_rejected(value):
     payload={"evidence":[{"artifact":"runtime-route-ledger-snapshot","measurements":{GAP_EXTENT_MEASUREMENT_SLOT:value}}]}
-    with pytest.raises((ValueError,TypeError)):_payload_without_gap_extent(payload)
-    with pytest.raises((ValueError,TypeError)):_digest_without_gap_extent(payload)
+    with pytest.raises((ValueError,TypeError)):
+        _payload_without_gap_extent(payload)
+    with pytest.raises((ValueError,TypeError)):
+        _digest_without_gap_extent(payload)

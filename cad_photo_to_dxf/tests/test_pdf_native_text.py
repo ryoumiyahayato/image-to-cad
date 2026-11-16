@@ -39,7 +39,8 @@ def source(tmp_path, *, rotate=0, hidden=False, line=False, mirror=False, page_r
         page=doc[0]
         bitmap=page.render(scale=2,grayscale=True)
         gray=np.array(bitmap.to_pil().convert("L"))
-        bitmap.close();page.close()
+        bitmap.close()
+        page.close()
     return gray,SimpleNamespace(binding=pdf_geometry_binding(path,0,144)),path
 
 
@@ -135,11 +136,14 @@ endcmap CMapName currentdict /CMap defineresource pop end end""")
     with pymupdf.open(wrong) as doc:
         assert "Q7" in doc[0].get_text()
     with pdfium.PdfDocument(wrong) as doc:
-        page=doc[0];tp=page.get_textpage()
+        page=doc[0]
+        tp=page.get_textpage()
         assert "Q7" in tp.get_text_range()
         bitmap=page.render(scale=2,grayscale=True)
         assert np.array_equal(gray,np.array(bitmap.to_pil().convert("L")))
-        bitmap.close();tp.close();page.close()
+        bitmap.close()
+        tp.close()
+        page.close()
     evidence=SimpleNamespace(binding=pdf_geometry_binding(wrong,0,144))
     plan=collect_native_text(gray,evidence,(),mode="independent")
     assert not plan.texts

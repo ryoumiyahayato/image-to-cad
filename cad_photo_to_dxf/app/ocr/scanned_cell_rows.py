@@ -168,7 +168,8 @@ def measure_compact_cell(gray, binary, rows, cell, *, visible, line_mask, protec
     ]
     stubs = np.isin(labels, rule_stubs)
     rule |= stubs
-    transform = lambda x, y: (x, gray.shape[0] - y)
+    def transform(x, y):
+        return (x, gray.shape[0] - y)
     rule_path = _path(rule, left, y0, gray.shape[0])
     protected_path = _path(protected & source_ink & ~rule, left, y0, gray.shape[0])
     measured = []

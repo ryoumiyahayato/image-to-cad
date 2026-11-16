@@ -65,7 +65,8 @@ def residual_ocr_partition(gray, plan, original, fresh=(), *, source_carriers=No
                 parts.append(native)
         axis=1 if text.bbox[3]>text.bbox[2] and all(len(t.text)==1 for t in parts) else 0
         parts.sort(key=lambda t:t.bbox[axis])
-        normal=lambda s:"".join(s.split())
+        def normal(s):
+            return "".join(s.split())
         if parts and normal(text.text)==normal("".join(t.text for t in parts)):
             # Same complete source transcript: foreign padding is retained
             # structure, rather than a missing OCR suffix to invent.
@@ -73,7 +74,8 @@ def residual_ocr_partition(gray, plan, original, fresh=(), *, source_carriers=No
         if np.any(foreign):
             needs[i]=foreign
     required=np.zeros(gray.shape,bool)
-    for mask in needs.values(): required |= mask
+    for mask in needs.values():
+        required |= mask
     covered=np.zeros(gray.shape,bool)
     for text in fresh:
         claim=(_candidate_region_mask(text,gray.shape)>0) & (plan.background<255)
@@ -90,7 +92,8 @@ def mixed_source_rollback_objects(plan, original, failed):
     objects=set()
 
     def intersects(a,b):
-        x,y,w,h=a;u,v,s,t=b
+        x,y,w,h=a
+        u,v,s,t=b
         return max(x,u)<min(x+w,u+s) and max(y,v)<min(y+h,v+t)
 
     def carrier_hits(text,boxes):
@@ -100,7 +103,8 @@ def mixed_source_rollback_objects(plan, original, failed):
     while changed:
         previous=(len(rows),len(objects))
         for record in plan.records:
-            if record["decision"]!="ADOPTED": continue
+            if record["decision"]!="ADOPTED":
+                continue
             if record["object_index"] in objects or any(carrier_hits(original[i],record["bboxes"]) for i in rows):
                 objects.add(record["object_index"])
                 rows.update(i for i,text in enumerate(original) if carrier_hits(text,record["bboxes"]))
@@ -179,18 +183,21 @@ def _segments(obj, indexes, tp, pos, raw):
         if not raw.FPDFText_GetCharOrigin(tp,index,ct.byref(x),ct.byref(y)):
             raise ValueError("NO_NATIVE_CHARACTER_ORIGIN")
         p=np.asarray(pos.to_bitmap(x.value,y.value),float)
-        l,b,r,t=tp.get_charbox(index)
-        corners=np.asarray([pos.to_bitmap(a,z) for a,z in ((l,b),(l,t),(r,b),(r,t))])
+        left_coord,b,r,t=tp.get_charbox(index)
+        corners=np.asarray([pos.to_bitmap(a,z) for a,z in ((left_coord,b),(left_coord,t),(r,b),(r,t))])
         height=max(1,float(np.ptp(corners@v)))
         if previous is not None:
             old,old_height=previous
             delta=p-old
             scale=max(height,old_height)
             if delta@u < -.25*scale or delta@u > 1.7*scale or abs(delta@v) > .3*scale:
-                if group: groups.append(group)
+                if group:
+                    groups.append(group)
                 group=[]
-        group.append(index);previous=(p,height)
-    if group: groups.append(group)
+        group.append(index)
+        previous=(p,height)
+    if group:
+        groups.append(group)
     return groups
 
 
@@ -212,8 +219,8 @@ def _candidate(obj, indexes, tp, pos, raw, shape, mapping):
         # Both parsers must refer to this actual painted character, and the
         # embedded font cmap must map its Unicode to its actual glyph ID.
         origins.append((code, x.value, y.value))
-        l, b, r, t = tp.get_charbox(index)
-        corners = np.asarray([pos.to_bitmap(a, z) for a, z in ((l,b),(l,t),(r,b),(r,t))], float)
+        left_coord, b, r, t = tp.get_charbox(index)
+        corners = np.asarray([pos.to_bitmap(a, z) for a, z in ((left_coord,b),(left_coord,t),(r,b),(r,t))], float)
         points.extend(corners)
         lo, hi = corners.min(axis=0), corners.max(axis=0)
         character_boxes.append((floor(lo[0]), floor(lo[1]), max(1, ceil(hi[0])-floor(lo[0])), max(1, ceil(hi[1])-floor(lo[1]))))
@@ -387,7 +394,8 @@ def collect_native_text(
                             np.any(exclusive & (mask > 0)) for mask in protected_retirement_masks
                         ):
                             raise ValueError("NATIVE_RETIREMENT_OWNERSHIP_CONFLICT")
-                    selected.append(i); candidates.extend(parts)
+                    selected.append(i)
+                    candidates.extend(parts)
                     native_ink |= only<255
                     rec.update(decision="ADOPTED", reason="VISIBLE_NATIVE_OBJECT_EMBEDDED_CMAP",
                                mapping="EMBEDDED_CMAP_EQUALS_PAINTED_GLYPH_ID_AND_ORIGIN",

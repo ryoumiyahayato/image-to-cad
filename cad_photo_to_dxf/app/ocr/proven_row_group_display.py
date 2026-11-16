@@ -110,18 +110,18 @@ def refine_proven_row_group_displays(gray, structure):
                 return structure
             rows = tuple(texts[i] for i in indexes)
             # A two-pixel source-paper inspection margin, not erasure authority.
-            l = max(0, min(t.bbox[0] for t in rows)-2)
+            left_coord = max(0, min(t.bbox[0] for t in rows)-2)
             t = max(0, min(t.bbox[1] for t in rows)-2)
             r = min(gray.shape[1], max(t.bbox[0]+t.bbox[2] for t in rows)+2)
             b = min(gray.shape[0], max(t.bbox[1]+t.bbox[3] for t in rows)+2)
-            area = (r-l)*(b-t)
+            area = (r-left_coord)*(b-t)
             if area <= 0 or area > min(65_536, remaining):
                 skipped.append(dict(indices=indexes, reason="SOURCE_PIXEL_BUDGET"))
                 continue
             remaining -= area
             proofs = []
             fitted = _restore_cell_text_rows(
-                gray, rows, (l,t,r,b), verified_sources=proofs, source_group=True,
+                gray, rows, (left_coord,t,r,b), verified_sources=proofs, source_group=True,
             )
             if len(proofs) != 1:
                 skipped.append(dict(indices=indexes, reason="NO_COMPLETE_SOURCE_ROW_PROOF"))
@@ -186,14 +186,14 @@ def refine_proven_row_group_displays(gray, structure):
                 skipped.append(dict(indices=indexes, reason="NO_PROVED_CONTACT_REDUCTION"))
                 continue
             proposals.update(stage)
-            l,t,r,b = proof.bounds
+            left_coord,t,r,b = proof.bounds
             records.append(dict(
                 indices=indexes, source_bounds=proof.bounds,
-                source_strong_runs=pixel_runs(proof.mask > 0, left=l, top=t),
+                source_strong_runs=pixel_runs(proof.mask > 0, left=left_coord, top=t),
                 changed=[dict(index=i, text=texts[i].text, bbox=texts[i].bbox,
                               original_quad=texts[i].quad, display_quad=quad,
                               source_row_runs=pixel_runs(proof.row_masks[indexes.index(i)] > 0,
-                                                         left=l, top=t), geometry=geometry)
+                                                         left=left_coord, top=t), geometry=geometry)
                          for i,(quad,_path,geometry) in stage.items()],
                 held_context=held, native_pairs_before=sorted(before),
                 native_pairs_after=sorted(after), authority="DISPLAY_ONLY",

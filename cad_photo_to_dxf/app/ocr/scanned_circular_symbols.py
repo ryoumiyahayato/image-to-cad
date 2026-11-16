@@ -312,13 +312,13 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
         # Bound the fit to a local observation even if the source component
         # joins the rest of the drawing. Ink outside it is never retired.
         pad = 2 * max(w, h)
-        l, t = max(0, x - pad), max(0, y - pad)
+        left_coord, t = max(0, x - pad), max(0, y - pad)
         r, b = min(binary.shape[1], x + w + pad), min(binary.shape[0], y + h + pad)
-        window = np.s_[t:b, l:r]
+        window = np.s_[t:b, left_coord:r]
         local = labels[window]
         rx, ry = parent[0, 0]
         ring = local == labels[ry, rx]
-        fitted = _circle(ring, np.asarray(seed) - (l, t), min(axes) / 2)
+        fitted = _circle(ring, np.asarray(seed) - (left_coord, t), min(axes) / 2)
         if fitted is None:
             continue
         center, radius, width, metrics = fitted
@@ -331,7 +331,7 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
         gx, gy, gw, gh, count = map(int, stats[ids[0]])
         glyph = local == ids[0]
         if (count < 8 or count != glyph.sum() or np.any(glyph & (distance >= radius - width / 2))
-                or not (l <= gx < gx+gw <= r and t <= gy < gy+gh <= b)):
+                or not (left_coord <= gx < gx+gw <= r and t <= gy < gy+gh <= b)):
             continue
         outer = radius + width / 2
         blocked = protected[window] | claimed[window]
@@ -356,7 +356,7 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
         owned = owned_ring.copy()
         branches = []
         clipped_sides = {
-            (0, -1): crop_edges[0] and l == 0,
+            (0, -1): crop_edges[0] and left_coord == 0,
             (0, 1): crop_edges[2] and r == binary.shape[1],
             (1, -1): crop_edges[1] and t == 0,
             (1, 1): crop_edges[3] and b == binary.shape[0],
@@ -388,16 +388,16 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
                 continue
             owned |= owned_branch
             branches.append(dict(
-                start_px=tuple(start + (l, t)), end_px=tuple(end + (l, t)), width_px=pen, **detail,
+                start_px=tuple(start + (left_coord, t)), end_px=tuple(end + (left_coord, t)), width_px=pen, **detail,
                 source_coverage=coverage_branch, model_coverage=precision_branch,
-                retained_continuation=continued, retired_runs_y_x0_x1=pixel_runs(owned_branch, l, t),
+                retained_continuation=continued, retired_runs_y_x0_x1=pixel_runs(owned_branch, left_coord, t),
             ))
 
         glyph_record = {}
         original_glyph_review = None
         if can_fit_glyph and not np.any(glyph & blocked):
             box = (gx, gy, gw, gh)
-            observed = _glyph(glyph[gy-t:gy-t+gh, gx-l:gx-l+gw], box, center+(l,t), radius, width, dpi)
+            observed = _glyph(glyph[gy-t:gy-t+gh, gx-left_coord:gx-left_coord+gw], box, center+(left_coord,t), radius, width, dpi)
             if observed is not None:
                 text, text_width, observed_width, clearance, glyph_coverage, glyph_precision = observed
                 related = _related_glyph(text, candidates)
@@ -414,11 +414,11 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
                         glyph_box=box, glyph_text=text.text, glyph_width_px=text_width,
                         glyph_gap_px=clearance, glyph_observed_width_px=observed_width,
                         glyph_source_coverage=glyph_coverage, glyph_model_coverage=glyph_precision,
-                        glyph_retired_runs_y_x0_x1=pixel_runs(glyph, l, t),
+                        glyph_retired_runs_y_x0_x1=pixel_runs(glyph, left_coord, t),
                     )
         if not owned.any():
             continue
-        center = center + (l, t)
+        center = center + (left_coord, t)
         if ring_replaced:
             points = tuple(map(tuple, center + radius * _RAYS))
             paths.append(TracePath(points, None, 0, len(paths)))
@@ -428,8 +428,8 @@ def recover_circular_symbols(binary, candidates, *, protected, text_owned, dpi,
             center_px=tuple(center), radius_px=radius, width_px=width,
             ring_replaced=ring_replaced, branches=branches,
             source_coverage=coverage, model_coverage=precision,
-            ring_retired_runs_y_x0_x1=pixel_runs(owned_ring, l, t),
-            retired_runs_y_x0_x1=pixel_runs(owned, l, t),
+            ring_retired_runs_y_x0_x1=pixel_runs(owned_ring, left_coord, t),
+            retired_runs_y_x0_x1=pixel_runs(owned, left_coord, t),
             preserved_ring_pixels=int(np.count_nonzero(ring & ~owned)),
             electrical_connectivity="UNRESOLVED", **metrics, **glyph_record,
             **({"registered_glyph_confirmation": original_glyph_review}
@@ -449,12 +449,12 @@ def confirm_input_glyph_on_registered_original(candidate, scan, source_crop=None
     x,y,w,h = candidate.bbox
     ox,oy = source_crop[:2] if source_crop is not None else (0,0)
     q=scan.ratio
-    l,t,rr,b=(x+ox)*q,(y+oy)*q,(x+ox+w)*q,(y+oy+h)*q
-    record=dict(proposed=candidate.text,original_bbox=(l,t,rr,b),accepted=False,
+    left_coord,t,rr,b=(x+ox)*q,(y+oy)*q,(x+ox+w)*q,(y+oy+h)*q
+    record=dict(proposed=candidate.text,original_bbox=(left_coord,t,rr,b),accepted=False,
                 authority="CORROBORATION_ONLY")
-    if not 0 <= l < rr <= scan.pixels.shape[1] or not 0 <= t < b <= scan.pixels.shape[0]:
+    if not 0 <= left_coord < rr <= scan.pixels.shape[1] or not 0 <= t < b <= scan.pixels.shape[0]:
         return dict(record,reason="ORIGINAL_GLYPH_OUT_OF_BOUNDS")
-    mark=np.where(scan.pixels[t:b,l:rr] < 128,0,255).astype(np.uint8)
+    mark=np.where(scan.pixels[t:b,left_coord:rr] < 128,0,255).astype(np.uint8)
     reading=_recognize(mark)
     if reading is None:
         return dict(record,reason="ORIGINAL_GLYPH_UNRESOLVED")
@@ -480,13 +480,13 @@ def recover_registered_circular_symbols(source_gray, binary, candidates, *, prot
             continue
         # A hole-width margin covers the ring wall and the near branch fit.
         pad = max(w, h)
-        l, t = max(0, x - pad), max(0, y - pad)
+        left_coord, t = max(0, x - pad), max(0, y - pad)
         r, b = min(width, x + w + pad), min(height, y + h + pad)
-        window = np.s_[t:b, l:r]
-        nx0, ny0, nx1, ny1 = ((crop_x + l) * ratio, (crop_y + t) * ratio,
+        window = np.s_[t:b, left_coord:r]
+        nx0, ny0, nx1, ny1 = ((crop_x + left_coord) * ratio, (crop_y + t) * ratio,
                               (crop_x + r) * ratio, (crop_y + b) * ratio)
         native = scan.pixels[ny0:ny1, nx0:nx1]
-        if native.shape != ((b - t) * ratio, (r - l) * ratio):
+        if native.shape != ((b - t) * ratio, (r - left_coord) * ratio):
             continue
 
         def expand(mask):
@@ -498,22 +498,22 @@ def recover_registered_circular_symbols(source_gray, binary, candidates, *, prot
         native_candidates = []
         for i, c in enumerate(candidates):
             cx, cy, cw, ch = c.bbox
-            if cx < r and cy < b and cx + cw > l and cy + ch > t:
+            if cx < r and cy < b and cx + cw > left_coord and cy + ch > t:
                 candidate_indices.append(i)
                 native_candidates.append(
-                    replace(c, bbox=((cx-l)*ratio, (cy-t)*ratio, cw*ratio, ch*ratio))
+                    replace(c, bbox=((cx-left_coord)*ratio, (cy-t)*ratio, cw*ratio, ch*ratio))
                 )
         local_texts, local_paths, local_records, _, local_replaced = recover_circular_symbols(
             native, native_candidates, dpi=scan.dpi,
             protected=expand(protected[window] | claimed[window]),
             text_owned=expand(text_owned[window]),
-            search_bounds=((x-l)*ratio, (y-t)*ratio, (x+w-l)*ratio, (y+h-t)*ratio),
-            crop_edges=(l == 0, t == 0, r == width, b == height),
+            search_bounds=((x-left_coord)*ratio, (y-t)*ratio, (x+w-left_coord)*ratio, (y+h-t)*ratio),
+            crop_edges=(left_coord == 0, t == 0, r == width, b == height),
         )
         related = {candidate_indices[i] for i in local_replaced}
         if len(local_records) != 1 or related & replaced:
             continue
-        record, owned = _map_registered_symbol(local_records[0], native < 128, ratio, (l, t), dpi)
+        record, owned = _map_registered_symbol(local_records[0], native < 128, ratio, (left_coord, t), dpi)
         if not owned.any():
             continue
         record.update(
@@ -523,10 +523,10 @@ def recover_registered_circular_symbols(source_gray, binary, candidates, *, prot
         )
         if record["ring_replaced"]:
             path, = local_paths
-            paths.append(replace(path, points=tuple(_input_center(p, ratio, (l, t)) for p in path.points)))
+            paths.append(replace(path, points=tuple(_input_center(p, ratio, (left_coord, t)) for p in path.points)))
         if "glyph_box" in record:
             text, = local_texts
-            quad = tuple((px / ratio + l, py / ratio + t) for px, py in text.display_quad)
+            quad = tuple((px / ratio + left_coord, py / ratio + t) for px, py in text.display_quad)
             texts.append(replace(text, bbox=record["glyph_box"], display_quad=quad))
             replaced.update(related)
         claimed[window] |= owned
@@ -536,12 +536,12 @@ def recover_registered_circular_symbols(source_gray, binary, candidates, *, prot
 
 def _input_center(point, ratio, origin):
     x, y = point
-    l, t = origin
-    return (x + .5) / ratio + l - .5, (y + .5) / ratio + t - .5
+    left_coord, t = origin
+    return (x + .5) / ratio + left_coord - .5, (y + .5) / ratio + t - .5
 
 
 def _map_registered_symbol(record, native_ink, ratio, origin, dpi):
-    l, t = origin
+    left_coord, t = origin
     h, w = native_ink.shape
     footprint = (h // ratio, ratio, w // ratio, ratio)
     owned = np.zeros((h // ratio, w // ratio), dtype=bool)
@@ -553,7 +553,7 @@ def _map_registered_symbol(record, native_ink, ratio, origin, dpi):
     def bbox(box):
         x, y, w, h = box
         left, top = x // ratio, y // ratio
-        return left + l, top + t, ceil((x+w)/ratio) - left, ceil((y+h)/ratio) - top
+        return left + left_coord, top + t, ceil((x+w)/ratio) - left, ceil((y+h)/ratio) - top
 
     def member_runs(runs):
         nonlocal original_member_pixels
@@ -568,7 +568,7 @@ def _map_registered_symbol(record, native_ink, ratio, origin, dpi):
         if cells.any():
             owned[:] |= cells
             original_member_pixels += int(member.sum())
-        return pixel_runs(cells, l, t)
+        return pixel_runs(cells, left_coord, t)
 
     ring_runs = member_runs(record["ring_retired_runs_y_x0_x1"])
     mapped = dict(
@@ -593,6 +593,6 @@ def _map_registered_symbol(record, native_ink, ratio, origin, dpi):
                 end_px=_input_center(branch["end_px"], ratio, origin),
                 width_px=branch["width_px"] / ratio, retired_runs_y_x0_x1=runs,
             ))
-    mapped.update(retired_runs_y_x0_x1=pixel_runs(owned, l, t),
+    mapped.update(retired_runs_y_x0_x1=pixel_runs(owned, left_coord, t),
                   original_member_pixels=original_member_pixels)
     return mapped, owned

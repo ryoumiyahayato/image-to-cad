@@ -62,7 +62,8 @@ def test_complete_source_display_preserves_reading_and_all_source_fields(turns):
     before, after = baseline.texts[0], result.texts[0]
     assert after.display_quad is not None
     a, b = asdict(before), asdict(after)
-    a.pop("display_quad"); b.pop("display_quad")
+    a.pop("display_quad")
+    b.pop("display_quad")
     assert a == b
     for name in ["contour_binary", "preview_binary", "editable_text_source_mask",
                  "source_text_outline_mask", "uncertain_text_outline_mask"]:
@@ -120,7 +121,9 @@ def test_visible_old_outline_or_structure_contact_blocks_enlargement():
 
 def test_joint_expansions_cannot_collide_between_old_texts():
     def rect(a, b):
-        p = QPainterPath(); p.addRect(a, 0, b-a, 10); return p
+        p = QPainterPath()
+        p.addRect(a, 0, b-a, 10)
+        return p
     originals = {0: rect(0, 10), 1: rect(30, 40)}
     proposals = {0: (None, rect(0, 22), None), 1: (None, rect(18, 40), None)}
     assert not proposals[0][1].intersects(originals[1])

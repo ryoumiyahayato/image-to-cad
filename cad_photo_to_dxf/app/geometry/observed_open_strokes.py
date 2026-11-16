@@ -73,7 +73,8 @@ def _ordered_path(mask: np.ndarray) -> np.ndarray | None:
         peers = [p for p in adjacency[order[-1]] if p not in seen]
         if len(peers) != 1:
             return None
-        order.append(peers[0]); seen.add(peers[0])
+        order.append(peers[0])
+        seen.add(peers[0])
     if len(seen) != len(nodes):
         return None
     return np.array([(x,y) for y,x in order], dtype=float)
@@ -114,10 +115,14 @@ def _gray_center_and_terminals(mask: np.ndarray, gray: np.ndarray, path: np.ndar
     result=path.copy()
     ink=((255.-gray)/255.*mask).astype(np.float32)
     for i,p in enumerate(path):
-        a=path[max(0,i-1)];b=path[min(len(path)-1,i+1)]
-        tangent=b-a;norm=float(np.linalg.norm(tangent))
-        if norm<=0:continue
-        tangent/=norm;normal=np.array((-tangent[1],tangent[0]))
+        a=path[max(0,i-1)]
+        b=path[min(len(path)-1,i+1)]
+        tangent=b-a
+        norm=float(np.linalg.norm(tangent))
+        if norm<=0:
+            continue
+        tangent/=norm
+        normal=np.array((-tangent[1],tangent[0]))
         offsets=np.arange(-max(4.,2.*width+1.),max(4.,2.*width+1.)+.125,.25)
         points=p+offsets[:,None]*normal
         values=cv2.remap(ink,points[:,0].astype(np.float32).reshape(1,-1),
@@ -125,16 +130,21 @@ def _gray_center_and_terminals(mask: np.ndarray, gray: np.ndarray, path: np.ndar
                        borderMode=cv2.BORDER_CONSTANT,borderValue=0).ravel()
         if values.sum()>0:
             shift=float(np.dot(offsets,values)/values.sum())
-            if abs(shift)<=1.:result[i]=p+normal*shift
-    yy,xx=np.nonzero(mask);source=np.column_stack((xx,yy)).astype(float)
+            if abs(shift)<=1.:
+                result[i]=p+normal*shift
+    yy,xx=np.nonzero(mask)
+    source=np.column_stack((xx,yy)).astype(float)
     for i,j in ((0,1),(-1,-2)):
-        point=result[i];outward=point-result[j];outward/=np.linalg.norm(outward)
+        point=result[i]
+        outward=point-result[j]
+        outward/=np.linalg.norm(outward)
         delta=source-point
         local=np.linalg.norm(delta,axis=1)<=max(4.,3.*width)
         projections=delta[local]@outward
         if len(projections):
             extension=float(projections.max()+.5-width/2.)
-            if 0.<extension<=max(3.,2.*width):result[i]=point+outward*extension
+            if 0.<extension<=max(3.,2.*width):
+                result[i]=point+outward*extension
     return result
 
 
@@ -162,14 +172,17 @@ def _fit(mask: np.ndarray, gray: np.ndarray, foreign: np.ndarray, dpi: float
 
     stations, tangents = [], []
     for a, b in zip(path, path[1:]):
-        edge = b-a; edge_length = float(np.linalg.norm(edge))
+        edge = b-a
+        edge_length = float(np.linalg.norm(edge))
         for t in np.linspace(0., 1., max(2, int(math.ceil(edge_length))+1)):
             point = a + t*edge
             if min(np.linalg.norm(point-path[0]), np.linalg.norm(point-path[-1])) > max(2.,width*2.):
-                stations.append(point); tangents.append(edge/edge_length)
+                stations.append(point)
+                tangents.append(edge/edge_length)
     if len(stations) < 12:
         return None, "SHORT_MEASUREMENT_RUN"
-    stations = np.asarray(stations); tangents = np.asarray(tangents)
+    stations = np.asarray(stations)
+    tangents = np.asarray(tangents)
     normals = np.column_stack((-tangents[:,1], tangents[:,0]))
     radius = max(4., width*2.+1.)
     offsets = np.arange(-radius, radius+.125, .25)
@@ -193,7 +206,8 @@ def _fit(mask: np.ndarray, gray: np.ndarray, foreign: np.ndarray, dpi: float
         return None, "SOURCE_TO_PEN"
     samples = []
     for a,b in zip(path,path[1:]):
-        edge = b-a; distance = float(np.linalg.norm(edge))
+        edge = b-a
+        distance = float(np.linalg.norm(edge))
         normal = np.array((-edge[1],edge[0]))/distance
         points = np.linspace(a,b,max(3,int(math.ceil(distance*4))+1))
         samples.extend((points,points+normal*pen_width/2.,points-normal*pen_width/2.))
@@ -251,7 +265,10 @@ def recover_observed_open_strokes(gray: np.ndarray, binary: np.ndarray, visible_
         review["status"]="SKIPPED_INPUT_CONTRACT"
         return visible_binary,(),(),review
     count, labels, stats, _ = cv2.connectedComponentsWithStats(np.uint8(gray<254),connectivity=8)
-    output = visible_binary; paths=[]; records=[]; budget=MAX_TOTAL_LOCAL_PIXELS
+    output = visible_binary
+    paths=[]
+    records=[]
+    budget=MAX_TOTAL_LOCAL_PIXELS
     pad=max(3,int(math.ceil(4*dpi/100.))+1)
     for label in range(1,count):
         x,y,w,h,area=map(int,stats[label])
@@ -263,29 +280,37 @@ def recover_observed_open_strokes(gray: np.ndarray, binary: np.ndarray, visible_
         item=dict(bbox=(x,y,w,h),source_pixels=area,decision="REJECTED")
         review['decisions'].append(item)
         if len(review['decisions'])>MAX_CHECKS or budget<size:
-            item['reason']='RESOURCE_BUDGET';break
+            item['reason']='RESOURCE_BUDGET'
+            break
         budget-=size
         if x<pad or y<pad or x+w+pad>gray.shape[1] or y+h+pad>gray.shape[0]:
-            item['reason']='PAGE_EDGE_COMPONENT';continue
+            item['reason']='PAGE_EDGE_COMPONENT'
+            continue
         sl=np.s_[y-pad:y+h+pad,x-pad:x+w+pad]
         component=labels[sl]==label
         protected=np.zeros(component.shape,bool)
         for p in protected_masks:
-            if p is not None:protected|=p[sl]>0
+            if p is not None:
+                protected|=p[sl]>0
         if np.any(component & protected):
-            item['reason']='PROTECTED_OR_SHARED_SOURCE';continue
+            item['reason']='PROTECTED_OR_SHARED_SOURCE'
+            continue
         if np.any(component & (binary[sl]>=128)):
-            item['reason']='SOURCE_NOT_IN_CURRENT_FOREGROUND';continue
+            item['reason']='SOURCE_NOT_IN_CURRENT_FOREGROUND'
+            continue
         if np.any(component & (visible_binary[sl]>=128)):
-            item['reason']='SOURCE_ALREADY_CLAIMED';continue
+            item['reason']='SOURCE_ALREADY_CLAIMED'
+            continue
         foreign=((gray[sl]<254)&~component)|protected
         fit,reason=_fit(component,gray[sl],foreign,float(dpi))
         item['reason']=reason
-        if fit is None:continue
+        if fit is None:
+            continue
         path=np.asarray(fit['points_px'])+(x-pad,y-pad)
         old_paths=trace_binary(np.where(component,0,255).astype(np.uint8))
         if not old_paths:
-            item['reason']='NO_SOURCE_BOUNDARY';continue
+            item['reason']='NO_SOURCE_BOUNDARY'
+            continue
         record=dict(fit, kind='open_stroke',bbox=(x,y,w,h),native_scan=False,
                     native_source_open_stroke=True,dpi=float(dpi),points_px=tuple(map(tuple,path)),
                     source_runs_y_x0_x1=tuple((ry+y-pad,a+x-pad,b+x-pad) for ry,a,b in _runs(component)),
@@ -293,11 +318,14 @@ def recover_observed_open_strokes(gray: np.ndarray, binary: np.ndarray, visible_
                                                      for p in old_paths),
                     classification='OBSERVED_ISOLATED_OPEN_STROKE',creates_connection=False,
                     historical_identity='NOT_PROVEN',width_space='paper_mm')
-        paths.append(TracePath(tuple(map(tuple,path)),None,0,len(paths)));records.append(record)
-        if output is visible_binary:output=visible_binary.copy()
+        paths.append(TracePath(tuple(map(tuple,path)),None,0,len(paths)))
+        records.append(record)
+        if output is visible_binary:
+            output=visible_binary.copy()
         output[sl][component]=255
         item.update(decision='ACCEPTED',source_to_pen_error_px=fit['source_to_pen_error_px'],
                     pen_to_source_error_px=fit['pen_to_source_error_px'],
                     lineweight_hundredth_mm=fit['lineweight_hundredth_mm'],vertices=len(path))
-        review['accepted']+=1;review['source_pixels']+=area
+        review['accepted']+=1
+        review['source_pixels']+=area
     return output,tuple(paths),tuple(records),review

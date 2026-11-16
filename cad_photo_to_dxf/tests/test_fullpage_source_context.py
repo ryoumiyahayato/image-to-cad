@@ -58,15 +58,20 @@ def sample():
     cv2.putText(gray,'ABC',(28,47),cv2.FONT_HERSHEY_SIMPLEX,.8,0,1,cv2.LINE_8)
     quad=((20.,20.),(100.,20.),(100.,55.),(20.,55.))
     text=TextCandidate('ABC',(20,20,80,35),.99,'text_candidate',quad=quad,source='rapidocr-tile')
-    z=np.zeros_like(gray);empty=np.full_like(gray,255)
+    z=np.zeros_like(gray)
+    empty=np.full_like(gray,255)
     s=build_final_structure(source_size_px=gray.shape[::-1],contour_binary=empty,contours=(),texts=(text,),
       editable_text_source_mask=z,source_text_outline_mask=z,uncertain_text_outline_mask=z,preview_binary=gray)
     return gray,s
 
 def test_source_cap_display_only_never_changes_content_or_source_masks():
-    gray,s=sample();t=refine_source_supported_scan_displays(gray,s)
+    gray,s=sample()
+    t=refine_source_supported_scan_displays(gray,s)
     assert t.texts[0].display_quad is not None
-    a,b=asdict(s.texts[0]),asdict(t.texts[0]);a.pop('display_quad');b.pop('display_quad');assert a==b
+    a,b=asdict(s.texts[0]),asdict(t.texts[0])
+    a.pop('display_quad')
+    b.pop('display_quad')
+    assert a==b
     for n in ('contour_binary','preview_binary','editable_text_source_mask','source_text_outline_mask','uncertain_text_outline_mask'):
       assert np.array_equal(getattr(s,n),getattr(t,n))
     assert t.straight_lines==s.straight_lines and t.contours==s.contours
@@ -74,7 +79,8 @@ def test_source_cap_display_only_never_changes_content_or_source_masks():
 def test_source_cap_display_abstains_for_manual_review_and_dimensions():
     gray,s=sample()
     for text in (replace(s.texts[0],reviewed=True),replace(s.texts[0],text='123')):
-      t=replace(s,texts=(text,)); assert refine_source_supported_scan_displays(gray,t) is t
+      t=replace(s,texts=(text,))
+      assert refine_source_supported_scan_displays(gray,t) is t
 
 def test_closed_frame_with_separate_inner_glyphs_not_treated_as_text_body():
     gray,s=sample()

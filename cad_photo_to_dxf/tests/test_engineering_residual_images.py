@@ -1,5 +1,5 @@
 from dataclasses import replace
-from pathlib import Path
+
 
 import ezdxf
 import numpy as np
@@ -16,7 +16,8 @@ from app.ocr.logo_detection import LogoRegion
 
 def source_region():
     alpha = np.zeros((21, 23), np.uint8)
-    alpha[9, 1] = 255; alpha[10, 1] = 191
+    alpha[9, 1] = 255
+    alpha[10, 1] = 191
     alpha[18, 5] = 255
     alpha[20, 12:15] = (191, 255, 255)
     return LogoRegion((8, 7, 23, 21), alpha, .99, 0, 3, visual_kind='engineering_graphic')
@@ -29,7 +30,8 @@ def record(region):
 
 
 def reconstruct(original, parts):
-    out = np.zeros_like(original.mask); count = np.zeros_like(original.mask)
+    out = np.zeros_like(original.mask)
+    count = np.zeros_like(original.mask)
     ox,oy,_,_=original.bbox
     for p in parts:
         x,y,w,h=p.bbox
@@ -41,7 +43,8 @@ def reconstruct(original, parts):
 
 
 def test_exact_alpha_and_no_transparent_pick_area():
-    r=source_region();parts=residual_image_tiles(r,eligible=True)
+    r=source_region()
+    parts=residual_image_tiles(r,eligible=True)
     assert len(parts)==3
     assert np.array_equal(reconstruct(r,parts),r.mask)
     assert sum(p.bbox[2]*p.bbox[3] for p in parts)==6
@@ -55,7 +58,8 @@ def test_no_unproved_split_or_logo_change(eligible,kind):
 
 
 def test_requires_replacement_authority_not_only_overlap():
-    r=source_region(); rec=record(r)
+    r=source_region()
+    rec=record(r)
     assert has_native_recovery(r.bbox,[rec])
     assert not has_native_recovery((9,7,23,21),[rec])
     rec['engineering_graphic_replacements'][0]['authority']='UNKNOWN'
@@ -77,8 +81,10 @@ def test_random_alpha_runs_are_lossless(seed):
 
 @pytest.mark.parametrize('multipage',[False,True])
 def test_real_export_readback_retains_alpha_placement_and_metadata(tmp_path,multipage):
-    r=source_region(); shape=(44,52)
-    source=np.full(shape,255,np.uint8);x,y,w,h=r.bbox
+    r=source_region()
+    shape=(44,52)
+    source=np.full(shape,255,np.uint8)
+    x,y,w,h=r.bbox
     source[y:y+h,x:x+w]=255-r.mask
     structure=build_final_structure(source_size_px=shape[::-1],
         contour_binary=np.full(shape,255,np.uint8),contours=(),logos=(r,),preview_binary=source,
@@ -88,7 +94,8 @@ def test_real_export_readback_retains_alpha_placement_and_metadata(tmp_path,mult
         export_trace_document_streaming((DocumentPage(1,None,shape[::-1],final_structure=structure),),out,total_pages=1)
     else:
         export_final_structure_dxf(structure,out)
-    d=ezdxf.readfile(out);images=list(d.modelspace().query('IMAGE'))
+    d=ezdxf.readfile(out)
+    images=list(d.modelspace().query('IMAGE'))
     assert len(images)==3
     actual=np.zeros_like(r.mask)
     for e in images:

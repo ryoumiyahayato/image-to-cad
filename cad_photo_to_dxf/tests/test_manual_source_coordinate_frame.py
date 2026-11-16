@@ -7,7 +7,7 @@ from app.core import manual_text_recovery as manual
 from app.core.review_project import ReviewProjectError
 from app.export.document_export import DocumentPage
 from app.export.trace_document_export import export_trace_document_streaming
-from tests.test_manual_text_recovery import confirm, layout, project  # noqa: F401
+from tests.test_manual_text_recovery import confirm, layout, project as project  # noqa: F401
 
 
 @pytest.mark.parametrize("paper", [(100., 100.), (200., 100.), (50., 150.)])

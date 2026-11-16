@@ -666,8 +666,10 @@ def _source_alpha_runs(layout, region, transform, layer_name):
         runs={(int(a),int(b),int(row[a])) for a,b in zip(changes,changes[1:]) if a<len(row) and row[a]}
         for key,start in list(active.items()):
             if key not in runs:
-                rectangles.append((*key,start,row_index));del active[key]
-        for key in runs:active.setdefault(key,row_index)
+                rectangles.append((*key,start,row_index))
+                del active[key]
+        for key in runs:
+            active.setdefault(key,row_index)
     for start,end,alpha,top,bottom in rectangles:
         e=layout.add_hatch(color=7,dxfattribs={'layer':layer_name})
         e.paths.add_polyline_path([transform(a,b) for a,b in (

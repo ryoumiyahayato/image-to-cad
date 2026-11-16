@@ -191,12 +191,13 @@ def test_w03_signatures_and_printed_names_have_separate_ownership(tmp_path, pres
             for path in hatch.paths:
                 assert len(path.vertices) == 4
                 assert all(v[2] == 0 for v in path.vertices)
-                xs=[v[0] for v in path.vertices];ys=[page_height-v[1] for v in path.vertices]
+                xs=[v[0] for v in path.vertices]
+                ys=[page_height-v[1] for v in path.vertices]
                 assert all(abs(v-round(v)) < 1e-7 for v in (*xs,*ys))
-                l,rr=round(min(xs))-x,round(max(xs))-x
+                left_coord,rr=round(min(xs))-x,round(max(xs))-x
                 t,b=round(min(ys))-y,round(max(ys))-y
-                assert 0 <= l < rr <= w and 0 <= t < b <= h
-                coverage[t:b,l:rr] += 1
+                assert 0 <= left_coord < rr <= w and 0 <= t < b <= h
+                coverage[t:b,left_coord:rr] += 1
         assert int(coverage.max()) == 1
         assert np.array_equal(coverage > 0, r.mask > 0)
     assert not expected

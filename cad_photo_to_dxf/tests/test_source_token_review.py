@@ -2,16 +2,14 @@
 """Token/glyph source agreement: no expected word, grammar or mask expansion."""
 from dataclasses import replace
 from types import SimpleNamespace
-import json
 
-import cv2
+
+
 import numpy as np
 import pytest
 
 from app.ocr.auxiliary_recognition import TextCandidate
-from app.ocr.source_token_review import (
-    review_source_tokens, _single_glyph, _source_tokens, _eligible, _white_views,
-)
+from app.ocr.source_token_review import review_source_tokens, _single_glyph, _source_tokens, _white_views
 
 def sample():
     im = np.full((20, 110), 255, np.uint8)
@@ -31,7 +29,8 @@ def sample():
 
 class Reader:
     def __init__(self, words=("BASE","BASE","8/4","8/4"), glyph=("4","4"), word_scores=None, glyph_scores=None):
-        self.words=words; self.glyph=glyph
+        self.words=words
+        self.glyph=glyph
         self.word_scores=word_scores or (.99,)*len(words)
         self.glyph_scores=glyph_scores or (.99,)*len(glyph)
         self.calls=[]
@@ -42,7 +41,9 @@ class Reader:
         return SimpleNamespace(txts=self.glyph,scores=self.glyph_scores)
 
 def test_source_supported_substitution_preserves_geometry_authority_and_spacing():
-    image,item=sample();before=image.copy();r=Reader()
+    image,item=sample()
+    before=image.copy()
+    r=Reader()
     out,proof=review_source_tokens(image,[item],recognize=r)
     assert out[0].text=="BASE 8/4"
     for name in ("bbox","quad","character_boxes","display_quad","rotation_deg","approved","reviewed","replacement_safe"):
@@ -65,8 +66,10 @@ def test_source_supported_substitution_preserves_geometry_authority_and_spacing(
     ("BASE","BASE","中/4","中/4"),
 ])
 def test_word_disagreement_or_invalid_mapping_preserves_old(words):
-    im,item=sample();out,records=review_source_tokens(im,[item],recognize=Reader(words=words))
-    assert out==[item];assert records==[]
+    im,item=sample()
+    out,records=review_source_tokens(im,[item],recognize=Reader(words=words))
+    assert out==[item]
+    assert records==[]
 
 @pytest.mark.parametrize("glyph,scores", [
     (("A","A"),(.99,.99)),
@@ -78,13 +81,17 @@ def test_word_disagreement_or_invalid_mapping_preserves_old(words):
     (("",""),(.99,.99)),
 ])
 def test_isolated_glyph_conflict_or_weak_evidence_never_changes_text(glyph,scores):
-    im,item=sample();out,rec=review_source_tokens(im,[item],recognize=Reader(glyph=glyph,glyph_scores=scores))
-    assert out==[item];assert rec==[]
+    im,item=sample()
+    out,rec=review_source_tokens(im,[item],recognize=Reader(glyph=glyph,glyph_scores=scores))
+    assert out==[item]
+    assert rec==[]
 
 @pytest.mark.parametrize("scores",[(.99,.99,.89,.99),(.99,.99,float("nan"),.99),(.99,.99,float("inf"),.99)])
 def test_word_score_guard(scores):
-    im,item=sample();out,rec=review_source_tokens(im,[item],recognize=Reader(word_scores=scores))
-    assert out==[item];assert rec==[]
+    im,item=sample()
+    out,rec=review_source_tokens(im,[item],recognize=Reader(word_scores=scores))
+    assert out==[item]
+    assert rec==[]
 
 @pytest.mark.parametrize("change",[
     {"reviewed":True},{"approved":False},{"rotation_deg":90},
@@ -92,8 +99,10 @@ def test_word_score_guard(scores):
     {"text":"中文 8/A"},{"kind":"signature_candidate"},
 ])
 def test_ineligible_candidates_do_not_invoke_recognition(change):
-    im,item=sample();r=Reader()
-    c=replace(item,**change);out,rec=review_source_tokens(im,[c],recognize=r)
+    im,item=sample()
+    r=Reader()
+    c=replace(item,**change)
+    out,rec=review_source_tokens(im,[c],recognize=r)
     assert out==[c] and not rec and not r.calls
 
 def test_bad_results_or_optional_reader_failure_preserve_detection():
@@ -103,12 +112,16 @@ def test_bad_results_or_optional_reader_failure_preserve_detection():
     assert review_source_tokens(im,[item],recognize=lambda _:SimpleNamespace(txts=["BASE"],scores=[.99]))==([item],[])
 
 def test_touching_observation_edge_rejects_incomplete_geometry():
-    im,item=sample();im[0,5]=0;r=Reader()
+    im,item=sample()
+    im[0,5]=0
+    r=Reader()
     assert review_source_tokens(im,[item],recognize=r)==([item],[])
     assert not r.calls
 
 def test_single_character_word_is_not_relabelled_from_context():
-    im,item=sample();im[:,50:]=255;im[4:14,50:53]=0
+    im,item=sample()
+    im[:,50:]=255
+    im[4:14,50:53]=0
     im[5:13,29:32]=0
     c=replace(item,text="LABEL I")
     r=Reader(words=("LABEL","LABEL","1","1"),glyph=("1","1"))
@@ -123,19 +136,22 @@ def test_extra_source_component_is_not_removed_to_fit_string_length():
     assert out==[item] and not rec
 
 def test_disjoint_glyph_extraction_preserves_gray_not_binary():
-    im,item=sample();tokens=_source_tokens(im,item.bbox)
+    im,item=sample()
+    tokens=_source_tokens(im,item.bbox)
     measured=_single_glyph(im,tokens[1][0],"8/4",2)
     assert measured is not None and 192 in measured[0]
 
 def test_actual_image_and_candidate_order_are_not_target_coordinates():
-    im,item=sample();larger=np.pad(im,((7,9),(19,11)),constant_values=255)
+    im,item=sample()
+    larger=np.pad(im,((7,9),(19,11)),constant_values=255)
     moved=replace(item,bbox=(19,7,110,20),quad=tuple((x+19,y+7) for x,y in item.quad))
     out,rec=review_source_tokens(larger,[moved],recognize=Reader())
     assert out[0].text=="BASE 8/4"
     assert rec[0]["checks"][0]["glyph_bbox"][0] > 19
 
 def test_valid_preexisting_reading_unchanged():
-    im,item=sample();r=Reader(words=("BASE","BASE","8/A","8/A"))
+    im,item=sample()
+    r=Reader(words=("BASE","BASE","8/A","8/A"))
     out,rec=review_source_tokens(im,[item],recognize=r)
     assert out==[item] and not rec and len(r.calls)==1
 
@@ -146,7 +162,8 @@ def test_new_version_is_cache_distinct():
 def test_white_views_only_add_white_pixels_and_keep_native_gray():
     im=np.array([[255,192,0],[255,100,255]],np.uint8)
     for view in _white_views(im):
-        y=(view.shape[0]-im.shape[0])//2;x=(view.shape[1]-im.shape[1])//2
+        y=(view.shape[0]-im.shape[0])//2
+        x=(view.shape[1]-im.shape[1])//2
         assert np.array_equal(view[y:y+2,x:x+3,0],im)
         assert np.all(view[:y]==255)
 
