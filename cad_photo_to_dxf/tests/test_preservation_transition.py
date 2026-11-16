@@ -1,7 +1,7 @@
 """The reviewed compact transition must still detect real source loss."""
 
 from copy import deepcopy
-from dataclasses import replace
+from dataclasses import asdict, replace
 import importlib.util
 import json
 from pathlib import Path
@@ -103,6 +103,36 @@ def test_reviewed_raster_transition_keeps_every_other_historical_identity_field(
     wrong_source[0, 0] = 255
     with pytest.raises(AssertionError, match="restored edge lacks original black source"):
         module.verify_transition("sample-test", wrong_source, structure, baseline, historical)
+
+
+@pytest.mark.parametrize("changes", [
+    {"source_ids": ("UNREVIEWED_SOURCE",)},
+    {"history": ("UNREVIEWED_HISTORY",)},
+    {"confidence": 0.123},
+    {"classification_confidence": 0.123},
+    {"classification_reasons": ("UNREVIEWED_REASON",)},
+])
+def test_complete_line_ledger_rejects_lineage_drift_with_unchanged_geometry_identity(raster_sample, changes):
+    image, structure = raster_sample
+    changed_line = replace(structure.straight_lines[0], **changes)
+    changed = replace(structure, straight_lines=(changed_line, *structure.straight_lines[1:]))
+    # This limitation is explicit: the historical identity itself stays equal.
+    assert changed.structure_id == structure.structure_id
+    module.verify_p10a_identity("sample-test", changed)
+    with pytest.raises(AssertionError, match="complete LINE source ledger changed"):
+        module.verify_transition(
+            "sample-test", image, changed, module.load_current_baseline(),
+            json.loads((ROOT / "docs/refactor/preservation-baseline.json").read_text()),
+        )
+
+
+def test_raw_cache_cannot_use_loader_defaults_to_hide_missing_line_source_fields(raster_sample):
+    _, structure = raster_sample
+    records = [asdict(line) for line in structure.straight_lines]
+    module.verify_complete_line_sources("sample-test", (), raw_records=records)
+    records[0].pop("classification_confidence")
+    with pytest.raises(AssertionError, match="incomplete LINE source record"):
+        module.verify_complete_line_sources("sample-test", (), raw_records=records)
 
 
 @pytest.mark.parametrize("mutation,message", [

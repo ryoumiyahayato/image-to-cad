@@ -9,7 +9,7 @@ The previous contracts remain immutable; no runtime geometry is changed here.
 
 import argparse
 from collections import Counter
-from dataclasses import replace
+from dataclasses import asdict, fields, replace
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -147,6 +147,7 @@ def verify_transition(name, image, structure, baseline, historical):
         f"{name}: unaccounted historical LINE change"
     )
     if not approved:
+        verify_complete_line_sources(name, structure.straight_lines)
         return
     prepared = prepare_scan_page(image)
     for row in approved:
@@ -159,6 +160,31 @@ def verify_transition(name, image, structure, baseline, historical):
         assert not np.any((previous > 0) & (kept == 0) & (prepared.binary[window] < 128)), (
             f"{name}: removed LINE has unique source ink"
         )
+    verify_complete_line_sources(name, structure.straight_lines)
+
+
+def verify_complete_line_sources(name, lines, *, raw_records=None):
+    """Bind complete source lineage separately from the geometry-only identity.
+
+    P10-A's LINE payload includes endpoints/width/layer, not all dataclass fields.
+    This independently reviewed digest covers every field and source-list order.
+    Raw cache records are checked too, before loader defaults could hide a loss.
+    """
+    contract = json.loads((ROOT / "docs/refactor/preservation-line-sources-20261116.json").read_text())
+    assert contract["format"] == "compact-complete-line-sources-20261116-v1"
+    assert contract["fields"] == [field.name for field in fields(LineSegment)]
+    assert set(contract["cases"]) == set(load_p10a_baseline()["cases"])
+    records = [asdict(line) for line in lines] if raw_records is None else raw_records
+    assert all(set(row) == set(contract["fields"]) for row in records), (
+        f"{name}: incomplete LINE source record"
+    )
+    payload = dict(format=contract["ledger_format"], fields=contract["fields"], lines=records)
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True,
+                         separators=(",", ":"), allow_nan=False).encode("utf-8")
+    expected = contract["cases"][name]
+    assert len(records) == expected["count"] and sha256(encoded).hexdigest() == expected["sha256"], (
+        f"{name}: complete LINE source ledger changed"
+    )
 
 
 def inputs():
@@ -196,8 +222,13 @@ def measure(*, baseline=None, historical=None):
             document = ezdxf.readfile(exported.path)
             assert not document.audit().errors
             verify_raster_export(name, structure, document)
-            saved = load_trace_cache(save_trace_cache(tmp / f"{name}.npz", result))
+            cache_path = save_trace_cache(tmp / f"{name}.npz", result)
+            with np.load(cache_path, allow_pickle=False) as archive:
+                raw_lines = json.loads(archive["lines_json"].item())
+            verify_complete_line_sources(name, (), raw_records=raw_lines)
+            saved = load_trace_cache(cache_path)
             assert saved.final_structure.structure_id == structure.structure_id
+            verify_complete_line_sources(name, saved.final_structure.straight_lines)
             item = {
                 "id": structure.structure_id,
                 "size": list(structure.source_size_px),

@@ -34,9 +34,12 @@ The two synthetic fixtures have identical complete structure identities and
 saved drawing records. On `sample-test`, only the following identity fields
 change: the contour-mask hash, the outer contour's four coordinates, and the
 point lists of fourteen degenerate raster runs. Every other identity field is
-exactly equal, including LINE coordinates, widths, source IDs and history,
+exactly equal, including LINE coordinates, widths and layers,
 all remaining contour coordinates and hierarchy, preview/text masks, and
-output-relevant presentation. The new sample identity is
+output-relevant presentation. The historical identity does **not** include all
+LINE source fields. A separate raw-cache and restored-dataclass comparison proves
+that source IDs, history, confidence and classification fields are also unchanged.
+The new sample identity is
 `62263d27ff70fc2067a8277b5d046d8adfe3c700e3b080c82e8e00ebcdd9e310`.
 
 ### Original dark edge restored
@@ -88,6 +91,7 @@ distinct reviewed contracts:
 
 - [Current exact measurements](preservation-current-20261116.json).
 - [Every permitted mask/contour change](preservation-raster-transition-20261116.json).
+- [Complete LINE source ledger](preservation-line-sources-20261116.json).
 
 The checker requires the exact current algorithm identity, schema 4 and trace
 cache 11. Case coverage and all historical LINE transition declarations remain
@@ -105,11 +109,25 @@ the only permitted metadata normalization. The projected **whole** structure
 must then reproduce the original P10-A identity.
 
 That projection is never exported, cached, or used by the product. A changed
-width, source ID, unlisted contour, mask pixel, hierarchy or nonempty curve record
+width, unlisted contour, mask pixel, hierarchy or nonempty curve record
 is not excused by the migration. LINE consolidation still requires its original
 keeper geometry, retained source IDs, equal width and zero unique source-ink
 loss. New exact trace reconstruction and saved-HATCH cell checks prevent a
 count-only match from hiding source loss or a displaced filled run.
+
+Independent mutation review identified an older checker limitation before this
+change was published: altering only `sample-test`'s LINE source ID left its
+structure identity unchanged and passed the keeper-only transition check because
+that case has no approved LINE consolidations. The old evidence is retained;
+the identity is not retroactively claimed to cover that field.
+
+The new separate LINE ledger binds all eleven dataclass fields and the actual
+source-list order for **all three cases**, including source IDs, history,
+confidence and classification confidence/reasons. The two compared revisions'
+raw `lines_json` cache records and restored objects agree exactly. Every current
+measurement checks the complete in-memory ledger, raw saved-cache field presence
+and ledger, and restored-cache ledger. This guard does not depend on the
+geometry identity or on whether a case had a P10-A LINE consolidation.
 
 Negative controls retain the wrong algorithm/schema/cache, wrong keeper and
 same-count width failures. Added controls reject a one-pixel run extension,
@@ -117,6 +135,9 @@ one missing original border pixel, a white original source pixel falsely used
 as restoration evidence, and a shifted HATCH that keeps its entity count, size
 and source tags. They also reject a crossing boundary with the same four corner
 vertices, white true-color overrides, invisible entities and transparency.
+Additional source controls change an ID, history, confidence or classification
+while keeping the geometry and structure identity identical, and remove a
+default-valued field from raw cache metadata. The complete ledger rejects each.
 
 `--baseline` still refuses regeneration. No previous report is overwritten and
 no production threshold or raster decision is changed by this compatibility fix.
