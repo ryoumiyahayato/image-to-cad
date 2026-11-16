@@ -12,7 +12,46 @@ caps, for every registered contract. See
 The earlier A2 positive described below is historical and fails this stronger
 condition; it receives no exception. Native-grid research passed its fixed
 controls but recovered zero parts in the complete motivating real cohort, and
-has not been registered in the production entry.
+has not been registered in the production entry. The shared preservation fix is
+saved in commit `210817bb43f711d9985acba992cfde66e329f137`.
+
+The final related regression selection passes **210 tests**. Fresh final-source
+whole-page runs for A2, ENV and HABS all exit successfully and preserve every
+baseline model entity, native TEXT, old r13 source member, relative draw order,
+recursive block and image/font dependency checked by the independent auditor.
+There are zero additions and zero removals on all three pages, zero audit errors
+or fixes, and read/save/read semantic equality. The complete 275-file Python
+inventory matches between the tests and all three launches. This is a
+preservation result; no new compound parts were recovered.
+
+The separately frozen constant-pen open-polyline v1 and endpoint-support v2
+proposals also remain research-only. Each returned zero candidates on the same
+six curved controls under both ownership arms, including failure to recover the
+required curved positives. Neither version was run on A2 or registered for
+export. The two unchanged frozen reference curves have since passed the full
+adoption audit, including original ownership, interfaces and complete-path
+geometry. This establishes existence on those controls, not recovery by either
+method.
+
+The later source-constrained v1.1 recovers the four required clear-arc positives
+but wrongly retires a short-branch source cell in both ownership arms. It stays
+FAIL despite zero native black/white center changes. Persistent-band v1 adds
+distributed source-section evidence for every spline coefficient but fails all
+four required curved positives and has six endpoint assertion exceptions.
+Neither failed method entered the prior 49 controls or A2. Complete distinctions,
+frozen evidence digests and the separate compatibility repair are recorded in
+[`compound_source_continuation_20261116.md`](../../docs/research/compound_source_continuation_20261116.md).
+
+The subsequent frozen three-parameter global-circle proposal passed all 12
+curve-control and 98 prior-control evaluations under independent review. Its
+complete original 24-parent A2 plus historical-parent queue then returned zero
+candidates in all 50 calls, with no source retirement or runtime exception.
+No real circle solver was reached: source eligibility or initial source-plane
+construction stopped the proposals. This does not prove global infeasibility,
+and it provides no real-page editing gain. The next separate proposal studies
+two globally coupled straight-line parameters constrained by original black and
+white source centers. Neither these research methods nor their saved control
+outputs have been registered for production export.
 
 ## Representation and permission
 
@@ -147,6 +186,8 @@ The existing short contract and its numeric geometry gates are unchanged.
 New proposal declarations require their own explicit registration. The current
 dispatcher accepts neither unknown proposals nor the early working-grid
 research schema as a long-export alias. This tightening does not certify any
-new native-grid algorithm. The related regression selection passes 193 tests,
-including pre-write rejection of long members carrying incomplete or unknown
-contracts, and the previous actual A2 record still passes validation.
+new native-grid algorithm. The dispatch-only checkpoint passed 193 related
+tests, including pre-write rejection of long members carrying incomplete or
+unknown contracts. The earlier A2 record passed at that intermediate checkpoint;
+the subsequent common native-center policy correctly rejects it. The current
+210-test and final whole-page results above supersede that intermediate status.
