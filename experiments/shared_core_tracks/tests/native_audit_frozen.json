@@ -1,0 +1,26 @@
+{
+  "status": "FROZEN_ADDITIONAL_NATIVE_AUDIT_NOT_RUN_ON_PROPOSALS",
+  "created_utc": "2026-11-17T01:42:17.487119+00:00",
+  "parent_controls_manifest_sha256": "b47a82b3ba7fbde03d97022738c72b8f3215e1d15d201ab0cd22552758e033c9",
+  "source_files": {
+    "independent_native_pen.py": "ea1e0089d6af23c500dc63a64fa6d140ba35e83497986f2e8e0aa8879177e4b3",
+    "independent_native_fixtures.py": "82f90332de663000c0bf657e92d65436141fbe4c177febb02cb44b8151fc4712",
+    "test_independent_native_pen.py": "ed299fb980a81897d1746176ca5b991b2e111c81b86e9c8b26becc4f404a3221"
+  },
+  "direct_native_controls": [
+    {
+      "name": "one_native_black_spur",
+      "working_gray_sha256": "ef8dc505a40539db66641e4e4f7239f0fa30c1ac29280d846755f944121d6c4a",
+      "native_gray_sha256": "0510ce2471e1b579f3f2c2f0b82a3d2e300051f8d36521cecd1f2beac6f3682b",
+      "retained_annotation_sha256": "010cd2bf150860bb3401da3923ea4d77ddec08ef463f913dc2cc29c8c2e1c4d8",
+      "white_fence_sha256": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e"
+    },
+    {
+      "name": "one_native_white_notch",
+      "working_gray_sha256": "068ff9d4eba1d9d9af71f99fff99713009e09f0b354db08894de7bfe778e0452",
+      "native_gray_sha256": "c103de3c66f170a38f7aaa898126d98b1e80158f5b1695e8db14ddbdbe39527f",
+      "retained_annotation_sha256": "2c53f070ef138518e116c79e488f38079118302c10c59095d5b0917e8e1d7385",
+      "white_fence_sha256": "b7e185aa1a06ed301a5b06837ee183658a4e413974d031901b06fb52220d0dce"
+    }
+  ]
+}

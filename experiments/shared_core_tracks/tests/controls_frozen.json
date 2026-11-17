@@ -1,0 +1,535 @@
+{
+  "status": "FROZEN_SYNTHETIC_COUNTEREXAMPLES_NOT_REAL_POSITIVES",
+  "created_utc": "2026-11-17T01:40:25.752311+00:00",
+  "fixture_count": 21,
+  "families": [
+    "close_true_junctions",
+    "hole_closed_loop",
+    "isolated_control",
+    "junction",
+    "near_without_contact",
+    "old_correct_owner",
+    "protected_sources",
+    "real_branch",
+    "shared_stroke",
+    "short_attached_strokes",
+    "text_engineering_contact"
+  ],
+  "controls": [
+    {
+      "name": "isolated_long_control",
+      "family": "isolated_control",
+      "expectation": "candidate_expected",
+      "notes": "Old isolated behavior must remain available; not a new capability.",
+      "source_pixels": 627,
+      "native_source_pixels": 2508,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "f2e5ab05db634378edc15d471a0128cf24799fd6799b448261ad9ab1f95a9b7c",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "f2e5ab05db634378edc15d471a0128cf24799fd6799b448261ad9ab1f95a9b7c"
+      },
+      "native_array_sha256": {
+        "gray": "b1f6596c121d7a08e27088d40e72761152fb84c3a7f34811898889e01d1be9f3",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "b1f6596c121d7a08e27088d40e72761152fb84c3a7f34811898889e01d1be9f3"
+      }
+    },
+    {
+      "name": "T_long_arms",
+      "family": "junction",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Retain shared center. Geometry contact, object identity, and conductivity stay separate.",
+      "source_pixels": 864,
+      "native_source_pixels": 3456,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "e5ce05d840051996307f6e5d2a2db46be9eea6cacc0286af952d2f36de8a9ed1",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "b9303ed8a3488974c5dfa0c99ab5e986f374e66aad7e1662f190fe81507d8b94",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "e5ce05d840051996307f6e5d2a2db46be9eea6cacc0286af952d2f36de8a9ed1"
+      },
+      "native_array_sha256": {
+        "gray": "6c038c2d2b5fd533dc8b9de1445ec926ac1131ec8995d8c64ad652e519bea4c0",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "2c53f070ef138518e116c79e488f38079118302c10c59095d5b0917e8e1d7385",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "6c038c2d2b5fd533dc8b9de1445ec926ac1131ec8995d8c64ad652e519bea4c0"
+      }
+    },
+    {
+      "name": "cross_long_arms",
+      "family": "junction",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Retain shared center. Geometry contact, object identity, and conductivity stay separate.",
+      "source_pixels": 1101,
+      "native_source_pixels": 4404,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "c4043a22fd3f3ce811eab1d0f3ea3ef1ea69cd7aab1dd3d45055bd628ae9b763",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "e94048010c3c33cb7f47ce5c449338a9bf91c7214c253c4f3ab5597b6e4576d2",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "c4043a22fd3f3ce811eab1d0f3ea3ef1ea69cd7aab1dd3d45055bd628ae9b763"
+      },
+      "native_array_sha256": {
+        "gray": "c3bddd32206ddca9d32b0025cdfb95b6e0d36a96fb78cc1a237d5c04a326b59d",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "f934f00dd1b0b01bcc5ad2a4120f7b68bd199d0c6ad12701d2455bf8548f5e5a",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "c3bddd32206ddca9d32b0025cdfb95b6e0d36a96fb78cc1a237d5c04a326b59d"
+      }
+    },
+    {
+      "name": "end_gap_1px",
+      "family": "near_without_contact",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Independent collinear strokes; the complete vertical white fence must remain open.",
+      "source_pixels": 624,
+      "native_source_pixels": 2496,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "1b4c43ec4399976445a76e46440f405d3c96c8899f05528f11b618216f9ea531",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "b66fc5af821edfd78c10e0e1e10050f967faaca752df69f92187ff0d97c29587",
+        "visible": "1b4c43ec4399976445a76e46440f405d3c96c8899f05528f11b618216f9ea531"
+      },
+      "native_array_sha256": {
+        "gray": "8ff31319ee4e3676418f92f6a782737eec39b216a513591251772fd0cdfa5e21",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "4421b0ca635a54a12c4529e3796e4d9a0fd4b11f0df8f46878c70fb3363f57f9",
+        "visible": "8ff31319ee4e3676418f92f6a782737eec39b216a513591251772fd0cdfa5e21"
+      }
+    },
+    {
+      "name": "end_gap_2px",
+      "family": "near_without_contact",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Independent collinear strokes; the complete vertical white fence must remain open.",
+      "source_pixels": 621,
+      "native_source_pixels": 2484,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "35adeb27dbf87ad6d14b9bfc1be438a229de65bae22edc433e751491ac4e103b",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "43ad9d1ab3b70eb5bff001d0ff86c207b7bc87e126f504e03c007fd002f2bd9b",
+        "visible": "35adeb27dbf87ad6d14b9bfc1be438a229de65bae22edc433e751491ac4e103b"
+      },
+      "native_array_sha256": {
+        "gray": "6d8b49461384930de10007e33d968341000d3c521eff738dcb76cdf1924d90ff",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "445183104e1e34844a211ab18e693f22194adce861519aa15e949be4fdd0192c",
+        "visible": "6d8b49461384930de10007e33d968341000d3c521eff738dcb76cdf1924d90ff"
+      }
+    },
+    {
+      "name": "end_gap_3px",
+      "family": "near_without_contact",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Independent collinear strokes; the complete vertical white fence must remain open.",
+      "source_pixels": 618,
+      "native_source_pixels": 2472,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "53fb94bccc731aeee38d20aae73006f3f59d0cde70bf3d3c30e9a3c7455c1606",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "626a448a62be00c211aaa0c2ff4c609d13542466a24f90b6cacbc17cb8d45d58",
+        "visible": "53fb94bccc731aeee38d20aae73006f3f59d0cde70bf3d3c30e9a3c7455c1606"
+      },
+      "native_array_sha256": {
+        "gray": "021293e7ef9e8fb4615ec126416867a7f646feff57b89bf8eaa0ab641a5562ba",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "0357b3597a6a1bb6d51ec65f3637b83e01ae2ae0487625eb9725a0d6ccdce5ef",
+        "visible": "021293e7ef9e8fb4615ec126416867a7f646feff57b89bf8eaa0ab641a5562ba"
+      }
+    },
+    {
+      "name": "parallel_1px_gap",
+      "family": "near_without_contact",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Nearby parallel sources have one complete white row; no owner expansion across it.",
+      "source_pixels": 1254,
+      "native_source_pixels": 5016,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "a7da5650f3cea0c59455e65b4b383ffc5acc23a0eae6937070b7758ebbc6ab9b",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "e1078ac625af6cc4be016dac45e9174b0c8889295b509cc96e7b070d56209efa",
+        "visible": "a7da5650f3cea0c59455e65b4b383ffc5acc23a0eae6937070b7758ebbc6ab9b"
+      },
+      "native_array_sha256": {
+        "gray": "27766d9921f803c83ffb651cfb184be6001288248760b950983ed1fd16648aad",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "db3c4dbb7af1fa5d0d0cac3dddf5a568d35926d8729e35a66d210e212ba89c10",
+        "visible": "27766d9921f803c83ffb651cfb184be6001288248760b950983ed1fd16648aad"
+      }
+    },
+    {
+      "name": "comb_short_teeth",
+      "family": "short_attached_strokes",
+      "expectation": "partial_candidate_permitted",
+      "notes": "All deliberately 7-10 px short teeth and their contact regions stay; length threshold may reject every segment.",
+      "source_pixels": 681,
+      "native_source_pixels": 2724,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "011720e49ec30b25a3730d04afee53aa258832e9cd3f3741b2a1946e37381fad",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "aa77acf1847e3e67bd14f1bd34b9f2f04f640d83d62e94c966089b8d0601a653",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "011720e49ec30b25a3730d04afee53aa258832e9cd3f3741b2a1946e37381fad"
+      },
+      "native_array_sha256": {
+        "gray": "acf198d5a66a12029ac3e47cba2ee6524aacf0e3c528df6e1d8d0d945c094dd9",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "a7fb3dc80ff94ee8bbf3f3bf13363153eb60f179e6f491731503d6e4ff74b116",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "acf198d5a66a12029ac3e47cba2ee6524aacf0e3c528df6e1d8d0d945c094dd9"
+      }
+    },
+    {
+      "name": "opposite_contacts_2px",
+      "family": "close_true_junctions",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Keep both branches and intervening evidence; no fixed-distance real-node assertion.",
+      "source_pixels": 273,
+      "native_source_pixels": 1092,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "942dfbe7d3db61d662d1653e669b3b315820de83a1aafab6216e64c754f306f0",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "dafb04c4f69aeae2cc0247a7f30463eb9e613bb9332387cec50de64c8d9427e0",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "942dfbe7d3db61d662d1653e669b3b315820de83a1aafab6216e64c754f306f0"
+      },
+      "native_array_sha256": {
+        "gray": "07c9d0a63166fb8eefb6b2e65b22a5fcb2058a41bfff878834b9af80d937d3cf",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "2da96868e4526443cc7ea2440ac3ce72f9a25d83c86141678bdb543d7d4ca84f",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "07c9d0a63166fb8eefb6b2e65b22a5fcb2058a41bfff878834b9af80d937d3cf"
+      }
+    },
+    {
+      "name": "opposite_contacts_3px",
+      "family": "close_true_junctions",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Keep both branches and intervening evidence; no fixed-distance real-node assertion.",
+      "source_pixels": 273,
+      "native_source_pixels": 1092,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "be0f22c20c0b50cc128edd646dc1bb051eaf8f648a710f7f111201e1eb36c7e7",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "48465eed0d79cb2c8219ebde108ecf2e520e0eefbb3947c9e70c8e485ac27a99",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "be0f22c20c0b50cc128edd646dc1bb051eaf8f648a710f7f111201e1eb36c7e7"
+      },
+      "native_array_sha256": {
+        "gray": "ed2f27f8a54d63577f09954594eca3410d2ae768feb0ca543df5c3def7e0db0c",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "641079f52ccad753d9113d6c3658c11da9eb618f334451b2131f8373957d3c0f",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "ed2f27f8a54d63577f09954594eca3410d2ae768feb0ca543df5c3def7e0db0c"
+      }
+    },
+    {
+      "name": "opposite_contacts_6px",
+      "family": "close_true_junctions",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Keep both branches and intervening evidence; no fixed-distance real-node assertion.",
+      "source_pixels": 273,
+      "native_source_pixels": 1092,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "af42419ad8894928fbc77384713c4f64f9d383b54da5e0952380fe45000a2f18",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "bb16d28aef080f84b36175253e0a7652e0cdc48dacb2500aaf507e129c425fb0",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "af42419ad8894928fbc77384713c4f64f9d383b54da5e0952380fe45000a2f18"
+      },
+      "native_array_sha256": {
+        "gray": "e6a38cf79aed52cf8fd65e755dd520f3fd5ce397dbe16e753d48badee6d0e857",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "e5a06a9f10454b743c0173ce195fdf7ecb92b9bb3470ac2c3daa079af21a1eb5",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "e6a38cf79aed52cf8fd65e755dd520f3fd5ce397dbe16e753d48badee6d0e857"
+      }
+    },
+    {
+      "name": "text_touching_line_protected",
+      "family": "text_engineering_contact",
+      "expectation": "whole_source_rejection",
+      "notes": "A small protected text region intersects the full connected source; preserve the complete source.",
+      "source_pixels": 934,
+      "native_source_pixels": 3736,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "414cf21bd44702e84a143db590ac8ea8fb1750cd0d273e448db35d2ddd1b376f",
+        "protected": "1c56d2c7f6a61313e452f9bab4d89f593bcb5eff7cd5c165a2559469f2178fc6",
+        "must_retain": "10fc1b7480b2f6268cccb7158cb61f82e92c179aeb02597ca9b6d9d19b098f0d",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "414cf21bd44702e84a143db590ac8ea8fb1750cd0d273e448db35d2ddd1b376f"
+      },
+      "native_array_sha256": {
+        "gray": "b900c0b80f0a5fa01563559add6a3c3a72387637d5b5f13edc83e5029295ae98",
+        "protected": "381f282a553287ceca2f84d13493179790ce27de28449ded913b31fb1b86410f",
+        "must_retain": "f1044854cbc9cc773efeb840a5a0ad1add3d37e818b7da4f756ce95884980912",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "b900c0b80f0a5fa01563559add6a3c3a72387637d5b5f13edc83e5029295ae98"
+      }
+    },
+    {
+      "name": "text_touching_line_unlabelled",
+      "family": "text_engineering_contact",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Unknown membership cannot be resolved merely by long straight geometry.",
+      "source_pixels": 934,
+      "native_source_pixels": 3736,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "414cf21bd44702e84a143db590ac8ea8fb1750cd0d273e448db35d2ddd1b376f",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "33464690ca4d5eae950e8788d7f252e9fcc495aa1e23c1eef9d3880358ea0086",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "414cf21bd44702e84a143db590ac8ea8fb1750cd0d273e448db35d2ddd1b376f"
+      },
+      "native_array_sha256": {
+        "gray": "b900c0b80f0a5fa01563559add6a3c3a72387637d5b5f13edc83e5029295ae98",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "563069fdfe6948e66bb4c9b264e9ddbd32f9db5bbbf0ede8e6e5721c52a668cc",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "b900c0b80f0a5fa01563559add6a3c3a72387637d5b5f13edc83e5029295ae98"
+      }
+    },
+    {
+      "name": "closed_rectangle",
+      "family": "hole_closed_loop",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Hole must stay paper. A source-supported closed representation is allowed; an invented open shortcut is not.",
+      "source_pixels": 1224,
+      "native_source_pixels": 4896,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "49c2a3198e694fa676d25bdc24708f5901e9850cade6b4c24a09d8ed90865615",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "white_fence": "ff5368bbe9ce69da4071f95ea2fe51f9de0ff0d8c7a241f2006da9781ac4890c",
+        "visible": "49c2a3198e694fa676d25bdc24708f5901e9850cade6b4c24a09d8ed90865615"
+      },
+      "native_array_sha256": {
+        "gray": "6aeea5293fa58c7b754cf984d33ae7c1628a569d8579fcc105c0f08b270c86ab",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "white_fence": "c21269b3a9c86ffe9fbf229ac5789218b919969ae6d5541df43157137d7b699c",
+        "visible": "6aeea5293fa58c7b754cf984d33ae7c1628a569d8579fcc105c0f08b270c86ab"
+      }
+    },
+    {
+      "name": "loop_with_short_tail",
+      "family": "hole_closed_loop",
+      "expectation": "partial_candidate_permitted",
+      "notes": "The attached short tail and its core stay; the hole remains paper.",
+      "source_pixels": 1314,
+      "native_source_pixels": 5256,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "58ab6090ca062cda361dec32fccf88c8cf53b7a1cefdabdba892c9752e547265",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "1887c6f7b8a374f40e29f5e9f655158546c9f0848e9e63b491ed3f16f59d51ae",
+        "white_fence": "ff5368bbe9ce69da4071f95ea2fe51f9de0ff0d8c7a241f2006da9781ac4890c",
+        "visible": "58ab6090ca062cda361dec32fccf88c8cf53b7a1cefdabdba892c9752e547265"
+      },
+      "native_array_sha256": {
+        "gray": "f74f75889d33937c59a95b09c93737740bcc1a9b1e3113ce9b8fbdd765941e80",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "75f6c8b715380a1e60261dca6ddb5260500ce2cbfae7ac68a832e31ae66253fd",
+        "white_fence": "c21269b3a9c86ffe9fbf229ac5789218b919969ae6d5541df43157137d7b699c",
+        "visible": "f74f75889d33937c59a95b09c93737740bcc1a9b1e3113ce9b8fbdd765941e80"
+      }
+    },
+    {
+      "name": "true_Y_branch",
+      "family": "real_branch",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Branch is deliberate, not skeleton noise; retained center remains undecided semantically.",
+      "source_pixels": 1024,
+      "native_source_pixels": 4096,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "a7c6763e1cf65380c04e23f71517e11df459f183424f5a24b209b468b8009d35",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "4899fde98471808f65f69ab57eab2a736fc00e3970319f7511ed17bdd6c87361",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "a7c6763e1cf65380c04e23f71517e11df459f183424f5a24b209b468b8009d35"
+      },
+      "native_array_sha256": {
+        "gray": "0fc727fb1892d53474e0c4fcad6b3666f12b0138511a87739cc9aa90f4d12c36",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "534ae798434770bac7fcc5fe875a0ba54419e0298f84e3d75a5f1ed1bd3ce7fb",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "0fc727fb1892d53474e0c4fcad6b3666f12b0138511a87739cc9aa90f4d12c36"
+      }
+    },
+    {
+      "name": "two_boxes_shared_stroke",
+      "family": "shared_stroke",
+      "expectation": "partial_candidate_permitted",
+      "notes": "Shared vertical stroke and both holes stay; no invented historical object identity.",
+      "source_pixels": 1965,
+      "native_source_pixels": 7860,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "00555049f5b1878e9d14d6d7f9c999f54d25c178dd44a7c9fef6234ed69e48c8",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "210fad383a9c7f85aa01610c866872b17aea52b61ebb2f21a2427f87c9044eec",
+        "white_fence": "9ea8c619c04236cfad45968c79a2a79ead2fd93da509da10c71bed37398c4ebd",
+        "visible": "00555049f5b1878e9d14d6d7f9c999f54d25c178dd44a7c9fef6234ed69e48c8"
+      },
+      "native_array_sha256": {
+        "gray": "56bd3b944d53a9a8d2cd5e809f89f7411f7c8e83a36f88612da6a574d032fd11",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "71feb9b4ef2371383d298f04483fc1734c2cd1ecee3c24313f59f566e2b1795c",
+        "white_fence": "bcdaafed0a97869c9371c12eb6fb7543a551887537f3272325d3106f9f84cda9",
+        "visible": "56bd3b944d53a9a8d2cd5e809f89f7411f7c8e83a36f88612da6a574d032fd11"
+      }
+    },
+    {
+      "name": "logo",
+      "family": "protected_sources",
+      "expectation": "whole_source_rejection",
+      "notes": "Explicitly protected full source: no candidate retirement, irrespective of geometric fit.",
+      "source_pixels": 1785,
+      "native_source_pixels": 7140,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "dce1a077c1790c9d6e98561fd985361f5732cfb4521e5b31cdf0e89a99b173f9",
+        "protected": "359346dd33fb7fe9e8050022ce4122ff38cb6df8fa5d8510e7a6a9c9421e182e",
+        "must_retain": "359346dd33fb7fe9e8050022ce4122ff38cb6df8fa5d8510e7a6a9c9421e182e",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "dce1a077c1790c9d6e98561fd985361f5732cfb4521e5b31cdf0e89a99b173f9"
+      },
+      "native_array_sha256": {
+        "gray": "67ae8e0cad669d7d466d690afcdd0331acf0150ddc21a799e7920495684bd210",
+        "protected": "6a7e325d7f59be57ccdd5a6adabcf71c0026148dc65f91822699ef13888156f5",
+        "must_retain": "6a7e325d7f59be57ccdd5a6adabcf71c0026148dc65f91822699ef13888156f5",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "67ae8e0cad669d7d466d690afcdd0331acf0150ddc21a799e7920495684bd210"
+      }
+    },
+    {
+      "name": "signature",
+      "family": "protected_sources",
+      "expectation": "whole_source_rejection",
+      "notes": "Explicitly protected full source: no candidate retirement, irrespective of geometric fit.",
+      "source_pixels": 1564,
+      "native_source_pixels": 6256,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "3b151725974c36862d1d7cf322cd0189948385b9e5f9f574c535ea714a5f9718",
+        "protected": "058b97fe3bf4d0c4b9ff0a7d82fbcc4c56a68fcfe83222d0ba0735286dad93b7",
+        "must_retain": "058b97fe3bf4d0c4b9ff0a7d82fbcc4c56a68fcfe83222d0ba0735286dad93b7",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "3b151725974c36862d1d7cf322cd0189948385b9e5f9f574c535ea714a5f9718"
+      },
+      "native_array_sha256": {
+        "gray": "5ac7fad44f2072d1710339f7281ad764ed8d7a1e38c2b95b83dccbeaa172de8a",
+        "protected": "91a8b6451a239a71616ae38ca50dea83894a6e0065176e620c246fdb84a336d3",
+        "must_retain": "91a8b6451a239a71616ae38ca50dea83894a6e0065176e620c246fdb84a336d3",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "5ac7fad44f2072d1710339f7281ad764ed8d7a1e38c2b95b83dccbeaa172de8a"
+      }
+    },
+    {
+      "name": "manual_protection",
+      "family": "protected_sources",
+      "expectation": "whole_source_rejection",
+      "notes": "Explicitly protected full source: no candidate retirement, irrespective of geometric fit.",
+      "source_pixels": 1011,
+      "native_source_pixels": 4044,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "06145cec5d6a7b6cf3fb55a3cd5ae51b7b4b3ea6cfe1c11de162275937dc4b90",
+        "protected": "d18fc52beddd4723491ca0efb5d55e8baf885f0ad10d3e9a18f6a7ae0fe71165",
+        "must_retain": "d18fc52beddd4723491ca0efb5d55e8baf885f0ad10d3e9a18f6a7ae0fe71165",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "06145cec5d6a7b6cf3fb55a3cd5ae51b7b4b3ea6cfe1c11de162275937dc4b90"
+      },
+      "native_array_sha256": {
+        "gray": "4659bcfc7b147e84028b1ec31ff89b0fe3b3c6c5b9593919d6d10fa2e6bb33cb",
+        "protected": "9494d4cebef2c3da54c7ab03a6ba44a251e98b3ba2ea7dc2df5f7f1f602345f0",
+        "must_retain": "9494d4cebef2c3da54c7ab03a6ba44a251e98b3ba2ea7dc2df5f7f1f602345f0",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "4659bcfc7b147e84028b1ec31ff89b0fe3b3c6c5b9593919d6d10fa2e6bb33cb"
+      }
+    },
+    {
+      "name": "already_claimed_fragment",
+      "family": "old_correct_owner",
+      "expectation": "whole_source_rejection",
+      "notes": "Only a small source fragment is already owned; new processing must not claim the larger connected source.",
+      "source_pixels": 1011,
+      "native_source_pixels": 4044,
+      "dpi": 100.0,
+      "native_dpi": 200.0,
+      "input_array_sha256": {
+        "gray": "06145cec5d6a7b6cf3fb55a3cd5ae51b7b4b3ea6cfe1c11de162275937dc4b90",
+        "protected": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "must_retain": "d18fc52beddd4723491ca0efb5d55e8baf885f0ad10d3e9a18f6a7ae0fe71165",
+        "white_fence": "2aae7dc846aaf25f1cadf55f1666862046c6db9d65d84bdc07fa039dac405606",
+        "visible": "f86997df1df88e19a90b56b0b0f392292baeddd45f00d7e6bb4dc8b1a6809fcb"
+      },
+      "native_array_sha256": {
+        "gray": "4659bcfc7b147e84028b1ec31ff89b0fe3b3c6c5b9593919d6d10fa2e6bb33cb",
+        "protected": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "must_retain": "9494d4cebef2c3da54c7ab03a6ba44a251e98b3ba2ea7dc2df5f7f1f602345f0",
+        "white_fence": "3381de4ca9f3a477f25989dfc8b744e7916046b7aa369f61a9a2f7dc0963ec9e",
+        "visible": "c8e962610b0c7bdacdd18b6d5a09a819408ab9a618dab83084cfab875d883186"
+      }
+    }
+  ],
+  "source_files": {
+    "independent_fixtures.py": "03b29dc055391c79e513b0a2d4fa4adaeae876046d718512e9b20dd903e075bb",
+    "independent_oracle.py": "06f808cd349775c7647d8ba21fd724ea75cb075685a493ac10906f90fd82ba8c",
+    "test_independent_oracle.py": "05c820a801c853c693d909522827d7d668e8cdba8b8fa9ebe8d2167c4deb6690"
+  },
+  "limitations": [
+    "No experiment evaluated yet.",
+    "Synthetic source conservation is not real drawing accuracy or editable benefit.",
+    "Annotations define short branches, shared cores, white fences, and protected regions independently of proposal code.",
+    "Object identity and electrical connectivity are unknown from these raster controls."
+  ]
+}
