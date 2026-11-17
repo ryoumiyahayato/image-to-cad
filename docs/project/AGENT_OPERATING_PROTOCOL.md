@@ -85,6 +85,16 @@ Rules:
 - update [CURRENT_TASK.md](CURRENT_TASK.md), [NEXT_TASK.md](NEXT_TASK.md), and [CHECKPOINT.md](CHECKPOINT.md);
 - stop at the declared stop condition.
 
+## Accuracy R&D execution — substantive experiment required (2026-11-17)
+
+When the user has explicitly authorized an **accuracy R&D execution task**, this is execution mode, not an indefinite audit or suggestion exercise. Follow [《精度研发与有效实验硬要求》](ACCURACY_RND_EXPERIMENT_REQUIREMENTS_ZH.md):
+
+- Each R&D round must **run a real algorithm experiment**, with executable code/prototype, a relevant real-source failure, a before/after or baseline/candidate comparison, and meaningful negative controls. A proposal, report, replayed old tests, or a toy self-confirming test is not an experiment deliverable.
+- Basic unit tests, synthetic controls and smoke checks are useful supporting evidence, but **cannot count as the round's substantive accuracy improvement** unless tied to an actual difficult failure and corroborated by real-source output.
+- Preserve failed branches, output, counterexamples, commands and logs; attempt a technically justified alternative when feasible. Record NO_GO honestly instead of relaxing guards or inventing success.
+- After local mechanism validation, require normal full-page output and non-target regression before claiming a production candidate. Only real target-CAD GUI operations that cloud tools cannot verify are assigned locally.
+- This section does not authorize unrequested model training, private-data disclosure, modifying main, or overriding the product and acceptance contracts.
+
 ## Conflict handling
 
 When code or automated evidence conflicts with user UAT:
