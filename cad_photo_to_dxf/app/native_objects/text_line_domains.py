@@ -1432,10 +1432,10 @@ def refine_text_line_domains(
                 observations, domain, labels, roi
             )
             for alternative in alternatives:
-                selected, excluded = scope_words_to_source_domain(
+                applicable_words, excluded = scope_words_to_source_domain(
                     alternative["words"], domain, labels, roi
                 )
-                alternative["words"] = selected
+                alternative["words"] = applicable_words
                 alternative["source_scope_excluded_raw_words"] = excluded
             seed["discovery_strings"] = sorted(
                 {

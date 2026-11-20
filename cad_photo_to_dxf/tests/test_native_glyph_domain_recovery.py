@@ -1,6 +1,7 @@
 """Source-domain regressions: nearby rules, true suffixes and truncation."""
 
 import copy
+import json
 import numpy as np
 from scipy.ndimage import find_objects
 
@@ -128,3 +129,107 @@ def test_i_upper_i_and_one_are_exposed_at_exact_positions_without_rewrite():
     assert conflicts[0]["character_index_zero_based"] == 0
     assert conflicts[0]["alternatives"] == ["1", "I", "i"]
     assert strings == ["iST FLOOR", "IST FLOOR", "1ST FLOOR", "OTHER"]
+
+
+def test_neighbor_scope_refinement_preserves_selected_region_ledger(
+    tmp_path, monkeypatch
+):
+    """Run the refinement driver with canned observations and no OCR engine.
+
+    The glyph/neighbor partition is real; unrelated recognition, grouping and
+    contract validation are stubbed so this checks the selected-region ledger
+    after the branch that filters words, not recognition acceptance.
+    """
+    image, roi, labels, line = source_fixture()
+    original_image = image.copy()
+    region = {
+        "id": "TR-SYNTHETIC",
+        "text": "UNRESOLVED",
+        "complete": False,
+        "bbox_xyxy_px": [42, 68, 105, 96],
+        "discovery_bbox_xyxy_px": line["bbox_xyxy_px"],
+        "inspection_bbox_xyxy_px": [42, 68, 105, 96],
+        "unresolved_reasons": ["SYNTHETIC_PENDING_OBSERVATION"],
+        "compact_source_ink_mask": {"runs_y_x0_x1": []},
+    }
+    text_data = {
+        "regions": [region],
+        "groups": [],
+        "roi_xyxy_px": roi,
+        "source_size_px": [180, 180],
+    }
+    original_text = copy.deepcopy(text_data)
+    upstream = tmp_path / "upstream.json"
+    text._dump(upstream, text_data)
+    provenance = {
+        "source_sha256": "synthetic-source",
+        "text_path": str(upstream),
+        "text_sha256": text._sha(upstream),
+    }
+    words = [
+        {"text": "FFF", "bbox_xyxy_px": [50, 70, 93, 94], "confidence": 95},
+        {"text": "IFFF", "bbox_xyxy_px": [42, 68, 105, 96], "confidence": 95},
+    ]
+    original_words = copy.deepcopy(words)
+    line.update(
+        context_support=2,
+        anchors=[
+            {"all_observation_ids": ["synthetic"], "raw_text_alternatives": ["FFF"]}
+        ],
+    )
+    monkeypatch.setattr(domains, "_verify_inputs", lambda *args: roi)
+    monkeypatch.setattr(
+        domains,
+        "_collect_current_observations",
+        lambda *args: (
+            copy.deepcopy(words),
+            {"cache": {}, "source_identity": {"source_sha256": "synthetic-source"}},
+        ),
+    )
+    monkeypatch.setattr(domains, "_anchors", lambda *args: [])
+    monkeypatch.setattr(domains, "_anchor_line", lambda *args: (line, None))
+    monkeypatch.setattr(domains, "_unread_boundary_ink", lambda *args: ([], []))
+    monkeypatch.setattr(domains, "_regroup", lambda *args: [])
+    monkeypatch.setattr(domains, "validate_text_regions", lambda *args: None)
+    monkeypatch.setattr(text, "_overlay", lambda *args: {})
+    canned_calls = []
+
+    def canned_observation(image, box, psm, *args, **kwargs):
+        canned_calls.append(psm)
+        return copy.deepcopy(words), {
+            "status": "COMPLETED",
+            "specification": {"crop_xyxy_px": box, "psm": psm},
+            "tsv_sha256": "synthetic-no-engine",
+            "child_cpu_seconds": 0.0,
+        }
+
+    def keep_pending(seed, alternatives, *args):
+        result = copy.deepcopy(region)
+        result["completeness_evidence"] = {"alternatives": alternatives}
+        return result
+
+    monkeypatch.setattr(text, "_ocr", canned_observation)
+    monkeypatch.setattr(text, "_complete_region", keep_pending)
+    output = tmp_path / "refinement"
+    result = domains.refine_text_line_domains(
+        image,
+        text_data,
+        output,
+        cache_dir=None,
+        upstream_provenance=provenance,
+    )
+    selection = json.loads((output / "selection.json").read_text())
+    summary = json.loads((output / "recovery_summary.json").read_text())
+    assert result["line_domain_recovery"]["selected_region_ids"] == [region["id"]]
+    assert selection["selected_region_ids"] == [region["id"]]
+    assert summary["selected_regions"] == 1
+    assert summary["resources"]["selected_regions"] == 1
+    assert len(canned_calls) == 2
+    refined = result["regions"][0]
+    assert refined["line_domain_refinement"]["new_domain"]["glyph_neighbor_separation"]
+    for alternative in refined["completeness_evidence"]["alternatives"]:
+        assert [word["text"] for word in alternative["words"]] == ["FFF"]
+        assert alternative["all_words"] == original_words
+    assert words == original_words
+    assert text_data == original_text
+    assert np.array_equal(image, original_image)
