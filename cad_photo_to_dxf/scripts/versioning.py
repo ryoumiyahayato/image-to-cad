@@ -2,10 +2,26 @@ from __future__ import annotations
 
 from pathlib import Path
 import re
-from app.version import PRODUCT_NAME
+from app.version import PRODUCT_NAME, PRODUCT_STATUS, __version__
 
 
 _VERSION_PATTERN = re.compile(r"^(\d+)\.(\d+)\.(\d+)(?:-dev)?$")
+
+
+def require_product_release_approval(
+    version: str = __version__, status: str = PRODUCT_STATUS,
+) -> None:
+    """Block publishing a development/NO_GO baseline; building remains available.
+
+    This guard does not establish product acceptance. A future GO requires the
+    independent CAD and engineer acceptance in the current product baseline.
+    """
+    if status != "GO" or not re.fullmatch(r"\d+\.\d+\.\d+", version):
+        raise RuntimeError(
+            f"Formal release blocked: {version} / {status}. "
+            "Complete native objects, target-CAD roundtrip and engineer acceptance "
+            "must be verified before product release. Development builds remain available."
+        )
 
 
 def parse_version(version: str) -> tuple[int, int, int, int]:

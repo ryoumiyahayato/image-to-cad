@@ -1,5 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+import json
 import os
 from pathlib import Path
 import sys
@@ -11,7 +12,7 @@ ROOT = Path(SPECPATH)
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.version import __version__
+from app.version import __version__, product_status_payload
 from scripts.prepare_cad_fonts import prepare_font_bundle
 from scripts.prepare_librecad_font import prepare_librecad_font
 from scripts.versioning import write_windows_version_info
@@ -21,6 +22,12 @@ version_info = write_windows_version_info(
     ROOT / "build" / "version_info.generated.txt",
     __version__,
 )
+product_status_file = ROOT / "build" / "product_status.generated.json"
+product_status_file.write_text(
+    json.dumps(product_status_payload(), ensure_ascii=False, indent=2) + "\n",
+    encoding="utf-8",
+)
+product_baseline = ROOT.parent / "docs" / "project" / "NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md"
 font_resource_directory = ROOT / "resources" / "fonts"
 font_resource_directory.mkdir(parents=True, exist_ok=True)
 font_license_path = font_resource_directory / "OFL-1.1.txt"
@@ -54,6 +61,8 @@ for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime"):
 
 datas += [
     ("README.md", "."),
+    (str(product_baseline), "docs/product"),
+    (str(product_status_file), "docs/product"),
     ("samples/test.jpg", "samples"),
     ("app/geometry_rules", "app/geometry_rules"),
     (str(font_directory), "resources/fonts"),

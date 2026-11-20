@@ -7,6 +7,7 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from app import __version__
+from app.version import product_status_payload
 from app.core.cancellation import (
     CancellationToken,
     ProgressCallback,
@@ -148,7 +149,7 @@ def _start_single_export(window: Any) -> None:
             "当前预览与最终结构数据不一致，请重新处理当前页后再导出。",
         )
         return
-    selection = _select_output_path(window, default_name="drawing-page.dwg")
+    selection = _select_output_path(window, default_name="drawing-page.dxf")
     if selection is None:
         return
     requested_path, requested_dwg = selection
@@ -209,6 +210,7 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
+            "product_status": product_status_payload(),
             "mode": "editable_line_text_single_page",
             "input": str(source_path) if source_path is not None else None,
             "text_review": (

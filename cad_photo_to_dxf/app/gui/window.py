@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from app import __version__
-from app.version import PRODUCT_NAME
+from app.version import PRODUCT_NAME, PRODUCT_STATUS
 from app.ocr.auxiliary_recognition import AuxiliaryRecognitionResult
 from app.core.cancellation import CancellationToken
 from app.core.structure import FinalStructure
@@ -115,7 +115,7 @@ class MainWindow(QMainWindow):
         self._trace_vertex_count = 0
         self._reviewed_circles = []
         QMainWindow.__init__(self)
-        self.setWindowTitle(f"{PRODUCT_NAME} {__version__}")
+        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS}")
         self.resize(1450, 900)
         self.original_image: np.ndarray | None = None
         self.corrected_image: np.ndarray | None = None
@@ -169,7 +169,7 @@ class MainWindow(QMainWindow):
         self._current_pdf_page_index = 0
         self._pdf_page_states: dict[int, dict[str, Any]] = {}
         self._pdf_page_sizes_mm: dict[int, tuple[float, float]] = {}
-        self.setWindowTitle(f"{PRODUCT_NAME} {__version__}")
+        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS}")
         self.statusBar().showMessage("请先导入 JPG、PNG 或扫描 PDF")
         if self.calibration is None:
             self.info_label.setText(UNSCALED_LABEL)

@@ -53,6 +53,9 @@ jobs:
           fi
           echo "value=$version" >> "$GITHUB_OUTPUT"
 
+      - name: Require current product release approval
+        run: python -c "from scripts.versioning import require_product_release_approval; require_product_release_approval()"
+
       - name: Install application dependencies and pinned FreeCAD
         shell: bash
         run: |
