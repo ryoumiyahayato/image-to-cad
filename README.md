@@ -45,11 +45,17 @@ python -m venv .venv
 
 历史仅支持部分原生矢量 PDF 的独立工具仍见 [native-first 工具说明](tools/native_first/README_ZH.md)，**不代表扫描图纸已经重建完成**。
 
+### 当前入口和默认构建的边界
+
+GUI 与 CLI 仍调用 `ProductionProcessingService.process_page`，使用已保留的 `FinalStructure` 和 DXF serializer。最新私有 `app/native_objects` 研究尚未迁入这个公开入口；界面、CLI 帮助和导出报告明确标为 `LOCAL_NO_GO / preserved_main_baseline`，不得按目标规范倒推实现已经完成。
+
+本清理分支把单页和多页 GUI 的默认保存格式统一为 **DXF**；DWG 仍须显式选择外部转换器，未取得产品往返验收。默认打包继续使用同一公开入口，同时携带当前产品基准和状态。`0.3.0-dev` 或未达到 GO 的版本不能通过正式 Release 发布门禁；开发构建仍可运行。
+
 ## 状态、历史与代码合入
 
 - 项目当前版本仍为 `0.3.0-dev`，暂不宣称正式发布。
 - 研究、产品源码、私有原图与可公开文档分层管理。与新设计冲突的旧路线转历史或标记 SUPERSEDED，不再作为默认开发任务。
-- PR #38、#39 及其他独立分支存在重叠或祖先关系；合并/删除前先清查独有提交、保护回归、归档引用和开放 PR。见 [仓库清理审计](docs/project/BRANCH_AND_CONTENT_CLEANUP_20261120.md)。
+- 清理第二阶段已关闭 PR #38／#39，实际删除 7 条冗余远端分支；三条源码末端、两条含独有资产的 sync 分支和 15 个旧归档标签保留。11 个重复或空文件已从本清理分支的 Git 跟踪中删除。见 [执行及恢复账本](docs/project/CLEANUP_EXECUTED_20261120.md)；main 未合并这些清理更改。
 - 原版长期意图备忘录、旧研究与工程证据可供历史追溯，但**当前产品契约**由 [2026-11-20 基准](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) 定义。
 - 无论独立研究输出多漂亮，都必须在最终保存 DXF 中核对，并经过目标 CAD 的打开、编辑、保存和重开。未测即 NOT_RUN。
 

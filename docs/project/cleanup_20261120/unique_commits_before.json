@@ -1,0 +1,256 @@
+[
+  {
+    "branch": "accuracy/compound-source-partitions-20261116",
+    "sha": "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 1,
+    "behind_main": 11,
+    "merge_base": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "accuracy/explicit-source-region-adapter-20261117",
+    "sha": "d6d26c142f2d1998ef69ac181b18718dddb6d2d1",
+    "protected": false,
+    "status": "ahead",
+    "unique_vs_main": 10,
+    "behind_main": 0,
+    "merge_base": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f",
+      "c47803bc64a01f28f1cf9996c332fdd3076c58e3",
+      "210817bb43f711d9985acba992cfde66e329f137",
+      "b3f557273ee1de7c0c16671ed4929bb552df8f46",
+      "f50cbc20a45f9596441d47323407b804cefcd06c",
+      "19ec1288932436a15439767a710c130362ac16ac",
+      "da3f3747194a98a27defaeb49631f1d5fa5dd08e",
+      "ce7672a633f5694f98bb5cb1e6886c5ac62cc42d",
+      "98b9cff608cd6aa4367a69a7a467c1fe22f5831a",
+      "d6d26c142f2d1998ef69ac181b18718dddb6d2d1"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "accuracy/native-grid-compound-parts-20261116",
+    "sha": "2cba247dc9582485a74d696c2c49e83a558fa1a1",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 5,
+    "behind_main": 11,
+    "merge_base": "d5c05642de7150b254ccccafb8716bf7dfbab503",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f",
+      "c47803bc64a01f28f1cf9996c332fdd3076c58e3",
+      "210817bb43f711d9985acba992cfde66e329f137",
+      "b3f557273ee1de7c0c16671ed4929bb552df8f46",
+      "2cba247dc9582485a74d696c2c49e83a558fa1a1"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "accuracy/shared-core-directional-tracks-20261117",
+    "sha": "775492497a1207c3ef7dae1af4f3a302aa78af39",
+    "protected": false,
+    "status": "ahead",
+    "unique_vs_main": 11,
+    "behind_main": 0,
+    "merge_base": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f",
+      "c47803bc64a01f28f1cf9996c332fdd3076c58e3",
+      "210817bb43f711d9985acba992cfde66e329f137",
+      "b3f557273ee1de7c0c16671ed4929bb552df8f46",
+      "f50cbc20a45f9596441d47323407b804cefcd06c",
+      "19ec1288932436a15439767a710c130362ac16ac",
+      "da3f3747194a98a27defaeb49631f1d5fa5dd08e",
+      "ce7672a633f5694f98bb5cb1e6886c5ac62cc42d",
+      "98b9cff608cd6aa4367a69a7a467c1fe22f5831a",
+      "d6d26c142f2d1998ef69ac181b18718dddb6d2d1",
+      "775492497a1207c3ef7dae1af4f3a302aa78af39"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "delivery/w02-glyph-source-boundary",
+    "sha": "c0671df319be467582c00354f1307a52c0116a3f",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 2,
+    "behind_main": 26,
+    "merge_base": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "ece85a401a93f12743e493ac050929bbfd5a8da5",
+      "c0671df319be467582c00354f1307a52c0116a3f"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "delivery/w02-librecad-handoff",
+    "sha": "ebe4823522a12e6275c3b0dd72d62bb7b78e1e0e",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 4,
+    "behind_main": 26,
+    "merge_base": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "ece85a401a93f12743e493ac050929bbfd5a8da5",
+      "c0671df319be467582c00354f1307a52c0116a3f",
+      "98de5e4e63371a5ddfb98c86a61f691f203e0fab",
+      "ebe4823522a12e6275c3b0dd72d62bb7b78e1e0e"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "delivery/w02-member-lifecycle-rebuilt",
+    "sha": "ece85a401a93f12743e493ac050929bbfd5a8da5",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 1,
+    "behind_main": 26,
+    "merge_base": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "ece85a401a93f12743e493ac050929bbfd5a8da5"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "delivery/w02-weak-edge-source",
+    "sha": "98de5e4e63371a5ddfb98c86a61f691f203e0fab",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 3,
+    "behind_main": 26,
+    "merge_base": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "ece85a401a93f12743e493ac050929bbfd5a8da5",
+      "c0671df319be467582c00354f1307a52c0116a3f",
+      "98de5e4e63371a5ddfb98c86a61f691f203e0fab"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "docs/native-object-product-rebaseline-20261120",
+    "sha": "f2ad95703cf1ccb0284137bfe7fbc39b137f3217",
+    "protected": false,
+    "status": "ahead",
+    "unique_vs_main": 10,
+    "behind_main": 0,
+    "merge_base": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "6878b49adceb5d9afa69562ab2d45c2767fdfa1b",
+      "ef05381c37d8530f1d233051aab61ba62bac99e3",
+      "b0ca08d5d1c095030fc6b3943fb1287137fc4127",
+      "dfdc996a609e9d1c7669da7ec7dfaf2f84ab005f",
+      "1873eb504f5a13884a3fdf5c45bced5501869640",
+      "d5184bb2cd6c98a57c7355583ec3a484721bf030",
+      "c54af0ada55fb569c622047fe4eb5d4c6c40b974",
+      "37ea04ddbb3c4d49d14a5c4bdfef7bc6d552a534",
+      "6c4bd5f643af8d2ea8d8d24b009834568711aaeb",
+      "f2ad95703cf1ccb0284137bfe7fbc39b137f3217"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "fix/py312-singleton-validation-20261116",
+    "sha": "05424c491fa8be0d8ef87cb6c1a96f351731e31b",
+    "protected": false,
+    "status": "behind",
+    "unique_vs_main": 0,
+    "behind_main": 1,
+    "merge_base": "05424c491fa8be0d8ef87cb6c1a96f351731e31b",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "integration/compound-source-with-main-20261116",
+    "sha": "98b9cff608cd6aa4367a69a7a467c1fe22f5831a",
+    "protected": false,
+    "status": "ahead",
+    "unique_vs_main": 9,
+    "behind_main": 0,
+    "merge_base": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "3ab1311eaabfd6a391b36c681d0d4204f6dcc52f",
+      "c47803bc64a01f28f1cf9996c332fdd3076c58e3",
+      "210817bb43f711d9985acba992cfde66e329f137",
+      "b3f557273ee1de7c0c16671ed4929bb552df8f46",
+      "f50cbc20a45f9596441d47323407b804cefcd06c",
+      "19ec1288932436a15439767a710c130362ac16ac",
+      "da3f3747194a98a27defaeb49631f1d5fa5dd08e",
+      "ce7672a633f5694f98bb5cb1e6886c5ac62cc42d",
+      "98b9cff608cd6aa4367a69a7a467c1fe22f5831a"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "main",
+    "sha": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "protected": false,
+    "status": "identical",
+    "unique_vs_main": 0,
+    "behind_main": 0,
+    "merge_base": "5b2a76b716a568bd6dad0a1e1e2a5f80145f0395",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "sync/verified-online-r12-20261116",
+    "sha": "e0f09e0674efc90ec0abb3d9e626f4efaaec5b5b",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 3,
+    "behind_main": 3,
+    "merge_base": "e8ce4ac742ebbc439cefef47320975b303827af9",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "bd481dc23ed4615649b288b112a6591e68763012",
+      "4f84daa484fcd09fc6ddf6ad3db1b4c615039362",
+      "e0f09e0674efc90ec0abb3d9e626f4efaaec5b5b"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  },
+  {
+    "branch": "sync/20261116-recovered-progress",
+    "sha": "e398d6c99534142f17dfa71382d2405ab4a64899",
+    "protected": false,
+    "status": "diverged",
+    "unique_vs_main": 1,
+    "behind_main": 26,
+    "merge_base": "81f364fbe4eee1df00dadefabaef0d1a72993e6e",
+    "git_rev_list_returncode": 0,
+    "unique_commit_shas": [
+      "e398d6c99534142f17dfa71382d2405ab4a64899"
+    ],
+    "count_matches_api": true,
+    "stderr": ""
+  }
+]

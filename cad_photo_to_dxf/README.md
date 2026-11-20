@@ -1,5 +1,15 @@
 # Image to CAD（开发预览）
 
+> **2026-11-20 当前状态：0.3.0-dev / LOCAL_NO_GO。** 本目录是保留的公开应用基线，不是最近私有完整对象研究的已合并版本。当前唯一产品目标是完整、独立可编辑的原生二维 CAD 对象，参见源码仓库的 [产品基准](../docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)；目录包另携带 `docs/product/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md` 与 `docs/product/product_status.generated.json`。
+>
+> GUI 和 CLI 仍经过 `ProductionProcessingService.process_page`，从 `FinalStructure` 导出 DXF。新私有 `app/native_objects` 尚未接入。默认保存优先 DXF；DWG 需用户显式选择及外部转换器。普通文字、多行注释、完整框、墙/门/交汇和目标 CAD 往返仍有未完成验证，不能仅凭程序成功导出就认为对象已正确重建。
+>
+> Windows EXE 干净环境、Android APK、DWG 往返和工程师修图时间减半均未取得当前流程的验收。GUI、CLI 和报告显示研发状态；正式 Release 对开发版本或非 GO 状态拒绝发布。当前构建脚本可用于开发验证，不代表已交付软件。
+
+## 保留应用的历史功能说明（SUPERSEDED，2026-10-14）
+
+以下记录用于理解仍保留的接口与限制。涉及“当前支持”“直接编辑”“默认可编辑”的历史表述不构成 2026-11-20 的完整对象采用证明；与上述当前基准冲突时以新基准为准。旧源码及说明可从清理前提交 `f2ad95703cf1ccb0284137bfe7fbc39b137f3217` 恢复。
+
 产品版本唯一来源为 `app/version.py`。运行 `python main.py --version` 查看名称和版本。
 开发版本的 Windows numeric file version 使用前三段数字并补零；资源中的显示版本保留开发后缀。
 
@@ -84,7 +94,7 @@ DWG 仍由本机安装的 ODA File Converter 从 DXF 转换。ODA 不随程序�
 
 纸面毫米不是工程模型尺寸。没有独立模型尺度校准时，不得把 `paper_mm` 解释为真实施工尺寸。
 
-## 环境
+## 历史目标环境（当前 Windows 构建仍需实测）
 
 - Windows 10/11 x64；
 - Python 3.11+；

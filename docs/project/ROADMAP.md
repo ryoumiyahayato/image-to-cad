@@ -1,6 +1,19 @@
 # Controlled roadmap
 
-> Historical snapshot. The current product stage and task queue are in [PROJECT_STATUS.md](PROJECT_STATUS.md). This record does not authorize new work.
+## 当前阶段路线（2026-11-20）
+
+本路线遵守 [原生完整对象基准](NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)，各阶段须用真实输出及对应环境验证。
+
+1. 清理与恢复：保存独有源码，删除已证明冗余分支/文件；本轮实际记录见 [执行账本](CLEANUP_EXECUTED_20261120.md)。
+2. 入口整合与完整对象：在独立功能分支迁入可靠算法；新输入无旧缓存运行，文字/框/线/门等同一最终 DXF，按对象双向核查。
+3. CAD 编辑：目标 CAD 普通打开、独立编辑、保存和重开；未知及待修仍计入补绘成本。
+4. 桌面交付：真实 Windows 构建与干净机验证，长任务、取消、恢复与文件保护成立。
+5. 工程师区域验收：同范围同质量修图时间不超过手画一半后，才扩全页及新来源。
+6. Android：依赖和真机资源探针通过后选择本地或远程路线；不从 Linux 局部耗时推断手机能力。
+
+## 历史路线快照（SUPERSEDED）
+
+> 下文保留原阶段事实，不再授权当前工作。当前状态和任务见 [PROJECT_STATUS.md](PROJECT_STATUS.md) 与 [CURRENT_TASK.md](CURRENT_TASK.md)。
 
 Only one major problem may be active at a time. Each phase requires an isolated commit and a recoverable checkpoint.
 

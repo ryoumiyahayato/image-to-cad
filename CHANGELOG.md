@@ -4,6 +4,8 @@
 
 ## Unreleased — 2026-11-20（文档重定基准，尚未合并）
 
+- 第二阶段已实际删除 7 条远端冗余分支并关闭 #38/#39；独立清理分支移除 11 个重复/空文件，保留原 SHA、祖先关系及恢复清单。main 和旧归档标签不变。
+- 入口、报告和默认构建明确 LOCAL_NO_GO；GUI 默认 DXF，开发/NO_GO 版本禁止正式 Release。没有迁入尚未审查的私有原生对象算法。
 - 新设 [原生可编辑 CAD 对象重建产品契约](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)，明确完整对象重建、来源追溯和真实编辑的优先级。
 - 更新 README、AGENTS、PROJECT_STATUS、CURRENT_TASK、NEXT_TASK 及验收说明；旧产品意图文档标记为历史备忘录。
 - 新增 [分支与过时内容清理审计](docs/project/BRANCH_AND_CONTENT_CLEANUP_20261120.md)；仅列出核验后的候选和删除条件，并不代表分支已删。

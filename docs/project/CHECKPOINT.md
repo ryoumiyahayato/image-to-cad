@@ -1,5 +1,11 @@
 # 检查点
 
+## 2026-11-20：仓库清理第二阶段（未合并）
+
+基底为 PR #40 `f2ad95703cf1ccb0284137bfe7fbc39b137f3217`，main 仍 `5b2a76b716a568bd6dad0a1e1e2a5f80145f0395`。7 条远端分支已删除，#38/#39 关闭且保留恢复说明；独立分支 `chore/native-object-cleanup-20261120` 删除 11 个重复/空文件，约 15.68 MiB。三条源码末端、两条 sync 分支、15 个旧归档标签与保护基线保留；全部原 SHA 与文件 blob 见 [执行账本](CLEANUP_EXECUTED_20261120.md)。没有 main 强推、历史重写、生产合并或 Release。
+
+运行入口诚实标明保留基线，GUI 默认 DXF，开发/NO_GO 版本无法正式发布。新完整对象算法尚未接入公开入口，整体继续 LOCAL_NO_GO。实际测试以清理 Draft PR 的对应提交 CI 和随附验证记录为准，不能继承旧 CI 当作本次通过。
+
 ## 2026-11-16：PR #36 兼容主体与来源账本补充
 
 独立兼容分支基底 `d5c0564`，六项主体提交保存至 `593b23e1330588ca67040506982147c6caf1d518`，完整来源账本补充保存至 `57719e0fd5e05164e003d20fabcfb757dbe66979`。最终支持环境 Python 3.11.18 / pytest 8.4.2：unit 1,728 PASS / 26 SKIP、未变 drafting 代码的 88 PASS 保持有效，EXACT/Ruff/mypy/compileall/卫生检查通过；296 文件运行前后相同，inventory `08197e42eedfc8c9fa85aa7f31550c0b805da72d5482f47d954f3300ff2b97aa`。实际启动为 `593b23e` 加未提交同字节补充，不误标启动提交。原 Python 3.12 / PySide6 6.11.3 的 True-ref 失败未被宣称修复。
