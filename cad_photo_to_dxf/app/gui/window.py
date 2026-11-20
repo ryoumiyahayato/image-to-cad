@@ -11,6 +11,8 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
     QInputDialog,
     QMainWindow,
+    QScrollArea,
+    QSizePolicy,
     QMessageBox,
     QPushButton,
     QSplitter,
@@ -97,7 +99,9 @@ class MainWindow(QMainWindow):
         export_processed_pages_from_window as export_processed_pages,
     )
 
-    def __init__(self) -> None:
+    def __init__(self, *, processing_mode: str = "native-objects") -> None:
+        if processing_mode not in {"native-objects", "legacy"}:
+            raise ValueError(f"Unknown processing engine: {processing_mode}")
         self._librecad_font_install_report = None
         self._review_project = None
         self._completed_trace_key = None
@@ -194,8 +198,74 @@ class MainWindow(QMainWindow):
         from app.gui.review_async import preview_scheduler
 
         preview_scheduler()  # Optional heartbeat also covers project loading.
+        # The native product entry is the default workspace. The preserved
+        # legacy controls remain accessible only through an explicit tab/mode.
+        from app.gui.native_task_panel import NativeTaskPanel
+
+        legacy_workspace = self.takeCentralWidget()
+        self.workspace_tabs = QTabWidget(self)
+        self.native_task_panel = NativeTaskPanel(self)
+        self.native_workspace_scroll = QScrollArea(self)
+        self.native_workspace_scroll.setWidgetResizable(True)
+        self.native_workspace_scroll.setMinimumSize(0, 0)
+        self.native_workspace_scroll.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        self.native_workspace_scroll.setWidget(self.native_task_panel)
+        self.workspace_tabs.addTab(self.native_workspace_scroll, "原生任务 · native-objects")
+        legacy_scroll = QScrollArea(self)
+        legacy_scroll.setWidgetResizable(True)
+        legacy_scroll.setMinimumSize(0, 0)
+        legacy_scroll.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        legacy_scroll.setWidget(legacy_workspace)
+        self.workspace_tabs.addTab(legacy_scroll, "兼容工具 · legacy（显式选择）")
+        self.workspace_tabs.setCurrentIndex(0 if processing_mode == "native-objects" else 1)
+        self.setCentralWidget(self.workspace_tabs)
+        self.workspace_tabs.currentChanged.connect(self._workspace_changed)
+        self.native_task_panel.running_changed.connect(
+            lambda running: self.workspace_tabs.setTabEnabled(1, not running)
+        )
+        self.native_task_panel.ready_to_close.connect(self.close)
+        self._workspace_changed()
+        self._fit_initial_desktop_geometry()
+
+    def _fit_initial_desktop_geometry(self) -> None:
+        screen = self.screen()
+        if screen is None:
+            return
+        available = screen.availableGeometry()
+        width = min(1280, max(1, available.width() - 32))
+        height = min(900, max(1, available.height() - 80))
+        self.resize(width, height)
+        self.move(available.x() + max(0, (available.width() - width) // 2),
+                  available.y() + max(0, (available.height() - height) // 2))
+
+    def _native_task_panel_active(self) -> bool:
+        return (hasattr(self, "native_task_panel")
+                and self.workspace_tabs.currentWidget() is self.native_workspace_scroll)
+
+    def _workspace_changed(self, *_args) -> None:
+        native = self._native_task_panel_active()
+        engine = "native-objects" if native else "preserved_main_baseline / legacy"
+        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS} — {engine}")
+        self.statusBar().showMessage(f"当前引擎：{engine}；输出须核对，工程尺寸仍需标定")
+        for action in self._legacy_only_actions:
+            action.setEnabled(not native)
+        self._export_menu_action.setText("导出原生 DXF…" if native else "导出同一 CAD（DWG / DXF）")
+
+    def _open_active_source(self) -> None:
+        if self._native_task_panel_active():
+            self.native_task_panel.open_source()
+        else:
+            self.import_image()
+
+    def _export_active_result(self) -> None:
+        if self._native_task_panel_active():
+            self.native_task_panel.export_dxf()
+        else:
+            self.export_file()
 
     def _active_canvas(self) -> ImageCanvas | None:
+        if self._native_task_panel_active():
+            return self.native_task_panel.canvas
         current = self.tabs.currentWidget()
         if isinstance(current, ImageCanvas):
             return current
@@ -239,9 +309,9 @@ class MainWindow(QMainWindow):
     def _build_menu(self) -> None:
         file_menu = self.menuBar().addMenu("文件")
         open_action = QAction("导入图片", self)
-        open_action.triggered.connect(self.import_image)
+        open_action.triggered.connect(self._open_active_source)
         export_action = QAction("导出 DXF", self)
-        export_action.triggered.connect(self.export_file)
+        export_action.triggered.connect(self._export_active_result)
         file_menu.addAction(open_action)
         file_menu.addAction(export_action)
         save_review = QAction("保存校对项目…", self)
@@ -257,6 +327,13 @@ class MainWindow(QMainWindow):
         review_document = QAction("导出校对项目文档DXF…", self)
         review_document.triggered.connect(self.export_review_document)
         file_menu.addAction(review_document)
+        self._legacy_only_actions = (save_review, open_review, manual_text, review_document)
+        self._export_menu_action = export_action
+        file_menu.addSeparator()
+        exit_action = QAction("退出应用", self)
+        exit_action.setShortcut("Ctrl+Q")
+        exit_action.triggered.connect(self.close)
+        file_menu.addAction(exit_action)
         for menu_action in self.menuBar().actions():
             menu = menu_action.menu()
             if menu is None or menu.title() != "文件":
@@ -370,7 +447,9 @@ class MainWindow(QMainWindow):
             self.corrected_canvas.set_image(self.corrected_image)
 
     def _is_processing(self) -> bool:
-        return self._worker_thread is not None and self._worker_thread.isRunning()
+        native = getattr(self, "native_task_panel", None)
+        return (bool(native and (native.running or native.preview_running))
+                or (self._worker_thread is not None and self._worker_thread.isRunning()))
 
     def _ocr_enabled(self) -> bool:
         checkbox = getattr(self, "ocr_before_trace_checkbox", None)
@@ -731,6 +810,10 @@ class MainWindow(QMainWindow):
         self._start_processing(operation, completed, "正在自动校正图片…")
 
     def cancel_processing(self) -> None:
+        native = getattr(self, "native_task_panel", None)
+        if native is not None and native.running:
+            native.cancel()
+            return
         if self._cancellation_token is None:
             return
         self._cancellation_token.cancel()
@@ -739,6 +822,10 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("已请求取消，将在当前 OpenCV/OCR 调用返回后停止")
 
     def closeEvent(self, event) -> None:
+        native = getattr(self, "native_task_panel", None)
+        if native is not None and not native.request_close():
+            event.ignore()
+            return
         from app.gui.review_async import defer_close_for_review
 
         if defer_close_for_review(self):

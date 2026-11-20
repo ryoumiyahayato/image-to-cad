@@ -1,0 +1,107 @@
+{
+  "schema": "native-resource-manifest-v1",
+  "recorded_date": "2026-11-21",
+  "tested_platform": {
+    "implementation": "CPython",
+    "python": "3.12.14",
+    "system": "Linux",
+    "machine": "x86_64"
+  },
+  "packages": {
+    "certifi": "2026.10.19",
+    "charset-normalizer": "3.5.2",
+    "colorlog": "6.12.0",
+    "ezdxf": "1.4.5",
+    "flatbuffers": "25.12.19",
+    "fonttools": "4.61.1",
+    "idna": "3.18",
+    "numpy": "2.3.5",
+    "omegaconf": "2.4.0",
+    "onnxruntime": "1.29.0",
+    "opencv-python": "4.13.0.92",
+    "packaging": "26.3",
+    "pillow": "13.0.0",
+    "protobuf": "7.36.2",
+    "psutil": "7.2.2",
+    "pyclipper": "1.4.0",
+    "pymupdf": "1.26.6",
+    "pyparsing": "3.3.2",
+    "pypdfium2": "5.13.0",
+    "pyside6": "6.11.3",
+    "pyside6-addons": "6.11.3",
+    "pyside6-essentials": "6.11.3",
+    "pyyaml": "6.0.3",
+    "rapidocr": "3.9.2",
+    "requests": "2.34.2",
+    "scipy": "1.17.0",
+    "shapely": "2.2.0",
+    "shiboken6": "6.11.3",
+    "six": "1.17.0",
+    "tqdm": "4.70.1",
+    "typing-extensions": "4.16.0",
+    "urllib3": "2.8.0"
+  },
+  "tesseract": {
+    "version": "tesseract 5.5.0",
+    "tested_binary": {
+      "bytes": 51536,
+      "sha256": "74b76a5b994adcc18be362bf64ed5118082b2401d5d9a35242e92fc4c62e2b4b"
+    },
+    "tested_binary_hash_scope": "this Linux package build only; version and traineddata are required by default",
+    "language": "eng",
+    "traineddata": {
+      "filename": "eng.traineddata",
+      "bytes": 4113088,
+      "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+    },
+    "acquisition": [
+      "https://tesseract-ocr.github.io/tessdoc/Installation.html",
+      "https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.0",
+      "https://github.com/tesseract-ocr/tessdata_fast"
+    ]
+  },
+  "rapidocr": {
+    "version": "3.9.2",
+    "models": [
+      {
+        "relative_path": "models/PP-OCRv6_rec_small.onnx",
+        "bytes": 21234383,
+        "sha256": "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884",
+        "role": "used: independent recognition only"
+      },
+      {
+        "relative_path": "models/PP-OCRv6_det_small.onnx",
+        "bytes": 9929594,
+        "sha256": "090f04abcd9d9a7498bc4ebf677e4cb9bdce1fe4197ddb7e529f1ef44e1ff94f",
+        "role": "packaged by RapidOCR; not used by independent recognition route"
+      },
+      {
+        "relative_path": "models/ch_ppocr_mobile_v2.0_cls_mobile.onnx",
+        "bytes": 585532,
+        "sha256": "e47acedf663230f8863ff1ab0e64dd2d82b838fceb5957146dab185a89d6215c",
+        "role": "packaged by RapidOCR; not used by independent recognition route"
+      }
+    ],
+    "embedded_dictionary": {
+      "metadata_key": "character",
+      "encoding": "UTF-8",
+      "sha256": "f7aa897ca828a4c7c9e2739c30f9161a33306d532f020bcdb91dcfb664a5507e",
+      "decoding_character_count_including_CTC_blank_and_space": 18710
+    },
+    "acquisition": "https://pypi.org/project/rapidocr/3.9.2/",
+    "runtime_downloads": false
+  },
+  "font": {
+    "filename": "DejaVuSans.ttf",
+    "bytes": 759720,
+    "sha256": "57f73e11f51999432bf7ab22ce55b6f945d5eca1bf824404cfa9ec2e3718c84e",
+    "license_filename": "DejaVuSans.LICENSE.txt",
+    "tested_license": {
+      "bytes": 3859,
+      "sha256": "63d3ba759d12804c5b31a9d5940d855c1820d1f5999e6b0872eb1c7ff045fbc9"
+    },
+    "acquisition": "https://dejavu-fonts.github.io/",
+    "export_bundle_license_filename": "FONT_LICENSE_DejaVu.txt"
+  },
+  "scope": "Deployment identity only. Does not establish product GO, full content completeness, Windows native compatibility or engineer time savings."
+}

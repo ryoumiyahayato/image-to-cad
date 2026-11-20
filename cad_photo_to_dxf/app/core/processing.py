@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from app.diagnostics.observability import ObservationSink
+    from app.geometry.raster_trace import RasterTraceResult
 
 import json
 from collections.abc import Mapping
@@ -26,10 +27,7 @@ from app.geometry.junction_v2_consumer import (
     JunctionContract,
     validate_junction_contract_authority,
 )
-from app.ocr.ocr_recognition import MAX_OCR_CANDIDATES, MIN_OCR_CONFIDENCE
-from app.geometry.optimized_trace import trace_image_optimized
 from app.diagnostics.performance_observability import PerformanceCallback
-from app.geometry.raster_trace import RasterTraceResult
 from app.geometry.straight_line_reconstruction import (
     MAX_CONNECTION_DISTANCE_MM,
     PROTECTION_EXPANSION_MM,
@@ -69,6 +67,13 @@ DEFAULT_IMAGE_DPI = 240.0
 PRODUCTION_ALGORITHM_VERSION += "-observed-boxed-label-members-v1"
 PRODUCTION_ALGORITHM_VERSION += "-observed-label-frame-geometry-v2-paper-pen"
 PRODUCTION_ALGORITHM_VERSION += "-observed-isolated-open-strokes-v1"
+
+
+def trace_image_optimized(*args, **kwargs):
+    """Load the preserved legacy recognizer only when legacy mode is selected."""
+    from app.geometry.optimized_trace import trace_image_optimized as implementation
+
+    return implementation(*args, **kwargs)
 
 
 def _sha256_hex(value: str, label: str) -> str:
@@ -195,6 +200,8 @@ class ProductionProcessingConfig:
             )
 
     def threshold_summary(self) -> dict[str, object]:
+        from app.ocr.ocr_recognition import MAX_OCR_CANDIDATES, MIN_OCR_CONFIDENCE
+
         return {
             "foreground_threshold": self.foreground_threshold,
             "minimum_ocr_confidence": MIN_OCR_CONFIDENCE,
@@ -358,7 +365,39 @@ def cache_key_matches(
 
 
 class ProductionProcessingService:
-    """The only production trace call used by single-page and batch GUI work."""
+    """Shared native entry plus the explicitly selected legacy page service."""
+
+    @staticmethod
+    def process_native_objects(
+        input_path: str | Path,
+        output_path: str | Path,
+        roi,
+        *,
+        dpi: float = 200.0,
+        progress_callback: ProgressCallback | None = None,
+        evidence_dir: str | Path | None = None,
+        cache_dir: str | Path | None = None,
+        page_number: int | None = None,
+        frame_number: int | None = None,
+        orientation: int = 0,
+        job_id: str | None = None,
+        temp_dir: str | Path | None = None,
+        resource_report_path: str | Path | None = None,
+        cancellation_token: CancellationToken | None = None,
+        entrypoint: str = "ProductionProcessingService.process_native_objects",
+    ) -> dict:
+        """Explicit native-object mode; failures never enter the legacy trace."""
+        from app.core.native_objects_entry import dispatch_native_objects
+
+        return dispatch_native_objects(
+            input_path, output_path, roi, dpi=dpi,
+            progress_callback=progress_callback, evidence_dir=evidence_dir,
+            cache_dir=cache_dir, page_number=page_number, frame_number=frame_number,
+            orientation=orientation, job_id=job_id, temp_dir=temp_dir,
+            resource_report_path=resource_report_path,
+            cancellation_token=cancellation_token, entrypoint=entrypoint,
+        )
+
 
     @staticmethod
     def process_page(

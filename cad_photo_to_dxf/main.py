@@ -4,6 +4,7 @@ import argparse
 from dataclasses import asdict
 from math import isfinite
 from pathlib import Path
+import shutil
 import sys
 
 from app import __version__
@@ -23,14 +24,40 @@ def _positive_finite_float(value: str) -> float:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            f"{PRODUCT_NAME} ({PRODUCT_STATUS}): development baseline for image/PDF to DXF. "
-            "Complete editable native-object reconstruction is not yet integrated. "
+            f"{PRODUCT_NAME} ({PRODUCT_STATUS}): image/PDF to editable DXF. "
+            "Default engine: native-objects; legacy requires --mode legacy. "
+            "Complete engineering reconstruction still requires source and CAD review. "
             "Trace/reference output is not a reconstructed engineering object."
         )
     )
     parser.add_argument("--version", action="version", version=f"{PRODUCT_NAME} {__version__}")
     parser.add_argument("--headless", action="store_true", help="Run without the GUI")
+    parser.add_argument("--native-worker", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--input", type=Path, help="Input JPG/PNG/TIFF/PDF for headless mode")
+    parser.add_argument("--mode", choices=("native-objects", "legacy"), default="native-objects",
+                        help="Processing engine (default: native-objects); legacy is explicit compatibility mode")
+    parser.add_argument("--roi", type=int, nargs=4, metavar=("X0", "Y0", "X1", "Y1"),
+                        help="Native mode: required half-open selected-source pixel region before orientation")
+    parser.add_argument("--dpi", type=_positive_finite_float,
+                        help="Native mode: required integer scan/render DPI; establishes paper millimetres only")
+    parser.add_argument("--page", type=int, help="Native mode: 1-based PDF page; required for multipage PDFs")
+    parser.add_argument("--frame", type=int, help="Native mode: 1-based image/TIFF frame; required for multiframe inputs")
+    parser.add_argument("--orientation", type=int, choices=(0, 90, 180, 270),
+                        help="Native mode: clockwise source rotation (default: 0 degrees)")
+    parser.add_argument("--job-id", help="Native mode: task identity; a new identity is generated when omitted")
+    parser.add_argument("--temp-dir", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--resource-report", type=Path, help="Native mode: process resource JSON path")
+    parser.add_argument("--evidence-dir", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--native-cache", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--jobs-dir", type=Path,
+                        help="Native mode: persisted task directory (default: OUTPUT-parent/native-jobs)")
+    for flag, default, help_text in (
+        ("cpu-seconds", 7200.0, "Cumulative CPU seconds including OCR children (default: 7200)"),
+        ("wall-seconds", 7200.0, "Cumulative task wall seconds (default: 7200)"),
+        ("rss-mib", 3072.0, "Worker and OCR tree memory limit in MiB (default: 3072)"),
+        ("temporary-mib", 8192.0, "All persisted task files limit in MiB (default: 8192)"),
+    ):
+        parser.add_argument("--" + flag, type=_positive_finite_float, default=default, help=help_text)
     parser.add_argument(
         "--source-dpi", type=_positive_finite_float,
         help="Actual aligned scan DPI, or requested PDF render DPI before the pixel limit",
@@ -49,7 +76,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Export a half-open rectangle on the actual rendered pixel grid, in page coordinates",
     )
     parser.add_argument("--output", type=Path, default=Path("output/output.dxf"))
-    parser.add_argument("--preview", type=Path, default=Path("output/preview.png"))
+    parser.add_argument("--preview", type=Path, help="Optional preview path; defaults to native evidence or legacy output/preview.png")
     parser.add_argument(
         "--paper-size",
         type=str.upper,
@@ -73,7 +100,7 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Allow a successful empty DXF when no lines are detected",
     )
-    parser.add_argument("--report", type=Path, default=Path("output/report.json"))
+    parser.add_argument("--report", type=Path, help="Optional JSON report path; defaults to native evidence or legacy output/report.json")
     parser.add_argument("--debug-dir", type=Path)
     parser.add_argument(
         "--ocr",
@@ -87,6 +114,16 @@ def build_parser() -> argparse.ArgumentParser:
 def run_headless(args: argparse.Namespace) -> int:
     if args.input is None:
         raise SystemExit("--input is required with --headless")
+    if args.mode == "native-objects":
+        return run_native_headless(args)
+    native_options = ("roi", "dpi", "evidence_dir", "native_cache", "page", "frame",
+                      "orientation", "job_id", "temp_dir", "resource_report", "jobs_dir")
+    if any(getattr(args, name, None) is not None for name in native_options):
+        raise ValueError("Native ROI/DPI/page/frame/job/cache options require --mode native-objects")
+    if args.preview is None:
+        args.preview = Path("output/preview.png")
+    if args.report is None:
+        args.report = Path("output/report.json")
     is_pdf = args.input.suffix.lower() == ".pdf"
     if (args.original_scan is not None or (args.crop is not None and not is_pdf)) and args.source_dpi is None:
         raise SystemExit("Raster --crop and --original-scan require --source-dpi")
@@ -233,7 +270,7 @@ def run_headless(args: argparse.Namespace) -> int:
         args.report,
         {
             "application_version": __version__,
-            "product_status": product_status_payload(),
+            "product_status": product_status_payload("legacy"),
             "input": str(args.input),
             "structure_id": structure.structure_id,
             "source_size_px": structure.source_size_px,
@@ -306,7 +343,98 @@ def run_headless(args: argparse.Namespace) -> int:
     return 0
 
 
-def run_gui() -> int:
+def run_native_headless(args: argparse.Namespace) -> int:
+    """Use the same persisted manager/worker chain as the default desktop."""
+    import json
+    import time
+
+    if args.roi is None:
+        raise ValueError("--roi X0 Y0 X1 Y1 is required for native-objects")
+    if args.dpi is None:
+        raise ValueError("--dpi is required for native-objects; a preview cannot establish scan scale")
+    if (args.source_dpi is not None or args.original_scan is not None or args.blank_paper
+            or args.crop is not None or args.allow_uncorrected or args.allow_empty
+            or args.paper_size != "UNKNOWN" or args.paper_orientation != "auto"
+            or args.paper_width_mm is not None or args.paper_height_mm is not None
+            or args.debug_dir is not None or args.ocr):
+        raise ValueError("Legacy paper/crop/OCR options require --mode legacy; native uses --roi and --dpi with source-supported OCR")
+    if args.native_cache is not None or args.evidence_dir is not None or args.temp_dir is not None:
+        raise ValueError("Managed native tasks own evidence/cache/temp directories; choose --jobs-dir and use verified task recovery instead of external caches")
+    from app.core.native_job_manager import ACTIVE, NativeJobManager
+
+    output = args.output.expanduser().resolve()
+    if output.suffix.lower() != ".dxf":
+        raise ValueError("Native output must use the .dxf extension")
+    if output.exists():
+        raise FileExistsError(f"Native output already exists; use a new path: {output}")
+    for override in (args.preview, args.report, args.resource_report):
+        if override is not None and override.expanduser().exists():
+            raise FileExistsError(f"Artifact override already exists; use a new path: {override}")
+    manager = NativeJobManager(args.jobs_dir or output.parent / "native-jobs")
+    state = manager.create({
+        "input_path": args.input, "roi": args.roi, "dpi": args.dpi,
+        "page_number": args.page, "frame_number": args.frame,
+        "orientation": args.orientation or 0, "job_id": args.job_id,
+        "limits": {"CPU_seconds": args.cpu_seconds, "wall_seconds": args.wall_seconds,
+                   "RSS_MiB": args.rss_mib, "temporary_MiB": args.temporary_mib},
+    })
+    job_id = state["job_id"]
+    print(f"Engine: native-objects; product status: {PRODUCT_STATUS}", flush=True)
+    print(f"Job: {job_id}; state: {manager.jobs_root / job_id / 'state.json'}", flush=True)
+    print(f"Source commit: {state['algorithm'].get('git', {}).get('commit')}; "
+          f"dirty: {state['algorithm'].get('git', {}).get('worktree_dirty')}", flush=True)
+    try:
+        state = manager.start(job_id)
+        previous = None
+        while state["status"] in ACTIVE:
+            current = (state["stage"], state["progress"])
+            if args.verbose and current != previous:
+                print(f"[{float(state['progress']) * 100:5.1f}%] {state['stage']}",
+                      file=sys.stderr, flush=True)
+                previous = current
+            time.sleep(0.2)
+            state = manager.poll(job_id)
+        manager.shutdown(cancel_running=False)
+        if state["status"] != "COMPLETED_WITH_ISSUES":
+            print(f"Native task stopped: {state['status']}; evidence and checkpoints retained", file=sys.stderr)
+            print(json.dumps(state.get("error"), ensure_ascii=False), file=sys.stderr)
+            return 2
+        exported = manager.export(job_id, output)
+        companion = Path(exported["evidence_dir"])
+        artifacts = {
+            "preview_path": companion / "result.png",
+            "report_path": companion / "result.objects.json",
+            "resource_report_path": Path(state["attempt_directory"]) / "manager_resources.json",
+        }
+        for key, override in (("preview_path", args.preview), ("report_path", args.report),
+                              ("resource_report_path", args.resource_report)):
+            if override is None:
+                continue
+            destination = override.expanduser().resolve()
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with artifacts[key].open("rb") as source, destination.open("xb") as target:
+                shutil.copyfileobj(source, target)
+            artifacts[key] = destination
+        print(f"DXF: {exported['dxf_path']}")
+        print(f"Preview: {artifacts['preview_path']}")
+        print(f"Report: {artifacts['report_path']}")
+        print(f"Entry trace: {companion / 'result.entry_trace.json'}")
+        print(f"Import/coordinate evidence: {companion / 'evidence/import_manifest.json'}")
+        print(f"Resources: {artifacts['resource_report_path']}")
+        print(f"Export manifest: {exported['manifest_path']}")
+        print("Scale: paper millimetres from source DPI; engineering scale unverified")
+        print("Target CAD / engineering acceptance: separate; generated candidate remains LOCAL_NO_GO")
+        return 0
+    except KeyboardInterrupt:
+        manager.cancel(job_id, reason="CLI_keyboard_interrupt")
+        raise
+    finally:
+        if state["status"] in ACTIVE:
+            manager.cancel(job_id, reason="CLI_exit")
+        manager.shutdown(cancel_running=False)
+
+
+def run_gui(mode: str = "native-objects") -> int:
     try:
         from PySide6.QtWidgets import QApplication
 
@@ -318,14 +446,17 @@ def run_gui() -> int:
 
     app = QApplication(sys.argv)
     app.setApplicationName(f"{PRODUCT_NAME} {__version__}")
-    window = ProductMainWindow()
+    window = ProductMainWindow(processing_mode=mode)
     window.show()
     return app.exec()
 
 
 def main() -> int:
     args = build_parser().parse_args()
-    return run_headless(args) if args.headless else run_gui()
+    if args.native_worker is not None:
+        from app.core.native_worker import worker_run
+        return worker_run(args.native_worker)
+    return run_headless(args) if args.headless else run_gui(args.mode)
 
 
 if __name__ == "__main__":
