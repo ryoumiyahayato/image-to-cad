@@ -1,4 +1,6 @@
-# 仓库清理第二阶段：实际执行与恢复（2026-11-20）
+# 历史快照：仓库清理第二阶段（2026-11-20）
+
+> 以下是当时的执行状态，含“main未改、Draft未合并、分支保留”。当前收口及恢复检查见[G1记录](G1_CLOSEOUT_20261120.md)；正常main前进不改写这里的历史结论。
 
 **远端实际删除 7 条分支，关闭 PR #38／#39，清理分支实际移除 11 个 tracked 文件，共 16,445,839 字节（15.68 MiB）。** main 未改、历史未重写、15 个原归档标签原 SHA 保留。产品继续 0.3.0-dev / LOCAL_NO_GO。
 
@@ -58,7 +60,8 @@ GitHub API 和本地完整提交图双重核实 14 个分支；7 条安全删除
 原文件均可从清理前提交 f2ad95703cf1ccb0284137bfe7fbc39b137f3217 恢复。账本另列 SHA-256、mode 和恢复命令。需要研究时建立独立恢复分支：
 
 ```bash
-git fetch origin docs/native-object-product-rebaseline-20261120
+git fetch origin main
+# 原f2ad957提交由包含#40的正常合并main或经验证归档保持可达
 git switch -c recovery/cleanup-20261120 f2ad95703cf1ccb0284137bfe7fbc39b137f3217
 # 或只恢复指定文件：git restore --source=<上面的原提交> -- <原路径>
 ```
