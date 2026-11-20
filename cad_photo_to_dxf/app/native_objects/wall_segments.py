@@ -195,8 +195,33 @@ def _retire_exact_cap_overlaps(lines, caps):
     return kept, fully_consumed, partitions, nearby
 
 
+def _deferred_edge_replacements(probe_cache, walls):
+    active = {wall["id"] for wall in walls}
+    return [
+        {
+            "source_line_id": key[0],
+            "wall_id": key[1],
+            "wall_edge_parent": key[2],
+            "candidate_wall_edge_geometry": {
+                "start": list(key[3]),
+                "end": list(key[4]),
+            },
+            "source_responsibility": proof,
+            "status": "PENDING_SOURCE_INTERVAL_RESPONSIBILITY_NOT_TRANSFERRED",
+        }
+        for key, proof in probe_cache.items()
+        if (
+            proof.get("pending_supported_intervals_px")
+            or proof.get("pending_junction_dependency_intervals")
+        )
+        and key[1] in active
+    ]
+
+
 def _partition_wall_lines(gray, lines, walls, probe_cache=None):
     """Retain every source-line span not justified by a selected whole wall."""
+    from .wall_junction_ownership import joint_replacement_support
+
     probe_cache = {} if probe_cache is None else probe_cache
     kept = []
     partitions = []
@@ -205,11 +230,14 @@ def _partition_wall_lines(gray, lines, walls, probe_cache=None):
         a, b, u, length = _vectors(original)
         intervals = []
         claims = []
+        feasible_partial_candidates = []
         for wall in walls:
             edges = [m for m in wall["geometry"]["members"] if m["role"] == "wall_edge"]
             parents = wall["source_evidence"]["source_line_ids"]
             for parent, member in zip(parents, edges):
-                if parent == original["id"]:
+                if parent == original["id"] and not wall["source_evidence"].get(
+                    "candidate_group_representative_selection"
+                ):
                     c, d = (
                         np.asarray(member["geometry"]["start"]),
                         np.asarray(member["geometry"]["end"]),
@@ -237,25 +265,87 @@ def _partition_wall_lines(gray, lines, walls, probe_cache=None):
                     tuple(member["geometry"]["end"]),
                 )
                 if key not in probe_cache:
-                    probe_cache[key] = replacement_support(
+                    owned_geometry = [
+                        m["geometry"] for m in wall["geometry"]["members"]
+                    ]
+                    primary = replacement_support(
                         gray,
                         original["geometry"],
                         member["geometry"],
-                        support_geometry=[
-                            m["geometry"] for m in wall["geometry"]["members"]
-                        ],
+                        support_geometry=owned_geometry,
+                    )
+                    probe_cache[key] = joint_replacement_support(
+                        gray,
+                        original["geometry"],
+                        member["geometry"],
+                        owned_geometry,
+                        wall["source_evidence"].get(
+                            "junction_boundary_responsibilities", []
+                        ),
+                        primary,
                     )
                 proof = probe_cache[key]
+                if (
+                    not proof["eligible"]
+                    and proof.get("pending_supported_intervals_px")
+                    and wall["source_evidence"].get(
+                        "candidate_group_representative_selection"
+                    )
+                ):
+                    feasible_partial_candidates.append((key, wall, parent, proof))
                 if proof["eligible"]:
                     intervals.extend(proof["covered_intervals_px"])
                     claims.append(
                         {
                             "wall_id": wall["id"],
                             "wall_edge_parent": parent,
-                            "basis": "UNCHANGED_SOURCE_STROKE_RESPONSIBILITY",
+                            "basis": "EXPLICIT_WALL_AND_JUNCTION_SOURCE_RESPONSIBILITY"
+                            if proof.get("junction_dependency_intervals")
+                            else "UNCHANGED_SOURCE_STROKE_RESPONSIBILITY",
                             **proof,
                         }
                     )
+        # A newly selected representative may expose a wider partial source
+        # relation. It is safe only if the actual final remainder partition
+        # passes the unchanged source gate; a failed trial stays pending and
+        # cannot revoke an otherwise valid neighboring wall.
+        from .wall_partition_gate import _check
+
+        for key, wall, parent, proof in feasible_partial_candidates:
+            spans = proof["pending_supported_intervals_px"]
+            if any(_positive_overlap(span, intervals, length) for span in spans):
+                continue
+            remainder_spans, _ = _partition_intervals(length, intervals + spans)
+            remainders = _remainder_objects(
+                original, remainder_spans, "trial_source_partition"
+            )
+            checks = [
+                {"id": o["id"], **_check(gray, o["geometry"])} for o in remainders
+            ]
+            if not all(check["pass"] for check in checks):
+                proof["pending_partition_rejection"] = "ACTUAL_REMAINDER_SOURCE_GATE"
+                proof["candidate_remainder_checks"] = checks
+                continue
+            accepted = {
+                **proof,
+                "eligible": True,
+                "covered_intervals_px": spans,
+                "pending_supported_intervals_px": [],
+                "pending_reason": None,
+                "ownership_basis": "PARTIAL_SOURCE_INTERVAL_WITH_FEASIBLE_ACTUAL_REMAINDERS",
+                "wider_partial_source_evidence": proof,
+                "actual_remainder_source_checks": checks,
+            }
+            probe_cache[key] = accepted
+            intervals.extend(spans)
+            claims.append(
+                {
+                    "wall_id": wall["id"],
+                    "wall_edge_parent": parent,
+                    "basis": "UNCHANGED_SOURCE_STROKE_RESPONSIBILITY",
+                    **accepted,
+                }
+            )
         if not intervals:
             kept.append(original)
             continue
@@ -271,7 +361,7 @@ def _partition_wall_lines(gray, lines, walls, probe_cache=None):
             wall_claims=claims,
         )
         partitions.append(ledger)
-        if any(c["basis"] == "UNCHANGED_SOURCE_STROKE_RESPONSIBILITY" for c in claims):
+        if any(c["basis"] != "DIRECT_SOURCE_PARAMETER_PARTITION" for c in claims):
             withdrawals.append(
                 {
                     "source_line_id": original["id"],
@@ -293,7 +383,9 @@ def _partition_wall_lines(gray, lines, walls, probe_cache=None):
     return kept, partitions, withdrawals, cap_dup, cap_partition, cap_nearby
 
 
-def assemble_walls(gray, roi, lines, out, *, candidate_lines=None):
+def assemble_walls(
+    gray, roi, lines, out, *, candidate_lines=None, candidate_groups=None
+):
     started = time.perf_counter()
     x0, y0, x1, y1 = roi
     origin = np.array([x0, y0])
@@ -645,9 +737,52 @@ def assemble_walls(gray, roi, lines, out, *, candidate_lines=None):
         walls.append(proposal)
         for sid, lo, hi in intervals:
             used.setdefault(sid, []).append((lo, hi))
+    from .wall_group_representatives import refine_selected_wall_representatives
+    from .wall_junction_ownership import (
+        junction_owner_uncertainties,
+        resolve_junction_boundaries,
+    )
+
+    _, original_junction_boundaries, _ = resolve_junction_boundaries(
+        gray, walls, _check
+    )
+    walls, representative_audit = refine_selected_wall_representatives(
+        gray,
+        walls,
+        lines,
+        bank,
+        candidate_groups or [],
+        _check,
+        _partition_wall_lines,
+        {row["wall_id"] for row in original_junction_boundaries},
+    )
+    # A source-supported cross stroke can be a neighboring through boundary,
+    # not an independently owned end cap. Resolve only among selected walls;
+    # this does not alter candidate selection or any neighbor's wall edges.
+    walls, junction_boundaries, junction_candidates = resolve_junction_boundaries(
+        gray, walls, _check
+    )
+    # A cap no longer in the actual owned members cannot silently continue
+    # supporting an earlier cached LINE withdrawal.
+    if junction_boundaries or any(row.get("selected") for row in representative_audit):
+        probe_cache.clear()
     kept, partition, withdrawals, cap_dup, cap_partition, cap_nearby = (
         _partition_wall_lines(gray, lines, walls, probe_cache)
     )
+    if junction_boundaries:
+        final_remainder_checks = [
+            {"id": o["id"], **_check(gray, o["geometry"])}
+            for o in kept
+            if o["id"] not in baseline_ids
+        ]
+        for wall in walls:
+            if wall["source_evidence"].get("junction_boundary_responsibilities"):
+                feasibility = wall["source_evidence"]["whole_wall_feasibility"]
+                feasibility["derived_remainder_checks"] = final_remainder_checks
+                feasibility["remainder_checks_scope"] = (
+                    "FINAL_PARTITION_AFTER_JUNCTION_ASSIGNMENT"
+                )
+    deferred = _deferred_edge_replacements(probe_cache, walls)
     corners = []
     openings = []
     for i, w in enumerate(walls):
@@ -715,8 +850,14 @@ def assemble_walls(gray, roi, lines, out, *, candidate_lines=None):
         "candidate_source_lines": [o for o in bank if o["id"] not in baseline_ids],
         "local_alternative_candidate_audit": candidate_audit,
         "supported_edge_replacements": withdrawals,
+        "deferred_edge_replacements": deferred,
         "diagnosis_origin": "RECONSTRUCTED_FROM_CURRENT_FROZEN_SOURCE_AND_CANDIDATES_NOT_MISSING_HISTORICAL_ORIGINAL",
         "source_interval_partition": partition,
+        "junction_boundary_responsibilities": junction_boundaries,
+        "junction_boundary_candidates": junction_candidates,
+        "candidate_group_representative_audit": representative_audit,
+        "original_junction_boundaries_before_group_selection": original_junction_boundaries,
+        "uncertainties": junction_owner_uncertainties(walls, deferred),
         "duplicate_cap_lines_consumed": cap_dup,
         "cap_interval_partition": cap_partition,
         "near_cap_lines_retained": cap_nearby,
@@ -730,8 +871,11 @@ def assemble_walls(gray, roi, lines, out, *, candidate_lines=None):
             "confirmed_wall_segments": 0,
             "wall_edge_members": 2 * len(walls),
             "observed_cap_members": sum(
-                sum(w["source_evidence"]["observed_caps"]) for w in walls
+                member["role"] == "observed_end_cap"
+                for wall in walls
+                for member in wall["geometry"]["members"]
             ),
+            "junction_boundary_caps_not_owned": len(junction_boundaries),
         },
         "resources": {"wall_seconds": time.perf_counter() - started},
         "wall_segments_count_is_candidate_count": True,

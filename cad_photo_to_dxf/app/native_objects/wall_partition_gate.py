@@ -76,12 +76,31 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
             bad_walls.update(
                 claim["wall_id"] for claim in partition.get("wall_claims", [])
             )
+    unavailable_junction_dependencies = []
     changed = True
     while changed:
         changed = False
         for w in result["objects"]:
             parents = set(w["source_evidence"]["source_line_ids"])
-            if w["id"] in bad_walls or parents & bad_parents:
+            unavailable = [
+                boundary
+                for boundary in w["source_evidence"].get(
+                    "junction_boundary_responsibilities", []
+                )
+                if set(boundary["represented_by_wall_ids"]) <= bad_walls
+            ]
+            if unavailable and w["id"] not in bad_walls:
+                unavailable_junction_dependencies.append(
+                    {
+                        "wall_id": w["id"],
+                        "original_cap_member_indices": [
+                            boundary["original_member_index"]
+                            for boundary in unavailable
+                        ],
+                        "reason": "ALL_JUNCTION_BOUNDARY_REPRESENTATIVES_REVOKED",
+                    }
+                )
+            if w["id"] in bad_walls or parents & bad_parents or unavailable:
                 if w["id"] not in bad_walls or not parents <= bad_parents:
                     changed = True
                 bad_walls.add(w["id"])
@@ -92,6 +111,7 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
         "restored_source_line_ids": sorted(bad_parents),
         "source_line_coordinates_changed": False,
         "thresholds_changed": False,
+        "unavailable_junction_dependencies": unavailable_junction_dependencies,
         "restoring_standalone_line_is_not_wall_reconstruction_success": True,
     }
     if not bad_walls:
@@ -100,11 +120,39 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
         save_json(Path(out) / "partition_source_gate.json", evidence)
         return result
     surviving = [w for w in result["objects"] if w["id"] not in bad_walls]
+    surviving_ids = {wall["id"] for wall in surviving}
+
+    # Keep the original evidence, but never advertise a revoked wall as an
+    # active representative of a boundary removed from another object's caps.
+    def active_boundary(boundary):
+        owner_ids = {
+            row["neighbor_wall_id"] for row in boundary["representative_evidence"]
+        }
+        boundary["represented_by_wall_ids"] = sorted(owner_ids & surviving_ids)
+        boundary["revoked_representative_wall_ids"] = sorted(owner_ids - surviving_ids)
+        boundary["owner_status"] = (
+            "NEIGHBOR_OWNER_AMBIGUITY_RETAINED"
+            if len(boundary["represented_by_wall_ids"]) > 1
+            else "EXISTING_NEIGHBOR_BOUNDARY_REPRESENTATIVE"
+        )
+        return boundary
+
+    for wall in surviving:
+        wall["source_evidence"]["junction_boundary_responsibilities"] = [
+            active_boundary(boundary)
+            for boundary in wall["source_evidence"].get(
+                "junction_boundary_responsibilities", []
+            )
+        ]
+    from .wall_junction_ownership import junction_owner_uncertainties
+
     # Alternative hypotheses were never independent formal lines. On revoke,
     # restore the original input bank and recompute only surviving claims.
+    probe_cache = {}
     kept, partition, withdrawals, cap_dup, cap_partition, cap_nearby = (
-        ws._partition_wall_lines(gray, source_lines, surviving)
+        ws._partition_wall_lines(gray, source_lines, surviving, probe_cache)
     )
+    deferred = ws._deferred_edge_replacements(probe_cache, surviving)
     # A revoked edit group is retained in rejection evidence, never relabelled
     # as a successful wall merely because the original LINE still passes.
     for w in result["objects"]:
@@ -121,6 +169,13 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
         remaining_lines=kept,
         source_interval_partition=partition,
         supported_edge_replacements=withdrawals,
+        deferred_edge_replacements=deferred,
+        junction_boundary_responsibilities=[
+            active_boundary(boundary)
+            for boundary in result.get("junction_boundary_responsibilities", [])
+            if boundary["wall_id"] not in bad_walls
+        ],
+        uncertainties=junction_owner_uncertainties(surviving, deferred),
         duplicate_cap_lines_consumed=cap_dup,
         cap_interval_partition=cap_partition,
         near_cap_lines_retained=cap_nearby,
@@ -136,7 +191,12 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
         paired_edge_composite_candidates=len(surviving),
         wall_edge_members=2 * len(surviving),
         observed_cap_members=sum(
-            sum(w["source_evidence"]["observed_caps"]) for w in surviving
+            member["role"] == "observed_end_cap"
+            for wall in surviving
+            for member in wall["geometry"]["members"]
+        ),
+        junction_boundary_caps_not_owned=len(
+            result["junction_boundary_responsibilities"]
         ),
     )
     restored_checks = [
@@ -145,8 +205,33 @@ def enforce_partition_source_gate(gray, source_lines, result, out):
         if sid in inputs
     ]
     evidence["original_standalone_line_checks"] = restored_checks
-    evidence["pass"] = all(row["pass"] for row in restored_checks)
+    final_fragment_checks = [
+        {"id": line["id"], **_check(gray, line["geometry"])} for line in kept
+    ]
+    evidence["recomputed_actual_fragment_checks"] = final_fragment_checks
+    evidence["pass"] = all(
+        row["pass"] for row in restored_checks + final_fragment_checks
+    )
     result["partition_source_gate"] = evidence
+    if any(not row["pass"] for row in final_fragment_checks):
+        # Losing one external endpoint owner can expose a new short remainder.
+        # Re-run the same conservative gate on that actual partition. Each
+        # recursive call follows a nonempty wall revocation, so this contracts
+        # the selected set rather than repeatedly accepting an unchecked tail.
+        result = enforce_partition_source_gate(gray, source_lines, result, out)
+        final_evidence = result["partition_source_gate"]
+        final_evidence.setdefault("prior_revocation_passes", []).insert(0, evidence)
+        for key in ("revoked_wall_ids", "restored_source_line_ids"):
+            final_evidence[key] = sorted(set(final_evidence[key]) | set(evidence[key]))
+        final_evidence["failed_derived_fragments"] = (
+            evidence["failed_derived_fragments"]
+            + final_evidence["failed_derived_fragments"]
+        )
+        final_evidence["unavailable_junction_dependencies"] = (
+            evidence["unavailable_junction_dependencies"]
+            + final_evidence["unavailable_junction_dependencies"]
+        )
+        evidence = final_evidence
     save_json(Path(out) / "partition_source_gate.json", evidence)
     save_json(Path(out) / "wall_segments_after_partition_gate.json", result)
     return result

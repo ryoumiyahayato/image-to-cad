@@ -1417,6 +1417,7 @@ def run_native_objects(
                 line_bank,
                 out / "walls",
                 candidate_lines=geometry.get("pre_dedup_line_candidates", []),
+                candidate_groups=geometry.get("line_candidate_groups", []),
             )
             from .wall_partition_gate import enforce_partition_source_gate
 
@@ -1469,6 +1470,7 @@ def run_native_objects(
                 + text_issues
             )
             issues += connections["uncertainties"]
+            issues += walls.get("uncertainties", [])
             issues += [
                 {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
                 for row in walls.get("partition_source_gate", {}).get(
