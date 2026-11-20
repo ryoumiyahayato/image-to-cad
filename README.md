@@ -7,6 +7,8 @@
 
 **当前源码研发入口：`development/native-reconstruction`。** 本分支迁入 v8.4 实际原生核心、manager/worker 和 CLI/GUI，正式入口默认使用 `native-objects`。安装、资源校验和新目录运行见 [复现说明](docs/native/REPRODUCE.md)；[CAD 打开说明](docs/native/OPEN_IN_CAD.md)与[工程师试用](docs/native/ENGINEER_TRIAL.md)分别记录文件兼容和人工劳动。`main` 的已合并清理基线与本研发分支的能力不能混用。
 
+**仓库交接：** [#41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 已作为唯一清理内容入口合并，#40 已随包含关系关闭；[#43](https://github.com/ryoumiyahayato/image-to-cad/pull/43) 已把实际交接状态登记到 main。当前源码由 [PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42) 持续跟踪，尚未合入 main。main 仍是 `preserved_main_baseline`；本次同步 main 只合并文档，维护合并不代表产品 GO 或正式发布。
+
 ## 产品要交付什么
 
 用户选择图片、TIFF 或 PDF 的页面/区域，软件在保留原图证据的前提下，尽量重建为原生 LINE、ARC、LWPOLYLINE、TEXT/MTEXT、INSERT/BLOCK 等合理完整的对象，最终导出 DXF。对象能独立删除、移动、改形状或改文字，且不留下不合理碎片、不损伤邻近图形。
@@ -30,7 +32,7 @@
 
 冻结对象：A2-SG-008.tiff 的连续四分之一区域，原像素裁框 `[1400,1000,5000,3411]`。固定反例包括房号 `210`、完整三行 `DN. TO / LIGHTS ON / 1ST FLOOR`、`EBB-3`、完整墙与门、交叉连接和真实短划。
 
-私有v8.4已实际完成同一固定区域的正式执行链和主DXF，并完成295项去向及LibreCAD八项普通编辑/退出重开；仍未通过完整内容验收。R1/R2旧逻辑缺陷已在私有版本修复，不重复作为新任务。当前优先：PANTRY和完整墙组退化、完整连接与交汇（含C07/C08）、i/I/1冲突与标签后缀；同时将实际源码迁入持续研发分支。公开main能力仍按下方入口和[项目状态](docs/project/PROJECT_STATUS.md)判断。
+私有v8.4已实际完成同一固定区域的正式执行链和主DXF，并完成295项去向及LibreCAD八项普通编辑/退出重开；仍未通过完整内容验收。R1/R2旧逻辑缺陷已在私有版本修复，不重复作为新任务。当前优先：PANTRY和完整墙组退化、完整连接与交汇（含C07/C08）、i/I/1冲突与标签后缀；源码迁入和后续改进由 #42 持续跟踪，每轮成果须绑定实际 Git 提交。下方入口和[项目状态](docs/project/PROJECT_STATUS.md)说明本研发分支；公开 main 能力见 [main 的 README](https://github.com/ryoumiyahayato/image-to-cad/blob/main/README.md)。
 
 正式工程师验收仍需：无须清理无意义碎线或填色垃圾，所有漏项补绘、纠错及核对计入人工修图时间，人工修图用时 **≤ 同范围、同质量从零重画时间的 50%**。未有真实计时，不能宣布通过。
 
@@ -57,7 +59,7 @@ GUI 默认打开原生任务页，CLI 默认使用 `native-objects`；两者进�
 
 - 项目当前版本仍为 `0.3.0-dev`，暂不宣称正式发布。
 - 研究、产品源码、私有原图与可公开文档分层管理。与新设计冲突的旧路线转历史或标记 SUPERSEDED，不再作为默认开发任务。
-- [#41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 已作为唯一清理入口合并，包含 #40；main 合并提交为 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`。历史清理记录与当前可恢复性分开，见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。维护合并不代表产品发布。
+- [#41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 的 G1 内容合并锚点为 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`；#40 已关闭。main 经 [#43](https://github.com/ryoumiyahayato/image-to-cad/pull/43) 状态登记前进到 `87adc73f4d100ca1b296b28c4127ab1d884a5eaa`；两个已合并工作分支尚待删除，五个独有研究分支继续保留。历史清理记录与当前可恢复性分开，见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。
 - 原版长期意图备忘录、旧研究与工程证据可供历史追溯，但**当前产品契约**由 [2026-11-20 基准](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) 定义。
 - 无论独立研究输出多漂亮，都必须在最终保存 DXF 中核对，并经过目标 CAD 的打开、编辑、保存和重开。未测即 NOT_RUN。
 

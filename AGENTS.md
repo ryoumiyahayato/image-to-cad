@@ -6,10 +6,10 @@
 
 ## 能力与分支边界
 
-- `main` 清理基线是 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`；#41正常合并且包含#40。当前长期研发分支是 `development/native-reconstruction`，已迁入实际原生核心和正式入口。不要把研发分支或私有产物当成main已交付能力。
+- G1 清理内容的合并锚点是 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`；#41正常合并且包含#40。main经#43状态登记已前进到`87adc73f4d100ca1b296b28c4127ab1d884a5eaa`，仍为legacy保留基线。当前长期研发分支是 `development/native-reconstruction`，已迁入实际原生核心和正式入口，由[PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)跟踪、尚未合入main。不要把研发分支或私有产物当成main已交付能力。
 - 私有v8.4已经完成固定区域的正式执行链及一份342对象DXF、295项去向和八项LibreCAD操作；仍有大面积遗漏、PANTRY与完整墙组退化、文字/交汇问题及CAD兼容差异。
 - R1历史裁边否决、R2新输入行域空跑在私有版本已修复，不重复当作新算法任务；迁入公开源码时做定向回归。
-- G1以#41为唯一清理合并入口，#40被包含。正常main前进不是恢复证据损毁。合并维护不代表产品GO或Release。
+- G1已通过#41这一唯一清理内容入口合并，#40已随包含关系关闭，不再安排重复合并。两个已合并工作分支尚待删除，五个独有研究分支继续保留，详见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。正常main前进不是恢复证据损毁，维护合并不代表产品GO或Release。
 - 正式CLI/GUI默认 `native-objects`，经manager/worker运行；明确选择`legacy`才调用保留基线。原生依赖使用`requirements-native.lock`，资源按[复现说明](docs/native/REPRODUCE.md)核验。最新成果绑定实际Git提交、源码哈希、输入、配置和输出文件。
 
 ## 当前工作

@@ -4,21 +4,29 @@
 
 ## G1：已合并，分支删除尚待完成
 
-#41 已在五项正常检查通过后合并，实际 main 合并提交为
+[清理 PR #41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 已在五项正常检查通过后合并，G1 内容合并锚点为
 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`，已确认包含 #41 和 #40 的目标提交，#40 已关闭。
+[#43](https://github.com/ryoumiyahayato/image-to-cad/pull/43) 的三项适用检查通过后已登记实际交接状态，
+main 前进到 `87adc73f4d100ca1b296b28c4127ab1d884a5eaa`；main 仍是 legacy 保留基线。
+不要再次安排合并 #40/#41，也不把 #43 当成原生源码已经合入 main。
 两个已合并工作分支当前仍保留：现有 GitHub 写接口没有删除引用动作，浏览器未登录。
 五个独有研究末端继续保留；先建立并读回远端归档引用后才能退役。
 具体引用与原因见 [G1 收口记录](G1_CLOSEOUT_20261120.md)。历史快照和当前可恢复性分别检查，main 可正常前进。
 
 ## G2：持续源码研发分支
 
-长期研发分支为 `development/native-reconstruction`，来自上述清理后 main。
+长期研发分支为 `development/native-reconstruction`，从 G1 内容合并锚点建立，现已同步 #43 的状态文档；
+实际源码由 [PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42) 跟踪，尚未合入 main。
 本分支迁入实际核心、manager/worker、CLI/GUI、依赖锁及资源检查；默认入口为 `native-objects`。
 较新的公开 legacy 处理逻辑继续保留，显式选择后使用。
 按 [复现说明](../native/REPRODUCE.md)从明确提交、独立环境及空任务目录运行，
 用正式入口生成 DXF；提交的合成烟测不依赖历史观察或采用名单。
 真实区域可显式提供经过校验的原始观察，重新运行归属和采用门槛，不能导入旧结论。
 具体执行文件、源码 SHA 和检查结果绑定源码 PR 的运行回执，不从“代码已迁入”推导产品验收。
+
+本轮正式整区执行使用独立干净检出的 `dfdff18d14aad1d76915449f530e84511f8a840f`。
+本次 main 同步只改 Markdown，所有非 Markdown 文件保持该提交的 tree/blob；
+执行记录和实际 DXF 仍须登记真实生产提交，不因后续文档合并改写来源或声称重新运行。
 
 ## Q1—Q5：完整区域质量
 
