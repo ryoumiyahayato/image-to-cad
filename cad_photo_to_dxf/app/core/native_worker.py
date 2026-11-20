@@ -14,6 +14,10 @@ import threading
 import time
 import traceback
 
+from app.native_objects.offline_runtime import (
+    prepare_onnx_privacy,
+    runtime_privacy_status,
+)
 from app.native_objects.execution import (
     NativeCancelled,
     NativeResourceLimit,
@@ -271,6 +275,7 @@ def worker_run(request_path):
         "production_GO": False,
     }
     try:
+        prepare_onnx_privacy()
         request = _validate_request(request_path)
         parent_guard, parent_thread = _watch_parent(request, directory, resource_start)
         staging = Path(request["staging_directory"])
@@ -328,6 +333,7 @@ def worker_run(request_path):
                 evidence / "raw_observation_usage.json",
                 request.get("raw_observation_cache"),
             )
+            atomic_json(evidence / "runtime_privacy.json", runtime_privacy_status())
             files = {
                 p.relative_to(staging).as_posix(): {
                     "sha256": file_sha(p),
@@ -450,6 +456,7 @@ def worker_run(request_path):
             wall_seconds=time.monotonic() - started,
             resources=elapsed(resource_start),
             worker_exit_code=locals().get("exit_code", 1),
+            runtime_privacy=runtime_privacy_status(),
         )
         atomic_json(directory / "outcome.json", outcome)
     return exit_code

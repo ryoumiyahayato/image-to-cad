@@ -14,6 +14,7 @@ import time
 import cv2
 import numpy as np
 from .execution import check_cancel
+from .offline_runtime import private_onnxruntime, runtime_privacy_status
 
 
 MODEL_SHA256 = "6f327246b50388f3c176ae304bd95767ea6dc0c9ae92153ef8cbe210b3c14884"
@@ -49,7 +50,7 @@ def prepare_model_input(crop):
 
 class IndependentRecognizer:
     def __init__(self, model_path=None):
-        import onnxruntime as ort
+        ort = private_onnxruntime()
 
         if model_path is None:
             import importlib.util
@@ -87,6 +88,7 @@ class IndependentRecognizer:
                 raw_characters.encode()
             ).hexdigest(),
             "policy": POLICY,
+            "runtime_privacy": runtime_privacy_status(),
         }
 
     def recognize(self, crop):

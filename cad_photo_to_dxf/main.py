@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import sys
 
+from app.native_objects.offline_runtime import prepare_onnx_privacy
 from app import __version__
 from app.version import PRODUCT_NAME, PRODUCT_STATUS, product_status_payload
 
@@ -452,6 +453,7 @@ def run_gui(mode: str = "native-objects") -> int:
 
 
 def main() -> int:
+    prepare_onnx_privacy()
     args = build_parser().parse_args()
     if args.native_worker is not None:
         from app.core.native_worker import worker_run

@@ -21,6 +21,10 @@ import time
 import uuid
 
 from app.native_objects.execution import atomic_json, file_sha, read_json, utc_now
+from app.native_objects.offline_runtime import (
+    prepare_onnx_privacy,
+    runtime_privacy_status,
+)
 
 try:
     import psutil
@@ -317,6 +321,7 @@ class _WindowsKillJob:
 
 class NativeJobManager:
     def __init__(self, jobs_root, main_path=None, python_executable=None):
+        prepare_onnx_privacy()
         self.jobs_root = Path(jobs_root).expanduser().resolve()
         self.jobs_root.mkdir(parents=True, exist_ok=True)
         self.main_path, self.python_executable = main_path, python_executable
@@ -457,6 +462,7 @@ class NativeJobManager:
             "processing_location": "computer_running_this_application",
             "remote_service_calls": 0,
             "remote_wait_seconds": 0,
+            "runtime_privacy": runtime_privacy_status(),
             "review_capability": "local OCR, deterministic source rules, saved-DXF audit; no chat vision service",
             "validation_controls": values.get("validation_controls") or {},
             "result_dxf": None,
@@ -574,6 +580,7 @@ class NativeJobManager:
         return self._launch(job_id, resume=True)
 
     def _launch(self, job_id, resume=False):
+        prepare_onnx_privacy()
         with self._lock:
             state = self.poll(job_id)
             tracked = self._processes.get(job_id)
@@ -711,6 +718,7 @@ class NativeJobManager:
                 "validation_controls": state["validation_controls"],
                 "external_cache_or_review_list_supplied": False,
                 "raw_observation_cache": raw_cache,
+                "runtime_privacy": runtime_privacy_status(),
             }
             request["checkpoint_import"] = state.get("checkpoint_import")
             request["compatible_resume"] = compatible
@@ -731,6 +739,7 @@ class NativeJobManager:
                 OPENBLAS_NUM_THREADS="1",
                 MKL_NUM_THREADS="1",
                 PYTHONUNBUFFERED="1",
+                ORT_DISABLE_TELEMETRY="1",
             )
             app_root = str(Path(__file__).resolve().parents[2])
             inherited = env.get("PYTHONPATH", "")

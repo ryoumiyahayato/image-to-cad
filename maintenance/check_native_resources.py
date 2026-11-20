@@ -2,7 +2,8 @@
 
 Run from any directory with the selected native-profile Python interpreter.
 The ONNX recognition session is opened only to read its embedded dictionary;
-no inference, source drawing, network request or package mutation occurs.
+no inference, source drawing or package mutation occurs. Runtime privacy
+configuration is recorded separately from any system-level network measurement.
 """
 from __future__ import annotations
 
@@ -21,6 +22,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "docs/native/resource_manifest.json"
+sys.path.insert(0, str(ROOT / "cad_photo_to_dxf"))
+
+from app.native_objects.offline_runtime import (
+    prepare_onnx_privacy,
+    private_onnxruntime,
+    runtime_privacy_status,
+)
 
 
 def sha256(path: Path) -> str:
@@ -45,6 +53,7 @@ def file_identity(path: Path, expected: dict) -> dict:
 
 
 def inspect_runtime(*, strict_platform_binaries: bool = False) -> dict:
+    prepare_onnx_privacy()
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     failures, warnings = [], []
     report = {
@@ -53,7 +62,8 @@ def inspect_runtime(*, strict_platform_binaries: bool = False) -> dict:
         "python": {"version": platform.python_version(), "executable": sys.executable,
                    "prefix": sys.prefix, "base_prefix": sys.base_prefix,
                    "system": platform.system(), "machine": platform.machine()},
-        "network_calls": 0, "inference_calls": 0,
+        "network_calls_requested_by_this_script": 0, "inference_calls": 0,
+        "system_network_activity_measured": False,
         "strict_platform_binaries": strict_platform_binaries,
         "packages": {}, "failures": failures, "warnings": warnings,
         "scope": "Deployment identity only; not CAD, content-completeness or engineer acceptance",
@@ -129,7 +139,7 @@ def inspect_runtime(*, strict_platform_binaries: bool = False) -> dict:
                 failures.append("RAPIDOCR_MODEL_SHA256_MISMATCH:" + expected["relative_path"])
         report["rapidocr"] = {"package_directory": str(package), "models": models}
         if all(item["matches_manifest"] for item in models):
-            import onnxruntime as ort
+            ort = private_onnxruntime()
 
             options = ort.SessionOptions()
             options.intra_op_num_threads = options.inter_op_num_threads = 1
@@ -143,6 +153,7 @@ def inspect_runtime(*, strict_platform_binaries: bool = False) -> dict:
                 "decoding_character_count_including_CTC_blank_and_space": len(raw.splitlines()) + 2,
             }
             report["rapidocr"]["embedded_dictionary"] = dictionary
+            report["runtime_privacy"] = runtime_privacy_status()
             if (dictionary["sha256"] != expected["sha256"]
                     or dictionary["decoding_character_count_including_CTC_blank_and_space"]
                     != expected["decoding_character_count_including_CTC_blank_and_space"]):
@@ -172,6 +183,7 @@ def inspect_runtime(*, strict_platform_binaries: bool = False) -> dict:
             (failures if strict_platform_binaries else warnings).append(
                 "FONT_LICENSE_TEXT_DIFFERS_FROM_RECORDED_PACKAGE_COPY_REVIEW_REQUIRED")
     report["passed"] = not failures
+    report["runtime_privacy"] = runtime_privacy_status()
     return report
 
 

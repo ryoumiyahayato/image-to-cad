@@ -120,6 +120,26 @@ SHA-256 为 `f7aa897ca828a4c7c9e2739c30f9161a33306d532f020bcdb91dcfb664a5507e`�
 [resource_manifest.json](resource_manifest.json)。失败应按实际缺少或不匹配的项目解决，
 不能通过删掉校验项来取得通过。
 
+### 3.1 ONNX Runtime 初始化前关闭遥测
+
+本次锁定的 ONNX Runtime 1.29.0 官方 Linux wheel 含默认启用的 1DS 遥测。
+其随包 `Privacy.md` 与 [官方隐私说明](https://github.com/microsoft/onnxruntime/blob/main/docs/Privacy.md)
+要求在原生运行库初始化前设置 `ORT_DISABLE_TELEMETRY=1`，以阻止 uploader、事件和
+持久设备标识创建。只在导入后调用 `disable_telemetry_events()` 可能来不及阻止最初的
+初始化事件，因此不能把“模型在本机运行”当成依赖没有联网的证明。
+
+本项目的正式 CLI/GUI、manager 子进程环境、独立识别器和资源检查入口会先强制设置
+该环境变量，再导入 ONNX Runtime，并在创建本项目 session 前调用官方
+`disable_telemetry_events()`。保留的 RapidOCR 入口也先经过同一初始化守卫。
+如果进程已经在守卫之前加载过 ONNX Runtime，运行会明确拒绝；应从正式入口启动
+新进程，不在旧解释器中补设变量后声称初始化已经受控。
+
+任务状态、worker 回执、模型身份与 `evidence/runtime_privacy.json` 记录实际配置，
+资源检查也输出 `runtime_privacy`。这些是初始化与 API 配置证据；系统级零联网需要
+另行保存实际网络调用跟踪。`remote_service_calls=0` 仅表示应用没有调用远程识别服务，
+不代表所有依赖和整个进程都已经实测零联网。上述措施使用运行库自身的 opt-out，
+不修改网络隔离、审批控制或端点白名单。已有中断与审批拒绝记录应保留。
+
 ## 4. 在干净任务目录运行正式入口
 
 将合法受控输入放在 Git 外，确定实际像素范围和 DPI。下面使用项目已经冻结的
