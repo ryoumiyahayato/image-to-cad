@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 from app import __version__
-from app.version import PRODUCT_NAME
+from app.version import PRODUCT_NAME, PRODUCT_STATUS, product_status_payload
 
 
 def _positive_finite_float(value: str) -> float:
@@ -22,7 +22,11 @@ def _positive_finite_float(value: str) -> float:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description=f"{PRODUCT_NAME}: convert a photographed printed CAD drawing into an editable DXF."
+        description=(
+            f"{PRODUCT_NAME} ({PRODUCT_STATUS}): development baseline for image/PDF to DXF. "
+            "Complete editable native-object reconstruction is not yet integrated. "
+            "Trace/reference output is not a reconstructed engineering object."
+        )
     )
     parser.add_argument("--version", action="version", version=f"{PRODUCT_NAME} {__version__}")
     parser.add_argument("--headless", action="store_true", help="Run without the GUI")
@@ -229,6 +233,7 @@ def run_headless(args: argparse.Namespace) -> int:
         args.report,
         {
             "application_version": __version__,
+            "product_status": product_status_payload(),
             "input": str(args.input),
             "structure_id": structure.structure_id,
             "source_size_px": structure.source_size_px,
@@ -282,6 +287,7 @@ def run_headless(args: argparse.Namespace) -> int:
             ),
         },
     )
+    print(f"Product status: {PRODUCT_STATUS}; preserved baseline output requires review")
     print(f"DXF: {export.path}")
     print(f"Editable LINE entities: {export.line_count}")
     print(f"Editable ARC entities: {export.arc_count}")

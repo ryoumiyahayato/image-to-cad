@@ -32,7 +32,7 @@ def _select_output_path(window: Any, *, default_name: str) -> tuple[Path, bool] 
         window,
         "导出 CAD",
         str(default_dir / default_name),
-        "AutoCAD DWG (*.dwg);;Drawing Exchange Format (*.dxf)",
+        "Drawing Exchange Format (*.dxf);;AutoCAD DWG (*.dwg)",
     )
     if not selected_path:
         return None

@@ -13,11 +13,19 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from app.version import PRODUCT_STATUS
 
 
 def build_controls(self):
     container = QWidget()
     layout = QVBoxLayout(container)
+    self.product_status_label = QLabel(
+        f"研发预览（{PRODUCT_STATUS}）：完整原生对象重建尚未接入。"
+        "当前运行保留基线，参考图形不计作完成重建，导出后仍须核对待修。",
+        container,
+    )
+    self.product_status_label.setWordWrap(True)
+    layout.addWidget(self.product_status_label)
     layout.addWidget(self._button("导入图片 / 扫描 PDF", self.import_image))
     layout.addWidget(self._button("图片校正", self.correct_image))
 

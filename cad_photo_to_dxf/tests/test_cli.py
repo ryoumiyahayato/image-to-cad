@@ -80,6 +80,8 @@ def test_headless_exports_shared_final_structure_with_gui_image_settings(tmp_pat
     report = json.loads(args.report.read_text(encoding='utf-8'))
     from app.version import __version__
     assert report['application_version'] == __version__
+    assert report['product_status']['status'] == 'LOCAL_NO_GO'
+    assert report['product_status']['native_object_reconstruction_verified'] is False
     assert report['structure_id'] == structure.structure_id
     assert report['source_size_px'] == list(structure.source_size_px)
     document = ezdxf.readfile(args.output)

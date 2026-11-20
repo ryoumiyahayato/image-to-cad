@@ -8,6 +8,7 @@ from typing import Any
 from PySide6.QtWidgets import QMessageBox
 
 from app import __version__
+from app.version import product_status_payload
 from app.core.cancellation import (
     CancellationToken,
     ProgressCallback,
@@ -100,7 +101,7 @@ def _start_processed_pages_export(window: Any) -> None:
 
     selection = _select_output_path(
         window,
-        default_name="drawing-processed-pages.dwg",
+        default_name="drawing-processed-pages.dxf",
     )
     if selection is None:
         return
@@ -250,6 +251,7 @@ def _start_processed_pages_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
+            "product_status": product_status_payload(),
             "mode": "editable_line_text_processed_pdf_pages",
             "input": str(source_path),
             "output_directory": str(output_directory),
