@@ -4,11 +4,15 @@
 
 ## G1：清理收口
 
-在#41完成执行协议、过时状态、历史格式和公开/私有边界修正；#41包含#40，作为单一合并入口。检查通过后正常合并，确认main包含目标提交，再关闭#40并删除两个已合并工作分支。研究分支先有经读回验证的归档引用再退役，否则明确保留。历史快照和当前可恢复性分别检查。
+[清理 PR #41](https://github.com/ryoumiyahayato/image-to-cad/pull/41)已通过正常检查并合并，G1 内容合并提交为`1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`。main已包含#41与#40的目标提交，#40已关闭；不要再次安排合并这两份PR。
+
+剩余清理是删除两个已合并工作分支并读回核实；[G1收口记录](G1_CLOSEOUT_20261120.md)列出实际保留清单。五个独有研究分支尚无本轮新建且读回验证的替代归档，继续保留。历史快照和当前可恢复性分别检查，main正常前进不算资料损毁。
 
 ## G2：持续源码研发分支
 
-从整理后main建立原生重建研发分支，迁入实际核心、manager/worker、CLI/GUI和必要验证，锁定实测依赖及资源校验。保留公开legacy，不整体覆盖较新的生产代码。空任务目录、没有旧采用名单的新输入必须经正式入口生成实际DXF；界面明确引擎。源码PR与私人证据分开，后续成果绑定Git提交。
+持续分支[`development/native-reconstruction`](https://github.com/ryoumiyahayato/image-to-cad/tree/development/native-reconstruction)已从上述整理后main建立，实际核心、manager/worker、CLI/GUI及依赖资源说明已进入[源码PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)，尚未合入main。后续实现与验证继续绑定该研发分支的明确提交；保留本main的legacy行为，不把研发分支的默认原生入口误报为main现状。
+
+当前继续核对源码PR适用检查、干净入口实际DXF及同一冻结区域的来源责任和编辑结果，按[研发分支复现说明](https://github.com/ryoumiyahayato/image-to-cad/blob/development/native-reconstruction/docs/native/REPRODUCE.md)运行。空任务目录、没有旧采用名单的新输入必须经正式入口生成实际DXF；界面明确引擎。源码PR与私人证据分开，局部通过不等于完整区域或产品采用通过。
 
 ## Q1—Q5：完整区域质量
 
