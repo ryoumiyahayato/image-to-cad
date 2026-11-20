@@ -78,6 +78,7 @@ class BoundObservations:
         self.source_sha, self.dpi = source_sha, int(dpi)
         self.rows, self.by_path, self.aliases = {}, {}, []
         self.model_rows = {}
+        self.scope_evidence = domains.ScopeObservationEvidence(self.output)
         self.new_tesseract_calls = self.new_model_calls = 0
         self.engine = None
 
@@ -182,6 +183,7 @@ class BoundObservations:
             )
         else:
             self.rows[key] = row
+            self.scope_evidence.register(words)
         self.by_path[str(raw)] = key
         return key
 
@@ -522,11 +524,15 @@ def evaluate_bound_region(
     scope_exclusions = []
     if source_domain and source_domain.get("glyph_neighbor_separation"):
         originals, scope_exclusions = domains.scope_words_to_source_domain(
-            originals, source_domain, labels, roi
+            originals, source_domain, labels, roi, evidence=store.scope_evidence
         )
         for alternative in alternatives:
             selected, excluded = domains.scope_words_to_source_domain(
-                alternative["words"], source_domain, labels, roi
+                alternative["words"],
+                source_domain,
+                labels,
+                roi,
+                evidence=store.scope_evidence,
             )
             alternative["words"] = selected
             alternative["source_scope_excluded_raw_words"] = excluded

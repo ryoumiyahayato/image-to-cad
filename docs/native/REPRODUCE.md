@@ -235,3 +235,21 @@ CLI 成功退出只说明该候选经保存与审核绑定检查后已导出，�
 当前坐标单位为**纸面毫米**。继续按建筑实际墙长、门宽设计，需要图纸比例或可靠已知尺寸标定；
 DPI 不能直接代表建筑实际比例。对象删移、文字修改、CAD 保存重开和工程师修图时间
 仍按同一完整区域另行验证；没有工程师参与时记录 `NOT_RUN`。
+
+## 6. CI 中的来源与兼容入口合同
+
+原 legacy 侧栏检查通过显式 `processing_mode="legacy"` 进入其页签，仍检查侧栏至少
+500 像素、无横向滚动和无弃用文案。默认 native 页签、引擎标识及兼容工具显式选择
+仍由独立入口测试检查。原 FreeCAD legacy/full-trace 样例验证显式使用 `--mode legacy`；
+正式默认入口保持 native，并由 Native Linux CI 的真实受控转换验证。
+
+源像素和几何连接禁止形态学封口。现有 `_frames` 的一个固定 3×3 closing 只作用于
+独立候选发现图，目的是提出断裂矩形框的待验证候选。测试对全 `app` 扫描，只允许
+`native_objects/text_regions.py::_frames` 内这一处、这一参数形状的 AST 调用；其他
+legacy/native 模块和 native connections 继续全部受禁令约束，没有按目录豁免。
+
+该唯一例外另有行为测试：不可写原图、ink 和 glyph labels 保持逐像素不变；原白缝
+仍在，实际 OCR 输入只能是原 crop 加外部白边；候选的 `edge_support` 必须采样原 ink。
+即使候选发现图人为给出完整封口，原图缺边达不到支持门槛仍被拒绝。候选始终标记
+`source_frame_continuity_proven=false`、`geometry_must_verify_original_four_sides=true`，
+不能把候选图中的补口用作完整闭合来源证据。

@@ -65,6 +65,7 @@ jobs:
           mkdir -p output/freecad/debug
           python main.py \
             --headless \
+            --mode legacy \
             --input samples/test.jpg \
             --output output/freecad/sample.dxf \
             --preview output/freecad/preview.png \

@@ -57,6 +57,7 @@ jobs:
           python -m pytest -q --junitxml=output/native-ci/pytest-junit.xml \
             tests/test_native_product_entry.py \
             tests/test_native_observation_cache.py \
+            tests/test_native_frame_discovery_contract.py \
             tests/test_native_connected_paths.py \
             tests/test_native_wall_candidate_ownership.py \
             tests/test_native_glyph_domain_recovery.py \

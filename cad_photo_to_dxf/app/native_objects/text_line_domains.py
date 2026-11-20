@@ -793,7 +793,76 @@ def _line_domain(image, line, roi, *, labels=None, component_slices=None):
     return result
 
 
-def scope_words_to_source_domain(words, domain, labels, roi):
+class ScopeObservationEvidence:
+    """Keep full raw words once and use hash-bound references in scope decisions.
+
+    Paths are relative to the task evidence root (the parent of a stage
+    directory), not to a region's current stage. A later stage can therefore
+    deepcopy a decision without rebasing or invalidating its evidence path.
+    """
+
+    def __init__(self, output):
+        self.output = Path(output)
+        self.references = {}
+
+    def register(self, words, *, existing_path=None):
+        digests = [_digest(word) for word in words]
+        if all(digest in self.references for digest in digests):
+            return
+        if existing_path is None:
+            path = (
+                self.output / "scope_observation_ledgers" / (_digest(words) + ".json")
+            )
+            if not path.exists():
+                base._dump(path, words)
+        else:
+            path = Path(existing_path)
+        if _digest(json.loads(path.read_text())) != _digest(words):
+            raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_CONTENT_MISMATCH")
+        relative = path.resolve().relative_to(self.output.parent.resolve())
+        ledger_hash = base._sha(path)
+        for index, digest in enumerate(digests):
+            self.references.setdefault(
+                digest,
+                {
+                    "path": relative.as_posix(),
+                    "relative_to": "task_evidence_root",
+                    "sha256": ledger_hash,
+                    "word_index_zero_based": index,
+                    "word_sha256": digest,
+                    "ledger_word_count": len(words),
+                },
+            )
+
+    def reference(self, word):
+        digest = _digest(word)
+        if digest not in self.references:
+            raise ValueError("SOURCE_SCOPE_RAW_WORD_HAS_NO_SAVED_LEDGER")
+        return dict(self.references[digest])
+
+
+def read_scope_observation(evidence_root, reference):
+    """Cold-read an excluded raw word, verifying its ledger and value hashes."""
+    if reference.get("relative_to") != "task_evidence_root":
+        raise ValueError("SOURCE_SCOPE_OBSERVATION_REFERENCE_ROOT_INVALID")
+    root = Path(evidence_root).resolve()
+    path = (root / reference["path"]).resolve()
+    path.relative_to(root)
+    if base._sha(path) != reference["sha256"]:
+        raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_HASH_MISMATCH")
+    words = json.loads(path.read_text())
+    if len(words) != reference["ledger_word_count"]:
+        raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_COUNT_MISMATCH")
+    index = reference["word_index_zero_based"]
+    if type(index) is not int or not 0 <= index < len(words):
+        raise ValueError("SOURCE_SCOPE_RAW_WORD_INDEX_INVALID")
+    word = words[index]
+    if _digest(word) != reference["word_sha256"]:
+        raise ValueError("SOURCE_SCOPE_RAW_WORD_HASH_MISMATCH")
+    return word
+
+
+def scope_words_to_source_domain(words, domain, labels, roi, *, evidence=None):
     """Separate raw observations applicable to the selected source object.
 
     Raw words are not edited; a word whose box mixes the external component
@@ -827,16 +896,34 @@ def scope_words_to_source_domain(words, domain, labels, roi):
         if inside and ids and not mixed:
             kept.append(word)
         else:
-            rejected.append(
+            raw_word = (
                 {
-                    "raw_word": copy.deepcopy(word),
-                    "word_inside_current_source_domain": inside,
-                    "external_component_ids_in_word_box": mixed,
-                    "source_component_ids": sorted(ids),
-                    "reason": "OBSERVATION_REFERS_TO_DIFFERENT_OR_MIXED_SOURCE_SCOPE",
-                    "raw_word_or_original_source_modified": False,
+                    key: copy.deepcopy(word[key])
+                    for key in (
+                        "id",
+                        "text",
+                        "bbox_xyxy_px",
+                        "confidence",
+                        "context_id",
+                        "psm",
+                        "observation_key",
+                    )
+                    if key in word
                 }
+                if evidence is not None
+                else copy.deepcopy(word)
             )
+            rejection = {
+                "raw_word": raw_word,
+                "word_inside_current_source_domain": inside,
+                "external_component_ids_in_word_box": mixed,
+                "source_component_ids": sorted(ids),
+                "reason": "OBSERVATION_REFERS_TO_DIFFERENT_OR_MIXED_SOURCE_SCOPE",
+                "raw_word_or_original_source_modified": False,
+            }
+            if evidence is not None:
+                rejection["raw_word_reference"] = evidence.reference(word)
+            rejected.append(rejection)
     return kept, rejected
 
 
@@ -1235,6 +1322,10 @@ def refine_text_line_domains(
     anchors = _anchors(observations, glyphs)
     base._dump(output / "current_observation_collection.json", collection)
     base._dump(output / "current_observations.json", observations)
+    scope_evidence = ScopeObservationEvidence(output)
+    scope_evidence.register(
+        observations, existing_path=output / "current_observations.json"
+    )
     line_metrics, decisions = {}, []
     for region in text_data["regions"]:
         if region.get("enclosure"):
@@ -1429,11 +1520,16 @@ def refine_text_line_domains(
         scope_exclusions = []
         if domain.get("glyph_neighbor_separation"):
             applicable_observations, scope_exclusions = scope_words_to_source_domain(
-                observations, domain, labels, roi
+                observations, domain, labels, roi, evidence=scope_evidence
             )
             for alternative in alternatives:
+                scope_evidence.register(alternative["words"])
                 applicable_words, excluded = scope_words_to_source_domain(
-                    alternative["words"], domain, labels, roi
+                    alternative["words"],
+                    domain,
+                    labels,
+                    roi,
+                    evidence=scope_evidence,
                 )
                 alternative["words"] = applicable_words
                 alternative["source_scope_excluded_raw_words"] = excluded
