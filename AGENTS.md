@@ -9,8 +9,8 @@
 - 本公开基线仍为 `preserved_main_baseline`；私有v8.4完整区域产物不等于算法已进入main。
 - 私有v8.4已经完成固定区域的正式执行链及一份342对象DXF、295项去向和八项LibreCAD操作；仍有大面积遗漏、PANTRY与完整墙组退化、文字/交汇问题及CAD兼容差异。
 - R1历史裁边否决、R2新输入行域空跑在私有版本已修复，不重复当作新算法任务；迁入公开源码时做定向回归。
-- G1以#41为唯一清理合并入口，#40被包含。正常main前进不是恢复证据损毁。合并维护不代表产品GO或Release。
-- G2建立持续原生重建研发分支，保留公开legacy基线；最新成果必须绑定实际Git提交，真实输入与大型证据留在私有资料中。
+- G1已通过[#41](https://github.com/ryoumiyahayato/image-to-cad/pull/41)这一唯一清理内容入口合并，合并提交为`1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`；main包含#40，#40已关闭，不再安排重复合并。两个已合并工作分支尚待删除，五个独有研究分支继续保留，详见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。正常main前进不是恢复证据损毁，维护合并不代表产品GO或Release。
+- G2持续研发分支`development/native-reconstruction`已从该合并提交建立，实际原生源码与入口迁入由[PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)跟踪，尚未合入main。保留本公开main的legacy边界；后续源码工作在该研发分支继续，最新成果必须绑定实际Git提交，真实输入与大型证据留在私有资料中。
 
 ## 当前工作
 

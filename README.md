@@ -5,6 +5,8 @@
 
 **[当前权威设计与验收基准](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)** · [真实研发状态](docs/project/PROJECT_STATUS.md) · [当前任务](docs/project/CURRENT_TASK.md) · [下一步](docs/project/NEXT_TASK.md) · [Agent 执行协议](docs/project/AGENT_OPERATING_PROTOCOL.md)
 
+**仓库交接：** G1 清理内容已通过 [#41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 合入 main；被包含的 #40 已关闭。原生重建源码现由持续分支 [`development/native-reconstruction`](https://github.com/ryoumiyahayato/image-to-cad/tree/development/native-reconstruction) 和 [源码 PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42) 跟踪，尚未合入 main。本页的 main 入口仍是下述 `preserved_main_baseline`；维护合并不代表产品 GO 或正式发布。
+
 ## 产品要交付什么
 
 用户选择图片、TIFF 或 PDF 的页面/区域，软件在保留原图证据的前提下，尽量重建为原生 LINE、ARC、LWPOLYLINE、TEXT/MTEXT、INSERT/BLOCK 等合理完整的对象，最终导出 DXF。对象能独立删除、移动、改形状或改文字，且不留下不合理碎片、不损伤邻近图形。
@@ -28,7 +30,7 @@
 
 冻结对象：A2-SG-008.tiff 的连续四分之一区域，原像素裁框 `[1400,1000,5000,3411]`。固定反例包括房号 `210`、完整三行 `DN. TO / LIGHTS ON / 1ST FLOOR`、`EBB-3`、完整墙与门、交叉连接和真实短划。
 
-私有v8.4已实际完成同一固定区域的正式执行链和主DXF，并完成295项去向及LibreCAD八项普通编辑/退出重开；仍未通过完整内容验收。R1/R2旧逻辑缺陷已在私有版本修复，不重复作为新任务。当前优先：PANTRY和完整墙组退化、完整连接与交汇（含C07/C08）、i/I/1冲突与标签后缀；同时将实际源码迁入持续研发分支。公开main能力仍按下方入口和[项目状态](docs/project/PROJECT_STATUS.md)判断。
+私有v8.4已实际完成同一固定区域的正式执行链和主DXF，并完成295项去向及LibreCAD八项普通编辑/退出重开；仍未通过完整内容验收。R1/R2旧逻辑缺陷已在私有版本修复，不重复作为新任务。当前优先：PANTRY和完整墙组退化、完整连接与交汇（含C07/C08）、i/I/1冲突与标签后缀；源码迁入和后续改进由 #42 持续跟踪，每轮成果须绑定实际 Git 提交。公开main能力仍按下方入口和[项目状态](docs/project/PROJECT_STATUS.md)判断。
 
 正式工程师验收仍需：无须清理无意义碎线或填色垃圾，所有漏项补绘、纠错及核对计入人工修图时间，人工修图用时 **≤ 同范围、同质量从零重画时间的 50%**。未有真实计时，不能宣布通过。
 
@@ -47,7 +49,7 @@ python -m venv .venv
 
 ### 当前入口和默认构建的边界
 
-GUI 与 CLI 仍调用 `ProductionProcessingService.process_page`，使用已保留的 `FinalStructure` 和 DXF serializer。最新私有 `app/native_objects` 研究尚未迁入这个公开入口；界面、CLI 帮助和导出报告明确标为 `LOCAL_NO_GO / preserved_main_baseline`，不得按目标规范倒推实现已经完成。
+main 的 GUI 与 CLI 仍调用 `ProductionProcessingService.process_page`，使用已保留的 `FinalStructure` 和 DXF serializer。`app/native_objects` 链路已迁入 #42 的研发分支，尚未合入这个 main 入口；界面、CLI 帮助和导出报告明确标为 `LOCAL_NO_GO / preserved_main_baseline`，不得按研发分支或目标规范倒推 main 已有相同能力。原生研发入口的安装与资源说明见[研发分支 REPRODUCE](https://github.com/ryoumiyahayato/image-to-cad/blob/development/native-reconstruction/docs/native/REPRODUCE.md)。
 
 当前保留基线把单页和多页 GUI 的默认保存格式统一为 **DXF**；DWG 仍须显式选择外部转换器，未取得产品往返验收。默认打包继续使用同一公开入口，同时携带当前产品基准和状态。`0.3.0-dev` 或未达到 GO 的版本不能通过正式 Release 发布门禁；开发构建仍可运行。
 
@@ -55,7 +57,7 @@ GUI 与 CLI 仍调用 `ProductionProcessingService.process_page`，使用已保�
 
 - 项目当前版本仍为 `0.3.0-dev`，暂不宣称正式发布。
 - 研究、产品源码、私有原图与可公开文档分层管理。与新设计冲突的旧路线转历史或标记 SUPERSEDED，不再作为默认开发任务。
-- 历史清理已关闭#38/#39、删除7条冗余分支和11个重复/空文件，见[当时执行账本](docs/project/CLEANUP_EXECUTED_20261120.md)。#41包含#40，是唯一清理合并入口；维护合并不代表产品发布。当前删除/保留及恢复规则见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。
+- 历史清理已关闭#38/#39、删除7条冗余分支和11个重复/空文件，见[当时执行账本](docs/project/CLEANUP_EXECUTED_20261120.md)。#41 已作为唯一清理内容入口合并，main 包含 #40，#40 已关闭；两个已合并工作分支尚待删除，五个独有研究分支继续保留。合并提交、删除/保留及恢复规则见[G1收口记录](docs/project/G1_CLOSEOUT_20261120.md)。
 - 原版长期意图备忘录、旧研究与工程证据可供历史追溯，但**当前产品契约**由 [2026-11-20 基准](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) 定义。
 - 无论独立研究输出多漂亮，都必须在最终保存 DXF 中核对，并经过目标 CAD 的打开、编辑、保存和重开。未测即 NOT_RUN。
 
