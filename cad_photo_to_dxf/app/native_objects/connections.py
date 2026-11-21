@@ -191,11 +191,21 @@ def _degree(skel):
 
 
 class _SourceGraph:
-    def __init__(self, skel, origin, rounds, roi, started, *, source_ink=None):
+    def __init__(self, skel, origin, rounds, roi, started, *, source_ink=None,
+                 aggregate_core_boxes=None):
+        self.source_endpoint_cap_restoration = None
+        if aggregate_core_boxes and source_ink is not None:
+            from .source_endpoint_caps import restore_source_endpoint_caps
+
+            skel, self.source_endpoint_cap_restoration = restore_source_endpoint_caps(
+                skel, source_ink, origin, aggregate_core_boxes
+            )
         self.skel = skel
         self.h, self.w = skel.shape
         self.flat = skel.ravel()
         self.origin = np.asarray(origin, float)
+        self.roi = list(map(int, roi))
+        self.enable_shared_core_proofs = bool(aggregate_core_boxes)
         self.source_ink = source_ink
         self.degree = _degree(skel)
         junction = skel & (self.degree >= 3)
@@ -252,6 +262,13 @@ class _SourceGraph:
                     self.nodes[end]["edges"].append((eid, 1))
             if node_id % 300 == 0:
                 _checkpoint(started)
+        self.bounded_aggregate_cores = []
+        if aggregate_core_boxes:
+            from .text_graph_support import aggregate_close_crossing_cores
+
+            self.bounded_aggregate_cores = aggregate_close_crossing_cores(
+                self, aggregate_core_boxes
+            )
         for node in self.nodes.values():
             points = self.xy(node["pixels"])
             centre = points.mean(axis=0)
@@ -425,6 +442,20 @@ class _SourceGraph:
             loop["pixels"]
             + self.core_route(node["id"], loop["pixels"][-1], loop["pixels"][0])[1:]
         )
+        # Start the closed walk where its unique external stroke actually
+        # joins it. An arbitrary loop-edge origin can walk the closing edge
+        # again while travelling to the external port, creating an avoidable
+        # duplicate CAD segment. Rotation preserves every source cycle edge.
+        external = next(port for port in ports if port[0] != loop["id"])
+        external_pixel = self.oriented(external)[0]
+        ring = cycle[:-1]
+        entry = min(range(len(ring)), key=lambda index: (
+            len(self.core_route(node["id"], ring[index], external_pixel))
+            if self.node_map[ring[index]] == node["id"] else float("inf"),
+            ring[index],
+        ))
+        ring = ring[entry:] + ring[:entry]
+        cycle = ring + ring[:1]
         node["terminal"] = {
             "kind": "OBSERVED_CLOSED_TERMINAL_LOBE",
             "loop_edge_id": loop["id"],
@@ -436,6 +467,7 @@ class _SourceGraph:
             "loop_pixels": cycle,
             "source_hole_retained": True,
             "external_port_count": 1,
+            "cycle_anchor_chosen_from_actual_external_port": True,
         }
         return True
 
@@ -568,6 +600,8 @@ class _SourceGraph:
             "separate_crossing_owners_retained": True,
         }
         node["crossing_evidence"] = evidence
+        if node.get("bounded_aggregate_source_core"):
+            evidence["bounded_aggregate_source_core"] = node["bounded_aggregate_source_core"]
         if (
             best[1] > POLICY["crossing_pair_max_deviation_deg"]
             or scored[1][0] - best[0] < POLICY["crossing_pair_cost_margin_deg"]
@@ -578,6 +612,12 @@ class _SourceGraph:
         for a, b in best[2]:
             node["pairing"][ports[a]] = ports[b]
             node["pairing"][ports[b]] = ports[a]
+        from .text_graph_support import four_port_source_core_proof
+
+        shared_core = four_port_source_core_proof(self, node) if self.enable_shared_core_proofs else None
+        if shared_core:
+            node["bounded_shared_source_core"] = shared_core
+            evidence["bounded_shared_source_core"] = shared_core
 
     def core_route(self, node_id, start, end):
         pending = deque([start])
@@ -1377,7 +1417,8 @@ def _round_boundary_ownership(points, rounds):
 
 
 def extract_connections(
-    gray, roi, prior_objects, out, *, cpu_budget_seconds=42.0, text_regions=None
+    gray, roi, prior_objects, out, *, cpu_budget_seconds=42.0, text_regions=None,
+    verified_text_observations=None,
 ):
     """Return native whole paths and explicit, unapplied prior-LINE intervals."""
     del (
@@ -1399,7 +1440,12 @@ def extract_connections(
     input_hash = hashlib.sha256(crop.tobytes()).hexdigest()
     rounds = _round_boundaries(ink, origin)
     skel, thinning_counts = _thinning(ink, started)
-    graph = _SourceGraph(skel, origin, rounds, roi, started, source_ink=ink)
+    from .text_graph_support import verified_candidate_core_boxes
+
+    core_boxes = verified_candidate_core_boxes(gray, text_regions, verified_text_observations)
+    graph = _SourceGraph(skel, origin, rounds, roi, started, source_ink=ink,
+                         aggregate_core_boxes=core_boxes)
+    skel = graph.skel
     distance = cv2.distanceTransform(
         (~ink).astype(np.uint8), cv2.DIST_L2, cv2.DIST_MASK_PRECISE
     )
@@ -1413,6 +1459,16 @@ def extract_connections(
         from .contracts import validate_text_regions
 
         source_text_boxes = validate_text_regions(text_regions, gray.shape, roi)
+    from .text_graph_support import (
+        assess_path_text_contact,
+        complete_crossing_group,
+        prepare_text_support,
+    )
+
+    text_support = prepare_text_support(
+        gray, roi, text_regions, prior_objects, graph,
+        verified_observations=verified_text_observations,
+    )
     proposals = []
     uncertainties = []
     seen = set()
@@ -1432,7 +1488,8 @@ def extract_connections(
             seen.add(key)
             points = graph.xy(pixels)
             length = _length(points)
-            if length < POLICY["minimum_path_length_px"]:
+            graphic_group = complete_crossing_group(text_support, edge_ids)
+            if length < POLICY["minimum_path_length_px"] and graphic_group is None:
                 continue
             row = {
                 "source_graph_edge_ids": edge_ids,
@@ -1446,6 +1503,12 @@ def extract_connections(
                 ],
                 "crossing_evidence": crossings,
             }
+            if graph.source_endpoint_cap_restoration:
+                path_points = {tuple(point) for point in row["source_path_points"]}
+                row["source_endpoint_cap_restorations"] = [
+                    item for item in graph.source_endpoint_cap_restoration["restored"]
+                    if tuple(item["original_endpoint_source_xy_px"]) in path_points
+                ]
             label = int(source_labels.ravel()[pixels[0]])
             row["source_connected_group_id"] = f"SOURCE-COMPONENT-{label:06d}"
             row["source_component_bbox_xywh"] = (
@@ -1613,6 +1676,7 @@ def extract_connections(
             if (
                 curved_deviation < POLICY["minimum_curved_deviation_px"]
                 and not terminal_lobes
+                and graphic_group is None
             ):
                 continue  # Existing straight-LINE capability; no new recovery claim.
             contacts = []
@@ -1652,27 +1716,69 @@ def extract_connections(
                 if int(hit.sum()) >= 6:
                     glyph_contacts.append(box["region_id"])
             if glyph_contacts:
-                row["reason"] = "CURRENT_SOURCE_GLYPH_OWNERSHIP_CONTACT"
-                row["text_region_ids"] = sorted(set(glyph_contacts))
-                uncertainties.append(row)
+                role = assess_path_text_contact(
+                    text_support, points, row["endpoint_evidence"], crossings,
+                    glyph_contacts,
+                    complete_source_path=(
+                        row.get("whole_isolated_component_skeleton_accounted", False)
+                        or row.get("complete_mixed_observed_endpoint_chain", {}).get("pass", False)
+                        or graphic_group is not None
+                    ),
+                    source_graph_edge_ids=edge_ids,
+                )
+                row["text_graphic_support"] = role
+                if role["decision"] != "SOURCE_SUPPORTED_GRAPHIC":
+                    row["reason"] = "CURRENT_SOURCE_GLYPH_OWNERSHIP_CONTACT"
+                    row["text_region_ids"] = sorted(set(glyph_contacts))
+                    uncertainties.append(row)
+                    continue
+            elif graphic_group is not None and (
+                length < POLICY["minimum_path_length_px"]
+                or curved_deviation < POLICY["minimum_curved_deviation_px"]
+            ):
+                # The bounded straight/short-member route is licensed only by
+                # a freshly proved graphic support relation for this group.
                 continue
             protected = [
                 len(n["terminal"].get("loop_pixels", []))
                 for n in (start_node, end_node)
             ]
-            geometry, representation = _representation(
-                points,
-                protected_prefix=protected[0],
-                protected_suffix=protected[1],
-                protected_intervals=[
-                    row["protected_source_path_interval"]
-                    for row in crossings
-                    if row.get("local_cycle_cover_evidence")
-                ],
-            )
-            if row.get("whole_simple_source_chain", {}).get("pass") or mixed_pair:
+            protected_intervals = [
+                crossing["protected_source_path_interval"]
+                for crossing in crossings
+                if crossing.get("local_cycle_cover_evidence")
+            ]
+            has_protected_source_walk = bool(any(protected) or protected_intervals)
+            if graphic_group is not None and not has_protected_source_walk:
+                # Different source routes may share a tiny raster junction
+                # bridge. Independent greedy simplification can copy that
+                # exact bridge into both CAD paths. Use the existing bounded
+                # source-order minimum-span encoder for every complete group
+                # member; all vertices still come from its own source walk,
+                # and the unchanged two-way 0.85 px fit gate follows below.
+                simplified, encoding = _bounded_source_polyline(points)
+                geometry = {
+                    "points": simplified.tolist(),
+                    "bulges": [0.0] * len(simplified),
+                    "closed": False,
+                }
+                representation = {
+                    "representation": "ONE_NATIVE_OPEN_POLYLINE",
+                    "source_ordered_span_encoding": encoding,
+                    "complete_multi_path_group_encoding": True,
+                    "source_walk_and_endpoints_unchanged": True,
+                }
+            else:
+                geometry, representation = _representation(
+                    points,
+                    protected_prefix=protected[0],
+                    protected_suffix=protected[1],
+                    protected_intervals=protected_intervals,
+                )
+            if (row.get("whole_simple_source_chain", {}).get("pass") or mixed_pair
+                    or graphic_group is not None):
                 fit = _simple_chain_fit_certificate(points, geometry)
-                if not fit["pass"]:
+                if not fit["pass"] and not has_protected_source_walk:
                     simplified, encoding = _bounded_source_polyline(points)
                     replacement = {
                         "points": simplified.tolist(),
@@ -1799,6 +1905,37 @@ def extract_connections(
             )
         else:
             selected.append(obj)
+    # A compound graphic is not reported complete if one of its real crossing
+    # strokes failed native fitting or source responsibility. Shared core
+    # pixels remain evidence; each external graph edge still has a whole path.
+    complete_groups = {}
+    for obj in selected:
+        certificate = obj["source_evidence"].get("text_graphic_support", {}).get("complete_graphic_group")
+        if certificate:
+            complete_groups.setdefault(certificate["certificate_sha256"], (certificate, []))[1].append(obj)
+    incomplete_ids = set()
+    for certificate, members in complete_groups.values():
+        expected = {tuple(sorted(row["source_graph_edge_ids"])) for row in certificate["complete_routes"]}
+        actual = {tuple(sorted(obj["source_evidence"]["source_graph_edge_ids"])) for obj in members}
+        if actual != expected:
+            incomplete_ids.update(obj["id"] for obj in members)
+            uncertainties.append({
+                "reason": "WHOLE_GRAPHIC_GROUP_NATIVE_MEMBERS_INCOMPLETE",
+                "source_connected_group_id": members[0]["source_evidence"]["source_connected_group_id"],
+                "group_certificate": certificate,
+                "complete_member_path_ids_before_group_gate": [obj["id"] for obj in members],
+                "missing_source_edge_paths": [list(key) for key in sorted(expected - actual)],
+                "source_short_branches_removed": False,
+            })
+        else:
+            responsibility = [
+                {"path_id": obj["id"], "source_graph_edge_ids": obj["source_evidence"]["source_graph_edge_ids"],
+                 "endpoint_evidence": obj["source_evidence"]["endpoint_evidence"]}
+                for obj in members
+            ]
+            for obj in members:
+                obj["source_evidence"]["graphic_group_path_responsibility"] = responsibility
+    selected = [obj for obj in selected if obj["id"] not in incomplete_ids]
     groups = defaultdict(
         lambda: {
             "edge_ids": [],
@@ -1843,6 +1980,8 @@ def extract_connections(
                 "core_topology": node["core_topology"],
                 "finite_path_decompositions": node["finite_path_decompositions"],
                 "local_cycle_cover_evidence": node.get("local_cycle_cover"),
+                "bounded_aggregate_source_core": node.get("bounded_aggregate_source_core"),
+                "bounded_shared_source_core": node.get("bounded_shared_source_core"),
                 "semantic_connectivity": "UNKNOWN_UNLESS_INDEPENDENT_SOURCE_CONTEXT_PROVES_IT",
             }
         )
@@ -1887,6 +2026,8 @@ def extract_connections(
             "edges": graph_edges,
             "groups": group_rows,
             "bounded_local_cycle_cell_discovery": graph.cycle_cell_discovery,
+            "bounded_aggregate_source_cores": graph.bounded_aggregate_cores,
+            "source_endpoint_cap_restoration": graph.source_endpoint_cap_restoration,
             "all_ports_and_short_edges_preserved": True,
             "nodes_without_unique_decomposition_remain_pending": True,
         },
@@ -1896,6 +2037,15 @@ def extract_connections(
         "dependency_producers": {
             "app.native_objects.connection_core_routes": hashlib.sha256(
                 Path(__file__).with_name("connection_core_routes.py").read_bytes()
+            ).hexdigest(),
+            "app.native_objects.text_graph_support": hashlib.sha256(
+                Path(__file__).with_name("text_graph_support.py").read_bytes()
+            ).hexdigest(),
+            "app.native_objects.checkpoint_text_observations": hashlib.sha256(
+                Path(__file__).with_name("checkpoint_text_observations.py").read_bytes()
+            ).hexdigest(),
+            "app.native_objects.source_endpoint_caps": hashlib.sha256(
+                Path(__file__).with_name("source_endpoint_caps.py").read_bytes()
             ).hexdigest(),
         },
         "policy": POLICY,

@@ -65,6 +65,16 @@ jobs:
             tests/test_native_connection_checkpoint_adoption.py \
             tests/test_native_connection_checkpoint_cad.py \
             tests/test_native_connection_checkpoint_pipeline.py \
+            tests/test_native_checkpoint_baseline.py \
+            tests/test_native_checkpoint_text_observations.py \
+            tests/test_native_checkpoint_continuation.py \
+            tests/test_native_checkpoint_shared_core.py \
+            tests/test_native_complete_shared_core.py \
+            tests/test_native_duplicate_source_group.py \
+            tests/test_native_final_connection_group_gate.py \
+            tests/test_native_terminal_loop_saved.py \
+            tests/test_native_source_endpoint_caps.py \
+            tests/test_native_text_graph_support.py \
             tests/test_native_checkpoint_review_scope.py \
             tests/test_native_connection_core_routes.py \
             tests/test_native_retrace_cold_audit.py \

@@ -13,7 +13,6 @@ import time
 import cv2
 import numpy as np
 from scipy.ndimage import distance_transform_edt
-from scipy.spatial import cKDTree
 
 from .connection_checkpoint_inputs import (
     capture_checkpoint,
@@ -28,7 +27,10 @@ from .connections import (
     extract_connections,
 )
 from .contracts import TOLERANCES, save_json
-from .completion_stages import _existing_arc_overlap, _existing_line_members
+from .completion_stages import (
+    _connection_path_responsibility, _existing_arc_overlap, _existing_line_members,
+    _quarantine_native_duplicate_groups, _finalize_complete_connection_groups,
+)
 from .execution import check_cancel, file_sha
 
 __all__ = [
@@ -38,15 +40,6 @@ __all__ = [
     "adopt_checkpoint_paths",
     "run_connection_checkpoint",
 ]
-
-
-def _source_edges(obj):
-    points = obj.get("source_evidence", {}).get("source_path_points", [])
-    return {
-        tuple(sorted((tuple(a), tuple(b))))
-        for a, b in zip(points, points[1:])
-        if a != b
-    }
 
 
 def _line_source_coverage(proposal, line):
@@ -186,31 +179,24 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
     prior = {obj["id"]: obj for obj in prior_objects}
     if len(prior) != len(prior_objects):
         raise ValueError("CONNECTION_CHECKPOINT_DUPLICATE_PRIOR_ID")
+    quarantine = _quarantine_native_duplicate_groups(proposals, prior_objects)
+    quarantined_ids = set(quarantine["quarantined_ids"])
     adopted, decisions, retired = [], [], set()
     for candidate in proposals:
         if candidate["kind"] != "CONNECTION_PATH":
             raise ValueError("CONNECTION_CHECKPOINT_NONPATH_PROPOSAL")
         obj = deepcopy(candidate)
         row = {"id": obj["id"], "adopted": False, "reasons": [],
-               "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": []}
+               "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": [],
+               "shared_source_core_checks": []}
+        if obj["id"] in quarantined_ids:
+            row.update(_connection_path_responsibility(gray, obj, prior_objects))
+            row["decision"] = "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP"
+            row["reasons"].append("SOURCE_GROUP_HAS_DUPLICATE_NATIVE_SEGMENTS")
+            decisions.append(row)
+            continue
         active = [p for p in prior_objects if p["id"] not in retired] + adopted
-        path = _dense_geometry(obj["geometry"])
-        edges = _source_edges(obj)
-        for old in active:
-            if old["id"] == obj["id"]:
-                if old["geometry"] != obj["geometry"] or old["kind"] != obj["kind"]:
-                    raise ValueError("CONNECTION_CHECKPOINT_ID_GEOMETRY_COLLISION")
-                row["existing_adequate_ids"].append(old["id"])
-                continue
-            if old["kind"] != "CONNECTION_PATH":
-                continue
-            other = _dense_geometry(old["geometry"])
-            same = max(float(cKDTree(path).query(other)[0].max()),
-                       float(cKDTree(other).query(path)[0].max())) <= POLICY["polyline_approximation_px"]
-            if same:
-                row["existing_adequate_ids"].append(old["id"])
-            elif edges & _source_edges(old):
-                row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
+        row.update(_connection_path_responsibility(gray, obj, active))
         if row["existing_adequate_ids"]:
             row["decision"] = "RETAIN_EXISTING_COMPLETE_PATH_NO_DUPLICATE"
             decisions.append(row)
@@ -252,10 +238,17 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
             obj["source_evidence"]["checkpoint_responsibility_resolution"] = deepcopy(row)
             adopted.append(obj)
         decisions.append(row)
+    final_groups = _finalize_complete_connection_groups(proposals, prior_objects, adopted, decisions, retired)
+    adopted, decisions, retired = final_groups["objects"], final_groups["decisions"], final_groups["retired_ids"]
     return {
         "objects": adopted, "retired_ids": sorted(retired), "decisions": decisions,
         "uncertainties": [{"reason": "CONNECTION_EDIT_RESPONSIBILITY_PENDING", **row}
-                          for row in decisions if row.get("decision") == "PENDING_WHOLE_OBJECT_RESPONSIBILITY"],
+                          for row in decisions if row.get("decision") in (
+                              "PENDING_WHOLE_OBJECT_RESPONSIBILITY", "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP",
+                              "PENDING_INCOMPLETE_FINAL_SOURCE_GROUP")],
+        "native_duplicate_group_quarantine": quarantine,
+        "final_complete_group_gate": {key: value for key, value in final_groups.items()
+                                      if key not in ("objects", "decisions")},
         "source_pixels_modified": False,
         "partial_old_entity_retirement_permitted": False,
     }
@@ -290,6 +283,42 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
     gray, roi, out = prepared.gray, prepared.working_roi, job.evidence_dir
     out.mkdir(parents=True, exist_ok=True)
     trace = []
+    protected_ids, baseline_scopes, source_assets = set(), [], []
+    verified_text_observations = None
+    if binding.get("baseline_evidence") is not None:
+        from .checkpoint_baseline import (
+            capture_baseline_evidence,
+            materialize_baseline_graphs,
+            verify_baseline_evidence,
+        )
+
+        copied = capture_baseline_evidence(binding["baseline_evidence"], out / "baseline_preservation")
+        current = verify_baseline_evidence(
+            copied, baseline_path, baseline, job.input_path,
+            prepared.source_sha256, binding["parameters"], gray=gray,
+        )
+        protected_ids = set(current["protected_object_ids"])
+        baseline_scopes = materialize_baseline_graphs(copied, out, baseline, protected_ids)
+        save_json(out / "baseline_preservation_checks.json", {
+            key: value for key, value in current.items() if key not in ("manifest", "root")
+        })
+        source_assets.extend((out / "baseline_preservation").rglob("*"))
+        source_assets.extend((out / "baseline_observations").rglob("*"))
+        source_assets.append(out / "baseline_preservation_checks.json")
+    if binding.get("source_observations") is not None:
+        from .checkpoint_text_observations import capture_source_observations, verify_source_observations
+
+        copied = capture_source_observations(
+            binding["source_observations"]["path"], out / "source_observations",
+            job.input_path, prepared.source_sha256, binding["parameters"],
+        )
+        verified_text_observations = verify_source_observations(
+            copied, job.input_path, prepared.source_sha256,
+            binding["parameters"], gray=gray,
+        )
+        save_json(out / "source_observations_verified.json", verified_text_observations)
+        source_assets.extend((out / "source_observations").rglob("*"))
+        source_assets.append(out / "source_observations_verified.json")
 
     def progress(stage, fraction):
         check_cancel(stage)
@@ -310,7 +339,7 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
     save_json(out / "import_manifest.json", imported)
     save_json(out / "connection_checkpoint_binding.json", binding)
     selected = [obj for obj in baseline["objects"]
-                if any(_intersects(_box(obj), scope) for scope in scopes)]
+                if obj["id"] in protected_ids or any(_intersects(_box(obj), scope) for scope in scopes)]
     progress("CAPTURED_SOURCE_AND_EXISTING_OBSERVATIONS_VERIFIED_NO_OCR", 0.05)
     candidates, uncertainties, scope_rows, discovery_scopes = [], [], [], []
     first_scope = {}
@@ -325,8 +354,12 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
             "derived_roi_xyxy_px": window["context_roi"],
             "all_region_rows_unchanged": True, "new_OCR_calls": 0,
         })
+        observation_options = {}
+        if verified_text_observations is not None:
+            observation_options["verified_text_observations"] = verified_text_observations
         raw = extract_connections(gray, window["context_roi"], baseline["objects"],
-                                  scope_dir / "discovery", text_regions=local_texts)
+                                  scope_dir / "discovery", text_regions=local_texts,
+                                  **observation_options)
         for obj in raw["objects"]:
             candidates.append(obj)
             first_scope.setdefault(obj["id"], index)
@@ -357,9 +390,14 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
         if obj["id"] not in retained:
             continue
         if any(row.get("local_cycle_cover_evidence") for row in obj.get("source_evidence", {}).get("crossing_evidence", [])):
+            if obj["id"] in protected_ids:
+                continue  # Captured original graph is re-proved by the cold audit below.
             if obj["id"] not in first_scope:
                 raise ValueError("RETAINED_RETRACE_NEEDS_CURRENT_BOUNDED_GRAPH")
             discovery_scopes[first_scope[obj["id"]]]["object_ids"].append(obj["id"])
+    discovery_scopes.extend(baseline_scopes)
+    if len(discovery_scopes) > 8:
+        raise ValueError("BOUNDED_NEW_AND_PRESERVED_GRAPH_SCOPE_BUDGET_EXCEEDED")
     progress("ACTUAL_NATIVE_CHECKPOINT_DXF_SAVE", 0.72)
     meta = write_checkpoint_dxf(baseline_path, baseline, retained, adoption["objects"],
                                 job.output_path, roi, job.dpi, prepared.source_sha256,
@@ -378,6 +416,16 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
     progress("CURRENT_SAVED_LOCAL_SOURCE_REVIEW", 0.94)
     quality = run_quality_review(job.output_path, gray, roi, job.dpi, objects, texts,
                                  issues, imported, out, cold_audit=audit, render=render)
+    if source_assets:
+        from .review_binding import verify_saved_review
+
+        quality["evidence_assets"].extend({
+            "relative_path": path.relative_to(out).as_posix(), "sha256": file_sha(path)
+        } for path in sorted(set(source_assets)) if path.is_file())
+        save_json(out / "quality_review.json", quality)
+        if not verify_saved_review(out / "quality_review.json", job.output_path, objects,
+                                    imported, source_path=job.input_path)["valid"]:
+            raise ValueError("CURRENT_CAPTURED_SOURCE_PROOF_BINDING_REJECTED")
     report = {
         "status": "LOCAL_NO_GO", "formal_entry_called_new_pipeline": True,
         "pipeline_module": __name__, "job_id": job.job_id, "job_config": job.payload(),
@@ -390,6 +438,9 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
         "new_complete_path_ids": [obj["id"] for obj in adoption["objects"]],
         "retired_whole_line_ids": adoption["retired_ids"],
         "preserved_old_object_ids": sorted(retained),
+        "preserved_prior_delta_path_ids": sorted(protected_ids),
+        "verified_raw_text_observations": len(verified_text_observations["observations"])
+        if verified_text_observations is not None else 0,
         "old_objects_outside_selected_contexts_not_exported": len(baseline["objects"]) - len(selected),
         "existing_entities_partially_erased": False, "new_OCR_calls": 0,
         "full_region_conversion_runs": 0, "engineering_semantics_required": False,
