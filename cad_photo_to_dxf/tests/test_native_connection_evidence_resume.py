@@ -52,9 +52,12 @@ def completed_connections(tmp_path):
     return old, gray, roi, source_sha, raw, result
 
 
-def _cold_resume(tmp_path, gray, roi, source_sha, objects, evidence):
+def _cold_resume(
+    tmp_path, gray, roi, source_sha, objects, evidence, native_geometry_export_context
+):
     dxf = tmp_path / "result.dxf"
-    export_objects(objects, dxf, roi, 200, source_sha)
+    with native_geometry_export_context(objects):
+        export_objects(objects, dxf, roi, 200, source_sha)
     audit = cold_audit(dxf, gray, roi, 200, evidence / "cold_audit.json")
     assert audit["source_gate_pass"]
     assert not audit["exact_duplicate_segments"]
@@ -63,7 +66,7 @@ def _cold_resume(tmp_path, gray, roi, source_sha, objects, evidence):
 
 
 def test_assembly_resume_restores_bound_raw_graph_and_reaudits_saved_entity(
-    tmp_path, completed_connections
+    tmp_path, completed_connections, native_geometry_export_context
 ):
     old, gray, roi, source_sha, _, result = completed_connections
     evidence = tmp_path / "assembly-resume/evidence"
@@ -79,13 +82,19 @@ def test_assembly_resume_restores_bound_raw_graph_and_reaudits_saved_entity(
         assert (evidence / name).read_bytes() == (old / name).read_bytes()
     assert not (evidence / "cold_audit.json").exists()
     _cold_resume(
-        tmp_path / "assembly-resume", gray, roi, source_sha, result["objects"], evidence
+        tmp_path / "assembly-resume",
+        gray,
+        roi,
+        source_sha,
+        result["objects"],
+        evidence,
+        native_geometry_export_context,
     )
 
 
 @pytest.mark.parametrize("mode", ["revision", "completed-stage"])
 def test_proposal_resume_carries_graph_into_current_adoption_and_cold_audit(
-    tmp_path, completed_connections, mode
+    tmp_path, completed_connections, native_geometry_export_context, mode
 ):
     old, gray, roi, source_sha, raw, result = completed_connections
     identity = {
@@ -134,7 +143,15 @@ def test_proposal_resume_carries_graph_into_current_adoption_and_cold_audit(
     if mode == "revision":
         assert resumed["replay"]["old_adoption_or_responsibility_reused"] is False
     assert not (evidence / "cold_audit.json").exists()
-    _cold_resume(tmp_path / mode, gray, roi, source_sha, resumed["objects"], evidence)
+    _cold_resume(
+        tmp_path / mode,
+        gray,
+        roi,
+        source_sha,
+        resumed["objects"],
+        evidence,
+        native_geometry_export_context,
+    )
 
 
 @pytest.mark.parametrize(
@@ -198,3 +215,25 @@ def test_objects_without_local_retraces_need_no_new_cold_certificate_assets(tmp_
         )
         is None
     )
+
+
+def test_geometry_font_context_restores_the_production_missing_resource_gate(
+    tmp_path, monkeypatch, native_geometry_export_context
+):
+    from app.native_objects import cad_io
+
+    original = cad_io._font
+    with native_geometry_export_context([{"kind": "CONNECTION_PATH"}]):
+        metadata = cad_io._font(tmp_path)
+        assert (
+            metadata["font_resource"] == metadata["license_resource"] == "NOT_EXERCISED"
+        )
+        assert metadata["text_metrics_and_rendering"] == "NOT_RUN"
+        assert not list(tmp_path.iterdir())
+    assert cad_io._font is original
+    with monkeypatch.context() as no_resources:
+        no_resources.setattr(Path, "is_file", lambda _path: False)
+        with pytest.raises(
+            FileNotFoundError, match="NATIVE_EXPORT_FONT_OR_LICENSE_MISSING"
+        ):
+            cad_io._font(tmp_path)

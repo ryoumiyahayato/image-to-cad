@@ -31,8 +31,8 @@ def _save(path, value):
 
 
 @pytest.fixture(scope="module")
-def source_template(tmp_path_factory):
-    """Actual discovery and export, without OCR or a private drawing fixture."""
+def source_template(tmp_path_factory, native_geometry_export_context):
+    """Actual path discovery/export; font loading and rendering are not exercised."""
     folder = tmp_path_factory.mktemp("retrace-source")
     ink = np.zeros((160, 220), np.uint8)
     for center in ((25, 90), (195, 90)):
@@ -48,13 +48,17 @@ def source_template(tmp_path_factory):
         gray, ROI, [], folder / "evidence/connections/discovery"
     )
     assert len(discovered["objects"]) == 1
-    export_objects(
-        discovered["objects"],
-        folder / "result.dxf",
-        ROI,
-        DPI,
-        hashlib.sha256(gray.tobytes()).hexdigest(),
-    )
+    assert discovered["objects"][0]["kind"] == "CONNECTION_PATH"
+    # The formal path geometry and cold audit are real. REVIEW labels are not
+    # rendered or measured, so this fixture makes no font/resource claim.
+    with native_geometry_export_context(discovered["objects"]):
+        export_objects(
+            discovered["objects"],
+            folder / "result.dxf",
+            ROI,
+            DPI,
+            hashlib.sha256(gray.tobytes()).hexdigest(),
+        )
     return folder, gray
 
 
