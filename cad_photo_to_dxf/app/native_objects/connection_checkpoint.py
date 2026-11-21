@@ -29,6 +29,7 @@ from .connections import (
 from .contracts import TOLERANCES, save_json
 from .completion_stages import (
     _connection_path_responsibility, _existing_arc_overlap, _existing_line_members,
+    _quarantine_native_duplicate_groups,
 )
 from .execution import check_cancel, file_sha
 
@@ -178,6 +179,8 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
     prior = {obj["id"]: obj for obj in prior_objects}
     if len(prior) != len(prior_objects):
         raise ValueError("CONNECTION_CHECKPOINT_DUPLICATE_PRIOR_ID")
+    quarantine = _quarantine_native_duplicate_groups(proposals, prior_objects)
+    quarantined_ids = set(quarantine["quarantined_ids"])
     adopted, decisions, retired = [], [], set()
     for candidate in proposals:
         if candidate["kind"] != "CONNECTION_PATH":
@@ -186,6 +189,12 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
         row = {"id": obj["id"], "adopted": False, "reasons": [],
                "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": [],
                "shared_source_core_checks": []}
+        if obj["id"] in quarantined_ids:
+            row.update(_connection_path_responsibility(gray, obj, prior_objects))
+            row["decision"] = "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP"
+            row["reasons"].append("SOURCE_GROUP_HAS_DUPLICATE_NATIVE_SEGMENTS")
+            decisions.append(row)
+            continue
         active = [p for p in prior_objects if p["id"] not in retired] + adopted
         row.update(_connection_path_responsibility(gray, obj, active))
         if row["existing_adequate_ids"]:
@@ -232,7 +241,9 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
     return {
         "objects": adopted, "retired_ids": sorted(retired), "decisions": decisions,
         "uncertainties": [{"reason": "CONNECTION_EDIT_RESPONSIBILITY_PENDING", **row}
-                          for row in decisions if row.get("decision") == "PENDING_WHOLE_OBJECT_RESPONSIBILITY"],
+                          for row in decisions if row.get("decision") in (
+                              "PENDING_WHOLE_OBJECT_RESPONSIBILITY", "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP")],
+        "native_duplicate_group_quarantine": quarantine,
         "source_pixels_modified": False,
         "partial_old_entity_retirement_permitted": False,
     }

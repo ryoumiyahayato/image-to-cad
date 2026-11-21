@@ -427,6 +427,87 @@ def _source_edges(obj):
     }
 
 
+
+def _quarantine_native_duplicate_groups(proposals, prior_objects=()):
+    """Reject an entire observed source group before any old entity retirement.
+
+    This is a refusal gate for distinct paths with exact straight native spans,
+    using the saved cold audit's seven-decimal source-coordinate precision.
+    Equal whole-path rediscoveries remain the ordinary duplicate suppressor's
+    responsibility. Same-owner source-certified local-cycle walks are untouched.
+    """
+    from scipy.spatial import cKDTree
+
+    from .connections import POLICY, _dense_geometry
+
+    paths = list(proposals)
+    old_paths = [obj for obj in prior_objects if obj.get("kind") == "CONNECTION_PATH"]
+    dense = {}
+
+    def equivalent(a, b):
+        if a["id"] == b["id"]:
+            if a["kind"] != b["kind"] or a["geometry"] != b["geometry"]:
+                raise ValueError("CONNECTION_PATH_ID_GEOMETRY_COLLISION")
+            return True
+        for obj in (a, b):
+            if id(obj) not in dense:
+                dense[id(obj)] = _dense_geometry(obj["geometry"])
+        left, right = dense[id(a)], dense[id(b)]
+        return max(float(cKDTree(left).query(right)[0].max()),
+                   float(cKDTree(right).query(left)[0].max())) <= POLICY["polyline_approximation_px"]
+
+    groups, membership = {}, {}
+    for obj in paths:
+        if obj.get("kind") != "CONNECTION_PATH":
+            raise ValueError("CONNECTION_PATH_RESPONSIBILITY_REQUIRES_PATH")
+        source = obj.get("source_evidence", {})
+        scope = source.get("original_source_crop_xyxy_px")
+        source_group = source.get("source_connected_group_id")
+        key = ("source_graph", tuple(scope), source.get("original_source_crop_array_sha256"), source_group) \
+            if scope is not None and source_group else ("one_path", obj["id"])
+        groups.setdefault(key, set()).add(obj["id"])
+        membership.setdefault(obj["id"], set()).add(key)
+    adequate = {obj["id"] for obj in paths if any(equivalent(obj, old) for old in old_paths)}
+    active = [(obj, True) for obj in paths if obj["id"] not in adequate]
+    active += [(obj, False) for obj in old_paths]
+    indexed, conflicts, bad_groups = {}, [], set()
+    for obj, proposed in active:
+        points = obj["geometry"]["points"]
+        bulges = obj["geometry"]["bulges"]
+        spans = list(zip(points, points[1:] + (points[:1] if obj["geometry"].get("closed") else [])))
+        for index, (a, b) in enumerate(spans):
+            if float(bulges[index]) != 0:
+                continue  # Circular arcs retain their independent existing gates.
+            key = tuple(sorted((tuple(np.round(a, 7)), tuple(np.round(b, 7)))))
+            if key[0] == key[1]:
+                continue
+            for other, other_proposed, other_index in indexed.get(key, []):
+                if not (proposed or other_proposed) or equivalent(obj, other):
+                    continue
+                affected = [row["id"] for row, fresh in ((obj, proposed), (other, other_proposed)) if fresh]
+                for oid in affected:
+                    bad_groups.update(membership[oid])
+                conflicts.append({"object_ids": [other["id"], obj["id"]],
+                                  "native_segment_indices": [other_index, index],
+                                  "source_pixel_endpoints": [list(point) for point in key]})
+            indexed.setdefault(key, []).append((obj, proposed, index))
+    # One object may have been discovered in overlapping graph namespaces.
+    # Propagate only those exact identity links, not nearby source bounding boxes.
+    while True:
+        quarantined = set().union(*(groups[key] for key in bad_groups)) if bad_groups else set()
+        linked = set().union(*(membership[oid] for oid in quarantined)) if quarantined else set()
+        if linked <= bad_groups:
+            break
+        bad_groups.update(linked)
+    return {"quarantined_ids": sorted(quarantined - adequate),
+            "source_group_members": [sorted(groups[key]) for key in sorted(bad_groups, key=repr)],
+            "native_duplicate_conflicts": conflicts,
+            "before_old_entity_retirement": True,
+            "existing_entities_modified": 0,
+            "whole_path_duplicate_suppression_unchanged": True,
+            "same_owner_retrace_permission_changed": False}
+
+
 def _connection_path_responsibility(gray, proposal, existing):
     """One conservative path-ownership rule for ordinary and bounded entry."""
     from scipy.spatial import cKDTree
@@ -506,11 +587,20 @@ def complete_connections_without_unresolved_retirement(
         discovery=raw,
         binding=(payload or revision or {}).get("raw_discovery_evidence"),
     )
+    quarantine = _quarantine_native_duplicate_groups(raw["objects"], objects)
+    quarantined_ids = set(quarantine["quarantined_ids"])
     members = _existing_line_members(objects)
     adopted = []
     decisions = []
     distance_fields = {}
     for proposal in raw["objects"]:
+        if proposal["id"] in quarantined_ids:
+            responsibility = _connection_path_responsibility(gray, proposal, objects)
+            decisions.append({"id": proposal["id"], "adopted": False, **responsibility,
+                              "decision": "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP",
+                              "reasons": [*responsibility["reasons"], "SOURCE_GROUP_HAS_DUPLICATE_NATIVE_SEGMENTS"],
+                              "existing_entities_modified": 0})
+            continue
         responsibility = _connection_path_responsibility(gray, proposal, [*objects, *adopted])
         reasons = list(responsibility["reasons"])
         if responsibility["existing_adequate_ids"]:
@@ -602,6 +692,7 @@ def complete_connections_without_unresolved_retirement(
         "decisions": decisions,
         "replay": replay,
         "all_existing_native_entities_retained": True,
+        "native_duplicate_group_quarantine": quarantine,
         "dashed_gaps_joined": False,
         "engineering_stroke_identity_proven": False,
         "status": "LOCAL_SOURCE_PATH_CANDIDATES_REQUIRE_SAVED_DXF_AUDIT",

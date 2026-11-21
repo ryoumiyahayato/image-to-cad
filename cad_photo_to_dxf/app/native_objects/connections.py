@@ -1743,20 +1743,42 @@ def extract_connections(
                 len(n["terminal"].get("loop_pixels", []))
                 for n in (start_node, end_node)
             ]
-            geometry, representation = _representation(
-                points,
-                protected_prefix=protected[0],
-                protected_suffix=protected[1],
-                protected_intervals=[
-                    row["protected_source_path_interval"]
-                    for row in crossings
-                    if row.get("local_cycle_cover_evidence")
-                ],
-            )
+            protected_intervals = [
+                crossing["protected_source_path_interval"]
+                for crossing in crossings
+                if crossing.get("local_cycle_cover_evidence")
+            ]
+            has_protected_source_walk = bool(any(protected) or protected_intervals)
+            if graphic_group is not None and not has_protected_source_walk:
+                # Different source routes may share a tiny raster junction
+                # bridge. Independent greedy simplification can copy that
+                # exact bridge into both CAD paths. Use the existing bounded
+                # source-order minimum-span encoder for every complete group
+                # member; all vertices still come from its own source walk,
+                # and the unchanged two-way 0.85 px fit gate follows below.
+                simplified, encoding = _bounded_source_polyline(points)
+                geometry = {
+                    "points": simplified.tolist(),
+                    "bulges": [0.0] * len(simplified),
+                    "closed": False,
+                }
+                representation = {
+                    "representation": "ONE_NATIVE_OPEN_POLYLINE",
+                    "source_ordered_span_encoding": encoding,
+                    "complete_multi_path_group_encoding": True,
+                    "source_walk_and_endpoints_unchanged": True,
+                }
+            else:
+                geometry, representation = _representation(
+                    points,
+                    protected_prefix=protected[0],
+                    protected_suffix=protected[1],
+                    protected_intervals=protected_intervals,
+                )
             if (row.get("whole_simple_source_chain", {}).get("pass") or mixed_pair
                     or graphic_group is not None):
                 fit = _simple_chain_fit_certificate(points, geometry)
-                if not fit["pass"]:
+                if not fit["pass"] and not has_protected_source_walk:
                     simplified, encoding = _bounded_source_polyline(points)
                     replacement = {
                         "points": simplified.tolist(),
