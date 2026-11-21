@@ -7,6 +7,7 @@ capture, path algorithm, preserved entities and saved-file review are real.
 from __future__ import annotations
 
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 import shutil
@@ -40,7 +41,12 @@ def _captured_case(tmp_path, incomplete_old_line):
     # Use the same legitimate deployed font and license as the production
     # exporter. Missing resources must fail this integration gate, not skip it.
     font_resource = cad_io._font(original)
-    font = ImageFont.truetype(str(original / font_resource["font"]), 14)
+    # FreeType keeps a filename-backed font open on Windows. Use the exact
+    # deployed bytes in memory so the real exporter can copy its font into the
+    # same directory, and the author directory can later be removed completely.
+    font = ImageFont.truetype(
+        BytesIO((original / font_resource["font"]).read_bytes()), 14
+    )
     text_bounds = font.getbbox("KEEP", anchor="ls")
     image = Image.new("L", (ROI[2], ROI[3]), 255)
     ImageDraw.Draw(image).text((20, 40), "KEEP", font=font, fill=0, anchor="ls")
@@ -131,6 +137,7 @@ def _captured_case(tmp_path, incomplete_old_line):
     # The actual dispatch must work from captured files, without a surviving
     # author directory, external observation cache or prior approval list.
     shutil.rmtree(original)
+    assert not original.exists()
     return job, captured_source, binding, expected
 
 
