@@ -65,6 +65,7 @@ def dispatch_native_objects(
     resource_report_path: str | Path | None = None,
     cancellation_token: CancellationToken | None = None,
     entrypoint: str = "ProductionProcessingService.process_native_objects",
+    connection_checkpoint: dict | None = None,
 ) -> dict:
     from app.core.processing import file_content_sha256
     from app.native_objects.job import make_job
@@ -151,6 +152,8 @@ def dispatch_native_objects(
         "fallback_to_legacy_permitted": False,
         "status": "DISPATCHING",
     }
+    if connection_checkpoint is not None:
+        trace["connection_checkpoint"] = connection_checkpoint
 
     def save_trace():
         save_json(trace_path, trace)
@@ -181,6 +184,9 @@ def dispatch_native_objects(
         trace["pipeline_module"] = str(
             Path(run_native_objects.__code__.co_filename).resolve()
         )
+        checkpoint_options = {}
+        if connection_checkpoint is not None:
+            checkpoint_options["connection_checkpoint"] = connection_checkpoint
         result = run_native_objects(
             source,
             target,
@@ -191,6 +197,7 @@ def dispatch_native_objects(
             cache_dir=cache,
             job_config=job,
             prepared_source=prepared,
+            **checkpoint_options,
         )
         checkpoint(cancellation_token)
         if not isinstance(result, dict) or not isinstance(result.get("objects"), list):

@@ -93,19 +93,8 @@ def _unique_rows(rows):
     return result
 
 
-def certify_saved_retraces(
-    doc, dxf_sha256, metadata_path, graph_path, discovery_path, gray, roi, dpi
-):
-    """Return explicit allowances and failed proof rows, without changing files.
-
-    The raw graph is hash-bound to the current decoded source crop.  Local
-    cells are reconstructed from all of its real nodes/edges/ports; neither a
-    candidate's claimed subgraph nor its flags substitute for this evidence.
-    The original source image independently supplies every ink/white witness.
-    This function does not claim to hash the original TIFF container from a
-    decoded array.
-    """
-    report = {
+def _new_report(dxf_sha256):
+    return {
         "schema": "saved_same_handle_source_cell_retrace_proof_v1",
         "actual_DXF_sha256": dxf_sha256,
         "allowances": [],
@@ -115,6 +104,181 @@ def certify_saved_retraces(
         "source_image_or_graph_modified": False,
         "TIFF_container_hash_verified_by_this_function": False,
     }
+
+
+def _claimed_retraces(meta):
+    return [
+        o
+        for o in meta["objects"]
+        if any(
+            c.get("local_cycle_cover_evidence")
+            for c in o.get("source_evidence", {}).get("crossing_evidence", [])
+        )
+    ]
+
+
+def _scoped_asset(evidence_root, relative_path, expected_sha256):
+    if (
+        not isinstance(relative_path, str)
+        or not relative_path
+        or Path(relative_path).is_absolute()
+        or "\\" in relative_path
+    ):
+        raise ValueError("RETRACE_SCOPE_RELATIVE_EVIDENCE_PATH_REQUIRED")
+    path = (evidence_root / relative_path).resolve()
+    if evidence_root not in path.parents:
+        raise ValueError("RETRACE_SCOPE_PATH_OUTSIDE_EVIDENCE_ROOT")
+    if (
+        not isinstance(expected_sha256, str)
+        or len(expected_sha256) != 64
+        or any(c not in "0123456789abcdef" for c in expected_sha256)
+    ):
+        raise ValueError("RETRACE_SCOPE_ASSET_SHA256_INVALID")
+    if hashlib.sha256(path.read_bytes()).hexdigest() != expected_sha256:
+        raise ValueError("RETRACE_SCOPE_ASSET_HASH_MISMATCH")
+    return path
+
+
+def certify_saved_retraces(
+    doc, dxf_sha256, metadata_path, graph_path, discovery_path, gray, roi, dpi
+):
+    """Cold proof using one original graph or explicitly bound local graphs.
+
+    Optional sidecar ``connection_discovery_scopes`` routes each formal path
+    to one graph; it never substitutes for the original source/cell proof.
+    Scope asset paths are relative to the evidence root containing the legacy
+    ``connections/discovery/{source_graph,connections}.json`` paths supplied
+    by the caller. DXF coordinates always use the unchanged parent ``roi``.
+    """
+    metadata_path, graph_path, discovery_path = map(
+        Path, (metadata_path, graph_path, discovery_path)
+    )
+    try:
+        meta_bytes = metadata_path.read_bytes()
+        meta = json.loads(meta_bytes)
+    except (OSError, ValueError):
+        return _certify_saved_retraces(
+            doc, dxf_sha256, metadata_path, graph_path, discovery_path, gray, roi, dpi
+        )
+    if not isinstance(meta, dict) or "connection_discovery_scopes" not in meta:
+        return _certify_saved_retraces(
+            doc, dxf_sha256, metadata_path, graph_path, discovery_path, gray, roi, dpi
+        )
+    report = _new_report(dxf_sha256)
+    try:
+        objects = _unique_rows(meta["objects"])
+        claimed = {o["id"] for o in _claimed_retraces(meta)}
+        if (
+            meta["dxf_sha256"] != dxf_sha256
+            or meta["roi_xyxy_px"] != list(roi)
+            or float(meta["dpi"]) != dpi
+        ):
+            raise ValueError("SIDECAR_DXF_OR_COORDINATE_BINDING_MISMATCH")
+        scopes = meta["connection_discovery_scopes"]
+        if not isinstance(scopes, list) or not 1 <= len(scopes) <= 8:
+            raise ValueError("RETRACE_REQUIRES_1_TO_8_DISCOVERY_SCOPES")
+        if graph_path.parent.resolve() != discovery_path.parent.resolve():
+            raise ValueError("RETRACE_SCOPE_EVIDENCE_ROOT_AMBIGUOUS")
+        evidence_root = graph_path.resolve().parents[2]
+        required = {
+            "roi_xyxy_px", "graph_path", "graph_sha256", "discovery_path",
+            "discovery_sha256", "object_ids",
+        }
+        planned, assigned = [], set()
+        for index, scope in enumerate(scopes):
+            if not isinstance(scope, dict) or set(scope) != required:
+                raise ValueError("RETRACE_DISCOVERY_SCOPE_FIELDS_INVALID")
+            local_roi = scope["roi_xyxy_px"]
+            if (
+                not isinstance(local_roi, list)
+                or len(local_roi) != 4
+                or not all(isinstance(v, int) and not isinstance(v, bool) for v in local_roi)
+                or not (
+                    roi[0] <= local_roi[0] < local_roi[2] <= roi[2]
+                    and roi[1] <= local_roi[1] < local_roi[3] <= roi[3]
+                )
+            ):
+                raise ValueError("RETRACE_DISCOVERY_SCOPE_OUTSIDE_PARENT_ROI")
+            identifiers = scope["object_ids"]
+            if (
+                not isinstance(identifiers, list)
+                or not all(isinstance(oid, str) and oid for oid in identifiers)
+                or len(identifiers) != len(set(identifiers))
+                or assigned.intersection(identifiers)
+                or any(
+                    oid not in objects or objects[oid]["kind"] != "CONNECTION_PATH"
+                    for oid in identifiers
+                )
+            ):
+                raise ValueError("RETRACE_SCOPE_OBJECT_MISSING_DUPLICATED_OR_NOT_PATH")
+            assigned.update(identifiers)
+            raw_graph = _scoped_asset(
+                evidence_root, scope["graph_path"], scope["graph_sha256"]
+            )
+            raw_discovery = _scoped_asset(
+                evidence_root, scope["discovery_path"], scope["discovery_sha256"]
+            )
+            planned.append((index, scope, raw_graph, raw_discovery))
+        if not claimed <= assigned:
+            raise ValueError("DECLARED_RETRACE_HAS_NO_UNIQUE_DISCOVERY_SCOPE")
+        report["sidecar_sha256"] = hashlib.sha256(meta_bytes).hexdigest()
+        report["CAD_parent_roi_xyxy_px"] = list(roi)
+        report["bounded_discovery_scope_checks"] = []
+        for index, scope, raw_graph, raw_discovery in planned:
+            partial = _certify_saved_retraces(
+                doc, dxf_sha256, metadata_path, raw_graph, raw_discovery,
+                gray, roi, dpi,
+                discovery_roi=scope["roi_xyxy_px"],
+                scope_object_ids=set(scope["object_ids"]),
+                expected_graph_sha256=scope["graph_sha256"],
+                expected_discovery_sha256=scope["discovery_sha256"],
+            )
+            report["bounded_discovery_scope_checks"].append(
+                {
+                    "scope_index": index,
+                    **scope,
+                    "evidence_status": partial["evidence_status"],
+                    "object_proof_count": len(partial["object_checks"]),
+                }
+            )
+            report["object_checks"].extend(
+                {**row, "discovery_scope_index": index}
+                for row in partial["object_checks"]
+            )
+            report["allowances"].extend(
+                {**row, "discovery_scope_index": index}
+                for row in partial["allowances"]
+            )
+        if metadata_path.read_bytes() != meta_bytes:
+            raise ValueError("RETRACE_SIDECAR_CHANGED_DURING_SCOPED_PROOF")
+        for _, scope, _, _ in planned:
+            _scoped_asset(evidence_root, scope["graph_path"], scope["graph_sha256"])
+            _scoped_asset(
+                evidence_root, scope["discovery_path"], scope["discovery_sha256"]
+            )
+        report["evidence_status"] = (
+            "NO_DECLARED_LOCAL_CYCLE_RETRACES"
+            if not claimed
+            else "COMPLETE_COLD_PROOF"
+            if all(row["pass"] for row in report["object_checks"])
+            else "LOCAL_RETRACE_PROOF_FAILED"
+        )
+    except (OSError, KeyError, TypeError, ValueError, IndexError, AttributeError) as exc:
+        report["allowances"] = []
+        report["evidence_status"] = "RETRACE_EVIDENCE_BINDING_FAILED"
+        report["object_checks"] = [
+            {"id": "UNBOUND_LOCAL_RETRACE_EVIDENCE", "pass": False, "failures": [str(exc)]}
+        ]
+    return report
+
+
+def _certify_saved_retraces(
+    doc, dxf_sha256, metadata_path, graph_path, discovery_path, gray, roi, dpi,
+    *, discovery_roi=None, scope_object_ids=None,
+    expected_graph_sha256=None, expected_discovery_sha256=None,
+):
+    """Apply every original source/cell/native test within one graph namespace."""
+    report = _new_report(dxf_sha256)
     metadata_path, graph_path, discovery_path = map(
         Path, (metadata_path, graph_path, discovery_path)
     )
@@ -123,14 +287,9 @@ def certify_saved_retraces(
         return report
     try:
         meta = json.loads(metadata_path.read_text())
-        claimed = [
-            o
-            for o in meta["objects"]
-            if any(
-                c.get("local_cycle_cover_evidence")
-                for c in o.get("source_evidence", {}).get("crossing_evidence", [])
-            )
-        ]
+        claimed = _claimed_retraces(meta)
+        if scope_object_ids is not None:
+            claimed = [obj for obj in claimed if obj["id"] in scope_object_ids]
         if not claimed:
             report["evidence_status"] = "NO_DECLARED_LOCAL_CYCLE_RETRACES"
             return report
@@ -145,7 +304,16 @@ def certify_saved_retraces(
         ):
             raise ValueError("SIDECAR_DXF_OR_COORDINATE_BINDING_MISMATCH")
         graph_bytes = graph_path.read_bytes()
-        discovery = json.loads(discovery_path.read_text())
+        discovery_bytes = discovery_path.read_bytes()
+        if (
+            expected_graph_sha256 is not None
+            and hashlib.sha256(graph_bytes).hexdigest() != expected_graph_sha256
+        ) or (
+            expected_discovery_sha256 is not None
+            and hashlib.sha256(discovery_bytes).hexdigest() != expected_discovery_sha256
+        ):
+            raise ValueError("RETRACE_SCOPE_ASSET_CHANGED_DURING_PROOF")
+        discovery = json.loads(discovery_bytes)
         if (
             hashlib.sha256(graph_bytes).hexdigest()
             != discovery["source_graph"]["sha256"]
@@ -165,11 +333,12 @@ def certify_saved_retraces(
             raise ValueError("RAW_SOURCE_GRAPH_CURRENT_IMAGE_BINDING_MISMATCH")
         if discovery["policy"]["source_threshold"] != 128:
             raise ValueError("RAW_SOURCE_GRAPH_THRESHOLD_CHANGED")
+        source_roi = roi if discovery_roi is None else discovery_roi
         expected_crop = [
-            max(0, roi[0] - 32),
-            max(0, roi[1] - 32),
-            min(gray.shape[1], roi[2] + 32),
-            min(gray.shape[0], roi[3] + 32),
+            max(0, source_roi[0] - 32),
+            max(0, source_roi[1] - 32),
+            min(gray.shape[1], source_roi[2] + 32),
+            min(gray.shape[0], source_roi[3] + 32),
         ]
         if discovery["policy"]["context_px"] != 32 or bounds != expected_crop:
             raise ValueError("RAW_SOURCE_GRAPH_CROP_IS_NOT_CURRENT_ROI_CONTEXT")
@@ -199,6 +368,7 @@ def certify_saved_retraces(
             oid: set(o["source_evidence"]["source_graph_edge_ids"])
             for oid, o in objects.items()
             if o["kind"] == "CONNECTION_PATH"
+            and (scope_object_ids is None or oid in scope_object_ids)
         }
         report["raw_graph_sha256"] = hashlib.sha256(graph_bytes).hexdigest()
         report["source_crop_array_sha256"] = graph["source_crop_array_sha256"]
@@ -353,6 +523,19 @@ def certify_saved_retraces(
             )
             for eid in ev["source_graph_edge_ids"]:
                 chain = edges[eid]["source_points"]
+                if scope_object_ids is not None:
+                    # Numeric graph IDs are local to each discovery. Across
+                    # scopes, compare actual source adjacencies instead; a new
+                    # namespace must never permit a second owner of this edge.
+                    chain_edges = set(_edges(chain))
+                    require(
+                        all(
+                            not (chain_edges & other)
+                            for other_id, other in all_path_edges.items()
+                            if other_id != oid
+                        ),
+                        "SOURCE_GRAPH_ADJACENCY_HAS_ANOTHER_FORMAL_PATH_OWNER",
+                    )
                 require(
                     any(
                         _same(source_path[i : i + len(chain)], chain)

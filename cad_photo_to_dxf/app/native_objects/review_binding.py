@@ -149,7 +149,7 @@ def source_identity(import_manifest):
             "paper_mm_per_recognition_pixel",
         )
     }
-    return {
+    identity = {
         "source_file_sha256": import_manifest["source_sha256"],
         "working_array_sha256": import_manifest["working_array_sha256"],
         "selection_sha256": canonical_sha256(
@@ -161,6 +161,14 @@ def source_identity(import_manifest):
         "coordinates_sha256": canonical_sha256(import_manifest["coordinates"]),
         "job_input_interpretation": selection,
     }
+    if "connection_checkpoint" in import_manifest:
+        # Scope and preserved baseline are part of the source interpretation,
+        # not an old approval list.  Do not add a default key: ordinary jobs
+        # retain their existing source identity shape and digest inputs.
+        identity["connection_checkpoint_sha256"] = canonical_sha256(
+            import_manifest["connection_checkpoint"]
+        )
+    return identity
 
 
 def build_review_binding(

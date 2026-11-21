@@ -385,10 +385,14 @@ class ProductionProcessingService:
         resource_report_path: str | Path | None = None,
         cancellation_token: CancellationToken | None = None,
         entrypoint: str = "ProductionProcessingService.process_native_objects",
+        connection_checkpoint: dict | None = None,
     ) -> dict:
         """Explicit native-object mode; failures never enter the legacy trace."""
         from app.core.native_objects_entry import dispatch_native_objects
 
+        checkpoint_options = {}
+        if connection_checkpoint is not None:
+            checkpoint_options["connection_checkpoint"] = connection_checkpoint
         return dispatch_native_objects(
             input_path, output_path, roi, dpi=dpi,
             progress_callback=progress_callback, evidence_dir=evidence_dir,
@@ -396,6 +400,7 @@ class ProductionProcessingService:
             orientation=orientation, job_id=job_id, temp_dir=temp_dir,
             resource_report_path=resource_report_path,
             cancellation_token=cancellation_token, entrypoint=entrypoint,
+            **checkpoint_options,
         )
 
 

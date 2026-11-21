@@ -843,6 +843,7 @@ def run_native_objects(
     cache_dir=None,
     job_config=None,
     prepared_source=None,
+    connection_checkpoint=None,
 ):
     """Called by the existing GUI/CLI's ProductionProcessingService."""
     cv2.setNumThreads(1)
@@ -878,6 +879,12 @@ def run_native_objects(
         or file_sha(input_path) != prepared.source_sha256
     ):
         raise ValueError("PIPELINE_PREPARED_SOURCE_IDENTITY_MISMATCH")
+    if connection_checkpoint is not None:
+        from .connection_checkpoint import run_connection_checkpoint
+
+        return run_connection_checkpoint(
+            job, prepared, connection_checkpoint, progress_callback=progress_callback
+        )
     gray = prepared.gray
     roi = prepared.working_roi
     cache_dir = job.cache_dir

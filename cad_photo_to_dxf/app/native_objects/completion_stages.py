@@ -368,9 +368,13 @@ def _existing_arc_overlap(proposal, objects):
     direction = v / np.maximum(length[:, None], 1e-300)
     rows = []
     for obj in objects:
-        if obj["kind"] != "DOOR":
+        if obj["kind"] == "ARC":
+            arc_members = [obj]
+        elif obj["kind"] == "DOOR":
+            arc_members = native_members(obj)
+        else:
             continue
-        for i, member in enumerate(native_members(obj)):
+        for i, member in enumerate(arc_members):
             if member["kind"] != "ARC":
                 continue
             g = member["geometry"]
