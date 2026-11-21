@@ -234,6 +234,25 @@ v8.4 receipt 中 Tesseract 的 `current_*` 哈希是后来导入环境的测量�
 资源边界及已复制的证明文件。旧 raw 输出中的耗时保留原值，不计作本次推理耗时；
 本次真实总资源由 manager/worker 单独计量。相同观察不会被包装成独立引擎的新票数。
 
+### 4.2 受控局部连接检查点
+
+`--connection-checkpoint PATH` 接受 `native-connection-checkpoint-v1` JSON：`source_sha256`、`roi_xyxy_px`、`dpi`，三份 `{path, sha256}` 资源 `baseline_dxf`／`baseline_ownership`／`text_observations`，以及 1—8 个带 `id`、`target_roi`、`context_roi` 的窗口。窗口必须位于原 ROI 内，不能拼成一次全区运行；当前该入口要求 `--orientation 0`。旧 DXF、实体账本、保存的文字观察必须绑定同一原图及配置。manager 将它们复制到任务目录并重验，后续只读捕获副本，仍通过原 worker、DXF 冷读、来源审核和发布门禁。该入口不执行 OCR，也不以旧审核或对象 ID 作采用白名单；仍需要锁定 Python 依赖、合法字体及许可，普通全流程的 OCR 资源要求不变。
+
+在已激活锁定环境的任意干净工作目录执行下面的源代码入口；把检出目录和受控资料路径替换为本机绝对路径，并使用全新的输出及任务目录。示例 ROI／DPI 与本项目冻结输入一致，其他输入须按其账本填写；私人原图和这些 JSON／DXF 资源放在 Git 外。
+
+```bash
+python /path/to/checkout/cad_photo_to_dxf/main.py \
+  --headless --mode native-objects \
+  --input /controlled/A2-SG-008.tiff \
+  --roi 1400 1000 5000 3411 --dpi 200 --orientation 0 \
+  --connection-checkpoint /controlled/connection-checkpoint.json \
+  --output /controlled/run-local-001/local.dxf \
+  --jobs-dir /controlled/run-local-001/jobs \
+  --verbose
+```
+
+生成的是窗口及必要完整邻居的局部文件，不能将对象数量作为整个原 ROI 的完成率。结果仍是纸面毫米；用户编辑文件须独立审核，不能沿用原输出的来源结论。
+
 ## 5. 实际产物与绑定方式
 
 成功导出包括：

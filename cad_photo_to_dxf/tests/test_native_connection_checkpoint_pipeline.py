@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 from io import BytesIO
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import shutil
 
 import cv2
@@ -21,6 +21,7 @@ import pytest
 from app.core.native_objects_entry import dispatch_native_objects
 from app.core.native_worker import _saved_candidate_gates
 from app.native_objects import cad_io, pipeline
+from app.native_objects.connection_checkpoint import _relative_evidence_path
 from app.native_objects.connection_checkpoint_inputs import capture_checkpoint
 from app.native_objects.contracts import save_json
 from app.native_objects.review_binding import file_sha256, verify_saved_review
@@ -33,6 +34,17 @@ CONTEXT = [10, 20, 190, 150]
 
 def _asset(path):
     return {"path": str(path), "sha256": file_sha256(path)}
+
+
+@pytest.mark.parametrize("root", [
+    PurePosixPath("/job/evidence"), PureWindowsPath("C:/job/evidence"),
+], ids=["posix", "windows"])
+@pytest.mark.parametrize("filename", ["source_graph.json", "connections.json"])
+def test_checkpoint_scope_paths_use_portable_separators(root, filename):
+    path = root / "connections" / "scopes" / "000" / "discovery" / filename
+    assert _relative_evidence_path(path, root) == (
+        "connections/scopes/000/discovery/" + filename
+    )
 
 
 def _captured_case(tmp_path, incomplete_old_line):
@@ -193,7 +205,9 @@ def test_bounded_dispatch_produces_complete_editable_path_and_preserves_neighbor
     assert imported["connection_checkpoint"]["context_rois"] == [CONTEXT]
     assert quality["review_scope"]["full_parent_region_review_performed"] is False
     assert quality["summary"]["safe_artifact_structure"]
-    assert quality["summary"]["source_geometry_gate_pass"]
+    assert quality["summary"]["source_geometry_gate_pass"], (
+        evidence / "cold_audit.json"
+    ).read_text(encoding="utf-8")
     assert quality["text_style_and_font_dependencies"]
     assert all(row["pass"] for row in quality["text_style_and_font_dependencies"])
     assert verify_saved_review(

@@ -261,6 +261,11 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
     }
 
 
+def _relative_evidence_path(path, evidence_root):
+    """Use the portable evidence protocol, independent of host separators."""
+    return path.relative_to(evidence_root).as_posix()
+
+
 def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None):
     """Formal native pipeline branch: captured observations, local fresh fits.
 
@@ -336,8 +341,8 @@ def run_connection_checkpoint(job, prepared, binding, *, progress_callback=None)
         discovery = scope_dir / "discovery/connections.json"
         discovery_scopes.append({
             "roi_xyxy_px": window["context_roi"],
-            "graph_path": str(graph.relative_to(out)), "graph_sha256": file_sha(graph),
-            "discovery_path": str(discovery.relative_to(out)), "discovery_sha256": file_sha(discovery),
+            "graph_path": _relative_evidence_path(graph, out), "graph_sha256": file_sha(graph),
+            "discovery_path": _relative_evidence_path(discovery, out), "discovery_sha256": file_sha(discovery),
             "object_ids": [],
         })
     progress("WHOLE_OBJECT_OWNERSHIP_AND_PRIOR_ENTITY_PROTECTION", 0.60)

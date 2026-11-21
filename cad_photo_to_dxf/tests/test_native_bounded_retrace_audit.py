@@ -112,7 +112,10 @@ def test_two_graph_namespaces_use_parent_cad_coordinates_and_actual_local_proofs
     assert not (folder / "evidence/connections/discovery/source_graph.json").exists()
 
 
-@pytest.mark.parametrize("change", ["missing_owner", "duplicate_owner", "wrong_roi", "wrong_hash", "path_escape"])
+@pytest.mark.parametrize("change", [
+    "missing_owner", "duplicate_owner", "wrong_roi", "wrong_hash", "path_escape",
+    "backslash_graph_path", "backslash_discovery_path",
+])
 def test_scope_mapping_is_not_a_retrace_allowlist(bounded_case, change):
     folder, _ = bounded_case
     path = folder / "result.objects.json"
@@ -126,6 +129,9 @@ def test_scope_mapping_is_not_a_retrace_allowlist(bounded_case, change):
         scopes[0]["roi_xyxy_px"] = list(ROI)
     elif change == "wrong_hash":
         scopes[0]["discovery_sha256"] = "0" * 64
+    elif change.startswith("backslash_"):
+        field = change.removeprefix("backslash_")
+        scopes[0][field] = scopes[0][field].replace("/", "\\")
     else:
         scopes[0]["graph_path"] = "../outside.json"
     _save(path, meta)
@@ -133,6 +139,10 @@ def test_scope_mapping_is_not_a_retrace_allowlist(bounded_case, change):
     assert not report["source_gate_pass"]
     assert report["exact_duplicate_segments"]
     proof = report["same_owner_retrace_cold_proof"]
+    if change.startswith("backslash_"):
+        assert proof["object_checks"][0]["failures"] == [
+            "RETRACE_SCOPE_RELATIVE_EVIDENCE_PATH_REQUIRED"
+        ]
     assert any(not row["pass"] for row in proof["object_checks"])
     assert not any(
         row["id"] == meta["objects"][0]["id"] for row in proof["allowances"]
