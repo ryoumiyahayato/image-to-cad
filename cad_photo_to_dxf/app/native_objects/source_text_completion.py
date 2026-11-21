@@ -21,6 +21,7 @@ from . import text_regions as base, text_line_domains as domains
 from . import text_block_rescue as blocks, cross_engine_text as cross
 from . import independent_recognizer as independent
 from . import text_confirmation as confirmation_module
+from . import text_context_ownership as context_ownership
 from .contracts import validate_text_regions
 from .execution import check_cancel
 
@@ -685,7 +686,7 @@ def refine_source_text_completion(
         queue = [row for row in queue if row["stage"] == "rebind"]
     dependencies = [
         {"module": m.__name__, "sha256": base._sha(m.__file__)}
-        for m in (base, domains, blocks, cross, independent, confirmation_module)
+        for m in (base, domains, blocks, cross, independent, confirmation_module, context_ownership)
     ]
     manifest = {
         "schema": "finite-source-completion-v1",
@@ -986,6 +987,12 @@ def refine_source_text_completion(
             },
         )
         raise
+    result, context_ownership_audit = context_ownership.derive_context_ownership(
+        image, result, store.model_rows.values(), store.rows.values(),
+        labels=labels, slices=slices, glyphs=glyphs,
+    )
+    _atomic(output / "text_context_ownership_audit.json", context_ownership_audit)
+    regions = {region["id"]: region for region in result["regions"]}
     for group in result["groups"]:
         rows = [regions[rid] for rid in group["region_ids"]]
         group.update(
@@ -1090,6 +1097,7 @@ def refine_source_text_completion(
     confirmation = confirmation_module.build_confirmation_index(
         image, result, store.model_rows.values(), glyphs=glyphs
     )
+    context_ownership.attach_confirmation_context(confirmation, result)
     _atomic(output / "text_confirmation_index.json", confirmation)
     result["text_confirmation_index"] = {
         "path": "text_confirmation_index.json",

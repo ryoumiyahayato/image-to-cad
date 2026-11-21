@@ -36,6 +36,7 @@ _PRODUCERS = (
     "door_detector",
     "door_completion",
     "connections",
+    "connection_core_routes",
     "contracts",
     "source_import",
     "job",
@@ -51,7 +52,12 @@ _ROOTS = (
     "source_text_completion",
     "text_geometry_ownership",
 )
-_DERIVED_PRODUCERS = ("source_text_completion", "source_text_ownership")
+_DERIVED_PRODUCERS = (
+    "source_text_completion",
+    "source_text_ownership",
+    "text_confirmation",
+    "text_context_ownership",
+)
 
 
 def _canonical_digest(value):

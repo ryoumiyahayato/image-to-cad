@@ -147,6 +147,7 @@ def _completed_text_checkpoint(
         **allowed,
         "app.native_objects.independent_recognizer": "independent_recognizer.py",
         "app.native_objects.text_confirmation": "text_confirmation.py",
+        "app.native_objects.text_context_ownership": "text_context_ownership.py",
     }
     for module_name, expected in dependency_items:
         if (

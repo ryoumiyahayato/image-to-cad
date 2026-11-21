@@ -35,6 +35,28 @@ def text_context_sha(objects):
     return canonical_sha(sorted(rows, key=lambda r: r["id"]))
 
 
+def _check_completion_dependencies(stage, payload):
+    """A source proposal also depends on its finite local route implementation.
+
+    The job fingerprint covers every native module. An explicitly imported
+    stage has its own identity too; checking only connections.py would allow a
+    changed helper to reuse an old route selection. Missing attestations fail
+    closed, including historical payloads that predate the helper.
+    """
+    if stage != "connections":
+        return
+    from . import connection_core_routes
+
+    expected = {
+        connection_core_routes.__name__: hashlib.sha256(
+            Path(connection_core_routes.__file__).read_bytes()
+        ).hexdigest()
+    }
+    discovery = payload.get("discovery", {})
+    if discovery.get("dependency_producers") != expected:
+        raise ValueError("CONNECTION_ROUTE_DEPENDENCY_CHANGED_OR_MISSING")
+
+
 def _load(cache_dir, stage, gray, roi, source_sha, out, *, text_sha=None):
     manifest = Path(cache_dir) / "native_completion_stages.json" if cache_dir else None
     if manifest is None or not manifest.is_file():
@@ -74,6 +96,7 @@ def _load(cache_dir, stage, gray, roi, source_sha, out, *, text_sha=None):
     ):
         raise ValueError("NATIVE_COMPLETION_CACHE_PRODUCER_CHANGED:" + stage)
     payload = json.loads(path.read_text())
+    _check_completion_dependencies(stage, payload)
     evidence = {
         "cache_hit": True,
         "path": str(path),
@@ -114,6 +137,7 @@ def _revision_proposals(cache_dir, stage, gray, roi, source_sha, out):
     }
     if any(row.get(k) != v for k, v in expected.items()):
         raise ValueError("REVISION_PROPOSAL_SOURCE_OR_PRODUCER_MISMATCH:" + stage)
+    _check_completion_dependencies(stage, row)
     if (
         row.get("source_array_sha256")
         != hashlib.sha256(np.ascontiguousarray(gray).tobytes()).hexdigest()

@@ -59,6 +59,9 @@ jobs:
             tests/test_native_observation_cache.py \
             tests/test_native_frame_discovery_contract.py \
             tests/test_native_connected_paths.py \
+            tests/test_native_connection_core_routes.py \
+            tests/test_native_completion_dependencies.py \
+            tests/test_native_text_context_ownership.py \
             tests/test_native_wall_candidate_ownership.py \
             tests/test_native_glyph_domain_recovery.py \
             tests/test_native_cad_compatibility.py
