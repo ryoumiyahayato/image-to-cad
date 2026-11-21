@@ -69,6 +69,7 @@ jobs:
             tests/test_native_checkpoint_text_observations.py \
             tests/test_native_checkpoint_continuation.py \
             tests/test_native_checkpoint_shared_core.py \
+            tests/test_native_complete_shared_core.py \
             tests/test_native_terminal_loop_saved.py \
             tests/test_native_source_endpoint_caps.py \
             tests/test_native_text_graph_support.py \

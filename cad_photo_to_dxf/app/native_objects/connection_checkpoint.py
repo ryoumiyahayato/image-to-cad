@@ -13,7 +13,6 @@ import time
 import cv2
 import numpy as np
 from scipy.ndimage import distance_transform_edt
-from scipy.spatial import cKDTree
 
 from .connection_checkpoint_inputs import (
     capture_checkpoint,
@@ -28,9 +27,10 @@ from .connections import (
     extract_connections,
 )
 from .contracts import TOLERANCES, save_json
-from .completion_stages import _existing_arc_overlap, _existing_line_members
+from .completion_stages import (
+    _connection_path_responsibility, _existing_arc_overlap, _existing_line_members,
+)
 from .execution import check_cancel, file_sha
-from .text_graph_support import prove_shared_core_overlap
 
 __all__ = [
     "capture_checkpoint",
@@ -39,15 +39,6 @@ __all__ = [
     "adopt_checkpoint_paths",
     "run_connection_checkpoint",
 ]
-
-
-def _source_edges(obj):
-    points = obj.get("source_evidence", {}).get("source_path_points", [])
-    return {
-        tuple(sorted((tuple(a), tuple(b))))
-        for a, b in zip(points, points[1:])
-        if a != b
-    }
 
 
 def _line_source_coverage(proposal, line):
@@ -196,26 +187,7 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
                "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": [],
                "shared_source_core_checks": []}
         active = [p for p in prior_objects if p["id"] not in retired] + adopted
-        path = _dense_geometry(obj["geometry"])
-        edges = _source_edges(obj)
-        for old in active:
-            if old["id"] == obj["id"]:
-                if old["geometry"] != obj["geometry"] or old["kind"] != obj["kind"]:
-                    raise ValueError("CONNECTION_CHECKPOINT_ID_GEOMETRY_COLLISION")
-                row["existing_adequate_ids"].append(old["id"])
-                continue
-            if old["kind"] != "CONNECTION_PATH":
-                continue
-            other = _dense_geometry(old["geometry"])
-            same = max(float(cKDTree(path).query(other)[0].max()),
-                       float(cKDTree(other).query(path)[0].max())) <= POLICY["polyline_approximation_px"]
-            if same:
-                row["existing_adequate_ids"].append(old["id"])
-            elif edges & _source_edges(old):
-                shared_core = prove_shared_core_overlap(gray, obj, old)
-                row["shared_source_core_checks"].append(shared_core)
-                if not shared_core["pass"]:
-                    row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
+        row.update(_connection_path_responsibility(gray, obj, active))
         if row["existing_adequate_ids"]:
             row["decision"] = "RETAIN_EXISTING_COMPLETE_PATH_NO_DUPLICATE"
             decisions.append(row)

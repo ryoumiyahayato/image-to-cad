@@ -7,7 +7,8 @@ import math
 import numpy as np
 import pytest
 
-from app.native_objects.connection_checkpoint import _source_edges, adopt_checkpoint_paths
+from app.native_objects.connection_checkpoint import adopt_checkpoint_paths
+from app.native_objects.completion_stages import _source_edges
 from app.native_objects.text_graph_support import prove_shared_core_overlap
 from tests.test_native_text_graph_support import crossing_fixture, extract
 

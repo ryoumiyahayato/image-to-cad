@@ -417,6 +417,49 @@ def _existing_arc_overlap(proposal, objects):
     return rows
 
 
+
+def _source_edges(obj):
+    points = obj.get("source_evidence", {}).get("source_path_points", [])
+    return {
+        tuple(sorted((tuple(a), tuple(b))))
+        for a, b in zip(points, points[1:])
+        if a != b
+    }
+
+
+def _connection_path_responsibility(gray, proposal, existing):
+    """One conservative path-ownership rule for ordinary and bounded entry."""
+    from scipy.spatial import cKDTree
+
+    from .connections import POLICY, _dense_geometry
+    from .text_graph_support import prove_shared_core_overlap
+
+    if proposal["kind"] != "CONNECTION_PATH":
+        raise ValueError("CONNECTION_PATH_RESPONSIBILITY_REQUIRES_PATH")
+    row = {"existing_adequate_ids": [], "shared_source_core_checks": [], "reasons": []}
+    path = _dense_geometry(proposal["geometry"])
+    edges = _source_edges(proposal)
+    for old in existing:
+        if old["id"] == proposal["id"]:
+            if old["geometry"] != proposal["geometry"] or old["kind"] != proposal["kind"]:
+                raise ValueError("CONNECTION_PATH_ID_GEOMETRY_COLLISION")
+            row["existing_adequate_ids"].append(old["id"])
+            continue
+        if old["kind"] != "CONNECTION_PATH":
+            continue
+        other = _dense_geometry(old["geometry"])
+        same = max(float(cKDTree(path).query(other)[0].max()),
+                   float(cKDTree(other).query(path)[0].max())) <= POLICY["polyline_approximation_px"]
+        if same:
+            row["existing_adequate_ids"].append(old["id"])
+        elif edges & _source_edges(old):
+            shared = prove_shared_core_overlap(gray, proposal, old)
+            row["shared_source_core_checks"].append(shared)
+            if not shared["pass"]:
+                row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
+    return row
+
+
 def complete_connections_without_unresolved_retirement(
     gray, roi, source_sha, objects, out, cache_dir=None, *, text_regions=None,
     verified_text_observations=None,
@@ -468,7 +511,10 @@ def complete_connections_without_unresolved_retirement(
     decisions = []
     distance_fields = {}
     for proposal in raw["objects"]:
-        reasons = []
+        responsibility = _connection_path_responsibility(gray, proposal, [*objects, *adopted])
+        reasons = list(responsibility["reasons"])
+        if responsibility["existing_adequate_ids"]:
+            reasons.append("EXISTING_COMPLETE_PATH_ALREADY_PRESENT_NO_DUPLICATE")
         current_recheck = None
         if revision is not None:
             import cv2
@@ -537,6 +583,8 @@ def complete_connections_without_unresolved_retirement(
                 "existing_entities_modified": 0,
                 "overlap_records": overlap,
                 "arc_overlap_records": arc_overlap,
+                "existing_adequate_ids": responsibility["existing_adequate_ids"],
+                "shared_source_core_checks": responsibility["shared_source_core_checks"],
                 "revision_current_source_and_text_recheck": current_recheck,
             }
         )
