@@ -45,13 +45,19 @@ def _check_completion_dependencies(stage, payload):
     """
     if stage != "connections":
         return
-    from . import connection_core_routes, text_graph_support, checkpoint_text_observations
+    from . import (
+        connection_core_routes, text_graph_support, checkpoint_text_observations,
+        source_endpoint_caps,
+    )
 
     expected = {
         module.__name__: hashlib.sha256(
             Path(module.__file__).read_bytes()
         ).hexdigest()
-        for module in (connection_core_routes, text_graph_support, checkpoint_text_observations)
+        for module in (
+            connection_core_routes, text_graph_support, checkpoint_text_observations,
+            source_endpoint_caps,
+        )
     }
     discovery = payload.get("discovery", {})
     if discovery.get("dependency_producers") != expected:

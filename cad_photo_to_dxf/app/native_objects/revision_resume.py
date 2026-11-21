@@ -39,6 +39,7 @@ _PRODUCERS = (
     "connection_core_routes",
     "text_graph_support",
     "checkpoint_text_observations",
+    "source_endpoint_caps",
     "contracts",
     "source_import",
     "job",

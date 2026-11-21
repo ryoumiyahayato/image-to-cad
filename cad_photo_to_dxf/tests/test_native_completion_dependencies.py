@@ -7,6 +7,7 @@ import pytest
 
 from app.native_objects import (
     connection_core_routes, text_graph_support, checkpoint_text_observations,
+    source_endpoint_caps,
 )
 from app.native_objects.completion_stages import _check_completion_dependencies
 
@@ -18,7 +19,10 @@ def _attested_payload():
                 module.__name__: hashlib.sha256(
                     Path(module.__file__).read_bytes()
                 ).hexdigest()
-                for module in (connection_core_routes, text_graph_support, checkpoint_text_observations)
+                for module in (
+                    connection_core_routes, text_graph_support, checkpoint_text_observations,
+                    source_endpoint_caps,
+                )
             }
         }
     }
@@ -29,7 +33,10 @@ def test_unchanged_local_route_policy_can_reuse_its_source_proposal():
 
 
 @pytest.mark.parametrize(
-    "helper", [connection_core_routes, text_graph_support, checkpoint_text_observations]
+    "helper", [
+        connection_core_routes, text_graph_support, checkpoint_text_observations,
+        source_endpoint_caps,
+    ]
 )
 def test_changed_helper_rejects_old_attestation(tmp_path, monkeypatch, helper):
     payload = _attested_payload()

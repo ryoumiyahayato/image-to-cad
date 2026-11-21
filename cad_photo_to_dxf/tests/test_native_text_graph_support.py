@@ -2,13 +2,15 @@
 
 import copy
 import hashlib
+import time
 
 import cv2
 import numpy as np
 import pytest
 
-from app.native_objects.connections import extract_connections
+from app.native_objects.connections import _SourceGraph, extract_connections
 from app.native_objects.contracts import validate_text_regions
+from app.native_objects.text_graph_support import _source_adjacencies, prove_shared_core_overlap
 
 
 def digest(array):
@@ -72,6 +74,41 @@ def extract(item, output, *, verified=True):
     assert np.array_equal(gray, original)
     assert data == raw
     return result
+
+
+def crossing_fixture(*, raw_words=("NO", "Nvv"), missing_bar=False, stroke_width=2):
+    """Public synthetic ink: one long stroke crossing two complete short bars."""
+    item = fixture(raw_words=raw_words)
+    ink = np.zeros_like(item[0], np.uint8)
+    candidate = np.zeros_like(ink)
+    cv2.polylines(candidate, [np.array([[80, 100], [124, 113], [165, 129], [210, 145]], np.int32)], False, 1, stroke_width)
+    cv2.line(candidate, (135, 93), (110, 133), 1, stroke_width)
+    if not missing_bar:
+        cv2.line(candidate, (171, 109), (146, 149), 1, stroke_width)
+    ink |= candidate
+    for x in [90, 105, 120]:
+        ink[35:55, x] = 1
+        ink[35, x:x + 10] = 1
+        ink[45, x:x + 8] = 1
+        ink[54, x:x + 10] = 1
+    gray = np.where(ink, 0, 255).astype(np.uint8)
+    yy, xx = np.nonzero(candidate)
+    box = [int(xx.min()), int(yy.min()), int(xx.max() + 1), int(yy.max() + 1)]
+    data, token = copy.deepcopy(item[2]), copy.deepcopy(item[3])
+    data["source_array_sha256"] = token["source_array_sha256"] = digest(gray)
+    region = data["regions"][0]
+    region["bbox_xyxy_px"] = box
+    region["compact_source_ink_mask"]["runs_y_x0_x1"] = [[int(y), int(x), int(x + 1)] for y, x in zip(yy, xx)]
+    for index, (row, alt) in enumerate(zip(token["observations"], region["completeness_evidence"]["alternatives"])):
+        pad = 2 + 2 * index
+        crop = [box[0] - pad, box[1] - pad, box[2] + pad, box[3] + pad]
+        row["specification"]["crop_xyxy_px"] = crop
+        row["specification"]["crop_array_sha256"] = digest(gray[crop[1]:crop[3], crop[0]:crop[2]])
+        row["words"][0]["bbox_xyxy_px"] = box
+        alt["crop_xyxy_px"] = crop
+        alt["words"][0]["bbox_xyxy_px"] = box
+    region["words"][0]["bbox_xyxy_px"] = box
+    return gray, item[1], data, token, item[4], box
 
 
 def target_paths(result, box):
@@ -153,3 +190,82 @@ def test_contract_preserves_candidate_mask_and_reports_group_role_separately():
     assert not box["confirmed"]
     assert box["support_role"]["groups"][0]["source_review_accepted"]
     assert box["glyph_source_runs"] == data["regions"][0]["compact_source_ink_mask"]["runs_y_x0_x1"]
+
+
+def test_complete_multi_crossing_group_emits_all_three_paths_including_sub50_short_strokes(tmp_path):
+    item = crossing_fixture()
+    result = extract(item, tmp_path)
+    target = target_paths(result, item[-1])
+    assert len(target) == 3
+    assert sum(obj["source_evidence"]["source_path_length_px"] < 50 for obj in target) == 2
+    assert all(len(obj["source_evidence"]["graphic_group_path_responsibility"]) == 3 for obj in target)
+    for obj in target:
+        source = obj["source_evidence"]
+        assert source["whole_simple_source_chain_fit"]["pass"]
+        assert all(endpoint["kind"] == "OBSERVED_FREE_SOURCE_ENDPOINT" for endpoint in source["endpoint_evidence"])
+    shared_pairs = [(a, b) for i, a in enumerate(target) for b in target[i + 1:]
+                    if _source_adjacencies(a) & _source_adjacencies(b)]
+    assert len(shared_pairs) == 2
+    for a, b in shared_pairs:
+        proof = prove_shared_core_overlap(item[0], a, b)
+        assert proof["pass"]
+        assert all(row["source_recomputed"] for row in proof["current_core_proofs"])
+
+
+def test_one_crossing_or_an_unrepresented_short_member_does_not_claim_a_complete_graphic_group(tmp_path):
+    item = crossing_fixture(missing_bar=True)
+    result = extract(item, tmp_path)
+    assert not target_paths(result, item[-1])
+
+
+def test_real_dot_above_source_stroke_keeps_fragmented_character_protected_with_wrong_multiletter_ocr(tmp_path):
+    # Actual extra ink, not merely changing the OCR answer of an unchanged
+    # positive. The dot overlaps the stem's x range and leaves a real 2 px gap.
+    item = fixture()
+    gray, _, data, token, _, box = item
+    gray[box[1] - 4:box[1] - 2, box[0]:box[0] + 2] = 0
+    data["source_array_sha256"] = token["source_array_sha256"] = digest(gray)
+    for observation in token["observations"]:
+        x0, y0, x1, y1 = observation["specification"]["crop_xyxy_px"]
+        observation["specification"]["crop_array_sha256"] = digest(gray[y0:y1, x0:x1])
+    result = extract(item, tmp_path)
+    assert not target_paths(result, box)
+    assert any("POSSIBLE_FRAGMENTED_CHARACTER_RETAINED" in str(row) for row in result["uncertainties"])
+
+
+@pytest.mark.parametrize("restore_caps", [False, True])
+def test_source_cap_repair_is_required_before_complete_group_adoption(tmp_path, monkeypatch, restore_caps):
+    # Keep the former failure as a negative: disabling the new observation
+    # repair must still fail the unchanged 3 px cap gate, never just bypass it.
+    if not restore_caps:
+        monkeypatch.setattr("app.native_objects.source_endpoint_caps.restore_source_endpoint_caps",
+                            lambda skel, *_: (skel, {"restored": [], "rejected": []}))
+    item = crossing_fixture(stroke_width=3)
+    result = extract(item, tmp_path)
+    if restore_caps:
+        target = target_paths(result, item[-1])
+        assert len(target) == 3
+        assert all(obj["source_evidence"]["source_endpoint_cap_restorations"] for obj in target)
+        assert all(cap["pass"] for obj in target
+                   for cap in obj["source_evidence"]["original_source_endpoint_cap_checks"])
+    else:
+        assert not target_paths(result, item[-1])
+        assert any(row["reason"] == "SOURCE_TERMINAL_CAP_NOT_EXPLAINED_WITHIN_ENDPOINT_BOUND"
+                   for row in result["uncertainties"])
+
+
+@pytest.mark.parametrize("white_gap", [False, True])
+def test_two_actual_offset_t_junctions_are_not_merged_into_a_crossing(white_gap):
+    ink = np.zeros((140, 160), np.uint8)
+    ink[70, 20:141] = 1
+    ink[30:71, 70] = 1
+    ink[70:111, 74] = 1
+    if white_gap:
+        ink[70, 72] = 0
+    original = ink.copy()
+    graph = _SourceGraph(ink.astype(bool), [0, 0], [], [0, 0, 160, 140], time.process_time(),
+                         source_ink=ink.astype(bool), aggregate_core_boxes=[[0, 0, 160, 140]])
+    assert not graph.bounded_aggregate_cores
+    assert np.array_equal(graph.skel, original)
+    assert np.array_equal(graph.source_ink, original)
+    assert sum(len(node["edges"]) == 3 for node in graph.nodes.values()) >= (0 if white_gap else 2)

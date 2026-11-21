@@ -193,11 +193,19 @@ def _degree(skel):
 class _SourceGraph:
     def __init__(self, skel, origin, rounds, roi, started, *, source_ink=None,
                  aggregate_core_boxes=None):
+        self.source_endpoint_cap_restoration = None
+        if aggregate_core_boxes and source_ink is not None:
+            from .source_endpoint_caps import restore_source_endpoint_caps
+
+            skel, self.source_endpoint_cap_restoration = restore_source_endpoint_caps(
+                skel, source_ink, origin, aggregate_core_boxes
+            )
         self.skel = skel
         self.h, self.w = skel.shape
         self.flat = skel.ravel()
         self.origin = np.asarray(origin, float)
         self.roi = list(map(int, roi))
+        self.enable_shared_core_proofs = bool(aggregate_core_boxes)
         self.source_ink = source_ink
         self.degree = _degree(skel)
         junction = skel & (self.degree >= 3)
@@ -604,6 +612,12 @@ class _SourceGraph:
         for a, b in best[2]:
             node["pairing"][ports[a]] = ports[b]
             node["pairing"][ports[b]] = ports[a]
+        from .text_graph_support import four_port_source_core_proof
+
+        shared_core = four_port_source_core_proof(self, node) if self.enable_shared_core_proofs else None
+        if shared_core:
+            node["bounded_shared_source_core"] = shared_core
+            evidence["bounded_shared_source_core"] = shared_core
 
     def core_route(self, node_id, start, end):
         pending = deque([start])
@@ -1431,6 +1445,7 @@ def extract_connections(
     core_boxes = verified_candidate_core_boxes(gray, text_regions, verified_text_observations)
     graph = _SourceGraph(skel, origin, rounds, roi, started, source_ink=ink,
                          aggregate_core_boxes=core_boxes)
+    skel = graph.skel
     distance = cv2.distanceTransform(
         (~ink).astype(np.uint8), cv2.DIST_L2, cv2.DIST_MASK_PRECISE
     )
@@ -1488,6 +1503,12 @@ def extract_connections(
                 ],
                 "crossing_evidence": crossings,
             }
+            if graph.source_endpoint_cap_restoration:
+                path_points = {tuple(point) for point in row["source_path_points"]}
+                row["source_endpoint_cap_restorations"] = [
+                    item for item in graph.source_endpoint_cap_restoration["restored"]
+                    if tuple(item["original_endpoint_source_xy_px"]) in path_points
+                ]
             label = int(source_labels.ravel()[pixels[0]])
             row["source_connected_group_id"] = f"SOURCE-COMPONENT-{label:06d}"
             row["source_component_bbox_xywh"] = (
@@ -1938,6 +1959,7 @@ def extract_connections(
                 "finite_path_decompositions": node["finite_path_decompositions"],
                 "local_cycle_cover_evidence": node.get("local_cycle_cover"),
                 "bounded_aggregate_source_core": node.get("bounded_aggregate_source_core"),
+                "bounded_shared_source_core": node.get("bounded_shared_source_core"),
                 "semantic_connectivity": "UNKNOWN_UNLESS_INDEPENDENT_SOURCE_CONTEXT_PROVES_IT",
             }
         )
@@ -1983,6 +2005,7 @@ def extract_connections(
             "groups": group_rows,
             "bounded_local_cycle_cell_discovery": graph.cycle_cell_discovery,
             "bounded_aggregate_source_cores": graph.bounded_aggregate_cores,
+            "source_endpoint_cap_restoration": graph.source_endpoint_cap_restoration,
             "all_ports_and_short_edges_preserved": True,
             "nodes_without_unique_decomposition_remain_pending": True,
         },
@@ -1998,6 +2021,9 @@ def extract_connections(
             ).hexdigest(),
             "app.native_objects.checkpoint_text_observations": hashlib.sha256(
                 Path(__file__).with_name("checkpoint_text_observations.py").read_bytes()
+            ).hexdigest(),
+            "app.native_objects.source_endpoint_caps": hashlib.sha256(
+                Path(__file__).with_name("source_endpoint_caps.py").read_bytes()
             ).hexdigest(),
         },
         "policy": POLICY,

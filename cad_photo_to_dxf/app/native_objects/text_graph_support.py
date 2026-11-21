@@ -212,6 +212,7 @@ def aggregate_close_crossing_cores(graph, permitted_boxes):
         return []
     widths = 2 * cv2.distanceTransform(graph.source_ink.astype(np.uint8), cv2.DIST_L2,
                                        cv2.DIST_MASK_PRECISE)
+    graph.source_stroke_widths = widths
     eligible = []
     for internal in graph.edges:
         a, b = internal["nodes"]
@@ -314,6 +315,60 @@ def aggregate_close_crossing_cores(graph, permitted_boxes):
             for end, nid in enumerate(edge["nodes"]):
                 graph.nodes[nid]["edges"].append((eid, end))
     return proofs
+
+
+def four_port_source_core_proof(graph, node):
+    """Give an ordinary or aggregated four-port core the same bounded proof."""
+    if node.get("bounded_aggregate_source_core"):
+        return node["bounded_aggregate_source_core"]
+    if graph.source_ink is None or len(node.get("pairing", {})) != 4:
+        return None
+    pixels, ports = node["pixels"], node["edges"]
+    points = graph.xy(pixels)
+    pixel_set = set(pixels)
+    adjacency = sorted({tuple(sorted((p, q))) for p in pixels for q in graph.neighbors(p)
+                        if q in pixel_set})
+    if len(adjacency) != len(pixels) - 1:
+        return None
+    axes = [_port_axis(graph, port) for port in ports]
+    if any(axis is None for axis in axes):
+        return None
+    widths = getattr(graph, "source_stroke_widths", None)
+    if widths is None:
+        widths = 2 * cv2.distanceTransform(graph.source_ink.astype(np.uint8), cv2.DIST_L2,
+                                           cv2.DIST_MASK_PRECISE)
+        graph.source_stroke_widths = widths
+    width = float(np.median([float(widths.ravel()[p]) for port in ports
+                             for p in graph.oriented(port)[1:13]]))
+    extent = float(np.ptp(points, axis=0).max())
+    if extent > min(POLICY["maximum_aggregate_core_extent_px"],
+                    POLICY["maximum_aggregate_core_stroke_widths"] * width):
+        return None
+    normals = np.array([[-axis[1][1], axis[1][0]] for axis in axes])
+    offsets = np.array([normal @ axis[0] for normal, axis in zip(normals, axes)])
+    common, *_ = np.linalg.lstsq(normals, offsets, rcond=None)
+    residuals = np.abs(normals @ common - offsets)
+    local = np.rint(common - graph.origin).astype(int)
+    if (float(residuals.max()) > POLICY["common_crossing_axis_residual_px"]
+            or not (0 <= local[0] < graph.w and 0 <= local[1] < graph.h)
+            or not graph.source_ink[local[1], local[0]]):
+        return None
+    return {
+        "kind": "BOUNDED_ORIGINAL_INK_FOUR_PORT_CORE",
+        "original_node_ids": [node["id"]], "source_core_points": points.tolist(),
+        "source_core_adjacencies": [graph.xy(pair).tolist() for pair in adjacency],
+        "source_core_extent_px": extent, "measured_stroke_width_px": width,
+        "external_port_source_tangents": [axis[2].tolist() for axis in axes],
+        "common_source_intersection_px": common.tolist(),
+        "common_axis_residuals_px": residuals.tolist(),
+        "source_crop_xyxy_px": [int(graph.origin[0]), int(graph.origin[1]),
+                                int(graph.origin[0]) + graph.w, int(graph.origin[1]) + graph.h],
+        "graph_roi_xyxy_px": list(graph.roi),
+        "source_binary_crop_sha256": _array_sha(graph.source_ink.astype(np.uint8)),
+        "all_four_ports_retained": True, "internal_source_bridge_retained": True,
+        "white_holes_filled": False, "source_short_branches_deleted": False,
+        "core_geometry_sha256": _digest(points.tolist()),
+    }
 
 
 def _component_routes(graph, labels):
@@ -426,9 +481,9 @@ def prove_shared_core_overlap(gray, candidate, other):
     maps = []
     for obj in (candidate, other):
         rows = obj.get("source_evidence", {}).get("crossing_evidence", [])
-        maps.append({row["bounded_aggregate_source_core"].get("core_geometry_sha256"):
-                     row["bounded_aggregate_source_core"] for row in rows
-                     if row.get("bounded_aggregate_source_core")})
+        maps.append({row["bounded_shared_source_core"].get("core_geometry_sha256"):
+                     row["bounded_shared_source_core"] for row in rows
+                     if row.get("bounded_shared_source_core")})
     common = set(maps[0]) & set(maps[1])
     covered, proofs, reconstructed = set(), [], {}
     for key in sorted(common):
@@ -452,12 +507,12 @@ def prove_shared_core_overlap(gray, candidate, other):
                 source_ink=source_ink, aggregate_core_boxes=[crop])
         graph = reconstructed[scope]
         nodes = [node for node in graph.nodes.values()
-                 if node.get("bounded_aggregate_source_core", {}).get("core_geometry_sha256") == key
+                 if node.get("bounded_shared_source_core", {}).get("core_geometry_sha256") == key
                  and len(node.get("pairing", {})) == 4]
         if len(nodes) != 1:
             continue
         node = nodes[0]
-        fresh = node["bounded_aggregate_source_core"]
+        fresh = node["bounded_shared_source_core"]
         if any(_digest(record.get("source_core_points")) != key for record in (maps[0][key], maps[1][key])):
             continue
         path_ports = []
@@ -488,7 +543,18 @@ def prove_shared_core_overlap(gray, candidate, other):
         return result
     overlaps = []
     for points, other_points in (native, native[::-1]):
-        near = cKDTree(other_points).query(points)[0] < 0.05
+        # Project onto finite spans, rather than comparing sampled points:
+        # identical lines sampled with different phases are still duplicates.
+        _, nearest = cKDTree(other_points).query(points, k=min(2, len(other_points)))
+        nearest = np.asarray(nearest).reshape(len(points), -1)
+        span_indices = np.clip(np.concatenate((nearest - 1, nearest), axis=1),
+                               0, len(other_points) - 2)
+        starts, ends = other_points[span_indices], other_points[span_indices + 1]
+        vectors = ends - starts
+        denominator = np.maximum(np.sum(vectors * vectors, axis=2), 1e-12)
+        fractions = np.clip(np.sum((points[:, None] - starts) * vectors, axis=2) / denominator, 0, 1)
+        distances = np.linalg.norm(points[:, None] - (starts + fractions[..., None] * vectors), axis=2)
+        near = distances.min(axis=1) < 0.05
         overlap = points[near]
         if len(overlap):
             contained = np.zeros(len(overlap), bool)
@@ -506,7 +572,7 @@ def prove_shared_core_overlap(gray, candidate, other):
     return result
 
 
-def _candidate_protection(context, region, component_box, source_label):
+def _candidate_protection(context, region, component_box, source_label, *, stronger_graphic_evidence=None):
     blocks, evidence = [], {}
     rows = context["verified_rows"].get(region["id"], [])
     if len(rows) < POLICY["minimum_verified_contexts"]:
@@ -516,15 +582,45 @@ def _candidate_protection(context, region, component_box, source_label):
     if any(group.get("complete") or group.get("source_review", {}).get("accepted")
            for group in context["groups"].get(region["id"], [])):
         blocks.append("COMPLETE_OR_REVIEWED_SOURCE_TEXT_GROUP")
+    local_word_sets = []
+    has_single_interpretation = False
     for row in rows:
-        for word in row["words"]:
+        words = [word for word in row["words"] if _intersects(word["bbox_xyxy_px"], component_box)]
+        local_word_sets.append(tuple(word["text"] for word in words))
+        for word in words:
             threshold = POLICY["minimum_numeric_confidence"] if word["text"].isdigit() else POLICY["minimum_word_confidence"]
             if word["confidence"] >= threshold:
                 blocks.append("RELIABLE_VERIFIED_WORD_SUPPORT_RETAINED")
             if sum(c.isalnum() for c in word["text"]) <= 1:
-                blocks.append("SINGLE_CHARACTER_OR_PUNCTUATION_INTERPRETATION_RETAINED")
+                has_single_interpretation = True
+    conflicting_shape_claims = (len(set(local_word_sets)) >= 2
+                               and any(sum(c.isalnum() for c in text) > 1
+                                       for words in local_word_sets for text in words))
+    if has_single_interpretation:
+        if stronger_graphic_evidence and conflicting_shape_claims:
+            evidence["single_character_counterevidence"] = stronger_graphic_evidence
+            evidence["conflicting_raw_local_word_sets_preserved"] = [list(row) for row in local_word_sets]
+        else:
+            blocks.append("SINGLE_CHARACTER_OR_PUNCTUATION_INTERPRETATION_RETAINED")
     if any("effective_input_boundary" in reason for reason in region.get("unresolved_reasons", [])):
-        blocks.append("TRUE_SOURCE_INPUT_TRUNCATION_RETAINED")
+        # A large OCR crop may touch an unrelated stroke at its boundary. A
+        # complete, separately witnessed graphic component inside every raw
+        # crop does not inherit that unrelated text-fragment failure. The raw
+        # region's truncation decision remains unchanged and is not accepted.
+        local_inside = bool(rows) and all(
+            row["specification"]["crop_xyxy_px"][0] < component_box[0]
+            and row["specification"]["crop_xyxy_px"][1] < component_box[1]
+            and component_box[2] < row["specification"]["crop_xyxy_px"][2]
+            and component_box[3] < row["specification"]["crop_xyxy_px"][3]
+            for row in rows)
+        if stronger_graphic_evidence and local_inside:
+            evidence["parent_crop_truncation_not_assigned_to_complete_interior_component"] = {
+                "all_verified_crops_strictly_contain_complete_component": True,
+                "parent_text_truncation_decision_preserved": True,
+                "complete_graphic_evidence": stronger_graphic_evidence,
+            }
+        else:
+            blocks.append("TRUE_SOURCE_INPUT_TRUNCATION_RETAINED")
     references = context["references"]
     formal = [row for row in references if _intersects(row["bbox_xyxy_px"], component_box)]
     if formal:
@@ -662,12 +758,27 @@ def assess_path_text_contact(context, points, endpoint_evidence, crossing_eviden
         report["reason"] = context["binding_error"] or "NO_COMPLETE_BOUND_CANDIDATE_CONTACT"
         return report
     group = complete_crossing_group(context, source_graph_edge_ids)
+    stronger = None
+    if group:
+        main = max(group["complete_routes"], key=lambda route: _length(np.asarray(route["source_path_points"])))
+        references = [row for row in context["references"]
+                      if _box_distance(row["bbox_xyxy_px"], box)
+                      <= POLICY["local_reference_distance_glyph_heights"] * row["glyph_height_px"]]
+        if references:
+            scale = float(np.median([row["glyph_height_px"] for row in references]))
+            continuations = _separated_continuations(context, np.asarray(main["source_path_points"]), label, scale)
+            if continuations["pass"]:
+                stronger = {"kind": "COMPLETE_MULTI_CROSSING_GRAPH_AND_SEPARATE_TWO_SIDED_CONTINUATION",
+                            "complete_group_certificate_sha256": group["certificate_sha256"],
+                            "complete_independent_route_count": len(group["complete_routes"]),
+                            "main_route_separate_source_continuations": continuations,
+                            "raw_character_hypotheses_preserved": True}
     for region_id in sorted(set(collision_region_ids)):
         region = context["regions"].get(region_id)
         if region is None:
             report["reason"] = "UNKNOWN_SOURCE_REGION"
             return report
-        protected = _candidate_protection(context, region, box, label)
+        protected = _candidate_protection(context, region, box, label, stronger_graphic_evidence=stronger)
         evidence = None
         if not protected["blocking_reasons"]:
             evidence = group or _separated_continuations(context, points, label, protected["reference_glyph_height_px"])

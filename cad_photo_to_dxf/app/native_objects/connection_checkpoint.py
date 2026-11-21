@@ -30,6 +30,7 @@ from .connections import (
 from .contracts import TOLERANCES, save_json
 from .completion_stages import _existing_arc_overlap, _existing_line_members
 from .execution import check_cancel, file_sha
+from .text_graph_support import prove_shared_core_overlap
 
 __all__ = [
     "capture_checkpoint",
@@ -192,7 +193,8 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
             raise ValueError("CONNECTION_CHECKPOINT_NONPATH_PROPOSAL")
         obj = deepcopy(candidate)
         row = {"id": obj["id"], "adopted": False, "reasons": [],
-               "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": []}
+               "retired_ids": [], "existing_adequate_ids": [], "whole_line_certificates": [],
+               "shared_source_core_checks": []}
         active = [p for p in prior_objects if p["id"] not in retired] + adopted
         path = _dense_geometry(obj["geometry"])
         edges = _source_edges(obj)
@@ -210,7 +212,10 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
             if same:
                 row["existing_adequate_ids"].append(old["id"])
             elif edges & _source_edges(old):
-                row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
+                shared_core = prove_shared_core_overlap(gray, obj, old)
+                row["shared_source_core_checks"].append(shared_core)
+                if not shared_core["pass"]:
+                    row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
         if row["existing_adequate_ids"]:
             row["decision"] = "RETAIN_EXISTING_COMPLETE_PATH_NO_DUPLICATE"
             decisions.append(row)
