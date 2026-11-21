@@ -60,6 +60,8 @@ jobs:
             tests/test_native_frame_discovery_contract.py \
             tests/test_native_connected_paths.py \
             tests/test_native_connection_core_routes.py \
+            tests/test_native_retrace_cold_audit.py \
+            tests/test_native_connection_evidence_resume.py \
             tests/test_native_completion_dependencies.py \
             tests/test_native_text_context_ownership.py \
             tests/test_native_wall_candidate_ownership.py \

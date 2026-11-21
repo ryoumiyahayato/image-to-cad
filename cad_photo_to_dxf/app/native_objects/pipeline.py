@@ -951,6 +951,17 @@ def run_native_objects(
             doors = restored_assembly["doors"]
             door_completion = restored_assembly["door_completion"]
             connections = restored_assembly["connections"]
+            from .completion_stages import restore_connection_discovery_evidence
+
+            connections["raw_discovery_evidence"] = (
+                restore_connection_discovery_evidence(
+                    cache_dir,
+                    out / "connections",
+                    gray,
+                    binding=connections.get("raw_discovery_evidence"),
+                    objects=connections["objects"],
+                )
+            )
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
             issues = restored_assembly["issues"]

@@ -18,6 +18,7 @@ from ezdxf.addons.drawing.recorder import Recorder
 from ezdxf.addons.drawing.pymupdf import PyMuPdfRenderBackend
 from scipy.ndimage import map_coordinates, distance_transform_edt
 from .contracts import save_json
+from .connection_retrace_audit import certify_saved_retraces
 
 APPID = "I2CAD_NATIVE_V2"
 LAYERS = (
@@ -528,8 +529,25 @@ def cold_audit(path, gray, roi, dpi, out):
     counts = Counter()
     members = Counter()
     duplicates = []
+    all_repeated = []
+    certified_retraces = []
     seen = {}
     room_blocks = []
+    evidence_root = Path(out).parent
+    retrace_proof = certify_saved_retraces(
+        doc,
+        before,
+        Path(path).with_suffix(".objects.json"),
+        evidence_root / "connections/discovery/source_graph.json",
+        evidence_root / "connections/discovery/connections.json",
+        gray,
+        roi,
+        dpi,
+    )
+    allowed_retraces = {
+        (row["handle"], *sorted(row["segment_indices"])): row
+        for row in retrace_proof["allowances"]
+    }
 
     def px(point):
         return np.array([point[0] / mm + x0, y1 - point[1] / mm])
@@ -616,7 +634,7 @@ def cold_audit(path, gray, roi, dpi, out):
                 continue
             else:
                 raise ValueError("UNEXPECTED_DXF_PRIMITIVE:" + typ)
-            for a, b in segments:
+            for segment_index, (a, b) in enumerate(segments):
                 length = float(np.linalg.norm(b - a))
                 p = np.linspace(a, b, max(2, int(math.ceil(length / 0.25)) + 1))
                 ds = map_coordinates(
@@ -648,11 +666,41 @@ def cold_audit(path, gray, roi, dpi, out):
                     sorted([np.round(a, 7).tolist(), np.round(b, 7).tolist()])
                 )
                 if key in seen:
-                    duplicates.append(
-                        {"objects": [seen[key], oid], "same_geometry": key}
+                    previous = seen[key]
+                    repeated = {
+                        "objects": [previous["id"], oid],
+                        "same_geometry": key,
+                        "actual_handles": [previous["handle"], e.dxf.handle],
+                        "expanded_member_indices": [previous["member"], idx],
+                        "segment_indices": [previous["segment"], segment_index],
+                    }
+                    all_repeated.append(repeated)
+                    allowed = allowed_retraces.get(
+                        (e.dxf.handle, *sorted((previous["segment"], segment_index)))
                     )
+                    if (
+                        allowed is not None
+                        and previous["handle"] == e.dxf.handle
+                        and previous["member"] == idx == 0
+                        and previous["top_level_open_polyline"]
+                        and e.dxftype() == "LWPOLYLINE"
+                        and m is e
+                    ):
+                        certified_retraces.append(
+                            {**repeated, "source_certificate": allowed}
+                        )
+                    else:
+                        duplicates.append(repeated)
                 else:
-                    seen[key] = oid
+                    seen[key] = {
+                        "id": oid,
+                        "handle": e.dxf.handle,
+                        "member": idx,
+                        "segment": segment_index,
+                        "top_level_open_polyline": e.dxftype() == "LWPOLYLINE"
+                        and m is e
+                        and not e.closed,
+                    }
                 entities.append({"id": oid, "start": a.tolist(), "end": b.tolist()})
     report = {
         "dxf_sha256": before,
@@ -663,8 +711,22 @@ def cold_audit(path, gray, roi, dpi, out):
         "expanded_formal_types": dict(members),
         "texts": texts,
         "source_checks": checks,
-        "source_gate_pass": all(x["pass"] for x in checks),
+        "source_geometry_gate_pass": all(x["pass"] for x in checks),
+        "local_retrace_certificate_gate_pass": all(
+            row["pass"] for row in retrace_proof["object_checks"]
+        ),
+        "source_gate_pass": all(x["pass"] for x in checks)
+        and all(row["pass"] for row in retrace_proof["object_checks"]),
         "exact_duplicate_segments": duplicates,
+        "all_repeated_segments": all_repeated,
+        "certified_same_owner_retraces": certified_retraces,
+        "same_owner_retrace_cold_proof": retrace_proof,
+        "duplicate_geometry_policy": {
+            "all_observed_repetitions_retained_in_report": True,
+            "cross_entity_or_unproved_repetition_still_blocks": True,
+            "exemption_requires_same_actual_modelspace_handle_and_exact_protected_segment_indices": True,
+            "source_or_DXF_geometry_modified": False,
+        },
         "room_block_definitions_are_unique": len(room_blocks) == len(set(room_blocks)),
         "snapshot": snapshot(doc),
         "CAD_GUI": "NOT_RUN_BY_THIS_AUDIT",
