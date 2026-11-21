@@ -264,17 +264,27 @@ def export_objects(objects, path, roi, dpi, source_sha):
                 if not math.isfinite(measured) or measured <= 0:
                     raise ValueError("UNMEASURABLE_NATIVE_MTEXT_LINE")
                 factor = source_width * mm / measured
+                left_offset = float(box[0]) - float(g["x"])
+                if not math.isfinite(left_offset):
+                    raise ValueError("MTEXT_SOURCE_LINE_OFFSET_MUST_BE_FINITE")
+                # Paragraph indents are multiples of the initial char height,
+                # not drawing units. Reset every paragraph, including a zero
+                # offset, so a preceding indented row cannot shift its neighbor.
+                paragraph = "\\pxi0,l" + format(left_offset * mm / h, ".10g") + ",r0,ql;"
                 # Each paragraph gets an independent absolute width factor.
                 # Keep one true MTEXT and the original text/height/line pitch.
-                content_parts.append("{\\W" + format(factor, ".10g") + ";" + line + "}")
+                content_parts.append(
+                    paragraph + "{\\W" + format(factor, ".10g") + ";" + line + "}"
+                )
                 mtext_line_layout.append(
                     {
                         "line_index": index,
                         "text": line,
                         "source_bbox_xyxy_px": box,
                         "source_width_px": source_width,
-                        "source_left_offset_px": float(box[0]) - float(g["x"]),
-                        "source_left_offset_applied": False,
+                        "source_left_offset_px": left_offset,
+                        "source_left_offset_applied": True,
+                        "paragraph_indent_char_heights": left_offset * mm / h,
                         "unscaled_font_width_mm": measured,
                         "inline_width_factor": factor,
                         "font_width_target_mm": source_width * mm,
@@ -293,6 +303,7 @@ def export_objects(objects, path, roi, dpi, source_sha):
                     "width": width * 1.03,
                     "attachment_point": 1,
                     "style": "I2CAD_TEXT",
+                    "rotation": -g.get("rotation_deg_image", 0),
                     "line_spacing_style": 2,
                     "flow_direction": 1,
                     "line_spacing_factor": float(
