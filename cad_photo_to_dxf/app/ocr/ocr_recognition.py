@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 
 from app.ocr.auxiliary_recognition import TextCandidate
+from app.native_objects.offline_runtime import private_onnxruntime
 
 
 # Keep lower-confidence detections available for manual correction. Automatic
@@ -94,6 +95,7 @@ def _as_sequence(value: Any) -> Sequence[Any]:
 
 def _get_rapidocr_engine() -> Any:
     global _RAPID_OCR_ENGINE
+    private_onnxruntime()
     if _RAPID_OCR_ENGINE is not None:
         return _RAPID_OCR_ENGINE
     from rapidocr import RapidOCR  # type: ignore[import-not-found]

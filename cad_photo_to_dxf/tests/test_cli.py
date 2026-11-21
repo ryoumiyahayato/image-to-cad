@@ -60,7 +60,7 @@ def test_headless_exports_shared_final_structure_with_gui_image_settings(tmp_pat
     source = tmp_path / 'page.png'
     assert cv2.imwrite(str(source), _page())
     args = build_parser().parse_args([
-        '--headless', '--allow-uncorrected', '--input', str(source),
+        '--headless', '--mode', 'legacy', '--allow-uncorrected', '--input', str(source),
         '--output', str(tmp_path / 'page.dxf'),
         '--preview', str(tmp_path / 'preview.png'),
         '--report', str(tmp_path / 'report.json'),
@@ -108,7 +108,7 @@ def test_headless_uses_native_tiff_dpi_and_reports_only_reviewed_crop_dust(tmp_p
     output = tmp_path / "crop.dxf"
     report = tmp_path / "crop.json"
     args = build_parser().parse_args([
-        "--headless", "--input", str(source), "--source-dpi", "100",
+        "--headless", "--mode", "legacy", "--input", str(source), "--source-dpi", "100",
         "--original-scan", str(original), "--blank-paper", "73", "73", "76", "76",
         "--crop", "64", "64", "128", "128", "--allow-empty",
         "--output", str(output), "--preview", str(tmp_path / "crop.png"),
@@ -220,7 +220,7 @@ def test_rotated_pdf_uses_same_capped_page_grid_in_gui_and_cli(tmp_path, monkeyp
     ):
         output = tmp_path / f"{name}.dxf"
         args = build_parser().parse_args([
-            "--headless", "--input", str(path), *options,
+            "--headless", "--mode", "legacy", "--input", str(path), *options,
             "--output", str(output), "--preview", str(tmp_path / f"{name}.png"),
             "--report", str(tmp_path / f"{name}.json"),
         ])

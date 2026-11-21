@@ -1,4 +1,4 @@
-# 当前项目状态 — 2026-11-20
+# 当前项目状态 — 源码研发分支
 
 **版本0.3.0-dev；整体LOCAL_NO_GO。** 当前目标是[完整可编辑原生对象](NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)。
 
@@ -6,8 +6,8 @@
 
 | 范围 | 已验证事实 | 未通过事项 |
 |---|---|---|
-| 本公开保留基线 | ProductionProcessingService/FinalStructure/DXF基础设施；GUI默认DXF；入口和构建明示preserved_main_baseline；既有基线CI与精确保留检查 | 尚未迁入私有app/native_objects完整链路；旧Windows CI不代表新原生引擎通过干净机验收 |
-| 持续研发分支（[PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)，尚未合入main） | `development/native-reconstruction`已从G1合并提交建立；实际原生核心、manager/worker、CLI/GUI和依赖资源清单已提交 | 结果按该PR的明确提交与实际产物核对，不能写成本main已默认使用原生引擎；完整区域和产品验收仍须独立判断 |
+| 已合并 main 清理与状态基线 | #41 内容合并锚点为 `1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`，包含 #40；#43 状态登记后 main 为 `87adc73f4d100ca1b296b28c4127ab1d884a5eaa`；保留 ProductionProcessingService/FinalStructure/DXF 基础设施 | 不包含本研发 PR 的原生实现；旧 Windows CI 不代表最新原生引擎通过干净机验收 |
+| 本源码研发分支（[PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)，尚未合入 main） | `development/native-reconstruction` 迁入实际 `app/native_objects`、持久 manager/worker 与默认 native CLI/GUI；精确 Linux/Python 依赖、模型/语言资源校验；保留显式 legacy | 运行、文件数量和编辑结论以对应 Git 提交的回执为准；迁入本身不等于完整内容或产品 GO |
 | 私有v8.4 | 同一固定四分之一区域正式生成主DXF；342正式对象；原453条OCR保留并来源重验；真实冷读、独立渲染与LibreCAD 2.2.1.6八项编辑和退出重开 | 完整内容验收未过；PANTRY、一个完整墙编辑组合退化；多行说明、EBB-3、其他文字/交汇/符号仍待修 |
 | 产品采用 | 有来源和实际编辑证据的局部对象 | Windows最新引擎EXE、APK、DWG、工程师修图≤手画50%均未通过 |
 
@@ -17,13 +17,20 @@
 
 R1/R2私有逻辑修复已通过，不再要求重做原局部实验。三行注释前两行完整，第三行i/I/1证据冲突；旧7个曲线像素已不在当前输入域。EBB-3仍缺可靠完整采用，相关邻近EBB区域必须按真实来源位置区分。
 
-LibreCAD普通保存的二维编辑与交换兼容分开记录。本轮复核发现历史普通保存文件的25个INSERT原始group43为0；FreeCAD 1.0独立消费者对实际房号/双门/单门切片的4/4/7条边均变成0，仅将诊断副本zscale恢复1后恢复原几何。这是已证实的交换问题，不能由二维截图消除。字体、REVIEW和PLOTSETTINGS仍按实际显示、选择和打印分别检查；XDATA丢失影响追溯，不直接等于实体不可编辑。原审核只绑定原文件，不自动适用于改后文件。当前单位为纸面毫米，未证明建筑实际比例。具体证据边界见[研发分支CAD兼容说明](https://github.com/ryoumiyahayato/image-to-cad/blob/development/native-reconstruction/docs/native/CAD_COMPATIBILITY.md)。
+以上 342 对象和 295 项去向是私有 v8.4 的历史快照，不是本研发提交重新生成结果的计数。
+
+LibreCAD 普通保存的二维编辑与交换兼容分开记录。本轮实际复核发现25个 INSERT 的原始 group43 被写为0；FreeCAD 1.0 对实际房号/双门/单门诊断切片分别由4/4/7条边变为0/0/0，单独将副本 zscale 恢复1后恢复原几何。属已证实的跨 CAD 几何丢失，不能因二维可见而关闭。
+XDATA 丢失属于审核追溯变化，不代表 LINE、文字、图块不能编辑；字体、REVIEW、PLOTSETTINGS 按实际显示、选择和打印分别核查，见 [CAD 兼容说明](../native/CAD_COMPATIBILITY.md)。原审核只绑定原文件，不适用于改后文件。当前单位为纸面毫米，未证明建筑实际比例。
 
 ## 仓库收口和当前工作
 
-[PR #41](https://github.com/ryoumiyahayato/image-to-cad/pull/41)已作为唯一清理内容入口合并，G1内容合并提交为`1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`，包含#41最终HEAD与#40目标提交；#40已关闭。两个已合并工作分支尚待删除，五个独有研究分支继续保留。维护合并不等于正式发布；旧`main=5b2a76b`是清理前历史起点，G1合并提交也是历史锚点，main允许正常前进。
+#41 已作为唯一清理内容入口合并，#40 已关闭；#43 已把交接状态登记到 main。两个已合并工作分支尚未删除，五个独有研究末端保留。以 [G1 收口记录](G1_CLOSEOUT_20261120.md)和 GitHub 实际引用为准。旧`main=5b2a76b`是清理前历史起点，`1b82d8f`是G1内容合并锚点，main允许正常前进。维护合并不等同正式发布。
 
-G2源码迁入已由持续研发分支及[PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)跟踪；本main继续保持公开legacy行为和受保护回归。原生安装、依赖与资源说明见[研发分支REPRODUCE](https://github.com/ryoumiyahayato/image-to-cad/blob/development/native-reconstruction/docs/native/REPRODUCE.md)。Q1—Q5继续处理退化、完整连接、文字分型、CAD影响及工程师试用准备，结果绑定实际提交和文件，见[当前任务](CURRENT_TASK.md)。
+G2 的实际源代码已在本分支持续维护；Q1 的字形域与墙候选责任、Q2 的多路径图及循环/圆边界负例、Q3 的字符冲突/后缀待确认入口已加入实现与定向测试。正式结果须从干净检出经 manager/worker 运行。Q1—Q5 继续以同一区域实际文件和来源账本验收，见[当前任务](CURRENT_TASK.md)。工程师尚未参与，Q5 为 `NOT_RUN`。
+
+本轮正式整区执行绑定干净生产提交 `dfdff18d14aad1d76915449f530e84511f8a840f`；
+随后同步 main 的合并只涉及 Markdown，所有非 Markdown 文件与该提交完全一致。
+文档同步不替换实际执行来源，数量、通过情况和 DXF 哈希仍按原任务的真实回执登记。
 
 历史清理已删除7条冗余分支和11个重复/空文件，#38/#39关闭；原执行事实见[历史清理账本](CLEANUP_EXECUTED_20261120.md)。新收口后的活动引用与保留原因见[G1收口记录](G1_CLOSEOUT_20261120.md)。
 

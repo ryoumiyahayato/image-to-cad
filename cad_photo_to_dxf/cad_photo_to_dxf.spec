@@ -50,10 +50,13 @@ prepare_librecad_font(
     strict=True,
 )
 hiddenimports = collect_submodules("ezdxf")
+hiddenimports += collect_submodules("app.native_objects")
+hiddenimports += ["app.core.native_worker", "app.core.native_job_manager",
+                  "app.core.native_objects_entry", "app.gui.native_task_panel"]
 hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
 binaries = []
-for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime"):
+for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime", "pymupdf", "psutil"):
     package_datas, package_binaries, package_hiddenimports = collect_all(package)
     datas += package_datas
     binaries += package_binaries

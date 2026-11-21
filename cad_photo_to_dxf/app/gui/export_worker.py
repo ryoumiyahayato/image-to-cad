@@ -210,7 +210,7 @@ def _start_single_export(window: Any) -> None:
         report = {
             "schema_version": REPORT_SCHEMA_VERSION,
             "app_version": __version__,
-            "product_status": product_status_payload(),
+            "product_status": product_status_payload("legacy"),
             "mode": "editable_line_text_single_page",
             "input": str(source_path) if source_path is not None else None,
             "text_review": (

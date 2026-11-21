@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from collections.abc import Mapping
 from dataclasses import replace
 from pathlib import Path
@@ -24,13 +25,43 @@ from app.export.trace_single_export import export_final_structure_dxf
 APP_ROOT = Path(__file__).resolve().parents[1] / "app"
 
 
-def test_application_has_no_morphological_closing() -> None:
+def test_morphological_closing_is_limited_to_one_native_discovery_copy() -> None:
+    # All legacy code, native connections, and every other native producer
+    # retain the prohibition. The one pre-existing frame-discovery call is
+    # constrained to its exact AST and independently checked on broken-source
+    # fixtures in test_native_frame_discovery_contract.py.
+    allowed = APP_ROOT / "native_objects/text_regions.py"
     occurrences = {
-        path.name
+        path
         for path in APP_ROOT.rglob("*.py")
         if "MORPH_CLOSE" in path.read_text(encoding="utf-8")
     }
-    assert occurrences == set()
+    assert occurrences == {allowed}
+    source = allowed.read_text(encoding="utf-8")
+    assert source.count("MORPH_CLOSE") == 1
+    tree = ast.parse(source)
+    frames = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "_frames"]
+    assert len(frames) == 1
+    references = [node for node in ast.walk(tree)
+                  if isinstance(node, ast.Attribute) and node.attr == "MORPH_CLOSE"]
+    assert len(references) == 1 and references[0] in set(ast.walk(frames[0]))
+    parents = {child: node for node in ast.walk(tree) for child in ast.iter_child_nodes(node)}
+    call = parents[references[0]]
+    expected = ast.parse(
+        "cv2.morphologyEx(ink, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))", mode="eval"
+    ).body
+    assert ast.dump(call, include_attributes=False) == ast.dump(expected, include_attributes=False)
+    tagged_candidate = parents[call]
+    assert isinstance(tagged_candidate, ast.Tuple)
+    assert tagged_candidate.elts[0] is call
+    assert ast.literal_eval(tagged_candidate.elts[1]) == "3x3_close_for_discovery_only"
+    maps = parents[tagged_candidate]
+    loop = parents[maps]
+    assert isinstance(maps, ast.List) and isinstance(loop, ast.For)
+    assert loop.iter is maps
+    assert ast.dump(loop.target, include_attributes=False) == ast.dump(
+        ast.parse("discovery_map, method = ()").body[0].targets[0], include_attributes=False
+    )
 
 
 def test_classifiers_have_no_position_or_fixed_field_rules() -> None:

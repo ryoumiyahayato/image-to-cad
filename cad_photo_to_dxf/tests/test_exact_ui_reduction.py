@@ -5,7 +5,9 @@ import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import numpy as np
-from PySide6.QtWidgets import QApplication, QGroupBox, QLabel, QPushButton, QSplitter
+from PySide6.QtWidgets import (
+    QApplication, QGroupBox, QLabel, QPushButton, QScrollArea, QSplitter, QTabWidget,
+)
 
 from app.ocr.auxiliary_recognition import TextCandidate
 from app.gui import MainWindow
@@ -60,12 +62,19 @@ def test_recognizable_ocr_is_available_without_manual_save() -> None:
 
 def test_public_sidebar_opens_fully_without_deprecated_feature_copy() -> None:
     application = _application()
-    window = PublicMainWindow()
+    window = PublicMainWindow(processing_mode="legacy")
     try:
         window.resize(1920, 1080)
         window.show()
         application.processEvents()
-        splitter = window.centralWidget()
+        workspaces = window.centralWidget()
+        assert isinstance(workspaces, QTabWidget)
+        assert workspaces.currentIndex() == 1
+        assert "legacy" in workspaces.tabText(workspaces.currentIndex())
+        assert not window._native_task_panel_active()
+        workspace_scroll = workspaces.currentWidget()
+        assert isinstance(workspace_scroll, QScrollArea)
+        splitter = workspace_scroll.widget()
         assert isinstance(splitter, QSplitter)
         scroll = splitter.widget(0)
         assert scroll.width() >= 500

@@ -17,12 +17,13 @@ APP_ROOT = Path(__file__).resolve().parents[1]
 def test_current_entry_distinguishes_target_from_shipped_pipeline() -> None:
     payload = product_status_payload()
     assert payload["status"] == PRODUCT_STATUS == "LOCAL_NO_GO"
-    assert payload["running_pipeline"] == "preserved_main_baseline"
+    assert payload["running_pipeline"] == "native-objects"
     assert payload["native_object_reconstruction_verified"] is False
     assert payload["reference_geometry_counts_as_reconstruction"] is False
-    help_text = build_parser().format_help()
+    help_text = " ".join(build_parser().format_help().split())
     assert "LOCAL_NO_GO" in help_text
-    assert "not yet integrated" in help_text
+    assert "Default engine: native-objects" in build_parser().description
+    assert product_status_payload("legacy")["running_pipeline"] == "preserved_main_baseline"
 
 
 @pytest.mark.parametrize("version,status", [

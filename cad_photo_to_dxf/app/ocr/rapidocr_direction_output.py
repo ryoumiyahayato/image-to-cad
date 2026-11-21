@@ -1,9 +1,17 @@
 """Keep the classifier's actual decision aligned with filtered line output."""
 
-from rapidocr import RapidOCR
+from app.native_objects.offline_runtime import private_onnxruntime
+
+private_onnxruntime()
+
+from rapidocr import RapidOCR  # noqa: E402 - privacy opt-out precedes dependency import
 
 
 class DirectionAwareRapidOCR(RapidOCR):
+    def __init__(self, *args, **kwargs):
+        private_onnxruntime()
+        super().__init__(*args, **kwargs)
+
     def build_final_output(
         self, ori_img, det_res, cls_res, rec_res, cropped_img_list, op_record
     ):

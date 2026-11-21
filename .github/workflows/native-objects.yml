@@ -1,0 +1,84 @@
+name: Native objects (Linux)
+
+on:
+  push:
+    branches:
+      - main
+      - "development/**"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  native-linux:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      QT_QPA_PLATFORM: offscreen
+      QT_OPENGL: software
+      LIBGL_ALWAYS_SOFTWARE: "1"
+      OMP_NUM_THREADS: "1"
+      OMP_THREAD_LIMIT: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      PYTHONNOUSERSITE: "1"
+      I2CAD_JOBS_ROOT: ${{ github.workspace }}/cad_photo_to_dxf/output/native-ci/gui-jobs
+
+    steps:
+      - name: Check out exact commit
+        uses: actions/checkout@v4
+
+      - name: Install Qt, local English OCR and licensed font
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libxkbcommon-x11-0 libxcb-cursor0 \
+            tesseract-ocr tesseract-ocr-eng fonts-dejavu-core
+
+      - name: Set up isolated native Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: cad_photo_to_dxf/requirements-native.lock
+
+      - name: Install locked native runtime and test runner
+        run: |
+          python -m pip install -r cad_photo_to_dxf/requirements-native.lock
+          python -m pip install 'pytest>=8.3,<9.0'
+          python -m pip check
+
+      - name: Check native entry and affected object contracts
+        working-directory: cad_photo_to_dxf
+        run: |
+          mkdir -p output/native-ci
+          python -m pytest -q --junitxml=output/native-ci/pytest-junit.xml \
+            tests/test_native_product_entry.py \
+            tests/test_native_observation_cache.py \
+            tests/test_native_frame_discovery_contract.py \
+            tests/test_native_connected_paths.py \
+            tests/test_native_connection_core_routes.py \
+            tests/test_native_retrace_cold_audit.py \
+            tests/test_native_connection_evidence_resume.py \
+            tests/test_native_completion_dependencies.py \
+            tests/test_native_text_context_ownership.py \
+            tests/test_native_wall_candidate_ownership.py \
+            tests/test_native_glyph_domain_recovery.py \
+            tests/test_native_cad_compatibility.py
+          python -m app.gui.native_task_contract_checks --qt
+
+      - name: Run actual default CLI on generated controlled source
+        run: |
+          python maintenance/native_cli_smoke.py \
+            --work-dir cad_photo_to_dxf/output/native-ci/controlled-cli
+
+      - name: Upload native CI evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-linux-evidence-${{ github.sha }}
+          path: cad_photo_to_dxf/output/native-ci/**
+          if-no-files-found: warn
+          retention-days: 14

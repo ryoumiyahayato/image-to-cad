@@ -2,17 +2,31 @@
 
 **产品0.3.0-dev / LOCAL_NO_GO。** [当前规范](NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)要求完整且独立可编辑的原生对象。
 
-## G1：清理收口
+## G1：已合并，分支删除尚待完成
 
-[清理 PR #41](https://github.com/ryoumiyahayato/image-to-cad/pull/41)已通过正常检查并合并，G1 内容合并提交为`1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`。main已包含#41与#40的目标提交，#40已关闭；不要再次安排合并这两份PR。
-
-剩余清理是删除两个已合并工作分支并读回核实；[G1收口记录](G1_CLOSEOUT_20261120.md)列出实际保留清单。五个独有研究分支尚无本轮新建且读回验证的替代归档，继续保留。历史快照和当前可恢复性分别检查，main正常前进不算资料损毁。
+[清理 PR #41](https://github.com/ryoumiyahayato/image-to-cad/pull/41) 已在五项正常检查通过后合并，G1 内容合并锚点为
+`1b82d8f9fa165e93b3e8ff9caef5543e8d566b3f`，已确认包含 #41 和 #40 的目标提交，#40 已关闭。
+[#43](https://github.com/ryoumiyahayato/image-to-cad/pull/43) 的三项适用检查通过后已登记实际交接状态，
+main 前进到 `87adc73f4d100ca1b296b28c4127ab1d884a5eaa`；main 仍是 legacy 保留基线。
+不要再次安排合并 #40/#41，也不把 #43 当成原生源码已经合入 main。
+两个已合并工作分支当前仍保留：现有 GitHub 写接口没有删除引用动作，浏览器未登录。
+五个独有研究末端继续保留；先建立并读回远端归档引用后才能退役。
+具体引用与原因见 [G1 收口记录](G1_CLOSEOUT_20261120.md)。历史快照和当前可恢复性分别检查，main 可正常前进。
 
 ## G2：持续源码研发分支
 
-持续分支[`development/native-reconstruction`](https://github.com/ryoumiyahayato/image-to-cad/tree/development/native-reconstruction)已从上述整理后main建立，实际核心、manager/worker、CLI/GUI及依赖资源说明已进入[源码PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42)，尚未合入main。后续实现与验证继续绑定该研发分支的明确提交；保留本main的legacy行为，不把研发分支的默认原生入口误报为main现状。
+长期研发分支为 `development/native-reconstruction`，从 G1 内容合并锚点建立，现已同步 #43 的状态文档；
+实际源码由 [PR #42](https://github.com/ryoumiyahayato/image-to-cad/pull/42) 跟踪，尚未合入 main。
+本分支迁入实际核心、manager/worker、CLI/GUI、依赖锁及资源检查；默认入口为 `native-objects`。
+较新的公开 legacy 处理逻辑继续保留，显式选择后使用。
+按 [复现说明](../native/REPRODUCE.md)从明确提交、独立环境及空任务目录运行，
+用正式入口生成 DXF；提交的合成烟测不依赖历史观察或采用名单。
+真实区域可显式提供经过校验的原始观察，重新运行归属和采用门槛，不能导入旧结论。
+具体执行文件、源码 SHA 和检查结果绑定源码 PR 的运行回执，不从“代码已迁入”推导产品验收。
 
-当前继续核对源码PR适用检查、干净入口实际DXF及同一冻结区域的来源责任和编辑结果，按[研发分支复现说明](https://github.com/ryoumiyahayato/image-to-cad/blob/development/native-reconstruction/docs/native/REPRODUCE.md)运行。空任务目录、没有旧采用名单的新输入必须经正式入口生成实际DXF；界面明确引擎。源码PR与私人证据分开，局部通过不等于完整区域或产品采用通过。
+本轮正式整区执行使用独立干净检出的 `dfdff18d14aad1d76915449f530e84511f8a840f`。
+本次 main 同步只改 Markdown，所有非 Markdown 文件保持该提交的 tree/blob；
+执行记录和实际 DXF 仍须登记真实生产提交，不因后续文档合并改写来源或声称重新运行。
 
 ## Q1—Q5：完整区域质量
 
@@ -21,6 +35,16 @@
 - Q3：邻线混域、i/I/1冲突、EBB-3后缀分别处理。原始字形/同页可靠参照和负例支持裁决；相同输入不重复识别，模糊字符不阻塞其他区域。
 - Q4：按显示、内容、变换、可编辑性、审核绑定和打印的实际影响划分CAD差异；明确纸面毫米与工程比例标定。
 - Q5：准备发现问题的工程师试用。真人文件、时间和高成本位置没有发生就NOT_RUN；正式50%门槛不因减少最终内容而降低。
+
+## 本分支已实施的定向修正
+
+- 墙的局部近似候选保留到完整墙可行性检查；按原图实际连续来源划分被替代区间，独立邻线仍保留。缺失的旧墙诊断不能补称找回，本轮生成新的完整诊断。
+- 文字域以真实紧凑字形和外连邻组件的来源责任重新界定，保留原图；三行首字符冲突、后缀不完整和邻域污染分别生成精确待确认记录及同页可靠字符参照。
+- 同一来源连通组允许多条独立完整路径；保存全部端口、边、短枝和有限分解。中途未解释循环、复合终端环、沿圆符号边界的伪连接继续待修。C07 的真实小白孔不能由最短节点路由省略；C08 的低置信文字候选责任需要明确裁决。
+- CAD 原始字段和独立消费者检查已证实历史 LibreCAD 普通保存的 `zscale=0` 会令部分实际门/房号几何在 FreeCAD 消失；保留原普通保存文件及单变量诊断副本，不将二维截图当作交换通过。
+
+这些实现有合成正负例及私有来源诊断；最终数量、完整性和编辑通过情况仍须从对应提交的实际全区文件读取。
+工程师试用按 [试用说明](../native/ENGINEER_TRIAL.md)执行，无真人参与时保持 `NOT_RUN`。
 
 ## 本轮交付与边界
 

@@ -20,8 +20,8 @@ def build_controls(self):
     container = QWidget()
     layout = QVBoxLayout(container)
     self.product_status_label = QLabel(
-        f"研发预览（{PRODUCT_STATUS}）：完整原生对象重建尚未接入。"
-        "当前运行保留基线，参考图形不计作完成重建，导出后仍须核对待修。",
+        f"兼容工具（{PRODUCT_STATUS}）· 引擎：preserved_main_baseline。"
+        "当前为显式选择的 legacy 工具；原生重建请切换到原生任务。参考图形不计作完整重建。",
         container,
     )
     self.product_status_label.setWordWrap(True)

@@ -17,7 +17,7 @@ $report = Join-Path $work "smoke-report.json"
 $debugDir = Join-Path $work "debug"
 
 $arguments = @(
-    "--headless", "--input", "`"$samplePath`"",
+    "--headless", "--mode", "legacy", "--input", "`"$samplePath`"",
     "--output", "`"$output`"",
     "--preview", "`"$preview`"",
     "--report", "`"$report`"",

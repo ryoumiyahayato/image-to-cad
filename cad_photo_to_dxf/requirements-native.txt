@@ -1,0 +1,3 @@
+# Reproducible native runtime profile; legacy requirements.txt is unchanged.
+# Tested CPython 3.12.14 / Linux x86_64. See ../docs/native/REPRODUCE.md.
+-r requirements-native.lock
