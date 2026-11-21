@@ -1055,6 +1055,64 @@ def _maximum_point_to_polyline_distance(points, chain):
     return maximum
 
 
+def _mixed_observed_endpoint_chain_certificate(graph, pixels, source_label, labels):
+    """Own one complete chain from a witnessed boundary to a natural end.
+
+    The rest of the connected component may contain the round boundary and
+    other strokes. They are not owned by this path. Only the round-contact
+    endpoint may have source adjacencies outside this unique chain; any real
+    interior branch or cycle keeps the path pending rather than being pruned.
+    """
+    ordered = list(map(int, pixels))
+    owned = set(ordered)
+    ends = [ordered[0], ordered[-1]]
+    internal = owned - set(ends)
+    internal_edges = {
+        tuple(sorted((p, q)))
+        for p in owned
+        for q in graph.neighbors(p)
+        if q in owned
+    }
+    outside = {
+        p: [q for q in graph.neighbors(p) if q not in owned]
+        for p in owned
+        if any(q not in owned for q in graph.neighbors(p))
+    }
+    checks = {
+        "single_unchanged_source_component": all(
+            int(labels.ravel()[p]) == source_label for p in owned
+        ),
+        "unique_ordered_source_samples": len(owned) == len(ordered),
+        "all_internal_source_degrees_are_two": all(
+            len(graph.neighbors(p)) == 2 for p in internal
+        ),
+        "all_owned_source_adjacencies_accounted": internal_edges
+        == {tuple(sorted(pair)) for pair in zip(ordered, ordered[1:])},
+        "one_natural_degree_one_endpoint": sum(
+            len(graph.neighbors(p)) == 1 for p in ends
+        )
+        == 1,
+        "no_unowned_interior_branches": not (set(outside) & internal),
+        "unowned_source_only_at_contact_endpoint": len(outside) <= 1
+        and all(p in ends for p in outside),
+    }
+    return {
+        "schema": "complete-mixed-observed-endpoint-chain-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "owned_source_pixel_count": len(owned),
+        "unowned_contact_adjacencies_retained": [
+            {"contact_source_point": graph.xy([p])[0].tolist(),
+             "neighbor_source_points": graph.xy(qs).tolist()}
+            for p, qs in sorted(outside.items())
+        ],
+        "round_boundary_geometry_owned": False,
+        "whole_connected_component_ownership_claimed": False,
+        "source_pixels_removed_or_gaps_closed": False,
+        "engineering_semantics_required": False,
+    }
+
+
 def _simple_chain_fit_certificate(raw, geometry):
     """Check source order and both directions of the actual native fit.
 
@@ -1421,13 +1479,16 @@ def extract_connections(
                 v in ("OBSERVED_FREE_SOURCE_ENDPOINT", "OBSERVED_CLOSED_TERMINAL_LOBE")
                 for v in endpoints
             )
+            mixed_pair = sorted(endpoints) == sorted(
+                ["OBSERVED_ROUND_BOUNDARY_CONTACT", "OBSERVED_FREE_SOURCE_ENDPOINT"]
+            )
             terminal_lobes = [
                 n["terminal"]
                 for n in (start_node, end_node)
                 if n["terminal"].get("kind") == "OBSERVED_CLOSED_TERMINAL_LOBE"
             ]
             chord = float(np.linalg.norm(points[-1] - points[0]))
-            if not ring_pair and not free_pair:
+            if not ring_pair and not free_pair and not mixed_pair:
                 row["reason"] = "MIXED_ENDPOINT_ROLE_REQUIRES_WHOLE_GROUP_REVIEW"
                 uncertainties.append(row)
                 continue
@@ -1447,7 +1508,16 @@ def extract_connections(
                 )
                 uncertainties.append(row)
                 continue
-            if free_pair:
+            if mixed_pair:
+                mixed_chain = _mixed_observed_endpoint_chain_certificate(
+                    graph, pixels, label, source_labels
+                )
+                row["complete_mixed_observed_endpoint_chain"] = mixed_chain
+                if not mixed_chain["pass"]:
+                    row["reason"] = "MIXED_ENDPOINT_PATH_SOURCE_OWNERSHIP_NOT_COMPLETE"
+                    uncertainties.append(row)
+                    continue
+            if free_pair or mixed_pair:
                 whole_component = len(set(pixels)) == int(skel_counts[label])
                 row["whole_isolated_component_skeleton_accounted"] = whole_component
                 row["raster_path_length_to_chord_ratio_diagnostic_only"] = length / chord
@@ -1455,13 +1525,14 @@ def extract_connections(
                     crossings
                 )
                 simple_chain = None
-                if not crossings and not terminal_lobes:
+                if free_pair and not crossings and not terminal_lobes:
                     simple_chain = _simple_source_chain_certificate(
                         graph, pixels, label, source_labels, int(skel_counts[label])
                     )
                     row["whole_simple_source_chain"] = simple_chain
-                if (not crossings and not whole_component) or (
-                    simple_chain is not None and not simple_chain["pass"]
+                if free_pair and (
+                    (not crossings and not whole_component)
+                    or (simple_chain is not None and not simple_chain["pass"])
                 ):
                     row["reason"] = "NOT_A_WHOLE_THIN_ISOLATED_CURVED_STROKE"
                     uncertainties.append(row)
@@ -1470,6 +1541,16 @@ def extract_connections(
                 for ordered, endpoint_node in zip(
                     (points, points[::-1]), (start_node, end_node)
                 ):
+                    if endpoint_node["terminal"]["kind"] == "OBSERVED_ROUND_BOUNDARY_CONTACT":
+                        cap_checks.append(
+                            {
+                                "kind": "OBSERVED_ROUND_BOUNDARY_CONTACT_RETAINED",
+                                "round_id": endpoint_node["terminal"]["round_id"],
+                                "boundary_pixels_owned_or_removed": False,
+                                "pass": not boundary_conflicts,
+                            }
+                        )
+                        continue
                     if (
                         endpoint_node["terminal"]["kind"]
                         == "OBSERVED_CLOSED_TERMINAL_LOBE"
@@ -1589,7 +1670,7 @@ def extract_connections(
                     if row.get("local_cycle_cover_evidence")
                 ],
             )
-            if row.get("whole_simple_source_chain", {}).get("pass"):
+            if row.get("whole_simple_source_chain", {}).get("pass") or mixed_pair:
                 fit = _simple_chain_fit_certificate(points, geometry)
                 if not fit["pass"]:
                     simplified, encoding = _bounded_source_polyline(points)
@@ -1606,7 +1687,11 @@ def extract_connections(
                         "source_ordered_span_encoding": encoding,
                         "single_bounded_fallback_from_initial_fit": True,
                     }
-                row["whole_simple_source_chain_fit"] = fit
+                row[
+                    "mixed_observed_endpoint_chain_fit"
+                    if mixed_pair
+                    else "whole_simple_source_chain_fit"
+                ] = fit
                 if not fit["pass"]:
                     row["reason"] = "COMPLETE_SOURCE_CHAIN_NATIVE_FIT_NOT_BIDIRECTIONAL"
                     row["native_geometry"] = geometry
@@ -1644,6 +1729,8 @@ def extract_connections(
                     "whole_path_class": (
                         "ROUND_BOUNDARY_TO_ROUND_BOUNDARY"
                         if ring_pair
+                        else "OBSERVED_ROUND_BOUNDARY_TO_NATURAL_ENDPOINT"
+                        if mixed_pair
                         else "COMPLETE_STROKE_WITH_TERMINAL_LOOP"
                         if terminal_lobes
                         else "COMPLETE_PATH_IN_SHARED_SOURCE_COMPONENT"

@@ -122,3 +122,63 @@ def test_existing_line_overlap_remains_explicit_and_is_not_silently_retired(tmp_
     assert proposals and proposals[0]["prior_object_id"] == prior["id"]
     assert proposals[0]["proposal_only_requires_independent_remainder_and_ownership_audit"]
     assert prior["geometry"] == {"start": [32, 102], "end": [50, 85]}
+
+
+def mixed_boundary_curve(*, reflect=False, branch=False, gap=False):
+    ink = np.zeros((180, 180), dtype=np.uint8)
+    cv2.circle(ink, (145, 80), 12, 1, 1)
+    points = np.array([[25, 110], [45, 90], [70, 78], [100, 74], [133, 80]], np.int32)
+    cv2.polylines(ink, [points], False, 1, 1)
+    if branch:
+        ink[65:75, 100] = 1
+    if gap:
+        ink[:, 125:130] = 0
+    return ink[:, ::-1].copy() if reflect else ink
+
+
+@pytest.mark.parametrize("reflect", [False, True])
+def test_circle_contact_and_natural_end_form_a_complete_geometry_without_semantic_role_match(tmp_path, reflect):
+    result = extract(mixed_boundary_curve(reflect=reflect), tmp_path)
+    assert len(result["objects"]) == 1
+    obj = result["objects"][0]
+    evidence = obj["source_evidence"]
+    assert evidence["whole_path_class"] == "OBSERVED_ROUND_BOUNDARY_TO_NATURAL_ENDPOINT"
+    assert evidence["complete_mixed_observed_endpoint_chain"]["pass"]
+    assert evidence["mixed_observed_endpoint_chain_fit"]["pass"]
+    assert not evidence["complete_mixed_observed_endpoint_chain"]["round_boundary_geometry_owned"]
+    assert not evidence["observed_round_boundary_ownership_checks"]["conflicts"]
+    assert all(check["pass"] for check in evidence["original_source_endpoint_cap_checks"])
+    native = _dense_geometry(obj["geometry"])
+    assert native[:, 0].min() >= 24 if not reflect else native[:, 0].max() <= 155
+    assert native[:, 0].max() <= 134 if not reflect else native[:, 0].min() >= 45
+
+
+def test_mixed_endpoint_rule_does_not_hide_a_real_internal_branch(tmp_path):
+    result = extract(mixed_boundary_curve(branch=True), tmp_path)
+    assert not result["objects"]
+    assert any("BRANCH" in row["reason"] for row in result["uncertainties"])
+
+
+def test_mixed_endpoint_rule_does_not_bridge_a_real_gap_to_the_circle(tmp_path):
+    result = extract(mixed_boundary_curve(gap=True), tmp_path)
+    for obj in result["objects"]:
+        native = _dense_geometry(obj["geometry"])
+        assert native[:, 0].max() <= 124 or native[:, 0].min() >= 130
+        assert not obj["source_evidence"]["source_morphological_gap_closing"]
+
+
+def test_mixed_endpoint_rule_cannot_override_current_glyph_ownership(tmp_path):
+    ink = mixed_boundary_curve()
+    text = {
+        "coordinate_system": "source_pixels_top_left",
+        "source_size_px": [180, 180],
+        "roi_xyxy_px": list(ROI),
+        "regions": [{"id": "synthetic-unresolved-glyph", "accepted": False,
+                     "bbox_xyxy_px": [20, 60, 125, 120],
+                     "compact_source_ink_mask": {"runs_y_x0_x1": [
+                         [int(y), int(x), int(x + 1)] for y, x in zip(*np.nonzero(ink)) if x < 125
+                     ]}}],
+    }
+    result = extract(ink, tmp_path, text_regions=text)
+    assert not result["objects"]
+    assert any(row["reason"] == "CURRENT_SOURCE_GLYPH_OWNERSHIP_CONTACT" for row in result["uncertainties"])
