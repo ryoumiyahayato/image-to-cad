@@ -70,8 +70,14 @@ def test_ordinary_completion_rejects_unproved_sharing_or_native_overlap_after_re
     assert damaged[0] not in {row["id"] for row in result["objects"]}
     row = next(row for row in result["decisions"] if row["id"] == damaged[0])
     assert row["adopted"] is False
-    assert "ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES" in row["reasons"]
-    assert any(not proof["pass"] for proof in row["shared_source_core_checks"])
+    assert result["objects"] == []  # A late member failure cannot leave a claimed-complete subset.
+    if damage == "native-long-overlap":
+        assert "SOURCE_GROUP_HAS_DUPLICATE_NATIVE_SEGMENTS" in row["reasons"]
+        assert result["native_duplicate_group_quarantine"]["native_duplicate_conflicts"]
+    else:
+        assert "ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES" in row["reasons"]
+        assert any(not proof["pass"] for proof in row["shared_source_core_checks"])
+    assert all(not group["pass"] for group in result["final_complete_group_gate"]["groups"])
 
 
 def test_ordinary_completion_does_not_add_an_existing_or_twice_emitted_whole_path(tmp_path, monkeypatch):

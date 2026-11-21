@@ -29,7 +29,7 @@ from .connections import (
 from .contracts import TOLERANCES, save_json
 from .completion_stages import (
     _connection_path_responsibility, _existing_arc_overlap, _existing_line_members,
-    _quarantine_native_duplicate_groups,
+    _quarantine_native_duplicate_groups, _finalize_complete_connection_groups,
 )
 from .execution import check_cancel, file_sha
 
@@ -238,12 +238,17 @@ def adopt_checkpoint_paths(gray, proposals, prior_objects):
             obj["source_evidence"]["checkpoint_responsibility_resolution"] = deepcopy(row)
             adopted.append(obj)
         decisions.append(row)
+    final_groups = _finalize_complete_connection_groups(proposals, prior_objects, adopted, decisions, retired)
+    adopted, decisions, retired = final_groups["objects"], final_groups["decisions"], final_groups["retired_ids"]
     return {
         "objects": adopted, "retired_ids": sorted(retired), "decisions": decisions,
         "uncertainties": [{"reason": "CONNECTION_EDIT_RESPONSIBILITY_PENDING", **row}
                           for row in decisions if row.get("decision") in (
-                              "PENDING_WHOLE_OBJECT_RESPONSIBILITY", "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP")],
+                              "PENDING_WHOLE_OBJECT_RESPONSIBILITY", "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP",
+                              "PENDING_INCOMPLETE_FINAL_SOURCE_GROUP")],
         "native_duplicate_group_quarantine": quarantine,
+        "final_complete_group_gate": {key: value for key, value in final_groups.items()
+                                      if key not in ("objects", "decisions")},
         "source_pixels_modified": False,
         "partial_old_entity_retirement_permitted": False,
     }

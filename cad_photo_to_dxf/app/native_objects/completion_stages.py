@@ -431,8 +431,9 @@ def _source_edges(obj):
 def _quarantine_native_duplicate_groups(proposals, prior_objects=()):
     """Reject an entire observed source group before any old entity retirement.
 
-    This is a refusal gate for distinct paths with exact straight native spans,
-    using the saved cold audit's seven-decimal source-coordinate precision.
+    This is a refusal gate for distinct paths with positive collinear finite
+    overlap, including different segmentations and partial coincident spans.
+    The tolerance is the existing seven-decimal source-coordinate precision.
     Equal whole-path rediscoveries remain the ordinary duplicate suppressor's
     responsibility. Same-owner source-certified local-cycle walks are untouched.
     """
@@ -470,7 +471,7 @@ def _quarantine_native_duplicate_groups(proposals, prior_objects=()):
     adequate = {obj["id"] for obj in paths if any(equivalent(obj, old) for old in old_paths)}
     active = [(obj, True) for obj in paths if obj["id"] not in adequate]
     active += [(obj, False) for obj in old_paths]
-    indexed, conflicts, bad_groups = {}, [], set()
+    segments, conflicts, bad_groups = [], [], set()
     for obj, proposed in active:
         points = obj["geometry"]["points"]
         bulges = obj["geometry"]["bulges"]
@@ -478,19 +479,46 @@ def _quarantine_native_duplicate_groups(proposals, prior_objects=()):
         for index, (a, b) in enumerate(spans):
             if float(bulges[index]) != 0:
                 continue  # Circular arcs retain their independent existing gates.
-            key = tuple(sorted((tuple(np.round(a, 7)), tuple(np.round(b, 7)))))
-            if key[0] == key[1]:
+            a, b = np.asarray(a, float), np.asarray(b, float)
+            if not np.all(np.isfinite([a, b])):
+                raise ValueError("CONNECTION_NATIVE_SEGMENT_NONFINITE")
+            if float(np.linalg.norm(b - a)) <= 1e-7:
                 continue
-            for other, other_proposed, other_index in indexed.get(key, []):
-                if not (proposed or other_proposed) or equivalent(obj, other):
+            segments.append((float(min(a[0], b[0])), float(max(a[0], b[0])),
+                             float(min(a[1], b[1])), float(max(a[1], b[1])),
+                             obj, proposed, index, a, b))
+    nearby = []
+    for span in sorted(segments, key=lambda item: (item[0], item[2], item[4]["id"], item[6])):
+        left, right, bottom, top, obj, proposed, index, a, b = span
+        nearby = [old for old in nearby if old[1] >= left - 1e-7]
+        for other_span in nearby:
+            _, _, other_bottom, other_top, other, other_proposed, other_index, c, d = other_span
+            if top < other_bottom - 1e-7 or other_top < bottom - 1e-7:
+                continue
+            if not (proposed or other_proposed):
+                continue
+            vector = b - a
+            length = float(np.linalg.norm(vector))
+            axis = vector / length
+            delta = np.asarray([c - a, d - a])
+            perpendicular = np.abs(delta[:, 0] * axis[1] - delta[:, 1] * axis[0])
+            if float(perpendicular.max()) > 1e-7:
+                continue  # A true point crossing is not coincident native length.
+            low, high = sorted(float(point @ axis) for point in delta)
+            start, end = max(0.0, low), min(length, high)
+            if end - start > 1e-7:
+                if equivalent(obj, other):
                     continue
                 affected = [row["id"] for row, fresh in ((obj, proposed), (other, other_proposed)) if fresh]
                 for oid in affected:
                     bad_groups.update(membership[oid])
                 conflicts.append({"object_ids": [other["id"], obj["id"]],
                                   "native_segment_indices": [other_index, index],
-                                  "source_pixel_endpoints": [list(point) for point in key]})
-            indexed.setdefault(key, []).append((obj, proposed, index))
+                                  "source_pixel_endpoints": [(a + start * axis).tolist(),
+                                                             (a + end * axis).tolist()],
+                                  "positive_overlap_length_source_px": end - start,
+                                  "finite_segment_intersection": True})
+        nearby.append(span)
     # One object may have been discovered in overlapping graph namespaces.
     # Propagate only those exact identity links, not nearby source bounding boxes.
     while True:
@@ -539,6 +567,152 @@ def _connection_path_responsibility(gray, proposal, existing):
             if not shared["pass"]:
                 row["reasons"].append("ANOTHER_WHOLE_PATH_OWNS_OBSERVED_SOURCE_ADJACENCIES")
     return row
+
+
+def _finalize_complete_connection_groups(proposals, prior_objects, adopted, decisions, retired_ids=()):
+    """Reconcile complete-group claims with the entities that will be written.
+
+    A rejected member cannot leave its peers claiming the complete discovery
+    group. Adequate retained old entities may represent members, but every
+    route needs a distinct actual representative. Withdrawal also cancels the
+    withdrawn paths' old-entity retirement plans, before the writer runs.
+    """
+    groups = {}
+    known_paths = {}
+    for obj in [*prior_objects, *proposals]:
+        known_paths.setdefault(obj["id"], []).append(obj)
+    for obj in proposals:
+        evidence = obj.get("source_evidence", {})
+        certificate = evidence.get("text_graphic_support", {}).get("complete_graphic_group")
+        if certificate is None:
+            continue
+        signature = certificate.get("certificate_sha256") if isinstance(certificate, dict) else None
+        key = (signature or canonical_sha(certificate),
+               tuple(evidence.get("original_source_crop_xyxy_px", [])))
+        members = evidence.get("graphic_group_path_responsibility", [])
+        declared = {row.get("path_id"): tuple(sorted(row.get("source_graph_edge_ids", [])))
+                    for row in members if isinstance(row, dict)}
+        routes = {tuple(sorted(row.get("source_graph_edge_ids", [])))
+                  for row in certificate.get("complete_routes", [])} if isinstance(certificate, dict) else set()
+        own_route = tuple(sorted(evidence.get("source_graph_edge_ids", [])))
+        # Duplicate suppression can observe an exact whole-path alias. It is
+        # not a new route or member: bind it to a present canonical member's
+        # actual geometry and source traversal, not its self-declared edge IDs.
+        alias_bound = obj["id"] not in declared and any(
+            own_route == route
+            and original.get("kind") == obj.get("kind")
+            and original.get("geometry") == obj.get("geometry")
+            and all(original.get("source_evidence", {}).get(field) == evidence.get(field)
+                    for field in ("source_path_points", "source_graph_edge_ids",
+                                  "original_source_crop_xyxy_px", "original_source_crop_array_sha256",
+                                  "source_connected_group_id"))
+            for oid, route in declared.items() for original in known_paths.get(oid, [])
+        )
+        valid = (isinstance(signature, str) and bool(routes) and len(declared) == len(members)
+                 and all(isinstance(oid, str) and oid for oid in declared)
+                 and len(declared) == len(routes) and set(declared.values()) == routes
+                 and own_route in routes
+                 and (declared.get(obj["id"]) == own_route or alias_bound))
+        group = groups.setdefault(key, {"certificate_sha256": signature,
+                                       "members": declared, "declaring_ids": set(),
+                                       "valid_declaration": valid})
+        group["valid_declaration"] &= valid and group["members"] == declared
+        group["declaring_ids"].add(obj["id"])
+    decisions = copy.deepcopy(decisions)
+    adopted = copy.deepcopy(adopted)
+    adopted_ids = {obj["id"] for obj in adopted}
+    prior_ids = {obj["id"] for obj in prior_objects}
+    rows_by_id = {}
+    for row in decisions:
+        rows_by_id.setdefault(row["id"], []).append(row)
+    all_planned = {oid for row in decisions for oid in row.get("retired_ids", [])}
+    unassigned_retirements = set(retired_ids) - all_planned
+    blocked, failed = set(), {}
+
+    def remaining_retirements():
+        return unassigned_retirements | {
+            oid for row in decisions if row.get("adopted") and row["id"] not in blocked
+            for oid in row.get("retired_ids", [])
+        }
+
+    def actual_representatives(member_ids, available):
+        options = {}
+        for oid in member_ids:
+            adequate = {actual for row in rows_by_id.get(oid, [])
+                        for actual in row.get("existing_adequate_ids", [])}
+            choices = ({oid} | adequate) & available
+            options[oid] = sorted(choices, key=lambda actual: (actual != oid, actual))
+        assigned = {}
+
+        def match(oid, seen):
+            for actual in options[oid]:
+                if actual in seen:
+                    continue
+                seen.add(actual)
+                if actual not in assigned or match(assigned[actual], seen):
+                    assigned[actual] = oid
+                    return True
+            return False
+
+        for oid in sorted(member_ids, key=lambda identity: (len(options[identity]), identity)):
+            if not match(oid, set()):
+                return None, {key: values for key, values in options.items() if not values}
+        return {oid: actual for actual, oid in assigned.items()}, {}
+
+    # Withdrawal can remove a representative used by another declaration.
+    # Iterate only removals; never invent a replacement or re-adopt a failure.
+    while True:
+        available = (prior_ids - remaining_retirements()) | (adopted_ids - blocked)
+        newly_blocked = set()
+        for key, group in groups.items():
+            if key in failed:
+                continue
+            representatives, missing = actual_representatives(group["members"], available)
+            if not group["valid_declaration"] or representatives is None:
+                failed[key] = {
+                    "reason": "FINAL_COMPLETE_GROUP_MEMBER_SET_NOT_REPRESENTED"
+                    if group["valid_declaration"] else "COMPLETE_GROUP_DECLARATION_INCONSISTENT",
+                    "member_ids_without_actual_representative": sorted(missing),
+                }
+                newly_blocked.update(set(group["members"]) | group["declaring_ids"])
+        if newly_blocked <= blocked:
+            break
+        blocked.update(newly_blocked)
+    final_retired = remaining_retirements()
+    available = (prior_ids - final_retired) | (adopted_ids - blocked)
+    group_rows = []
+    for key, group in groups.items():
+        representatives, _ = actual_representatives(group["members"], available)
+        group_rows.append({
+            "certificate_sha256": group["certificate_sha256"],
+            "expected_proposed_member_ids": sorted(group["members"]),
+            "pass": key not in failed,
+            "actual_member_representatives": representatives if key not in failed else {},
+            "source_scope_xyxy_px": list(key[1]),
+            **failed.get(key, {}),
+        })
+    for row in decisions:
+        if row["id"] not in blocked:
+            continue
+        if row.get("adopted"):
+            row["decision_before_final_group_gate"] = row.get("decision", "ADOPTED_COMPLETE_PATH")
+            row["decision"] = "PENDING_INCOMPLETE_FINAL_SOURCE_GROUP"
+        row["adopted"] = False
+        row["retired_ids"] = []
+        row["reasons"] = sorted(set(row.get("reasons", [])) | {"FINAL_COMPLETE_GROUP_MEMBER_SET_NOT_REPRESENTED"})
+        row["final_complete_group_gate_pass"] = False
+    result = [obj for obj in adopted if obj["id"] not in blocked]
+    for obj in result:
+        declarations = [row for row in group_rows if row["pass"]
+                        and obj["id"] in row["expected_proposed_member_ids"]]
+        if declarations:
+            obj["source_evidence"]["final_graphic_group_responsibility"] = declarations
+    return {"objects": result, "decisions": decisions, "retired_ids": sorted(final_retired),
+            "groups": group_rows, "quarantined_ids": sorted(blocked),
+            "rolled_back_retired_ids": sorted(set(retired_ids) - final_retired),
+            "distinct_actual_entity_required_per_member": True,
+            "existing_entities_modified": 0, "before_old_entity_retirement": True,
+            "recognition_or_source_graph_modified": False}
 
 
 def complete_connections_without_unresolved_retirement(
@@ -680,6 +854,8 @@ def complete_connections_without_unresolved_retirement(
         )
         if not reasons:
             adopted.append(copy.deepcopy(proposal))
+    final_groups = _finalize_complete_connection_groups(raw["objects"], objects, adopted, decisions)
+    adopted, decisions = final_groups["objects"], final_groups["decisions"]
     result = {
         "objects": adopted,
         "raw_candidate_count": len(raw["objects"]),
@@ -693,6 +869,8 @@ def complete_connections_without_unresolved_retirement(
         "replay": replay,
         "all_existing_native_entities_retained": True,
         "native_duplicate_group_quarantine": quarantine,
+        "final_complete_group_gate": {key: value for key, value in final_groups.items()
+                                      if key not in ("objects", "decisions")},
         "dashed_gaps_joined": False,
         "engineering_stroke_identity_proven": False,
         "status": "LOCAL_SOURCE_PATH_CANDIDATES_REQUIRE_SAVED_DXF_AUDIT",
