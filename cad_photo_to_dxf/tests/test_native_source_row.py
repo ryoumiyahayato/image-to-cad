@@ -7,7 +7,7 @@ from types import SimpleNamespace
 import numpy as np
 import pypdfium2 as pdfium
 import pytest
-from PySide6.QtGui import QGuiApplication
+from PySide6.QtWidgets import QApplication
 
 from app.core.processing import ProductionProcessingConfig
 from app.geometry.content_ownership import _candidate_region_mask
@@ -15,7 +15,8 @@ from app.geometry.pdf_arc_evidence import pdf_geometry_binding
 from app.ocr.auxiliary_recognition import TextCandidate, TextObservation
 from app.ocr.native_source_row import measure_row, recover_native_source_rows
 
-APP = QGuiApplication.instance() or QGuiApplication([])
+# Font and widget tests share a process and need one widget-capable application.
+APP = QApplication.instance() or QApplication([])
 
 
 def sample(tmp_path, *, angle=0, shifted=False, extra=None, page_rotation=0):

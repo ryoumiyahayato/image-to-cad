@@ -364,6 +364,7 @@ class NativeJobManager:
             "language",
             "limits",
             "validation_controls",
+            "connection_checkpoint",
         }
         extra = set(values) - allowed
         if extra:
@@ -430,6 +431,13 @@ class NativeJobManager:
             "orientation": job.orientation_cw,
             "language": language,
         }
+        connection_checkpoint = None
+        if values.get("connection_checkpoint") is not None:
+            from app.native_objects.connection_checkpoint import capture_checkpoint
+
+            connection_checkpoint = capture_checkpoint(
+                values["connection_checkpoint"], directory, before, parameters
+            )
         from app.native_objects.observation_cache import (
             ENVIRONMENT_VARIABLE,
             cache_binding,
@@ -474,6 +482,8 @@ class NativeJobManager:
             "attempts": [],
             "production_GO": False,
         }
+        if connection_checkpoint is not None:
+            state["connection_checkpoint"] = connection_checkpoint
         atomic_json(
             directory / "input_manifest.json",
             {
@@ -723,6 +733,8 @@ class NativeJobManager:
             request["checkpoint_import"] = state.get("checkpoint_import")
             request["compatible_resume"] = compatible
             request["revision_import"] = revision
+            if state.get("connection_checkpoint") is not None:
+                request["connection_checkpoint"] = state["connection_checkpoint"]
             path = directory / "request.json"
             atomic_json(path, request)
             command = worker_command(

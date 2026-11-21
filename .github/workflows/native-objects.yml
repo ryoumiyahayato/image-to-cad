@@ -59,6 +59,19 @@ jobs:
             tests/test_native_observation_cache.py \
             tests/test_native_frame_discovery_contract.py \
             tests/test_native_connected_paths.py \
+            tests/test_native_complete_source_chains.py \
+            tests/test_native_connection_checkpoint_inputs.py \
+            tests/test_native_connection_checkpoint_entry.py \
+            tests/test_native_connection_checkpoint_adoption.py \
+            tests/test_native_connection_checkpoint_cad.py \
+            tests/test_native_connection_checkpoint_pipeline.py \
+            tests/test_native_checkpoint_review_scope.py \
+            tests/test_native_connection_core_routes.py \
+            tests/test_native_retrace_cold_audit.py \
+            tests/test_native_bounded_retrace_audit.py \
+            tests/test_native_connection_evidence_resume.py \
+            tests/test_native_completion_dependencies.py \
+            tests/test_native_text_context_ownership.py \
             tests/test_native_wall_candidate_ownership.py \
             tests/test_native_glyph_domain_recovery.py \
             tests/test_native_cad_compatibility.py

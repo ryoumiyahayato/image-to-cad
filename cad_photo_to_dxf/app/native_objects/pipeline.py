@@ -147,6 +147,7 @@ def _completed_text_checkpoint(
         **allowed,
         "app.native_objects.independent_recognizer": "independent_recognizer.py",
         "app.native_objects.text_confirmation": "text_confirmation.py",
+        "app.native_objects.text_context_ownership": "text_context_ownership.py",
     }
     for module_name, expected in dependency_items:
         if (
@@ -842,6 +843,7 @@ def run_native_objects(
     cache_dir=None,
     job_config=None,
     prepared_source=None,
+    connection_checkpoint=None,
 ):
     """Called by the existing GUI/CLI's ProductionProcessingService."""
     cv2.setNumThreads(1)
@@ -877,6 +879,12 @@ def run_native_objects(
         or file_sha(input_path) != prepared.source_sha256
     ):
         raise ValueError("PIPELINE_PREPARED_SOURCE_IDENTITY_MISMATCH")
+    if connection_checkpoint is not None:
+        from .connection_checkpoint import run_connection_checkpoint
+
+        return run_connection_checkpoint(
+            job, prepared, connection_checkpoint, progress_callback=progress_callback
+        )
     gray = prepared.gray
     roi = prepared.working_roi
     cache_dir = job.cache_dir
@@ -950,6 +958,17 @@ def run_native_objects(
             doors = restored_assembly["doors"]
             door_completion = restored_assembly["door_completion"]
             connections = restored_assembly["connections"]
+            from .completion_stages import restore_connection_discovery_evidence
+
+            connections["raw_discovery_evidence"] = (
+                restore_connection_discovery_evidence(
+                    cache_dir,
+                    out / "connections",
+                    gray,
+                    binding=connections.get("raw_discovery_evidence"),
+                    objects=connections["objects"],
+                )
+            )
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
             issues = restored_assembly["issues"]

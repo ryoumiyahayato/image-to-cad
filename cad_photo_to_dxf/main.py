@@ -50,6 +50,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--resource-report", type=Path, help="Native mode: process resource JSON path")
     parser.add_argument("--evidence-dir", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--native-cache", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--connection-checkpoint", type=Path,
+                        help="Native mode: controlled source checkpoint JSON for bounded connection reconstruction; no OCR rerun")
     parser.add_argument("--jobs-dir", type=Path,
                         help="Native mode: persisted task directory (default: OUTPUT-parent/native-jobs)")
     for flag, default, help_text in (
@@ -118,7 +120,8 @@ def run_headless(args: argparse.Namespace) -> int:
     if args.mode == "native-objects":
         return run_native_headless(args)
     native_options = ("roi", "dpi", "evidence_dir", "native_cache", "page", "frame",
-                      "orientation", "job_id", "temp_dir", "resource_report", "jobs_dir")
+                      "orientation", "job_id", "temp_dir", "resource_report", "jobs_dir",
+                      "connection_checkpoint")
     if any(getattr(args, name, None) is not None for name in native_options):
         raise ValueError("Native ROI/DPI/page/frame/job/cache options require --mode native-objects")
     if args.preview is None:
@@ -372,13 +375,16 @@ def run_native_headless(args: argparse.Namespace) -> int:
         if override is not None and override.expanduser().exists():
             raise FileExistsError(f"Artifact override already exists; use a new path: {override}")
     manager = NativeJobManager(args.jobs_dir or output.parent / "native-jobs")
-    state = manager.create({
+    request = {
         "input_path": args.input, "roi": args.roi, "dpi": args.dpi,
         "page_number": args.page, "frame_number": args.frame,
         "orientation": args.orientation or 0, "job_id": args.job_id,
         "limits": {"CPU_seconds": args.cpu_seconds, "wall_seconds": args.wall_seconds,
                    "RSS_MiB": args.rss_mib, "temporary_MiB": args.temporary_mib},
-    })
+    }
+    if args.connection_checkpoint is not None:
+        request["connection_checkpoint"] = args.connection_checkpoint
+    state = manager.create(request)
     job_id = state["job_id"]
     print(f"Engine: native-objects; product status: {PRODUCT_STATUS}", flush=True)
     print(f"Job: {job_id}; state: {manager.jobs_root / job_id / 'state.json'}", flush=True)

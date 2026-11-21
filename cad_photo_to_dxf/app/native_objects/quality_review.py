@@ -511,31 +511,98 @@ def _font_dependencies(doc, dxf_path):
     return rows, assets
 
 
-def _topology(mask):
+def _connection_checkpoint_scope(import_manifest, roi):
+    """Validate an explicit local review scope without changing source pixels."""
+    if "connection_checkpoint" not in import_manifest:
+        return None, None
+    checkpoint = import_manifest["connection_checkpoint"]
+    required = {"manifest_sha256", "baseline_dxf_sha256", "context_rois"}
+    if not isinstance(checkpoint, dict) or set(checkpoint) != required:
+        raise ValueError("REVIEW_CONNECTION_CHECKPOINT_FIELDS_INVALID")
+    for key in ("manifest_sha256", "baseline_dxf_sha256"):
+        digest = checkpoint[key]
+        if (
+            not isinstance(digest, str)
+            or len(digest) != 64
+            or any(c not in "0123456789abcdef" for c in digest)
+        ):
+            raise ValueError("REVIEW_CONNECTION_CHECKPOINT_HASH_INVALID:" + key)
+    contexts = checkpoint["context_rois"]
+    if not isinstance(contexts, (list, tuple)) or not 1 <= len(contexts) <= 8:
+        raise ValueError("REVIEW_CONNECTION_CHECKPOINT_REQUIRES_1_TO_8_CONTEXTS")
+    x0, y0, x1, y1 = roi
+    normalized = []
+    for context in contexts:
+        if (
+            not isinstance(context, (list, tuple))
+            or len(context) != 4
+            or not all(isinstance(v, int) and not isinstance(v, bool) for v in context)
+        ):
+            raise ValueError("REVIEW_CONNECTION_CONTEXT_INTEGER_ROI_REQUIRED")
+        a, b, c, d = context
+        if not (x0 <= a < c <= x1 and y0 <= b < d <= y1):
+            raise ValueError("REVIEW_CONNECTION_CONTEXT_OUTSIDE_PARENT_ROI")
+        normalized.append(list(context))
+    mask = np.zeros((y1 - y0, x1 - x0), dtype=bool)
+    for a, b, c, d in normalized:
+        mask[b - y0 : d - y0, a - x0 : c - x0] = True
+    scope = {
+        "mode": "CONNECTION_CHECKPOINT_CONTEXT_UNION",
+        "parent_roi_xyxy_px": list(roi),
+        "context_rois": normalized,
+        "context_union_pixel_count": int(np.count_nonzero(mask)),
+        "parent_roi_pixel_count": int(mask.size),
+        "manifest_sha256": checkpoint["manifest_sha256"],
+        "baseline_dxf_sha256": checkpoint["baseline_dxf_sha256"],
+        "connection_checkpoint_sha256": canonical_sha256(checkpoint),
+        "source_to_output_scope": "ONLY_ORIGINAL_PIXELS_WITHIN_CONTEXT_UNION",
+        "output_to_source_scope": "ALL_SAVED_FORMAL_ENTITIES_INCLUDING_PRESERVED_NEIGHBORS",
+        "source_pixels_changed": False,
+        "full_parent_region_review_performed": False,
+        "limitation": (
+            "This local source review does not establish completeness or acceptance "
+            "of the parent region. Context-boundary groups have unverified full "
+            "extent. Every saved formal entity still receives structure and "
+            "cold source checks, including geometry outside the contexts."
+        ),
+    }
+    return scope, mask
+
+
+def _topology(mask, scope_mask=None):
     result = {}
     for connectivity, structure in (
         (4, ndimage.generate_binary_structure(2, 1)),
         (8, np.ones((3, 3), bool)),
     ):
         _, ink_count = ndimage.label(mask, structure)
-        paper_labels, paper_count = ndimage.label(~mask, structure)
-        edge_labels = set(
-            np.concatenate(
-                (
-                    paper_labels[0],
-                    paper_labels[-1],
-                    paper_labels[:, 0],
-                    paper_labels[:, -1],
-                )
-            ).tolist()
-        )
+        paper = ~mask if scope_mask is None else scope_mask & ~mask
+        paper_labels, paper_count = ndimage.label(paper, structure)
+        if scope_mask is None:
+            edge_labels = set(
+                np.concatenate(
+                    (
+                        paper_labels[0],
+                        paper_labels[-1],
+                        paper_labels[:, 0],
+                        paper_labels[:, -1],
+                    )
+                ).tolist()
+            )
+        else:
+            frame = scope_mask & ~ndimage.binary_erosion(
+                scope_mask, structure=structure, border_value=0
+            )
+            edge_labels = set(paper_labels[frame].tolist())
         edge_labels.discard(0)
         result[str(connectivity)] = {
             "ink_components": int(ink_count),
             "paper_components": int(paper_count),
-            "paper_components_not_touching_ROI_frame": int(
-                paper_count - len(edge_labels)
-            ),
+            (
+                "paper_components_not_touching_ROI_frame"
+                if scope_mask is None
+                else "paper_components_not_touching_context_union_frame"
+            ): int(paper_count - len(edge_labels)),
         }
     return result
 
@@ -561,11 +628,20 @@ def _source_groups(
     text_boxes,
     roi,
     identity_hash,
+    *,
+    scope_mask=None,
 ):
-    """All original source components, not just the convenient large ones."""
+    """Retain every in-scope source pixel; mark any context-clipped fragment."""
     x0, y0, _, _ = roi
     labels, count = ndimage.label(source_mask, np.ones((3, 3), bool))
     slices = ndimage.find_objects(labels)
+    scope_frame = (
+        None
+        if scope_mask is None
+        else scope_mask & ~ndimage.binary_erosion(
+            scope_mask, structure=np.ones((3, 3), bool), border_value=0
+        )
+    )
     yy, xx = np.nonzero(source_mask)
     points = np.column_stack((xx + x0, yy + y0)).astype(float)
     near = np.zeros(len(points), bool)
@@ -614,6 +690,9 @@ def _source_groups(
             or sx.stop == source_mask.shape[1]
             or sy.stop == source_mask.shape[0]
         )
+        touches_scope_frame = bool(
+            scope_frame is not None and np.any(scope_frame[window] & local)
+        )
         group_id = "SRC-" + canonical_sha256([identity_hash, bounds, index, area])[:16]
         linked = sorted(
             oid for oid, box in object_bounds.items() if _intersects(bounds, box)
@@ -627,6 +706,11 @@ def _source_groups(
             reason, status = (
                 "TEXT_OR_SHARED_INK_GROUP_REQUIRES_CONTENT_AND_OWNERSHIP_REVIEW",
                 "REVIEW_TEXT_OR_SHARED_SOURCE",
+            )
+        elif touches_scope_frame:
+            reason, status = (
+                "SOURCE_GROUP_EXTENT_UNVERIFIED_AT_CONTEXT_SCOPE_BOUNDARY",
+                "REVIEW_OBJECT_EXTENT",
             )
         elif touches_frame:
             reason, status = (
@@ -649,6 +733,14 @@ def _source_groups(
             "bbox_contact_is_not_ownership": True,
             "touches_ROI_frame": touches_frame,
         }
+        if scope_mask is not None:
+            support.update(
+                {
+                    "touches_context_union_frame": touches_scope_frame,
+                    "complete_source_component_extent_in_scope": not touches_scope_frame,
+                    "outside_context_source_not_analyzed": True,
+                }
+            )
         group = {
             "id": group_id,
             "bbox_xyxy_px": bounds,
@@ -663,12 +755,30 @@ def _source_groups(
             "minimum_area_filter_applied": False,
         }
         groups.append(group)
+        if scope_mask is not None:
+            group["grouping_meaning"] = (
+                "original connected ink within context union; boundary fragments "
+                "are not complete original components or editable objects"
+            )
         if reason:
             issues.append(
                 _issue(
                     reason,
                     bounds,
                     status=status,
+                    object_ids=linked,
+                    source_group_ids=[group_id],
+                    support=support,
+                )
+            )
+        if touches_scope_frame and status != "REVIEW_OBJECT_EXTENT":
+            # Missing pixels and text contact must remain accurately reported;
+            # neither cancels the additional, independent extent limitation.
+            issues.append(
+                _issue(
+                    "SOURCE_GROUP_EXTENT_UNVERIFIED_AT_CONTEXT_SCOPE_BOUNDARY",
+                    bounds,
+                    status="REVIEW_OBJECT_EXTENT",
                     object_ids=linked,
                     source_group_ids=[group_id],
                     support=support,
@@ -747,6 +857,7 @@ def run_quality_review(
     x0, y0, x1, y1 = roi
     if not (0 <= x0 < x1 <= gray.shape[1] and 0 <= y0 < y1 <= gray.shape[0]):
         raise ValueError("REVIEW_ROI_OUTSIDE_WORKING_PIXELS")
+    review_scope, scope_mask = _connection_checkpoint_scope(import_manifest, roi)
     validate_text_regions(texts, gray.shape, roi)
     if (
         texts.get("source_array_sha256")
@@ -777,6 +888,11 @@ def run_quality_review(
             np.asarray(image.convert("L")) < POLICY["independent_render_threshold"]
         )
     source_mask = gray[y0:y1, x0:x1] < POLICY["source_ink_threshold"]
+    if scope_mask is not None:
+        # These are analysis masks only. The immutable gray array, saved source
+        # image and complete cold audit below retain all original pixels.
+        source_mask = source_mask & scope_mask
+        render_mask = render_mask & scope_mask
     mm = 25.4 / float(dpi)
 
     def pixel_from_cad(point):
@@ -1047,6 +1163,7 @@ def run_quality_review(
         text_boxes,
         roi,
         binding["source_identity"]["working_array_sha256"],
+        scope_mask=scope_mask,
     )
     issues += source_issues
     represented_groups = {
@@ -1056,10 +1173,16 @@ def run_quality_review(
     }
     for group in (texts or {}).get("groups", []):
         if group.get("id") not in represented_groups:
+            group_box = _box(group)
+            if review_scope is not None and not any(
+                _intersects(group_box, context)
+                for context in review_scope["context_rois"]
+            ):
+                continue
             issues.append(
                 _issue(
                     "CURRENT_TEXT_GROUP_NOT_EXPORTED_COMPLETE",
-                    _box(group),
+                    group_box,
                     status="PENDING_TEXT_GROUP",
                     support={
                         "text_group_id": group.get("id"),
@@ -1121,6 +1244,7 @@ def run_quality_review(
             "coordinate_system": "job_working_pixels_top_left",
             "roi_xyxy_px": list(roi),
             "source_identity": binding["source_identity"],
+            **({"review_scope": review_scope} if review_scope is not None else {}),
             "groups": groups,
             "counts": counts,
         },
@@ -1132,13 +1256,17 @@ def run_quality_review(
             "coordinate_system": "job_working_pixels_top_left",
             "roi_xyxy_px": list(roi),
             "binding_sha256": binding["binding_sha256"],
+            **({"review_scope": review_scope} if review_scope is not None else {}),
             "issues": issues,
         },
     )
     save_json(out / "quality_uncertainties.json", uncertainties or [])
     save_json(out / "quality_text_evidence.json", texts)
     save_json(out / "quality_saved_cold_audit.json", cold_audit)
-    source_topology, render_topology = _topology(source_mask), _topology(render_mask)
+    source_topology, render_topology = (
+        _topology(source_mask, scope_mask),
+        _topology(render_mask, scope_mask),
+    )
     safe_structure = not any(
         row["severity"] == "error" and row["status"] == "REJECT_STRUCTURE"
         for row in issues
@@ -1154,7 +1282,9 @@ def run_quality_review(
         "localized_issue_count": sum(not r["unlocalized"] for r in issues),
         "unlocalized_issue_count": sum(r["unlocalized"] for r in issues),
         "source_group_count": len(groups),
-        "source_groups_with_pending_work": len(source_issues),
+        "source_groups_with_pending_work": len(
+            {gid for issue in source_issues for gid in issue["source_group_ids"]}
+        ),
         "formal_object_count": len(formal),
         "formal_object_kind_counts": dict(Counter(row["kind"] for row in formal)),
         "native_modelspace_type_counts": dict(
@@ -1184,6 +1314,12 @@ def run_quality_review(
         if issues
         else "RULES_REVIEW_COMPLETE_NO_REPORTED_ISSUES",
     }
+    if review_scope is not None:
+        summary["source_to_output_scope"] = review_scope["mode"]
+        summary["full_parent_region_review_performed"] = False
+        summary["all_in_scope_original_source_pixels_in_group_ledger"] = summary.pop(
+            "all_original_source_pixels_in_group_ledger"
+        )
     assets = [
         source_path,
         out / "quality_unexplained_source.png",
@@ -1199,6 +1335,7 @@ def run_quality_review(
         "coordinate_system": "job_working_pixels_top_left",
         "roi_xyxy_px": list(roi),
         "source_identity": binding["source_identity"],
+        **({"review_scope": review_scope} if review_scope is not None else {}),
         "binding": binding,
         "policy": POLICY,
         "summary": summary,
@@ -1223,6 +1360,7 @@ def run_quality_review(
         "source_to_output": {
             "counts": counts,
             "ledger_file": "quality_source_groups.json",
+            **({"review_scope": review_scope} if review_scope is not None else {}),
             "source_grouping_is_engineering_classification": False,
             "grid_role": "NAVIGATION_ONLY_NOT_REPAIR_INVENTORY",
             "all_small_components_retained": True,
@@ -1232,7 +1370,12 @@ def run_quality_review(
             "source": source_topology,
             "independent_render": render_topology,
             "same_4_and_8_connected_pixel_counts": source_topology == render_topology,
-            "scope": "selected ROI raster only; boundary-clipped groups are marked",
+            "scope": (
+                "context union raster only; excluded pixels are not paper; "
+                "boundary fragments have unverified full extent"
+                if review_scope is not None
+                else "selected ROI raster only; boundary-clipped groups are marked"
+            ),
             "continuous_ink_paper_topology": "NOT_PROVEN_BY_RASTER_COUNTS_OR_ZERO_HATCH",
         },
         "independent_render": {
@@ -1248,7 +1391,11 @@ def run_quality_review(
         ],
         "resources": {
             "wall_seconds": time.perf_counter() - started,
-            "source_field_scope": "ROI only; no full-page floating distance field",
+            "source_field_scope": (
+                "source-to-output context union only; cold audit covers all saved entities"
+                if review_scope is not None
+                else "ROI only; no full-page floating distance field"
+            ),
         },
         "old_failure_records_modified": False,
         "actual_saved_DXF_unchanged": file_sha256(dxf_path) == original_sha,

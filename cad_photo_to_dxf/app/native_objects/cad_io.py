@@ -18,6 +18,7 @@ from ezdxf.addons.drawing.recorder import Recorder
 from ezdxf.addons.drawing.pymupdf import PyMuPdfRenderBackend
 from scipy.ndimage import map_coordinates, distance_transform_edt
 from .contracts import save_json
+from .connection_retrace_audit import certify_saved_retraces
 
 APPID = "I2CAD_NATIVE_V2"
 LAYERS = (
@@ -162,7 +163,15 @@ def save_native_dxf(doc, path):
 
 
 @profiled("cad_io.export_objects")
-def export_objects(objects, path, roi, dpi, source_sha):
+def export_objects(
+    objects, path, roi, dpi, source_sha, *, diagnostic_source_mtext_layout=False
+):
+    """Write formal geometry; failed consumer layout remains an explicit probe.
+
+    The source-paragraph indent experiment has not passed LibreCAD layout.
+    Production callers therefore retain main's existing MTEXT expression.
+    Only a checkpoint diagnostic may opt in to reproducing that experiment.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     mm = 25.4 / dpi
@@ -263,17 +272,36 @@ def export_objects(objects, path, roi, dpi, source_sha):
                 if not math.isfinite(measured) or measured <= 0:
                     raise ValueError("UNMEASURABLE_NATIVE_MTEXT_LINE")
                 factor = source_width * mm / measured
+                left_offset = float(box[0]) - float(g["x"])
+                if not math.isfinite(left_offset):
+                    raise ValueError("MTEXT_SOURCE_LINE_OFFSET_MUST_BE_FINITE")
+                # Paragraph indents are multiples of the initial char height,
+                # not drawing units. Reset every paragraph, including a zero
+                # offset, so a preceding indented row cannot shift its neighbor.
+                paragraph = (
+                    "\\pxi0,l" + format(left_offset * mm / h, ".10g") + ",r0,ql;"
+                    if diagnostic_source_mtext_layout
+                    else ""
+                )
                 # Each paragraph gets an independent absolute width factor.
                 # Keep one true MTEXT and the original text/height/line pitch.
-                content_parts.append("{\\W" + format(factor, ".10g") + ";" + line + "}")
+                content_parts.append(
+                    paragraph + "{\\W" + format(factor, ".10g") + ";" + line + "}"
+                )
                 mtext_line_layout.append(
                     {
                         "line_index": index,
                         "text": line,
                         "source_bbox_xyxy_px": box,
                         "source_width_px": source_width,
-                        "source_left_offset_px": float(box[0]) - float(g["x"]),
-                        "source_left_offset_applied": False,
+                        "source_left_offset_px": left_offset,
+                        "source_left_offset_applied": diagnostic_source_mtext_layout,
+                        "layout_profile": (
+                            "FAILED_LIBRECAD_LAYOUT_DIAGNOSTIC"
+                            if diagnostic_source_mtext_layout
+                            else "EXISTING_MAIN_MTEXT_EXPRESSION"
+                        ),
+                        "paragraph_indent_char_heights": left_offset * mm / h,
                         "unscaled_font_width_mm": measured,
                         "inline_width_factor": factor,
                         "font_width_target_mm": source_width * mm,
@@ -292,6 +320,11 @@ def export_objects(objects, path, roi, dpi, source_sha):
                     "width": width * 1.03,
                     "attachment_point": 1,
                     "style": "I2CAD_TEXT",
+                    "rotation": (
+                        -g.get("rotation_deg_image", 0)
+                        if diagnostic_source_mtext_layout
+                        else 0
+                    ),
                     "line_spacing_style": 2,
                     "flow_direction": 1,
                     "line_spacing_factor": float(
@@ -528,8 +561,25 @@ def cold_audit(path, gray, roi, dpi, out):
     counts = Counter()
     members = Counter()
     duplicates = []
+    all_repeated = []
+    certified_retraces = []
     seen = {}
     room_blocks = []
+    evidence_root = Path(out).parent
+    retrace_proof = certify_saved_retraces(
+        doc,
+        before,
+        Path(path).with_suffix(".objects.json"),
+        evidence_root / "connections/discovery/source_graph.json",
+        evidence_root / "connections/discovery/connections.json",
+        gray,
+        roi,
+        dpi,
+    )
+    allowed_retraces = {
+        (row["handle"], *sorted(row["segment_indices"])): row
+        for row in retrace_proof["allowances"]
+    }
 
     def px(point):
         return np.array([point[0] / mm + x0, y1 - point[1] / mm])
@@ -616,7 +666,7 @@ def cold_audit(path, gray, roi, dpi, out):
                 continue
             else:
                 raise ValueError("UNEXPECTED_DXF_PRIMITIVE:" + typ)
-            for a, b in segments:
+            for segment_index, (a, b) in enumerate(segments):
                 length = float(np.linalg.norm(b - a))
                 p = np.linspace(a, b, max(2, int(math.ceil(length / 0.25)) + 1))
                 ds = map_coordinates(
@@ -648,11 +698,41 @@ def cold_audit(path, gray, roi, dpi, out):
                     sorted([np.round(a, 7).tolist(), np.round(b, 7).tolist()])
                 )
                 if key in seen:
-                    duplicates.append(
-                        {"objects": [seen[key], oid], "same_geometry": key}
+                    previous = seen[key]
+                    repeated = {
+                        "objects": [previous["id"], oid],
+                        "same_geometry": key,
+                        "actual_handles": [previous["handle"], e.dxf.handle],
+                        "expanded_member_indices": [previous["member"], idx],
+                        "segment_indices": [previous["segment"], segment_index],
+                    }
+                    all_repeated.append(repeated)
+                    allowed = allowed_retraces.get(
+                        (e.dxf.handle, *sorted((previous["segment"], segment_index)))
                     )
+                    if (
+                        allowed is not None
+                        and previous["handle"] == e.dxf.handle
+                        and previous["member"] == idx == 0
+                        and previous["top_level_open_polyline"]
+                        and e.dxftype() == "LWPOLYLINE"
+                        and m is e
+                    ):
+                        certified_retraces.append(
+                            {**repeated, "source_certificate": allowed}
+                        )
+                    else:
+                        duplicates.append(repeated)
                 else:
-                    seen[key] = oid
+                    seen[key] = {
+                        "id": oid,
+                        "handle": e.dxf.handle,
+                        "member": idx,
+                        "segment": segment_index,
+                        "top_level_open_polyline": e.dxftype() == "LWPOLYLINE"
+                        and m is e
+                        and not e.closed,
+                    }
                 entities.append({"id": oid, "start": a.tolist(), "end": b.tolist()})
     report = {
         "dxf_sha256": before,
@@ -663,8 +743,22 @@ def cold_audit(path, gray, roi, dpi, out):
         "expanded_formal_types": dict(members),
         "texts": texts,
         "source_checks": checks,
-        "source_gate_pass": all(x["pass"] for x in checks),
+        "source_geometry_gate_pass": all(x["pass"] for x in checks),
+        "local_retrace_certificate_gate_pass": all(
+            row["pass"] for row in retrace_proof["object_checks"]
+        ),
+        "source_gate_pass": all(x["pass"] for x in checks)
+        and all(row["pass"] for row in retrace_proof["object_checks"]),
         "exact_duplicate_segments": duplicates,
+        "all_repeated_segments": all_repeated,
+        "certified_same_owner_retraces": certified_retraces,
+        "same_owner_retrace_cold_proof": retrace_proof,
+        "duplicate_geometry_policy": {
+            "all_observed_repetitions_retained_in_report": True,
+            "cross_entity_or_unproved_repetition_still_blocks": True,
+            "exemption_requires_same_actual_modelspace_handle_and_exact_protected_segment_indices": True,
+            "source_or_DXF_geometry_modified": False,
+        },
         "room_block_definitions_are_unique": len(room_blocks) == len(set(room_blocks)),
         "snapshot": snapshot(doc),
         "CAD_GUI": "NOT_RUN_BY_THIS_AUDIT",

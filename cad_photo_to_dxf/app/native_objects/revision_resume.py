@@ -36,6 +36,7 @@ _PRODUCERS = (
     "door_detector",
     "door_completion",
     "connections",
+    "connection_core_routes",
     "contracts",
     "source_import",
     "job",
@@ -51,7 +52,12 @@ _ROOTS = (
     "source_text_completion",
     "text_geometry_ownership",
 )
-_DERIVED_PRODUCERS = ("source_text_completion", "source_text_ownership")
+_DERIVED_PRODUCERS = (
+    "source_text_completion",
+    "source_text_ownership",
+    "text_confirmation",
+    "text_context_ownership",
+)
 
 
 def _canonical_digest(value):
@@ -194,7 +200,10 @@ def prepare_revision_resume(
     from .job import make_job
     from .source_import import prepare_source
     from .contracts import validate_text_regions
-    from .completion_stages import text_context_sha
+    from .completion_stages import (
+        restore_connection_discovery_evidence,
+        text_context_sha,
+    )
 
     old, job = Path(source_job).resolve(), Path(target_job).resolve()
     _require(
@@ -560,6 +569,15 @@ def prepare_revision_resume(
             "REVISION_ANCESTOR_CONNECTION_PROPOSALS_CHANGED",
         )
         connections_payload = connections_payload["discovery"]
+    raw_connection_evidence = restore_connection_discovery_evidence(
+        evidence, None, gray, discovery=connections_payload
+    )
+    if raw_connection_evidence is not None:
+        for relative in raw_connection_evidence["files"]:
+            path = _within(evidence, relative)
+            published_check(path)
+            if path not in selected:
+                selected.append(path)
     wrappers = {
         "native_verified_cache.json": {
             "schema": "published-source-door-proposals-v8.3",
@@ -596,6 +614,7 @@ def prepare_revision_resume(
             ),
             "old_text_context_is_current": False,
             "discovery": connections_payload,
+            "raw_discovery_evidence": raw_connection_evidence,
             "provenance": {
                 "original_sha256": file_sha(connections_path),
                 "current_source_and_text_recheck_required": True,

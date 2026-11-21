@@ -18,6 +18,7 @@ import cv2
 import numpy as np
 from scipy.ndimage import map_coordinates
 
+from .connection_core_routes import enumerate_bounded_cycle_cells
 from .contracts import save_json, stable_id
 
 
@@ -38,7 +39,6 @@ POLICY = {
     "crossing_axis_separation_min_deg": 30.0,
     "minimum_path_length_px": 50.0,
     "minimum_curved_deviation_px": 1.5,
-    "isolated_chord_length_ratio_max": 1.06,
     "maximum_path_length_px": 2400.0,
     "polyline_approximation_px": 0.85,
     "maximum_control_vertices": 48,
@@ -51,6 +51,14 @@ POLICY = {
     "proposal_selection": "ALL_COMPLETE_SOURCE_PATHS_WITHIN_TASK_RESOURCE_CONTRACT",
     "maximum_graph_steps": 10000,
     "maximum_trace_edges": 100,
+    "local_cycle_maximum_core_pixels": 24,
+    "local_cycle_maximum_core_extent_px": 6,
+    "local_cycle_maximum_walk_steps": 64,
+    "local_cycle_maximum_core_nodes": 4,
+    "local_cycle_maximum_internal_edge_length_px": 12.0,
+    "local_cycle_maximum_states_per_seed": 128,
+    "local_cycle_unprotected_window_points": 128,
+    "local_cycle_white_pixel_minimum_clearance_px": 0.5,
     "prior_fragment_normal_px": 0.75,
     "prior_fragment_angle_deg": 5.0,
     "minimum_retired_interval_px": 1.0,
@@ -183,11 +191,12 @@ def _degree(skel):
 
 
 class _SourceGraph:
-    def __init__(self, skel, origin, rounds, roi, started):
+    def __init__(self, skel, origin, rounds, roi, started, *, source_ink=None):
         self.skel = skel
         self.h, self.w = skel.shape
         self.flat = skel.ravel()
         self.origin = np.asarray(origin, float)
+        self.source_ink = source_ink
         self.degree = _degree(skel)
         junction = skel & (self.degree >= 3)
         core = (
@@ -333,6 +342,54 @@ class _SourceGraph:
             else:
                 node["reason"] = "NONUNIQUE_SOURCE_BRANCH_OR_NONFOURWAY_JUNCTION"
                 node["finite_path_decompositions"] = self._unresolved_pairings(node)
+        self._assign_bounded_cycle_cells()
+        _checkpoint(started)
+
+    def _assign_bounded_cycle_cells(self):
+        def source_ink_at(x, y):
+            x -= int(self.origin[0])
+            y -= int(self.origin[1])
+            return 0 <= x < self.w and 0 <= y < self.h and bool(self.source_ink[y, x])
+
+        self.cycle_cell_discovery = enumerate_bounded_cycle_cells(
+            self.nodes,
+            self.edges,
+            self.neighbors,
+            self.xy,
+            source_ink_at if self.source_ink is not None else None,
+            maximum_core_nodes=POLICY["local_cycle_maximum_core_nodes"],
+            maximum_internal_edge_length_px=POLICY[
+                "local_cycle_maximum_internal_edge_length_px"
+            ],
+            maximum_states_per_seed=POLICY["local_cycle_maximum_states_per_seed"],
+            maximum_core_pixels=POLICY["local_cycle_maximum_core_pixels"],
+            maximum_core_extent_px=POLICY["local_cycle_maximum_core_extent_px"],
+            maximum_walk_steps=POLICY["local_cycle_maximum_walk_steps"],
+        )
+        self.cycle_cells_by_port = {}
+        for cover in self.cycle_cell_discovery["cells"]:
+            if not cover["eligible"]:
+                continue
+            for nid in cover["cell_node_ids"]:
+                self.nodes[nid]["local_cycle_cover"] = cover
+            for port in cover["external_ports"]:
+                self.cycle_cells_by_port[tuple(port)] = cover
+
+    def _cycle_cover_route(self, cover, start, end):
+        selected = next(
+            row
+            for row in cover["finite_cover_walks"]
+            if row["id"] == cover["selected_encoding_id"]
+        )
+        route = [
+            (int(y) - int(self.origin[1])) * self.w + int(x) - int(self.origin[0])
+            for x, y in selected["source_walk_points"]
+        ]
+        if (route[0], route[-1]) == (end, start):
+            route.reverse()
+        if (route[0], route[-1]) != (start, end):
+            raise ValueError("LOCAL_CYCLE_COVER_PORTS_DO_NOT_MATCH_TRACE")
+        return route
 
     def _terminal_lobe(self, node):
         """Recognize a small observed terminal cycle without deleting its hole.
@@ -559,13 +616,28 @@ class _SourceGraph:
             path.extend(terminal["loop_pixels"])
             edge_ids.append(loop)
         for _ in range(POLICY["maximum_trace_edges"]):
+            if len(edge_ids) >= POLICY["maximum_trace_edges"]:
+                return (
+                    path,
+                    edge_ids,
+                    crossings,
+                    node_id,
+                    "SOURCE_ROUTE_EXCEEDS_EDGE_LIMIT",
+                )
             eid, end = port
             if eid in edge_ids:
                 return path, edge_ids, crossings, node_id, "SOURCE_ROUTE_CYCLE"
             edge_ids.append(eid)
             points = self.oriented(port)
             if path:
-                core = self.core_route(node_id, path[-1], points[0])
+                # A covered local cell has already appended its entire walk;
+                # its exit is exactly this port.  BFS only joins ordinary
+                # acyclic cores, never selects one side of a certified cycle.
+                core = (
+                    [path[-1]]
+                    if path[-1] == points[0]
+                    else self.core_route(node_id, path[-1], points[0])
+                )
                 path.extend(core[1:])
                 path.extend(points[1:])
             else:
@@ -580,8 +652,71 @@ class _SourceGraph:
                     path.extend(self.core_route(node_id, path[-1], loop_pixels[0])[1:])
                     path.extend(loop_pixels[1:])
                     edge_ids.append(loop)
+                if any(row.get("local_cycle_cover_evidence") for row in crossings):
+                    start_terminal = self.nodes[start_id]["terminal"] or {}
+                    if (
+                        start_terminal.get("kind") != "OBSERVED_ROUND_BOUNDARY_CONTACT"
+                        or terminal.get("kind") != "OBSERVED_ROUND_BOUNDARY_CONTACT"
+                        or start_terminal["round_id"] == terminal.get("round_id")
+                    ):
+                        return (
+                            path,
+                            edge_ids,
+                            crossings,
+                            node_id,
+                            "LOCAL_CYCLE_COVER_REQUIRES_DISTINCT_ROUND_TERMINALS",
+                        )
                 return path, edge_ids, crossings, node_id, None
             incoming = (eid, 1 - end)
+            cover = self.cycle_cells_by_port.get(incoming)
+            if cover:
+                if (self.nodes[start_id]["terminal"] or {}).get(
+                    "kind"
+                ) != "OBSERVED_ROUND_BOUNDARY_CONTACT":
+                    return (
+                        path,
+                        edge_ids,
+                        crossings,
+                        node_id,
+                        "LOCAL_CYCLE_COVER_REQUIRES_DISTINCT_ROUND_TERMINALS",
+                    )
+                internal = cover["internal_source_graph_edge_ids"]
+                if set(internal) & set(edge_ids):
+                    return path, edge_ids, crossings, node_id, "SOURCE_ROUTE_CYCLE"
+                if len(edge_ids) + len(internal) >= POLICY["maximum_trace_edges"]:
+                    return (
+                        path,
+                        edge_ids,
+                        crossings,
+                        node_id,
+                        "SOURCE_ROUTE_EXCEEDS_EDGE_LIMIT",
+                    )
+                outgoing = next(
+                    tuple(p) for p in cover["external_ports"] if tuple(p) != incoming
+                )
+                route = self._cycle_cover_route(
+                    cover, path[-1], self.oriented(outgoing)[0]
+                )
+                interval = [len(path) - 1, len(path) + len(route) - 1]
+                path.extend(route[1:])
+                edge_ids.extend(internal)
+                crossings.append(
+                    {
+                        "node_id": node_id,
+                        "center": node["center"],
+                        "incoming_edge": eid,
+                        "outgoing_edge": outgoing[0],
+                        "other_owner_edge_ids": [],
+                        "port_count": 2,
+                        "semantic_connection": "UNKNOWN_NOT_INFERRED",
+                        "local_cycle_cover_evidence": cover,
+                        "protected_source_path_interval": interval,
+                        "same_owner_local_retrace_not_electrical_inference": True,
+                    }
+                )
+                node_id = self.edges[outgoing[0]]["nodes"][outgoing[1]]
+                port = outgoing
+                continue
             if incoming not in node["pairing"]:
                 return (
                     path,
@@ -631,7 +766,121 @@ def _dense_geometry(geometry, step=0.25):
     return np.asarray(result)
 
 
-def _representation(raw, *, protected_prefix=0, protected_suffix=0):
+def _bounded_source_polyline(points):
+    """Minimize vertices within a bounded, source-ordered straight-span graph.
+
+    Each candidate segment uses the existing finite-segment error bound.
+    Source projections must progress monotonically along that segment, so a
+    narrow out-and-back stroke cannot disappear into its common short chord.
+    Protected core walks are never passed to this function.
+    """
+    points = np.asarray(points, float)
+    count = len(points)
+    window = POLICY["local_cycle_unprotected_window_points"]
+    tolerance = POLICY["polyline_approximation_px"]
+    costs = np.full(count, count + 1, np.int64)
+    previous = np.full(count, -1, np.int64)
+    costs[0] = 0
+    examined = 0
+    for start in range(count - 1):
+        delta = points[start + 1 : start + window] - points[start]
+        size = len(delta)
+        squared_lengths = np.sum(delta * delta, axis=1)
+        dot = delta @ delta.T
+        fraction = np.clip(dot / np.maximum(squared_lengths[None, :], 1e-12), 0, 1)
+        distance2 = (
+            squared_lengths[:, None]
+            - 2 * fraction * dot
+            + fraction * fraction * squared_lengths[None, :]
+        )
+        progression = dot - np.vstack((np.zeros((1, size)), dot[:-1]))
+        outside_span = np.tril_indices(size, -1)
+        distance2[outside_span] = 0
+        progression[outside_span] = 0
+        valid = (
+            (distance2.max(axis=0) <= tolerance * tolerance + 1e-9)
+            & (progression.min(axis=0) >= -1e-9)
+            & (squared_lengths > 1e-12)
+        )
+        endpoints = np.arange(start + 1, start + size + 1)
+        improve = valid & (costs[endpoints] > costs[start] + 1)
+        costs[endpoints[improve]] = costs[start] + 1
+        previous[endpoints[improve]] = start
+        examined += size
+    if count > 1 and previous[-1] < 0:
+        # Repeated/degenerate samples are retained, never replaced by a new
+        # segment whose direction cannot be defined.
+        indices = list(range(count))
+        mode = "DEGENERATE_SOURCE_SAMPLES_RETAINED"
+    else:
+        indices = [count - 1]
+        while indices[-1] > 0:
+            indices.append(int(previous[indices[-1]]))
+        indices.reverse()
+        mode = "MINIMUM_VERTICES_WITHIN_BOUNDED_MONOTONE_SOURCE_WINDOW"
+    return points[indices], {
+        "method": mode,
+        "source_point_count": count,
+        "selected_source_point_indices": indices,
+        "maximum_window_source_points": window,
+        "candidate_segments_examined": examined,
+        "maximum_finite_segment_source_distance_px": tolerance,
+        "source_index_order_preserved": True,
+        "source_projection_order_monotone": mode
+        != "DEGENERATE_SOURCE_SAMPLES_RETAINED",
+        "source_tolerances_unchanged": True,
+    }
+
+
+def _local_cycle_white_space_checks(geometry, crossings):
+    white = sorted(
+        {
+            tuple(p)
+            for crossing in crossings
+            if crossing.get("local_cycle_cover_evidence")
+            for p in crossing["local_cycle_cover_evidence"][
+                "original_source_hole_evidence"
+            ]["enclosed_white_hole_points"]
+        }
+    )
+    if not white:
+        return None
+    if any(abs(bulge) > 1e-12 for bulge in geometry["bulges"]):
+        raise ValueError("PROTECTED_CYCLE_WALK_REQUIRES_EXPLICIT_FINITE_LINE_SEGMENTS")
+    points = np.asarray(geometry["points"], float)
+    starts = points[:-1]
+    delta = points[1:] - starts
+    length2 = np.sum(delta * delta, axis=1)
+    rows = []
+    for point in white:
+        offset = np.asarray(point, float) - starts
+        fraction = np.clip(
+            np.sum(offset * delta, axis=1) / np.maximum(length2, 1e-12), 0, 1
+        )
+        distance = float(
+            np.linalg.norm(offset - fraction[:, None] * delta, axis=1).min()
+        )
+        rows.append(
+            {
+                "original_white_point": list(point),
+                "minimum_native_segment_distance_px": distance,
+            }
+        )
+    threshold = POLICY["local_cycle_white_pixel_minimum_clearance_px"]
+    return {
+        "method": "EXACT_DISTANCE_TO_ALL_NATIVE_FINITE_LINE_SEGMENTS",
+        "original_white_pixels": rows,
+        "required_clearance_px": threshold,
+        "diagonal_raster_contacts_not_relabelled_as_electrical_connectivity": True,
+        "pass": all(
+            row["minimum_native_segment_distance_px"] >= threshold for row in rows
+        ),
+    }
+
+
+def _representation(
+    raw, *, protected_prefix=0, protected_suffix=0, protected_intervals=()
+):
     points = np.asarray(raw, float)
     a, b = points[0], points[-1]
     chord = b - a
@@ -640,7 +889,7 @@ def _representation(raw, *, protected_prefix=0, protected_suffix=0):
     deviation = (points - a) @ normal
     mid = points[int(np.argmax(np.abs(deviation)))]
     if (
-        not (protected_prefix or protected_suffix)
+        not (protected_prefix or protected_suffix or protected_intervals)
         and abs(deviation).max() >= POLICY["minimum_curved_deviation_px"]
     ):
         matrix = 2 * np.array([mid - a, b - a])
@@ -667,14 +916,35 @@ def _representation(raw, *, protected_prefix=0, protected_suffix=0):
                     "representation": "ONE_NATIVE_BULGED_ARC_SEGMENT",
                     "raw_radial_error_max_px": float(residual.max()),
                 }
-    lo = max(0, protected_prefix - 1)
-    hi = len(points) - max(0, protected_suffix - 1)
-    simplified = cv2.approxPolyDP(
-        points[lo:hi].astype(np.float32).reshape(-1, 1, 2),
-        POLICY["polyline_approximation_px"],
-        False,
-    )[:, 0, :].astype(float)
-    simplified = np.concatenate((points[:lo], simplified, points[hi:]))
+    unprotected_span_encodings = []
+    if protected_intervals:
+        anchors = {0, len(points) - 1}
+        anchors.update(range(protected_prefix))
+        anchors.update(range(len(points) - protected_suffix, len(points)))
+        for lo, hi in protected_intervals:
+            if not 0 <= lo < hi <= len(points):
+                raise ValueError("PROTECTED_SOURCE_CORE_INTERVAL_OUTSIDE_PATH")
+            anchors.update(range(lo, hi))
+        ordered = sorted(anchors)
+        parts = []
+        for lo, hi in zip(ordered, ordered[1:]):
+            if hi - lo > 1:
+                part, encoding = _bounded_source_polyline(points[lo : hi + 1])
+                encoding["source_path_interval"] = [lo, hi + 1]
+                unprotected_span_encodings.append(encoding)
+            else:
+                part = points[lo : hi + 1]
+            parts.extend(part if not parts else part[1:])
+        simplified = np.asarray(parts, float)
+    else:
+        lo = max(0, protected_prefix - 1)
+        hi = len(points) - max(0, protected_suffix - 1)
+        simplified = cv2.approxPolyDP(
+            points[lo:hi].astype(np.float32).reshape(-1, 1, 2),
+            POLICY["polyline_approximation_px"],
+            False,
+        )[:, 0, :].astype(float)
+        simplified = np.concatenate((points[:lo], simplified, points[hi:]))
     simplified[0] = points[0]
     simplified[-1] = points[-1]
     return {
@@ -685,6 +955,12 @@ def _representation(raw, *, protected_prefix=0, protected_suffix=0):
         "representation": "ONE_NATIVE_OPEN_POLYLINE",
         "maximum_source_chain_simplification_px": POLICY["polyline_approximation_px"],
         "terminal_cycle_control_points_retained": protected_prefix + protected_suffix,
+        "internal_cycle_control_points_retained": sum(
+            hi - lo for lo, hi in protected_intervals
+        ),
+        "protected_source_path_intervals": [list(v) for v in protected_intervals],
+        "local_retrace_is_same_owner_only": bool(protected_intervals),
+        "unprotected_source_span_encodings": unprotected_span_encodings,
     }
 
 
@@ -711,6 +987,209 @@ def _support(points, distance, origin):
             fraction >= POLICY["source_fraction_min"]
             and gap <= POLICY["maximum_white_gap_px"]
         ),
+    }
+
+
+def _simple_source_chain_certificate(graph, pixels, label, labels, expected_count):
+    """Certify a complete natural-end source chain without a curvature proxy.
+
+    An eight-neighbor raster path has orientation-dependent length even when
+    its visible centreline is straight.  Length divided by endpoint distance
+    therefore cannot establish whether a source stroke is complete.  Inspect
+    the unchanged graph instead: every component pixel and adjacency must be
+    owned, with exactly two degree-one ends and degree-two interior pixels.
+    """
+    ordered = list(map(int, pixels))
+    owned = set(ordered)
+    source_edges = {
+        tuple(sorted((p, q))) for p in owned for q in graph.neighbors(p)
+    }
+    path_edges = {tuple(sorted(pair)) for pair in zip(ordered, ordered[1:])}
+    degrees = {p: len(graph.neighbors(p)) for p in owned}
+    endpoints = {p for p, degree in degrees.items() if degree == 1}
+    checks = {
+        "all_samples_from_same_source_component": bool(ordered)
+        and all(int(labels.ravel()[p]) == label for p in owned),
+        "all_component_skeleton_pixels_accounted": len(owned) == expected_count,
+        "source_path_has_no_repeated_pixels": len(owned) == len(ordered),
+        "every_source_adjacency_accounted": source_edges == path_edges,
+        "exactly_two_natural_source_endpoints": len(ordered) >= 2
+        and endpoints == {ordered[0], ordered[-1]}
+        and len(endpoints) == 2,
+        "all_internal_source_degrees_are_two": all(
+            degree == 2 for p, degree in degrees.items() if p not in endpoints
+        ),
+    }
+    return {
+        "schema": "complete-natural-end-source-chain-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "source_skeleton_pixels": int(expected_count),
+        "owned_source_pixels": len(owned),
+        "source_graph_edge_count": len(source_edges),
+        "source_short_branches_deleted": False,
+        "source_holes_or_gaps_modified": False,
+        "engineering_semantics_required": False,
+        "raster_length_to_chord_used_as_completeness_gate": False,
+    }
+
+
+def _maximum_point_to_polyline_distance(points, chain):
+    """Exact point-to-finite-segment distances, with bounded working memory."""
+    points, chain = np.asarray(points, float), np.asarray(chain, float)
+    starts, delta = chain[:-1], np.diff(chain, axis=0)
+    size2 = np.sum(delta * delta, axis=1)
+    maximum = 0.0
+    for offset in range(0, len(points), 64):
+        vectors = points[offset : offset + 64, None, :] - starts[None, :, :]
+        fraction = np.clip(
+            np.sum(vectors * delta[None, :, :], axis=2)
+            / np.maximum(size2[None, :], 1e-12),
+            0,
+            1,
+        )
+        distances = np.linalg.norm(
+            vectors - fraction[:, :, None] * delta[None, :, :], axis=2
+        )
+        maximum = max(maximum, float(distances.min(axis=1).max()))
+    return maximum
+
+
+def _mixed_observed_endpoint_chain_certificate(graph, pixels, source_label, labels):
+    """Own one complete chain from a witnessed boundary to a natural end.
+
+    The rest of the connected component may contain the round boundary and
+    other strokes. They are not owned by this path. Only the round-contact
+    endpoint may have source adjacencies outside this unique chain; any real
+    interior branch or cycle keeps the path pending rather than being pruned.
+    """
+    ordered = list(map(int, pixels))
+    owned = set(ordered)
+    ends = [ordered[0], ordered[-1]]
+    internal = owned - set(ends)
+    internal_edges = {
+        tuple(sorted((p, q)))
+        for p in owned
+        for q in graph.neighbors(p)
+        if q in owned
+    }
+    outside = {
+        p: [q for q in graph.neighbors(p) if q not in owned]
+        for p in owned
+        if any(q not in owned for q in graph.neighbors(p))
+    }
+    checks = {
+        "single_unchanged_source_component": all(
+            int(labels.ravel()[p]) == source_label for p in owned
+        ),
+        "unique_ordered_source_samples": len(owned) == len(ordered),
+        "all_internal_source_degrees_are_two": all(
+            len(graph.neighbors(p)) == 2 for p in internal
+        ),
+        "all_owned_source_adjacencies_accounted": internal_edges
+        == {tuple(sorted(pair)) for pair in zip(ordered, ordered[1:])},
+        "one_natural_degree_one_endpoint": sum(
+            len(graph.neighbors(p)) == 1 for p in ends
+        )
+        == 1,
+        "no_unowned_interior_branches": not (set(outside) & internal),
+        "unowned_source_only_at_contact_endpoint": len(outside) <= 1
+        and all(p in ends for p in outside),
+    }
+    return {
+        "schema": "complete-mixed-observed-endpoint-chain-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "owned_source_pixel_count": len(owned),
+        "unowned_contact_adjacencies_retained": [
+            {"contact_source_point": graph.xy([p])[0].tolist(),
+             "neighbor_source_points": graph.xy(qs).tolist()}
+            for p, qs in sorted(outside.items())
+        ],
+        "round_boundary_geometry_owned": False,
+        "whole_connected_component_ownership_claimed": False,
+        "source_pixels_removed_or_gaps_closed": False,
+        "engineering_semantics_required": False,
+    }
+
+
+def _simple_chain_fit_certificate(raw, geometry):
+    """Check source order and both directions of the actual native fit.
+
+    Native-to-source coverage is sampled at the existing 0.25 px source gate
+    step. Source-to-native distance is exact for the single arc or finite line
+    spans used here. No supporting pixels are erased to improve either score.
+    """
+    raw = np.asarray(raw, float)
+    vertices = np.asarray(geometry["points"], float)
+    tolerance = POLICY["polyline_approximation_px"]
+    endpoint_match = np.allclose(vertices[[0, -1]], raw[[0, -1]], atol=1e-9, rtol=0)
+    bulges = geometry["bulges"]
+    source_order = False
+    source_distance = float("inf")
+    if len(vertices) == 2 and abs(bulges[0]) > 1e-12:
+        a, b = vertices
+        bulge = float(bulges[0])
+        chord = float(np.linalg.norm(b - a))
+        unit = (b - a) / chord
+        normal = np.array([-unit[1], unit[0]])
+        centre = (a + b) / 2 + normal * chord * (1 - bulge * bulge) / (4 * bulge)
+        radius = float(np.linalg.norm(a - centre))
+        angles = np.unwrap(np.arctan2(raw[:, 1] - centre[1], raw[:, 0] - centre[0]))
+        directed = (angles - angles[0]) * math.copysign(1, bulge)
+        sweep = abs(4 * math.atan(bulge))
+        source_order = bool(
+            np.all(np.diff(directed) >= -1e-9)
+            and directed.min() >= -1e-9
+            and directed.max() <= sweep + 1e-9
+        )
+        radial = np.abs(np.linalg.norm(raw - centre, axis=1) - radius)
+        end_distances = np.minimum(
+            np.linalg.norm(raw - a, axis=1), np.linalg.norm(raw - b, axis=1)
+        )
+        within_sweep = (directed >= 0) & (directed <= sweep)
+        source_distance = float(np.where(within_sweep, radial, end_distances).max())
+    elif all(abs(value) <= 1e-12 for value in bulges):
+        indices = []
+        for vertex in vertices:
+            matches = np.flatnonzero(np.all(np.abs(raw - vertex) <= 1e-9, axis=1))
+            if len(matches) != 1:
+                break
+            indices.append(int(matches[0]))
+        source_order = (
+            len(indices) == len(vertices)
+            and indices[0] == 0
+            and indices[-1] == len(raw) - 1
+            and all(a < b for a, b in zip(indices, indices[1:]))
+        )
+        if source_order:
+            source_distance = 0.0
+            for lo, hi in zip(indices, indices[1:]):
+                a, b = raw[lo], raw[hi]
+                delta = b - a
+                projection = (raw[lo : hi + 1] - a) @ delta
+                source_order = source_order and bool(np.all(np.diff(projection) >= -1e-9))
+                source_distance = max(
+                    source_distance,
+                    _maximum_point_to_polyline_distance(raw[lo : hi + 1], [a, b]),
+                )
+    dense = _dense_geometry(geometry, POLICY["dense_step_px"])
+    native_distance = _maximum_point_to_polyline_distance(dense, raw)
+    checks = {
+        "natural_source_endpoints_preserved": bool(endpoint_match),
+        "source_traversal_order_preserved": bool(source_order),
+        "source_to_native_within_existing_fit_tolerance": source_distance <= tolerance + 1e-9,
+        "native_to_source_within_existing_fit_tolerance": native_distance <= tolerance + 1e-9,
+    }
+    return {
+        "schema": "ordered-two-way-simple-chain-fit-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "maximum_fit_error_px": tolerance,
+        "source_to_native_maximum_distance_px": source_distance if math.isfinite(source_distance) else None,
+        "native_to_source_maximum_distance_px": native_distance,
+        "native_sampling_step_px": POLICY["dense_step_px"],
+        "source_tolerances_unchanged": True,
     }
 
 
@@ -920,7 +1399,7 @@ def extract_connections(
     input_hash = hashlib.sha256(crop.tobytes()).hexdigest()
     rounds = _round_boundaries(ink, origin)
     skel, thinning_counts = _thinning(ink, started)
-    graph = _SourceGraph(skel, origin, rounds, roi, started)
+    graph = _SourceGraph(skel, origin, rounds, roi, started, source_ink=ink)
     distance = cv2.distanceTransform(
         (~ink).astype(np.uint8), cv2.DIST_L2, cv2.DIST_MASK_PRECISE
     )
@@ -1000,13 +1479,16 @@ def extract_connections(
                 v in ("OBSERVED_FREE_SOURCE_ENDPOINT", "OBSERVED_CLOSED_TERMINAL_LOBE")
                 for v in endpoints
             )
+            mixed_pair = sorted(endpoints) == sorted(
+                ["OBSERVED_ROUND_BOUNDARY_CONTACT", "OBSERVED_FREE_SOURCE_ENDPOINT"]
+            )
             terminal_lobes = [
                 n["terminal"]
                 for n in (start_node, end_node)
                 if n["terminal"].get("kind") == "OBSERVED_CLOSED_TERMINAL_LOBE"
             ]
             chord = float(np.linalg.norm(points[-1] - points[0]))
-            if not ring_pair and not free_pair:
+            if not ring_pair and not free_pair and not mixed_pair:
                 row["reason"] = "MIXED_ENDPOINT_ROLE_REQUIRES_WHOLE_GROUP_REVIEW"
                 uncertainties.append(row)
                 continue
@@ -1026,16 +1508,31 @@ def extract_connections(
                 )
                 uncertainties.append(row)
                 continue
-            if free_pair:
+            if mixed_pair:
+                mixed_chain = _mixed_observed_endpoint_chain_certificate(
+                    graph, pixels, label, source_labels
+                )
+                row["complete_mixed_observed_endpoint_chain"] = mixed_chain
+                if not mixed_chain["pass"]:
+                    row["reason"] = "MIXED_ENDPOINT_PATH_SOURCE_OWNERSHIP_NOT_COMPLETE"
+                    uncertainties.append(row)
+                    continue
+            if free_pair or mixed_pair:
                 whole_component = len(set(pixels)) == int(skel_counts[label])
                 row["whole_isolated_component_skeleton_accounted"] = whole_component
+                row["raster_path_length_to_chord_ratio_diagnostic_only"] = length / chord
                 row["connected_group_may_have_several_independent_paths"] = bool(
                     crossings
                 )
-                if (not crossings and not whole_component) or (
-                    not crossings
-                    and not terminal_lobes
-                    and length / chord > POLICY["isolated_chord_length_ratio_max"]
+                simple_chain = None
+                if free_pair and not crossings and not terminal_lobes:
+                    simple_chain = _simple_source_chain_certificate(
+                        graph, pixels, label, source_labels, int(skel_counts[label])
+                    )
+                    row["whole_simple_source_chain"] = simple_chain
+                if free_pair and (
+                    (not crossings and not whole_component)
+                    or (simple_chain is not None and not simple_chain["pass"])
                 ):
                     row["reason"] = "NOT_A_WHOLE_THIN_ISOLATED_CURVED_STROKE"
                     uncertainties.append(row)
@@ -1044,6 +1541,16 @@ def extract_connections(
                 for ordered, endpoint_node in zip(
                     (points, points[::-1]), (start_node, end_node)
                 ):
+                    if endpoint_node["terminal"]["kind"] == "OBSERVED_ROUND_BOUNDARY_CONTACT":
+                        cap_checks.append(
+                            {
+                                "kind": "OBSERVED_ROUND_BOUNDARY_CONTACT_RETAINED",
+                                "round_id": endpoint_node["terminal"]["round_id"],
+                                "boundary_pixels_owned_or_removed": False,
+                                "pass": not boundary_conflicts,
+                            }
+                        )
+                        continue
                     if (
                         endpoint_node["terminal"]["kind"]
                         == "OBSERVED_CLOSED_TERMINAL_LOBE"
@@ -1154,10 +1661,47 @@ def extract_connections(
                 for n in (start_node, end_node)
             ]
             geometry, representation = _representation(
-                points, protected_prefix=protected[0], protected_suffix=protected[1]
+                points,
+                protected_prefix=protected[0],
+                protected_suffix=protected[1],
+                protected_intervals=[
+                    row["protected_source_path_interval"]
+                    for row in crossings
+                    if row.get("local_cycle_cover_evidence")
+                ],
             )
+            if row.get("whole_simple_source_chain", {}).get("pass") or mixed_pair:
+                fit = _simple_chain_fit_certificate(points, geometry)
+                if not fit["pass"]:
+                    simplified, encoding = _bounded_source_polyline(points)
+                    replacement = {
+                        "points": simplified.tolist(),
+                        "bulges": [0.0] * len(simplified),
+                        "closed": False,
+                    }
+                    retry = _simple_chain_fit_certificate(points, replacement)
+                    row["initial_simple_chain_fit"] = fit
+                    geometry, fit = replacement, retry
+                    representation = {
+                        "representation": "ONE_NATIVE_OPEN_POLYLINE",
+                        "source_ordered_span_encoding": encoding,
+                        "single_bounded_fallback_from_initial_fit": True,
+                    }
+                row[
+                    "mixed_observed_endpoint_chain_fit"
+                    if mixed_pair
+                    else "whole_simple_source_chain_fit"
+                ] = fit
+                if not fit["pass"]:
+                    row["reason"] = "COMPLETE_SOURCE_CHAIN_NATIVE_FIT_NOT_BIDIRECTIONAL"
+                    row["native_geometry"] = geometry
+                    uncertainties.append(row)
+                    continue
             if len(geometry["points"]) > POLICY["maximum_control_vertices"]:
                 row["reason"] = "CONTROL_COMPLEXITY_EXCEEDS_FROZEN_LIMIT"
+                row["native_geometry"] = geometry
+                row["native_representation"] = representation
+                row["control_vertex_count"] = len(geometry["points"])
                 uncertainties.append(row)
                 continue
             dense = _dense_geometry(geometry, POLICY["dense_step_px"])
@@ -1168,6 +1712,16 @@ def extract_connections(
                 row["support"] = support
                 uncertainties.append(row)
                 continue
+            white_space = _local_cycle_white_space_checks(geometry, crossings)
+            if white_space is not None:
+                row["local_cycle_white_space_checks"] = white_space
+                if not white_space["pass"]:
+                    row["reason"] = (
+                        "LOCAL_CYCLE_NATIVE_GEOMETRY_CONSUMES_ORIGINAL_WHITE_SPACE"
+                    )
+                    row["native_geometry"] = geometry
+                    uncertainties.append(row)
+                    continue
             retirement, retained = _retirement_proposals(geometry, prior_objects)
             row.update(
                 {
@@ -1175,6 +1729,8 @@ def extract_connections(
                     "whole_path_class": (
                         "ROUND_BOUNDARY_TO_ROUND_BOUNDARY"
                         if ring_pair
+                        else "OBSERVED_ROUND_BOUNDARY_TO_NATURAL_ENDPOINT"
+                        if mixed_pair
                         else "COMPLETE_STROKE_WITH_TERMINAL_LOOP"
                         if terminal_lobes
                         else "COMPLETE_PATH_IN_SHARED_SOURCE_COMPONENT"
@@ -1222,7 +1778,27 @@ def extract_connections(
             p["id"],
         )
     )
-    selected = proposals
+    owners = defaultdict(list)
+    for obj in proposals:
+        for eid in set(obj["source_evidence"]["source_graph_edge_ids"]):
+            owners[eid].append(obj["id"])
+    selected = []
+    for obj in proposals:
+        conflicts = {
+            eid: owners[eid]
+            for eid in obj["source_evidence"]["source_graph_edge_ids"]
+            if len(owners[eid]) > 1
+        }
+        if conflicts:
+            uncertainties.append(
+                {
+                    **obj["source_evidence"],
+                    "reason": "SOURCE_GRAPH_EDGE_HAS_MULTIPLE_PROPOSED_OWNERS",
+                    "conflicting_proposed_owners": conflicts,
+                }
+            )
+        else:
+            selected.append(obj)
     groups = defaultdict(
         lambda: {
             "edge_ids": [],
@@ -1266,6 +1842,7 @@ def extract_connections(
                 "reason": node.get("reason"),
                 "core_topology": node["core_topology"],
                 "finite_path_decompositions": node["finite_path_decompositions"],
+                "local_cycle_cover_evidence": node.get("local_cycle_cover"),
                 "semantic_connectivity": "UNKNOWN_UNLESS_INDEPENDENT_SOURCE_CONTEXT_PROVES_IT",
             }
         )
@@ -1309,12 +1886,18 @@ def extract_connections(
             "nodes": graph_nodes,
             "edges": graph_edges,
             "groups": group_rows,
+            "bounded_local_cycle_cell_discovery": graph.cycle_cell_discovery,
             "all_ports_and_short_edges_preserved": True,
             "nodes_without_unique_decomposition_remain_pending": True,
         },
     )
     result = {
         "schema": "whole_source_connections_v2",
+        "dependency_producers": {
+            "app.native_objects.connection_core_routes": hashlib.sha256(
+                Path(__file__).with_name("connection_core_routes.py").read_bytes()
+            ).hexdigest(),
+        },
         "policy": POLICY,
         "objects": selected,
         "uncertainties": uncertainties,
@@ -1336,6 +1919,16 @@ def extract_connections(
             "source_two_port_unique_continuations": sum(
                 bool(n["pairing"]) and len(n["edges"]) == 2
                 for n in graph.nodes.values()
+            ),
+            "source_two_port_local_cycle_cover_candidates": sum(
+                bool(row["eligible"]) for row in graph.cycle_cell_discovery["cells"]
+            ),
+            "source_round_to_round_paths_with_local_cycle_cover": sum(
+                any(
+                    c.get("local_cycle_cover_evidence")
+                    for c in obj["source_evidence"]["crossing_evidence"]
+                )
+                for obj in selected
             ),
             "round_boundary_terminal_nodes": sum(
                 n["terminal"] is not None

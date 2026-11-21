@@ -148,6 +148,15 @@ def _validate_request(path):
         raise ValueError(
             "This desktop worker does not accept developer cache or whitelist inputs"
         )
+    if request.get("connection_checkpoint") is not None:
+        from app.native_objects.connection_checkpoint import verify_captured_checkpoint
+
+        verify_captured_checkpoint(
+            request["connection_checkpoint"],
+            job,
+            request["source_sha256"],
+            request["parameters"],
+        )
     from app.native_objects.observation_cache import (
         ENVIRONMENT_VARIABLE,
         verify_binding,
@@ -301,6 +310,9 @@ def worker_run(request_path):
             from app.core.processing import ProductionProcessingService
 
             params = request["parameters"]
+            checkpoint_options = {}
+            if request.get("connection_checkpoint") is not None:
+                checkpoint_options["connection_checkpoint"] = request["connection_checkpoint"]
             result = ProductionProcessingService.process_native_objects(
                 request["input_path"],
                 staging / "result.dxf",
@@ -316,6 +328,7 @@ def worker_run(request_path):
                 cache_dir=request.get("cache_dir"),
                 progress_callback=boundary,
                 entrypoint="main.py:--native-worker / NativeJobManager",
+                **checkpoint_options,
             )
             check_cancel("BEFORE_FINAL_PUBLICATION_AUDIT")
             if context.failed_children:

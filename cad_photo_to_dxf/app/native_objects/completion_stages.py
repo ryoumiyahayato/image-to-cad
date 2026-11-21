@@ -35,6 +35,119 @@ def text_context_sha(objects):
     return canonical_sha(sorted(rows, key=lambda r: r["id"]))
 
 
+def _check_completion_dependencies(stage, payload):
+    """A source proposal also depends on its finite local route implementation.
+
+    The job fingerprint covers every native module. An explicitly imported
+    stage has its own identity too; checking only connections.py would allow a
+    changed helper to reuse an old route selection. Missing attestations fail
+    closed, including historical payloads that predate the helper.
+    """
+    if stage != "connections":
+        return
+    from . import connection_core_routes
+
+    expected = {
+        connection_core_routes.__name__: hashlib.sha256(
+            Path(connection_core_routes.__file__).read_bytes()
+        ).hexdigest()
+    }
+    discovery = payload.get("discovery", {})
+    if discovery.get("dependency_producers") != expected:
+        raise ValueError("CONNECTION_ROUTE_DEPENDENCY_CHANGED_OR_MISSING")
+
+
+def restore_connection_discovery_evidence(
+    cache_dir, out, gray, *, discovery=None, binding=None, objects=()
+):
+    """Restore the immutable raw graph needed by a new cold retrace audit.
+
+    Completed assembly checkpoints bind both files explicitly. Proposal
+    replay instead supplies its already hash-verified discovery payload.
+    Neither imports a prior cold audit or approves a traversal. ``out=None``
+    verifies the published evidence without changing the original job.
+    """
+    candidates = discovery.get("objects", []) if discovery is not None else objects
+    required = any(
+        crossing.get("local_cycle_cover_evidence")
+        for obj in candidates
+        for crossing in obj.get("source_evidence", {}).get("crossing_evidence", [])
+    )
+    if not required and binding is None:
+        return None
+    if cache_dir is None or (discovery is None and binding is None):
+        raise ValueError("CONNECTION_RETRACE_RAW_EVIDENCE_BINDING_MISSING")
+    root = Path(cache_dir).resolve()
+    relative_names = (
+        "connections/discovery/connections.json",
+        "connections/discovery/source_graph.json",
+    )
+    contents = {}
+    for name in relative_names:
+        path = root / name
+        if (
+            path.is_symlink()
+            or root not in path.resolve().parents
+            or not path.is_file()
+        ):
+            raise ValueError(
+                "CONNECTION_RETRACE_RAW_EVIDENCE_MISSING_OR_OUTSIDE:" + name
+            )
+        contents[name] = path.read_bytes()
+    recorded = json.loads(contents[relative_names[0]])
+    if discovery is not None and canonical_sha(recorded) != canonical_sha(discovery):
+        raise ValueError("CONNECTION_RETRACE_DISCOVERY_PAYLOAD_CHANGED")
+    _check_completion_dependencies("connections", {"discovery": recorded})
+    graph_bytes = contents[relative_names[1]]
+    graph_ref = recorded.get("source_graph", {})
+    if (
+        graph_ref.get("path") != "source_graph.json"
+        or graph_ref.get("sha256") != hashlib.sha256(graph_bytes).hexdigest()
+    ):
+        raise ValueError("CONNECTION_RETRACE_RAW_GRAPH_HASH_CHANGED")
+    graph = json.loads(graph_bytes)
+    bounds = graph.get("source_crop_xyxy_px", [])
+    if (
+        graph.get("schema") != "unmodified_source_graph_v2"
+        or len(bounds) != 4
+        or any(not isinstance(v, int) or isinstance(v, bool) for v in bounds)
+    ):
+        raise ValueError("CONNECTION_RETRACE_RAW_GRAPH_SOURCE_CROP_INVALID")
+    x0, y0, x1, y1 = bounds
+    if not (0 <= x0 < x1 <= gray.shape[1] and 0 <= y0 < y1 <= gray.shape[0]):
+        raise ValueError("CONNECTION_RETRACE_RAW_GRAPH_SOURCE_CROP_INVALID")
+    crop_sha = hashlib.sha256(
+        np.ascontiguousarray(gray[y0:y1, x0:x1]).tobytes()
+    ).hexdigest()
+    if crop_sha != graph.get("source_crop_array_sha256"):
+        raise ValueError("CONNECTION_RETRACE_RAW_GRAPH_CURRENT_SOURCE_CHANGED")
+    actual = {
+        "schema": "connection-discovery-evidence-v1",
+        "files": {
+            name: {"sha256": hashlib.sha256(data).hexdigest(), "bytes": len(data)}
+            for name, data in contents.items()
+        },
+        "source_crop_xyxy_px": bounds,
+        "source_crop_array_sha256": crop_sha,
+        "prior_cold_audit_imported": False,
+        "current_saved_retrace_certification_required": True,
+    }
+    if binding is not None and binding != actual:
+        raise ValueError("CONNECTION_RETRACE_RAW_EVIDENCE_BINDING_CHANGED")
+    if out is not None:
+        destination = Path(out).resolve()
+        for name, data in contents.items():
+            target = destination / "discovery" / Path(name).name
+            if target.is_symlink() or destination not in target.resolve().parents:
+                raise ValueError("CONNECTION_RETRACE_RESTORED_PATH_OUTSIDE_EVIDENCE")
+            if target.exists() and target.read_bytes() != data:
+                raise ValueError("CONNECTION_RETRACE_RESTORED_EVIDENCE_ALREADY_DIFFERS")
+            if not target.exists():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(data)
+    return actual
+
+
 def _load(cache_dir, stage, gray, roi, source_sha, out, *, text_sha=None):
     manifest = Path(cache_dir) / "native_completion_stages.json" if cache_dir else None
     if manifest is None or not manifest.is_file():
@@ -74,6 +187,7 @@ def _load(cache_dir, stage, gray, roi, source_sha, out, *, text_sha=None):
     ):
         raise ValueError("NATIVE_COMPLETION_CACHE_PRODUCER_CHANGED:" + stage)
     payload = json.loads(path.read_text())
+    _check_completion_dependencies(stage, payload)
     evidence = {
         "cache_hit": True,
         "path": str(path),
@@ -114,6 +228,7 @@ def _revision_proposals(cache_dir, stage, gray, roi, source_sha, out):
     }
     if any(row.get(k) != v for k, v in expected.items()):
         raise ValueError("REVISION_PROPOSAL_SOURCE_OR_PRODUCER_MISMATCH:" + stage)
+    _check_completion_dependencies(stage, row)
     if (
         row.get("source_array_sha256")
         != hashlib.sha256(np.ascontiguousarray(gray).tobytes()).hexdigest()
@@ -253,9 +368,13 @@ def _existing_arc_overlap(proposal, objects):
     direction = v / np.maximum(length[:, None], 1e-300)
     rows = []
     for obj in objects:
-        if obj["kind"] != "DOOR":
+        if obj["kind"] == "ARC":
+            arc_members = [obj]
+        elif obj["kind"] == "DOOR":
+            arc_members = native_members(obj)
+        else:
             continue
-        for i, member in enumerate(native_members(obj)):
+        for i, member in enumerate(arc_members):
             if member["kind"] != "ARC":
                 continue
             g = member["geometry"]
@@ -327,6 +446,13 @@ def complete_connections_without_unresolved_retirement(
         else extract_connections(
             gray, roi, objects, out / "discovery", text_regions=text_regions
         )
+    )
+    raw_evidence = restore_connection_discovery_evidence(
+        cache_dir if payload is not None or revision is not None else out.parent,
+        out,
+        gray,
+        discovery=raw,
+        binding=(payload or revision or {}).get("raw_discovery_evidence"),
     )
     members = _existing_line_members(objects)
     adopted = []
@@ -422,6 +548,7 @@ def complete_connections_without_unresolved_retirement(
         "dashed_gaps_joined": False,
         "engineering_stroke_identity_proven": False,
         "status": "LOCAL_SOURCE_PATH_CANDIDATES_REQUIRE_SAVED_DXF_AUDIT",
+        "raw_discovery_evidence": raw_evidence,
     }
     save_json(out / "completion_result.json", result)
     return result
