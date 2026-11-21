@@ -52,6 +52,12 @@ jobs:
           "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
+      - name: Prepare verified native font and license
+        shell: pwsh
+        run: |
+          python scripts/prepare_native_font.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Run regression and static checks
         shell: pwsh
         run: |

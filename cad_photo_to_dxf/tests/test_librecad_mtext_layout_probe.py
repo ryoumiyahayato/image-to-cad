@@ -9,9 +9,8 @@ import sys
 import ezdxf
 import pytest
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
-if str(SCRIPTS) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS))
+# Import the standalone diagnostic exactly as its command-line entry does.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from app.native_objects import cad_io
 from export_annotation_group_checkpoint import signature, snapshot

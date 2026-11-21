@@ -59,6 +59,7 @@ jobs:
             tests/test_native_observation_cache.py \
             tests/test_native_frame_discovery_contract.py \
             tests/test_native_connected_paths.py \
+            tests/test_native_complete_source_chains.py \
             tests/test_native_connection_core_routes.py \
             tests/test_native_retrace_cold_audit.py \
             tests/test_native_connection_evidence_resume.py \

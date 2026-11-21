@@ -39,7 +39,6 @@ POLICY = {
     "crossing_axis_separation_min_deg": 30.0,
     "minimum_path_length_px": 50.0,
     "minimum_curved_deviation_px": 1.5,
-    "isolated_chord_length_ratio_max": 1.06,
     "maximum_path_length_px": 2400.0,
     "polyline_approximation_px": 0.85,
     "maximum_control_vertices": 48,
@@ -991,6 +990,151 @@ def _support(points, distance, origin):
     }
 
 
+def _simple_source_chain_certificate(graph, pixels, label, labels, expected_count):
+    """Certify a complete natural-end source chain without a curvature proxy.
+
+    An eight-neighbor raster path has orientation-dependent length even when
+    its visible centreline is straight.  Length divided by endpoint distance
+    therefore cannot establish whether a source stroke is complete.  Inspect
+    the unchanged graph instead: every component pixel and adjacency must be
+    owned, with exactly two degree-one ends and degree-two interior pixels.
+    """
+    ordered = list(map(int, pixels))
+    owned = set(ordered)
+    source_edges = {
+        tuple(sorted((p, q))) for p in owned for q in graph.neighbors(p)
+    }
+    path_edges = {tuple(sorted(pair)) for pair in zip(ordered, ordered[1:])}
+    degrees = {p: len(graph.neighbors(p)) for p in owned}
+    endpoints = {p for p, degree in degrees.items() if degree == 1}
+    checks = {
+        "all_samples_from_same_source_component": bool(ordered)
+        and all(int(labels.ravel()[p]) == label for p in owned),
+        "all_component_skeleton_pixels_accounted": len(owned) == expected_count,
+        "source_path_has_no_repeated_pixels": len(owned) == len(ordered),
+        "every_source_adjacency_accounted": source_edges == path_edges,
+        "exactly_two_natural_source_endpoints": len(ordered) >= 2
+        and endpoints == {ordered[0], ordered[-1]}
+        and len(endpoints) == 2,
+        "all_internal_source_degrees_are_two": all(
+            degree == 2 for p, degree in degrees.items() if p not in endpoints
+        ),
+    }
+    return {
+        "schema": "complete-natural-end-source-chain-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "source_skeleton_pixels": int(expected_count),
+        "owned_source_pixels": len(owned),
+        "source_graph_edge_count": len(source_edges),
+        "source_short_branches_deleted": False,
+        "source_holes_or_gaps_modified": False,
+        "engineering_semantics_required": False,
+        "raster_length_to_chord_used_as_completeness_gate": False,
+    }
+
+
+def _maximum_point_to_polyline_distance(points, chain):
+    """Exact point-to-finite-segment distances, with bounded working memory."""
+    points, chain = np.asarray(points, float), np.asarray(chain, float)
+    starts, delta = chain[:-1], np.diff(chain, axis=0)
+    size2 = np.sum(delta * delta, axis=1)
+    maximum = 0.0
+    for offset in range(0, len(points), 64):
+        vectors = points[offset : offset + 64, None, :] - starts[None, :, :]
+        fraction = np.clip(
+            np.sum(vectors * delta[None, :, :], axis=2)
+            / np.maximum(size2[None, :], 1e-12),
+            0,
+            1,
+        )
+        distances = np.linalg.norm(
+            vectors - fraction[:, :, None] * delta[None, :, :], axis=2
+        )
+        maximum = max(maximum, float(distances.min(axis=1).max()))
+    return maximum
+
+
+def _simple_chain_fit_certificate(raw, geometry):
+    """Check source order and both directions of the actual native fit.
+
+    Native-to-source coverage is sampled at the existing 0.25 px source gate
+    step. Source-to-native distance is exact for the single arc or finite line
+    spans used here. No supporting pixels are erased to improve either score.
+    """
+    raw = np.asarray(raw, float)
+    vertices = np.asarray(geometry["points"], float)
+    tolerance = POLICY["polyline_approximation_px"]
+    endpoint_match = np.allclose(vertices[[0, -1]], raw[[0, -1]], atol=1e-9, rtol=0)
+    bulges = geometry["bulges"]
+    source_order = False
+    source_distance = float("inf")
+    if len(vertices) == 2 and abs(bulges[0]) > 1e-12:
+        a, b = vertices
+        bulge = float(bulges[0])
+        chord = float(np.linalg.norm(b - a))
+        unit = (b - a) / chord
+        normal = np.array([-unit[1], unit[0]])
+        centre = (a + b) / 2 + normal * chord * (1 - bulge * bulge) / (4 * bulge)
+        radius = float(np.linalg.norm(a - centre))
+        angles = np.unwrap(np.arctan2(raw[:, 1] - centre[1], raw[:, 0] - centre[0]))
+        directed = (angles - angles[0]) * math.copysign(1, bulge)
+        sweep = abs(4 * math.atan(bulge))
+        source_order = bool(
+            np.all(np.diff(directed) >= -1e-9)
+            and directed.min() >= -1e-9
+            and directed.max() <= sweep + 1e-9
+        )
+        radial = np.abs(np.linalg.norm(raw - centre, axis=1) - radius)
+        end_distances = np.minimum(
+            np.linalg.norm(raw - a, axis=1), np.linalg.norm(raw - b, axis=1)
+        )
+        within_sweep = (directed >= 0) & (directed <= sweep)
+        source_distance = float(np.where(within_sweep, radial, end_distances).max())
+    elif all(abs(value) <= 1e-12 for value in bulges):
+        indices = []
+        for vertex in vertices:
+            matches = np.flatnonzero(np.all(np.abs(raw - vertex) <= 1e-9, axis=1))
+            if len(matches) != 1:
+                break
+            indices.append(int(matches[0]))
+        source_order = (
+            len(indices) == len(vertices)
+            and indices[0] == 0
+            and indices[-1] == len(raw) - 1
+            and all(a < b for a, b in zip(indices, indices[1:]))
+        )
+        if source_order:
+            source_distance = 0.0
+            for lo, hi in zip(indices, indices[1:]):
+                a, b = raw[lo], raw[hi]
+                delta = b - a
+                projection = (raw[lo : hi + 1] - a) @ delta
+                source_order = source_order and bool(np.all(np.diff(projection) >= -1e-9))
+                source_distance = max(
+                    source_distance,
+                    _maximum_point_to_polyline_distance(raw[lo : hi + 1], [a, b]),
+                )
+    dense = _dense_geometry(geometry, POLICY["dense_step_px"])
+    native_distance = _maximum_point_to_polyline_distance(dense, raw)
+    checks = {
+        "natural_source_endpoints_preserved": bool(endpoint_match),
+        "source_traversal_order_preserved": bool(source_order),
+        "source_to_native_within_existing_fit_tolerance": source_distance <= tolerance + 1e-9,
+        "native_to_source_within_existing_fit_tolerance": native_distance <= tolerance + 1e-9,
+    }
+    return {
+        "schema": "ordered-two-way-simple-chain-fit-v1",
+        "checks": checks,
+        "pass": all(checks.values()),
+        "maximum_fit_error_px": tolerance,
+        "source_to_native_maximum_distance_px": source_distance if math.isfinite(source_distance) else None,
+        "native_to_source_maximum_distance_px": native_distance,
+        "native_sampling_step_px": POLICY["dense_step_px"],
+        "source_tolerances_unchanged": True,
+    }
+
+
 def _text_boxes(prior_objects):
     boxes = []
     for obj in prior_objects:
@@ -1306,13 +1450,18 @@ def extract_connections(
             if free_pair:
                 whole_component = len(set(pixels)) == int(skel_counts[label])
                 row["whole_isolated_component_skeleton_accounted"] = whole_component
+                row["raster_path_length_to_chord_ratio_diagnostic_only"] = length / chord
                 row["connected_group_may_have_several_independent_paths"] = bool(
                     crossings
                 )
+                simple_chain = None
+                if not crossings and not terminal_lobes:
+                    simple_chain = _simple_source_chain_certificate(
+                        graph, pixels, label, source_labels, int(skel_counts[label])
+                    )
+                    row["whole_simple_source_chain"] = simple_chain
                 if (not crossings and not whole_component) or (
-                    not crossings
-                    and not terminal_lobes
-                    and length / chord > POLICY["isolated_chord_length_ratio_max"]
+                    simple_chain is not None and not simple_chain["pass"]
                 ):
                     row["reason"] = "NOT_A_WHOLE_THIN_ISOLATED_CURVED_STROKE"
                     uncertainties.append(row)
@@ -1440,6 +1589,29 @@ def extract_connections(
                     if row.get("local_cycle_cover_evidence")
                 ],
             )
+            if row.get("whole_simple_source_chain", {}).get("pass"):
+                fit = _simple_chain_fit_certificate(points, geometry)
+                if not fit["pass"]:
+                    simplified, encoding = _bounded_source_polyline(points)
+                    replacement = {
+                        "points": simplified.tolist(),
+                        "bulges": [0.0] * len(simplified),
+                        "closed": False,
+                    }
+                    retry = _simple_chain_fit_certificate(points, replacement)
+                    row["initial_simple_chain_fit"] = fit
+                    geometry, fit = replacement, retry
+                    representation = {
+                        "representation": "ONE_NATIVE_OPEN_POLYLINE",
+                        "source_ordered_span_encoding": encoding,
+                        "single_bounded_fallback_from_initial_fit": True,
+                    }
+                row["whole_simple_source_chain_fit"] = fit
+                if not fit["pass"]:
+                    row["reason"] = "COMPLETE_SOURCE_CHAIN_NATIVE_FIT_NOT_BIDIRECTIONAL"
+                    row["native_geometry"] = geometry
+                    uncertainties.append(row)
+                    continue
             if len(geometry["points"]) > POLICY["maximum_control_vertices"]:
                 row["reason"] = "CONTROL_COMPLEXITY_EXCEEDS_FROZEN_LIMIT"
                 row["native_geometry"] = geometry

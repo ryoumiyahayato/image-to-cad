@@ -46,7 +46,10 @@ def source_objects(angle=0):
 def test_source_row_offsets_reach_saved_mtext_glyph_geometry(tmp_path, angle):
     path = tmp_path / "synthetic.dxf"
     objects = source_objects(angle)
-    meta = export_objects(objects, path, [0, 0, 100, 100], 25.4, "synthetic")
+    meta = export_objects(
+        objects, path, [0, 0, 100, 100], 25.4, "synthetic",
+        diagnostic_source_mtext_layout=True,
+    )
     doc = ezdxf.readfile(path)
     assert not doc.audit().has_errors
     notes = list(doc.modelspace().query("MTEXT"))
@@ -90,3 +93,15 @@ def test_missing_rows_still_cannot_be_exported_as_a_complete_mtext(tmp_path):
     objects[0]["geometry"]["source_line_geometries"].pop()
     with pytest.raises(ValueError, match="MTEXT_REQUIRES_ORDERED_SOURCE_LINE_GEOMETRIES"):
         export_objects(objects, tmp_path / "incomplete.dxf", [0, 0, 100, 100], 25.4, "synthetic")
+
+
+def test_failed_consumer_paragraph_layout_is_not_the_production_default(tmp_path):
+    path = tmp_path / "baseline.dxf"
+    meta = export_objects(source_objects(27), path, [0, 0, 100, 100], 25.4, "synthetic")
+    note = ezdxf.readfile(path).modelspace().query("MTEXT").first
+    assert "\\pxi" not in note.text
+    assert note.plain_text() == "SAMPLE\nSAMPLE\nSAMPLE"
+    assert note.dxf.rotation == 0
+    rows = meta["written"][0]["mtext_line_layout"]
+    assert all(row["source_left_offset_applied"] is False for row in rows)
+    assert all(row["layout_profile"] == "EXISTING_MAIN_MTEXT_EXPRESSION" for row in rows)

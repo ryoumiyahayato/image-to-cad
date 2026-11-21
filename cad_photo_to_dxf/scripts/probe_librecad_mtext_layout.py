@@ -20,9 +20,8 @@ import sys
 import ezdxf
 
 
-PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-if str(PACKAGE_ROOT) not in sys.path:
-    sys.path.insert(0, str(PACKAGE_ROOT))
+# Keep the direct bootstrap visible to Ruff's supported sys.path exception.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.native_objects import cad_io
 from export_annotation_group_checkpoint import (

@@ -163,7 +163,15 @@ def save_native_dxf(doc, path):
 
 
 @profiled("cad_io.export_objects")
-def export_objects(objects, path, roi, dpi, source_sha):
+def export_objects(
+    objects, path, roi, dpi, source_sha, *, diagnostic_source_mtext_layout=False
+):
+    """Write formal geometry; failed consumer layout remains an explicit probe.
+
+    The source-paragraph indent experiment has not passed LibreCAD layout.
+    Production callers therefore retain main's existing MTEXT expression.
+    Only a checkpoint diagnostic may opt in to reproducing that experiment.
+    """
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     mm = 25.4 / dpi
@@ -270,7 +278,11 @@ def export_objects(objects, path, roi, dpi, source_sha):
                 # Paragraph indents are multiples of the initial char height,
                 # not drawing units. Reset every paragraph, including a zero
                 # offset, so a preceding indented row cannot shift its neighbor.
-                paragraph = "\\pxi0,l" + format(left_offset * mm / h, ".10g") + ",r0,ql;"
+                paragraph = (
+                    "\\pxi0,l" + format(left_offset * mm / h, ".10g") + ",r0,ql;"
+                    if diagnostic_source_mtext_layout
+                    else ""
+                )
                 # Each paragraph gets an independent absolute width factor.
                 # Keep one true MTEXT and the original text/height/line pitch.
                 content_parts.append(
@@ -283,7 +295,12 @@ def export_objects(objects, path, roi, dpi, source_sha):
                         "source_bbox_xyxy_px": box,
                         "source_width_px": source_width,
                         "source_left_offset_px": left_offset,
-                        "source_left_offset_applied": True,
+                        "source_left_offset_applied": diagnostic_source_mtext_layout,
+                        "layout_profile": (
+                            "FAILED_LIBRECAD_LAYOUT_DIAGNOSTIC"
+                            if diagnostic_source_mtext_layout
+                            else "EXISTING_MAIN_MTEXT_EXPRESSION"
+                        ),
                         "paragraph_indent_char_heights": left_offset * mm / h,
                         "unscaled_font_width_mm": measured,
                         "inline_width_factor": factor,
@@ -303,7 +320,11 @@ def export_objects(objects, path, roi, dpi, source_sha):
                     "width": width * 1.03,
                     "attachment_point": 1,
                     "style": "I2CAD_TEXT",
-                    "rotation": -g.get("rotation_deg_image", 0),
+                    "rotation": (
+                        -g.get("rotation_deg_image", 0)
+                        if diagnostic_source_mtext_layout
+                        else 0
+                    ),
                     "line_spacing_style": 2,
                     "flow_direction": 1,
                     "line_spacing_factor": float(

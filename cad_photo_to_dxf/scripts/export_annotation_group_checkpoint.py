@@ -24,9 +24,8 @@ import numpy as np
 from PIL import Image
 
 
-PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-if str(PACKAGE_ROOT) not in sys.path:
-    sys.path.insert(0, str(PACKAGE_ROOT))
+# These standalone diagnostics also run outside the package working directory.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.native_objects import cad_io
 from app.native_objects.pipeline import _text_objects
@@ -323,7 +322,10 @@ def export_checkpoint(checkpoint, updated_path, group_id, source_image, context,
 
     evidence = out / "evidence"
     target_path = evidence / "assembled_target.dxf"
-    target_meta = cad_io.export_objects(targets, target_path, roi, dpi, manifest["source_sha256"])
+    target_meta = cad_io.export_objects(
+        targets, target_path, roi, dpi, manifest["source_sha256"],
+        diagnostic_source_mtext_layout=True,
+    )
     if target_meta["font"]["sha256"] != manifest["font"]["sha256"]:
         raise ValueError("CURRENT_WRITER_FONT_DIFFERS_FROM_CHECKPOINT_FONT")
     for name in (manifest["font"]["font"], manifest["font"]["bundled_license"]):

@@ -25,6 +25,11 @@ test-output/
 *.validation.json
 *.freecad.json
 
+# Generated, hash-verified official native export resources (not source files).
+resources/fonts/DejaVuSans.ttf
+resources/fonts/DejaVuSans.LICENSE.txt
+resources/fonts/native-dejavu.lock.json
+
 # Local editor and operating-system metadata
 .vscode/
 .idea/
