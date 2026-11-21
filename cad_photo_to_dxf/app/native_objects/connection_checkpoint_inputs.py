@@ -29,6 +29,7 @@ from .source_import import _decode, inspect_source
 SCHEMA = "native-connection-checkpoint-v1"
 CAPTURE_SCHEMA = "native-connection-checkpoint-capture-v1"
 _ASSETS = ("baseline_dxf", "baseline_ownership", "text_observations")
+_OPTIONAL_ASSETS = ("baseline_evidence", "source_observations")
 _APPID = "I2CAD_NATIVE_V2"
 _KINDS = {
     "LINE": {"LINE"},
@@ -143,7 +144,7 @@ def _manifest(manifest, source_sha256, parameters):
     if not isinstance(manifest, dict) or manifest.get("schema") != SCHEMA:
         _fail("MANIFEST_SCHEMA_INVALID")
     expected_keys = {"schema", "source_sha256", "roi_xyxy_px", "dpi", "windows", *_ASSETS}
-    if set(manifest) - expected_keys - {"reporting"} or expected_keys - set(manifest):
+    if set(manifest) - expected_keys - {"reporting", *_OPTIONAL_ASSETS} or expected_keys - set(manifest):
         _fail("MANIFEST_FIELDS_INVALID")
     roi, dpi = _parameters(parameters)
     if _sha(manifest["source_sha256"]) != _sha(source_sha256):
@@ -277,6 +278,20 @@ def _payloads(manifest, assets, source, parameters):
     if _sha(texts.get("source_array_sha256")) != source["source_array_sha256"]:
         _fail("TEXT_SOURCE_ARRAY_MISMATCH")
     validate_text_regions(texts, (size[1], size[0]), roi)
+    if "baseline_evidence" in assets:
+        from .checkpoint_baseline import verify_baseline_evidence
+
+        verified = verify_baseline_evidence(
+            assets["baseline_evidence"], assets["baseline_dxf"]["path"], ownership,
+            source["path"], source["sha256"], parameters,
+        )
+        if verified["manifest"]["baseline_ownership_sha256"] != assets["baseline_ownership"]["sha256"]:
+            _fail("BASELINE_EVIDENCE_LEDGER_HASH_MISMATCH")
+    if "source_observations" in assets:
+        from .checkpoint_text_observations import verify_source_observations
+
+        verify_source_observations(assets["source_observations"], source["path"],
+                                   source["sha256"], parameters)
     return ownership, texts
 
 
@@ -300,7 +315,8 @@ def capture_checkpoint(manifest_path, job_directory, source_sha256, parameters):
     original = _asset({"path": str(path), "sha256": file_sha(path)})
     manifest = _read_json(original)
     _manifest(manifest, source_sha256, parameters)
-    assets = {name: _asset(manifest[name], base=path.parent) for name in _ASSETS}
+    asset_names = (*_ASSETS, *(name for name in _OPTIONAL_ASSETS if name in manifest))
+    assets = {name: _asset(manifest[name], base=path.parent) for name in asset_names}
     candidates = [p for p in inputs.glob("source.*") if p.is_file() and p.suffix != ".tmp"]
     if len(candidates) != 1:
         _fail("ONE_CAPTURED_SOURCE_REQUIRED")
@@ -313,8 +329,21 @@ def capture_checkpoint(manifest_path, job_directory, source_sha256, parameters):
     originals = _copy_verified(original, capture / "request.original.json")
     copied = {
         name: _copy_verified(asset, capture / (name + (".dxf" if name == "baseline_dxf" else ".json")))
-        for name, asset in assets.items()
+        for name, asset in assets.items() if name in _ASSETS
     }
+    if "baseline_evidence" in assets:
+        from .checkpoint_baseline import capture_baseline_evidence
+
+        copied["baseline_evidence"] = capture_baseline_evidence(
+            assets["baseline_evidence"], capture / "baseline_evidence"
+        )
+    if "source_observations" in assets:
+        from .checkpoint_text_observations import capture_source_observations
+
+        copied["source_observations"] = capture_source_observations(
+            assets["source_observations"]["path"], capture / "source_observations",
+            source["path"], source["sha256"], parameters,
+        )
     rebound = deepcopy(manifest)
     rebound.update(copied)
     rebound_path = capture / "manifest.json"
@@ -347,14 +376,18 @@ def _verified_contents(binding, job_directory, source_sha256, parameters):
     capture = _under(binding.get("capture_directory", ""), base)
     if capture.parent != base:
         _fail("CAPTURE_DIRECTORY_INVALID")
-    assets = {name: _asset(binding.get(name), directory=capture) for name in (*_ASSETS, "manifest", "original_manifest")}
+    assets = {name: _asset(binding.get(name), directory=capture) for name in ("manifest", "original_manifest")}
+    original = _read_json(assets["original_manifest"])
+    _manifest(original, source_sha256, parameters)
+    asset_names = (*_ASSETS, *(name for name in _OPTIONAL_ASSETS if name in original))
+    if {name for name in _OPTIONAL_ASSETS if name in binding} != {name for name in _OPTIONAL_ASSETS if name in original}:
+        _fail("OPTIONAL_CAPTURE_ASSET_SET_MISMATCH")
+    assets.update({name: _asset(binding.get(name), directory=capture) for name in asset_names})
     if len({row["path"] for row in assets.values()}) != len(assets):
         _fail("CAPTURE_ASSET_PATHS_NOT_DISTINCT")
     manifest = _read_json(assets["manifest"])
-    original = _read_json(assets["original_manifest"])
-    _manifest(original, source_sha256, parameters)
     rebound = deepcopy(original)
-    for name in _ASSETS:
+    for name in asset_names:
         if original[name].get("sha256") != assets[name]["sha256"]:
             _fail("ORIGINAL_CAPTURE_HASH_MISMATCH")
         rebound[name] = assets[name]

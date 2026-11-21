@@ -5,7 +5,9 @@ from pathlib import Path
 
 import pytest
 
-from app.native_objects import connection_core_routes
+from app.native_objects import (
+    connection_core_routes, text_graph_support, checkpoint_text_observations,
+)
 from app.native_objects.completion_stages import _check_completion_dependencies
 
 
@@ -13,9 +15,10 @@ def _attested_payload():
     return {
         "discovery": {
             "dependency_producers": {
-                connection_core_routes.__name__: hashlib.sha256(
-                    Path(connection_core_routes.__file__).read_bytes()
+                module.__name__: hashlib.sha256(
+                    Path(module.__file__).read_bytes()
                 ).hexdigest()
+                for module in (connection_core_routes, text_graph_support, checkpoint_text_observations)
             }
         }
     }
@@ -25,11 +28,14 @@ def test_unchanged_local_route_policy_can_reuse_its_source_proposal():
     _check_completion_dependencies("connections", _attested_payload())
 
 
-def test_changed_helper_rejects_old_attestation(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "helper", [connection_core_routes, text_graph_support, checkpoint_text_observations]
+)
+def test_changed_helper_rejects_old_attestation(tmp_path, monkeypatch, helper):
     payload = _attested_payload()
     changed = tmp_path / "changed_route_policy.py"
     changed.write_text("# A different route implementation\n")
-    monkeypatch.setattr(connection_core_routes, "__file__", str(changed))
+    monkeypatch.setattr(helper, "__file__", str(changed))
     with pytest.raises(ValueError, match="ROUTE_DEPENDENCY_CHANGED_OR_MISSING"):
         _check_completion_dependencies("connections", payload)
 

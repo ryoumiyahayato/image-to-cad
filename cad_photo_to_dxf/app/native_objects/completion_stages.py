@@ -45,12 +45,13 @@ def _check_completion_dependencies(stage, payload):
     """
     if stage != "connections":
         return
-    from . import connection_core_routes
+    from . import connection_core_routes, text_graph_support, checkpoint_text_observations
 
     expected = {
-        connection_core_routes.__name__: hashlib.sha256(
-            Path(connection_core_routes.__file__).read_bytes()
+        module.__name__: hashlib.sha256(
+            Path(module.__file__).read_bytes()
         ).hexdigest()
+        for module in (connection_core_routes, text_graph_support, checkpoint_text_observations)
     }
     discovery = payload.get("discovery", {})
     if discovery.get("dependency_producers") != expected:
@@ -411,7 +412,8 @@ def _existing_arc_overlap(proposal, objects):
 
 
 def complete_connections_without_unresolved_retirement(
-    gray, roi, source_sha, objects, out, cache_dir=None, *, text_regions=None
+    gray, roi, source_sha, objects, out, cache_dir=None, *, text_regions=None,
+    verified_text_observations=None,
 ):
     from .connections import (
         extract_connections,
@@ -444,7 +446,8 @@ def complete_connections_without_unresolved_retirement(
         else revision["discovery"]
         if revision is not None
         else extract_connections(
-            gray, roi, objects, out / "discovery", text_regions=text_regions
+            gray, roi, objects, out / "discovery", text_regions=text_regions,
+            verified_text_observations=verified_text_observations,
         )
     )
     raw_evidence = restore_connection_discovery_evidence(

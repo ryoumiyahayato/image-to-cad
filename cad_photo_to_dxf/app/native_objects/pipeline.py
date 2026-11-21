@@ -1471,6 +1471,33 @@ def run_native_objects(
                 + text_objects
             )
             progress("WHOLE_SOURCE_CONNECTION_PATHS", 0.69)
+            # Fresh imports use the same raw-source verification as bounded
+            # continuation. A candidate mask alone is never a glyph verdict.
+            # Rotated working rasters retain the existing conservative rule
+            # until their raw-observation coordinate adapter is implemented.
+            verified_text_observations = None
+            if job.orientation_cw == 0:
+                from .checkpoint_text_observations import (
+                    verify_current_job_observations,
+                )
+
+                verified_text_observations = verify_current_job_observations(
+                    texts, out, input_path, source_sha,
+                    {"roi": list(roi), "dpi": dpi, "orientation": 0,
+                     "page_number": job.page_number,
+                     "frame_number": job.frame_number},
+                    text_artifact_path=saved_text, gray=gray,
+                )
+            save_json(out / "text_graph_source_verification.json", {
+                "status": (
+                    "CURRENT_RAW_OBSERVATIONS_VERIFIED"
+                    if verified_text_observations and verified_text_observations.get("validated")
+                    else "KEEP_CONSERVATIVE_CANDIDATE_TEXT_PROTECTION"
+                ),
+                "verification": verified_text_observations,
+                "new_OCR_calls": 0,
+                "source_pixels_modified": False,
+            })
             connections = complete_connections_without_unresolved_retirement(
                 gray,
                 roi,
@@ -1479,6 +1506,7 @@ def run_native_objects(
                 out / "connections",
                 cache_dir,
                 text_regions=texts,
+                verified_text_observations=verified_text_observations,
             )
             objects += connections["objects"]
             issues = (

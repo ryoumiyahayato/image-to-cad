@@ -37,6 +37,8 @@ _PRODUCERS = (
     "door_completion",
     "connections",
     "connection_core_routes",
+    "text_graph_support",
+    "checkpoint_text_observations",
     "contracts",
     "source_import",
     "job",

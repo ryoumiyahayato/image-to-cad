@@ -78,6 +78,14 @@ def validate_text_regions(data, shape, roi):
         raise ValueError("TEXT_REGIONS_LIST_MISSING")
     boxes = []
     ids = set()
+    group_roles = {}
+    for group in data.get("groups", []):
+        for rid in group.get("region_ids", []):
+            group_roles.setdefault(rid, []).append({
+                "group_id": group.get("id"),
+                "complete": bool(group.get("complete")),
+                "source_review_accepted": bool(group.get("source_review", {}).get("accepted")),
+            })
     for row in data["regions"]:
         if "bbox_xyxy_px" not in row:
             raise ValueError("TEXT_REGION_BBOX_XYXY_PX_MISSING:" + str(row.get("id")))
@@ -91,6 +99,14 @@ def validate_text_regions(data, shape, roi):
         if not oid or oid in ids:
             raise ValueError("TEXT_REGION_ID_MISSING_OR_DUPLICATE")
         ids.add(oid)
+        support_role = {
+            "mask_role": "COMPACT_CANDIDATE_INK_NOT_EXCLUSIVE_GLYPH_OWNERSHIP",
+            "region_complete": bool(row.get("complete")),
+            "region_accepted": bool(row.get("accepted")),
+            "source_review_accepted": bool(row.get("source_review", {}).get("accepted")),
+            "groups": group_roles.get(oid, []),
+            "shared_text_graphic_source_permitted_with_evidence": True,
+        }
         # A region is a text localization, not an eraser. Line classification
         # receives the narrow word boxes wherever available, never whole crops.
         words = row.get("words", [])
@@ -109,6 +125,7 @@ def validate_text_regions(data, shape, roi):
                         "bbox_xyxy_px": list(map(float, b)),
                         "text": w.get("text"),
                         "confirmed": bool(row.get("accepted", False)),
+                        "support_role": support_role,
                         "glyph_source_runs": row.get("compact_source_ink_mask", {}).get(
                             "runs_y_x0_x1"
                         ),
@@ -121,6 +138,7 @@ def validate_text_regions(data, shape, roi):
                     "bbox_xyxy_px": list(map(float, box)),
                     "text": row.get("text"),
                     "confirmed": False,
+                    "support_role": support_role,
                     "glyph_source_runs": row.get("compact_source_ink_mask", {}).get(
                         "runs_y_x0_x1"
                     ),
