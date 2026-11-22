@@ -266,6 +266,66 @@ def _saved_candidate_gates(staging, request):
     }
 
 
+def _publish_staging(staging, published, *, context, wall_deadline):
+    """Commit the audited directory, allowing only bounded Windows lock delays.
+
+    A directory reader can briefly deny rename on Windows. The actual holder
+    need not be known: persistent access failures still fail without publishing.
+    The manager keeps enforcing CPU/RSS/disk limits through the cancel token;
+    every attempt checks that token and the original remaining wall budget.
+    Retry events live in the attempt directory, outside the frozen manifest.
+    """
+    started = time.monotonic()
+    retry_deadline = started + 2.0
+    attempts = 0
+    last_error = None
+    while True:
+        check_cancel("BEFORE_ATOMIC_COMMIT")
+        now = time.monotonic()
+        if now >= wall_deadline:
+            raise NativeResourceLimit("WALL_LIMIT before atomic publication")
+        if published.exists() or published.is_symlink():
+            raise FileExistsError(
+                "A published result is immutable and will not be replaced"
+            )
+        if last_error is not None and now >= retry_deadline:
+            context.event(
+                "atomic_publication_retry_exhausted",
+                rename_attempts=attempts,
+                winerror=last_error.winerror,
+                elapsed_seconds=now - started,
+            )
+            raise last_error
+        attempts += 1
+        try:
+            # The sole commit point: never copy, replace or modify an existing
+            # publication. Do not check cancellation after a successful rename.
+            os.rename(staging, published)
+        except OSError as exc:
+            if sys.platform != "win32" or getattr(exc, "winerror", None) not in {
+                5, 32, 33,
+            }:
+                raise
+            last_error = exc
+            now = time.monotonic()
+            delay = min(0.05, retry_deadline - now, wall_deadline - now)
+            if delay > 0:
+                context.event(
+                    "atomic_publication_retry",
+                    rename_attempts=attempts,
+                    winerror=exc.winerror,
+                    elapsed_seconds=now - started,
+                    delay_seconds=delay,
+                )
+                time.sleep(delay)
+        else:
+            return {
+                "rename_attempts": attempts,
+                "elapsed_seconds": time.monotonic() - started,
+                "atomic_directory_rename": True,
+            }
+
+
 def worker_run(request_path):
     request_path = Path(request_path).resolve()
     directory = request_path.parent
@@ -373,14 +433,15 @@ def worker_run(request_path):
                 Path(request["job_directory"]) / "results" / f"{request['attempt']:04d}"
             )
             published.parent.mkdir(parents=True, exist_ok=True)
-            if published.exists():
-                raise FileExistsError(
-                    "A published result is immutable and will not be replaced"
-                )
             # Same-volume directory rename is the sole commit point. All files
             # are already complete; a cancellation after this point cannot
             # turn a valid published result into a fake partially cancelled one.
-            os.rename(staging, published)
+            publication = _publish_staging(
+                staging,
+                published,
+                context=context,
+                wall_deadline=started + float(request["limits"]["wall_seconds"]),
+            )
             outcome.update(
                 status="COMPLETED_WITH_ISSUES",
                 stage="PUBLISHED_AUDITED_CANDIDATE",
@@ -399,6 +460,7 @@ def worker_run(request_path):
                 remote_wait_seconds=0,
                 requires_manual_review=gates["requires_manual_review"],
                 formal_entities=gates["formal_entities"],
+                atomic_publication=publication,
                 error=None,
                 cancellation_after_commit=(directory / "cancel.json").exists(),
             )
@@ -406,6 +468,7 @@ def worker_run(request_path):
                 "published",
                 result_directory=str(published),
                 dxf_sha256=gates["cold_DXF_sha256"],
+                atomic_publication=publication,
             )
         exit_code = 0
     except NativeCancelled as exc:

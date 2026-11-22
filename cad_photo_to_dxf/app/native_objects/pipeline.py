@@ -6,6 +6,7 @@ image and explicit ROI are required; no failed stage falls back to old HATCH.
 
 from .performance import profiled
 from pathlib import Path
+from .evidence_paths import relative_evidence_path
 import copy
 import hashlib
 import json
@@ -13,7 +14,6 @@ import math
 import time
 import traceback
 import shutil
-import os
 import numpy as np
 import cv2
 from PIL import Image
@@ -1053,7 +1053,7 @@ def run_native_objects(
                 }
             )
             text_producer.update(
-                path=str(saved_text.relative_to(out)),
+                path=saved_text.relative_to(out).as_posix(),
                 sha256=hashlib.sha256(saved_text.read_bytes()).hexdigest(),
             )
             stage_manifest = {**stage_identity, "text": text_producer}
@@ -1288,7 +1288,7 @@ def run_native_objects(
                 )
                 upstream_text_root = (out / text_producer["path"]).parent
                 texts["region_evidence_roots"] = {
-                    r["id"]: os.path.relpath(
+                    r["id"]: relative_evidence_path(
                         (
                             upstream_text_root
                             / texts.get("region_evidence_roots", {}).get(r["id"], ".")
@@ -1298,7 +1298,7 @@ def run_native_objects(
                     for r in texts["regions"]
                 }
                 if texts.get("bbox_overlay"):
-                    texts["bbox_overlay"] = os.path.relpath(
+                    texts["bbox_overlay"] = relative_evidence_path(
                         upstream_text_root / texts["bbox_overlay"], responsibility_root
                     )
                 raw_checks = []
@@ -1326,7 +1326,7 @@ def run_native_objects(
                         raw_checks.append(
                             {
                                 "region_id": region["id"],
-                                "path": str(raw.relative_to(out.resolve())),
+                                "path": raw.relative_to(out.resolve()).as_posix(),
                                 "sha256": actual,
                             }
                         )
@@ -1508,6 +1508,8 @@ def run_native_objects(
                 text_regions=texts,
                 verified_text_observations=verified_text_observations,
             )
+            retired_connection_lines = set(connections["retired_ids"])
+            objects = [obj for obj in objects if obj["id"] not in retired_connection_lines]
             objects += connections["objects"]
             issues = (
                 geometry["uncertainties"]

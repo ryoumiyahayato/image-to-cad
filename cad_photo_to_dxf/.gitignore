@@ -29,6 +29,8 @@ test-output/
 resources/fonts/DejaVuSans.ttf
 resources/fonts/DejaVuSans.LICENSE.txt
 resources/fonts/native-dejavu.lock.json
+resources/ocr/
+resources/native-build.json
 
 # Local editor and operating-system metadata
 .vscode/

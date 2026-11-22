@@ -2,7 +2,8 @@ param(
     [Parameter(Mandatory = $true)][string]$Executable,
     [Parameter(Mandatory = $true)][string]$Sample,
     [Parameter(Mandatory = $true)][string]$WorkingDirectory,
-    [Parameter(Mandatory = $true)][string]$ExpectedVersion
+    [Parameter(Mandatory = $true)][string]$ExpectedVersion,
+    [string]$NativeSourceMain
 )
 
 $ErrorActionPreference = "Stop"
@@ -38,4 +39,32 @@ foreach ($required in @($output, $preview, $report, (Join-Path $debugDir "correc
 $json = Get-Content -LiteralPath $report -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($json.application_version -ne $ExpectedVersion -or $json.member_counts.straight_lines -le 0) {
     throw "Smoke report failed version or line-count validation"
+}
+
+if ($NativeSourceMain) {
+    $sourceMain = (Resolve-Path -LiteralPath $NativeSourceMain).Path
+    $python = (Get-Command python -ErrorAction Stop).Source
+    $helper = Join-Path $work "windows_native_smoke.py"
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot "windows_native_smoke.py") -Destination $helper
+    # The helper and parent shell must both run outside the source directory,
+    # which the test temporarily hides while the detached EXE is running.
+    $originalProcessDirectory = [System.Environment]::CurrentDirectory
+    Push-Location $work
+    try {
+        # Push-Location changes the PowerShell provider location, but does not
+        # release Windows' process-current-directory handle on the checkout.
+        [System.Environment]::CurrentDirectory = $work
+        & $python $helper `
+            --executable $exe `
+            --source-main $sourceMain `
+            --work-dir (Join-Path $work "native") `
+            --expected-version $ExpectedVersion
+        if ($LASTEXITCODE -ne 0) {
+            throw "Packaged native smoke failed; its source/EXE evidence is retained"
+        }
+    }
+    finally {
+        [System.Environment]::CurrentDirectory = $originalProcessDirectory
+        Pop-Location
+    }
 }

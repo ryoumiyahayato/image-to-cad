@@ -13,8 +13,8 @@ import copy
 import hashlib
 import json
 import math
-import os
 from pathlib import Path
+from .evidence_paths import relative_evidence_path
 import time
 
 from . import text_regions as base
@@ -143,9 +143,9 @@ def _collect_current_observations(image, text_data, cache_dir, provenance, outpu
         key = base.raw_observation_key(meta)
         artifact = {
             **base.raw_observation_provenance(meta),
-            "raw_tsv": os.path.relpath(tsv_path, output),
+            "raw_tsv": relative_evidence_path(tsv_path, output),
             "raw_tsv_sha256": base._sha(tsv_path),
-            "metadata": os.path.relpath(meta_path, output),
+            "metadata": relative_evidence_path(meta_path, output),
             "metadata_sha256": base._sha(meta_path),
             "source_identity": source_identity,
             "specification": spec,
@@ -1444,9 +1444,9 @@ def refine_text_line_domains(
             historical = copy.deepcopy(previous)
             historical["evidence_role"] = "historical_diagnostic"
             raw = (original_root / previous["raw_tsv"]).resolve()
-            historical["raw_tsv"] = os.path.relpath(raw, output)
+            historical["raw_tsv"] = relative_evidence_path(raw, output)
             historical["raw_artifact"] = {
-                "path": os.path.relpath(raw, output),
+                "path": relative_evidence_path(raw, output),
                 "sha256": base._sha(raw),
                 "status": "SAVED_RAW_TSV",
             }
@@ -1649,7 +1649,7 @@ def refine_text_line_domains(
             "text_evidence_dir", Path(upstream_provenance["text_path"]).parent
         )
     )
-    original_relative = os.path.relpath(original_evidence, output)
+    original_relative = relative_evidence_path(original_evidence, output)
     result["region_evidence_roots"] = {
         r["id"]: "." if r["id"] in selected_ids else original_relative
         for r in result["regions"]

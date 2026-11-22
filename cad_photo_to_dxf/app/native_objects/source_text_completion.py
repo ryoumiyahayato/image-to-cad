@@ -14,6 +14,7 @@ import copy
 import json
 import os
 from pathlib import Path
+from .evidence_paths import relative_evidence_path
 import shutil
 import time
 
@@ -252,7 +253,7 @@ class BoundObservations:
             ):
                 raise ValueError("COMPLETION_MODEL_RAW_OBSERVATION_KEY_MISMATCH")
         record = copy.deepcopy(record)
-        record["source_png"] = os.path.relpath(png, self.output)
+        record["source_png"] = relative_evidence_path(png, self.output)
         if key in self.model_rows:
             if _digest(record["raw_model_output"]) != _digest(
                 self.model_rows[key]["raw_model_output"]
@@ -264,7 +265,7 @@ class BoundObservations:
         row = self.rows[key]
         meta, raw = row["meta"], Path(row["raw"])
         words = copy.deepcopy(row["words"])
-        relative = os.path.relpath(raw, self.output)
+        relative = relative_evidence_path(raw, self.output)
         return {
             "context_id": row["context_id"],
             "psm": meta["specification"]["psm"],
@@ -347,7 +348,7 @@ class BoundObservations:
             "region_id": region_id,
             "context": context,
             "source_array_sha256": crop_hash,
-            "source_png": os.path.relpath(png, self.output),
+            "source_png": relative_evidence_path(png, self.output),
             "source_png_sha256": base._sha(png),
             "raw_model_output": raw,
             "model_identity_sha256": _digest(self.engine.identity),
@@ -703,7 +704,7 @@ def refine_source_text_completion(
         "queue_sha256": _digest(queue),
         "counts": counts,
         "frozen_plan_files": {
-            str((root / p).relative_to(root)): base._sha(root / p)
+            (root / p).relative_to(root).as_posix(): base._sha(root / p)
             for p in (
                 "text_domain_recovery/selection.json",
                 "text_block_rescue/policy_and_selection.json",
@@ -787,7 +788,7 @@ def refine_source_text_completion(
         _atomic(initial_bounds_path, initial_bounds)
     result = copy.deepcopy(text_data)
     result["region_evidence_roots"] = {
-        r["id"]: os.path.relpath(
+        r["id"]: relative_evidence_path(
             upstream.parent
             / text_data.get("region_evidence_roots", {}).get(r["id"], "."),
             output,

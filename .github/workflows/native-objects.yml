@@ -72,6 +72,8 @@ jobs:
             tests/test_native_complete_shared_core.py \
             tests/test_native_duplicate_source_group.py \
             tests/test_native_final_connection_group_gate.py \
+            tests/test_native_ordinary_connection_adoption.py \
+            tests/test_native_evidence_path_portability.py \
             tests/test_native_terminal_loop_saved.py \
             tests/test_native_source_endpoint_caps.py \
             tests/test_native_text_graph_support.py \

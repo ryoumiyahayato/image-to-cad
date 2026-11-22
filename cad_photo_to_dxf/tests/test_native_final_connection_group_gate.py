@@ -5,7 +5,9 @@ from copy import deepcopy
 import numpy as np
 import pytest
 
-from app.native_objects import completion_stages, connection_checkpoint, connections
+from app.native_objects import (
+    completion_stages, connection_adoption, connection_checkpoint, connections,
+)
 from app.native_objects.completion_stages import (
     _finalize_complete_connection_groups,
     _quarantine_native_duplicate_groups,
@@ -154,26 +156,21 @@ def test_both_entries_reconcile_late_refusal_and_keep_old_entities(tmp_path, mon
     proposals = first + second
     source = np.full((200, 200), 255, np.uint8)
     before = deepcopy([proposals, old])
-    module = completion_stages if entry == "ordinary" else connection_checkpoint
-    monkeypatch.setattr(module, "_existing_arc_overlap",
+    monkeypatch.setattr(connection_adoption, "_existing_arc_overlap",
                         lambda obj, _: [{"existing_id": "late-arc-conflict"}] if obj["id"] == first[1]["id"] else [])
+    monkeypatch.setattr(connection_adoption, "_whole_line_responsibility",
+                        lambda *args: {"pass": True, "old_line_coverage": {
+                            "already_complete_within_existing_line_tolerances": False}})
     if entry == "ordinary":
         monkeypatch.setattr(connections, "extract_connections",
                             lambda *args, **kwargs: {"objects": proposals, "uncertainties": []})
-        # The existing ordinary branch never retires a line, so use an old line
-        # clear of the proposals and exercise the independent late arc refusal.
-        old["geometry"] = {"start": [150, 150], "end": [170, 150]}
-        before = deepcopy([proposals, old])
         result = completion_stages.complete_connections_without_unresolved_retirement(
             source, [0, 0, 200, 200], "s" * 64, [old], tmp_path / "ordinary")
         assert result["all_existing_native_entities_retained"]
     else:
-        monkeypatch.setattr(connection_checkpoint, "_whole_line_responsibility",
-                            lambda *args: {"pass": True, "old_line_coverage": {
-                                "already_complete_within_existing_line_tolerances": False}})
         result = connection_checkpoint.adopt_checkpoint_paths(source, proposals, [old])
-        assert not result["retired_ids"]
-        assert result["final_complete_group_gate"]["rolled_back_retired_ids"] == [old["id"]]
+    assert not result["retired_ids"]
+    assert result["final_complete_group_gate"]["rolled_back_retired_ids"] == [old["id"]]
     assert [obj["id"] for obj in result["objects"]] == [obj["id"] for obj in second]
     assert [row["pass"] for row in result["final_complete_group_gate"]["groups"]] == [False, True]
     assert [proposals, old] == before

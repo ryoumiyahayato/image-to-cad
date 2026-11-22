@@ -9,8 +9,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import os
 from pathlib import Path
+from .evidence_paths import relative_evidence_path
 import shutil
 import time
 
@@ -278,13 +278,13 @@ def refine_text_blocks(
                 else old_root / alternative["raw_tsv"]
             )
             alternative["raw_artifact"] = {
-                "path": os.path.relpath(raw, output),
+                "path": relative_evidence_path(raw, output),
                 "sha256": base._sha(raw) if raw.is_file() else None,
                 "status": "SAVED_RAW_TSV"
                 if raw.is_file()
                 else "UPSTREAM_JSON_ONLY_RAW_EXTERNAL_REFERENCE",
             }
-            alternative["raw_tsv"] = os.path.relpath(raw, output)
+            alternative["raw_tsv"] = relative_evidence_path(raw, output)
     result["region_evidence_roots"] = {r["id"]: "." for r in result["regions"]}
     records, passes = [], []
     for index, plan in enumerate(plans):

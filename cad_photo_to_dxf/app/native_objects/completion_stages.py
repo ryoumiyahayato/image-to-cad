@@ -721,7 +721,6 @@ def complete_connections_without_unresolved_retirement(
 ):
     from .connections import (
         extract_connections,
-        _retirement_proposals,
         _text_boxes,
         _dense_geometry,
         _support,
@@ -761,24 +760,16 @@ def complete_connections_without_unresolved_retirement(
         discovery=raw,
         binding=(payload or revision or {}).get("raw_discovery_evidence"),
     )
-    quarantine = _quarantine_native_duplicate_groups(raw["objects"], objects)
-    quarantined_ids = set(quarantine["quarantined_ids"])
-    members = _existing_line_members(objects)
-    adopted = []
-    decisions = []
+    # The ordinary path shares the already source-certified whole-LINE
+    # replacement rule with bounded continuation. Old final adoption is never
+    # imported, and uncertain or partial old ownership remains pending.
+    from .connection_adoption import adopt_connection_paths
+
     distance_fields = {}
+    additional_reasons = {}
+    current_rechecks = {}
     for proposal in raw["objects"]:
-        if proposal["id"] in quarantined_ids:
-            responsibility = _connection_path_responsibility(gray, proposal, objects)
-            decisions.append({"id": proposal["id"], "adopted": False, **responsibility,
-                              "decision": "PENDING_NATIVE_DUPLICATE_SOURCE_GROUP",
-                              "reasons": [*responsibility["reasons"], "SOURCE_GROUP_HAS_DUPLICATE_NATIVE_SEGMENTS"],
-                              "existing_entities_modified": 0})
-            continue
-        responsibility = _connection_path_responsibility(gray, proposal, [*objects, *adopted])
-        reasons = list(responsibility["reasons"])
-        if responsibility["existing_adequate_ids"]:
-            reasons.append("EXISTING_COMPLETE_PATH_ALREADY_PRESENT_NO_DUPLICATE")
+        reasons = []
         current_recheck = None
         if revision is not None:
             import cv2
@@ -829,48 +820,22 @@ def complete_connections_without_unresolved_retirement(
                 ],
                 "old_text_context_not_relabelled_as_current": True,
             }
-        if proposal["source_evidence"].get("retirement_proposals"):
-            reasons.append("EXISTING_SOURCE_LINE_RETIREMENT_NOT_CERTIFIED_COMPLETE")
-        overlap, _ = _retirement_proposals(proposal["geometry"], members)
-        if overlap:
-            reasons.append("EXISTING_NATIVE_LINE_OR_BLOCK_MEMBER_OVERLAP")
-        arc_overlap = _existing_arc_overlap(proposal, objects)
-        if arc_overlap:
-            reasons.append("EXISTING_NATIVE_ARC_OVERLAP")
-        # This is an additional whole-object responsibility gate, not a
-        # relaxation of source tolerances. All existing entities are retained.
-        decisions.append(
-            {
-                "id": proposal["id"],
-                "adopted": not reasons,
-                "reasons": reasons,
-                "existing_entities_modified": 0,
-                "overlap_records": overlap,
-                "arc_overlap_records": arc_overlap,
-                "existing_adequate_ids": responsibility["existing_adequate_ids"],
-                "shared_source_core_checks": responsibility["shared_source_core_checks"],
-                "revision_current_source_and_text_recheck": current_recheck,
-            }
-        )
-        if not reasons:
-            adopted.append(copy.deepcopy(proposal))
-    final_groups = _finalize_complete_connection_groups(raw["objects"], objects, adopted, decisions)
-    adopted, decisions = final_groups["objects"], final_groups["decisions"]
+        additional_reasons[proposal["id"]] = reasons
+        current_rechecks[proposal["id"]] = current_recheck
+    adoption = adopt_connection_paths(
+        gray, raw["objects"], objects, additional_reasons=additional_reasons,
+    )
+    for row in adoption["decisions"]:
+        row["revision_current_source_and_text_recheck"] = current_rechecks[row["id"]]
+        row["existing_entities_modified"] = len(row["retired_ids"])
     result = {
-        "objects": adopted,
+        **adoption,
         "raw_candidate_count": len(raw["objects"]),
-        "uncertainties": list(raw["uncertainties"])
-        + [
-            {"reason": "CONNECTION_EDIT_RESPONSIBILITY_PENDING", **d}
-            for d in decisions
-            if not d["adopted"]
-        ],
-        "decisions": decisions,
+        "uncertainties": list(raw["uncertainties"]) + adoption["uncertainties"],
         "replay": replay,
-        "all_existing_native_entities_retained": True,
-        "native_duplicate_group_quarantine": quarantine,
-        "final_complete_group_gate": {key: value for key, value in final_groups.items()
-                                      if key not in ("objects", "decisions")},
+        "all_existing_native_entities_retained": not adoption["retired_ids"],
+        "retained_existing_ids": [obj["id"] for obj in objects
+                                  if obj["id"] not in set(adoption["retired_ids"])],
         "dashed_gaps_joined": False,
         "engineering_stroke_identity_proven": False,
         "status": "LOCAL_SOURCE_PATH_CANDIDATES_REQUIRE_SAVED_DXF_AUDIT",
@@ -878,3 +843,4 @@ def complete_connections_without_unresolved_retirement(
     }
     save_json(out / "completion_result.json", result)
     return result
+

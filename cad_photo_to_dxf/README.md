@@ -1,10 +1,21 @@
 # Image to CAD（开发预览）
 
+> **2026-11-22 当前状态：0.3.0-dev / LOCAL_NO_GO。** 本应用已有正式 `native-objects` CLI／GUI、NativeJobManager／worker 与实际原生 DXF 导出；legacy 作为显式选项保留。当前产品目标是完整、独立可编辑的原生二维 CAD 对象，见 [产品合同](../docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) 和 [当前任务](../docs/project/CURRENT_TASK.md)。
+>
+> 最新主 DXF 实际执行于 `6225980503c3627f8f5fab3fe82eab78e10c2922`（377 正式实体、48 REVIEW）；Windows 实际构建／执行于 `4bf6554526e9f247060a1a3a493bb4717c4c9ad5`，7 项适用 CI 成功，Windows 2235 passed／8 skipped，源码和实际 EXE 各输出 5 LINE＋1 TEXT，开发安装器已取得。两个提交只差测试夹具常量与注释，包内 60 个生产源码文件的 Git 内容完全相同，不能称为同一提交。新主图已重新渲染及直接核对旧内容；既有 GUI 证据仍绑定 `2adc3ee` 原文件，通过实体、BLOCK 与 XDATA 精确对应复用，兼容仍为 LIMITED。本轮单一合入入口为 [PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45)，合入状态与最新 HEAD 以 PR 记录和远端核对为准。版本、文件、失败历史与限制见 [本轮简报](../docs/native/QUARTER_NATIVE_EXE_20261122.md)。
+>
+> 从源码运行请以 [原生复现说明](../docs/native/REPRODUCE.md) 为准；Windows 随包 OCR／模型／字体与 smoke 见 [Windows 原生检查](../docs/native/WINDOWS_NATIVE_SMOKE.md)。完整图纸质量、复杂文字／符号、跨 CAD 完整性、工程师工时等仍未通过；实际打包成功不改为正式 Release 或产品 GO。
+
+<details>
+<summary>2026-11-20 入口历史快照（已由上述现状取代）</summary>
+
 > **2026-11-20 当前状态：0.3.0-dev / LOCAL_NO_GO。** 本目录是保留的公开应用基线，不是最近私有完整对象研究的已合并版本。当前唯一产品目标是完整、独立可编辑的原生二维 CAD 对象，参见源码仓库的 [产品基准](../docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)；目录包另携带 `docs/product/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md` 与 `docs/product/product_status.generated.json`。
 >
 > GUI 和 CLI 仍经过 `ProductionProcessingService.process_page`，从 `FinalStructure` 导出 DXF。新私有 `app/native_objects` 尚未接入。默认保存优先 DXF；DWG 需用户显式选择及外部转换器。普通文字、多行注释、完整框、墙/门/交汇和目标 CAD 往返仍有未完成验证，不能仅凭程序成功导出就认为对象已正确重建。
 >
 > Windows EXE 干净环境、Android APK、DWG 往返和工程师修图时间减半均未取得当前流程的验收。GUI、CLI 和报告显示研发状态；正式 Release 对开发版本或非 GO 状态拒绝发布。当前构建脚本可用于开发验证，不代表已交付软件。
+
+</details>
 
 ## 保留应用的历史功能说明（SUPERSEDED，2026-10-14）
 
@@ -94,7 +105,7 @@ DWG 仍由本机安装的 ODA File Converter 从 DXF 转换。ODA 不随程序�
 
 纸面毫米不是工程模型尺寸。没有独立模型尺度校准时，不得把 `paper_mm` 解释为真实施工尺寸。
 
-## 历史目标环境（当前 Windows 构建仍需实测）
+## 历史目标环境（2026-10-14，不代表当前验证范围）
 
 - Windows 10/11 x64；
 - Python 3.11+；

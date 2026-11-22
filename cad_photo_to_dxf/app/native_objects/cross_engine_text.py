@@ -12,8 +12,8 @@ import copy
 import hashlib
 import json
 import math
-import os
 from pathlib import Path
+from .evidence_paths import relative_evidence_path
 import time
 
 from . import text_regions as base, text_line_domains as domains
@@ -119,7 +119,7 @@ def _read_tesseract_evidence(region, text_data, upstream, output, image):
         provenance = {
             **base.raw_observation_provenance(meta),
             "specification": spec,
-            "raw_tsv": os.path.relpath(raw, output),
+            "raw_tsv": relative_evidence_path(raw, output),
             "raw_tsv_sha256": base._sha(raw),
             "metadata_sha256": base._sha(metadata),
             "engine_command": meta.get("command"),
@@ -140,10 +140,10 @@ def _read_tesseract_evidence(region, text_data, upstream, output, image):
                 "status": "COMPLETED",
                 "words": selected,
                 "all_words": words,
-                "raw_tsv": os.path.relpath(raw, output),
+                "raw_tsv": relative_evidence_path(raw, output),
                 "observation_key": key,
                 "raw_artifact": {
-                    "path": os.path.relpath(raw, output),
+                    "path": relative_evidence_path(raw, output),
                     "sha256": base._sha(raw),
                     "status": "SAVED_RAW_TSV",
                 },
@@ -457,7 +457,7 @@ def refine_cross_engine(
     result = copy.deepcopy(text_data)
     by_id = {r["id"]: r for r in result["regions"]}
     old_roots = {
-        r["id"]: os.path.relpath(
+        r["id"]: relative_evidence_path(
             (
                 upstream.parent
                 / text_data.get("region_evidence_roots", {}).get(r["id"], ".")
@@ -520,7 +520,7 @@ def refine_cross_engine(
                 "region_id": region["id"],
                 "context": context,
                 "source_array_sha256": base.source_array_sha256(crop),
-                "source_png": os.path.relpath(image_path, output),
+                "source_png": relative_evidence_path(image_path, output),
                 "source_png_sha256": base._sha(image_path),
                 "source_domain_audit": source_audit,
                 "raw_model_output": raw,

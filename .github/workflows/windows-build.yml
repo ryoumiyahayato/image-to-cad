@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Check out exact commit
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -71,24 +73,32 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build portable application
+        id: portable
         shell: pwsh
-        run: pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+        run: |
+          python scripts/prepare_windows_native_runtime.py --seven-zip "C:/Program Files/7-Zip/7z.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Smoke test portable application
         shell: pwsh
+        working-directory: ${{ runner.temp }}
         run: |
           Set-ExecutionPolicy -Scope Process Bypass -Force
-          ./scripts/windows_smoke.ps1 `
-            -Executable ./dist/CADPhotoToDXF/CADPhotoToDXF.exe `
-            -Sample ./samples/test.jpg `
+          & "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/scripts/windows_smoke.ps1" `
+            -Executable "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/dist/CADPhotoToDXF/CADPhotoToDXF.exe" `
+            -Sample "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/samples/test.jpg" `
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-portable-smoke" `
-            -ExpectedVersion $env:VERSION
+            -ExpectedVersion $env:VERSION `
+            -NativeSourceMain "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/main.py"
 
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup --no-progress -y
 
       - name: Build installer from canonical version
+        id: installer
         shell: pwsh
         run: |
           $fileVersion = (python -c "from app import __version__; from scripts.versioning import parse_version; print('.'.join(map(str, parse_version(__version__))))").Trim()
@@ -108,11 +118,28 @@ jobs:
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke" `
             -ExpectedVersion $env:VERSION
 
-      - name: Upload build artifact
+      - name: Upload portable build artifact
+        if: always() && steps.portable.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-Windows-${{ steps.version.outputs.value }}
+          name: CADPhotoToDXF-Windows-Portable-${{ steps.version.outputs.value }}
           if-no-files-found: error
+          path: cad_photo_to_dxf/dist/CADPhotoToDXF/**
+
+      - name: Upload installer artifact
+        if: always() && steps.installer.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-Windows-Installer-${{ steps.version.outputs.value }}
+          if-no-files-found: error
+          path: cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
+
+      - name: Upload native source versus EXE evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-native-smoke-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: ignore
           path: |
-            cad_photo_to_dxf/dist/CADPhotoToDXF/**
-            cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
+            ${{ runner.temp }}/cad-photo-portable-smoke/native/**
+            !${{ runner.temp }}/cad-photo-portable-smoke/native/detached-package/**

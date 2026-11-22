@@ -315,3 +315,29 @@ def test_current_text_memory_must_match_the_saved_stage(tmp_path):
     texts["regions"][0]["text"] = "unbound change"
     with pytest.raises(ValueError, match="CURRENT_TEXT_ARTIFACT_CONTENT_MISMATCH"):
         _current_verify(fixture, root, path, texts)
+
+
+def test_fresh_source_contact_evidence_survives_json_then_detects_real_drift(tmp_path):
+    from app.native_objects.text_regions import _source_label_contacts
+
+    fixture, root, path, texts = _current_job(tmp_path)
+    labels = np.zeros(fixture["image"].shape, dtype=np.int32)
+    labels[fixture["image"] == 0] = 1
+    contacts = _source_label_contacts(
+        labels, fixture["parameters"]["roi"], [5, 3, 12, 9], {1}
+    )
+    assert contacts and {row["edge"] for row in contacts} == {
+        "left", "right", "top", "bottom"
+    }
+    texts["regions"][0]["completeness_evidence"]["current_boundary_assessment"] = {
+        "actual_source_component_contacts_effective_input": contacts,
+    }
+    _write(path, texts)
+    assert texts == json.loads(path.read_text())
+    verified = _current_verify(fixture, root, path, texts)
+    assert verified["validated"] and verified["new_OCR_calls"] == 0
+
+    # No late cold-read or permissive comparison may hide a changed live count.
+    contacts[0]["component_pixel_counts"][0][1] += 1
+    with pytest.raises(ValueError, match="CURRENT_TEXT_ARTIFACT_CONTENT_MISMATCH"):
+        _current_verify(fixture, root, path, texts)
