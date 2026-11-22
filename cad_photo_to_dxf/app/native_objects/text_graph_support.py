@@ -450,6 +450,58 @@ def complete_crossing_group(context, edge_ids):
     return context["complete_crossing_routes"].get(tuple(sorted(edge_ids)))
 
 
+def unlocalized_compact_path_protection(context, points, *, straight_tolerance_px):
+    """Keep small bent ink pending even when OCR did not discover its label.
+
+    A natural-end chain proves continuity, not that a compact glyph has become
+    a drawing line. Use current formal text as a paper-pixel scale reference;
+    sparse OCR coverage may require the same-page reference set. A monotone
+    near-straight source stroke remains eligible under the existing geometric
+    tolerance. This does not recognize any character or authorize geometry.
+    """
+    points = np.asarray(points, float)
+    lo, hi = points.min(axis=0), points.max(axis=0)
+    box = [float(lo[0]), float(lo[1]), float(hi[0] + 1), float(hi[1] + 1)]
+    references = context["references"]
+    nearby = [row for row in references if _box_distance(row["bbox_xyxy_px"], box)
+              <= POLICY["local_reference_distance_glyph_heights"] * row["glyph_height_px"]]
+    selected = nearby or references
+    evidence = {"schema": "unlocalized-compact-source-ink-protection-v1",
+                "source_path_bbox_xyxy_px": box,
+                "reference_scope": "NEARBY_FORMAL_TEXT" if nearby else "SAME_PAGE_FORMAL_TEXT",
+                "formal_text_references": selected, "pending": False,
+                "new_character_recognition": False, "geometry_adoption_authorized": False}
+    if not selected:
+        evidence["reason"] = "NO_CURRENT_FORMAL_TEXT_SCALE_REFERENCE"
+        return evidence
+    height = float(np.median([row["glyph_height_px"] for row in selected]))
+    extent = float(max(hi - lo + 1))
+    limit = POLICY["text_component_height_ratio"][1] * height
+    evidence.update(reference_glyph_height_px=height,
+                    maximum_source_path_extent_px=extent,
+                    current_glyph_scale_extent_limit_px=limit)
+    if extent > limit:
+        evidence["reason"] = "SOURCE_PATH_EXCEEDS_COMPACT_GLYPH_SCALE"
+        return evidence
+    chord = points[-1] - points[0]
+    length = float(np.linalg.norm(chord))
+    direction = chord / length if length else np.zeros(2)
+    along = (points - points[0]) @ direction
+    normal = np.array([-direction[1], direction[0]])
+    residual = float(np.max(np.abs((points - points[0]) @ normal)))
+    monotone = bool(length and np.all(np.diff(along) >= -1e-9))
+    evidence["near_straight_source_stroke"] = {
+        "maximum_axis_deviation_px": residual,
+        "existing_source_perpendicular_tolerance_px": float(straight_tolerance_px),
+        "source_walk_monotone_along_endpoint_axis": monotone,
+        "pass": monotone and residual <= straight_tolerance_px,
+    }
+    evidence["pending"] = not evidence["near_straight_source_stroke"]["pass"]
+    evidence["reason"] = ("UNLOCALIZED_COMPACT_CURVED_INK_MAY_BE_GLYPH"
+                          if evidence["pending"] else "COMPLETE_NEAR_STRAIGHT_SOURCE_STROKE")
+    return evidence
+
+
 def _source_adjacencies(obj):
     points = obj.get("source_evidence", {}).get("source_path_points", [])
     return {tuple(sorted((tuple(a), tuple(b)))) for a, b in zip(points, points[1:]) if a != b}
@@ -467,7 +519,7 @@ def prove_shared_core_overlap(gray, candidate, other):
 
     from scipy.spatial import cKDTree
 
-    from .connections import _dense_geometry, _SourceGraph, _thinning
+    from .connections import _dense_geometry, _SourceGraph, _thinning, POLICY as GRAPH_POLICY
 
     result = {"schema": "current-source-shared-crossing-core-v1", "pass": False,
               "candidate_id": candidate.get("id"), "other_id": other.get("id"),
@@ -493,18 +545,46 @@ def prove_shared_core_overlap(gray, candidate, other):
         if len(crop) != 4 or len(roi) != 4 or not all(isinstance(v, int) for v in crop + roi):
             continue
         x0, y0, x1, y1 = crop
-        if (not (0 <= x0 < x1 <= gray.shape[1] and 0 <= y0 < y1 <= gray.shape[0])
-                or (x1 - x0) * (y1 - y0) > 2_000_000):
+        if not (0 <= x0 < x1 <= gray.shape[1] and 0 <= y0 < y1 <= gray.shape[0]):
             continue
         source_ink = gray[y0:y1, x0:x1] < POLICY["source_threshold"]
         if _array_sha(source_ink.astype(np.uint8)) != recorded.get("source_binary_crop_sha256"):
             continue
-        scope = tuple(crop + roi)
+        if any(_digest(record.get("source_core_points")) != key for record in (maps[0][key], maps[1][key])):
+            continue
+        replay_crop, replay_roi = list(crop), list(roi)
+        if (x1 - x0) * (y1 - y0) > 2_000_000:
+            # The same small four-port core may have been found in a full-page
+            # graph. Verify that entire original crop above, then bound only
+            # this independent core recheck by its witnessed ports plus the
+            # existing graph context. Do not drop ports, source branches or
+            # shared-adjacency checks to make a large graph fit the limit.
+            try:
+                witnessed = np.asarray(recorded["source_core_points"] + [
+                    point for port in recorded["external_port_source_tangents"] for point in port
+                ], float)
+            except (KeyError, TypeError, ValueError):
+                continue
+            if (witnessed.ndim != 2 or witnessed.shape[1] != 2 or not len(witnessed)
+                    or not np.isfinite(witnessed).all()
+                    or np.any(witnessed < [x0, y0]) or np.any(witnessed >= [x1, y1])):
+                continue
+            margin = GRAPH_POLICY["context_px"]
+            lower = np.maximum(np.floor(witnessed.min(axis=0)).astype(int) - margin, [x0, y0])
+            upper = np.minimum(np.ceil(witnessed.max(axis=0)).astype(int) + margin + 1, [x1, y1])
+            rx0, ry0 = map(int, lower)
+            rx1, ry1 = map(int, upper)
+            if (rx1 - rx0) * (ry1 - ry0) > 2_000_000:
+                continue
+            replay_crop = [rx0, ry0, rx1, ry1]
+            replay_roi = list(replay_crop)
+            source_ink = gray[ry0:ry1, rx0:rx1] < POLICY["source_threshold"]
+        scope = tuple(replay_crop + replay_roi)
         if scope not in reconstructed:
             started = time.process_time()
             skeleton, _ = _thinning(source_ink, started)
-            reconstructed[scope] = _SourceGraph(skeleton, [x0, y0], [], roi, started,
-                source_ink=source_ink, aggregate_core_boxes=[crop])
+            reconstructed[scope] = _SourceGraph(skeleton, replay_crop[:2], [], replay_roi, started,
+                source_ink=source_ink, aggregate_core_boxes=[replay_crop])
         graph = reconstructed[scope]
         nodes = [node for node in graph.nodes.values()
                  if node.get("bounded_shared_source_core", {}).get("core_geometry_sha256") == key
@@ -513,8 +593,6 @@ def prove_shared_core_overlap(gray, candidate, other):
             continue
         node = nodes[0]
         fresh = node["bounded_shared_source_core"]
-        if any(_digest(record.get("source_core_points")) != key for record in (maps[0][key], maps[1][key])):
-            continue
         path_ports = []
         for edges in source_edges:
             ports = [port for port in node["edges"] if tuple(sorted(
@@ -530,6 +608,10 @@ def prove_shared_core_overlap(gray, candidate, other):
                        "source_core_extent_px": fresh["source_core_extent_px"],
                        "measured_stroke_width_px": fresh["measured_stroke_width_px"],
                        "current_source_binary_crop_sha256": fresh["source_binary_crop_sha256"],
+                       "original_bound_source_crop_xyxy_px": crop,
+                       "original_bound_source_binary_crop_sha256": recorded["source_binary_crop_sha256"],
+                       "original_bound_source_crop_reverified": True,
+                       "current_core_replay_crop_xyxy_px": replay_crop,
                        "independent_four_port_pairings": [[list(port) for port in row] for row in path_ports],
                        "source_recomputed": True})
     if covered != shared:
@@ -635,7 +717,7 @@ def _candidate_protection(context, region, component_box, source_label, *, stron
         blocks.append("NO_BOUND_CURRENT_TEXT_SCALE_REFERENCE")
     elif component_box[3] - component_box[1] <= POLICY["text_component_height_ratio"][1] * height:
         blocks.append("SOURCE_COMPONENT_CAN_STILL_BE_CURRENT_SCALE_GLYPH_OR_PUNCTUATION")
-    neighbors, fragmented = [], []
+    neighbors, fragmented, nonlocal_boxes = [], [], []
     x0, y0, x1, y1 = component_box
     h = y1 - y0
     origin = context["graph"].origin
@@ -651,12 +733,36 @@ def _candidate_protection(context, region, component_box, source_label, *, stron
             neighbors.append({"source_component_label": label, "bbox_xyxy_px": list(map(float, b))})
         if (max(x0, b[0]) < min(x1, b[2])
                 and max(b[1] - y1, y0 - b[3], 0) <= 2):
-            fragmented.append({"source_component_label": label, "bbox_xyxy_px": list(map(float, b))})
+            # A page-spanning connected line can have a box around this whole
+            # candidate while contributing no nearby ink. A fragment witness
+            # needs actual pixels in the same two-pixel boundary-gap window.
+            # Boxes are half-open, so include one pixel beyond each gap limit.
+            labels = context["labels"]
+            xa = max(0, math.ceil(x0 - origin[0]))
+            xb = min(labels.shape[1], math.ceil(x1 - origin[0]))
+            ya = max(0, math.ceil(y0 - origin[1]) - 3)
+            yb = min(labels.shape[0], math.ceil(y1 - origin[1]) + 3)
+            yy, xx = np.nonzero(labels[ya:yb, xa:xb] == label)
+            witness = {"source_component_label": label,
+                       "bbox_xyxy_px": list(map(float, b)),
+                       "local_source_pixel_count": len(xx),
+                       "local_source_window_xyxy_px": [
+                           xa + float(origin[0]), ya + float(origin[1]),
+                           xb + float(origin[0]), yb + float(origin[1])],
+                       "maximum_component_boundary_gap_px": 2}
+            if len(xx):
+                witness["local_source_support_bbox_xyxy_px"] = [
+                    float(xx.min() + xa + origin[0]), float(yy.min() + ya + origin[1]),
+                    float(xx.max() + xa + origin[0] + 1), float(yy.max() + ya + origin[1] + 1)]
+                fragmented.append(witness)
+            else:
+                nonlocal_boxes.append(witness)
     if neighbors:
         blocks.append("POSSIBLE_SOURCE_CHARACTER_ROW_RETAINED")
     if fragmented:
         blocks.append("POSSIBLE_FRAGMENTED_CHARACTER_RETAINED")
     evidence.update(source_glyph_row_witnesses=neighbors, fragmented_character_witnesses=fragmented,
+                    nonlocal_component_bbox_contacts=nonlocal_boxes,
                     verified_observations=rows, blocking_reasons=sorted(set(blocks)))
     return evidence
 

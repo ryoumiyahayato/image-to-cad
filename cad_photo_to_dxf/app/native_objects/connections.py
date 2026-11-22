@@ -1463,6 +1463,7 @@ def extract_connections(
         assess_path_text_contact,
         complete_crossing_group,
         prepare_text_support,
+        unlocalized_compact_path_protection,
     )
 
     text_support = prepare_text_support(
@@ -1739,6 +1740,19 @@ def extract_connections(
                 # The bounded straight/short-member route is licensed only by
                 # a freshly proved graphic support relation for this group.
                 continue
+            elif not crossings and (free_pair or mixed_pair):
+                # OCR coverage is incomplete. A compact bent chain without a
+                # discovered text region still needs glyph protection; a
+                # proved crossing group's short members are handled together.
+                protection = unlocalized_compact_path_protection(
+                    text_support, points,
+                    straight_tolerance_px=POLICY["source_perpendicular_px"],
+                )
+                row["unlocalized_text_scale_check"] = protection
+                if protection["pending"]:
+                    row["reason"] = protection["reason"]
+                    uncertainties.append(row)
+                    continue
             protected = [
                 len(n["terminal"].get("loop_pixels", []))
                 for n in (start_node, end_node)

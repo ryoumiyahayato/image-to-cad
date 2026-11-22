@@ -31,8 +31,9 @@ PyInstaller 保留现有 GUI、任务管理和安装器结构，并在 `_interna
 
 ## 产物与判定
 
-- `CADPhotoToDXF-Windows-<version>`：便携目录及成功构建的安装器；内部构建清单绑定具体提交。
-- `Windows-native-smoke-evidence-<checkout SHA>`：实际小图、源码／EXE 输出、任务和冷读结果；检查失败也保存。
+- `CADPhotoToDXF-Windows-Portable-<version>`：完整便携目录，内部构建清单绑定具体提交；成功构建后，即使后续检查失败也保留。
+- `CADPhotoToDXF-Windows-Installer-<version>`：单个 `CADPhotoToDXF-<version>-Setup.exe` 安装器，按安装器实际构建结果独立上传，便于单独下载。开发工作流将它与便携包分开，避免组合附件超过下载渠道的 512 MiB 单文件上限。
+- `Windows-native-smoke-evidence-<checkout SHA>`：实际小图、源码／EXE 输出、任务和冷读结果；检查失败也保存。另保存从实际包内复制的 `native-build.json`、`native-ocr.lock.json` 和 `product_status.generated.json`；成功报告记录这三份文件的 SHA-256，可直接冷读核验提交、资源与产品状态。
 - **构建成功、EXE 原生转换成功、真实四分之一区域质量通过是三个独立结论。** 只按工作流及实际文件记录已经发生的结果，不由本说明提前登记成功。
 
 真实图纸、受控工程资料和完整实验包不进入 Windows 自动测试或公开仓库。

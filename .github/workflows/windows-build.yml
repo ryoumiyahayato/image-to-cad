@@ -98,6 +98,7 @@ jobs:
         run: choco install innosetup --no-progress -y
 
       - name: Build installer from canonical version
+        id: installer
         shell: pwsh
         run: |
           $fileVersion = (python -c "from app import __version__; from scripts.versioning import parse_version; print('.'.join(map(str, parse_version(__version__))))").Trim()
@@ -117,15 +118,21 @@ jobs:
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke" `
             -ExpectedVersion $env:VERSION
 
-      - name: Upload build artifact
+      - name: Upload portable build artifact
         if: always() && steps.portable.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-Windows-${{ steps.version.outputs.value }}
+          name: CADPhotoToDXF-Windows-Portable-${{ steps.version.outputs.value }}
           if-no-files-found: error
-          path: |
-            cad_photo_to_dxf/dist/CADPhotoToDXF/**
-            cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
+          path: cad_photo_to_dxf/dist/CADPhotoToDXF/**
+
+      - name: Upload installer artifact
+        if: always() && steps.installer.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-Windows-Installer-${{ steps.version.outputs.value }}
+          if-no-files-found: error
+          path: cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
 
       - name: Upload native source versus EXE evidence
         if: always()

@@ -11,6 +11,7 @@ import pytest
 from app.native_objects.connections import _SourceGraph, extract_connections
 from app.native_objects.contracts import validate_text_regions
 from app.native_objects.text_graph_support import _source_adjacencies, prove_shared_core_overlap
+from app.native_objects.text_graph_support import unlocalized_compact_path_protection
 
 
 def digest(array):
@@ -212,6 +213,47 @@ def test_complete_multi_crossing_group_emits_all_three_paths_including_sub50_sho
         assert all(row["source_recomputed"] for row in proof["current_core_proofs"])
 
 
+def test_large_parent_crop_rechecks_same_small_core_and_keeps_all_short_ports(tmp_path):
+    local = crossing_fixture()
+    local_paths = target_paths(extract(local, tmp_path / "local"), local[-1])
+    full = list(copy.deepcopy(local))
+    full[0] = np.pad(full[0], ((0, 1240), (0, 1120)), constant_values=255)
+    full[1] = [0, 0, full[0].shape[1], full[0].shape[0]]
+    full[2]["roi_xyxy_px"] = full[1]
+    full[2]["source_size_px"] = full[1][2:]
+    _rebind_changed_source(full)
+    full_paths = target_paths(extract(full, tmp_path / "full"), full[-1])
+    assert len(local_paths) == len(full_paths) == 3
+    assert {o["id"]: o["geometry"] for o in local_paths} == {
+        o["id"]: o["geometry"] for o in full_paths
+    }
+    assert sum(o["source_evidence"]["source_path_length_px"] < 50 for o in full_paths) == 2
+    pairs = [(a, b) for i, a in enumerate(full_paths) for b in full_paths[i + 1:]
+             if _source_adjacencies(a) & _source_adjacencies(b)]
+    assert len(pairs) == 2
+    for a, b in pairs:
+        proof = prove_shared_core_overlap(full[0], a, b)
+        assert proof["pass"]
+        for core in proof["current_core_proofs"]:
+            x0, y0, x1, y1 = core["original_bound_source_crop_xyxy_px"]
+            assert (x1 - x0) * (y1 - y0) > 2_000_000
+            x0, y0, x1, y1 = core["current_core_replay_crop_xyxy_px"]
+            assert (x1 - x0) * (y1 - y0) < 2_000_000
+            assert core["original_bound_source_crop_reverified"]
+            assert len(core["independent_four_port_pairings"]) == 2
+            assert len({tuple(port) for pair in core["independent_four_port_pairings"]
+                        for port in pair}) == 4
+    a, b = pairs[0]
+    changed_source = full[0].copy()
+    changed_source[-10, -10] = 0  # Outside replay crop, inside original binding.
+    assert not prove_shared_core_overlap(changed_source, a, b)["pass"]
+    altered = copy.deepcopy(a)
+    for row in altered["source_evidence"]["crossing_evidence"]:
+        if row.get("bounded_shared_source_core"):
+            row["bounded_shared_source_core"]["source_core_points"][0][0] += 1
+    assert not prove_shared_core_overlap(full[0], altered, b)["pass"]
+
+
 def test_one_crossing_or_an_unrepresented_short_member_does_not_claim_a_complete_graphic_group(tmp_path):
     item = crossing_fixture(missing_bar=True)
     result = extract(item, tmp_path)
@@ -231,6 +273,103 @@ def test_real_dot_above_source_stroke_keeps_fragmented_character_protected_with_
     result = extract(item, tmp_path)
     assert not target_paths(result, box)
     assert any("POSSIBLE_FRAGMENTED_CHARACTER_RETAINED" in str(row) for row in result["uncertainties"])
+
+
+def _rebind_changed_source(item):
+    gray, _, data, token, _, _ = item
+    data["source_array_sha256"] = token["source_array_sha256"] = digest(gray)
+    for observation in token["observations"]:
+        x0, y0, x1, y1 = observation["specification"]["crop_xyxy_px"]
+        observation["specification"]["crop_array_sha256"] = digest(gray[y0:y1, x0:x1])
+
+
+def test_large_enclosing_component_box_without_local_ink_is_not_a_fragment_witness(tmp_path):
+    item = fixture()
+    cv2.rectangle(item[0], (1, 1), (378, 258), 0, 1)
+    _rebind_changed_source(item)
+    result = extract(item, tmp_path)
+    target = target_paths(result, item[-1])
+    assert len(target) == 1
+    protection = target[0]["source_evidence"]["text_graphic_support"]["candidate_relations"][0]["text_protection_checks"]
+    assert not protection["fragmented_character_witnesses"]
+    assert protection["nonlocal_component_bbox_contacts"]
+    assert all(row["local_source_pixel_count"] == 0
+               for row in protection["nonlocal_component_bbox_contacts"])
+
+
+def test_enclosing_frame_in_full_roi_does_not_change_a_complete_local_path(tmp_path):
+    full = fixture()
+    cv2.rectangle(full[0], (1, 1), (378, 258), 0, 1)
+    _rebind_changed_source(full)
+    local = list(copy.deepcopy(full))
+    local[1] = [40, 30, 310, 225]
+    local[2]["roi_xyxy_px"] = local[1]
+    a = target_paths(extract(full, tmp_path / "full"), full[-1])
+    b = target_paths(extract(local, tmp_path / "local"), local[-1])
+    assert len(a) == len(b) == 1
+    assert a[0]["geometry"] == b[0]["geometry"]
+    assert a[0]["source_evidence"]["source_path_points"] == b[0]["source_evidence"]["source_path_points"]
+
+
+def test_real_fragment_at_lower_two_pixel_gap_remains_protected(tmp_path):
+    item = fixture()
+    box = item[-1]
+    item[0][box[3] + 2:box[3] + 4, box[2] - 2:box[2]] = 0
+    _rebind_changed_source(item)
+    result = extract(item, tmp_path)
+    assert not target_paths(result, box)
+    protections = [relation["text_protection_checks"]
+                   for row in result["uncertainties"]
+                   for relation in row.get("text_graphic_support", {}).get("candidate_relations", [])]
+    assert any("POSSIBLE_FRAGMENTED_CHARACTER_RETAINED" in row["blocking_reasons"]
+               and any(fragment["local_source_pixel_count"] > 0
+                       for fragment in row["fragmented_character_witnesses"])
+               for row in protections)
+
+
+def test_unlocalized_small_curved_ink_stays_pending_using_current_page_text_scale(tmp_path):
+    item = list(fixture())
+    # No OCR candidate covers this disconnected turning stroke. Its continuity
+    # and >50 px length alone must not reinterpret a possible label as a line.
+    item[0] = np.pad(item[0], ((0, 400), (0, 400)), constant_values=255)
+    curve = np.array([[500, 400], [489, 400], [486, 406], [489, 410],
+                      [499, 414], [499, 420], [494, 426], [486, 424]], np.int32)
+    cv2.polylines(item[0], [curve], False, 0, 1)
+    item[1] = [0, 0, item[0].shape[1], item[0].shape[0]]
+    item[2]["source_size_px"] = [item[0].shape[1], item[0].shape[0]]
+    item[2]["roi_xyxy_px"] = item[1]
+    _rebind_changed_source(item)
+    result = extract(item, tmp_path)
+    box = [486, 400, 501, 427]
+    assert not target_paths(result, box)
+    rejected = [row for row in result["uncertainties"]
+                if row["reason"] == "UNLOCALIZED_COMPACT_CURVED_INK_MAY_BE_GLYPH"]
+    assert len(rejected) == 1
+    proof = rejected[0]["unlocalized_text_scale_check"]
+    assert proof["reference_scope"] == "SAME_PAGE_FORMAL_TEXT"
+    assert proof["formal_text_references"][0]["object_id"] == "reference-label"
+    assert proof["reference_glyph_height_px"] == 20
+    assert not proof["near_straight_source_stroke"]["pass"]
+
+
+def test_short_monotone_slanted_stroke_is_not_rejected_at_compact_glyph_scale():
+    context = {"references": [{"object_id": "source-verified-reference",
+                "bbox_xyxy_px": [0, 0, 50, 28], "glyph_height_px": 28}]}
+    points = np.array([[150, 100], [154, 108], [159, 115], [162, 123],
+                       [166, 130], [170, 137], [174, 143]], float)
+    proof = unlocalized_compact_path_protection(context, points, straight_tolerance_px=2)
+    assert proof["maximum_source_path_extent_px"] <= proof["current_glyph_scale_extent_limit_px"]
+    assert proof["near_straight_source_stroke"]["pass"]
+    assert not proof["pending"]
+
+
+def test_unlocalized_guard_does_not_invent_a_scale_without_formal_text():
+    proof = unlocalized_compact_path_protection(
+        {"references": []}, np.array([[10, 10], [25, 10], [10, 25]], float),
+        straight_tolerance_px=2,
+    )
+    assert proof["reason"] == "NO_CURRENT_FORMAL_TEXT_SCALE_REFERENCE"
+    assert not proof["pending"]
 
 
 @pytest.mark.parametrize("restore_caps", [False, True])

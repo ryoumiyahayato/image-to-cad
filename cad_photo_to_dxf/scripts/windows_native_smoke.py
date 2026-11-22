@@ -184,6 +184,15 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     shutil.copytree(original_executable.parent, package)
     executable = package / original_executable.name
     bundle = package / "_internal"
+    # Keep the actual built metadata beside the small smoke evidence so it can
+    # be cold-read without downloading the much larger application package.
+    metadata_files = (
+        "resources/native-build.json",
+        "resources/ocr/tesseract/native-ocr.lock.json",
+        "docs/product/product_status.generated.json",
+    )
+    for relative in metadata_files:
+        shutil.copyfile(bundle / relative, work / Path(relative).name)
     manifest = json.loads((bundle / "resources/native-build.json").read_text(encoding="utf-8"))
     product = json.loads((bundle / "docs/product/product_status.generated.json").read_text(encoding="utf-8"))
     if manifest["application_version"] != expected_version or product["status"] != "LOCAL_NO_GO" or product["running_pipeline"] != "native-objects":
@@ -237,6 +246,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
+        "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": source_sha, "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": source_result, "exe_result": exe_result,
