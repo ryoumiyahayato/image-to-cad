@@ -50,6 +50,8 @@ def mark(e, o):
     data = {"id": o["id"], "kind": o["kind"]}
     if o.get("source_evidence", {}).get("circle_endpoint_contacts"):
         data["circle_endpoint_contacts"] = True
+    if o.get("source_evidence", {}).get("circle_white_gap_protection"):
+        data["circle_white_gap_protection"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -919,6 +921,10 @@ def cold_audit(path, gray, roi, dpi, out):
 
     circle_contact_checks = cold_circle_endpoint_contacts(path, doc, gray, roi, dpi)
     checks.extend(circle_contact_checks)
+    from .circle_white_gap_protection import cold_circle_white_gaps
+
+    circle_white_gap_checks = cold_circle_white_gaps(path, doc, gray, roi, dpi)
+    checks.extend(circle_white_gap_checks)
     retrace_proof = certify_saved_retraces(
         doc,
         before,
@@ -1157,6 +1163,8 @@ def cold_audit(path, gray, roi, dpi, out):
         }
     if circle_contact_checks:
         report["circle_endpoint_contact_checks"] = circle_contact_checks
+    if circle_white_gap_checks:
+        report["circle_white_gap_protection_checks"] = circle_white_gap_checks
     save_json(out, report)
     return report
 

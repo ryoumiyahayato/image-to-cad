@@ -400,11 +400,16 @@ def complete_circular_markers(
     if _digest(prior_objects) != before:
         raise AssertionError("CIRCULAR_ADOPTION_MUTATED_PRIOR_OBJECTS")
     from .circle_endpoint_contacts import restore_circle_endpoint_contacts
+    from .circle_white_gap_protection import protect_circle_white_gaps
 
+    active_objects = [old for old in prior_objects if old["id"] not in retired] + objects
+    white_gaps = protect_circle_white_gaps(gray, roi, active_objects)
+    gap_updates = {obj["id"]: obj for obj in white_gaps["replacements"]}
     contacts = restore_circle_endpoint_contacts(
-        gray, roi, [old for old in prior_objects if old["id"] not in retired] + objects,
+        gray, roi, [gap_updates.get(obj["id"], obj) for obj in active_objects],
     )
     pending_contacts = [row for row in contacts["decisions"] if not row["accepted"]]
+    pending_contacts += white_gaps["pending_relations"]
     pending_circle_ids = {row["circle_id"] for row in pending_contacts}
     for obj in objects:
         obj["source_evidence"]["external_endpoint_contact_review"] = {
@@ -412,6 +417,11 @@ def complete_circular_markers(
             "pending_contacts": [row for row in pending_contacts if row["circle_id"] == obj["id"]],
             "complete_network_connectivity_claimed": False,
             "pending_is_not_a_claim_that_source_pixels_should_be_connected": True,
+            "protected_source_white_gaps": [
+                end for line in white_gaps["replacements"]
+                for end in line["source_evidence"]["circle_white_gap_protection"]["ends"]
+                if end["circle_id"] == obj["id"]
+            ],
         }
         if obj["id"] in pending_circle_ids and obj["kind"] == "CIRCULAR_MARKER":
             obj["status"] = "COMPLETE_CIRCULAR_COMPONENTS_EXTERNAL_CONTACT_PENDING"
@@ -443,6 +453,7 @@ def complete_circular_markers(
         "objects": objects, "retired_ids": sorted(retired), "retirement_records": retirement_records,
         "uncertainties": uncertainties, "decisions": decisions, "discovery": discovery,
         "external_endpoint_contacts": contacts,
+        "source_white_gap_protection": white_gaps,
         "prior_objects_sha256_before": before, "prior_objects_sha256_after": _digest(prior_objects),
         "source_pixels_modified": False,
         "summary": {
@@ -460,6 +471,7 @@ def complete_circular_markers(
             "new_Tesseract_calls": new_tesseract_calls, "new_model_calls": new_model_calls,
             "circle_and_text_counted_as_one_complete_marker": True,
             "external_endpoint_contacts": contacts["summary"],
+            "source_white_gap_protection": white_gaps["summary"],
             "component_complete_markers_with_external_contact_pending": composition_pending,
             "component_complete_markers_without_observed_external_contact_pending": compositions - composition_pending,
             "pending_external_contact_circle_ids": sorted(pending_circle_ids),

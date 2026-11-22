@@ -157,6 +157,12 @@ def _terminal_cells(obj, end):
 
 
 def _offer(gray, roi, obj, end, endpoint, direction, marker):
+    # A separately certified source white gap is a proved non-connection,
+    # not an unresolved contact to be repaired or snapped back onto the ring.
+    gap_proof = obj.get("source_evidence", {}).get("circle_white_gap_protection", {})
+    if any(row.get("endpoint_number") == end and row.get("circle_id") == marker["id"]
+           for row in gap_proof.get("ends", [])):
+        return None
     geometry = _circle(marker)
     center, radius = np.asarray(geometry["center"], float), float(geometry["radius_px"])
     radial = endpoint - center

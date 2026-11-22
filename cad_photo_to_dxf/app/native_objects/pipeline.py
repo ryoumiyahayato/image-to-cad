@@ -1569,9 +1569,14 @@ def run_native_objects(
             objects += circular_markers["objects"]
             endpoint_updates = {
                 obj["id"]: obj for obj in circular_markers.get(
-                    "external_endpoint_contacts", {}
+                    "source_white_gap_protection", {}
                 ).get("replacements", [])
             }
+            endpoint_updates.update({
+                obj["id"]: obj for obj in circular_markers.get(
+                    "external_endpoint_contacts", {}
+                ).get("replacements", [])
+            })
             objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
             issues = (
                 geometry["uncertainties"]
