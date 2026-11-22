@@ -258,14 +258,15 @@ jobs:
 
       - name: Smoke test portable application
         shell: pwsh
+        working-directory: ${{ runner.temp }}
         run: |
           Set-ExecutionPolicy -Scope Process Bypass -Force
-          ./scripts/windows_smoke.ps1 `
-            -Executable ./dist/CADPhotoToDXF/CADPhotoToDXF.exe `
-            -Sample ./samples/test.jpg `
+          & "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/scripts/windows_smoke.ps1" `
+            -Executable "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/dist/CADPhotoToDXF/CADPhotoToDXF.exe" `
+            -Sample "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/samples/test.jpg" `
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-release-smoke" `
             -ExpectedVersion $env:VERSION `
-            -NativeSourceMain ./main.py
+            -NativeSourceMain "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/main.py"
 
       - name: Save native release smoke evidence
         if: always()

@@ -48,8 +48,12 @@ if ($NativeSourceMain) {
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot "windows_native_smoke.py") -Destination $helper
     # The helper and parent shell must both run outside the source directory,
     # which the test temporarily hides while the detached EXE is running.
+    $originalProcessDirectory = [System.Environment]::CurrentDirectory
     Push-Location $work
     try {
+        # Push-Location changes the PowerShell provider location, but does not
+        # release Windows' process-current-directory handle on the checkout.
+        [System.Environment]::CurrentDirectory = $work
         & $python $helper `
             --executable $exe `
             --source-main $sourceMain `
@@ -60,6 +64,7 @@ if ($NativeSourceMain) {
         }
     }
     finally {
+        [System.Environment]::CurrentDirectory = $originalProcessDirectory
         Pop-Location
     }
 }
