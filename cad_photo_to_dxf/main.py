@@ -461,6 +461,9 @@ def run_gui(mode: str = "native-objects") -> int:
 def main() -> int:
     prepare_onnx_privacy()
     args = build_parser().parse_args()
+    if args.native_worker is not None or args.mode == "native-objects":
+        from app.core.packaged_runtime import configure_native_ocr
+        configure_native_ocr()
     if args.native_worker is not None:
         from app.core.native_worker import worker_run
         return worker_run(args.native_worker)

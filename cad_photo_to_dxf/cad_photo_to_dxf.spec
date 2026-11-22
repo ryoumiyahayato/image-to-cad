@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import sys
 
-from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_submodules
+from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_submodules, copy_metadata
 
 
 ROOT = Path(SPECPATH)
@@ -15,6 +15,8 @@ if str(ROOT) not in sys.path:
 from app.version import __version__, product_status_payload
 from scripts.prepare_cad_fonts import prepare_font_bundle
 from scripts.prepare_librecad_font import prepare_librecad_font
+from scripts.native_packaging import write_build_manifest
+from app.core.packaged_runtime import verify_ocr_bundle
 from scripts.versioning import write_windows_version_info
 
 
@@ -49,12 +51,17 @@ prepare_librecad_font(
     allow_download=allow_font_download,
     strict=True,
 )
+native_ocr_directory = ROOT / "resources/ocr/tesseract"
+verify_ocr_bundle(native_ocr_directory)
+native_build_manifest, native_source_data = write_build_manifest(ROOT, __version__)
 hiddenimports = collect_submodules("ezdxf")
 hiddenimports += collect_submodules("app.native_objects")
 hiddenimports += ["app.core.native_worker", "app.core.native_job_manager",
                   "app.core.native_objects_entry", "app.gui.native_task_panel"]
 hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
+for package in ("numpy", "scipy", "ezdxf", "PyMuPDF", "Pillow"):
+    datas += copy_metadata(package)
 binaries = []
 for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime", "pymupdf", "psutil"):
     package_datas, package_binaries, package_hiddenimports = collect_all(package)
@@ -69,7 +76,13 @@ datas += [
     ("samples/test.jpg", "samples"),
     ("app/geometry_rules", "app/geometry_rules"),
     (str(font_directory), "resources/fonts"),
+    (str(native_ocr_directory), "resources/ocr/tesseract"),
+    (str(native_build_manifest), "resources"),
 ]
+# Native producer/reviewer gates read exact source bytes via __file__. Ship
+# those immutable inputs beside the compiled modules instead of depending on
+# a developer checkout or weakening the source-binding gates for the EXE.
+datas += native_source_data
 
 
 a = Analysis(
@@ -83,6 +96,7 @@ a = Analysis(
     runtime_hooks=[],
     excludes=[],
     noarchive=False,
+    module_collection_mode={"app.native_objects": "pyz+py", "app.core": "pyz+py"},
 )
 pyz = PYZ(a.pure)
 

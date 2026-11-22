@@ -234,6 +234,12 @@ jobs:
           "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
 
+      - name: Prepare verified native font and license
+        shell: pwsh
+        run: |
+          python scripts/prepare_native_font.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Run release checks
         shell: pwsh
         run: |
@@ -244,7 +250,11 @@ jobs:
 
       - name: Build portable application
         shell: pwsh
-        run: pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+        run: |
+          python scripts/prepare_windows_native_runtime.py --seven-zip "C:/Program Files/7-Zip/7z.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Smoke test portable application
         shell: pwsh
@@ -254,7 +264,18 @@ jobs:
             -Executable ./dist/CADPhotoToDXF/CADPhotoToDXF.exe `
             -Sample ./samples/test.jpg `
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-release-smoke" `
-            -ExpectedVersion $env:VERSION
+            -ExpectedVersion $env:VERSION `
+            -NativeSourceMain ./main.py
+
+      - name: Save native release smoke evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-native-release-evidence-${{ github.sha }}
+          if-no-files-found: ignore
+          path: |
+            ${{ runner.temp }}/cad-photo-release-smoke/native/**
+            !${{ runner.temp }}/cad-photo-release-smoke/native/detached-package/**
 
       - name: Install Inno Setup
         shell: pwsh
