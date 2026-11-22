@@ -1,12 +1,12 @@
 # 当前项目状态 — 2026-11-22
 
-**普通四分之一区域主 DXF 已实际保存并冷读为 377 个正式实体；同生产提交的 Windows EXE 已真正执行原生流程，并生成可取得的便携包和安装器。整体仍为 `0.3.0-dev / LOCAL_NO_GO`，工程师修图计时仍为 `NOT_RUN`。** 37 个新增、重编码或替代对象的实际图像复核已完成；整区内容完整性仍未通过。
+**普通四分之一区域主 DXF 已重新实际保存并冷读为 377 个正式实体；同生产代码、不同实际提交的 Windows EXE 已真正执行原生流程，便携包可取得，安装器已取得。整体仍为 `0.3.0-dev / LOCAL_NO_GO`，工程师修图计时仍为 `NOT_RUN`。** 新主图已重新渲染和实际查看；原 37 张对象图卡及 GUI 保留 `2adc3ee` 绑定，经精确内容对应复用，整区内容完整性仍未通过。
 
 ## 当前源码、主文件与同步状态
 
-- 本轮起点为远端 `main=5f6f012d400de396fb71642efd3e1c3dec21b58a`。正式主 DXF 与实际 Windows 包均绑定 **`2adc3ee36876fdb6ccb6d0e312f694702bc62dd9`**；源码已远端保存。**合入前观察快照（2026-11-22）：** [PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45) 当时尚未合入，main 仍为上述起点；此快照不代表后续 main 的当前状态，实际合入关系与最新 HEAD 以 PR 和远端核对为准。后续文档或合并 SHA 不替换这两项运行来源。
+- 本轮起点为远端 `main=5f6f012d400de396fb71642efd3e1c3dec21b58a`。最新主 DXF 实际执行于 **`6225980503c3627f8f5fab3fe82eab78e10c2922`**，Windows 实际构建／执行于 **`4bf6554526e9f247060a1a3a493bb4717c4c9ad5`**。两个提交只差 Windows 测试夹具常量与注释；包内 60 个生产源码文件逐一核对后，生产 Git 内容完全相同，不能称为同一提交。源码已远端保存；[PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45) 为本轮单一代码合入入口，实际合入关系与最新 HEAD 以 PR 和远端核对为准，后续文档或合并 SHA 不替换运行来源。
 - 输入为冻结 `A2-SG-008.tiff`、ROI `[1400,1000,5000,3411]`。本次是新建普通 manager／worker 任务，仅复用经过重验的 raw 观察，受影响阶段已重算；不导入旧最终采用或旧完整输出，未输入案例采用白名单、未拼接局部 DXF。
-- 主 DXF SHA-256：`19bc8e60eda0bf70bfe45f21d9d0053bd4aa43d56180a939201fa77ef08384d5`。**377 正式＝297 LINE＋26 INSERT＋9 TEXT＋45 LWPOLYLINE**；48 REVIEW 另计。任务状态 `COMPLETED_WITH_ISSUES`，保存来源审核通过，独立冷读错误／内存修补均为 0；未获来源证明的重复段为 0，另有 17 条同实体受保护来源复走经专门证明通过。
+- 最新主 DXF SHA-256：`bc1b1f77aba114772ae2e84ac3789d9b2c7308ffacda714a4ed0e0b7af0028ee`。**377 正式＝297 LINE＋26 INSERT＋9 TEXT＋45 LWPOLYLINE**；48 REVIEW 另计。任务状态 `COMPLETED_WITH_ISSUES`，新文件自身保存来源审核通过，独立冷读错误／内存修补均为 0；未获来源证明的重复段为 0，另有 17 条同实体受保护来源复走经专门证明通过。
 - 原图、实际 DXF、对照与恢复账本受控保存，不进入公开仓库。公开版本、文件指纹和验证摘要见 [本轮整区及 Windows 简报](../native/QUARTER_NATIVE_EXE_20261122.md)。
 
 ## 旧内容去向与整区新增
@@ -21,25 +21,35 @@
 
 C07、E02、E06、C08、PANTRY 邻曲线和 TR-0028 的三条路径均已进入实际完整区域文件。整合中撤回 6 个误画字形并保留原来源待修，恢复 3 条旧短笔。普通入口与局部入口共享完整采用及退休回滚；修复新鲜文字 tuple/list 合同、Windows 相对证据路径、巨大连通域 bbox 误挡及全区共享核心复算范围等实际接入问题，未降低来源或完整组门。
 
-**37 个新增、重编码或替代对象的原图／旧全区／新全区图卡已经全部实际打开复核，未见新增误画或错接。** 26 个 INSERT（7 房号、16 墙组、3 门）及 9 个 TEXT 保持；八条历史目标路径与先前实际局部 DXF 的保存几何完全一致。 18 条追加路径不等于全区已经完整，旧内容没有无法解释的丢失也不等于旧错误自动变正确。主要精度缺口已按本轮简报登记，不编造完整率；完整标签、多行说明、部分房号、复杂符号／交汇和圆形边界仍需后续任务。
+上述旧 359 去向和 18 条追加路径已直接对 `6225980` 新主图重新审核；新主图已实际重新渲染并查看原图／旧全区／新全区及关键位置对照。377 个正式实体、48 个 REVIEW、26 个 BLOCK 成员及 XDATA 与 `2adc3ee` 精确相同；来源摘要差异已按实际载荷解释，没有像素、转写、字框、路径或采用变化，但原来源账本不是字节全同。**37 张对象图卡的实际审核仍绑定 `2adc3ee`，通过精确内容对应复用，不冒充新一轮逐卡审核。** 26 个 INSERT（7 房号、16 墙组、3 门）及 9 个 TEXT 保持，八条历史目标路径与先前实际局部 DXF 的保存几何完全一致。18 条追加路径不等于全区已经完整，旧内容没有无法解释的丢失也不等于旧错误自动变正确。主要精度缺口已按本轮简报登记，不编造完整率；完整标签、多行说明、部分房号、复杂符号／交汇和圆形边界仍需后续任务。
 
 ## 本轮实际 CAD 反向检查
 
-LibreCAD 2.2.1.6 对 `CONNECTION-57a2860f79e1` 整条 LWPOLYLINE 移动 `(6,4)` 纸面毫米，再修改末顶点 `(+1,0)`；普通保存、完全退出后用新进程重开。冷读确认变更落盘，376 个非目标正式对象二维内容及 26 个图块成员保持，无旧位置残片或额外实体，原主文件保持原状。
+LibreCAD 2.2.1.6 的实际操作绑定 `2adc3ee` 原主文件：对 `CONNECTION-57a2860f79e1` 整条 LWPOLYLINE 移动 `(6,4)` 纸面毫米，再修改末顶点 `(+1,0)`；普通保存、完全退出后用新进程重开。冷读确认变更落盘，376 个非目标正式对象二维内容及 26 个图块成员保持，无旧位置残片或额外实体，原主文件保持原状。新 `6225980` 文件以实体／BLOCK／XDATA 精确对应映射这份证据，**未再次执行 GUI，也不将原编辑文件重新标为新版本**。
 
 保存兼容仍为 **LIMITED**：425 个 XDATA 丢失，26 个 INSERT 的 `zscale` 从 1 写为 0（二维成员保持、矩阵奇异）；字体 style 改变；REVIEW 仍 frozen、plot=0，但 off 变 false；1 个孤立 PLOTSETTINGS 需审计内存修补。原主文件的 INSERT 仍为 `zscale=1`。编辑文件单独审核，不能继承原文件来源结论。
 
 ## 实际 Windows 开发包
 
-[2adc3ee 的实际 Windows 工作流](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/44999859736) 全部成功：**2218 项回归通过，8 项跳过**；PyInstaller 构建、实际原生 EXE、安装器构建、安装／启动／卸载检查均已执行。
+`4bf6554` 的 7 项适用 CI 全部成功；[实际 Windows 工作流](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721) 为 **2235 项回归通过，8 项跳过**，包含严格的真实目录句柄拒绝／释放／原子发布重试回归。PyInstaller 构建、实际原生 EXE、安装器构建、安装／启动／卸载检查均已执行。
 
-受控小输入的源码和 EXE 均通过普通 manager／worker，实际各输出 **5 LINE＋1 TEXT**，几何与文字相同，各调用独立模型 2 次；源目录隐藏、干净 PATH／用户资料、随包 Tesseract／模型／字体经实测。下载后独立冷读两份 DXF 为 0 错误／0 修补。实际 `native-build.json` 绑定 `2adc3ee`，60 个审核源码清单与同提交 Windows checkout 字节相符；CRLF 与 Git LF 的区别明确记录。
+受控小输入的 `4bf6554` 源码和 EXE 均通过普通 manager／worker，实际各输出 **5 LINE＋1 TEXT**，几何与文字相同，各调用独立模型 2 次；源目录隐藏、干净 PATH／用户资料、随包 Tesseract／模型／字体经实测。下载后独立冷读两份 DXF 为 0 错误／0 修补。实际 `native-build.json` 绑定 `4bf6554`，60 个生产源码清单与其 Windows checkout 字节相符，并逐一核对与 `6225980` Git 内容相同；CRLF 与 Git LF 的区别明确记录。实际两次 smoke 均一次 rename 发布成功；真实冲突重试由 Windows 回归验证，历史锁持有者仍为 `UNKNOWN`。
 
-[开发安装器](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/44999859736/artifacts/14745472991)、[便携包](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/44999859736/artifacts/14745403438) 和 [实际原生证据](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/44999859736/artifacts/14746045357) 均已生成。Setup.exe 为 305,457,767 字节，SHA-256 `c33be76fb6c3f538dd543a2387ecd8e0ad3eccb939947ce03c287fdfc3aa570e`。这是实际开发包能力检查，不等于真实工程图质量或正式 Release。
+[开发安装器](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747522700)、[便携包](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747258390) 和 [实际原生证据](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747871770) 均已生成。已取得的 Setup.exe 为 305,473,507 字节，SHA-256 `0f969e96bef2912a55579cbe9bf27a799392c3515382cacb41a1b2cdf37022e3`。这是实际开发包能力检查，不等于真实工程图质量或正式 Release。
+
+## 本轮早期运行与失败历史
+
+- `2adc3ee` 原主图（SHA-256 `19bc8e60eda0bf70bfe45f21d9d0053bd4aa43d56180a939201fa77ef08384d5`）和 [run 44999859736](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/44999859736) 的实际成功保持：2218 passed／8 skipped、EXE 及安装器通过。原 37 张图卡、真实 GUI 编辑和旧安装器仍可恢复。
+- `b082905` 的 [run 45001918716](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45001918716) 中，实际 EXE 已生成并冷审 staging DXF，最终原子 rename 返回 WinError 5，未发布；真实持锁者仍 `UNKNOWN`，不能把这次失败改为 PASS。
+- `6225980` 的普通整区任务成功，但 [Windows run 45003368042](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45003368042) 为 2234 passed／8 skipped／1 failed：metadata-only 句柄没有制造 rename 冲突，严格的 `actual_errors` 非空断言失败，构建与 EXE 未运行。`4bf6554` 仅改测试句柄为 GENERIC_READ 及注释，保留全部断言；新的通过不删除这份失败原件。
+
+### 合入前早期观察快照（2adc3ee 阶段，2026-11-22）
+
+- 本轮起点为远端 `main=5f6f012d400de396fb71642efd3e1c3dec21b58a`。正式主 DXF 与实际 Windows 包均绑定 **`2adc3ee36876fdb6ccb6d0e312f694702bc62dd9`**；源码已远端保存。**合入前观察快照（2026-11-22）：** [PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45) 当时尚未合入，main 仍为上述起点；此快照不代表后续 main 的当前状态，实际合入关系与最新 HEAD 以 PR 和远端核对为准。后续文档或合并 SHA 不替换这两项运行来源。
 
 ## 保留的边界和下一步
 
-主 DXF、同版本开发安装器与恢复检查点已持久保存；PR #45 是本轮单一合入记录，交接时按实际 CI、合并关系及远端 main 内容核对，并处理无独有用途的分支。历史 6289f7d 的 Windows 成功单独保留，不能冒充本次最终版本；本次已有独立的 2adc3ee 成功证据。
+主 DXF 与同生产代码的开发安装器分别按 `6225980`／`4bf6554` 的实际执行锚点交付，恢复检查点与持久保存状态见交付清单；PR #45 是本轮单一代码合入记录，交接时按最后文档提交的适用 CI、实际合并关系及远端 main 内容核对，并处理无独有用途的分支。历史 6289f7d、2adc3ee 的 Windows 成功与后续两次失败单独保留，不能冒充本次最终版本或被新成功覆盖。
 
 既有 PANTRY、完整墙组、C07／E02／E06、C08／TR-0028 局部成果与 GUI 文件不删除，也不要求全部重做。三行注释单 MTEXT 和备用 BLOCK＋三 TEXT 的失败结论保持。LibreCAD XDATA 丢失、INSERT `zscale=0`、字体／版本／REVIEW／PLOTSETTINGS 的实际兼容边界继续 `LIMITED`，用户编辑文件须另审。当前纸面毫米不代表建筑实际比例。
 

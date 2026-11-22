@@ -2,6 +2,14 @@
 
 本检查只验证同版本打包程序能运行当前原生流程；生成的小测试图不代表真实工程图精度通过。产品保持 `0.3.0-dev / LOCAL_NO_GO`。
 
+## 最新实际结果（2026-11-22，4bf6554）
+
+实际构建／执行提交 **`4bf6554526e9f247060a1a3a493bb4717c4c9ad5`** 的 7 项适用 CI 全部成功；[Windows run 45004687721](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721) 为 **2235 passed、8 skipped**，实际 portable EXE 普通原生转换、安装器生成、安装／启动／卸载均通过。源码和实际 EXE 各保存 5 LINE＋1 TEXT `ROOM 17`，各有 2 次真实独立模型调用；下载后再次冷读，两份 DXF 均为 0 错误／0 修补，正式几何与内容相同。
+
+最新四分之一区域主图实际执行提交是 `6225980503c3627f8f5fab3fe82eab78e10c2922`。它与 `4bf6554` 只差 Windows 测试夹具的访问常量及注释；实际包内 60 个生产源码文件已逐一对照两个提交，生产 Git 内容完全相同，Windows CRLF 检出差异另列。**这是同生产代码的两个实际执行提交，不能写为同一 Git 提交。** 本轮代码单一合入入口是 [PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45)，最新 HEAD、适用 CI 和实际合入关系以 PR 及远端核对为准。
+
+已取得的 [安装器 artifact 14747522700](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747522700) ZIP 为 305,007,408 字节；内部实际 Setup.exe 为 **305,473,507 字节**，SHA-256 `0f969e96bef2912a55579cbe9bf27a799392c3515382cacb41a1b2cdf37022e3`。[便携包 14747258390](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747258390) 为 414,850,224 字节；[实际原生证据 14747871770](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721/artifacts/14747871770) 为 4,331,365 字节。证据内的实际 `native-build.json` 绑定 `4bf6554`，原生任务自身仍为 `COMPLETED_WITH_ISSUES`，小图通过不等于真实工程图质量通过。
+
 ## 实际执行范围
 
 Windows 工作流继续运行原 legacy 转换和安装器启动检查，同时由 `scripts/windows_smoke.ps1` 调用新增的原生检查：
@@ -38,10 +46,18 @@ PyInstaller 保留现有 GUI、任务管理和安装器结构，并在 `_interna
 
 真实图纸、受控工程资料和完整实验包不进入 Windows 自动测试或公开仓库。
 
-## 2026-11-22 原子发布失败与验证边界
+## 2026-11-22 原子发布失败与验证边界（历史原件保留）
 
 后续文档提交 `b082905b357b5cdce7af09dbddb58d539d788b8f` 的 [Windows run 45001918716](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45001918716) 实际失败：回归、构建和源码转换已通过，打包 EXE 也已生成并冷审其 staging DXF（5 LINE＋1 TEXT、0 错误／0 修补、来源门通过），但该提交 `native_worker.py` 的 `os.rename(staging, published)` 返回 `PermissionError [WinError 5]`。CLI 退出 2，结果保留在 staging、没有发布；**不能把这一运行登记为 PASS**。
 
 实际包内 60 个应用源码哈希和 11 个安装依赖版本均与已成功的 `2adc3ee` 包一致。具体持锁者仍未知；不能把并发目录扫描的可能性当成已经证实的原因，也不能以新一次运行成功覆盖原失败。[原始失败证据](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45001918716/artifacts/14746736237) 为 3,067,664 字节，SHA-256 `9612d4f43fdce6943cb7de61b5fb6fdd3c5b74db43834a55ec0cd3b0858683e9`。原主 DXF 和已取得开发安装器的实际成功来源仍绑定 `2adc3ee`。
 
 本次发布修复的范围限定为 Windows 的 `winerror` 5／32／33：以 50ms 短步、最多 2 秒且不超过原任务 wall 预算，重试同一个原子 `os.rename`；每次检查取消／资源停止，目标已存在（包括断链符号链接）立即失败。不得复制或覆盖目标、重跑识别，或放宽来源与冷审。其验收须包含 Windows 真实持句柄导致 rename 失败、释放后成功的回归，以及实际打包 EXE 的普通原生转换；Linux 模拟或源码测试不能替代该 Windows 执行证据，新修复结论按其实际提交与 CI 单独记录。
+
+### 6225980 的实际夹具失败与 4bf6554 验证
+
+`6225980` 的 [Windows run 45003368042](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45003368042) 为 **2234 passed、8 skipped、1 failed**，构建和 EXE 均未运行。真实句柄测试使用仅 `FILE_READ_ATTRIBUTES`（`0x80`）的目录句柄，没有制造实际 rename 冲突，因此 `actual_errors=[]` 触发原有非空断言。它是实际失败的测试夹具，不能记作发布重试通过或发布重试耗尽。
+
+`4bf6554` 仅将这一测试的访问权限改为 `GENERIC_READ`（`0x80000000`）并更新注释，仍不共享 DELETE；没有修改生产代码、删除测试或放宽实际错误／重试断言。该测试只在非 win32 跳过；在本次 Windows 全套 2235 项通过中，真实 `CreateFileW` 句柄造成 `os.rename` 拒绝、释放后原子成功、`rename_attempts > 1`、原载荷完整与重试事件均通过。每个成功测试的具体错误码没有单独输出，不能补写一个未记录的 WinError 数值。
+
+实际源码和 EXE 两次 smoke 的 `atomic_publication.rename_attempts` 均为 **1**，没有重试或耗尽事件。真实拒绝／释放／重试由专门 Windows 回归证明，不能把 EXE 本次正常发布说成再次复现并查明了历史锁。**b082905 的具体持锁者继续为 UNKNOWN。** `2adc3ee` 的原成功、`b082905` 的真实发布失败和 `6225980` 的夹具失败均保留其原日志、文件和提交绑定。
