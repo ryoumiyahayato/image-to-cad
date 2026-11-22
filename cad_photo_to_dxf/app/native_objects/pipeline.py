@@ -5,7 +5,7 @@ image and explicit ROI are required; no failed stage falls back to old HATCH.
 """
 
 from .performance import profiled
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from .evidence_paths import relative_evidence_path
 import copy
 import hashlib
@@ -89,6 +89,37 @@ def _saved_dxf_accepted(audit):
         and not audit["exact_duplicate_segments"]
         and audit["source_gate_pass"]
     )
+
+
+def _restore_circular_marker_evidence(cache_dir, out, completion):
+    """Restore bound raw artifacts; a prior saved-file verdict is never reused."""
+    source_root, destination = Path(cache_dir).resolve(), Path(out).resolve()
+    files = completion.get("raw_evidence_files")
+    if not isinstance(files, list) or not files:
+        raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_MANIFEST_MISSING")
+    seen = set()
+    for record in files:
+        name = record["path"]
+        relative = PurePosixPath(name)
+        if (not isinstance(name, str) or "\\" in name or relative.is_absolute()
+                or ".." in relative.parts or not relative.parts
+                or relative.parts[0] != "circular_markers" or name in seen):
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_PATH_INVALID")
+        seen.add(name)
+        source, target = source_root / name, destination / name
+        if (source.is_symlink() or source_root not in source.resolve().parents
+                or not source.is_file() or target.is_symlink()
+                or destination not in target.resolve().parents):
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_OUTSIDE_OR_MISSING")
+        contents = source.read_bytes()
+        if hashlib.sha256(contents).hexdigest() != record["sha256"]:
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_HASH_CHANGED")
+        if target.exists() and target.read_bytes() != contents:
+            raise ValueError("CIRCULAR_ASSEMBLY_DESTINATION_ALREADY_DIFFERS")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_bytes(contents)
+    save_json(destination / "circular_markers/circular_markers.json", completion)
 
 
 def _text_progress_adapter(progress):
@@ -969,6 +1000,8 @@ def run_native_objects(
                     objects=connections["objects"],
                 )
             )
+            circular_markers = restored_assembly["circular_markers"]
+            _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
             issues = restored_assembly["issues"]
@@ -1511,6 +1544,29 @@ def run_native_objects(
             retired_connection_lines = set(connections["retired_ids"])
             objects = [obj for obj in objects if obj["id"] not in retired_connection_lines]
             objects += connections["objects"]
+            progress("SOURCE_CIRCULAR_MARKERS_AND_INDEPENDENT_CHARACTERS", 0.71)
+            from .circular_marker_adoption import complete_circular_markers
+
+            # Connection observations only seed source geometry. They carry no
+            # approval, glyph answer or ownership of an external connection.
+            round_observation_path = out / "connections/discovery/connections.json"
+            observed_rounds = (
+                json.loads(round_observation_path.read_text()).get(
+                    "round_boundary_observations"
+                )
+                if round_observation_path.is_file() else None
+            )
+            circular_markers = complete_circular_markers(
+                gray, roi, source_sha, objects, out / "circular_markers", dpi=dpi,
+                text_regions=texts, observed_rounds=observed_rounds,
+                progress_callback=lambda event: progress(
+                    "CIRCULAR_MARKER:" + event["stage"],
+                    0.71 + 0.025 * min(1.0, event["processed"] / max(1, event["total"])),
+                ),
+            )
+            retired_marker_members = set(circular_markers["retired_ids"])
+            objects = [obj for obj in objects if obj["id"] not in retired_marker_members]
+            objects += circular_markers["objects"]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1519,6 +1575,7 @@ def run_native_objects(
                 + text_issues
             )
             issues += connections["uncertainties"]
+            issues += circular_markers["uncertainties"]
             issues += walls.get("uncertainties", [])
             issues += [
                 {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
@@ -1537,6 +1594,8 @@ def run_native_objects(
                         "wall_segments": len(walls["objects"]),
                         "doors": len(door_objects),
                         "whole_connection_paths": len(connections["objects"]),
+                        "complete_circular_markers": circular_markers["summary"]["new_complete_markers"],
+                        "partial_circular_boundaries": circular_markers["summary"]["new_partial_boundaries"],
                         "TEXT": sum(o["kind"] == "TEXT" for o in text_objects),
                         "MTEXT": sum(o["kind"] == "MTEXT" for o in text_objects),
                     },
@@ -1551,6 +1610,7 @@ def run_native_objects(
                 "doors": doors,
                 "door_completion": door_completion,
                 "connections": connections,
+                "circular_markers": circular_markers,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -1646,6 +1706,7 @@ def run_native_objects(
                 "replay": connections["replay"],
                 "engineering_stroke_identity_proven": False,
             },
+            "circular_marker_completion": circular_markers["summary"],
             "wall_partition_source_gate": walls.get("partition_source_gate"),
         }
         report.update(

@@ -440,6 +440,32 @@ def verify_circle_source_evidence(gray, roi, obj, evidence_root=None):
         expected_interior = ink & (distance < radius - width / 2 - POLICY["interior_clearance_px"])
         if not np.array_equal(ring, expected_ring) or not np.array_equal(interior, expected_interior):
             raise ValueError("CIRCULAR_SOURCE_RUNS_INCOMPLETE_OR_REASSIGNED")
+        interior_ids = [int(value) for value in np.unique(labels[interior]) if value > 0]
+        connected_interior = int(ids[0]) in interior_ids
+        complete_separate = bool(interior_ids and not connected_interior)
+        for identity in interior_ids:
+            if np.any((labels == identity) & ~interior):
+                complete_separate = False
+        glyph_box = None
+        if interior.any():
+            gy, gx = np.nonzero(interior)
+            glyph_box = [int(gx.min()) + a, int(gy.min()) + b,
+                         int(gx.max()) + a + 1, int(gy.max()) + b + 1]
+        interior_facts = {
+            "interior_component_count": len(interior_ids),
+            "interior_connected_to_boundary": connected_interior,
+            "interior_is_complete_separate_components": complete_separate,
+            "glyph_bbox_xyxy_px": glyph_box,
+            "ring_source_pixels": int(ring.sum()),
+            "interior_source_pixels": int(interior.sum()),
+        }
+        if any(evidence.get(key) != value for key, value in interior_facts.items()):
+            raise ValueError("CIRCULAR_INTERIOR_COMPONENT_OR_GLYPH_BOUNDING_EVIDENCE_CHANGED")
+        if not (roi[0] <= center[0] - radius - width / 2
+                and center[0] + radius + width / 2 <= roi[2]
+                and roi[1] <= center[1] - radius - width / 2
+                and center[1] + radius + width / 2 <= roi[3]):
+            raise ValueError("CIRCULAR_COMPLETE_GEOMETRY_OUTSIDE_REQUESTED_ROI")
         enclosed = _closed_source_enclosure(ring, local_center, radius, width)
         dense = _dense_circle(local_center, radius)
         sampled = _sample(ink, dense)
@@ -462,6 +488,7 @@ def verify_circle_source_evidence(gray, roi, obj, evidence_root=None):
         result.update({"crop_hash_matches": True, "all_source_runs_replayed": True,
                        "full_circle_samples": len(sampled), "minimum_center_ink": float(sampled.min()),
                        "maximum_centerline_source_distance_px": float(source_distance.max()),
+                       "interior_component_evidence_recomputed": interior_facts,
                        "closed_source_enclosure": enclosed, "contact_port_count": len(ports),
                        "external_connection_geometry_owned": False, "pass": True})
     except (ValueError, TypeError, KeyError, IndexError, OverflowError) as error:

@@ -185,6 +185,23 @@ def test_replacing_a_white_gap_and_rehashing_source_cannot_keep_closed_circle_ap
     assert not result["pass"]
 
 
+@pytest.mark.parametrize("field,value", [
+    ("interior_component_count", 99),
+    ("interior_connected_to_boundary", True),
+    ("interior_is_complete_separate_components", False),
+    ("glyph_bbox_xyxy_px", [74, 72, 82, 85]),
+    ("ring_source_pixels", 1),
+    ("interior_source_pixels", 0),
+])
+def test_cold_geometry_recomputes_character_separation_and_exact_source_bbox(field, value):
+    gray = _drawing()
+    (row,), _ = _accepted(gray)
+    row["source_evidence"][field] = value
+    result = verify_circle_source_evidence(gray, [0, 0, 180, 180], row)
+    assert not result["pass"]
+    assert "CIRCULAR_INTERIOR_COMPONENT_OR_GLYPH_BOUNDING_EVIDENCE_CHANGED" in result["reasons"]
+
+
 def test_roi_does_not_authorize_truncating_circle_or_switching_coordinate_frame():
     gray = _drawing()
     accepted, report = _accepted(gray, roi=[80, 0, 180, 180], observed_rounds=[{
