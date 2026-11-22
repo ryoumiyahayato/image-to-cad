@@ -346,3 +346,87 @@ def test_quality_review_does_not_count_an_unproved_ring_as_complete(tmp_path):
         == 0
     )
     assert composition["circle_plus_text_is_one_marker_not_two"]
+
+
+@pytest.mark.parametrize("character", ["J", "F", "D", "E", "H", "g", "j"])
+def test_circle_character_saved_render_fits_the_complete_source_ink_box(
+    tmp_path, character
+):
+    """Measure independent DXF rendering, including real descenders/bearings."""
+    obj = _marker(character=character)
+    obj["geometry"]["text_geometry"].update(
+        x=44, y=62, height_px=24, width_px=13
+    )
+    path = _export(tmp_path, [obj])
+    png = tmp_path / "saved-character.png"
+    cad_io.render_saved(path, png, ROI, DPI)
+    with Image.open(png) as image:
+        pixels = np.asarray(image.convert("L"))
+    # This interior window includes the source glyph and its white margins,
+    # but is strictly inside the ring. No DXF fields determine the ink result.
+    ys, xs = np.where(pixels[35:65, 41:60] < 128)
+    actual = np.array([xs.min() + 41, ys.min() + 35, xs.max() + 42, ys.max() + 36])
+    assert np.max(np.abs(actual - [44, 38, 57, 62])) <= 1
+    saved = _formal(ezdxf.readfile(path))[0]
+    checks = cad_io.circular_candidate_contract(saved, obj, _pixel, MM)
+    assert all(checks.values()), checks
+    assert [e.dxftype() for e in saved.virtual_entities()] == ["CIRCLE", "TEXT"]
+
+
+@pytest.mark.parametrize("rotation", [-23.0, 17.0])
+def test_circle_character_ink_transform_keeps_source_rotation(tmp_path, rotation):
+    obj = _marker(character="J")
+    obj["geometry"]["text_geometry"]["rotation_deg_image"] = rotation
+    path = _export(tmp_path, [obj])
+    saved = _formal(ezdxf.readfile(path))[0]
+    checks = cad_io.circular_candidate_contract(saved, obj, _pixel, MM)
+    assert all(checks.values()), checks
+
+
+def test_old_cap_height_baseline_mapping_is_rejected_for_descending_ink(tmp_path):
+    obj = _marker(character="J")
+    path = _export(tmp_path, [obj])
+    doc = ezdxf.readfile(path)
+    marker = _formal(doc)[0]
+    text = next(e for e in doc.blocks.get(marker.dxf.name) if e.dxftype() == "TEXT")
+    g = obj["geometry"]["text_geometry"]
+    text.dxf.height = g["height_px"] * MM
+    text.dxf.insert = ((g["x"] - 50) * MM, (50 - g["y"]) * MM)
+    doc.saveas(tmp_path / "old-mapping-counterexample.dxf")
+    saved = _formal(ezdxf.readfile(tmp_path / "old-mapping-counterexample.dxf"))[0]
+    assert not cad_io.circular_candidate_contract(saved, obj, _pixel, MM)[
+        "character_source_layout_matches"
+    ]
+
+
+@pytest.mark.parametrize("change", ["baseline", "height", "style_width", "oblique"])
+def test_saved_ink_layout_rejects_additional_text_transform(tmp_path, change):
+    obj = _marker(character="J")
+    path = _export(tmp_path, [obj])
+    doc = ezdxf.readfile(path)
+    marker = _formal(doc)[0]
+    text = next(e for e in doc.blocks.get(marker.dxf.name) if e.dxftype() == "TEXT")
+    if change == "baseline":
+        text.translate(0, MM, 0)
+    elif change == "height":
+        text.dxf.height *= 1.05
+    elif change == "style_width":
+        doc.styles.get(text.dxf.style).dxf.width = 1.05
+    else:
+        text.dxf.oblique = 10
+    changed = tmp_path / "changed-ink-layout.dxf"
+    doc.saveas(changed)
+    saved = _formal(ezdxf.readfile(changed))[0]
+    assert not cad_io.circular_candidate_contract(saved, obj, _pixel, MM)[
+        "character_source_layout_matches"
+    ]
+
+
+def test_existing_standalone_text_keeps_its_previous_layout_contract(tmp_path):
+    g = _marker(character="J")["geometry"]["text_geometry"]
+    obj = {"id": "ordinary-text", "kind": "TEXT", "layer": "ANNOTATION", "geometry": g}
+    path = _export(tmp_path, [obj])
+    text = _formal(ezdxf.readfile(path))[0]
+    assert _pixel(text.dxf.insert) == pytest.approx([g["x"], g["y"]])
+    assert text.dxf.height / MM == pytest.approx(g["height_px"])
+    assert cad_io.text_size(text).width / MM == pytest.approx(g["width_px"])

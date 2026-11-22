@@ -3,6 +3,7 @@
 from .performance import profiled
 from pathlib import Path
 from collections import Counter
+from functools import lru_cache
 import hashlib
 import json
 import math
@@ -10,6 +11,8 @@ import shutil
 import numpy as np
 import ezdxf
 import fitz
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.ttLib import TTFont
 from ezdxf.math import Matrix44
 from ezdxf.lldxf.tagwriter import TagWriter
 from ezdxf.tools.text_size import text_size
@@ -88,6 +91,86 @@ def _font(out):
         "bundled_license": "FONT_LICENSE_DejaVu.txt",
         "source": str(source),
     }
+
+
+@lru_cache(maxsize=128)
+def _circular_character_ink_metrics(font_path, font_sha256, character):
+    """Measure literal ink in the actual portable font, not advance width.
+
+    A source glyph box includes descenders and excludes side bearings. DXF
+    TEXT height instead means cap height, and its insertion is a baseline.
+    The font hash is part of the cache key so changed bytes cannot reuse old
+    metrics. Paths are measured only; output remains one native TEXT.
+    """
+    with TTFont(font_path) as font:
+        cmap = font.getBestCmap() or {}
+        glyphs = font.getGlyphSet()
+
+        def bounds(letter):
+            if ord(letter) not in cmap:
+                raise ValueError("CIRCULAR_CHARACTER_NOT_IN_PORTABLE_FONT")
+            pen = BoundsPen(glyphs)
+            glyphs[cmap[ord(letter)]].draw(pen)
+            if pen.bounds is None:
+                raise ValueError("CIRCULAR_CHARACTER_HAS_NO_FONT_INK")
+            return tuple(float(value) for value in pen.bounds)
+
+        # These are font metrics, not recognized content. ezdxf's TrueType
+        # renderer defines the baseline from x and the cap height from A.
+        baseline = bounds("x")[1]
+        cap_height = bounds("A")[3] - baseline
+        xmin, ymin, xmax, ymax = bounds(character)
+    values = (xmin, ymin - baseline, xmax, ymax - baseline, cap_height)
+    if not all(math.isfinite(value) for value in values) or not (
+        xmax > xmin and ymax > ymin and cap_height > 0
+    ):
+        raise ValueError("UNMEASURABLE_CIRCULAR_CHARACTER_FONT_INK")
+    return values
+
+
+def _circular_text_placement(g, mm, font_path):
+    """Fit the complete font ink box to the proven source glyph box."""
+    height, width = float(g["height_px"]) * mm, float(g["width_px"]) * mm
+    if not all(math.isfinite(value) and value > 0 for value in (height, width)):
+        raise ValueError("CIRCULAR_CHARACTER_REQUIRES_POSITIVE_SOURCE_INK_BOX")
+    metrics = _circular_character_ink_metrics(str(font_path), sha(font_path), g["text"])
+    xmin, ymin, xmax, ymax, cap = metrics
+    sx, sy = width / (xmax - xmin), height / (ymax - ymin)
+    angle = -math.radians(float(g.get("rotation_deg_image", 0.0)))
+    c, s = math.cos(angle), math.sin(angle)
+    # Subtract the transformed ink bearing from the source box's lower-left
+    # anchor. This preserves the original white gap beneath a descender.
+    offset = (c * xmin * sx - s * ymin * sy, s * xmin * sx + c * ymin * sy)
+    return {
+        "height": cap * sy,
+        "width": sx / sy,
+        "baseline_offset_mm": offset,
+        "font_ink_bounds_units": list(metrics[:4]),
+        "font_cap_height_units": cap,
+        "font_sha256": sha(font_path),
+        "basis": "complete_source_ink_box_to_portable_font_ink_bounds",
+    }
+
+
+def circular_text_ink_corners(entity):
+    """Read actual saved TEXT ink corners using its portable font bytes."""
+    style = entity.doc.styles.get(entity.dxf.style)
+    filename = str(style.dxf.font)
+    if filename != "DejaVuSans.ttf":
+        raise ValueError("CIRCULAR_CHARACTER_PORTABLE_FONT_REFERENCE_CHANGED")
+    font_path = Path(entity.doc.filename).parent / filename
+    xmin, ymin, xmax, ymax, cap = _circular_character_ink_metrics(
+        str(font_path), sha(font_path), entity.dxf.text
+    )
+    sy = float(entity.dxf.height) / cap
+    sx = sy * float(entity.dxf.get("width", 1.0))
+    angle = math.radians(float(entity.dxf.get("rotation", 0.0)))
+    c, s = math.cos(angle), math.sin(angle)
+    origin = np.array([entity.dxf.insert.x, entity.dxf.insert.y])
+    return [
+        origin + np.array([c * x * sx - s * y * sy, s * x * sx + c * y * sy])
+        for x, y in ((xmin, ymin), (xmax, ymin), (xmax, ymax), (xmin, ymax))
+    ]
 
 
 class _ExplicitMTextDirectionWriter(TagWriter):
@@ -236,6 +319,7 @@ def export_objects(
         attrs = {"layer": o["layer"], "color": 256}
         member_info = []
         mtext_line_layout = None
+        circular_text_layout = None
         if kind == "LINE":
             e = msp.add_line(xy(g["start"]), xy(g["end"]), dxfattribs=attrs)
         elif kind == "CIRCLE":
@@ -278,7 +362,23 @@ def export_objects(
             block = doc.blocks.new(name)
             anchor = xy(centre)
             block.add_circle((0, 0), radius * mm, dxfattribs={"layer": "0", "color": 0})
-            text(block, tg, {"layer": "0", "color": 0}, anchor)
+            circular_text_layout = _circular_text_placement(
+                tg, mm, path.parent / font["font"]
+            )
+            point = xy((tg["x"], tg["y"]))
+            offset = circular_text_layout["baseline_offset_mm"]
+            block.add_text(
+                tg["text"],
+                dxfattribs={
+                    "layer": "0",
+                    "color": 0,
+                    "style": "I2CAD_TEXT",
+                    "insert": tuple(point[i] - anchor[i] - offset[i] for i in (0, 1)),
+                    "height": circular_text_layout["height"],
+                    "width": circular_text_layout["width"],
+                    "rotation": -float(tg.get("rotation_deg_image", 0.0)),
+                },
+            )
             e = msp.add_blockref(name, anchor, dxfattribs=attrs)
             member_info = [m.dxftype() for m in block]
         elif kind == "CONNECTION_PATH":
@@ -513,6 +613,8 @@ def export_objects(
         )
         if mtext_line_layout is not None:
             written[-1]["mtext_line_layout"] = mtext_line_layout
+        if circular_text_layout is not None:
+            written[-1]["circular_text_layout"] = circular_text_layout
     regions = []
     for row in range(4):
         for col in range(6):
@@ -675,22 +777,32 @@ def circular_candidate_contract(entity, obj, pixel_from_cad, mm):
         )
         if len(strings) == 1:
             t = strings[0]
+            style = t.doc.styles.get(t.dxf.style)
+            angle = math.radians(float(tg.get("rotation_deg_image", 0.0)))
+            c, s = math.cos(angle), math.sin(angle)
+            origin = np.array([tg["x"], tg["y"]], dtype=float)
+            u = np.array([c, s]) * float(tg["width_px"])
+            v = np.array([s, -c]) * float(tg["height_px"])
+            source_corners = (origin, origin + u, origin + u + v, origin + v)
+            actual_corners = [pixel_from_cad(p) for p in circular_text_ink_corners(t)]
+            rotation_difference = math.radians(
+                float(t.dxf.get("rotation", 0.0))
+                + float(tg.get("rotation_deg_image", 0.0))
+            )
             checks["character_source_layout_matches"] = (
-                _same_circle_parameters(
-                    pixel_from_cad(t.dxf.insert), [tg["x"], tg["y"]]
-                )
-                and _same_circle_parameters(float(t.dxf.height) / mm, tg["height_px"])
+                _same_circle_parameters(actual_corners, source_corners)
                 and _same_circle_parameters(
-                    (
-                        float(t.dxf.get("rotation", 0.0))
-                        + float(tg.get("rotation_deg_image", 0.0))
-                    )
-                    % 360,
-                    0.0,
+                    (math.cos(rotation_difference), math.sin(rotation_difference)),
+                    (1.0, 0.0),
                 )
-                and _same_circle_parameters(text_size(t).width / mm, tg["width_px"])
                 and int(t.dxf.get("halign", 0)) == 0
                 and int(t.dxf.get("valign", 0)) == 0
+                and int(t.dxf.get("text_generation_flag", 0)) == 0
+                and float(t.dxf.get("oblique", 0.0)) == 0.0
+                and float(t.dxf.get("thickness", 0.0)) == 0.0
+                and _same_circle_parameters(t.dxf.get("extrusion", (0, 0, 1)), (0, 0, 1))
+                and float(style.dxf.get("width", 1.0)) == 1.0
+                and float(style.dxf.get("oblique", 0.0)) == 0.0
             )
     return checks
 
