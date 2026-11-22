@@ -18,6 +18,7 @@ from scripts.windows_native_smoke import (
     create_circular_fixture,
     entity_geometry,
     inspect_circular_character_payloads,
+    inspect_circular_fixture_source_gap,
     inspect_circular_members,
 )
 
@@ -153,13 +154,17 @@ def _saved_circular_checker_fixture(tmp_path):
         else:
             entity = document.modelspace().add_circle(point(cx, cy), 25 * mm)
         identify(entity, oid, kind)
-        rows.append({"id": oid, "kind": kind, "source_evidence": {"components_complete": bool(character)}, "geometry": {"text_geometry": {"text": character}}})
+        rows.append({"id": oid, "kind": kind, "source_evidence": {"components_complete": bool(character), "external_endpoint_contact_review": {"status": "NO_UNRESOLVED_OBSERVED_EXTERNAL_ENDPOINT", "pending_contacts": []}}, "geometry": {"text_geometry": {"text": character, "x": cx - 10, "y": cy + 11, "height_px": 22, "width_px": 20}} if character else {}})
         checks.append({"id": oid, "pass": True, "saved_candidate_checks": {"checker_test_only": True}, "ring_source": {"pass": True}, **({"character_source": {"pass": True}} if character else {})})
         sweeps.append({"id": oid, "type": "CIRCLE", "pass": True, "sampled_sweep_deg": 360.0, "samples": 4000, "tolerance_px": 2.5, "max_distance_px": 1.0})
-        line = document.modelspace().add_line(point(cx + 26, cy), point(cx + 130, cy))
+        line = document.modelspace().add_line(point(cx + 25, cy), point(cx + 130, cy))
         identify(line, "checker-lead-" + str(index), "LINE")
         rows.append({"id": "checker-lead-" + str(index), "kind": "LINE"})
         sweeps.append({"id": "checker-lead-" + str(index), "type": "LINE", "pass": True, "source_fraction": 1.0, "maximum_gap_px": 0.0, "max_distance_px": 0.0})
+    gap_line = document.modelspace().add_line(point(290, 330), point(371, 330))
+    identify(gap_line, "checker-real-gap-line", "LINE")
+    rows.append({"id": "checker-real-gap-line", "kind": "LINE"})
+    sweeps.append({"id": "checker-real-gap-line", "type": "LINE", "pass": True, "source_fraction": 1.0, "maximum_gap_px": 0.0, "max_distance_px": 0.0})
     path = tmp_path / "checker-only.dxf"
     document.saveas(path)
     cold = {"circular_marker_source_checks": checks, "source_checks": sweeps, "circular_member_source_sampling": {"closed_circle_sweep_deg": 360.0, "maximum_sample_spacing_px": 0.05, "circle_and_character_evidence_replayed": True, "missing_or_unreadable_evidence_passes": False}}
@@ -172,7 +177,11 @@ def test_circular_smoke_requires_distinct_complete_blocks_and_separate_partial_b
     assert result["complete_marker_count"] == 2
     assert result["partial_circle_boundary_count"] == 1
     assert result["complete_marker_characters"] == ["F", "K"]
-    assert len(result["independent_external_line_ids"]) == 3
+    assert len(result["independent_external_line_ids"]) == 4
+    assert result["all_attached_finite_geometry_contacts_circle"] is True
+    assert result["all_attached_endpoints_exactly_on_circle"] is True
+    assert len(result["protected_real_gap_line_checks"]) == 1
+    assert result["protected_real_gap_line_checks"][0]["minimum_saved_geometry_gap_px"] == pytest.approx(4)
     blocks = [document.blocks.get(entity.dxf.name) for entity in document.modelspace().query("INSERT")]
     blocks[0].query("TEXT")[0].dxf.text = "Z"
     assert blocks[1].query("TEXT")[0].dxf.text == "K"
@@ -180,7 +189,7 @@ def test_circular_smoke_requires_distinct_complete_blocks_and_separate_partial_b
         inspect_circular_members(document, objects, cold)
 
 
-@pytest.mark.parametrize("damage", ["shared-block", "extra-block-line", "missing-text", "false-O-circle", "partial-as-complete", "missing-ring-audit", "missing-character-audit", "partial-sweep", "duplicate-lead", "fragmented-lead", "unsupported-lead", "lead-beyond-shared-contact", "extra-glyph-fragment", "extra-glyph-text", "radius"])
+@pytest.mark.parametrize("damage", ["shared-block", "extra-block-line", "missing-text", "false-O-circle", "partial-as-complete", "external-relation-pending", "missing-ring-audit", "missing-character-audit", "partial-sweep", "duplicate-lead", "fragmented-lead", "unsupported-lead", "lead-beyond-shared-contact", "lead-enters-character-box", "gap-bridged", "gap-line-missing", "gap-line-duplicate", "extra-glyph-fragment", "extra-glyph-text", "radius"])
 def test_circular_smoke_rejects_actual_saved_representation_and_evidence_regressions(tmp_path, damage):
     document, objects, cold = _saved_circular_checker_fixture(tmp_path)
     inserts = list(document.modelspace().query("INSERT"))
@@ -196,6 +205,8 @@ def test_circular_smoke_rejects_actual_saved_representation_and_evidence_regress
         entity.set_xdata("I2CAD_NATIVE_V2", [(1000, json.dumps({"id": "false-O", "kind": "CIRCLE"}))])
     elif damage == "partial-as-complete":
         next(row for row in objects["objects"] if row["kind"] == "CIRCLE")["source_evidence"]["components_complete"] = True
+    elif damage == "external-relation-pending":
+        objects["objects"][0]["source_evidence"]["external_endpoint_contact_review"] = {"status": "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING", "pending_contacts": [{"reason": "unproved nearby relation"}]}
     elif damage == "missing-ring-audit":
         cold["circular_marker_source_checks"] = []
     elif damage == "missing-character-audit":
@@ -215,6 +226,15 @@ def test_circular_smoke_rejects_actual_saved_representation_and_evidence_regress
     elif damage == "lead-beyond-shared-contact":
         line = document.modelspace().query("LINE")[0]
         line.dxf.start = (line.dxf.start.x - 8 * 25.4 / 200, line.dxf.start.y)
+    elif damage == "lead-enters-character-box":
+        objects["objects"][0]["geometry"]["text_geometry"].update(x=174, width_px=3)
+    elif damage == "gap-bridged":
+        line = document.modelspace().query("LINE")[-1]
+        line.dxf.end = (375 * 25.4 / 200, line.dxf.end.y)
+    elif damage == "gap-line-missing":
+        document.modelspace().delete_entity(document.modelspace().query("LINE")[-1])
+    elif damage == "gap-line-duplicate":
+        document.modelspace().add_entity(document.modelspace().query("LINE")[-1].copy())
     elif damage == "extra-glyph-fragment":
         document.modelspace().add_line((18, 18), (18.5, 18.5))
     elif damage == "extra-glyph-text":
@@ -240,6 +260,9 @@ def test_generated_circle_fixture_has_original_round_glyph_protection_and_no_hin
         assert image.crop((108, 310, 180, 348)).getextrema() == (0, 255)
         assert image.crop((390, 320, 410, 340)).getextrema() == (255, 255)
         assert image.getpixel((500, 330)) == 0
+        assert image.getpixel((371, 330)) == image.getpixel((374, 330)) == 0
+        assert all(image.getpixel((x, y)) == 255 for x in (372, 373) for y in (329, 330, 331))
+    assert inspect_circular_fixture_source_gap(first)["source_gap_width_px"] == 2
     assert set(tmp_path.iterdir()) == {first, second}
 
 
@@ -250,13 +273,73 @@ def test_circular_lead_can_share_only_the_source_ring_contact_band(tmp_path):
     check = next(row for row in cold["source_checks"] if row["type"] == "LINE")
     check["max_distance_px"] = 1.75
     result = inspect_circular_members(document, objects, cold)
-    assert len(result["independent_external_line_ids"]) == 3
+    assert len(result["independent_external_line_ids"]) == 4
     report = result["independent_line_shared_contact_checks"][0]
     assert report["source_stroke_width_px"] == 3
     assert report["saved_source_budget_px"] == 2.5
     assert report["circle_radius_px"] == pytest.approx(25)
     assert report["saved_source_check"]["source_fraction"] == 1
+    assert report["contact_kind"] == "existing_supported_ring_overlap"
+    assert report["finite_geometry_intersections_px"]
+    assert result["existing_supported_overlap_line_ids"] == ["checker-lead-0"]
+    assert result["all_attached_endpoints_exactly_on_circle"] is False
     assert result["ordinary_O_and_zero_transcription_accuracy_claimed"] is False
+
+
+@pytest.mark.parametrize("entity_type", ["LINE", "LWPOLYLINE"])
+@pytest.mark.parametrize("positive_gap_px", [0.0001, 0.25, 1.5])
+def test_circular_smoke_rejects_positive_finite_geometry_gap_inside_source_budget(
+    tmp_path, entity_type, positive_gap_px
+):
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    line = document.modelspace().query("LINE")[0]
+    line.dxf.start = ((175 + positive_gap_px) * 25.4 / 200, line.dxf.start.y)
+    if entity_type == "LWPOLYLINE":
+        points = [line.dxf.start, (line.dxf.start + line.dxf.end) / 2, line.dxf.end]
+        replacement = document.modelspace().add_lwpolyline([(point.x, point.y) for point in points])
+        replacement.set_xdata("I2CAD_NATIVE_V2", line.get_xdata("I2CAD_NATIVE_V2"))
+        document.modelspace().delete_entity(line)
+        next(row for row in cold["source_checks"] if row["id"] == "checker-lead-0")["type"] = "LWPOLYLINE"
+    path = tmp_path / "positive-gap.dxf"
+    document.saveas(path)
+    with pytest.raises(AssertionError, match="does not contact"):
+        inspect_circular_members(ezdxf.readfile(path), objects, cold)
+
+
+def test_circle_source_gap_checker_rejects_an_accidentally_filled_fixture(tmp_path):
+    from PIL import Image
+
+    font = Path(__file__).resolve().parents[1] / "resources/fonts/DejaVuSans.ttf"
+    source = tmp_path / "damaged-source.png"
+    create_circular_fixture(source, font)
+    with Image.open(source) as original:
+        image = original.copy()
+    image.putpixel((372, 330), 0)
+    image.save(source)
+    with pytest.raises(AssertionError, match="white source gap"):
+        inspect_circular_fixture_source_gap(source)
+
+
+@pytest.mark.parametrize("restored_gap_px", [-0.25, 0.0])
+def test_new_certified_circle_endpoint_cannot_claim_preserved_old_overlap(
+    tmp_path, restored_gap_px
+):
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    line = document.modelspace().query("LINE")[0]
+    line.dxf.start = ((175 + restored_gap_px) * 25.4 / 200, line.dxf.start.y)
+    row = next(row for row in objects["objects"] if row["id"] == "checker-lead-0")
+    row["source_evidence"] = {"circle_endpoint_contacts": {
+        "schema": "native-direct-circle-end-contact-v1",
+        "ends": [{"circle_id": "checker-circle-0", "endpoint_number": 0, "restored_endpoint_px": [175 + restored_gap_px, 150], "circle_geometry": {"center": [150, 150], "radius_px": 25}}],
+    }}
+    path = tmp_path / "new-contact.dxf"
+    document.saveas(path)
+    if restored_gap_px:
+        with pytest.raises(AssertionError, match="newly certified endpoint"):
+            inspect_circular_members(ezdxf.readfile(path), objects, cold)
+    else:
+        report = inspect_circular_members(ezdxf.readfile(path), objects, cold)
+        assert report["independent_line_shared_contact_checks"][0]["new_certified_endpoint_checked"] is True
 
 
 @pytest.mark.parametrize("name", ["../outside.tsv", "/absolute.tsv", "C:/host/raw.tsv", "sub\\raw.tsv"])

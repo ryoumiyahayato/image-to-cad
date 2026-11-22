@@ -852,6 +852,29 @@ def _source_groups(
     return groups, issues, counts, unrepresented
 
 
+def _circular_composition_summary(circular_rows, candidate_by_id):
+    """A circle and TEXT can be intact while an external relation remains open."""
+    pending = {
+        oid for oid, obj in candidate_by_id.items()
+        if obj.get("source_evidence", {}).get("external_endpoint_contact_review", {}).get("status")
+        == "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING"
+    }
+    valid = [row for row in circular_rows
+             if row["candidate_structure_matches"] and row["source_geometry_gate_pass"]]
+    compositions = [row for row in valid if row["kind"] == "CIRCULAR_MARKER"]
+    pending_count = sum(row["id"] in pending for row in compositions)
+    boundaries = sum(row["kind"] == "CIRCLE" for row in valid)
+    return {
+        "complete_marker_objects": len(compositions) - pending_count,
+        "circle_text_compositions": len(compositions),
+        "circle_text_compositions_with_external_contacts_pending": pending_count,
+        "partial_circle_boundary_objects": boundaries,
+        "partial_compositions": boundaries + pending_count,
+        "circle_plus_text_is_one_marker_not_two": True,
+        "GUI_and_engineer_validation_not_inferred": True,
+    }
+
+
 @profiled("quality_review.run_quality_review")
 def run_quality_review(
     dxf_path,
@@ -1361,22 +1384,9 @@ def run_quality_review(
         row for row in formal if row["kind"] in ("CIRCLE", "CIRCULAR_MARKER")
     ]
     if circular_rows:
-        summary["circular_marker_composition"] = {
-            "complete_marker_objects": sum(
-                row["kind"] == "CIRCULAR_MARKER"
-                and row["candidate_structure_matches"]
-                and row["source_geometry_gate_pass"]
-                for row in circular_rows
-            ),
-            "partial_circle_boundary_objects": sum(
-                row["kind"] == "CIRCLE"
-                and row["candidate_structure_matches"]
-                and row["source_geometry_gate_pass"]
-                for row in circular_rows
-            ),
-            "circle_plus_text_is_one_marker_not_two": True,
-            "GUI_and_engineer_validation_not_inferred": True,
-        }
+        summary["circular_marker_composition"] = _circular_composition_summary(
+            circular_rows, candidate_by_id
+        )
     if review_scope is not None:
         summary["source_to_output_scope"] = review_scope["mode"]
         summary["full_parent_region_review_performed"] = False

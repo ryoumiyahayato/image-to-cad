@@ -1,0 +1,324 @@
+"""Direct original-ink contacts, real gaps and actual saved endpoint contracts."""
+
+from copy import deepcopy
+import hashlib
+import json
+
+import cv2
+import ezdxf
+import numpy as np
+import pytest
+
+from app.native_objects import cad_io
+from app.native_objects import circle_endpoint_contacts as contacts
+from app.native_objects.circular_markers import discover_circular_markers
+
+
+ROI = (0, 0, 180, 160)
+DPI = 200
+
+
+def _source():
+    gray = np.full((160, 180), 255, np.uint8)
+    cv2.circle(gray, (80, 80), 20, 0, 3)
+    cv2.line(gray, (75, 73), (75, 87), 0, 2)
+    cv2.line(gray, (75, 73), (85, 73), 0, 2)
+    cv2.line(gray, (75, 80), (82, 80), 0, 2)
+    cv2.line(gray, (102, 80), (145, 80), 0, 3)
+    return gray
+
+
+def _circle(gray):
+    row = next(row for row in discover_circular_markers(gray, ROI)["rows"] if row["geometry_accepted"])
+    return {"id": row["id"], "kind": "CIRCLE", "layer": "CIRCULAR_MARKERS",
+            "geometry": deepcopy(row["geometry"]), "bbox_xyxy_px": row["bbox_xyxy_px"],
+            "source_evidence": {**deepcopy(row["source_evidence"]), "components_complete": False}}
+
+
+def _line(*, kind="CONNECTION_PATH", first=(103, 80), last=(145, 80), bulge=0):
+    g = {"start": list(first), "end": list(last)} if kind == "LINE" else {
+        "points": [list(first), list(last)], "bulges": [bulge, 0.0], "closed": False}
+    return {"id": "independent-external-object", "kind": kind, "layer": "CONNECTIONS",
+            "geometry": g,
+            "source_evidence": {"source_path_points": [list(first), list(last)],
+                                "control_vertex_count": 2, "raw_observation": "unchanged"}}
+
+
+def _objects(gray=None, line=None):
+    gray = _source() if gray is None else gray
+    return gray, [_circle(gray), _line() if line is None else line]
+
+
+def _restore(gray, objects):
+    result = contacts.restore_circle_endpoint_contacts(gray, ROI, objects)
+    replacements = {obj["id"]: obj for obj in result["replacements"]}
+    return result, [replacements.get(obj["id"], obj) for obj in objects]
+
+
+@pytest.mark.parametrize("kind", ["LINE", "CONNECTION_PATH"])
+def test_direct_ink_contact_changes_same_external_object_and_preserves_raw_observation(kind):
+    gray, objects = _objects(line=_line(kind=kind))
+    original = deepcopy(objects)
+    result, restored = _restore(gray, objects)
+    assert result["summary"]["restored_external_endpoints"] == 1
+    assert result["summary"]["new_formal_objects"] == 0
+    assert result["summary"]["retired_objects"] == 0
+    assert objects == original
+    assert restored[0] == original[0]
+    obj = restored[1]
+    assert obj["id"] == original[1]["id"]
+    source = deepcopy(obj["source_evidence"])
+    cert = source.pop(contacts.FIELD)
+    assert source == original[1]["source_evidence"]
+    assert cert["original_geometry"] == original[1]["geometry"]
+    assert contacts.verified_original_geometry(gray, ROI, obj, restored, obj["geometry"]) == original[1]["geometry"]
+    if kind == "CONNECTION_PATH":
+        assert obj["geometry"]["points"][1:] == original[1]["geometry"]["points"]
+        assert obj["geometry"]["bulges"][1:] == original[1]["geometry"]["bulges"]
+    replay, replayed = _restore(gray, restored)
+    assert replayed == restored
+    assert replay["summary"] == result["summary"]
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+def test_terminal_bulge_is_never_modified_by_an_endpoint_extension(reverse):
+    line = _line(bulge=0.01)
+    if reverse:
+        line["geometry"]["points"].reverse()
+        line["geometry"]["bulges"] = [-0.01, 0.0]
+    gray, objects = _objects(line=line)
+    result, restored = _restore(gray, objects)
+    assert result["summary"]["restored_external_endpoints"] == 1
+    actual = restored[1]["geometry"]
+    old = line["geometry"]
+    if reverse:
+        assert actual["points"][:-1] == old["points"]
+        assert actual["bulges"][:-1] == old["bulges"]
+        assert actual["bulges"][-1] == 0
+    else:
+        assert actual["points"][1:] == old["points"]
+        assert actual["bulges"][1:] == old["bulges"]
+        assert actual["bulges"][0] == 0
+
+
+def test_two_real_white_columns_and_nearby_parallel_line_remain_independent():
+    gray = _source()
+    gray[77:84, 103:105] = 255
+    line = _line(first=(105, 80))
+    parallel = _line(first=(110, 88), last=(145, 88), kind="LINE")
+    parallel["id"] = "neighbor"
+    cv2.line(gray, (110, 88), (145, 88), 0, 1)
+    objects = [_circle(gray), line, parallel]
+    before = deepcopy(objects)
+    result, restored = _restore(gray, objects)
+    assert result["replacements"] == []
+    assert restored == before and objects == before
+    assert np.all(gray[77:84, 103:105] == 255)
+
+
+def test_diagonal_source_contact_never_becomes_a_solid_native_bridge():
+    # Extension cells can be all black while the original endpoint is on
+    # the ring side of a diagonal-only contact.  The exterior witness must
+    # also be continuous through original black pixel cells.
+    gray, objects = _objects()
+    gray[80, 104] = 255
+    objects[0] = _circle(gray)
+    result, restored = _restore(gray, objects)
+    assert not result["replacements"]
+    assert restored == objects
+    assert any("ORIGINAL_WHITE_PIXEL" in row["reason"] for row in result["decisions"])
+
+
+def test_unchanged_short_branch_and_neighbor_block_cannot_be_absorbed():
+    gray, objects = _objects()
+    cv2.line(gray, (128, 80), (128, 86), 0, 1)
+    objects[0] = _circle(gray)
+    branch = {"id": "short-branch", "kind": "LINE", "layer": "SHORT_STROKE",
+              "geometry": {"start": [128, 80], "end": [128, 86]}, "source_evidence": {}}
+    block = {"id": "neighbor-block", "kind": "WALL_SEGMENT", "layer": "WALL_SEGMENTS",
+             "geometry": {"members": [{"kind": "LINE", "geometry": {"start": [103, 80], "end": [145, 80]}}]},
+             "source_evidence": {"protected": True}}
+    objects.extend([branch, block])
+    before = deepcopy(objects)
+    result, restored = _restore(gray, objects)
+    assert result["summary"]["restored_external_endpoints"] == 1
+    assert objects == before
+    assert restored[2:] == before[2:]
+    assert restored[0]["geometry"] == before[0]["geometry"]
+
+
+def test_ambiguous_two_external_owners_on_same_port_are_both_kept():
+    gray, objects = _objects()
+    another = deepcopy(objects[1])
+    another["id"] = "another-owner"
+    objects.append(another)
+    result, restored = _restore(gray, objects)
+    assert not result["replacements"]
+    assert restored == objects
+    assert all("AMBIGUOUS" in row["reason"] for row in result["decisions"])
+
+
+def test_far_observed_endpoint_is_reported_pending_without_increasing_adoption_limit():
+    gray, objects = _objects(line=_line(first=(107, 80)))
+    result, restored = _restore(gray, objects)
+    assert restored == objects
+    assert result["summary"]["pending_nearby_contacts"] == 1
+    assert result["decisions"][0]["reason"] == "NEARBY_END_OUTSIDE_BOUNDED_CONTACT_RESTORATION_RANGE"
+
+
+def test_existing_circle_overlap_is_preserved_without_trimming():
+    gray, objects = _objects(line=_line(first=(99, 80), kind="LINE"))
+    result, restored = _restore(gray, objects)
+    assert restored == objects
+    assert result["replacements"] == []
+
+
+def _saved(tmp_path):
+    gray, objects = _objects()
+    _, restored = _restore(gray, objects)
+    path = tmp_path / "contact.dxf"
+    cad_io.export_objects(restored, path, ROI, DPI, hashlib.sha256(gray.tobytes()).hexdigest())
+    return gray, restored, path
+
+
+def _rebind(path, doc=None):
+    if doc is not None:
+        doc.saveas(path)
+    meta_path = path.with_suffix(".objects.json")
+    meta = json.loads(meta_path.read_text())
+    meta["dxf_sha256"] = cad_io.sha(path)
+    meta_path.write_text(json.dumps(meta))
+    return meta
+
+
+def _cold(path, gray):
+    return contacts.cold_circle_endpoint_contacts(path, ezdxf.readfile(path), gray, ROI, DPI)
+
+
+def test_actual_saved_native_contact_is_part_of_the_normal_cold_source_gate(tmp_path):
+    gray, restored, path = _saved(tmp_path)
+    before = cad_io.sha(path)
+    report = cad_io.cold_audit(path, gray, ROI, DPI, tmp_path / "audit.json")
+    assert report["source_gate_pass"], report["source_checks"]
+    assert report["circle_endpoint_contact_checks"][0]["pass"]
+    assert report["circle_endpoint_contact_checks"][0]["actual_saved_geometry_checked"]
+    assert before == cad_io.sha(path)
+    entity = next(e for e in ezdxf.readfile(path).modelspace() if e.dxftype() == "LWPOLYLINE" and e.dxf.layer != "REVIEW")
+    assert cad_io.identity(entity)[contacts.FIELD] is True
+    assert len(entity) == len(restored[1]["geometry"]["points"])
+
+
+@pytest.mark.parametrize("mutation", ["endpoint", "old_vertex", "bulge", "target_circle", "missing_target", "flag", "z_plane"])
+def test_actual_saved_mutations_fail_even_after_dxf_hash_is_rebound(tmp_path, mutation):
+    gray, _, path = _saved(tmp_path)
+    doc = ezdxf.readfile(path)
+    line = next(e for e in doc.modelspace() if cad_io.identity(e).get(contacts.FIELD))
+    circle = next(e for e in doc.modelspace() if e.dxftype() == "CIRCLE")
+    if mutation in ("endpoint", "old_vertex", "bulge"):
+        values = list(line.get_points("xyseb"))
+        i = 1 if mutation == "old_vertex" else 0
+        v = list(values[i])
+        v[4 if mutation == "bulge" else 0] += 0.1
+        values[i] = v
+        line.set_points(values, format="xyseb")
+    elif mutation == "target_circle":
+        circle.dxf.radius += 0.1
+    elif mutation == "missing_target":
+        doc.modelspace().delete_entity(circle)
+    elif mutation == "flag":
+        cad_io.mark(line, {"id": cad_io.identity(line)["id"], "kind": "CONNECTION_PATH"})
+    elif mutation == "z_plane":
+        line.dxf.elevation = 1
+    _rebind(path, doc)
+    rows = _cold(path, gray)
+    assert rows and not all(row["pass"] for row in rows), rows
+
+
+@pytest.mark.parametrize("mutation", ["remove_certificate", "raw_path", "source_pixel"])
+def test_cold_proof_rejects_missing_raw_records_or_new_white_gap(tmp_path, mutation):
+    gray, _, path = _saved(tmp_path)
+    meta_path = path.with_suffix(".objects.json")
+    meta = json.loads(meta_path.read_text())
+    obj = next(o for o in meta["objects"] if contacts.FIELD in o.get("source_evidence", {}))
+    if mutation == "remove_certificate":
+        obj["source_evidence"].pop(contacts.FIELD)
+    elif mutation == "raw_path":
+        obj["source_evidence"]["source_path_points"][0][1] += 1
+    else:
+        gray[80, 103] = 255
+    meta_path.write_text(json.dumps(meta))
+    rows = _cold(path, gray)
+    assert rows and not all(row["pass"] for row in rows), rows
+
+
+def test_exact_supercover_does_not_skip_white_corner_cells():
+    assert set(map(tuple, contacts._segment_cells([0, 0], [1, 1]))) == {(0, 0), (1, 0), (0, 1), (1, 1)}
+
+
+def test_quality_counts_intact_components_separately_from_fully_resolved_markers():
+    from app.native_objects.quality_review import _circular_composition_summary
+
+    # These are counter inputs, not invented OCR approvals. Unproved native
+    # circles/markers must be excluded before the composition is counted.
+    rows = [
+        {"id": "complete", "kind": "CIRCULAR_MARKER", "candidate_structure_matches": True, "source_geometry_gate_pass": True},
+        {"id": "unresolved-lead", "kind": "CIRCULAR_MARKER", "candidate_structure_matches": True, "source_geometry_gate_pass": True},
+        {"id": "unproved", "kind": "CIRCULAR_MARKER", "candidate_structure_matches": True, "source_geometry_gate_pass": False},
+        {"id": "boundary-only", "kind": "CIRCLE", "candidate_structure_matches": True, "source_geometry_gate_pass": True},
+    ]
+    candidates = {row["id"]: {"source_evidence": {}} for row in rows}
+    for key in ("unresolved-lead", "unproved"):
+        candidates[key]["source_evidence"]["external_endpoint_contact_review"] = {
+            "status": "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING"}
+    summary = _circular_composition_summary(rows, candidates)
+    assert summary["complete_marker_objects"] == 1
+    assert summary["circle_text_compositions"] == 2
+    assert summary["circle_text_compositions_with_external_contacts_pending"] == 1
+    assert summary["partial_circle_boundary_objects"] == 1
+    assert summary["partial_compositions"] == 2
+
+
+def test_two_marker_instances_keep_unique_circle_text_blocks_and_separate_leads(tmp_path):
+    roi = (0, 0, 250, 160)
+    gray = np.full((160, 250), 255, np.uint8)
+    for x in (50, 170):
+        cv2.circle(gray, (x, 80), 20, 0, 3)
+        cv2.line(gray, (x - 5, 73), (x - 5, 87), 0, 2)
+        cv2.line(gray, (x - 5, 73), (x + 5, 73), 0, 2)
+        cv2.line(gray, (x - 5, 80), (x + 2, 80), 0, 2)
+        cv2.line(gray, (x + 22, 80), (x + 60, 80), 0, 3)
+    markers = []
+    for row in discover_circular_markers(gray, roi)["rows"]:
+        if not row["geometry_accepted"]:
+            continue
+        a, b, c, d = row["glyph_bbox_xyxy_px"]
+        # Literal F is a synthetic exporter input here; no OCR is claimed.
+        markers.append({"id": row["id"], "kind": "CIRCULAR_MARKER", "layer": "CIRCULAR_MARKERS",
+                        "geometry": {"circle_geometry": row["geometry"], "text_geometry": {
+                            "text": "F", "x": a, "y": d, "width_px": c - a, "height_px": d - b}},
+                        "source_evidence": {**row["source_evidence"], "components_complete": True}})
+    assert len(markers) == 2
+    lines = []
+    for index, x in enumerate((50, 170)):
+        line = _line(first=(x + 23, 80), last=(x + 60, 80), kind="LINE")
+        line["id"] = "external-" + str(index)
+        lines.append(line)
+    objects = markers + lines
+    before = deepcopy(objects)
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects)
+    assert result["summary"]["restored_external_endpoints"] == 2
+    assert objects == before
+    path = tmp_path / "two-markers.dxf"
+    cad_io.export_objects(markers + result["replacements"], path, roi, DPI, "synthetic-exporter-input")
+    doc = ezdxf.readfile(path)
+    inserts = list(doc.modelspace().query("INSERT"))
+    assert len(inserts) == 2 and inserts[0].dxf.name != inserts[1].dxf.name
+    for insert in inserts:
+        assert [entity.dxftype() for entity in doc.blocks.get(insert.dxf.name)] == ["CIRCLE", "TEXT"]
+    assert len(doc.modelspace().query("LINE")) == 2
+    old_other = cad_io.entity_data(inserts[1])
+    first_text = next(e for e in doc.blocks.get(inserts[0].dxf.name) if e.dxftype() == "TEXT")
+    first_text.dxf.text = "Q"
+    inserts[0].translate(4, 3, 0)
+    assert cad_io.entity_data(inserts[1]) == old_other
+    assert next(e for e in doc.blocks.get(inserts[1].dxf.name) if e.dxftype() == "TEXT").dxf.text == "F"

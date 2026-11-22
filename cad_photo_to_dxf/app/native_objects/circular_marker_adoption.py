@@ -399,22 +399,70 @@ def complete_circular_markers(
                                "object_id": row["id"], "new_model_calls": new_model_calls})
     if _digest(prior_objects) != before:
         raise AssertionError("CIRCULAR_ADOPTION_MUTATED_PRIOR_OBJECTS")
+    from .circle_endpoint_contacts import restore_circle_endpoint_contacts
+
+    contacts = restore_circle_endpoint_contacts(
+        gray, roi, [old for old in prior_objects if old["id"] not in retired] + objects,
+    )
+    pending_contacts = [row for row in contacts["decisions"] if not row["accepted"]]
+    pending_circle_ids = {row["circle_id"] for row in pending_contacts}
+    for obj in objects:
+        obj["source_evidence"]["external_endpoint_contact_review"] = {
+            "status": "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING" if obj["id"] in pending_circle_ids else "NO_UNRESOLVED_OBSERVED_EXTERNAL_ENDPOINT",
+            "pending_contacts": [row for row in pending_contacts if row["circle_id"] == obj["id"]],
+            "complete_network_connectivity_claimed": False,
+            "pending_is_not_a_claim_that_source_pixels_should_be_connected": True,
+        }
+        if obj["id"] in pending_circle_ids and obj["kind"] == "CIRCULAR_MARKER":
+            obj["status"] = "COMPLETE_CIRCULAR_COMPONENTS_EXTERNAL_CONTACT_PENDING"
+    uncertainties.extend({
+        "id": row["circle_id"], "reason": "CIRCULAR_EXTERNAL_ENDPOINT_CONTACT_PENDING",
+        "external_object_id": row["object_id"], "endpoint_number": row["endpoint_number"],
+        "original_geometry_retained": True, "details": row,
+        "bbox_xyxy_px": next(obj["bbox_xyxy_px"] for obj in objects if obj["id"] == row["circle_id"]),
+    } for row in pending_contacts if any(obj["id"] == row["circle_id"] for obj in objects))
+    for decision in decisions:
+        if decision.get("accepted") and decision["id"] in pending_circle_ids:
+            decision["external_endpoint_contact_status"] = "PENDING"
+            if decision.get("kind") == "CIRCULAR_MARKER":
+                decision["status"] = "COMPLETE_CIRCULAR_COMPONENTS_EXTERNAL_CONTACT_PENDING"
+    compositions = sum(obj["kind"] == "CIRCULAR_MARKER" for obj in objects)
+    boundary_only = sum(obj["kind"] == "CIRCLE" for obj in objects)
+    composition_pending = sum(
+        obj["kind"] == "CIRCULAR_MARKER" and obj["id"] in pending_circle_ids for obj in objects
+    )
+    geometry_pending_ids = {
+        row["id"] for row in uncertainties
+        if row.get("reason") not in (
+            "CIRCULAR_MARKER_INTERIOR_CHARACTER_PENDING", "CIRCULAR_EXTERNAL_ENDPOINT_CONTACT_PENDING"
+        )
+    }
     result = {
         "schema": "native-circular-marker-completion-v1", "coordinate_system": COORDINATES,
         "source_sha256": source_sha, "roi_xyxy_px": list(roi), "policy": dict(POLICY),
         "objects": objects, "retired_ids": sorted(retired), "retirement_records": retirement_records,
         "uncertainties": uncertainties, "decisions": decisions, "discovery": discovery,
+        "external_endpoint_contacts": contacts,
         "prior_objects_sha256_before": before, "prior_objects_sha256_after": _digest(prior_objects),
         "source_pixels_modified": False,
         "summary": {
             "observed_round_boundaries": len(discovery["rows"]),
-            "new_complete_markers": sum(obj["kind"] == "CIRCULAR_MARKER" for obj in objects),
-            "new_partial_boundaries": sum(obj["kind"] == "CIRCLE" for obj in objects),
+            "new_complete_markers": compositions - composition_pending,
+            "circle_text_compositions": compositions,
+            "circle_text_compositions_with_external_contacts_pending": composition_pending,
+            "new_partial_boundaries": boundary_only,
+            "partial_compositions": boundary_only + composition_pending,
+            "geometry_pending_positions": len(geometry_pending_ids),
             "new_formal_objects": len(objects), "retired_old_whole_objects": len(retired),
             "retained_prior_objects": len(prior_objects) - len(retired),
-            "pending_positions": len(uncertainties),
+            "pending_positions": len({row["id"] for row in uncertainties}),
+            "pending_positions_deduplicated_by_circle_id": True,
             "new_Tesseract_calls": new_tesseract_calls, "new_model_calls": new_model_calls,
             "circle_and_text_counted_as_one_complete_marker": True,
+            "external_endpoint_contacts": contacts["summary"],
+            "component_complete_markers_with_external_contact_pending": composition_pending,
+            "component_complete_markers_without_observed_external_contact_pending": compositions - composition_pending,
+            "pending_external_contact_circle_ids": sorted(pending_circle_ids),
         },
     }
     result["raw_evidence_files"] = [

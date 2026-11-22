@@ -47,9 +47,12 @@ def identity(e):
 
 
 def mark(e, o):
+    data = {"id": o["id"], "kind": o["kind"]}
+    if o.get("source_evidence", {}).get("circle_endpoint_contacts"):
+        data["circle_endpoint_contacts"] = True
     e.set_xdata(
         APPID,
-        [(1000, json.dumps({"id": o["id"], "kind": o["kind"]}, ensure_ascii=True))],
+        [(1000, json.dumps(data, ensure_ascii=True))],
     )
 
 
@@ -912,6 +915,10 @@ def cold_audit(path, gray, roi, dpi, out):
     evidence_root = Path(out).parent
     circular_checks = _cold_circular_bindings(path, doc, gray, roi, dpi, evidence_root)
     checks.extend(circular_checks)
+    from .circle_endpoint_contacts import cold_circle_endpoint_contacts
+
+    circle_contact_checks = cold_circle_endpoint_contacts(path, doc, gray, roi, dpi)
+    checks.extend(circle_contact_checks)
     retrace_proof = certify_saved_retraces(
         doc,
         before,
@@ -1148,6 +1155,8 @@ def cold_audit(path, gray, roi, dpi, out):
             "circle_and_character_evidence_replayed": True,
             "missing_or_unreadable_evidence_passes": False,
         }
+    if circle_contact_checks:
+        report["circle_endpoint_contact_checks"] = circle_contact_checks
     save_json(out, report)
     return report
 

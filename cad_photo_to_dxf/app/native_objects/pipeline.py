@@ -1567,6 +1567,12 @@ def run_native_objects(
             retired_marker_members = set(circular_markers["retired_ids"])
             objects = [obj for obj in objects if obj["id"] not in retired_marker_members]
             objects += circular_markers["objects"]
+            endpoint_updates = {
+                obj["id"]: obj for obj in circular_markers.get(
+                    "external_endpoint_contacts", {}
+                ).get("replacements", [])
+            }
+            objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1595,7 +1601,9 @@ def run_native_objects(
                         "doors": len(door_objects),
                         "whole_connection_paths": len(connections["objects"]),
                         "complete_circular_markers": circular_markers["summary"]["new_complete_markers"],
+                        "circle_text_compositions": circular_markers["summary"]["circle_text_compositions"],
                         "partial_circular_boundaries": circular_markers["summary"]["new_partial_boundaries"],
+                        "partial_circular_compositions": circular_markers["summary"]["partial_compositions"],
                         "TEXT": sum(o["kind"] == "TEXT" for o in text_objects),
                         "MTEXT": sum(o["kind"] == "MTEXT" for o in text_objects),
                     },

@@ -61,6 +61,9 @@ def create_circular_fixture(path: Path, font_path: Path) -> None:
     # Empty attached border: a partial CIRCLE, never a complete marker.
     draw.ellipse((374, 304, 426, 356), outline=0, width=3)
     draw.line((426, 330, 530, 330), fill=0, width=3)
+    # Two truly white source columns (372/373) separate this independent
+    # left-hand line from the empty circle. It must never be snapped to it.
+    draw.line((290, 330, 371, 330), fill=0, width=3)
     # Ordinary round glyphs must not become CIRCLEs or marker INSERTs.
     draw.text((110, 310), "O 0", font=font, fill=0)
     image.save(path, dpi=(200, 200))
@@ -92,6 +95,64 @@ def _line_points(entity) -> list[tuple[float, float]]:
     return []
 
 
+def _finite_circle_intersections(points, center, radius):
+    intersections = []
+    for start, end in zip(points, points[1:]):
+        direction = (end[0] - start[0], end[1] - start[1])
+        offset = (start[0] - center[0], start[1] - center[1])
+        a = sum(value * value for value in direction)
+        if a == 0:
+            continue
+        b = 2 * sum(x * y for x, y in zip(offset, direction))
+        c = sum(value * value for value in offset) - radius * radius
+        discriminant = b * b - 4 * a * c
+        if discriminant < 0:
+            continue
+        tolerance = 1e-6 / math.sqrt(a)
+        for parameter in ((-b - math.sqrt(discriminant)) / (2 * a), (-b + math.sqrt(discriminant)) / (2 * a)):
+            if -tolerance <= parameter <= 1 + tolerance:
+                parameter = min(1.0, max(0.0, parameter))
+                point = [start[i] + parameter * direction[i] for i in (0, 1)]
+                if abs(math.dist(point, center) - radius) <= 1e-6:
+                    intersections.append(point)
+    return intersections
+
+
+def _segment_enters_box(start, end, box):
+    low, high = 0.0, 1.0
+    for axis in (0, 1):
+        delta = end[axis] - start[axis]
+        if delta == 0:
+            if not box[axis] <= start[axis] <= box[axis + 2]:
+                return False
+            continue
+        left, right = sorted(((box[axis] - start[axis]) / delta, (box[axis + 2] - start[axis]) / delta))
+        low, high = max(low, left), min(high, right)
+        if low > high:
+            return False
+    return True
+
+
+def _saved_line_source_check(cold, oid):
+    support = [row for row in cold.get("source_checks", []) if row.get("id") == oid and row.get("type") in ("LINE", "LWPOLYLINE")]
+    if len(support) != 1 or support[0].get("pass") is not True or support[0].get("source_fraction") != 1.0 or support[0].get("maximum_gap_px") != 0.0 or support[0].get("max_distance_px", math.inf) > 2.5:
+        raise AssertionError("Independent complete lead lacks actual saved source support")
+    return support[0]
+
+
+def inspect_circular_fixture_source_gap(source_path):
+    """Read the original generated fixture; never supply recognition answers."""
+    from PIL import Image
+
+    with Image.open(source_path) as source:
+        image = source.convert("L")
+    if image.size != (640, 480) or any(image.getpixel((x, y)) != 255 for x in (372, 373) for y in (329, 330, 331)):
+        raise AssertionError("Controlled circle fixture lost its actual white source gap")
+    if image.getpixel((371, 330)) != 0 or image.getpixel((374, 330)) != 0:
+        raise AssertionError("White gap is not bounded by the intended independent line and circle ink")
+    return {"source_sha256": digest(source_path), "original_white_columns": [372, 373], "white_gap_pixels_read": 6, "source_gap_width_px": 2, "source_pixels_modified": False}
+
+
 def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
     """Inspect actual saved members and executed source checks, not candidates.
 
@@ -121,7 +182,7 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
     expected = {"F": (150, 150), "K": (400, 150)}
     actual_characters = []
     reports = []
-    circle_radii = {}
+    circle_geometry = {}
     for entity, identity in markers + partial:
         oid, kind = identity["id"], identity["kind"]
         obj = rows.get(oid, {})
@@ -129,6 +190,9 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
         if obj.get("kind") != kind or obj.get("source_evidence", {}).get("components_complete") is not complete:
             raise AssertionError("Saved circle composition is not explicitly complete or partial")
         if complete:
+            relation = obj.get("source_evidence", {}).get("external_endpoint_contact_review", {})
+            if relation.get("status") != "NO_UNRESOLVED_OBSERVED_EXTERNAL_ENDPOINT" or relation.get("pending_contacts") != []:
+                raise AssertionError("Circle plus text with a pending external relation is not a complete marker")
             members = list(document.blocks.get(entity.dxf.name))
             if Counter(member.dxftype() for member in members) != {"CIRCLE": 1, "TEXT": 1} or entity.attribs:
                 raise AssertionError("Complete marker must contain exactly one real CIRCLE and one real TEXT")
@@ -147,7 +211,7 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
             circle, character, center = entity, None, (400, 330)
         if not _near_point(_pixel_point(circle.dxf.center), center) or abs(float(circle.dxf.radius) * 200 / 25.4 - 25) > 2:
             raise AssertionError("Saved circle location or radius differs from its source border")
-        circle_radii[center] = float(circle.dxf.radius) * 200 / 25.4
+        circle_geometry[center] = {"center": _pixel_point(circle.dxf.center), "radius": float(circle.dxf.radius) * 200 / 25.4, "object": obj}
         check = by_id.get(oid, {})
         contracts = check.get("saved_candidate_checks", {})
         if check.get("pass") is not True or not contracts or not all(value is True for value in contracts.values()) or check.get("ring_source", {}).get("pass") is not True:
@@ -164,11 +228,11 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
     lead_ids = []
     lead_reports = []
     for center in ((150, 150), (400, 150), (400, 330)):
-        # The source stroke is three pixels wide. A fitted complete lead can
-        # start in its shared ring contact band; it need not start exactly at
-        # the PIL drawing command's outer edge. Retain the established saved
-        # source budget, and independently require full cold line support.
-        radius = circle_radii[center]
+        # Use the source band to locate an independent lead, not to forgive a
+        # positive CAD gap. Existing supported overlap remains explicitly
+        # distinct from an endpoint lying exactly on the saved circle.
+        actual_center = circle_geometry[center]["center"]
+        radius = circle_geometry[center]["radius"]
         contact_tolerance = 3.0 / 2 + 2.5
         contact, end = (center[0] + radius, center[1]), (center[0] + 130, center[1])
         matching = []
@@ -176,18 +240,63 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
             points = _line_points(entity)
             if len(points) < 2:
                 continue
-            if points[0][0] > points[-1][0]:
+            near_endpoint_number = int(points[0][0] > points[-1][0])
+            if near_endpoint_number:
                 points.reverse()
             if _near_point(points[0], contact, contact_tolerance) and _near_point(points[-1], end) and all(abs(point[1] - center[1]) <= 2 for point in points) and all(right[0] > left[0] for left, right in zip(points, points[1:])):
                 oid = native_identity(entity)["id"]
-                support = [row for row in cold.get("source_checks", []) if row.get("id") == oid and row.get("type") in ("LINE", "LWPOLYLINE")]
-                if len(support) != 1 or support[0].get("pass") is not True or support[0].get("source_fraction") != 1.0 or support[0].get("maximum_gap_px") != 0.0 or support[0].get("max_distance_px", math.inf) > 2.5:
-                    raise AssertionError("Independent complete lead lacks actual saved source support")
+                support = _saved_line_source_check(cold, oid)
+                signed_gap = math.dist(points[0], actual_center) - radius
+                intersections = _finite_circle_intersections(points, actual_center, radius)
+                if signed_gap > 1e-6 or signed_gap < -contact_tolerance or not intersections:
+                    raise AssertionError("Saved finite lead does not contact its circle or exceeds the supported overlap band")
+                certificate = rows.get(oid, {}).get("source_evidence", {}).get("circle_endpoint_contacts")
+                new_contacts = []
+                if certificate is not None:
+                    if certificate.get("schema") != "native-direct-circle-end-contact-v1" or not isinstance(certificate.get("ends"), list):
+                        raise AssertionError("Saved lead has an unreadable circle endpoint contact certificate")
+                    new_contacts = [end for end in certificate["ends"] if end.get("circle_id") == circle_geometry[center]["object"]["id"]]
+                    if len(new_contacts) > 1:
+                        raise AssertionError("Saved lead repeats its new circle endpoint certificate")
+                    for restored in new_contacts:
+                        certified_circle = restored.get("circle_geometry", {})
+                        if abs(signed_gap) > 1e-6 or restored.get("endpoint_number") != near_endpoint_number or not _near_point(restored.get("restored_endpoint_px", (math.inf, math.inf)), points[0], 1e-6) or not _near_point(certified_circle.get("center", (math.inf, math.inf)), actual_center, 1e-6) or abs(certified_circle.get("radius_px", math.inf) - radius) > 1e-6:
+                            raise AssertionError("A newly certified endpoint is not exactly on its actual saved circle")
+                glyph = circle_geometry[center]["object"].get("geometry", {}).get("text_geometry")
+                if glyph is not None:
+                    box = [glyph["x"], glyph["y"] - glyph["height_px"], glyph["x"] + glyph["width_px"], glyph["y"]]
+                    if any(_segment_enters_box(left, right, box) for left, right in zip(points, points[1:])):
+                        raise AssertionError("An external lead enters the marker's actual character source box")
                 matching.append(oid)
-                lead_reports.append({"id": oid, "circle_radius_px": radius, "source_stroke_width_px": 3.0, "saved_source_budget_px": 2.5, "shared_contact_half_band_px": contact_tolerance, "actual_start_px": points[0], "actual_end_px": points[-1], "saved_source_check": support[0]})
+                lead_reports.append({"id": oid, "actual_circle_center_px": list(actual_center), "circle_radius_px": radius, "source_stroke_width_px": 3.0, "saved_source_budget_px": 2.5, "shared_contact_half_band_px": contact_tolerance, "actual_start_px": list(points[0]), "actual_end_px": list(points[-1]), "signed_endpoint_gap_px": signed_gap, "finite_geometry_intersections_px": intersections, "contact_kind": "existing_supported_ring_overlap" if signed_gap < -1e-6 else "endpoint_on_circle", "new_certified_endpoint_checked": bool(new_contacts), "positive_CAD_gap_tolerance_px": 1e-6, "character_source_box_preserved": True, "saved_source_check": support})
         if len(matching) != 1:
             raise AssertionError("Attached line is missing, duplicated, fragmented or absorbed into a marker")
         lead_ids += matching
+    protected_gaps = []
+    for entity in formal:
+        points = _line_points(entity)
+        if len(points) < 2:
+            continue
+        if points[0][0] > points[-1][0]:
+            points.reverse()
+        if not (_near_point(points[0], (290, 330)) and _near_point(points[-1], (371, 330)) and all(abs(point[1] - 330) <= 2 for point in points) and all(right[0] > left[0] for left, right in zip(points, points[1:]))):
+            continue
+        oid = native_identity(entity)["id"]
+        support = _saved_line_source_check(cold, oid)
+        actual_circle = circle_geometry[(400, 330)]
+        minimum_gap = math.inf
+        for left, right in zip(points, points[1:]):
+            dx, dy = right[0] - left[0], right[1] - left[1]
+            cx, cy = actual_circle["center"]
+            parameter = min(1.0, max(0.0, ((cx - left[0]) * dx + (cy - left[1]) * dy) / (dx * dx + dy * dy)))
+            nearest = (left[0] + parameter * dx, left[1] + parameter * dy)
+            minimum_gap = min(minimum_gap, math.dist(nearest, actual_circle["center"]) - actual_circle["radius"])
+        if minimum_gap < 2.0 or _finite_circle_intersections(points, actual_circle["center"], actual_circle["radius"]):
+            raise AssertionError("The independent line's real source gap was bridged or reduced below its white-gap width")
+        protected_gaps.append({"id": oid, "actual_start_px": list(points[0]), "actual_end_px": list(points[-1]), "minimum_saved_geometry_gap_px": minimum_gap, "source_white_gap_width_px": 2, "finite_geometry_intersects_circle": False, "saved_source_check": support})
+    if len(protected_gaps) != 1:
+        raise AssertionError("The independent real-gap line is missing, duplicated, fragmented or snapped to the circle")
+    lead_ids += [row["id"] for row in protected_gaps]
     allowed_geometry_ids = {identity["id"] for _, identity in circular} | set(lead_ids)
     ordinary_texts = []
     for entity in formal:
@@ -203,6 +312,10 @@ def inspect_circular_members(document, objects: dict, cold: dict) -> dict:
         "unique_block_definitions": names, "complete_marker_characters": sorted(actual_characters),
         "independent_external_line_ids": lead_ids, "ordinary_O_and_zero_not_circles": True,
         "independent_line_shared_contact_checks": lead_reports,
+        "protected_real_gap_line_checks": protected_gaps,
+        "existing_supported_overlap_line_ids": [row["id"] for row in lead_reports if row["contact_kind"] == "existing_supported_ring_overlap"],
+        "all_attached_finite_geometry_contacts_circle": True,
+        "all_attached_endpoints_exactly_on_circle": all(row["contact_kind"] == "endpoint_on_circle" for row in lead_reports),
         "ordinary_round_glyph_texts_if_adopted": ordinary_texts,
         "ordinary_O_and_zero_transcription_accuracy_claimed": False,
         "actual_saved_circle_and_character_audit": reports,
@@ -245,6 +358,10 @@ def inspect_circular_character_payloads(objects, cold, evidence_root: Path, sour
     actual_model = sum(row["new_model_calls"] for row in result_rows)
     if summary["new_Tesseract_calls"] != actual_tesseract or summary["new_model_calls"] != actual_model or actual_tesseract <= 0 or actual_model <= 0:
         raise AssertionError("Circle stage did not record real new Tesseract and model calls")
+    if (summary.get("new_complete_markers") != 2 or summary.get("circle_text_compositions") != 2
+            or summary.get("circle_text_compositions_with_external_contacts_pending") != 0
+            or summary.get("new_partial_boundaries") != 1 or summary.get("partial_compositions") != 1):
+        raise AssertionError("Ordinary pipeline summary does not separate two complete markers from the partial border")
     with Image.open(source_path) as image:
         original = np.asarray(image.convert("L"))
     checks = {row["id"]: row for row in cold["circular_marker_source_checks"]}
@@ -372,6 +489,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
     if not cold["source_gate_pass"] or not cold["dxf_unchanged"] or cold.get("dxf_sha256") != digest(target):
         raise AssertionError("Actual published native result failed its saved source audit")
     circle_result = inspect_circular_members(document, objects, cold) if fixture_kind == "circular-markers" else None
+    if circle_result is not None:
+        circle_result["original_real_gap_evidence"] = inspect_circular_fixture_source_gap(work.parent / "controlled-source.png")
     entry = json.loads((companion / "result.entry_trace.json").read_text(encoding="utf-8"))
     if entry["mode"] != "native-objects" or entry["legacy_processing_called"] or entry["legacy_export_called"] or entry["source_sha256"] != source_sha:
         raise AssertionError("EXE did not enter the source-bound native pipeline")
@@ -562,20 +681,22 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         stage(case["name"], "source-exe-comparison", complete=True)
     room, circles = cases
     circle_report = {
-        "status": "PASS", "schema": "windows-native-circular-markers-smoke-v1",
+        "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
         "source_result": circles["source_result"], "exe_result": circles["exe_result"],
         "same_source_saved_geometry_and_text_equal": True,
         "independent_complete_marker_definitions": True,
         "partial_border_not_counted_as_complete_marker": True,
         "ordinary_round_glyphs_not_exported_as_circles": True,
+        "actual_finite_lead_circle_contacts_checked": True,
+        "independent_real_source_gap_preserved": True,
         "expected_text_sent_to_recognizer": False,
         "product_GO": False,
     }
     write_json(circular_work / "native-smoke.json", circle_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 2,
+        "coverage_revision": 3,
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),

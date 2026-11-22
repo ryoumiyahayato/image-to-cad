@@ -120,6 +120,31 @@ def test_external_connection_is_preserved_separately_without_splitting_or_retire
     assert "independent-external-line" not in str(result["objects"][0]["geometry"])
 
 
+def test_component_complete_marker_with_unresolved_external_ends_is_not_counted_full(tmp_path):
+    first = {"id": "far-observed-external-end", "kind": "LINE",
+             "geometry": {"start": [107, 80], "end": [145, 80]}, "source_evidence": {}}
+    second = deepcopy(first)
+    second["id"] = "other-unresolved-external-end"
+    second["geometry"]["start"][1] = 81
+    result = _run(tmp_path, [first, second])
+    marker = result["objects"][0]
+    assert marker["kind"] == "CIRCULAR_MARKER"
+    assert marker["source_evidence"]["components_complete"]
+    assert marker["status"] == "COMPLETE_CIRCULAR_COMPONENTS_EXTERNAL_CONTACT_PENDING"
+    summary = result["summary"]
+    assert summary["new_complete_markers"] == 0
+    assert summary["circle_text_compositions"] == 1
+    assert summary["circle_text_compositions_with_external_contacts_pending"] == 1
+    assert summary["new_partial_boundaries"] == 0
+    assert summary["partial_compositions"] == 1
+    assert summary["geometry_pending_positions"] == 0
+    assert summary["pending_positions"] == 1
+    issues = [row for row in result["uncertainties"] if row["reason"] == "CIRCULAR_EXTERNAL_ENDPOINT_CONTACT_PENDING"]
+    assert len(issues) == 2 and {row["id"] for row in issues} == {marker["id"]}
+    assert all(row["bbox_xyxy_px"] == marker["bbox_xyxy_px"] for row in issues)
+    assert result["retired_ids"] == []
+
+
 @pytest.mark.parametrize("kind", ["LINE", "CONNECTION_PATH"])
 def test_complete_old_ring_fragment_is_retired_once_with_whole_member_certificate(tmp_path, kind):
     fragment = _ring_chord(kind=kind)

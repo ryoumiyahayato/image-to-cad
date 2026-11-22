@@ -486,15 +486,25 @@ def _certify_saved_retraces(
                 "WHOLE_NATIVE_GEOMETRY_DIFFERS_FROM_BOUND_SIDECAR",
             )
             ev = obj["source_evidence"]
+            original_native = native
+            if ev.get("circle_endpoint_contacts"):
+                from .circle_endpoint_contacts import verified_original_geometry
+
+                original_geometry = verified_original_geometry(
+                    gray, roi, obj, list(objects.values()),
+                    {"points": native.tolist(), "bulges": [0.0] * len(native), "closed": False},
+                )
+                original_native = np.asarray(original_geometry["points"], float)
+                result["source_supported_circle_end_extensions_replayed"] = True
             source_path = [_point(p) for p in ev["source_path_points"]]
             require(
                 2 <= len(source_path) <= 10000
                 and len(vertices) <= 48
-                and len(vertices) == ev["control_vertex_count"],
+                and len(original_native) == ev["control_vertex_count"],
                 "RETRACE_PATH_OR_NATIVE_VERTEX_BUDGET_MISMATCH",
             )
             require(
-                _same(native[[0, -1]], [source_path[0], source_path[-1]]),
+                _same(original_native[[0, -1]], [source_path[0], source_path[-1]]),
                 "NATIVE_ENDPOINTS_DIFFER_FROM_OBSERVED_SOURCE_ENDPOINTS",
             )
             require(
