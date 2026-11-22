@@ -13,7 +13,13 @@ import pytest
 from app.core import packaged_runtime
 from scripts import native_packaging
 from scripts import prepare_windows_native_runtime as setup
-from scripts.windows_native_smoke import entity_geometry
+from scripts.windows_native_smoke import (
+    _checked_record,
+    create_circular_fixture,
+    entity_geometry,
+    inspect_circular_character_payloads,
+    inspect_circular_members,
+)
 
 
 def make_resource_bundle(root: Path) -> Path:
@@ -116,3 +122,172 @@ def test_actual_geometry_comparison_detects_text_endpoint_and_block_member_chang
     assert entity_geometry(line, document) != line_before
     assert entity_geometry(text, document) != text_before
     assert entity_geometry(insert, document) != block_before
+
+
+def _saved_circular_checker_fixture(tmp_path):
+    """Checker-only synthetic evidence, never passed to recognition or adoption.
+
+    Mutations below test the smoke's ability to reject wrong real DXF members.
+    Only the separate ordinary CLI/EXE run can claim actual source recognition.
+    """
+    document = ezdxf.new("R2013")
+    document.units = 4
+    document.appids.new("I2CAD_NATIVE_V2")
+    rows, checks, sweeps = [], [], []
+    mm = 25.4 / 200
+
+    def point(x, y):
+        return x * mm, (480 - y) * mm
+
+    def identify(entity, oid, kind):
+        entity.set_xdata("I2CAD_NATIVE_V2", [(1000, json.dumps({"id": oid, "kind": kind}))])
+
+    for index, (cx, cy, character) in enumerate(((150, 150, "F"), (400, 150, "K"), (400, 330, None))):
+        oid = "checker-circle-" + str(index)
+        kind = "CIRCULAR_MARKER" if character else "CIRCLE"
+        if character:
+            block = document.blocks.new("independent-" + str(index))
+            block.add_circle((0, 0), 25 * mm)
+            block.add_text(character, dxfattribs={"height": 20 * mm})
+            entity = document.modelspace().add_blockref(block.name, point(cx, cy))
+        else:
+            entity = document.modelspace().add_circle(point(cx, cy), 25 * mm)
+        identify(entity, oid, kind)
+        rows.append({"id": oid, "kind": kind, "source_evidence": {"components_complete": bool(character)}, "geometry": {"text_geometry": {"text": character}}})
+        checks.append({"id": oid, "pass": True, "saved_candidate_checks": {"checker_test_only": True}, "ring_source": {"pass": True}, **({"character_source": {"pass": True}} if character else {})})
+        sweeps.append({"id": oid, "type": "CIRCLE", "pass": True, "sampled_sweep_deg": 360.0, "samples": 4000, "tolerance_px": 2.5, "max_distance_px": 1.0})
+        line = document.modelspace().add_line(point(cx + 26, cy), point(cx + 130, cy))
+        identify(line, "checker-lead-" + str(index), "LINE")
+        rows.append({"id": "checker-lead-" + str(index), "kind": "LINE"})
+        sweeps.append({"id": "checker-lead-" + str(index), "type": "LINE", "pass": True, "source_fraction": 1.0, "maximum_gap_px": 0.0, "max_distance_px": 0.0})
+    path = tmp_path / "checker-only.dxf"
+    document.saveas(path)
+    cold = {"circular_marker_source_checks": checks, "source_checks": sweeps, "circular_member_source_sampling": {"closed_circle_sweep_deg": 360.0, "maximum_sample_spacing_px": 0.05, "circle_and_character_evidence_replayed": True, "missing_or_unreadable_evidence_passes": False}}
+    return ezdxf.readfile(path), {"objects": rows}, cold
+
+
+def test_circular_smoke_requires_distinct_complete_blocks_and_separate_partial_boundary(tmp_path):
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    result = inspect_circular_members(document, objects, cold)
+    assert result["complete_marker_count"] == 2
+    assert result["partial_circle_boundary_count"] == 1
+    assert result["complete_marker_characters"] == ["F", "K"]
+    assert len(result["independent_external_line_ids"]) == 3
+    blocks = [document.blocks.get(entity.dxf.name) for entity in document.modelspace().query("INSERT")]
+    blocks[0].query("TEXT")[0].dxf.text = "Z"
+    assert blocks[1].query("TEXT")[0].dxf.text == "K"
+    with pytest.raises(AssertionError, match="character"):
+        inspect_circular_members(document, objects, cold)
+
+
+@pytest.mark.parametrize("damage", ["shared-block", "extra-block-line", "missing-text", "false-O-circle", "partial-as-complete", "missing-ring-audit", "missing-character-audit", "partial-sweep", "duplicate-lead", "fragmented-lead", "unsupported-lead", "lead-beyond-shared-contact", "extra-glyph-fragment", "extra-glyph-text", "radius"])
+def test_circular_smoke_rejects_actual_saved_representation_and_evidence_regressions(tmp_path, damage):
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    inserts = list(document.modelspace().query("INSERT"))
+    if damage == "shared-block":
+        inserts[1].dxf.name = inserts[0].dxf.name
+    elif damage == "extra-block-line":
+        document.blocks.get(inserts[0].dxf.name).add_line((1, 0), (10, 0))
+    elif damage == "missing-text":
+        block = document.blocks.get(inserts[0].dxf.name)
+        block.delete_entity(block.query("TEXT")[0])
+    elif damage == "false-O-circle":
+        entity = document.modelspace().add_circle((15, 20), 1)
+        entity.set_xdata("I2CAD_NATIVE_V2", [(1000, json.dumps({"id": "false-O", "kind": "CIRCLE"}))])
+    elif damage == "partial-as-complete":
+        next(row for row in objects["objects"] if row["kind"] == "CIRCLE")["source_evidence"]["components_complete"] = True
+    elif damage == "missing-ring-audit":
+        cold["circular_marker_source_checks"] = []
+    elif damage == "missing-character-audit":
+        cold["circular_marker_source_checks"][0].pop("character_source")
+    elif damage == "partial-sweep":
+        cold["source_checks"][0]["sampled_sweep_deg"] = 90
+    elif damage == "duplicate-lead":
+        document.modelspace().add_entity(document.modelspace().query("LINE")[0].copy())
+    elif damage == "fragmented-lead":
+        line = document.modelspace().query("LINE")[0]
+        end = line.dxf.end
+        middle = (line.dxf.start + end) / 2
+        line.dxf.end = middle
+        document.modelspace().add_line(middle, end)
+    elif damage == "unsupported-lead":
+        next(row for row in cold["source_checks"] if row["type"] == "LINE")["source_fraction"] = 0.9
+    elif damage == "lead-beyond-shared-contact":
+        line = document.modelspace().query("LINE")[0]
+        line.dxf.start = (line.dxf.start.x - 8 * 25.4 / 200, line.dxf.start.y)
+    elif damage == "extra-glyph-fragment":
+        document.modelspace().add_line((18, 18), (18.5, 18.5))
+    elif damage == "extra-glyph-text":
+        document.modelspace().add_text("F", dxfattribs={"height": 2, "insert": (20, 40)})
+    else:
+        document.blocks.get(inserts[0].dxf.name).query("CIRCLE")[0].dxf.radius *= 1.25
+    path = tmp_path / "mutated.dxf"
+    document.saveas(path)
+    with pytest.raises(AssertionError):
+        inspect_circular_members(ezdxf.readfile(path), objects, cold)
+
+
+def test_generated_circle_fixture_has_original_round_glyph_protection_and_no_hints(tmp_path):
+    from PIL import Image
+
+    font = Path(__file__).resolve().parents[1] / "resources/fonts/DejaVuSans.ttf"
+    first, second = tmp_path / "one.png", tmp_path / "two.png"
+    create_circular_fixture(first, font)
+    create_circular_fixture(second, font)
+    assert first.read_bytes() == second.read_bytes()
+    with Image.open(first) as image:
+        assert image.size == (640, 480)
+        assert image.crop((108, 310, 180, 348)).getextrema() == (0, 255)
+        assert image.crop((390, 320, 410, 340)).getextrema() == (255, 255)
+        assert image.getpixel((500, 330)) == 0
+    assert set(tmp_path.iterdir()) == {first, second}
+
+
+def test_circular_lead_can_share_only_the_source_ring_contact_band(tmp_path):
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    line = document.modelspace().query("LINE")[0]
+    line.dxf.start = (172.25 * 25.4 / 200, (480 - 150) * 25.4 / 200)
+    check = next(row for row in cold["source_checks"] if row["type"] == "LINE")
+    check["max_distance_px"] = 1.75
+    result = inspect_circular_members(document, objects, cold)
+    assert len(result["independent_external_line_ids"]) == 3
+    report = result["independent_line_shared_contact_checks"][0]
+    assert report["source_stroke_width_px"] == 3
+    assert report["saved_source_budget_px"] == 2.5
+    assert report["circle_radius_px"] == pytest.approx(25)
+    assert report["saved_source_check"]["source_fraction"] == 1
+    assert result["ordinary_O_and_zero_transcription_accuracy_claimed"] is False
+
+
+@pytest.mark.parametrize("name", ["../outside.tsv", "/absolute.tsv", "C:/host/raw.tsv", "sub\\raw.tsv"])
+def test_circular_raw_payload_reader_rejects_external_references(tmp_path, name):
+    with pytest.raises(AssertionError, match="reference|outside"):
+        _checked_record(tmp_path, {"path": name, "sha256": "0" * 64})
+
+
+def test_circular_raw_payload_reader_requires_actual_file_bytes(tmp_path):
+    path = tmp_path / "observation.tsv"
+    path.write_bytes(b"original checker-only raw observation")
+    record = {"path": path.name, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    assert _checked_record(tmp_path, record)[1] == path.read_bytes()
+    path.write_bytes(b"changed checker-only raw observation")
+    with pytest.raises(AssertionError, match="bytes differ"):
+        _checked_record(tmp_path, record)
+
+
+@pytest.mark.parametrize("tesseract,model,summary_model", [(0, 0, 0), (1, 0, 0), (0, 1, 1), (1, 1, 2)])
+def test_circular_smoke_cannot_substitute_global_or_cached_recognition_calls(tmp_path, tesseract, model, summary_model):
+    # A deliberately incomplete checker fixture: rejection must happen before
+    # reading any image/model. This does not simulate a successful recognizer.
+    source = tmp_path / "input.png"
+    source.write_bytes(b"checker input, not an image")
+    stage_root = tmp_path / "circular_markers"
+    stage_root.mkdir()
+    raw = stage_root / "character_result.json"
+    raw.write_text(json.dumps({"new_Tesseract_calls": tesseract, "new_model_calls": model}))
+    summary = {"new_Tesseract_calls": tesseract, "new_model_calls": summary_model}
+    stage = {"source_sha256": hashlib.sha256(source.read_bytes()).hexdigest(), "summary": summary, "raw_evidence_files": [{"path": "circular_markers/character_result.json", "sha256": hashlib.sha256(raw.read_bytes()).hexdigest()}]}
+    (stage_root / "circular_markers.json").write_text(json.dumps(stage))
+    pipeline = {"circular_marker_completion": summary, "cross_engine_text": {"actual_model_calls": 99}}
+    with pytest.raises(AssertionError, match="real new Tesseract and model calls"):
+        inspect_circular_character_payloads({}, {}, tmp_path, source, pipeline)
