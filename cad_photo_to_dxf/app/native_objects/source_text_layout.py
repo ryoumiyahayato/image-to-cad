@@ -15,10 +15,11 @@ import json
 import numpy as np
 
 from . import text_regions as base
+from . import observation_cache
 
 
 POLICY = {
-    "version": "verified-clean-context-exact-ink-layout-v1",
+    "version": "verified-clean-context-exact-ink-layout-v2-raw-identity",
     "minimum_distinct_clean_contexts": 2,
     "bbox_consensus": "exact_original_integer_word_union",
     "source_gate": "all_ink_in_current_word_union_has_exact_proposed_tight_bbox",
@@ -37,6 +38,92 @@ def _digest(value):
             allow_nan=False,
         ).encode()
     ).hexdigest()
+
+
+def _bound_observation_key(provenance, image):
+    """Bind a cache observation without confusing it with a crop/config key.
+
+    Raw file integrity remains the upstream producer's responsibility. Here
+    the immutable receipt is checked against the original pixels, exact
+    engine/configuration and its raw payload hash; this performs no OCR.
+    """
+    spec = provenance["specification"]
+    legacy_key = base._observation_context_key(spec)
+    receipt = provenance.get("raw_observation_cache")
+    if receipt is None:
+        if provenance.get("raw_observation_kind") is not None or provenance.get(
+            "raw_observation_key"
+        ) not in (None, legacy_key):
+            raise ValueError("UNBOUND_RAW_OBSERVATION_KEY")
+        return legacy_key
+    if not isinstance(receipt, dict) or receipt.get("kind") != "tesseract-tsv":
+        raise ValueError("UNSUPPORTED_LAYOUT_RAW_RECEIPT")
+    box = spec["crop_xyxy_px"]
+    if (
+        any(int(value) != value for value in box)
+        or not base._inside(box, [0, 0, image.shape[1], image.shape[0]])
+        or spec.get("pixel_scale") != [1, 1]
+        or spec.get("source_pixels_modified")
+        or spec.get("padding_replaces_source_pixels")
+    ):
+        raise ValueError("LAYOUT_RAW_SOURCE_CONFIGURATION_CHANGED")
+    x0, y0, x1, y1 = map(int, box)
+    crop = image[y0:y1, x0:x1]
+    if base.source_array_sha256(crop) != spec["crop_array_sha256"]:
+        raise ValueError("LAYOUT_RAW_SOURCE_PIXELS_CHANGED")
+    padding = spec.get("external_white_padding_px", 0)
+    if isinstance(padding, bool) or int(padding) != padding or padding < 0:
+        raise ValueError("LAYOUT_RAW_PADDING_INVALID")
+    actual_input = np.pad(crop, int(padding), constant_values=255) if padding else crop
+    cache_spec = observation_cache.tesseract_spec(
+        crop,
+        actual_input,
+        padding=padding,
+        psm=spec["psm"],
+        dpi=spec["recognition_dpi"],
+        engine=provenance["engine_identity"],
+    )
+    key = observation_cache.digest(cache_spec)
+    raw_hash = provenance.get("raw_tsv_sha256")
+    producer = receipt.get("producer", {})
+    metadata = producer.get("metadata", {})
+    engine = cache_spec["engine"]
+    if (
+        receipt.get("key") != key
+        or provenance.get("raw_observation_key") != key
+        or provenance.get("raw_observation_kind") != "tesseract-tsv"
+        or receipt.get("payload_sha256") != raw_hash
+        or receipt.get("same_observation_no_extra_vote") is not True
+        or producer.get("raw_text_rewritten") is not False
+        or any(producer.get("engine", {}).get(k) != v for k, v in engine.items())
+        or metadata.get("status") != "COMPLETED"
+        or metadata.get("return_code") != 0
+        or metadata.get("tsv_sha256") != raw_hash
+        or any(
+            metadata.get("engine_identity", {}).get(k) != v for k, v in engine.items()
+        )
+        or any(
+            metadata.get("specification", {}).get(k) != spec.get(k)
+            for k in (
+                "crop_array_sha256",
+                "psm",
+                "pixel_scale",
+                "source_pixels_modified",
+                "language",
+                "recognition_dpi",
+                "external_white_padding_px",
+                "padding_replaces_source_pixels",
+            )
+        )
+    ):
+        raise ValueError("LAYOUT_RAW_CACHE_RECEIPT_MISMATCH")
+    for value in (
+        raw_hash,
+        receipt.get("record_sha256"),
+        receipt.get("cache_manifest_sha256"),
+    ):
+        observation_cache._require_sha(value, "layout raw receipt")
+    return key
 
 
 def choose_source_text_layout(region, image, *, roi_xyxy_px=None):
@@ -92,7 +179,7 @@ def choose_source_text_layout(region, image, *, roi_xyxy_px=None):
         for r in boundary.get("observations", [])
         if r.get("clean_current_full_line_witness")
     }
-    modes, seen = defaultdict(list), set()
+    modes, seen, seen_configurations = defaultdict(list), set(), set()
     for alternative in region.get("completeness_evidence", {}).get("alternatives", []):
         provenance = alternative.get("observation_provenance") or {}
         if not provenance and alternative.get("words"):
@@ -103,12 +190,20 @@ def choose_source_text_layout(region, image, *, roi_xyxy_px=None):
         if not spec:
             record["reason"] = "MISSING_ORIGINAL_CROP_CONFIGURATION"
             continue
-        key = base._observation_context_key(spec)
+        configuration_key = base._observation_context_key(spec)
+        record["source_configuration_key"] = configuration_key
+        try:
+            key = _bound_observation_key(provenance, image)
+        except (ValueError, KeyError, TypeError, OverflowError, AttributeError) as exc:
+            record["reason"] = "RAW_OBSERVATION_IDENTITY_BINDING_FAILED"
+            record["identity_failure"] = str(exc)
+            continue
         record["observation_key"] = key
-        if key in seen:
+        if key in seen or configuration_key in seen_configurations:
             record["reason"] = "DUPLICATE_SOURCE_AND_CONFIGURATION_NO_EXTRA_VOTE"
             continue
         seen.add(key)
+        seen_configurations.add(configuration_key)
         if (
             alternative.get("observation_key") not in (None, key)
             or key not in clean_records
