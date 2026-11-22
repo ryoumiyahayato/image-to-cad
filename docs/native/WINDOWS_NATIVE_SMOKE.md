@@ -37,3 +37,11 @@ PyInstaller 保留现有 GUI、任务管理和安装器结构，并在 `_interna
 - **构建成功、EXE 原生转换成功、真实四分之一区域质量通过是三个独立结论。** 只按工作流及实际文件记录已经发生的结果，不由本说明提前登记成功。
 
 真实图纸、受控工程资料和完整实验包不进入 Windows 自动测试或公开仓库。
+
+## 2026-11-22 原子发布失败与验证边界
+
+后续文档提交 `b082905b357b5cdce7af09dbddb58d539d788b8f` 的 [Windows run 45001918716](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45001918716) 实际失败：回归、构建和源码转换已通过，打包 EXE 也已生成并冷审其 staging DXF（5 LINE＋1 TEXT、0 错误／0 修补、来源门通过），但该提交 `native_worker.py` 的 `os.rename(staging, published)` 返回 `PermissionError [WinError 5]`。CLI 退出 2，结果保留在 staging、没有发布；**不能把这一运行登记为 PASS**。
+
+实际包内 60 个应用源码哈希和 11 个安装依赖版本均与已成功的 `2adc3ee` 包一致。具体持锁者仍未知；不能把并发目录扫描的可能性当成已经证实的原因，也不能以新一次运行成功覆盖原失败。[原始失败证据](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45001918716/artifacts/14746736237) 为 3,067,664 字节，SHA-256 `9612d4f43fdce6943cb7de61b5fb6fdd3c5b74db43834a55ec0cd3b0858683e9`。原主 DXF 和已取得开发安装器的实际成功来源仍绑定 `2adc3ee`。
+
+本次发布修复的范围限定为 Windows 的 `winerror` 5／32／33：以 50ms 短步、最多 2 秒且不超过原任务 wall 预算，重试同一个原子 `os.rename`；每次检查取消／资源停止，目标已存在（包括断链符号链接）立即失败。不得复制或覆盖目标、重跑识别，或放宽来源与冷审。其验收须包含 Windows 真实持句柄导致 rename 失败、释放后成功的回归，以及实际打包 EXE 的普通原生转换；Linux 模拟或源码测试不能替代该 Windows 执行证据，新修复结论按其实际提交与 CI 单独记录。
