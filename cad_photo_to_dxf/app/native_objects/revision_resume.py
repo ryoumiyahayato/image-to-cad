@@ -53,6 +53,7 @@ _ROOTS = (
     "cross_engine_text",
     "geometry",
     "source_text_completion",
+    "single_line_labels",
     "text_geometry_ownership",
 )
 _DERIVED_PRODUCERS = (
@@ -61,6 +62,35 @@ _DERIVED_PRODUCERS = (
     "text_confirmation",
     "text_context_ownership",
 )
+_SINGLE_LINE_PRODUCERS = ("single_line_labels", "circle_character_recognition")
+
+
+def _dependency_items(row):
+    dependencies = row.get("dependency_producers", {})
+    return (
+        list(dependencies.items())
+        if isinstance(dependencies, dict)
+        else [(item["module"], item["sha256"]) for item in dependencies]
+    )
+
+
+def _has_single_line_producer(row):
+    module = "app.native_objects.single_line_labels"
+    return row.get("producer_module") == module or any(
+        name == module for name, _ in _dependency_items(row)
+    )
+
+
+def _revision_producer_names(row):
+    names = list(_PRODUCERS)
+    if row.get("producer_module") in {
+        "app.native_objects." + name
+        for name in (*_DERIVED_PRODUCERS, *_SINGLE_LINE_PRODUCERS)
+    }:
+        names += list(_DERIVED_PRODUCERS)
+    if _has_single_line_producer(row):
+        names += list(_SINGLE_LINE_PRODUCERS)
+    return names
 
 
 def _canonical_digest(value):
@@ -78,10 +108,387 @@ def _canonical_digest(value):
 def _producer_checks(producers):
     app = Path(__file__).resolve().parents[2]
     required = {"app.native_objects." + x for x in _PRODUCERS}
-    allowed = required | {"app.native_objects." + x for x in _DERIVED_PRODUCERS}
+    single_line = {"app.native_objects." + x for x in _SINGLE_LINE_PRODUCERS}
+    allowed = (
+        required | {"app.native_objects." + x for x in _DERIVED_PRODUCERS} | single_line
+    )
     _require(required <= set(producers) <= allowed, "REVISION_PRODUCER_SET_CHANGED")
+    _require(
+        not (set(producers) & single_line) or single_line <= set(producers),
+        "REVISION_SINGLE_LINE_PRODUCER_SET_INCOMPLETE",
+    )
     for module, expected in producers.items():
         _verify_file(_within(app, module.replace(".", "/") + ".py"), expected, module)
+
+
+def _replay_single_line_result(observation, gray, roi, evidence):
+    """Replay both adopted and explicitly rejected immutable observations.
+
+    The production verifier intentionally never approves a rejected label.
+    Its final rejection is usable here only when every saved decision, result
+    and execution count also equals a fresh decision from the already checked
+    raw views. A pending observation never becomes an adopted text object.
+    """
+    from . import single_line_labels as labels
+
+    proof = observation.get("evidence")
+    _require(isinstance(proof, dict), "REVISION_SINGLE_LINE_PROOF_MISSING")
+    replay = labels.verify_single_line_label_evidence(gray, roi, proof, evidence)
+    decision = labels._decision(
+        proof["tesseract_views"], proof["ppocr_views"], proof["source_partition"]
+    )
+    _require(
+        decision == proof.get("decision")
+        and isinstance(observation.get("accepted"), bool)
+        and observation["accepted"] is decision["accepted"]
+        and observation.get("text") == decision["text"]
+        and observation.get("reasons") == decision["reasons"]
+        and observation.get("bbox_xyxy_px") == proof.get("source_bbox_xyxy_px")
+        and observation.get("geometry") == proof.get("text_geometry"),
+        "REVISION_SINGLE_LINE_SAVED_DECISION_CHANGED",
+    )
+    for field, views, flag in (
+        ("new_Tesseract_calls", "tesseract_views", "command_executed_for_this_request"),
+        ("new_model_calls", "ppocr_views", "model_inference_executed_for_this_request"),
+    ):
+        count = sum(view[flag] for view in proof[views])
+        _require(
+            observation.get(field) == proof.get(field) == count,
+            "REVISION_SINGLE_LINE_EXECUTION_COUNT_CHANGED",
+        )
+    if decision["accepted"]:
+        _require(
+            replay.get("pass") is True,
+            "REVISION_SINGLE_LINE_SOURCE_REPLAY_FAILED:" + str(replay),
+        )
+    else:
+        _require(
+            replay.get("pass") is False
+            and replay.get("reason") == "SINGLE_LINE_RAW_DECISION_NOT_APPROVED"
+            and proof.get("text_geometry") is None
+            and decision["text"] is None,
+            "REVISION_SINGLE_LINE_PENDING_SOURCE_REPLAY_FAILED:" + str(replay),
+        )
+    return {
+        "accepted": decision["accepted"],
+        "raw_source_and_decision_replayed": True,
+        "source_replay": replay,
+        "new_OCR_calls": 0,
+        "new_model_calls": 0,
+        "pending_observation_not_adopted": not decision["accepted"],
+    }
+
+
+def _verify_single_line_stage(
+    evidence, text, stage, completion_text, producers, gray, published_check
+):
+    """Bind the additional text stage and all its raw/derived observations."""
+    from . import single_line_labels as labels
+    from .contracts import validate_text_regions
+
+    module = "app.native_objects.single_line_labels"
+    path = evidence / "single_line_labels/completed_text.json"
+    manifest_path = evidence / "single_line_labels/completed_stages.json"
+    summary_path = evidence / "single_line_labels/summary.json"
+    for saved in (path, manifest_path, summary_path):
+        published_check(saved)
+    single, manifest, summary = (
+        read_json(path),
+        read_json(manifest_path),
+        read_json(summary_path),
+    )
+    row = manifest["text"]
+    _require(
+        row.get("producer_module") == module
+        and row.get("producer_sha256") == producers.get(module)
+        and row.get("path") == "single_line_labels/completed_text.json",
+        "REVISION_SINGLE_LINE_PRODUCER_CHANGED",
+    )
+    _verify_file(path, row["sha256"], "completed single-line text")
+    for name, digest in _dependency_items(row):
+        _require(
+            producers.get(name) == digest, "REVISION_SINGLE_LINE_DEPENDENCY_CHANGED"
+        )
+    for field in (
+        "source_sha256",
+        "source_array_sha256",
+        "source_size_px",
+        "roi_xyxy_px",
+    ):
+        _require(
+            manifest.get(field) == stage.get(field),
+            "REVISION_SINGLE_LINE_SOURCE_IDENTITY_CHANGED",
+        )
+    validate_text_regions(single, gray.shape, stage["roi_xyxy_px"])
+    _require(
+        single.get("source_array_sha256") == stage["source_array_sha256"]
+        and summary == single.get("single_line_label_recovery")
+        and summary == text.get("single_line_label_recovery")
+        and summary.get("version") == labels.POLICY["version"]
+        and summary.get("source_sha256") == stage["source_sha256"]
+        and summary.get("source_array_sha256") == stage["source_array_sha256"],
+        "REVISION_SINGLE_LINE_SUMMARY_CHANGED",
+    )
+    upstream = _within(evidence, row["upstream_path"])
+    _require(
+        row["upstream_path"] == "single_line_labels/upstream_completed_text.json",
+        "REVISION_SINGLE_LINE_EXACT_UPSTREAM_MISSING",
+    )
+    published_check(upstream)
+    _verify_file(upstream, row["upstream_sha256"], "single-line immutable upstream")
+    prior = row["upstream_producer"]
+    _require(
+        prior.get("producer_module")
+        in {
+            "app.native_objects.source_text_completion",
+            "app.native_objects.source_text_ownership",
+        }
+        and prior.get("producer_sha256") == producers.get(prior.get("producer_module"))
+        and prior.get("sha256") == row["upstream_sha256"]
+        and prior.get("path") == row.get("upstream_original_path"),
+        "REVISION_SINGLE_LINE_UPSTREAM_PRODUCER_CHANGED",
+    )
+    for name, digest in _dependency_items(prior):
+        _require(
+            producers.get(name) == digest,
+            "REVISION_SINGLE_LINE_UPSTREAM_DEPENDENCY_CHANGED",
+        )
+    before = read_json(upstream)
+    validate_text_regions(before, gray.shape, stage["roi_xyxy_px"])
+    _require(
+        before.get("source_array_sha256") == stage["source_array_sha256"],
+        "REVISION_SINGLE_LINE_UPSTREAM_SOURCE_CHANGED",
+    )
+    if prior["producer_module"] == "app.native_objects.source_text_completion":
+        _require(
+            before == completion_text,
+            "REVISION_SINGLE_LINE_COMPLETION_UPSTREAM_CHANGED",
+        )
+    else:
+        ownership = before["source_text_ownership"]
+        _require(
+            ownership["producer_sha256"] == producers[prior["producer_module"]]
+            and ownership["upstream_text_sha256"] == _canonical_digest(completion_text)
+            and ownership["source_array_sha256"] == stage["source_array_sha256"]
+            and ownership["source_pixels_removed"]
+            == ownership["OCR_calls"]
+            == ownership["source_fits"]
+            == 0
+            and single.get("prior_source_text_ownership") == ownership,
+            "REVISION_SINGLE_LINE_PRIOR_OWNERSHIP_CHANGED",
+        )
+    old_regions = {region["id"]: region for region in before["regions"]}
+    single_regions = {region["id"]: region for region in single["regions"]}
+    _require(
+        all(single_regions.get(rid) == region for rid, region in old_regions.items()),
+        "REVISION_SINGLE_LINE_OLD_REGIONS_CHANGED",
+    )
+    single_groups = {group["id"]: group for group in single["groups"]}
+    _require(
+        all(
+            single_groups.get(group["id"]) == group
+            for group in before["groups"]
+            if group.get("complete")
+        ),
+        "REVISION_SINGLE_LINE_OLD_COMPLETE_GROUP_CHANGED",
+    )
+    raw_records = summary.get("raw_evidence_files")
+    _require(
+        isinstance(raw_records, list) and raw_records,
+        "REVISION_SINGLE_LINE_RAW_MANIFEST_MISSING",
+    )
+    raw_names = set()
+    for record in raw_records:
+        labels._read_record(evidence, record)
+        name = record["path"]
+        _require(
+            name.startswith("single_line_labels/") and name not in raw_names,
+            "REVISION_SINGLE_LINE_RAW_INVENTORY_CHANGED",
+        )
+        raw_names.add(name)
+        published_check(_within(evidence, name))
+    actual = {
+        saved.relative_to(evidence).as_posix()
+        for saved in (evidence / "single_line_labels").rglob("*")
+        if saved.is_file()
+        and saved.name
+        not in {"completed_text.json", "completed_stages.json", "summary.json"}
+    }
+    _require(actual == raw_names, "REVISION_SINGLE_LINE_RAW_INVENTORY_CHANGED")
+    attempts = summary.get("attempts", [])
+    _require(
+        len({attempt["id"] for attempt in attempts}) == len(attempts),
+        "REVISION_SINGLE_LINE_ATTEMPT_DUPLICATE",
+    )
+    checks, observations, derived_tsv, model_records = [], {}, {}, {}
+    for attempt in attempts:
+        relative = "single_line_labels/labels/" + attempt["id"] + "/label_result.json"
+        _require(relative in raw_names, "REVISION_SINGLE_LINE_RESULT_MISSING")
+        observation = read_json(_within(evidence, relative))
+        replay = _replay_single_line_result(
+            observation, gray, stage["roi_xyxy_px"], evidence
+        )
+        for field in (
+            "accepted",
+            "text",
+            "reasons",
+            "bbox_xyxy_px",
+            "new_Tesseract_calls",
+            "new_model_calls",
+        ):
+            _require(
+                attempt.get(field) == observation.get(field),
+                "REVISION_SINGLE_LINE_ATTEMPT_CHANGED",
+            )
+        checks.append({"id": attempt["id"], "result_path": relative, **replay})
+        observations[attempt["id"]] = observation
+        proof = observation["evidence"]
+        for view in proof["tesseract_views"]:
+            name = view["metadata"]["path"]
+            _require(
+                name in raw_names and name not in derived_tsv,
+                "REVISION_SINGLE_LINE_TSV_BINDING_CHANGED",
+            )
+            derived_tsv[name] = {
+                "source_partition": proof["source_partition"],
+                "normalization": view["normalization"],
+                "result_path": relative,
+            }
+        for view in proof["ppocr_views"]:
+            name = view["prediction_file"]["path"]
+            _require(
+                name in raw_names and name not in model_records,
+                "REVISION_SINGLE_LINE_MODEL_BINDING_CHANGED",
+            )
+            model_records[name] = {
+                "sha256": view["prediction_file"]["sha256"],
+                "source_png_sha256": view["recognition_image"]["sha256"],
+                "source_crop_sha256": view["normalization"]["input_array_sha256"],
+                "source_transform_replayed": True,
+                "result_path": relative,
+            }
+    recovered = summary.get("recovered_labels", [])
+    accepted = {
+        oid for oid, observation in observations.items() if observation["accepted"]
+    }
+    _require(
+        {item["id"] for item in recovered} == accepted
+        and len(recovered) == len(accepted) == summary.get("accepted_labels")
+        and len(attempts) - len(accepted) == summary.get("pending_labels"),
+        "REVISION_SINGLE_LINE_ADOPTED_INVENTORY_CHANGED",
+    )
+    expected_regions, expected_groups = set(), set()
+    for item in recovered:
+        observation = observations[item["id"]]
+        rid, gid = item["region_id"], item["group_id"]
+        expected_regions.add(rid)
+        expected_groups.add(gid)
+        for contract in (single, text):
+            regions = {region["id"]: region for region in contract["regions"]}
+            groups = {group["id"]: group for group in contract["groups"]}
+            for saved in (regions.get(rid, {}), groups.get(gid, {})):
+                _require(
+                    saved.get("single_line_recovery") == observation["evidence"]
+                    and saved.get("text") == observation["text"]
+                    and saved.get("bbox_xyxy_px") == observation["bbox_xyxy_px"]
+                    and saved.get("complete") is True,
+                    "REVISION_SINGLE_LINE_ADOPTED_BINDING_CHANGED",
+                )
+            _require(
+                groups[gid].get("region_ids") == [rid],
+                "REVISION_SINGLE_LINE_GROUP_BINDING_CHANGED",
+            )
+    for contract in (single, text):
+        _require(
+            {
+                region["id"]
+                for region in contract["regions"]
+                if "single_line_recovery" in region
+            }
+            == expected_regions
+            and {
+                group["id"]
+                for group in contract["groups"]
+                if "single_line_recovery" in group
+            }
+            == expected_groups,
+            "REVISION_SINGLE_LINE_PROOF_INVENTORY_CHANGED",
+        )
+    return (
+        single,
+        {
+            "module": module,
+            "path": str(path.relative_to(evidence)),
+            "sha256": file_sha(path),
+            "upstream_path": row["upstream_path"],
+            "upstream_sha256": row["upstream_sha256"],
+            "source_replays": checks,
+            "new_OCR_calls": 0,
+            "new_model_calls": 0,
+            "raw_OCR_not_repeated": True,
+        },
+        derived_tsv,
+        model_records,
+    )
+
+
+def _verify_ownership_chain(
+    evidence, text_row, upstream_text, producers, stage, published_check
+):
+    """The same ownership proof binds either old or new immediate upstream."""
+    ownership_path = (
+        evidence / "text_geometry_ownership/source_text_ownership_audit.json"
+    )
+    dictionary_path = _within(evidence, text_row["source_fitted_dictionary_path"])
+    for path in (ownership_path, dictionary_path):
+        published_check(path)
+    ownership = read_json(ownership_path)
+    _verify_file(
+        dictionary_path,
+        text_row["source_fitted_dictionary_sha256"],
+        "source ownership fitted dictionary",
+    )
+    _require(
+        ownership["producer_sha256"]
+        == producers["app.native_objects.source_text_ownership"]
+        and ownership["upstream_text_sha256"] == _canonical_digest(upstream_text)
+        and ownership["saved_geometry_proposals_sha256"]
+        == _canonical_digest(read_json(dictionary_path))
+        and ownership["source_array_sha256"] == stage["source_array_sha256"]
+        and ownership["source_pixels_removed"]
+        == ownership["OCR_calls"]
+        == ownership["source_fits"]
+        == 0,
+        "REVISION_OWNERSHIP_CHAIN_CHANGED",
+    )
+    return {
+        "module": text_row["producer_module"],
+        "path": text_row["path"],
+        "sha256": text_row["sha256"],
+        "ownership_audit_sha256": file_sha(ownership_path),
+        "not_formal_adoption": True,
+    }
+
+
+def _verify_single_line_ocr(path, gray, dpi, engine, binding):
+    from . import single_line_labels
+
+    normalization = binding["normalization"]
+    normalized, _ = single_line_labels._view(
+        gray,
+        binding["source_partition"],
+        normalization["scale"],
+        normalization["padding"],
+    )
+    # Retain every existing command, engine, source-byte, DPI and image check.
+    # Only its explicitly registered source changes to the replayed local view.
+    return {
+        **_verify_ocr(path, normalized, dpi * normalization["scale"], engine),
+        "registered_source_scope": "REPLAYED_SINGLE_LINE_DERIVED_VIEW",
+        "source_transform_replayed": True,
+        "source_partition_bbox_xyxy_px": binding["source_partition"]["bbox_xyxy_px"],
+        "result_path": binding["result_path"],
+    }
 
 
 def _budget(source_state, adjustment):
@@ -263,11 +670,14 @@ def prepare_revision_resume(
         )
 
     published_check(stage_path)
-    producer_names = list(_PRODUCERS)
-    if stage["text"]["producer_module"] in {
-        "app.native_objects." + n for n in _DERIVED_PRODUCERS
-    }:
-        producer_names += list(_DERIVED_PRODUCERS)
+    producer_names = _revision_producer_names(stage["text"])
+    _require(
+        all(
+            "app/native_objects/" + name + ".py" in state["algorithm"]["files"]
+            for name in producer_names
+        ),
+        "REVISION_PRODUCER_BINDING_MISSING",
+    )
     producers = {
         "app.native_objects." + name: state["algorithm"]["files"][
             "app/native_objects/" + name + ".py"
@@ -281,18 +691,13 @@ def prepare_revision_resume(
         in {
             "app.native_objects.cross_engine_text",
             "app.native_objects.source_text_completion",
+            "app.native_objects.single_line_labels",
             "app.native_objects.source_text_ownership",
         }
         and text_row["producer_sha256"] == producers[text_row["producer_module"]],
         "REVISION_TEXT_PRODUCER_BINDING_CHANGED",
     )
-    dependencies = text_row.get("dependency_producers", [])
-    items = (
-        dependencies.items()
-        if isinstance(dependencies, dict)
-        else [(r["module"], r["sha256"]) for r in dependencies]
-    )
-    for module, digest in items:
+    for module, digest in _dependency_items(text_row):
         _require(producers.get(module) == digest, "REVISION_TEXT_DEPENDENCY_CHANGED")
     _require(
         stage["geometry"]["producer_sha256"]
@@ -335,9 +740,19 @@ def prepare_revision_resume(
         text["source_array_sha256"] == stage["source_array_sha256"],
         "REVISION_TEXT_SOURCE_CHANGED",
     )
-    chain = []
+    chain, single_line_tsv, single_line_models = [], {}, {}
+    single_line_stage = _has_single_line_producer(text_row)
+    _require(
+        single_line_stage == ("single_line_label_recovery" in text)
+        and (
+            single_line_stage
+            or not any("single_line_recovery" in region for region in text["regions"])
+        ),
+        "REVISION_SINGLE_LINE_STAGE_BINDING_MISSING",
+    )
     if text_row["producer_module"] in {
         "app.native_objects.source_text_completion",
+        "app.native_objects.single_line_labels",
         "app.native_objects.source_text_ownership",
     }:
         completion_path = evidence / "source_text_completion/completed_text.json"
@@ -385,43 +800,27 @@ def prepare_revision_resume(
                 "raw_OCR_not_repeated": True,
             }
         )
+        ownership_upstream = completion_text
+        if single_line_stage:
+            (
+                ownership_upstream,
+                single_line_chain,
+                single_line_tsv,
+                single_line_models,
+            ) = _verify_single_line_stage(
+                evidence, text, stage, completion_text, producers, gray, published_check
+            )
+            chain.append(single_line_chain)
         if text_row["producer_module"] == "app.native_objects.source_text_ownership":
-            ownership_path = (
-                evidence / "text_geometry_ownership/source_text_ownership_audit.json"
-            )
-            dictionary_path = _within(
-                evidence, text_row["source_fitted_dictionary_path"]
-            )
-            for path in (ownership_path, dictionary_path):
-                published_check(path)
-            ownership = read_json(ownership_path)
-            _verify_file(
-                dictionary_path,
-                text_row["source_fitted_dictionary_sha256"],
-                "source ownership fitted dictionary",
-            )
-            _require(
-                ownership["producer_sha256"]
-                == producers["app.native_objects.source_text_ownership"]
-                and ownership["upstream_text_sha256"]
-                == _canonical_digest(completion_text)
-                and ownership["saved_geometry_proposals_sha256"]
-                == _canonical_digest(read_json(dictionary_path))
-                and ownership["source_array_sha256"] == stage["source_array_sha256"]
-                and ownership["source_pixels_removed"]
-                == ownership["OCR_calls"]
-                == ownership["source_fits"]
-                == 0,
-                "REVISION_OWNERSHIP_CHAIN_CHANGED",
-            )
             chain.append(
-                {
-                    "module": text_row["producer_module"],
-                    "path": text_row["path"],
-                    "sha256": text_row["sha256"],
-                    "ownership_audit_sha256": file_sha(ownership_path),
-                    "not_formal_adoption": True,
-                }
+                _verify_ownership_chain(
+                    evidence,
+                    text_row,
+                    ownership_upstream,
+                    producers,
+                    stage,
+                    published_check,
+                )
             )
         model = read_json(cross_path)["producer"]["model_identity"]
     else:
@@ -472,7 +871,7 @@ def prepare_revision_resume(
             )
             published_check(path)
             selected.append(path)
-    ocr, ppocr = {}, {}
+    ocr, ppocr = {}, dict(single_line_models)
     for path in selected:
         if path.suffix != ".json":
             continue
@@ -480,9 +879,16 @@ def prepare_revision_resume(
         if not isinstance(data, dict):
             continue
         if "specification" in data and "tsv_sha256" in data:
-            ocr[path.relative_to(evidence).as_posix()] = _verify_ocr(
-                path, gray, params["dpi"], engine
-            )
+            relative = path.relative_to(evidence).as_posix()
+            if relative.startswith("single_line_labels/"):
+                _require(
+                    relative in single_line_tsv, "REVISION_UNBOUND_SINGLE_LINE_TSV"
+                )
+                ocr[relative] = _verify_single_line_ocr(
+                    path, gray, params["dpi"], engine, single_line_tsv[relative]
+                )
+            else:
+                ocr[relative] = _verify_ocr(path, gray, params["dpi"], engine)
         if "raw_model_output" in data and "source_png" in data:
             x0, y0, x1, y1 = data["context"]["crop_xyxy_px"]
             crop = np.ascontiguousarray(gray[y0:y1, x0:x1])
@@ -513,6 +919,7 @@ def prepare_revision_resume(
                 "source_png_sha256": file_sha(png),
                 "source_crop_sha256": digest,
             }
+    _require(set(single_line_tsv) <= set(ocr), "REVISION_SINGLE_LINE_TSV_NOT_RECHECKED")
     _require(
         set(old_import["OCR"]) <= set(ocr), "REVISION_HISTORICAL_OBSERVATIONS_MISSING"
     )

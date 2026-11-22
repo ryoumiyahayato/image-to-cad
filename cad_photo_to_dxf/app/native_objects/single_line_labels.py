@@ -32,7 +32,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "complete-source-single-line-derived-views-v1",
+    "version": "complete-source-single-line-derived-views-v2-baseline-strip",
     "source_threshold": 192,
     "minimum_full_height_components": 3,
     "glyph_height_px": [8, 70],
@@ -68,6 +68,18 @@ POLICY = {
     "original_source_pixels_modified": False,
     "normalization_only_for_recognition": True,
     "new_geometry_ownership_must_be_rechecked": True,
+    "baseline_strip_separation": {
+        "maximum_thickness_px": 4,
+        "maximum_thickness_glyph_heights": 0.22,
+        "minimum_both_end_extensions_glyph_heights": 1.0,
+        "minimum_line_length_glyph_heights": 4.0,
+        "maximum_baseline_search_glyph_heights": 0.15,
+        "minimum_visible_glyph_body_fraction": 0.80,
+        "maximum_candidate_strips": 4,
+        "actual_source_white_gaps_filled": False,
+        "source_pixels_deleted": False,
+        "unobserved_glyph_strokes_reconstructed": False,
+    },
 }
 
 _RECOGNIZER = None
@@ -188,9 +200,18 @@ def _glyph_units(components, height, baseline):
                 horizontal = (
                     y_overlap >= 0.50 * min(a["height"], b["height"]) and x_gap <= 1
                 )
+                separate_dash = any(
+                    part["height"] <= 0.22 * height
+                    and 0.15 * height <= part["width"] <= 1.40 * height
+                    and part["width"] >= 2.5 * part["height"]
+                    and baseline - 0.75 * height
+                    <= (part["bbox"][1] + part["bbox"][3]) / 2
+                    <= baseline - 0.20 * height
+                    for part in (a, b)
+                )
                 if (
                     horizontal
-                    and x_gap >= 1
+                    and (x_gap >= 1 or separate_dash)
                     and (_glyph(a, height, baseline) or _glyph(b, height, baseline))
                 ):
                     # A complete glyph next to a detached mark is not a broken
@@ -230,7 +251,7 @@ def _glyph_units(components, height, baseline):
     return rows
 
 
-def _partition(gray, roi, seed_box, *, catalog=None):
+def _partition_original_row(gray, roi, seed_box, *, catalog=None):
     """A complete component row, including punctuation, independent of text."""
     roi, seed_box = _box_tuple(roi), _box_tuple(seed_box)
     if not base._inside(seed_box, roi):
@@ -448,6 +469,220 @@ def _partition(gray, roi, seed_box, *, catalog=None):
         "all_label_ink_assigned": True,
     }
     return result, None
+
+
+def _baseline_strip_candidates(gray, roi, seed):
+    """Only a complete straight strip beneath a discovered source row.
+
+    Both observed ends must extend beyond the row. A gap in the strip, a
+    second stroke continuing below it, or ink on the outer shoulders stops
+    this finite path. No word or expected character is an input.
+    """
+    policy = POLICY["baseline_strip_separation"]
+    h = seed[3] - seed[1]
+    if not 7 <= h <= 90 or not base._inside(seed, roi):
+        return []
+    extension = math.ceil(policy["minimum_both_end_extensions_glyph_heights"] * h)
+    search = max(2, math.ceil(policy["maximum_baseline_search_glyph_heights"] * h))
+    rows, seen = [], set()
+    for y in range(max(roi[1], seed[3] - search), min(roi[3], seed[3] + search + 1)):
+        ink = gray[y, roi[0] : roi[2]] < POLICY["source_threshold"]
+        starts_ends = np.flatnonzero(np.diff(np.r_[False, ink, False])).reshape(-1, 2)
+        for a, b in starts_ends:
+            a, b = int(a + roi[0]), int(b + roi[0])
+            if not (
+                a <= seed[0] - extension
+                and b >= seed[2] + extension
+                and b - a >= policy["minimum_line_length_glyph_heights"] * h
+            ):
+                continue
+            left, right = (a + seed[0]) // 2, (seed[2] + b) // 2
+            top, bottom = y, y + 1
+            while (
+                top > roi[1]
+                and gray[top - 1, left] < 192
+                and gray[top - 1, right] < 192
+            ):
+                top -= 1
+            while (
+                bottom < roi[3]
+                and gray[bottom, left] < 192
+                and gray[bottom, right] < 192
+            ):
+                bottom += 1
+            box = [a, top, b, bottom]
+            if tuple(box) in seen:
+                continue
+            seen.add(tuple(box))
+            thickness = bottom - top
+            if not (
+                a > roi[0]
+                and b < roi[2]
+                and top > roi[1]
+                and bottom < roi[3]
+                and 1 <= thickness <= policy["maximum_thickness_px"]
+                and thickness <= policy["maximum_thickness_glyph_heights"] * h
+                and top >= seed[1] + policy["minimum_visible_glyph_body_fraction"] * h
+                and bool(np.all(gray[top:bottom, a:b] < 192))
+            ):
+                continue
+            # With no source ink under the strip, a visible comma, descender,
+            # branch, curved stroke or another line cannot be silently cut.
+            lower = bottom + math.ceil(h)
+            upper = top - math.ceil(1.6 * h)
+            if lower > roi[3] or upper < roi[1]:
+                continue
+            if np.any(gray[bottom:lower, a:b] < 192):
+                continue
+            margin = math.ceil(0.20 * h)
+            if np.any(gray[upper:top, a : max(a, seed[0] - margin)] < 192) or np.any(
+                gray[upper:top, min(b, seed[2] + margin) : b] < 192
+            ):
+                continue
+            rows.append(
+                {
+                    "bbox_xyxy_px": box,
+                    "source_threshold": POLICY["source_threshold"],
+                    "original_strip_pixels": int(thickness * (b - a)),
+                    "strip_is_continuous_black_source_rectangle": True,
+                    "source_blank_below_bbox_xyxy_px": [a, bottom, b, lower],
+                    "outer_shoulders_checked_above_to_y": upper,
+                }
+            )
+            if len(rows) >= policy["maximum_candidate_strips"]:
+                return rows
+    return rows
+
+
+def _partition(gray, roi, seed_box, *, catalog=None):
+    """Original components first; a recorded baseline-strip split is bounded."""
+    partition, reason = _partition_original_row(gray, roi, seed_box, catalog=catalog)
+    if partition is not None or reason not in {
+        "INSUFFICIENT_COMPLETE_SOURCE_GLYPH_COMPONENTS",
+        "UNKNOWN_SHORT_OR_SHARED_SOURCE_COMPONENT_RETAINED",
+    }:
+        return partition, reason
+    roi, seed = _box_tuple(roi), _box_tuple(seed_box)
+    for line in _baseline_strip_candidates(gray, roi, seed):
+        a, top, b, bottom = line["bbox_xyxy_px"]
+        # This temporary array partitions the graph only. Original image files
+        # and candidate glyph samples are never repaired, filled or erased.
+        separated = gray.copy()
+        separated[top:bottom, a:b] = 255
+        body, error = _partition_original_row(separated, roi, seed)
+        if error:
+            continue
+        box = body["bbox_xyxy_px"]
+        full = [
+            c for c in body["components"] if c["source_role"] == "FULL_HEIGHT_GLYPH"
+        ]
+        marks = [
+            c for c in body["components"] if c["source_role"] == "RETAINED_PUNCTUATION"
+        ]
+        height = body["glyph_height_px"]
+        if (
+            box[3] != top
+            or box[0] - a < height
+            or b - box[2] < height
+            or any(top - c["bbox_xyxy_px"][3] not in (0, 1) for c in full)
+            or any(
+                c["bbox_xyxy_px"][3] - c["bbox_xyxy_px"][1]
+                < POLICY["baseline_strip_separation"][
+                    "minimum_visible_glyph_body_fraction"
+                ]
+                * (seed[3] - seed[1])
+                for c in full
+            )
+            or any(c["bbox_xyxy_px"][3] >= top - 1 for c in marks)
+            or not np.array_equal(
+                gray[box[1] : box[3], box[0] : box[2]],
+                separated[box[1] : box[3], box[0] : box[2]],
+            )
+        ):
+            continue
+        # Source labels remain the labels of the ORIGINAL connected graph.
+        # Derived subcomponent labels are retained separately, not mislabeled
+        # as independent original connected components.
+        original_labels, _ = catalog if catalog is not None else _catalog(gray, roi)
+        contacts = []
+        for component in body["components"]:
+            original_ids = set()
+            for y, x0, x1 in component["source_runs_y_x0_x1"]:
+                original_ids.update(
+                    int(v)
+                    for v in np.unique(
+                        original_labels[y - roi[1], x0 - roi[0] : x1 - roi[0]]
+                    )
+                    if v
+                )
+            component["derived_partition_component_labels"] = component[
+                "source_component_labels"
+            ]
+            component["source_component_labels"] = sorted(original_ids)
+            adjacent = [
+                run for run in component["source_runs_y_x0_x1"] if run[0] == top - 1
+            ]
+            if adjacent:
+                contacts.append(
+                    {
+                        "component_bbox_xyxy_px": component["bbox_xyxy_px"],
+                        "original_glyph_terminal_runs_y_x0_x1": adjacent,
+                        "adjacent_original_line_runs_y_x0_x1": [
+                            [top, x0, x1] for _, x0, x1 in adjacent
+                        ],
+                        "original_source_component_labels": sorted(original_ids),
+                    }
+                )
+        if not contacts:
+            continue
+        context = [
+            max(roi[0], a - 1),
+            max(roi[1], box[1] - math.ceil(height)),
+            min(roi[2], b + 1),
+            min(roi[3], bottom + math.ceil(height)),
+        ]
+        certificate = {
+            "schema": "source-baseline-straight-strip-separation-v1",
+            **line,
+            "original_source_context_bbox_xyxy_px": context,
+            "original_source_context_array_sha256": base.source_array_sha256(
+                gray[context[1] : context[3], context[0] : context[2]]
+            ),
+            "original_line_runs_y_x0_x1": [[y, a, b] for y in range(top, bottom)],
+            "original_line_component_labels": sorted(
+                int(v)
+                for v in np.unique(
+                    original_labels[
+                        top - roi[1] : bottom - roi[1], a - roi[0] : b - roi[0]
+                    ]
+                )
+                if v
+            ),
+            "recovered_complete_body_bbox_xyxy_px": box,
+            "actual_end_extensions_px": [box[0] - a, b - box[2]],
+            "glyph_to_line_contacts": contacts,
+            "source_body_samples_unchanged": True,
+            "source_graph_component_split_recorded": True,
+            "contact_strip_not_exclusively_assigned_to_glyphs": True,
+            "line_remains_independent_source_responsibility": True,
+            "source_erasure_authorized": False,
+            "unknown_glyph_strokes_reconstructed": False,
+            "actual_source_white_gaps_filled": False,
+        }
+        body["baseline_line_separation"] = certificate
+        body["source_components_cut"] = True
+        body["source_component_catalog_basis"] = (
+            "original_graph_labels_with_certified_baseline_body_subcomponents"
+        )
+        body["source_crop_array_sha256"] = base.source_array_sha256(
+            gray[box[1] : box[3], box[0] : box[2]]
+        )
+        cb = body["context_bbox_xyxy_px"]
+        body["context_array_sha256"] = base.source_array_sha256(
+            gray[cb[1] : cb[3], cb[0] : cb[2]]
+        )
+        return body, None
+    return None, reason
 
 
 def _single_baseline_group(group, regions):

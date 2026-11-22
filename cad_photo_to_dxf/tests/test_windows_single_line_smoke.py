@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import hashlib
+from io import BytesIO
 import json
 from pathlib import Path
 
 import ezdxf
 from ezdxf.fonts import fonts
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 import pytest
 
@@ -19,6 +21,7 @@ from scripts.windows_native_smoke import (
     create_single_line_fixture,
     inspect_single_line_character_payloads,
     inspect_single_line_members,
+    inspect_bounded_single_line_members,
 )
 
 
@@ -41,7 +44,7 @@ def checker_font():
     return path
 
 
-def _saved_checker_fixture(tmp_path, font_path):
+def _saved_checker_fixture(tmp_path, font_path, recovery_indices=(1,)):
     """Synthetic post-save checker input; never sent to production recognition."""
     doc = ezdxf.new("R2013")
     doc.units = 4
@@ -62,7 +65,7 @@ def _saved_checker_fixture(tmp_path, font_path):
         oid = "checker-label-" + str(index)
         geometry = {"text": content, "x": x0, "y": y1, "width_px": x1 - x0, "height_px": y1 - y0}
         row = {"id": oid, "kind": "TEXT", "geometry": geometry}
-        if index == 1:
+        if index in recovery_indices:
             # One new-recovery TEXT is enough to prove harness coverage. This
             # hand-written certificate is ONLY a unit-test object, not a claim
             # of source replay or successful optical recognition.
@@ -360,3 +363,192 @@ def test_raw_checker_preserves_raw_unicode_when_source_canonicalization_is_repla
     result = inspect_single_line_character_payloads(objects, cold, tmp_path, report)
     assert result["verified_saved_recovery_TEXT"][0]["text"] == final_text
     assert json.loads((tmp_path / reference["path"]).read_text())["raw_text"] == raw_text
+
+
+def _bounded_checker_fixture(tmp_path, font_path):
+    """Synthetic rejected receipts and source bytes, with no claimed OCR run."""
+    doc, objects, cold = _saved_checker_fixture(tmp_path, font_path)
+    doc.modelspace().delete_entity(next(e for e in doc.modelspace().query("TEXT") if e.dxf.text == SINGLE_LINE_LABEL_FIXTURE[0][0]))
+    objects["objects"] = [r for r in objects["objects"] if r["id"] != "checker-label-0"]
+    cold["native_text_candidate_checks"] = [r for r in cold["native_text_candidate_checks"] if r["id"] != "checker-label-0"]
+    target = tmp_path / "bounded-checker-only.dxf"
+    doc.saveas(target)
+    objects["dxf_sha256"] = hashlib.sha256(target.read_bytes()).hexdigest()
+    source_path = tmp_path / "controlled-source.png"
+    create_single_line_fixture(source_path, font_path)
+    source = np.asarray(Image.open(source_path))
+    source_sha = hashlib.sha256(source_path.read_bytes()).hexdigest()
+    source_array_sha = hashlib.sha256(source.tobytes()).hexdigest()
+    rendered = Image.new("L", (640, 480), 0)
+    content, point = SINGLE_LINE_LABEL_FIXTURE[0]
+    ImageDraw.Draw(rendered).text(point, content, font=ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC), fill=255)
+    box = list(rendered.getbbox())
+    x0, y0, x1, y1 = box
+    original = np.ascontiguousarray(source[y0:y1, x0:x1])
+    evidence_root = tmp_path / "pending-evidence"
+    label_dir = evidence_root / "single_line_labels/labels/checker-pending"
+    label_dir.mkdir(parents=True)
+    manifest = []
+
+    def record(name, payload):
+        path = label_dir / name
+        path.write_bytes(payload)
+        row = {"path": path.relative_to(evidence_root).as_posix(), "sha256": hashlib.sha256(payload).hexdigest()}
+        manifest.append(row)
+        return row
+
+    def png(array):
+        stream = BytesIO()
+        Image.fromarray(array).save(stream, format="PNG")
+        return stream.getvalue()
+
+    def normalized(spec):
+        array = np.pad(np.repeat(np.repeat(original, spec["scale"], axis=0), spec["scale"], axis=1), spec["padding"], constant_values=255)
+        return array, {**spec, "source_bbox_xyxy_px": box,
+                       "input_array_sha256": hashlib.sha256(array.tobytes()).hexdigest(), "original_source_pixels_modified": False}
+
+    ta, tn = normalized(SINGLE_LINE_TESSERACT_VIEWS[0])
+    t_png = png(ta)
+    t_bytes = b"synthetic rejected raw receipt; never actual optical recognition"
+    t_image = record("t-view.png", t_png)
+    tsv = record("t-view.tsv", t_bytes)
+    metadata = record("t-view.json", json.dumps({"status": "COMPLETED", "return_code": 0, "command_executed_for_this_request": True,
+                                                 "tsv_sha256": hashlib.sha256(t_bytes).hexdigest(), "image_sha256": hashlib.sha256(t_png).hexdigest()}).encode())
+    pa, pn = normalized(SINGLE_LINE_PP_OCR_VIEWS[0])
+    prediction = {"raw_text": content, "input_array_sha256": pn["input_array_sha256"], "raw_transcription_rewritten": False,
+                  "source_geometry_modified": False, "checker_test_only": True}
+    prediction_file = record("p-view.json", json.dumps(prediction).encode())
+    p_image = record("p-view.png", png(pa))
+    mask = original < 192
+    runs = []
+    for y, row in enumerate(mask):
+        delta = np.diff(np.r_[False, row, False].astype("int8"))
+        runs.extend([[y + y0, int(a + x0), int(b + x0)] for a, b in zip(np.flatnonzero(delta == 1), np.flatnonzero(delta == -1))])
+    reasons = ["SYNTHETIC_UNRESOLVED_FULL_LABEL_FOR_CHECKER_TEST_ONLY"]
+    evidence = {
+        "schema": "native-single-line-label-evidence-v1", "checker_test_only": True,
+        "source_bbox_xyxy_px": box, "original_source": record("original_source.png", png(original)),
+        "source_partition": {"bbox_xyxy_px": box, "source_support_runs_y_x0_x1": runs, "all_label_ink_assigned": True,
+                             "recognition_excluded_graphic_runs_y_x0_x1": [], "original_source_pixels_modified": False},
+        "model_identity": record("model_identity.json", json.dumps({"providers": ["CPUExecutionProvider"], "checker_test_only": True}).encode()),
+        "decision": {"accepted": False, "text": None, "reasons": reasons},
+        "policy": {"Tesseract_views": list(SINGLE_LINE_TESSERACT_VIEWS), "PP_OCR_views": list(SINGLE_LINE_PP_OCR_VIEWS), "maximum_views_per_engine": 2},
+        "expected_answers_provided": False, "original_source_pixels_modified": False, "raw_transcription_rewritten": False,
+        "tesseract_views": [{"view_index": 0, "normalization": tn, "raw_tsv": tsv, "metadata": metadata, "recognition_image": t_image, "command_executed_for_this_request": True}],
+        "ppocr_views": [{"view_index": 0, "normalization": pn, "prediction_file": prediction_file, "recognition_image": p_image, "prediction": prediction,
+                         "model_inference_executed_for_this_request": True, "observation_receipt": {"model_inference_executed_for_this_request": True}}],
+        "new_Tesseract_calls": 1, "new_model_calls": 1,
+    }
+    result = {"accepted": False, "text": None, "geometry": None, "bbox_xyxy_px": box, "reasons": reasons,
+              "evidence": evidence, "new_Tesseract_calls": 1, "new_model_calls": 1}
+    record("label_result.json", json.dumps(result).encode())
+    attempt = {"id": "checker-pending", "region_ids": ["pending-region"], "accepted": False, "text": None,
+               "bbox_xyxy_px": box, "reasons": reasons, "new_Tesseract_calls": 1, "new_model_calls": 1}
+    summary = {"source_sha256": source_sha, "source_array_sha256": source_array_sha, "attempts": [attempt],
+               "pending_labels": 1, "new_Tesseract_calls": 1, "new_model_calls": 1, "raw_evidence_files": manifest}
+    group = {"id": "pending-group", "region_ids": ["pending-region"], "bbox_xyxy_px": box, "text": "UNRESOLVED RAW OBSERVATION", "complete": False, "unresolved_reasons": reasons}
+    completed = {"source_array_sha256": source_array_sha, "regions": [{"id": "pending-region", "complete": False, "unresolved_reasons": reasons}], "groups": [group]}
+    uncertainty = {"id": "pending-group", "bbox_xyxy_px": box, "reason": reasons}
+    issue = {"id": "pending-issue", "bbox_xyxy_px": box, "status": "PENDING_SOURCE_REPAIR",
+             "source_support": {"uncertainty_record_index": 0, "details_file": "quality_uncertainties.json"},
+             "binding": {"source_file_sha256": source_sha, "saved_DXF_sha256": objects["dxf_sha256"]}}
+    for path, value in (("single_line_labels/summary.json", summary), ("single_line_labels/completed_text.json", completed),
+                        ("quality_uncertainties.json", [uncertainty]), ("quality_issues.json", {"issues": [issue]})):
+        (evidence_root / path).write_text(json.dumps(value))
+    return doc, objects, cold, evidence_root, source_path, {"single_line_label_recovery": summary}
+
+
+def test_bounded_capability_reports_two_complete_one_pending_and_preserves_strict_failure(tmp_path, checker_font):
+    doc, objects, cold, evidence, source, report = _bounded_checker_fixture(tmp_path, checker_font)
+    result = inspect_bounded_single_line_members(doc, objects, cold, checker_font, evidence, source, report)
+    assert result["supported_capability_pass"]
+    assert result["complete_count"] == 2 and result["pending_count"] == 1 and result["new_recovery_count"] == 1
+    assert result["strict_three_complete_status"] == "FAIL" and result["strict_three_complete_inspector_executed"]
+    assert result["strict_three_complete_failure"] == "Single-line fixture did not save one complete literal TEXT per label/control"
+    assert not result["all_labels_are_single_top_level_TEXT"]
+    assert result["pending_labels"][0]["counted_as_complete"] is False
+    with pytest.raises(AssertionError, match="complete literal TEXT per label"):
+        inspect_single_line_members(doc, objects, cold, checker_font)
+
+
+def test_bounded_contract_still_allows_three_complete_source_bound_labels(tmp_path, checker_font):
+    doc, objects, cold = _saved_checker_fixture(tmp_path, checker_font, recovery_indices=(0, 1))
+    result = inspect_bounded_single_line_members(doc, objects, cold, checker_font, tmp_path, tmp_path / "unused.png", {})
+    assert result["strict_three_complete_status"] == "PASS"
+    assert result["complete_count"] == 3 and result["pending_count"] == 0 and result["new_recovery_count"] == 2
+    assert result["strict_three_complete_failure"] is None
+
+
+@pytest.mark.parametrize("damage", ["wrong-letter", "prefix", "extra-glyph", "missing-required-label", "ordinary-control",
+                                   "lost-short-stroke", "neighbor-displaced", "no-PANEL-recovery", "failed-PANEL-source",
+                                   "missing-pending-attempt", "pending-reason-empty", "pending-group-disappeared", "pending-marked-complete",
+                                   "pending-quality-issue-disappeared", "pending-quality-wrong-DXF", "pending-raw-missing", "pending-raw-modified",
+                                   "pending-original-modified", "pending-source-support-truncated", "pending-no-real-call"])
+def test_bounded_contract_rejects_false_completion_disappearing_pending_and_damaged_neighbors(tmp_path, checker_font, damage):
+    doc, objects, cold, evidence, source, report = _bounded_checker_fixture(tmp_path, checker_font)
+    texts, lines = list(doc.modelspace().query("TEXT")), list(doc.modelspace().query("LINE"))
+    summary = report["single_line_label_recovery"]
+
+    def change_json(name, change):
+        path = evidence / name
+        value = json.loads(path.read_text())
+        change(value)
+        path.write_text(json.dumps(value))
+
+    def change_pending(change):
+        name = "single_line_labels/labels/checker-pending/label_result.json"
+        change_json(name, change)
+        for row in summary["raw_evidence_files"]:
+            if row["path"] == name:
+                row["sha256"] = hashlib.sha256((evidence / name).read_bytes()).hexdigest()
+
+    if damage in ("wrong-letter", "prefix"):
+        doc.modelspace().add_text("AHU-27B, 24" if damage == "wrong-letter" else "AHU-27B,", dxfattribs={"height": 2})
+    elif damage == "extra-glyph":
+        doc.modelspace().add_line((10, 10), (10, 12))
+    elif damage == "missing-required-label":
+        doc.modelspace().delete_entity(texts[0])
+    elif damage == "ordinary-control":
+        next(e for e in texts if e.dxf.text == "STORE").dxf.text = "ST0RE"
+    elif damage == "lost-short-stroke":
+        doc.modelspace().delete_entity(lines[-1])
+    elif damage == "neighbor-displaced":
+        lines[-1].dxf.end = lines[-1].dxf.end + (4, 0, 0)
+    elif damage == "no-PANEL-recovery":
+        next(r for r in objects["objects"] if r["id"] == "checker-label-1").pop("source_evidence")
+        cold["single_line_text_source_checks"] = []
+    elif damage == "failed-PANEL-source":
+        cold["single_line_text_source_checks"][0]["pass"] = False
+    elif damage == "missing-pending-attempt":
+        summary["attempts"] = []
+    elif damage == "pending-reason-empty":
+        summary["attempts"][0]["reasons"] = []
+    elif damage == "pending-group-disappeared":
+        change_json("single_line_labels/completed_text.json", lambda value: value.update(groups=[]))
+    elif damage == "pending-marked-complete":
+        change_json("single_line_labels/completed_text.json", lambda value: value["groups"][0].update(complete=True))
+    elif damage == "pending-quality-issue-disappeared":
+        change_json("quality_issues.json", lambda value: value.update(issues=[]))
+    elif damage == "pending-quality-wrong-DXF":
+        change_json("quality_issues.json", lambda value: value["issues"][0]["binding"].update(saved_DXF_sha256="stale"))
+    elif damage == "pending-raw-missing":
+        (evidence / "single_line_labels/labels/checker-pending/t-view.tsv").unlink()
+    elif damage == "pending-raw-modified":
+        (evidence / "single_line_labels/labels/checker-pending/t-view.tsv").write_text("tampered")
+    elif damage == "pending-original-modified":
+        path = evidence / "single_line_labels/labels/checker-pending/original_source.png"
+        image = Image.open(path)
+        image.putpixel((1, 1), 255 - image.getpixel((1, 1)))
+        image.save(path)
+        new_sha = hashlib.sha256(path.read_bytes()).hexdigest()
+        change_pending(lambda value: value["evidence"]["original_source"].update(sha256=new_sha))
+        next(row for row in summary["raw_evidence_files"] if row["path"].endswith("/original_source.png"))["sha256"] = new_sha
+    elif damage == "pending-source-support-truncated":
+        change_pending(lambda value: value["evidence"]["source_partition"]["source_support_runs_y_x0_x1"].pop())
+    else:
+        change_pending(lambda value: value["evidence"]["tesseract_views"][0].update(command_executed_for_this_request=False))
+    (evidence / "single_line_labels/summary.json").write_text(json.dumps(summary))
+    path = tmp_path / "bounded-damage.dxf"
+    doc.saveas(path)
+    with pytest.raises(AssertionError):
+        inspect_bounded_single_line_members(ezdxf.readfile(path), objects, cold, checker_font, evidence, source, report)

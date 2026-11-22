@@ -523,3 +523,182 @@ def test_malformed_earlier_raw_observation_cannot_be_hidden_by_later_success():
     assert not labels._decision(
         [good], [{"prediction": raw}, {"prediction": _prediction("AB-12,3")}], part
     )["accepted"]
+
+
+def _touching_baseline_source():
+    gray, roi, box, _ = _drawing("PANEL-08A")
+    top = box[3]
+    strip = [10, top, 460, top + 3]
+    gray[top : top + 3, 10:460] = 0
+    return gray, roi, box, strip
+
+
+def test_certified_baseline_strip_retains_complete_original_body_and_independent_line():
+    gray, roi, box, strip = _touching_baseline_source()
+    original = gray.copy()
+    assert labels._partition_original_row(gray, roi, box)[0] is None
+    part, reason = labels._partition(gray, roi, box)
+    assert not reason, reason
+    proof = part["baseline_line_separation"]
+    assert proof["bbox_xyxy_px"] == strip
+    assert part["bbox_xyxy_px"] == box
+    assert part["full_height_component_count"] == 8
+    assert part["punctuation_component_count"] == 1
+    assert labels._source_canonical_text("PANEL-08A", part)["text"] == "PANEL-08A"
+    assert part["source_components_cut"] is True
+    assert proof["glyph_to_line_contacts"]
+    assert proof["source_erasure_authorized"] is False
+    assert proof["line_remains_independent_source_responsibility"] is True
+    assert np.array_equal(gray, original)
+    normalized, _ = labels._view(gray, part, 2, 0)
+    assert np.array_equal(
+        normalized[::2, ::2], original[box[1] : box[3], box[0] : box[2]]
+    )
+    assert all(
+        run[0] < strip[1]
+        for c in part["components"]
+        for run in c["source_runs_y_x0_x1"]
+    )
+    assert all(c["source_component_labels"] for c in part["components"])
+    assert any(
+        c["derived_partition_component_labels"] != c["source_component_labels"]
+        for c in part["components"]
+    )
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "white-pixel-gap",
+        "descending-comma",
+        "lower-branch",
+        "upper-branch",
+        "curve",
+        "true-bottom-stroke",
+        "one-end-missing",
+    ],
+)
+def test_baseline_separator_does_not_hide_gaps_marks_branches_curves_or_bottom_ink(
+    damage,
+):
+    gray, roi, box, strip = _touching_baseline_source()
+    top = strip[1]
+    if damage == "white-pixel-gap":
+        gray[top + 1, box[0] + 10] = 255
+    elif damage == "descending-comma":
+        gray[top - 2 : top + 7, box[2] + 6 : box[2] + 8] = 0
+    elif damage == "lower-branch":
+        gray[top + 3 : top + 10, box[2] + 30] = 0
+    elif damage == "upper-branch":
+        gray[top - 9 : top, box[2] + 30] = 0
+    elif damage == "curve":
+        cv2.ellipse(gray, (box[2] + 30, top), (13, 9), 0, 0, 180, 0, 1)
+    elif damage == "true-bottom-stroke":
+        gray[top : top + 3, strip[0] : strip[2]] = 255
+        gray[top - 4 : top - 1, strip[0] : strip[2]] = 0
+    elif damage == "one-end-missing":
+        gray[top : top + 3, strip[0] : box[0]] = 255
+    original = gray.copy()
+    part, reason = labels._partition(gray, roi, box)
+    assert part is None, (damage, part)
+    assert reason
+    assert np.array_equal(gray, original)
+
+
+def test_clipped_discovery_box_cannot_clip_certified_full_source_body():
+    gray, roi, box, _ = _touching_baseline_source()
+    seed = [box[0] + 1, box[1], box[2] - 1, box[3]]
+    part, reason = labels._partition(gray, roi, seed)
+    assert not reason, reason
+    assert part["bbox_xyxy_px"] == box
+
+
+def test_baseline_line_requires_full_blank_lower_context_inside_requested_source():
+    gray, roi, box, strip = _touching_baseline_source()
+    roi = [roi[0], roi[1], roi[2], strip[3] + 1]
+    part, reason = labels._partition(gray, roi, box)
+    assert part is None and reason
+
+
+def test_component_bboxes_abut_but_a_real_detached_dash_stays_independent():
+    rows = [
+        {
+            "label": 1,
+            "labels": [1],
+            "bbox": [20, 20, 32, 40],
+            "width": 12,
+            "height": 20,
+            "area": 65,
+        },
+        {
+            "label": 2,
+            "labels": [2],
+            "bbox": [32, 29, 38, 31],
+            "width": 6,
+            "height": 2,
+            "area": 12,
+        },
+    ]
+    assert len(labels._glyph_units(rows, 20, 40)) == 2
+
+
+def test_cold_replays_baseline_partition_and_rejects_changed_certificate(
+    tmp_path, monkeypatch
+):
+    gray, roi, box, _ = _touching_baseline_source()
+    part, reason = labels._partition(gray, roi, box)
+    assert not reason
+    _engines(monkeypatch, [("PANEL-08A", 96)])
+    model = _RawModel([("PANEL-08A", 0.999)])
+    result = labels.recognize_single_line_label(
+        gray,
+        roi,
+        {"source_partition": part},
+        tmp_path,
+        recognizer=model,
+        evidence_root=tmp_path,
+    )
+    assert result["accepted"]
+    assert labels.verify_single_line_label_evidence(
+        gray, roi, result["evidence"], tmp_path
+    )["pass"]
+    damaged = deepcopy(result["evidence"])
+    damaged["source_partition"]["baseline_line_separation"]["actual_end_extensions_px"][
+        0
+    ] += 1
+    assert not labels.verify_single_line_label_evidence(gray, roi, damaged, tmp_path)[
+        "pass"
+    ]
+
+
+def test_fragmented_upper_bowl_is_not_mistaken_for_a_detached_midline_dash():
+    # The stem/top fragment is already tall. A tiny upper gap and its bowl
+    # fragment may still belong to that glyph, unlike a separate short dash.
+    rows = [
+        {
+            "label": 1,
+            "labels": [1],
+            "bbox": [20, 20, 31, 46],
+            "width": 11,
+            "height": 26,
+            "area": 80,
+        },
+        {
+            "label": 2,
+            "labels": [2],
+            "bbox": [31, 21, 32, 22],
+            "width": 1,
+            "height": 1,
+            "area": 1,
+        },
+        {
+            "label": 3,
+            "labels": [3],
+            "bbox": [32, 21, 39, 34],
+            "width": 7,
+            "height": 13,
+            "area": 25,
+        },
+    ]
+    units = labels._glyph_units(rows, 26, 46)
+    assert len(units) == 1 and units[0]["labels"] == [1, 2, 3]
