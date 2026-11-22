@@ -268,7 +268,8 @@ def test_legacy_text_keeps_previous_attributes_and_does_not_claim_new_replay(
     assert list(a.get_xdata(cad_io.APPID)) == list(b.get_xdata(cad_io.APPID))
     assert tuple(b.dxf.insert) == pytest.approx((23 * MM, 116 * MM, 0))
     assert b.dxf.height == pytest.approx(23 * MM)
-    assert cad_io.text_size(b).width == pytest.approx(178 * MM)
+    portable_font = fonts.sideload_ttf(current.parent / "DejaVuSans.ttf", b.dxf.height)
+    assert portable_font.text_width(b.plain_text()) * b.dxf.width == pytest.approx(178 * MM)
     report = _cold(current)
     assert all(r["pass"] for r in report["native_text_candidate_checks"])
     assert len(report["native_text_candidate_checks"]) == 2

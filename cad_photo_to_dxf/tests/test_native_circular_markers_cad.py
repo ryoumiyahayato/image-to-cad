@@ -472,4 +472,5 @@ def test_existing_standalone_text_keeps_its_previous_layout_contract(tmp_path):
     text = _formal(ezdxf.readfile(path))[0]
     assert _pixel(text.dxf.insert) == pytest.approx([g["x"], g["y"]])
     assert text.dxf.height / MM == pytest.approx(g["height_px"])
-    assert cad_io.text_size(text).width / MM == pytest.approx(g["width_px"])
+    portable_font = fonts.sideload_ttf(path.parent / "DejaVuSans.ttf", text.dxf.height)
+    assert portable_font.text_width(text.plain_text()) * text.dxf.width / MM == pytest.approx(g["width_px"])

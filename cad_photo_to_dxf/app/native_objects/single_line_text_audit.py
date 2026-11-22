@@ -2,7 +2,8 @@
 
 Font ink bounds determine placement only. They are never recognition evidence,
 and are not compared pixel-for-pixel with scan noise or a replacement font.
-Legacy standalone TEXT retains its existing cap-height/advance-width contract.
+Legacy standalone TEXT retains its existing cap-height/advance-width contract,
+measured from the saved adjacent font without a host font-manager fallback.
 """
 
 from __future__ import annotations
@@ -15,9 +16,8 @@ import math
 from pathlib import Path
 
 import ezdxf
-from ezdxf.entities import Text
 from ezdxf.fonts import fonts
-from ezdxf.tools.text_size import text_size
+from ezdxf.tools.text import plain_text
 import numpy as np
 
 from .contracts import plain
@@ -247,10 +247,12 @@ def _expected_attributes(entity, obj, roi, dpi, font_path, recovered):
         rotation=-geometry.get("rotation_deg_image", 0.0),
         width=1.0,
     )
-    virtual = Text.new(
-        dxfattribs={k: v for k, v in common.items() if v is not None}, doc=entity.doc
-    )
-    measured = text_size(virtual).width
+    # Recompute from the bound candidate and actual adjacent font bytes.
+    # Reusing text_size(entity) can repeat the writer's host fallback and
+    # incorrectly approve a width fitted to a different font.
+    measured = fonts.sideload_ttf(
+        Path(font_path).resolve(), common["height"]
+    ).text_width(plain_text(geometry["text"]))
     if not math.isfinite(measured) or measured <= 0:
         raise ValueError("UNMEASURABLE_LEGACY_NATIVE_TEXT")
     common["width"] = geometry["width_px"] * mm / measured

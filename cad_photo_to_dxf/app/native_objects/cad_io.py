@@ -316,10 +316,17 @@ def export_objects(
                 "rotation": -g.get("rotation_deg_image", 0),
             },
         )
-        measure = text_size(e)
-        if measure.width <= 0:
+        # Resolve the saved font bytes directly. The host FontManager may
+        # substitute Arial on Windows for the bare DXF style filename even
+        # though DejaVuSans.ttf has already been copied beside this DXF.
+        # Keep the existing cap-height/advance-width contract; only remove
+        # that host-dependent fallback from the width measurement.
+        measured = fonts.sideload_ttf(
+            (path.parent / font["font"]).resolve(), e.dxf.height
+        ).text_width(e.plain_text())
+        if not math.isfinite(measured) or measured <= 0:
             raise ValueError("UNMEASURABLE_NATIVE_TEXT")
-        e.dxf.width = g["width_px"] * mm / measure.width
+        e.dxf.width = g["width_px"] * mm / measured
         return e
 
     for o in objects:
