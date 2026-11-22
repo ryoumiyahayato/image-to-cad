@@ -122,6 +122,46 @@ def _restore_circular_marker_evidence(cache_dir, out, completion):
     save_json(destination / "circular_markers/circular_markers.json", completion)
 
 
+def _restore_single_line_label_evidence(cache_dir, out, texts):
+    """Keep new TEXT raw evidence available after completed-assembly resume."""
+    completion = texts.get("single_line_label_recovery")
+    if completion is None:
+        return
+    source_root, destination = Path(cache_dir).resolve(), Path(out).resolve()
+    records = completion.get("raw_evidence_files")
+    if not isinstance(records, list):
+        raise ValueError("SINGLE_LINE_ASSEMBLY_RAW_MANIFEST_MISSING")
+    seen = set()
+    for record in records:
+        name = record.get("path")
+        if not isinstance(name, str) or "\\" in name:
+            raise ValueError("SINGLE_LINE_ASSEMBLY_RAW_PATH_INVALID")
+        relative = PurePosixPath(name)
+        if (
+            relative.is_absolute() or ".." in relative.parts
+            or not relative.parts or relative.parts[0] != "single_line_labels"
+            or name in seen
+        ):
+            raise ValueError("SINGLE_LINE_ASSEMBLY_RAW_PATH_INVALID")
+        seen.add(name)
+        source, target = source_root / name, destination / name
+        if (
+            not source.is_file() or source.is_symlink()
+            or source_root not in source.resolve().parents
+            or target.is_symlink() or destination not in target.resolve().parents
+        ):
+            raise ValueError("SINGLE_LINE_ASSEMBLY_RAW_SOURCE_MISSING_OR_OUTSIDE")
+        contents = source.read_bytes()
+        if hashlib.sha256(contents).hexdigest() != record.get("sha256"):
+            raise ValueError("SINGLE_LINE_ASSEMBLY_RAW_SOURCE_CHANGED")
+        if target.exists() and target.read_bytes() != contents:
+            raise ValueError("SINGLE_LINE_ASSEMBLY_DESTINATION_ALREADY_DIFFERS")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_bytes(contents)
+    save_json(destination / "single_line_labels/summary.json", completion)
+
+
 def _text_progress_adapter(progress):
     """Text owns a structured event contract; service owns stage/fraction."""
     last_fraction = 0.05
@@ -159,6 +199,7 @@ def _completed_text_checkpoint(
         "app.native_objects.text_block_rescue": "text_block_rescue.py",
         "app.native_objects.cross_engine_text": "cross_engine_text.py",
         "app.native_objects.source_text_completion": "source_text_completion.py",
+        "app.native_objects.single_line_labels": "single_line_labels.py",
         "app.native_objects.source_text_ownership": "source_text_ownership.py",
         "app.native_objects.source_review": "source_review.py",
     }
@@ -179,6 +220,7 @@ def _completed_text_checkpoint(
         "app.native_objects.independent_recognizer": "independent_recognizer.py",
         "app.native_objects.text_confirmation": "text_confirmation.py",
         "app.native_objects.text_context_ownership": "text_context_ownership.py",
+        "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
     }
     for module_name, expected in dependency_items:
         if (
@@ -197,6 +239,7 @@ def _completed_text_checkpoint(
             "text_block_rescue",
             "cross_engine_text",
             "source_text_completion",
+            "single_line_labels",
             "source_text_ownership",
             "source_review",
         ):
@@ -426,6 +469,7 @@ def _restore_completed_text_assets(cache_dir, out, producer_row):
         "app.native_objects.text_block_rescue",
         "app.native_objects.cross_engine_text",
         "app.native_objects.source_text_completion",
+        "app.native_objects.single_line_labels",
         "app.native_objects.source_text_ownership",
     ]
     module = producer_row.get("producer_module", stages[0])
@@ -437,6 +481,7 @@ def _restore_completed_text_assets(cache_dir, out, producer_row):
         "text_block_rescue",
         "cross_engine_text",
         "source_text_completion",
+        "single_line_labels",
         "text_geometry_ownership",
     ]
     records = []
@@ -725,6 +770,120 @@ def _exclude_duplicate_door_lines(lines, doors):
     return retained, deferred
 
 
+def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress):
+    """Recompute complete single-line adoption in the ordinary text pipeline.
+
+    This stage takes only the current source and text observations. Evaluation
+    cases, expected strings and old DXF objects never enter recognition. The
+    previous stage remains immutable and its relative raw paths stay usable.
+    """
+    from . import single_line_labels
+
+    out = Path(out)
+    manifest_path = out / "completed_stages.json"
+    stage = json.loads(manifest_path.read_text(encoding="utf-8"))
+    previous = stage["text"]
+    module = "app.native_objects.single_line_labels"
+    producer_sha = hashlib.sha256(
+        Path(single_line_labels.__file__).read_bytes()
+    ).hexdigest()
+    dependencies = previous.get("dependency_producers", {})
+    dependencies = (
+        dict(dependencies)
+        if isinstance(dependencies, dict)
+        else {row["module"]: row["sha256"] for row in dependencies}
+    )
+    if previous["producer_module"] == "app.native_objects.source_review":
+        return texts
+    if (
+        previous["producer_module"] == module
+        and previous["producer_sha256"] == producer_sha
+    ) or dependencies.get(module) == producer_sha:
+        # This is an authenticated completed stage from the same producer, not
+        # a saved acceptance whitelist imported from another drawing.
+        return texts
+    upstream_path = out / previous["path"]
+    upstream_root = upstream_path.parent
+    previous_roots = dict(texts.get("region_evidence_roots", {}))
+    previous_ids = {row["id"] for row in texts["regions"]}
+    stage_dir = out / "single_line_labels"
+    # Ownership may already be the imported upstream stage. Its ordinary
+    # destination is rewritten after this recovery, so preserve the exact
+    # input bytes before a later ownership pass can replace that path.
+    upstream_snapshot = stage_dir / "upstream_completed_text.json"
+    upstream_contents = upstream_path.read_bytes()
+    if hashlib.sha256(upstream_contents).hexdigest() != previous["sha256"]:
+        raise ValueError("SINGLE_LINE_UPSTREAM_CHANGED_BEFORE_SNAPSHOT")
+    if upstream_snapshot.exists() and upstream_snapshot.read_bytes() != upstream_contents:
+        raise ValueError("SINGLE_LINE_UPSTREAM_SNAPSHOT_ALREADY_DIFFERS")
+    upstream_snapshot.parent.mkdir(parents=True, exist_ok=True)
+    if not upstream_snapshot.exists():
+        upstream_snapshot.write_bytes(upstream_contents)
+    progress("COMPLETE_SOURCE_BOUND_SINGLE_LINE_LABELS", 0.315)
+    result = single_line_labels.refine_single_line_labels(
+        gray,
+        texts,
+        stage_dir,
+        roi=roi,
+        dpi=dpi,
+        source_sha256=source_sha,
+        progress_callback=_text_progress_adapter(progress),
+        evidence_root=out,
+    )
+    result["region_evidence_roots"] = {
+        row["id"]: relative_evidence_path(
+            (
+                upstream_root / previous_roots.get(row["id"], ".")
+                if row["id"] in previous_ids
+                else stage_dir / result.get("region_evidence_roots", {}).get(
+                    row["id"], "."
+                )
+            ).resolve(),
+            stage_dir,
+        )
+        for row in result["regions"]
+    }
+    if result.get("bbox_overlay"):
+        result["bbox_overlay"] = relative_evidence_path(
+            upstream_root / result["bbox_overlay"], stage_dir
+        )
+    validate_text_regions(result, gray.shape, roi)
+    saved = stage_dir / "completed_text.json"
+    save_json(saved, result)
+    dependencies[previous["producer_module"]] = previous["producer_sha256"]
+    # The new producer reuses the existing raw recognizer integrity/score
+    # helpers. Their actual code is part of this completed-stage identity.
+    for dependency in (
+        "text_regions", "independent_recognizer", "circle_character_recognition"
+    ):
+        dependencies["app.native_objects." + dependency] = hashlib.sha256(
+            Path(__file__).with_name(dependency + ".py").read_bytes()
+        ).hexdigest()
+    derived = {
+        "path": "single_line_labels/completed_text.json",
+        "sha256": hashlib.sha256(saved.read_bytes()).hexdigest(),
+        "producer_module": module,
+        "producer_sha256": producer_sha,
+        "dependency_producers": dependencies,
+        "upstream_path": "single_line_labels/upstream_completed_text.json",
+        "upstream_sha256": previous["sha256"],
+        "upstream_original_path": previous["path"],
+        "upstream_producer": copy.deepcopy(previous),
+        "source_pixels_modified": False,
+        "derived_recognition_inputs_retained": True,
+        "old_adoption_or_evaluation_cases_imported": False,
+    }
+    stage["text"] = derived
+    # A text change invalidates any old ownership and downstream assembly.
+    # Source-fitted geometry may still be reused, with current text ownership
+    # and the original dense source checks repeated below.
+    stage.pop("assembly", None)
+    save_json(stage_dir / "completed_stages.json", stage)
+    save_json(manifest_path, stage)
+    checkpoint_artifact("completed_single_line_labels", manifest_path)
+    return result
+
+
 def _text_objects(text_data, consumed, deferred, gray=None):
     result = []
     issues = []
@@ -771,7 +930,22 @@ def _text_objects(text_data, consumed, deferred, gray=None):
         rows = [regions[rid] for rid in g["region_ids"]]
         source_evidence = g
         if len(rows) == 1:
-            if gray is not None:
+            recovery = rows[0].get("single_line_recovery") or g.get(
+                "single_line_recovery"
+            )
+            if recovery is not None:
+                if rows[0]["text"] != g["text"]:
+                    raise ValueError("SINGLE_LINE_GROUP_LITERAL_CHANGED")
+                source_evidence = copy.deepcopy(g)
+                source_evidence["single_line_recovery"] = copy.deepcopy(recovery)
+                x0, y0, x1, y1 = rows[0]["bbox_xyxy_px"]
+                source_evidence["text_layout"] = {
+                    "status": "COMPLETE_SOURCE_ROW_PORTABLE_FONT_INKBOX",
+                    "bbox_xyxy_px": [x0, y0, x1, y1],
+                    "source_geometry_from_verified_single_line_recovery": True,
+                    "font_outline_is_not_scan_ink_equality": True,
+                }
+            elif gray is not None:
                 from .source_text_layout import choose_source_text_layout
 
                 layout_evidence = choose_source_text_layout(
@@ -975,6 +1149,8 @@ def run_native_objects(
             "PDF_rasterized_at_explicit_DPI": import_manifest["selection"]["format"]
             == "PDF",
             "recognition_raster_rescaled_after_decode": False,
+            "recognition_raster_rescaled_after_decode_scope": "immutable task working raster only",
+            "local_derived_recognition_inputs": "separately recorded and replayed; never replace the task source",
             "tolerances": TOLERANCES,
             "core_reads_test_cases_or_expected_text": False,
             "engineering_scale": "UNVERIFIED_PAPER_MM_ONLY",
@@ -984,6 +1160,7 @@ def run_native_objects(
         restored_assembly = _completed_assembly_checkpoint(cache_dir, stage_identity)
         if restored_assembly is not None:
             texts = restored_assembly["texts"]
+            _restore_single_line_label_evidence(cache_dir, out, texts)
             geometry = restored_assembly["geometry"]
             annotations = restored_assembly["annotations"]
             doors = restored_assembly["doors"]
@@ -1176,6 +1353,7 @@ def run_native_objects(
                 "app.native_objects.text_block_rescue",
                 "app.native_objects.cross_engine_text",
                 "app.native_objects.source_text_completion",
+                "app.native_objects.single_line_labels",
                 "app.native_objects.source_text_ownership",
             ):
                 from .text_block_rescue import refine_text_blocks
@@ -1216,6 +1394,7 @@ def run_native_objects(
                 "app.native_objects.source_review",
                 "app.native_objects.cross_engine_text",
                 "app.native_objects.source_text_completion",
+                "app.native_objects.single_line_labels",
                 "app.native_objects.source_text_ownership",
             ):
                 from .cross_engine_text import refine_cross_engine
@@ -1244,6 +1423,7 @@ def run_native_objects(
             if current_text_stage["text"].get("producer_module") not in (
                 "app.native_objects.source_review",
                 "app.native_objects.source_text_completion",
+                "app.native_objects.single_line_labels",
                 "app.native_objects.source_text_ownership",
             ):
                 from .source_text_completion import refine_source_text_completion
@@ -1279,6 +1459,9 @@ def run_native_objects(
                 checkpoint_artifact(
                     "completed_bounded_source_text_queue", out / "completed_stages.json"
                 )
+            texts = _complete_single_line_stage(
+                gray, texts, out, source_sha, roi, dpi, progress
+            )
             text_producer = copy.deepcopy(
                 json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))["text"]
             )
@@ -1720,6 +1903,7 @@ def run_native_objects(
                 "engineering_stroke_identity_proven": False,
             },
             "circular_marker_completion": circular_markers["summary"],
+            "single_line_label_recovery": texts.get("single_line_label_recovery"),
             "wall_partition_source_gate": walls.get("partition_source_gate"),
         }
         report.update(

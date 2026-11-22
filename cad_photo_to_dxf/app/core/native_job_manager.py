@@ -1152,13 +1152,46 @@ class NativeJobManager:
                     raise ValueError("Worker outcome identity mismatch")
                 state.update(result)
             elif state["status"] in ACTIVE:
-                if progress.is_file():
-                    row = read_json(progress)
+                progress_read = False
+                try:
+                    if progress.is_file():
+                        row = read_json(progress)
+                        progress_read = True
+                except (PermissionError, FileNotFoundError) as exc:
+                    # Progress is optional telemetry. Windows can briefly deny
+                    # its open while the worker replaces it. Preserve the last
+                    # observation, but continue the normal worker/terminal checks.
+                    # Invalid JSON and required outcome/state reads must fail.
+                    diagnostic = state.setdefault(
+                        "optional_progress_read", {"transient_failure_count": 0}
+                    )
+                    diagnostic.update(
+                        transient_failure_count=diagnostic["transient_failure_count"]
+                        + 1,
+                        last_read_succeeded=False,
+                        last_failure={
+                            "attempt": state["attempt"],
+                            "path": str(progress),
+                            "type": type(exc).__name__,
+                            "message": str(exc),
+                            "errno": exc.errno,
+                            "winerror": getattr(exc, "winerror", None),
+                            "utc": utc_now(),
+                            "previous_progress_preserved": True,
+                            "terminal_result_inferred": False,
+                        },
+                    )
+                if progress_read:
                     state.update(
                         stage=row.get("stage", state["stage"]),
                         progress=row.get("progress", state["progress"]),
                         active_children=row.get("active_children", []),
                     )
+                    if "optional_progress_read" in state:
+                        state["optional_progress_read"].update(
+                            last_read_succeeded=True,
+                            last_successful_read_utc=utc_now(),
+                        )
                     if state["status"] == "STARTING":
                         state["status"] = "RUNNING"
                 tracked = self._processes.get(job_id)
