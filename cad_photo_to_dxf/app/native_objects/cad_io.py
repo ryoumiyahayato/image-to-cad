@@ -16,9 +16,11 @@ from fontTools.ttLib import TTFont
 from ezdxf.math import Matrix44
 from ezdxf.lldxf.tagwriter import TagWriter
 from ezdxf.tools.text_size import text_size
+from ezdxf.fonts import fonts
 from ezdxf.addons.drawing import Frontend, RenderContext, config, layout
 from ezdxf.addons.drawing.recorder import Recorder
 from ezdxf.addons.drawing.pymupdf import PyMuPdfRenderBackend
+from ezdxf.addons.drawing.unified_text_renderer import UnifiedTextRenderer
 from scipy.ndimage import map_coordinates, distance_transform_edt
 from .contracts import save_json
 from .connection_retrace_audit import certify_saved_retraces
@@ -1150,6 +1152,53 @@ def cold_audit(path, gray, roi, dpi, out):
     return report
 
 
+class _PortableTextRenderer(UnifiedTextRenderer):
+    """Use the saved font for native text without changing system font caches.
+
+    ezdxf resolves a style's filename through its system FontManager; it does
+    not search beside the DXF. A missing installed DejaVu can silently become
+    a fallback such as Arial, although export measured the bundled font.
+    The public sideload API bypasses that fallback, and an instance per render
+    also avoids the drawing pipeline's shared, filename-only text cache.
+    """
+
+    def __init__(self, font_path):
+        super().__init__()
+        self.portable_name = font_path.name.casefold()
+        self.portable_font = fonts.sideload_ttf(font_path.resolve(), 1.0)
+
+    def get_font(self, font_face):
+        if font_face.filename.casefold() == self.portable_name:
+            return self.portable_font
+        return super().get_font(font_face)
+
+
+def _saved_text_renderer(doc, path, context):
+    native_styles = {
+        style.dxf.name.casefold()
+        for style in doc.styles
+        if style.dxf.font.casefold() == "dejavusans.ttf"
+    }
+    if not any(
+        entity.dxftype() in ("TEXT", "MTEXT", "ATTRIB", "ATTDEF")
+        and entity.dxf.get("style", "Standard").casefold() in native_styles
+        for entity in doc.entitydb.values()
+    ):
+        return None, None
+    font_path = Path(path).parent / "DejaVuSans.ttf"
+    # Missing or unreadable saved resources must fail, even if a same-named
+    # system font happens to exist. The DXF and its audit remain untouched.
+    renderer = _PortableTextRenderer(font_path)
+    for name in native_styles:
+        context.fonts[name] = fonts.FontFace(filename=font_path.name)
+    return renderer, {
+        "font": font_path.name,
+        "sha256": sha(font_path),
+        "resolution": "DXF_adjacent_file_via_ezdxf_sideload_ttf",
+        "system_font_fallback": False,
+    }
+
+
 @profiled("cad_io.render_saved")
 def render_saved(path, png_path, roi, dpi=200, include_review=False):
     if int(dpi) != dpi:
@@ -1169,7 +1218,12 @@ def render_saved(path, png_path, roi, dpi=200, include_review=False):
         min_lineweight=0.0,
     )
     recorder = Recorder()
-    Frontend(RenderContext(doc), recorder, config=cfg).draw_layout(
+    context = RenderContext(doc)
+    text_renderer, font_receipt = _saved_text_renderer(doc, path, context)
+    frontend = Frontend(context, recorder, config=cfg)
+    if text_renderer is not None:
+        frontend.pipeline.text_engine = text_renderer
+    frontend.draw_layout(
         doc.modelspace(),
         finalize=True,
         filter_func=lambda e: include_review or e.dxf.layer != "REVIEW",
@@ -1201,6 +1255,7 @@ def render_saved(path, png_path, roi, dpi=200, include_review=False):
             "png_path": str(png_path),
             "size_px": [pix.width, pix.height],
             "CAD_GUI_screenshot": False,
+            "portable_text_font": font_receipt,
         }
     finally:
         backend.doc.close()

@@ -15,6 +15,8 @@ import subprocess
 import sys
 
 import ezdxf
+from ezdxf.fonts import fonts
+from ezdxf.fonts.font_manager import FontManager
 import numpy as np
 from PIL import Image
 import pytest
@@ -371,6 +373,47 @@ def test_circle_character_saved_render_fits_the_complete_source_ink_box(
     checks = cad_io.circular_candidate_contract(saved, obj, _pixel, MM)
     assert all(checks.values()), checks
     assert [e.dxftype() for e in saved.virtual_entities()] == ["CIRCLE", "TEXT"]
+
+
+@pytest.mark.parametrize("character", ["J", "F", "E"])
+def test_saved_circle_text_renders_from_portable_font_without_installed_fonts(
+    tmp_path, monkeypatch, character
+):
+    obj = _marker(character=character)
+    obj["geometry"]["text_geometry"].update(
+        x=44, y=62, height_px=24, width_px=13
+    )
+    path = _export(tmp_path, [obj])
+    dxf_hash = file_sha256(path)
+    with_fonts = tmp_path / "with-system-fonts.png"
+    cad_io.render_saved(path, with_fonts, ROI, DPI)
+
+    # Keep the real, unchanged saved font. Remove only the renderer's host
+    # discovery, reproducing a clean computer where DejaVu is not installed.
+    no_fonts = FontManager()
+    unchanged_manager = no_fonts.dumps()
+    monkeypatch.setattr(fonts, "font_manager", no_fonts)
+    without_fonts = tmp_path / "without-system-fonts.png"
+    result = cad_io.render_saved(path, without_fonts, ROI, DPI)
+    with Image.open(with_fonts) as first, Image.open(without_fonts) as second:
+        assert np.array_equal(np.asarray(first), np.asarray(second))
+    assert result["portable_text_font"] == {
+        "font": "DejaVuSans.ttf",
+        "sha256": file_sha256(tmp_path / "DejaVuSans.ttf"),
+        "resolution": "DXF_adjacent_file_via_ezdxf_sideload_ttf",
+        "system_font_fallback": False,
+    }
+    assert no_fonts.dumps() == unchanged_manager
+    assert file_sha256(path) == dxf_hash
+
+
+def test_saved_circle_text_missing_portable_font_does_not_use_system_fallback(
+    tmp_path,
+):
+    path = _export(tmp_path, [_marker(character="J")])
+    (tmp_path / "DejaVuSans.ttf").unlink()
+    with pytest.raises(FileNotFoundError):
+        cad_io.render_saved(path, tmp_path / "missing-font.png", ROI, DPI)
 
 
 @pytest.mark.parametrize("rotation", [-23.0, 17.0])

@@ -138,19 +138,40 @@ def _finite_score(value, maximum):
 
 
 def _raw_tsv_integrity(raw):
-    """A malformed word cannot vanish in the shared permissive TSV parser."""
+    """A malformed word cannot vanish in the shared permissive TSV parser.
+
+    Inspect every nonempty word before that parser drops invalid geometry or
+    strips text. Reject the raw view without rewriting any recorded fields.
+    """
     try:
-        reader = csv.DictReader(io.StringIO(raw.decode("utf-8")), delimiter="\t")
-        if not {"level", "conf", "text"}.issubset(reader.fieldnames or []):
+        reader = csv.DictReader(
+            io.StringIO(raw.decode("utf-8")), delimiter="\t", quoting=csv.QUOTE_NONE
+        )
+        fields = reader.fieldnames or []
+        required = {"level", "left", "top", "width", "height", "conf", "text"}
+        if not required.issubset(fields) or len(fields) != len(set(fields)):
             return False
         for row in reader:
-            if None in row or row.get("level") is None:
+            if None in row or row.get("level") not in {"1", "2", "3", "4", "5"}:
                 return False
-            if int(row["level"]) == 5 and (row.get("text") or "").strip():
+            text = row.get("text") or ""
+            if row["level"] == "5" and text.strip():
+                x, y, width, height = [
+                    int(row[key]) for key in ("left", "top", "width", "height")
+                ]
+                if (
+                    x < 0 or y < 0 or width <= 0 or height <= 0
+                    or not all(math.isfinite(float(v)) for v in (x, y, width, height))
+                    or text != text.strip()
+                ):
+                    return False
                 if not _finite_score(float(row["conf"]), 100):
                     return False
+                for key in ("page_num", "block_num", "par_num", "line_num", "word_num"):
+                    if key in row and int(row[key]) < 0:
+                        return False
         return True
-    except (ValueError, TypeError, UnicodeError, csv.Error):
+    except (ValueError, TypeError, OverflowError, UnicodeError, csv.Error):
         return False
 
 

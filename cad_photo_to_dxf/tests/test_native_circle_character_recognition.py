@@ -385,6 +385,66 @@ def test_malformed_raw_tsv_score_cannot_disappear_in_generic_word_parser(
 
 
 @pytest.mark.parametrize(
+    "field,value",
+    [
+        ("left", "not-an-integer"), ("top", "nan"),
+        ("width", "0"), ("height", "-1"),
+        ("width", "inf"), ("height", "1.5"),
+        ("left", "-1"), ("top", "-1"),
+        ("word_num", "not-an-integer"), ("level", "05"),
+        ("text", " J"), ("text", "J "),
+    ],
+)
+def test_nonempty_raw_word_cannot_be_hidden_by_malformed_fields(field, value):
+    columns = [
+        "level", "page_num", "block_num", "par_num", "line_num", "word_num",
+        "left", "top", "width", "height", "conf", "text",
+    ]
+    good = ["5", "1", "1", "1", "1", "1", "0", "0", "14", "22", "96", "F"]
+    bad = ["5", "1", "1", "1", "1", "2", "0", "0", "14", "22", "99", "J"]
+    bad[columns.index(field)] = value
+    raw = ("\t".join(columns) + "\n" + "\t".join(good)
+           + "\n" + "\t".join(bad) + "\n").encode("utf-8")
+    original = bytes(raw)
+    integrity = character._raw_tsv_integrity(raw)
+    assert not integrity
+    # Even if the shared permissive parser retained only the valid F, the
+    # untouched raw record must prevent that manufactured single-word vote.
+    view = {**_tview(), "raw_tsv_integrity": integrity}
+    decision = character._decision([view], [_pview()], BOX)
+    assert not decision["accepted"] and decision["text"] is None
+    assert raw == original
+
+
+def test_cold_rejects_rehashed_raw_word_discarded_by_shared_parser(tmp_path, monkeypatch):
+    gray, roi, obj, result, _, _ = _recognized_fixture(tmp_path, monkeypatch)
+    assert result["accepted"]
+    view = obj["source_evidence"]["character_evidence"]["tesseract_views"][0]
+    raw_path = tmp_path / view["raw_tsv"]["path"]
+    # The shared parser drops a zero-width high-confidence J. Update both
+    # hashes so the source gate must inspect the record, not just its digest.
+    malformed = b"5\t1\t1\t1\t1\t2\t4\t4\t0\t17\t99\tJ\n"
+    raw_path.write_bytes(raw_path.read_bytes() + malformed)
+    view["raw_tsv"]["sha256"] = _hash(raw_path.read_bytes())
+    metadata_path = tmp_path / view["metadata"]["path"]
+    metadata = json.loads(metadata_path.read_bytes())
+    metadata["tsv_sha256"] = view["raw_tsv"]["sha256"]
+    metadata_path.write_text(json.dumps(metadata), encoding="utf-8")
+    view["metadata"]["sha256"] = _hash(metadata_path.read_bytes())
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Cold raw validation must not execute recognition")
+
+    monkeypatch.setattr(base, "_ocr", forbidden)
+    monkeypatch.setattr(independent, "IndependentRecognizer", forbidden)
+    audited = character.verify_circle_character_evidence(gray, roi, obj, tmp_path)
+    assert not audited["pass"], audited
+    assert audited["reason"] == "CHARACTER_TESSERACT_RAW_TSV_INVALID_WORD_SCORE_OR_STRUCTURE"
+    assert audited["new_OCR_calls"] == audited["new_model_calls"] == 0
+    assert raw_path.read_bytes().endswith(malformed)
+
+
+@pytest.mark.parametrize(
     "damage",
     [
         "source-pixel",
