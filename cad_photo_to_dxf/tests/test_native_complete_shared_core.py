@@ -94,5 +94,5 @@ def test_ordinary_completion_does_not_add_an_existing_or_twice_emitted_whole_pat
     result = _complete(item, tmp_path / "again", [*item[4], *first["objects"]])
     assert result["objects"] == []
     assert all(row["existing_adequate_ids"] for row in result["decisions"])
-    assert all("EXISTING_COMPLETE_PATH_ALREADY_PRESENT_NO_DUPLICATE" in row["reasons"]
+    assert all(row["decision"] == "RETAIN_EXISTING_COMPLETE_PATH_NO_DUPLICATE"
                for row in result["decisions"])
