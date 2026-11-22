@@ -52,6 +52,8 @@ def mark(e, o):
         data["circle_endpoint_contacts"] = True
     if o.get("source_evidence", {}).get("circle_white_gap_protection"):
         data["circle_white_gap_protection"] = True
+    if "single_line_recovery" in o.get("source_evidence", {}):
+        data["single_line_recovery"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -327,6 +329,7 @@ def export_objects(
         member_info = []
         mtext_line_layout = None
         circular_text_layout = None
+        single_line_text_layout = None
         if kind == "LINE":
             e = msp.add_line(xy(g["start"]), xy(g["end"]), dxfattribs=attrs)
         elif kind == "CIRCLE":
@@ -406,7 +409,27 @@ def export_objects(
                 dxfattribs=attrs,
             )
         elif kind == "TEXT":
-            e = text(msp, g, attrs)
+            if "single_line_recovery" in o.get("source_evidence", {}):
+                from .single_line_text_audit import source_ink_text_layout
+
+                single_line_text_layout = source_ink_text_layout(
+                    g, roi, dpi, path.parent / font["font"]
+                )
+                e = msp.add_text(
+                    g["text"],
+                    dxfattribs={
+                        **attrs,
+                        "style": "I2CAD_TEXT",
+                        **{
+                            key: single_line_text_layout[key]
+                            for key in ("insert", "height", "width", "rotation")
+                        },
+                    },
+                )
+            else:
+                # Existing TEXT, room-label members and circular characters
+                # retain their already-verified geometry and font contracts.
+                e = text(msp, g, attrs)
         elif kind == "MTEXT":
             h = float(g["height_px"]) * mm
             lines = g["lines"]
@@ -622,6 +645,12 @@ def export_objects(
             written[-1]["mtext_line_layout"] = mtext_line_layout
         if circular_text_layout is not None:
             written[-1]["circular_text_layout"] = circular_text_layout
+        if kind == "TEXT":
+            from .single_line_text_audit import export_text_geometry_binding
+
+            written[-1]["text_geometry_binding"] = export_text_geometry_binding(
+                e, o, font, single_line_text_layout
+            )
     regions = []
     for row in range(4):
         for col in range(6):
@@ -915,6 +944,50 @@ def cold_audit(path, gray, roi, dpi, out):
     circular_curves = []
     room_blocks = []
     evidence_root = Path(out).parent
+    from .single_line_text_audit import cold_native_text_bindings
+
+    text_candidate_checks, single_line_source_checks = cold_native_text_bindings(
+        path, doc, gray, roi, dpi, evidence_root
+    )
+    checks.extend(text_candidate_checks)
+    checks.extend(single_line_source_checks)
+    identity_failures = []
+    for entity in doc.modelspace():
+        try:
+            saved_identity = identity(entity)
+            if not isinstance(saved_identity.get("id"), str) or not isinstance(
+                saved_identity.get("kind"), str
+            ):
+                raise ValueError("NATIVE_IDENTITY_FIELDS_MISSING")
+        except (ValueError, TypeError, AttributeError, ezdxf.DXFError) as exc:
+            identity_failures.append(
+                {
+                    "handle": entity.dxf.handle,
+                    "type": "NATIVE_SAVED_IDENTITY_BINDING",
+                    "pass": False,
+                    "failure": type(exc).__name__ + ": " + str(exc),
+                }
+            )
+    if identity_failures:
+        # A consumer may strip XDATA. Record a failed native source audit;
+        # never repair the file or silently omit unidentifiable TEXT from it.
+        report = {
+            "dxf_sha256": before,
+            "dxf_unchanged": before == sha(path),
+            "ezdxf_errors": [str(x) for x in audit.errors],
+            "ezdxf_in_memory_fixes": [str(x) for x in audit.fixes],
+            "source_checks": checks + identity_failures,
+            "source_gate_pass": False,
+            "source_geometry_gate_pass": False,
+            "native_text_candidate_checks": text_candidate_checks,
+            "single_line_text_source_checks": single_line_source_checks,
+            "identity_failures": identity_failures,
+            "geometry_audit": "NOT_RUN_INVALID_NATIVE_IDENTITIES",
+            "CAD_GUI": "NOT_RUN_BY_THIS_AUDIT",
+            "engineer_UAT": "NOT_MEASURED",
+        }
+        save_json(out, report)
+        return report
     circular_checks = _cold_circular_bindings(path, doc, gray, roi, dpi, evidence_root)
     checks.extend(circular_checks)
     from .circle_endpoint_contacts import cold_circle_endpoint_contacts
@@ -1151,6 +1224,8 @@ def cold_audit(path, gray, roi, dpi, out):
         "source_distance_field_bbox_xyxy_px": [ox, oy, rx, by],
         "ROI_is_not_a_white_source_mask": True,
         "source_distance_thresholds_changed": False,
+        "native_text_candidate_checks": text_candidate_checks,
+        "single_line_text_source_checks": single_line_source_checks,
     }
     if circular_checks:
         report["circular_marker_source_checks"] = circular_checks

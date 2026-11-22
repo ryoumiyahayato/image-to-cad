@@ -308,7 +308,9 @@ def _matches_member(member, expected, pixel_from_cad, mm):
     return False
 
 
-def _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm):
+def _candidate_geometry_checks(
+    entity, obj, members, pixel_from_cad, mm, *, source_roi=None, text_font_path=None
+):
     """Exact exported parameters with 64-ULP serialization allowance only."""
     kind, g = obj["kind"], obj["geometry"]
     expected_type = {
@@ -433,12 +435,33 @@ def _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm):
             checks["no_unexpected_members"] = len(members) == 2 + len(tails)
         elif kind == "TEXT":
             checks["literal_content_matches_candidate"] = entity.dxf.text == g["text"]
-            checks["height_matches_candidate"] = _numeric_equal(
-                float(entity.dxf.height) / mm, g["height_px"]
-            )
-            checks["insertion_matches_candidate"] = _numeric_equal(
-                pixel_from_cad(entity.dxf.insert), [g["x"], g["y"]]
-            )
+            recovered = "single_line_recovery" in (obj.get("source_evidence") or {})
+            if recovered:
+                from .single_line_text_audit import source_ink_text_layout
+
+                checks["source_ink_layout_context_available"] = (
+                    source_roi is not None and text_font_path is not None
+                )
+                if checks["source_ink_layout_context_available"]:
+                    layout = source_ink_text_layout(
+                        g, source_roi, 25.4 / mm, text_font_path
+                    )
+                    checks["height_matches_source_ink_layout"] = _numeric_equal(
+                        float(entity.dxf.height), layout["height"]
+                    )
+                    checks["insertion_matches_source_ink_layout"] = _numeric_equal(
+                        list(entity.dxf.insert), layout["insert"]
+                    )
+                    checks["width_matches_source_ink_layout"] = _numeric_equal(
+                        float(entity.dxf.width), layout["width"]
+                    )
+            else:
+                checks["height_matches_candidate"] = _numeric_equal(
+                    float(entity.dxf.height) / mm, g["height_px"]
+                )
+                checks["insertion_matches_candidate"] = _numeric_equal(
+                    pixel_from_cad(entity.dxf.insert), [g["x"], g["y"]]
+                )
             checks["rotation_matches_candidate"] = _numeric_equal(
                 (
                     float(entity.dxf.get("rotation", 0.0))
@@ -485,7 +508,7 @@ def _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm):
                     )
                 ),
             )
-    except (TypeError, ValueError, KeyError, AttributeError) as exc:
+    except (OSError, TypeError, ValueError, KeyError, AttributeError) as exc:
         checks["candidate_geometry_contract_readable"] = False
         checks["contract_error"] = type(exc).__name__ + ": " + str(exc)
     return checks
@@ -1036,7 +1059,10 @@ def run_quality_review(
         bbox = _box(obj)
         object_bounds[oid] = bbox
         members = _expanded(entity)
-        checks = _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm)
+        checks = _candidate_geometry_checks(
+            entity, obj, members, pixel_from_cad, mm,
+            source_roi=roi, text_font_path=dxf_path.parent / "DejaVuSans.ttf",
+        )
         checks["identity_kind_matches_candidate"] = kind == obj["kind"]
         layer = doc.layers.get(entity.dxf.layer)
         checks["formal_layer_visible_and_plotted"] = (

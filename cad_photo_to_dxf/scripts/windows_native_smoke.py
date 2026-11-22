@@ -69,6 +69,48 @@ def create_circular_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+SINGLE_LINE_LABEL_FIXTURE = (
+    ("AHU-27B, Z4", (80, 64)),
+    ("PANEL-08A", (80, 176)),
+    ("CIRCUIT-315, B2", (80, 288)),
+)
+SINGLE_LINE_NEIGHBOR_FIXTURE = (
+    ((50, 112), (405, 112)),
+    ((50, 202), (405, 202)),
+    ((310, 275), (310, 338)),
+    ((460, 308), (480, 308)),
+)
+SINGLE_LINE_TESSERACT_VIEWS = (
+    {"scale": 2, "padding": 16, "psm": 7},
+    {"scale": 2, "padding": 16, "psm": 13},
+)
+SINGLE_LINE_PP_OCR_VIEWS = (
+    {"scale": 1, "padding": 4},
+    {"scale": 1, "padding": 0},
+)
+
+
+def create_single_line_fixture(path: Path, font_path: Path) -> None:
+    """Fixed generated source, with answers confined to this post-save harness.
+
+    The middle label's bottom ink touches the independent horizontal line.
+    Neither component overwrites the other. The last short stroke is a real
+    independent source line, not a punctuation character to erase or absorb.
+    The existing circular fixture remains a separate, unchanged protection case.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    for content, point in SINGLE_LINE_LABEL_FIXTURE:
+        draw.text(point, content, font=font, fill=0)
+    draw.text((460, 64), "STORE", font=font, fill=0)
+    for start, end in SINGLE_LINE_NEIGHBOR_FIXTURE:
+        draw.line((start, end), fill=0, width=3)
+    image.save(path, dpi=(200, 200))
+
+
 def native_identity(entity) -> dict:
     """Read the saved public XDATA format without importing hidden app code."""
     try:
@@ -430,6 +472,279 @@ def inspect_circular_character_payloads(objects, cold, evidence_root: Path, sour
     return {"verified_complete_characters": verified, "raw_stage_files_read_and_hashed": len(payloads), "new_Tesseract_calls": actual_tesseract, "new_model_calls": actual_model, "global_cross_engine_calls_required": False, "inspection_executed_recognition": False}
 
 
+def inspect_single_line_members(document, objects: dict, cold: dict, font_path: Path) -> dict:
+    """Check actual saved whole labels, source bindings, and independent neighbors.
+
+    This is a post-save assertion for the fixed generated fixture. It cannot
+    supply transcription, coordinates, or acceptance hints to the worker.
+    """
+    from ezdxf.fonts import fonts
+    from PIL import Image, ImageDraw, ImageFont
+
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    expected_strings = [item[0] for item in SINGLE_LINE_LABEL_FIXTURE] + ["STORE"]
+    texts = [entity for entity in entities if entity.dxftype() == "TEXT"]
+    paths = [entity for entity in entities if entity.dxftype() in ("LINE", "LWPOLYLINE")]
+    if (len(entities) != len(texts) + len(paths)
+            or Counter(entity.dxf.text for entity in texts) != Counter(expected_strings)):
+        raise AssertionError("Single-line fixture did not save one complete literal TEXT per label/control")
+    if len(paths) != len(SINGLE_LINE_NEIGHBOR_FIXTURE):
+        raise AssertionError("Single-line fixture lost, duplicated, or fragmented an independent source line")
+    rows = objects.get("objects", [])
+    ledger = {row["id"]: row for row in rows}
+    if len(ledger) != len(rows):
+        raise AssertionError("Single-line fixture ledger has duplicate object identities")
+    candidate_checks = cold.get("native_text_candidate_checks", [])
+    candidate_checked_ids = [row.get("id") for row in candidate_checks]
+    if (len(set(candidate_checked_ids)) != len(candidate_checked_ids)
+            or set(candidate_checked_ids) != {native_identity(entity)["id"] for entity in texts}
+            or any(row.get("pass") is not True or row.get("type") != "NATIVE_TEXT_CANDIDATE_BINDING" for row in candidate_checks)):
+        raise AssertionError("Actual single-line TEXT lacks complete saved candidate/layout bindings")
+    checks = cold.get("single_line_text_source_checks", [])
+    checked_ids = [row.get("id") for row in checks]
+    if len(set(checked_ids)) != len(checked_ids):
+        raise AssertionError("Single-line source checks have duplicate identities")
+    saved_checks = {row.get("id"): row for row in checks}
+    mm = 25.4 / 200
+    font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    positions = dict(SINGLE_LINE_LABEL_FIXTURE)
+    positions["STORE"] = (460, 64)
+    text_results = []
+    recovered_ids = []
+    for entity in texts:
+        oid = native_identity(entity)["id"]
+        row = ledger.get(oid, {})
+        geometry = row.get("geometry", {})
+        content = entity.dxf.text
+        if row.get("kind") != "TEXT" or geometry.get("text") != content:
+            raise AssertionError("Actual single-line TEXT content/identity differs from its bound candidate")
+        recovery = row.get("source_evidence", {}).get("single_line_recovery")
+        x, y = _pixel_point(entity.dxf.insert)
+        measured = fonts.sideload_ttf(font_path, entity.dxf.height)
+        width_px = measured.text_width(content) * entity.dxf.get("width", 1.0) / mm
+        expected = (float(geometry["x"]), float(geometry["y"]), float(geometry["height_px"]), float(geometry["width_px"]), -float(geometry.get("rotation_deg_image", 0)))
+        actual = (x, y, entity.dxf.height / mm, width_px, float(entity.dxf.get("rotation", 0)))
+        if (not all(math.isfinite(value) for value in (*actual, *expected))
+                or any(value <= 0 for value in (*actual[2:4], *expected[2:4]))
+                or (recovery is None and any(abs(a - b) > 1e-6 for a, b in zip(actual, expected)))):
+            raise AssertionError("Actual saved single-line TEXT position/height/width/direction differs from its candidate")
+        if (entity.dxf.get("halign", 0) != 0 or entity.dxf.get("valign", 0) != 0
+                or entity.dxf.get("text_generation_flag", 0) != 0
+                or abs(entity.dxf.get("oblique", 0)) > 1e-8
+                or abs(actual[4]) > 1e-8 or abs(expected[4]) > 1e-8
+                or tuple(entity.dxf.get("extrusion", (0, 0, 1))) != (0, 0, 1)
+                or document.styles.get(entity.dxf.style).dxf.font != "DejaVuSans.ttf"):
+            raise AssertionError("Single-line TEXT has an unexpected alignment or transform")
+        original = Image.new("L", (640, 480), 0)
+        ImageDraw.Draw(original).text(positions[content], content, font=font, fill=255)
+        source_box = original.getbbox()
+        candidate_box = (x, y - actual[2], x + width_px, y)
+        if recovery is not None:
+            # New labels fit complete portable-font ink, including descenders.
+            # Their exact candidate binding is checked by the saved production
+            # audit above; this independently measures the actual TEXT outline
+            # bounds to catch misplaced/truncated complete-label presentation.
+            lower, upper = measured.text_path(content).bbox()
+            factor = entity.dxf.get("width", 1.0)
+            candidate_box = (x + lower.x * factor / mm, y - upper.y / mm,
+                             x + upper.x * factor / mm, y - lower.y / mm)
+            bound_box = (expected[0], expected[1] - expected[2], expected[0] + expected[3], expected[1])
+            if any(abs(a - b) > 1e-6 for a, b in zip(candidate_box, bound_box)):
+                raise AssertionError("Actual complete single-line font ink bounds differ from the bound source geometry")
+        edge_error = max(abs(a - b) for a, b in zip(candidate_box, source_box))
+        if edge_error > 2.0:
+            raise AssertionError("Single-line TEXT layout does not follow the complete source label bounds")
+        if recovery is not None:
+            check = saved_checks.get(oid, {})
+            if (not isinstance(recovery, dict)
+                    or recovery.get("schema") != "native-single-line-label-evidence-v1"
+                    or check.get("type") != "SINGLE_LINE_TEXT_SOURCE_BINDING"
+                    or check.get("pass") is not True):
+                raise AssertionError("Recovered single-line TEXT lacks its passing saved source replay")
+            recovered_ids.append(oid)
+        text_results.append({"id": oid, "text": content, "source_bbox_xyxy_px": list(source_box), "saved_layout_bbox_xyxy_px": list(candidate_box), "maximum_layout_edge_error_px": edge_error, "actual_saved_candidate_binding": True, "new_source_recovery_replayed": recovery is not None})
+    target_ids = {row["id"] for row in text_results if row["text"] != "STORE"}
+    if not target_ids.intersection(recovered_ids):
+        raise AssertionError("Single-line fixture did not exercise the new recovery capability")
+    if set(saved_checks) != set(recovered_ids):
+        raise AssertionError("Single-line source check inventory differs from the recovered actual TEXT objects")
+    line_results = []
+    used = set()
+    for start, end in SINGLE_LINE_NEIGHBOR_FIXTURE:
+        candidates = []
+        for entity in paths:
+            points = _line_points(entity)
+            if not points:
+                continue
+            a, b = points[0], points[-1]
+            forward = math.dist(a, start) <= 2.5 and math.dist(b, end) <= 2.5
+            reverse = math.dist(b, start) <= 2.5 and math.dist(a, end) <= 2.5
+            if forward or reverse:
+                candidates.append((entity, points))
+        if len(candidates) != 1:
+            raise AssertionError("Independent neighbor line/short stroke has no unique saved whole object")
+        entity, points = candidates[0]
+        oid = native_identity(entity)["id"]
+        if oid in used or ledger.get(oid, {}).get("kind") not in ("LINE", "LWPOLYLINE"):
+            raise AssertionError("Independent neighbor line identity or ownership changed")
+        used.add(oid)
+        dx, dy = end[0] - start[0], end[1] - start[1]
+        length = math.hypot(dx, dy)
+        if any(abs((point[0] - start[0]) * dy - (point[1] - start[1]) * dx) / length > 2.5 for point in points):
+            raise AssertionError("Independent neighbor line contains a text-glyph branch")
+        support = _saved_line_source_check(cold, oid)
+        line_results.append({"id": oid, "source_start_px": list(start), "source_end_px": list(end), "saved_points_px": points, "saved_source_check": support})
+    return {
+        "complete_label_count": len(SINGLE_LINE_LABEL_FIXTURE),
+        "complete_label_strings": [item[0] for item in SINGLE_LINE_LABEL_FIXTURE],
+        "ordinary_text_control": "STORE",
+        "ordinary_text_control_preserved": True,
+        "all_labels_are_single_top_level_TEXT": True,
+        "all_actual_TEXT_content_and_layout_bound_to_candidates": True,
+        "normal_font_shape_difference_not_pixel_equality": True,
+        "TEXT_checks": text_results,
+        "new_recovery_label_ids": sorted(target_ids.intersection(recovered_ids)),
+        "new_recovery_TEXT_ids": sorted(recovered_ids),
+        "all_new_recovery_TEXT_saved_source_replay_passed": True,
+        "independent_neighbor_line_checks": line_results,
+        "independent_short_stroke_preserved": True,
+        "fixture_expectations_sent_to_recognizer": False,
+    }
+
+
+def inspect_single_line_character_payloads(objects, cold, evidence_root: Path, pipeline_report) -> dict:
+    """Re-read raw accepted-label files and actual call receipts without OCR.
+
+    The ordinary saved audit separately replays source ownership and the finite
+    source-to-derived transforms. This inspection does not replace that gate.
+    """
+    from io import BytesIO
+
+    import numpy as np
+    from PIL import Image
+
+    summary_path = evidence_root / "single_line_labels/summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    if pipeline_report.get("single_line_label_recovery") != summary:
+        raise AssertionError("Single-line call summary is not the current ordinary pipeline report")
+    for key in ("new_Tesseract_calls", "new_model_calls"):
+        if not isinstance(summary.get(key), int) or isinstance(summary[key], bool) or summary[key] <= 0:
+            raise AssertionError("Single-line stage did not record real new Tesseract and model calls")
+    checks = {row["id"]: row for row in cold.get("single_line_text_source_checks", [])}
+    payloads = {}
+
+    def read_record(record):
+        path, data = _checked_record(evidence_root, record)
+        prior = payloads.get(record["path"])
+        if prior is not None and prior != record["sha256"]:
+            raise AssertionError("Single-line raw file has conflicting evidence hashes")
+        payloads[record["path"]] = record["sha256"]
+        return path, data
+
+    def array_digest(data):
+        with Image.open(BytesIO(data)) as image:
+            array = np.ascontiguousarray(image.convert("L"))
+        return hashlib.sha256(array.tobytes()).hexdigest()
+
+    verified = []
+    for obj in objects["objects"]:
+        evidence = obj.get("source_evidence", {}).get("single_line_recovery")
+        if evidence is None:
+            continue
+        check = checks.get(obj["id"], {})
+        replay = check.get("source_replay", {})
+        if (obj.get("kind") != "TEXT"
+                or evidence.get("schema") != "native-single-line-label-evidence-v1"
+                or check.get("type") != "SINGLE_LINE_TEXT_SOURCE_BINDING"
+                or check.get("pass") is not True or replay.get("pass") is not True
+                or replay.get("new_OCR_calls") != 0 or replay.get("new_model_calls") != 0):
+            raise AssertionError("Actual single-line TEXT lacks a passing complete source replay")
+        decision = evidence.get("decision", {})
+        if decision.get("accepted") is not True or decision.get("text") != obj["geometry"]["text"]:
+            raise AssertionError("Saved single-line content differs from its complete observed decision")
+        normalization = decision.get("source_text_normalization")
+        if (not isinstance(normalization, dict) or normalization.get("text") != decision["text"]
+                or normalization.get("reasons") != []
+                or not isinstance(normalization.get("normalizations"), list)
+                or not isinstance(normalization.get("word_spaces"), list)
+                or replay.get("source_text_normalization") != normalization
+                or replay.get("Tesseract_canonical_word_texts") != decision.get("Tesseract_canonical_word_texts")):
+            raise AssertionError("Single-line source character/space normalization was not replayed unchanged")
+        policy = evidence.get("policy", {})
+        if (policy.get("Tesseract_views") != list(SINGLE_LINE_TESSERACT_VIEWS)
+                or policy.get("PP_OCR_views") != list(SINGLE_LINE_PP_OCR_VIEWS)
+                or policy.get("maximum_views_per_engine") != 2):
+            raise AssertionError("Single-line recognition view policy differs from its frozen bounded configuration")
+        read_record(evidence["original_source"])
+        _, identity_raw = read_record(evidence["model_identity"])
+        if json.loads(identity_raw).get("providers") != ["CPUExecutionProvider"]:
+            raise AssertionError("Single-line recovery did not use its recorded CPU model")
+        t_views, p_views = evidence["tesseract_views"], evidence["ppocr_views"]
+        if not 1 <= len(t_views) <= 2 or len(t_views) != len(p_views):
+            raise AssertionError("Single-line raw observations are not the frozen finite paired views")
+        t_calls = p_calls = 0
+        for index, view in enumerate(t_views):
+            _, raw = read_record(view["raw_tsv"])
+            _, metadata_raw = read_record(view["metadata"])
+            _, image_raw = read_record(view["recognition_image"])
+            metadata = json.loads(metadata_raw)
+            norm = view.get("normalization", {})
+            if (view.get("view_index") != index
+                    or any(norm.get(key) != value for key, value in SINGLE_LINE_TESSERACT_VIEWS[index].items())
+                    or norm.get("source_bbox_xyxy_px") != evidence.get("source_bbox_xyxy_px")
+                    or norm.get("input_array_sha256") != array_digest(image_raw)
+                    or norm.get("original_source_pixels_modified") is not False):
+                raise AssertionError("Single-line Tesseract input differs from its fixed source-derived view")
+            if (metadata.get("status") != "COMPLETED" or metadata.get("return_code") != 0
+                    or metadata.get("tsv_sha256") != hashlib.sha256(raw).hexdigest()
+                    or metadata.get("image_sha256") != hashlib.sha256(image_raw).hexdigest()):
+                raise AssertionError("Single-line Tesseract raw/image bytes differ from the actual producer receipt")
+            called = view["command_executed_for_this_request"]
+            if not isinstance(called, bool) or called is not metadata.get("command_executed_for_this_request"):
+                raise AssertionError("Single-line Tesseract call count includes an unexecuted observation")
+            t_calls += called
+        for index, view in enumerate(p_views):
+            _, prediction_raw = read_record(view["prediction_file"])
+            _, image_raw = read_record(view["recognition_image"])
+            prediction = json.loads(prediction_raw)
+            norm = view.get("normalization", {})
+            if (view.get("view_index") != index
+                    or any(norm.get(key) != value for key, value in SINGLE_LINE_PP_OCR_VIEWS[index].items())
+                    or norm.get("source_bbox_xyxy_px") != evidence.get("source_bbox_xyxy_px")
+                    or norm.get("input_array_sha256") != array_digest(image_raw)
+                    or norm.get("original_source_pixels_modified") is not False):
+                raise AssertionError("Single-line model input differs from its fixed source-derived view")
+            if (prediction != view["prediction"]
+                    or prediction.get("input_array_sha256") != array_digest(image_raw)
+                    or prediction.get("raw_transcription_rewritten") is not False
+                    or prediction.get("source_geometry_modified") is not False):
+                raise AssertionError("Single-line model raw payload differs from its actual recognition input")
+            called = view["model_inference_executed_for_this_request"]
+            if not isinstance(called, bool) or called is not view["observation_receipt"].get("model_inference_executed_for_this_request"):
+                raise AssertionError("Single-line model call count includes an unexecuted observation")
+            p_calls += called
+        if evidence.get("new_Tesseract_calls") != t_calls or evidence.get("new_model_calls") != p_calls:
+            raise AssertionError("Single-line call counters disagree with the saved producer receipts")
+        verified.append({"id": obj["id"], "text": decision["text"], "Tesseract_views": len(t_views), "PP_OCR_views": len(p_views), "new_Tesseract_calls": t_calls, "new_model_calls": p_calls, "source_text_normalization": normalization, "raw_transcription_compared_before_source_supported_canonicalization": True})
+    actual_tesseract = sum(row["new_Tesseract_calls"] for row in verified)
+    actual_model = sum(row["new_model_calls"] for row in verified)
+    if (not verified or actual_tesseract <= 0 or actual_model <= 0
+            or actual_tesseract > summary["new_Tesseract_calls"]
+            or actual_model > summary["new_model_calls"]):
+        raise AssertionError("Single-line fixture did not execute new recognition for its actual recovered TEXT")
+    return {
+        "verified_saved_recovery_TEXT": verified,
+        "accepted_label_raw_files_read_and_hashed": len(payloads),
+        "accepted_label_new_Tesseract_calls": actual_tesseract,
+        "accepted_label_new_model_calls": actual_model,
+        "new_Tesseract_calls": summary["new_Tesseract_calls"],
+        "new_model_calls": summary["new_model_calls"],
+        "stage_counts_include_pending_attempts": True,
+        "source_partition_and_derived_views_replayed_by_saved_audit": True,
+        "inspection_executed_recognition": False,
+    }
+
+
 def canonical_value(value):
     if isinstance(value, float):
         return round(value, 8)
@@ -467,7 +782,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -491,6 +806,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
     circle_result = inspect_circular_members(document, objects, cold) if fixture_kind == "circular-markers" else None
     if circle_result is not None:
         circle_result["original_real_gap_evidence"] = inspect_circular_fixture_source_gap(work.parent / "controlled-source.png")
+    single_line_result = inspect_single_line_members(document, objects, cold, companion / font["font"]) if fixture_kind == "single-line-labels" else None
     entry = json.loads((companion / "result.entry_trace.json").read_text(encoding="utf-8"))
     if entry["mode"] != "native-objects" or entry["legacy_processing_called"] or entry["legacy_export_called"] or entry["source_sha256"] != source_sha:
         raise AssertionError("EXE did not enter the source-bound native pipeline")
@@ -519,12 +835,17 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Native flow did not initialize its bundled independent model")
     global_summary_path = companion / "evidence/cross_engine_text/summary.json"
     global_calls = json.loads(global_summary_path.read_text(encoding="utf-8"))["actual_model_calls"] if global_summary_path.is_file() else 0
+    pipeline_report = json.loads((companion / "result.report.json").read_text(encoding="utf-8"))
     circle_calls = 0
+    single_line_calls = pipeline_report.get("single_line_label_recovery", {}).get("new_model_calls", 0)
     if circle_result is not None:
-        pipeline_report = json.loads((companion / "result.report.json").read_text(encoding="utf-8"))
         payloads = inspect_circular_character_payloads(objects, cold, companion / "evidence", work.parent / "controlled-source.png", pipeline_report)
         circle_result["actual_character_payloads"] = payloads
         circle_calls = payloads["new_model_calls"]
+    if single_line_result is not None:
+        payloads = inspect_single_line_character_payloads(objects, cold, companion / "evidence", pipeline_report)
+        single_line_result["actual_label_payloads"] = payloads
+        single_line_calls = payloads["new_model_calls"]
     if (fixture_kind == "room17" and global_calls <= 0) or (fixture_kind == "circular-markers" and circle_calls <= 0):
         raise AssertionError("Native flow did not execute its independent recognizer")
     snapshot = sorted([entity_geometry(entity, document) for entity in entities], key=lambda row: json.dumps(row, sort_keys=True))
@@ -542,9 +863,10 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         "algorithm": state["algorithm"],
         "tesseract_engines": engines,
         "independent_models": models,
-        "actual_independent_model_calls": global_calls + circle_calls,
+        "actual_independent_model_calls": global_calls + circle_calls + single_line_calls,
         "global_cross_engine_model_calls": global_calls,
         "circle_character_model_calls": circle_calls,
+        "single_line_label_model_calls": single_line_calls,
         "initial_raw_observation_count": 0,
         "actual_source_ocr_saved": True,
         "export_font": font,
@@ -553,6 +875,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
     }
     if circle_result is not None:
         result["circular_markers"] = circle_result
+    if single_line_result is not None:
+        result["single_line_labels"] = single_line_result
     return result
 
 
@@ -627,9 +951,12 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
             raise AssertionError("Packaged code evidence differs from same-version source: " + relative)
     circular_work = work / "circular-markers"
     circular_work.mkdir()
+    single_line_work = work / "single-line-labels"
+    single_line_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
+        {"name": "single-line-labels", "directory": single_line_work, "create": create_single_line_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -679,7 +1006,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles = cases
+    room, circles, single_lines = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -694,15 +1021,30 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "product_GO": False,
     }
     write_json(circular_work / "native-smoke.json", circle_report)
+    single_line_report = {
+        "status": "PASS", "schema": "windows-native-single-line-labels-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": single_lines["source_sha256"],
+        "source_result": single_lines["source_result"], "exe_result": single_lines["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "complete_strings_each_one_editable_TEXT": True,
+        "actual_saved_content_and_layout_checked": True,
+        "new_recovery_source_evidence_replayed": True,
+        "independent_neighbor_lines_short_stroke_and_ordinary_text_preserved": True,
+        "unchanged_circular_case_also_required": True,
+        "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True,
+        "product_GO": False,
+    }
+    write_json(single_line_work / "native-smoke.json", single_line_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 3,
+        "coverage_revision": 4,
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,
