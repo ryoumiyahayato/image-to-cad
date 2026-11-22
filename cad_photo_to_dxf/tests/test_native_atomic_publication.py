@@ -261,9 +261,9 @@ def test_real_windows_directory_handle_conflict_recovers_after_release(publicati
     close_handle = kernel.CloseHandle
     close_handle.argtypes = [wintypes.HANDLE]
     close_handle.restype = wintypes.BOOL
-    # FILE_READ_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE (no DELETE),
+    # GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE (no DELETE),
     # OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS for a real directory handle.
-    handle = create_file(str(publication.staging), 0x80, 0x3, None, 3, 0x02000000, None)
+    handle = create_file(str(publication.staging), 0x80000000, 0x3, None, 3, 0x02000000, None)
     if handle == ctypes.c_void_p(-1).value:
         raise ctypes.WinError(ctypes.get_last_error())
     denied = threading.Event()
