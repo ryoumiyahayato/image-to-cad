@@ -20,7 +20,7 @@ import io
 import json
 import math
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import shutil
 import subprocess
 from .execution import run_subprocess, check_cancel, NativeResourceLimit
@@ -91,7 +91,11 @@ def _resolve_tesseract(configured_path, tessdata_prefix=None):
             "Tesseract is unavailable; set I2CAD_TESSERACT or install an executable on PATH"
         )
     languages = run_subprocess(
-        [binary, "--list-langs"], capture_output=True, text=True, timeout=20
+        [binary, "--list-langs"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=20,
     )
     names = [
         line.strip()
@@ -102,7 +106,11 @@ def _resolve_tesseract(configured_path, tessdata_prefix=None):
             "The selected Tesseract engine does not report an installed eng model"
         )
     version = run_subprocess(
-        [binary, "--version"], capture_output=True, text=True, timeout=20
+        [binary, "--version"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        timeout=20,
     )
     first_line = (version.stdout or version.stderr).splitlines()
     return {
@@ -309,6 +317,27 @@ def _bind_ocr_words(words, specification, meta):
     return words
 
 
+def _check_reused_tsv_encoding(raw, metadata):
+    """Do not silently reuse earlier Windows locale-decoded non-ASCII OCR.
+
+    The preserved text may already be mojibake even though its saved container
+    is valid UTF-8. Without the producer's decoding receipt it cannot be repaired
+    from the saved string. ASCII and prior Linux observations keep their normal
+    source/engine/hash checks; this guard does not rewrite any raw observation.
+    """
+    command = metadata.get("command") or []
+    executable = str(command[0]) if isinstance(command, list) and command else ""
+    windows = executable.lower().endswith(".exe") or bool(
+        PureWindowsPath(executable).drive
+    )
+    if (
+        windows
+        and not raw.isascii()
+        and metadata.get("recognition_output_encoding") != "utf-8"
+    ):
+        raise ValueError("LEGACY_WINDOWS_NONASCII_OCR_ENCODING_UNVERIFIED")
+
+
 @profiled("text_regions._ocr")
 def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, dpi=200):
     from PIL import Image
@@ -348,7 +377,7 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
         box[3] + padding_px,
     ]
     if meta_path.exists() and tsv_path.exists():
-        meta = json.loads(meta_path.read_text())
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
         if meta.get("specification") != specification:
             raise ValueError(
                 f"OCR checkpoint source/specification mismatch: {meta_path}"
@@ -356,13 +385,15 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
         if meta.get("status") == "COMPLETED" and meta.get("tsv_sha256") == _sha(
             tsv_path
         ):
+            raw = tsv_path.read_text(encoding="utf-8")
+            _check_reused_tsv_encoding(raw, meta)
             reused = {
                 **meta,
                 "reused_checkpoint": True,
                 "command_executed_for_this_request": False,
             }
             return _bind_ocr_words(
-                _parse_tsv(tsv_path.read_text(), origin_box, name, psm),
+                _parse_tsv(raw, origin_box, name, psm),
                 specification,
                 reused,
             ), reused
@@ -411,8 +442,9 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
     if cached is not None:
         payload, receipt = cached
         raw = payload.decode("utf-8")
-        tsv_path.write_bytes(payload)
         producer_metadata = receipt["producer"].get("metadata") or {}
+        _check_reused_tsv_encoding(raw, producer_metadata)
+        tsv_path.write_bytes(payload)
         meta = {
             "status": "COMPLETED",
             "specification": specification,
@@ -421,6 +453,9 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
             "engine_version": engine["version"],
             "engine_identity": receipt["producer"].get("engine"),
             "consumer_installed_engine_identity": engine_bytes,
+            "recognition_output_encoding": producer_metadata.get(
+                "recognition_output_encoding"
+            ),
             "wall_seconds": time.perf_counter() - cache_lookup_started,
             "child_cpu_seconds": 0.0,
             "child_peak_rss_kib": None,
@@ -466,6 +501,7 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
             command,
             capture_output=True,
             text=True,
+            encoding="utf-8",
             env=environment,
             timeout=POLICY["local_timeout_seconds"],
         )
@@ -474,9 +510,11 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
     except subprocess.TimeoutExpired as exc:
         raw = exc.stdout or ""
         stderr = exc.stderr or ""
-        raw = raw.decode(errors="replace") if isinstance(raw, bytes) else raw
+        raw = raw.decode("utf-8", errors="replace") if isinstance(raw, bytes) else raw
         stderr = (
-            stderr.decode(errors="replace") if isinstance(stderr, bytes) else stderr
+            stderr.decode("utf-8", errors="replace")
+            if isinstance(stderr, bytes)
+            else stderr
         )
         code, status = None, "TIMEOUT"
     after_cpu, after_rss = _usage(children=True)
@@ -488,6 +526,7 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
         "command": command,
         "engine_version": engine["version"],
         "engine_identity": engine_bytes,
+        "recognition_output_encoding": "utf-8",
         "command_executed_for_this_request": True,
         "wall_seconds": time.perf_counter() - start,
         "child_cpu_seconds": after_cpu - before_cpu if before_cpu is not None else None,
@@ -521,7 +560,7 @@ def _cached_observations(cache_dir, image, roi):
         return None, {"enabled": False}
     directory = Path(cache_dir)
     manifest_path = directory / "manifest.json"
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     expected = {
         "source_array_sha256": source_array_sha256(image),
         "source_size_px": [int(image.shape[1]), int(image.shape[0])],
@@ -536,7 +575,7 @@ def _cached_observations(cache_dir, image, roi):
     )
     if manifest.get("observations_sha256") != _sha(observation_path):
         raise ValueError("Explicit OCR cache observations hash mismatch")
-    data = json.loads(observation_path.read_text())
+    data = json.loads(observation_path.read_text(encoding="utf-8"))
     if not isinstance(data, list):
         raise TypeError("Cached OCR observations must be a list")
     cleaned = []
@@ -1610,7 +1649,7 @@ def extract_text_regions(
         "recognition_dpi": int(dpi),
     }
     policy_path = output / "policy_frozen_before_recognition.json"
-    if policy_path.exists() and json.loads(policy_path.read_text()) != policy:
+    if policy_path.exists() and json.loads(policy_path.read_text(encoding="utf-8")) != policy:
         raise ValueError(
             "Changed source/code/policy requires a fresh evidence output directory"
         )

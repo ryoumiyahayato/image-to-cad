@@ -186,10 +186,10 @@ def refine_text_blocks(
     if source_hash != text_data["source_array_sha256"]:
         raise ValueError("BLOCK_RESCUE_SOURCE_ARRAY_CHANGED")
     upstream_path, observation_path = Path(upstream_path), Path(observation_path)
-    if _digest(json.loads(upstream_path.read_text())) != _digest(text_data):
+    if _digest(json.loads(upstream_path.read_text(encoding="utf-8"))) != _digest(text_data):
         raise ValueError("BLOCK_RESCUE_UPSTREAM_NOT_SAVED_INPUT")
     upstream_hash = base._sha(upstream_path)
-    observations = json.loads(observation_path.read_text())
+    observations = json.loads(observation_path.read_text(encoding="utf-8"))
     if isinstance(observations, dict):
         observations = observations["observations"]
     # Legacy discovery uses tile_id; current discovery uses context_id. This is
@@ -222,7 +222,7 @@ def refine_text_blocks(
     }
     if completed_ocr_checkpoint is not None:
         prior = Path(completed_ocr_checkpoint)
-        old_plan = json.loads((prior / "policy_and_selection.json").read_text())
+        old_plan = json.loads((prior / "policy_and_selection.json").read_text(encoding="utf-8"))
         for key in (
             "policy",
             "selected",

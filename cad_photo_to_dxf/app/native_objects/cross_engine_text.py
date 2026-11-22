@@ -90,7 +90,7 @@ def _read_tesseract_evidence(region, text_data, upstream, output, image):
             raise FileNotFoundError(
                 "CROSS_ENGINE_UPSTREAM_RAW_OBSERVATION_MISSING:" + str(raw)
             )
-        meta = json.loads(metadata.read_text())
+        meta = json.loads(metadata.read_text(encoding="utf-8"))
         if meta.get("status") != "COMPLETED" or meta.get("tsv_sha256") != base._sha(
             raw
         ):
@@ -114,7 +114,7 @@ def _read_tesseract_evidence(region, text_data, upstream, output, image):
             box[3] + padding,
         ]
         words = base._parse_tsv(
-            raw.read_text(), origin, alternative["context_id"], spec["psm"]
+            raw.read_text(encoding="utf-8"), origin, alternative["context_id"], spec["psm"]
         )
         provenance = {
             **base.raw_observation_provenance(meta),
@@ -430,7 +430,7 @@ def refine_cross_engine(
     if source_hash != text_data["source_array_sha256"]:
         raise ValueError("CROSS_ENGINE_SOURCE_ARRAY_CHANGED")
     upstream = Path(upstream_path)
-    if _digest(json.loads(upstream.read_text())) != _digest(text_data):
+    if _digest(json.loads(upstream.read_text(encoding="utf-8"))) != _digest(text_data):
         raise ValueError("CROSS_ENGINE_UPSTREAM_NOT_SAVED_INPUT")
     upstream_hash = base._sha(upstream)
     output = Path(output_dir)

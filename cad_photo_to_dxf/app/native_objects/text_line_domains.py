@@ -119,12 +119,12 @@ def _collect_current_observations(image, text_data, cache_dir, provenance, outpu
     )
     policy_path = text_root / "policy_frozen_before_recognition.json"
     upstream_policy = (
-        json.loads(policy_path.read_text()) if policy_path.exists() else {}
+        json.loads(policy_path.read_text(encoding="utf-8")) if policy_path.exists() else {}
     )
     observations, pass_records, seen_passes, alias_records = [], [], {}, []
 
     def ingest(tsv_path, meta_path, context_id, origin, existing_ids=None):
-        meta = json.loads(meta_path.read_text())
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
         spec = meta["specification"]
         if meta["status"] != "COMPLETED" or meta.get("tsv_sha256") != base._sha(
             tsv_path
@@ -175,7 +175,7 @@ def _collect_current_observations(image, text_data, cache_dir, provenance, outpu
             box[3] + padding,
         ]
         words = base._parse_tsv(
-            tsv_path.read_text(), origin_box, context_id, spec["psm"]
+            tsv_path.read_text(encoding="utf-8"), origin_box, context_id, spec["psm"]
         )
         included = []
         for number, word in enumerate(words):
@@ -206,7 +206,7 @@ def _collect_current_observations(image, text_data, cache_dir, provenance, outpu
 
     discovery_path = text_root / "discovery_observations.json"
     discovery = (
-        json.loads(discovery_path.read_text()) if discovery_path.exists() else []
+        json.loads(discovery_path.read_text(encoding="utf-8")) if discovery_path.exists() else []
     )
     ids_by_context = {}
     for word in discovery:
@@ -817,7 +817,7 @@ class ScopeObservationEvidence:
                 base._dump(path, words)
         else:
             path = Path(existing_path)
-        if _digest(json.loads(path.read_text())) != _digest(words):
+        if _digest(json.loads(path.read_text(encoding="utf-8"))) != _digest(words):
             raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_CONTENT_MISMATCH")
         relative = path.resolve().relative_to(self.output.parent.resolve())
         ledger_hash = base._sha(path)
@@ -850,7 +850,7 @@ def read_scope_observation(evidence_root, reference):
     path.relative_to(root)
     if base._sha(path) != reference["sha256"]:
         raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_HASH_MISMATCH")
-    words = json.loads(path.read_text())
+    words = json.loads(path.read_text(encoding="utf-8"))
     if len(words) != reference["ledger_word_count"]:
         raise ValueError("SOURCE_SCOPE_OBSERVATION_LEDGER_COUNT_MISMATCH")
     index = reference["word_index_zero_based"]
@@ -1237,14 +1237,14 @@ def _verify_inputs(image, text_data, provenance):
             raise ValueError("UPSTREAM_FILE_HASH_MISMATCH:" + key)
     if base._sha(base.__file__) != provenance["producer_sha256"]:
         raise ValueError("UPSTREAM_TEXT_PRODUCER_CHANGED")
-    original = json.loads(Path(provenance["text_path"]).read_text())
+    original = json.loads(Path(provenance["text_path"]).read_text(encoding="utf-8"))
     if _digest(original) != _digest(text_data):
         raise ValueError("PASSED_TEXT_DATA_DIFFERS_FROM_SAVED_UPSTREAM")
     roi = list(text_data["roi_xyxy_px"])
     validate_text_regions(text_data, image.shape, roi)
     if text_data.get("source_array_sha256") != base.source_array_sha256(image):
         raise ValueError("TEXT_SOURCE_GRAY_SAMPLES_MISMATCH")
-    manifest = json.loads(Path(provenance["manifest_path"]).read_text())
+    manifest = json.loads(Path(provenance["manifest_path"]).read_text(encoding="utf-8"))
     if (
         manifest.get("source_sha256") != provenance["source_sha256"]
         or manifest.get("roi_xyxy_px") != roi

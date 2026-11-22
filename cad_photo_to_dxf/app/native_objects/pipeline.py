@@ -5,7 +5,7 @@ image and explicit ROI are required; no failed stage falls back to old HATCH.
 """
 
 from .performance import profiled
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from .evidence_paths import relative_evidence_path
 import copy
 import hashlib
@@ -37,7 +37,7 @@ def _completed_assembly_checkpoint(cache_dir, identity):
     manifest = Path(cache_dir) / "completed_stages.json" if cache_dir else None
     if manifest is None or not manifest.is_file():
         return None
-    data = json.loads(manifest.read_text())
+    data = json.loads(manifest.read_text(encoding="utf-8"))
     row = data.get("assembly")
     if row is None:
         return None
@@ -53,7 +53,7 @@ def _completed_assembly_checkpoint(cache_dir, identity):
         or hashlib.sha256(path.read_bytes()).hexdigest() != row["sha256"]
     ):
         raise ValueError("ASSEMBLY_CHECKPOINT_PATH_OR_HASH_MISMATCH")
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def _discovery_for_resume(cache_dir, out, texts):
@@ -67,7 +67,7 @@ def _discovery_for_resume(cache_dir, out, texts):
         return local
     if cache_dir is None:
         raise ValueError("TEXT_DISCOVERY_CHECKPOINT_MISSING")
-    manifest = json.loads((Path(cache_dir) / "completed_stages.json").read_text())
+    manifest = json.loads((Path(cache_dir) / "completed_stages.json").read_text(encoding="utf-8"))
     row = manifest.get("discovery")
     if row is None:
         raise ValueError("TEXT_DISCOVERY_CHECKPOINT_WITHOUT_HASH")
@@ -77,7 +77,7 @@ def _discovery_for_resume(cache_dir, out, texts):
         or hashlib.sha256(path.read_bytes()).hexdigest() != row["sha256"]
     ):
         raise ValueError("TEXT_DISCOVERY_CHECKPOINT_HASH_MISMATCH")
-    save_json(local, json.loads(path.read_text()))
+    save_json(local, json.loads(path.read_text(encoding="utf-8")))
     return local
 
 
@@ -89,6 +89,37 @@ def _saved_dxf_accepted(audit):
         and not audit["exact_duplicate_segments"]
         and audit["source_gate_pass"]
     )
+
+
+def _restore_circular_marker_evidence(cache_dir, out, completion):
+    """Restore bound raw artifacts; a prior saved-file verdict is never reused."""
+    source_root, destination = Path(cache_dir).resolve(), Path(out).resolve()
+    files = completion.get("raw_evidence_files")
+    if not isinstance(files, list) or not files:
+        raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_MANIFEST_MISSING")
+    seen = set()
+    for record in files:
+        name = record["path"]
+        relative = PurePosixPath(name)
+        if (not isinstance(name, str) or "\\" in name or relative.is_absolute()
+                or ".." in relative.parts or not relative.parts
+                or relative.parts[0] != "circular_markers" or name in seen):
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_PATH_INVALID")
+        seen.add(name)
+        source, target = source_root / name, destination / name
+        if (source.is_symlink() or source_root not in source.resolve().parents
+                or not source.is_file() or target.is_symlink()
+                or destination not in target.resolve().parents):
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_OUTSIDE_OR_MISSING")
+        contents = source.read_bytes()
+        if hashlib.sha256(contents).hexdigest() != record["sha256"]:
+            raise ValueError("CIRCULAR_ASSEMBLY_RAW_EVIDENCE_HASH_CHANGED")
+        if target.exists() and target.read_bytes() != contents:
+            raise ValueError("CIRCULAR_ASSEMBLY_DESTINATION_ALREADY_DIFFERS")
+        target.parent.mkdir(parents=True, exist_ok=True)
+        if not target.exists():
+            target.write_bytes(contents)
+    save_json(destination / "circular_markers/circular_markers.json", completion)
 
 
 def _text_progress_adapter(progress):
@@ -114,7 +145,7 @@ def _completed_text_checkpoint(
     manifest = Path(cache_dir) / "completed_stages.json" if cache_dir else None
     if not manifest or not manifest.is_file():
         return None, None
-    data = json.loads(manifest.read_text())
+    data = json.loads(manifest.read_text(encoding="utf-8"))
     if data.get("source_sha256") != source_sha or data.get("roi_xyxy_px") != list(roi):
         raise ValueError("COMPLETED_STAGE_SOURCE_OR_ROI_MISMATCH")
     row = data.get("text")
@@ -173,7 +204,7 @@ def _completed_text_checkpoint(
         producer = Path(__file__).with_name(name + ".py")
         if hashlib.sha256(producer.read_bytes()).hexdigest() != expected:
             raise ValueError("COMPLETED_TEXT_DERIVATION_CHANGED:" + name)
-    texts = json.loads(path.read_text())
+    texts = json.loads(path.read_text(encoding="utf-8"))
     validate_text_regions(texts, shape, roi)
     if (
         source_array_sha is not None
@@ -198,7 +229,7 @@ def _completed_geometry_checkpoint(cache_dir, source_sha, roi, texts, gray, out)
     manifest = Path(cache_dir) / "completed_stages.json" if cache_dir else None
     if not manifest or not manifest.is_file():
         return None
-    data = json.loads(manifest.read_text())
+    data = json.loads(manifest.read_text(encoding="utf-8"))
     row = data.get("geometry")
     if not row:
         return None
@@ -220,7 +251,7 @@ def _completed_geometry_checkpoint(cache_dir, source_sha, roi, texts, gray, out)
     path = (manifest.parent / row["path"]).resolve()
     if row["sha256"] != hashlib.sha256(path.read_bytes()).hexdigest():
         raise ValueError("GEOMETRY_CHECKPOINT_HASH_MISMATCH")
-    result = json.loads(path.read_text())
+    result = json.loads(path.read_text(encoding="utf-8"))
     result = _reclassify_source_fitted_lines(
         result, texts, gray.shape, roi, original_dictionary_sha256=row["sha256"]
     )
@@ -553,7 +584,7 @@ def _doors(gray, roi, source_path, out, cache_dir):
     cached = False
     cache = Path(cache_dir) / "native_verified_cache.json" if cache_dir else None
     if cache and cache.is_file():
-        data = json.loads(cache.read_text())
+        data = json.loads(cache.read_text(encoding="utf-8"))
         if data.get("source_sha256") != source_sha or data.get("roi_xyxy_px") != list(
             roi
         ):
@@ -969,6 +1000,8 @@ def run_native_objects(
                     objects=connections["objects"],
                 )
             )
+            circular_markers = restored_assembly["circular_markers"]
+            _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
             issues = restored_assembly["issues"]
@@ -1064,7 +1097,7 @@ def run_native_objects(
                     "sha256": hashlib.sha256(discovery.read_bytes()).hexdigest(),
                 }
             elif resume_evidence:
-                previous = json.loads(Path(resume_evidence["manifest"]).read_text())
+                previous = json.loads(Path(resume_evidence["manifest"]).read_text(encoding="utf-8"))
                 if previous.get("discovery"):
                     discovery = _discovery_for_resume(cache_dir, out, texts)
                     stage_manifest["discovery"] = {
@@ -1089,7 +1122,7 @@ def run_native_objects(
                     discovery = _discovery_for_resume(cache_dir, out, texts)
                     save_json(
                         text_cache / "observations.json",
-                        json.loads(discovery.read_text()),
+                        json.loads(discovery.read_text(encoding="utf-8")),
                     )
                     save_json(
                         text_cache / "manifest.json",
@@ -1126,7 +1159,7 @@ def run_native_objects(
                     dpi=dpi,
                 )
                 derived = json.loads(
-                    (out / "text_domain_recovery/completed_stages.json").read_text()
+                    (out / "text_domain_recovery/completed_stages.json").read_text(encoding="utf-8")
                 )
                 derived["text"]["path"] = "text_domain_recovery/completed_text.json"
                 derived.update(stage_identity)
@@ -1136,7 +1169,7 @@ def run_native_objects(
                 checkpoint_artifact(
                     "completed_text_domains", out / "completed_stages.json"
                 )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text())
+            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
             current_producer = current_text_stage["text"].get("producer_module")
             if current_producer not in (
                 "app.native_objects.source_review",
@@ -1168,7 +1201,7 @@ def run_native_objects(
                     ),
                 )
                 derived = json.loads(
-                    (out / "text_block_rescue/completed_stages.json").read_text()
+                    (out / "text_block_rescue/completed_stages.json").read_text(encoding="utf-8")
                 )
                 derived["text"]["path"] = "text_block_rescue/completed_text.json"
                 derived.update(stage_identity)
@@ -1178,7 +1211,7 @@ def run_native_objects(
                 checkpoint_artifact(
                     "completed_text_blocks", out / "completed_stages.json"
                 )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text())
+            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
             if current_text_stage["text"].get("producer_module") not in (
                 "app.native_objects.source_review",
                 "app.native_objects.cross_engine_text",
@@ -1197,7 +1230,7 @@ def run_native_objects(
                     progress_callback=_text_progress_adapter(progress),
                 )
                 derived = json.loads(
-                    (out / "cross_engine_text/completed_stages.json").read_text()
+                    (out / "cross_engine_text/completed_stages.json").read_text(encoding="utf-8")
                 )
                 derived["text"]["path"] = "cross_engine_text/completed_text.json"
                 derived.update(stage_identity)
@@ -1207,7 +1240,7 @@ def run_native_objects(
                 checkpoint_artifact(
                     "completed_cross_engine_text", out / "completed_stages.json"
                 )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text())
+            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
             if current_text_stage["text"].get("producer_module") not in (
                 "app.native_objects.source_review",
                 "app.native_objects.source_text_completion",
@@ -1236,7 +1269,7 @@ def run_native_objects(
                     ),
                 )
                 derived = json.loads(
-                    (out / "source_text_completion/completed_stages.json").read_text()
+                    (out / "source_text_completion/completed_stages.json").read_text(encoding="utf-8")
                 )
                 derived["text"]["path"] = "source_text_completion/completed_text.json"
                 derived.update(stage_identity)
@@ -1247,7 +1280,7 @@ def run_native_objects(
                     "completed_bounded_source_text_queue", out / "completed_stages.json"
                 )
             text_producer = copy.deepcopy(
-                json.loads((out / "completed_stages.json").read_text())["text"]
+                json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))["text"]
             )
             progress("TEXT_CONTRACT_TO_GEOMETRY", 0.32)
             geometry = _completed_geometry_checkpoint(
@@ -1266,7 +1299,7 @@ def run_native_objects(
                 save_json(original_fits, geometry)
                 from . import geometry as geometry_module
 
-                stage_manifest = json.loads((out / "completed_stages.json").read_text())
+                stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
                 stage_manifest["geometry"] = {
                     "path": "text_geometry_ownership/source_fitted_dictionary.json",
                     "sha256": hashlib.sha256(original_fits.read_bytes()).hexdigest(),
@@ -1366,7 +1399,7 @@ def run_native_objects(
                     "source_pixels_modified": False,
                     "transcription_decisions_modified": False,
                 }
-                stage_manifest = json.loads((out / "completed_stages.json").read_text())
+                stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
                 stage_manifest["text"] = text_producer
                 save_json(out / "completed_stages.json", stage_manifest)
                 checkpoint_artifact(
@@ -1387,7 +1420,7 @@ def run_native_objects(
             save_json(saved_geometry, geometry)
             from . import geometry as geometry_module
 
-            stage_manifest = json.loads((out / "completed_stages.json").read_text())
+            stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
             stage_manifest["geometry"] = {
                 "path": "completed_geometry.json",
                 "sha256": hashlib.sha256(saved_geometry.read_bytes()).hexdigest(),
@@ -1511,6 +1544,40 @@ def run_native_objects(
             retired_connection_lines = set(connections["retired_ids"])
             objects = [obj for obj in objects if obj["id"] not in retired_connection_lines]
             objects += connections["objects"]
+            progress("SOURCE_CIRCULAR_MARKERS_AND_INDEPENDENT_CHARACTERS", 0.71)
+            from .circular_marker_adoption import complete_circular_markers
+
+            # Connection observations only seed source geometry. They carry no
+            # approval, glyph answer or ownership of an external connection.
+            round_observation_path = out / "connections/discovery/connections.json"
+            observed_rounds = (
+                json.loads(round_observation_path.read_text(encoding="utf-8")).get(
+                    "round_boundary_observations"
+                )
+                if round_observation_path.is_file() else None
+            )
+            circular_markers = complete_circular_markers(
+                gray, roi, source_sha, objects, out / "circular_markers", dpi=dpi,
+                text_regions=texts, observed_rounds=observed_rounds,
+                progress_callback=lambda event: progress(
+                    "CIRCULAR_MARKER:" + event["stage"],
+                    0.71 + 0.025 * min(1.0, event["processed"] / max(1, event["total"])),
+                ),
+            )
+            retired_marker_members = set(circular_markers["retired_ids"])
+            objects = [obj for obj in objects if obj["id"] not in retired_marker_members]
+            objects += circular_markers["objects"]
+            endpoint_updates = {
+                obj["id"]: obj for obj in circular_markers.get(
+                    "source_white_gap_protection", {}
+                ).get("replacements", [])
+            }
+            endpoint_updates.update({
+                obj["id"]: obj for obj in circular_markers.get(
+                    "external_endpoint_contacts", {}
+                ).get("replacements", [])
+            })
+            objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1519,6 +1586,7 @@ def run_native_objects(
                 + text_issues
             )
             issues += connections["uncertainties"]
+            issues += circular_markers["uncertainties"]
             issues += walls.get("uncertainties", [])
             issues += [
                 {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
@@ -1537,6 +1605,10 @@ def run_native_objects(
                         "wall_segments": len(walls["objects"]),
                         "doors": len(door_objects),
                         "whole_connection_paths": len(connections["objects"]),
+                        "complete_circular_markers": circular_markers["summary"]["new_complete_markers"],
+                        "circle_text_compositions": circular_markers["summary"]["circle_text_compositions"],
+                        "partial_circular_boundaries": circular_markers["summary"]["new_partial_boundaries"],
+                        "partial_circular_compositions": circular_markers["summary"]["partial_compositions"],
                         "TEXT": sum(o["kind"] == "TEXT" for o in text_objects),
                         "MTEXT": sum(o["kind"] == "MTEXT" for o in text_objects),
                     },
@@ -1551,6 +1623,7 @@ def run_native_objects(
                 "doors": doors,
                 "door_completion": door_completion,
                 "connections": connections,
+                "circular_markers": circular_markers,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -1559,7 +1632,7 @@ def run_native_objects(
             }
             completed_assembly = out / "completed_assembly.json"
             save_json(completed_assembly, assembled)
-            stage_manifest = json.loads((out / "completed_stages.json").read_text())
+            stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
             stage_manifest["assembly"] = {
                 "path": "completed_assembly.json",
                 "sha256": hashlib.sha256(completed_assembly.read_bytes()).hexdigest(),
@@ -1646,6 +1719,7 @@ def run_native_objects(
                 "replay": connections["replay"],
                 "engineering_stroke_identity_proven": False,
             },
+            "circular_marker_completion": circular_markers["summary"],
             "wall_partition_source_gate": walls.get("partition_source_gate"),
         }
         report.update(

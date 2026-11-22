@@ -44,7 +44,7 @@ def _digest(value):
 
 
 def _read(path):
-    return json.loads(Path(path).read_text())
+    return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
 def _atomic(path, value):
@@ -52,7 +52,8 @@ def _atomic(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".pending")
     temporary.write_text(
-        json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False)
+        json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False),
+        encoding="utf-8",
     )
     os.replace(temporary, path)
 
@@ -146,7 +147,7 @@ class BoundObservations:
             box[3] + padding,
         ]
         context = "bound-" + key[:16]
-        words = base._parse_tsv(raw.read_text(), origin, context, spec["psm"])
+        words = base._parse_tsv(raw.read_text(encoding="utf-8"), origin, context, spec["psm"])
         provenance = {
             **base.raw_observation_provenance(meta),
             "source_sha256": self.source_sha,

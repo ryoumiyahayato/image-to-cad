@@ -90,7 +90,13 @@ def _box(value):
         x, y, w, h = (float(value[k]) for k in ("x", "y", "width_px", "height_px"))
         points += [[x, y - h], [x + w, y]]
     nested = []
-    for key in ("geometry", "source_evidence", "object", "text_geometry"):
+    for key in (
+        "geometry",
+        "source_evidence",
+        "object",
+        "text_geometry",
+        "circle_geometry",
+    ):
         candidate = _box(value.get(key))
         if candidate is not None:
             nested += [candidate[:2], candidate[2:]]
@@ -248,6 +254,12 @@ def _matches_member(member, expected, pixel_from_cad, mm):
         return _numeric_equal(
             pixel_from_cad(member.dxf.start), g["start"]
         ) and _numeric_equal(pixel_from_cad(member.dxf.end), g["end"])
+    if kind == "CIRCLE":
+        return (
+            _numeric_equal(pixel_from_cad(member.dxf.center), g["center"])
+            and _numeric_equal(float(member.dxf.radius) / mm, g["radius_px"])
+            and float(g["radius_px"]) > 0
+        )
     if kind == "ARC":
         if not _numeric_equal(
             pixel_from_cad(member.dxf.center), g["center"]
@@ -301,6 +313,9 @@ def _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm):
     kind, g = obj["kind"], obj["geometry"]
     expected_type = {
         "LINE": "LINE",
+        "ARC": "ARC",
+        "CIRCLE": "CIRCLE",
+        "CIRCULAR_MARKER": "INSERT",
         "CONNECTION_PATH": "LWPOLYLINE",
         "TEXT": "TEXT",
         "MTEXT": "MTEXT",
@@ -332,6 +347,25 @@ def _candidate_geometry_checks(entity, obj, members, pixel_from_cad, mm):
                 entity, {"kind": "LINE", "geometry": g}, pixel_from_cad, mm
             )
             checks["nonzero_length"] = not _numeric_equal(g["start"], g["end"])
+        elif kind == "ARC":
+            checks["observed_arc_parameters_match_candidate"] = _matches_member(
+                entity, {"kind": "ARC", "geometry": g}, pixel_from_cad, mm
+            )
+            checks["observed_sweep_is_open"] = (
+                0
+                < abs(
+                    float(
+                        g.get(
+                            "sweep_deg_image", g["end_deg_image"] - g["start_deg_image"]
+                        )
+                    )
+                )
+                < 360
+            )
+        elif kind in ("CIRCLE", "CIRCULAR_MARKER"):
+            checks.update(
+                cad_io.circular_candidate_contract(entity, obj, pixel_from_cad, mm)
+            )
         elif kind == "CONNECTION_PATH":
             vertices = list(entity.get_points("xyseb"))
             checks["whole_open_chain"] = (
@@ -638,7 +672,8 @@ def _source_groups(
     scope_frame = (
         None
         if scope_mask is None
-        else scope_mask & ~ndimage.binary_erosion(
+        else scope_mask
+        & ~ndimage.binary_erosion(
             scope_mask, structure=np.ones((3, 3), bool), border_value=0
         )
     )
@@ -815,6 +850,29 @@ def _source_groups(
         "mask_thresholds": [128, 128],
     }
     return groups, issues, counts, unrepresented
+
+
+def _circular_composition_summary(circular_rows, candidate_by_id):
+    """A circle and TEXT can be intact while an external relation remains open."""
+    pending = {
+        oid for oid, obj in candidate_by_id.items()
+        if obj.get("source_evidence", {}).get("external_endpoint_contact_review", {}).get("status")
+        == "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING"
+    }
+    valid = [row for row in circular_rows
+             if row["candidate_structure_matches"] and row["source_geometry_gate_pass"]]
+    compositions = [row for row in valid if row["kind"] == "CIRCULAR_MARKER"]
+    pending_count = sum(row["id"] in pending for row in compositions)
+    boundaries = sum(row["kind"] == "CIRCLE" for row in valid)
+    return {
+        "complete_marker_objects": len(compositions) - pending_count,
+        "circle_text_compositions": len(compositions),
+        "circle_text_compositions_with_external_contacts_pending": pending_count,
+        "partial_circle_boundary_objects": boundaries,
+        "partial_compositions": boundaries + pending_count,
+        "circle_plus_text_is_one_marker_not_two": True,
+        "GUI_and_engineer_validation_not_inferred": True,
+    }
 
 
 @profiled("quality_review.run_quality_review")
@@ -1064,7 +1122,13 @@ def run_quality_review(
                     object_ids=[oid],
                 )
             )
-        if kind in ("DOOR", "ROOM_LABEL", "WALL_SEGMENT", "CONNECTION_PATH"):
+        if kind in (
+            "DOOR",
+            "ROOM_LABEL",
+            "WALL_SEGMENT",
+            "CONNECTION_PATH",
+            "CIRCULAR_MARKER",
+        ):
             issues.append(
                 _issue(
                     "COMPOSITE_GEOMETRY_CHECKED_ENGINEERING_CLASS_OR_EDIT_SCOPE_NOT_HUMAN_VERIFIED",
@@ -1087,6 +1151,8 @@ def run_quality_review(
                 parameter_count += 4
             elif member.dxftype() == "ARC":
                 parameter_count += 5
+            elif member.dxftype() == "CIRCLE":
+                parameter_count += 3
             elif member.dxftype() == "LWPOLYLINE":
                 parameter_count += 2 * len(member) + (
                     len(member) if member.closed else max(0, len(member) - 1)
@@ -1314,6 +1380,13 @@ def run_quality_review(
         if issues
         else "RULES_REVIEW_COMPLETE_NO_REPORTED_ISSUES",
     }
+    circular_rows = [
+        row for row in formal if row["kind"] in ("CIRCLE", "CIRCULAR_MARKER")
+    ]
+    if circular_rows:
+        summary["circular_marker_composition"] = _circular_composition_summary(
+            circular_rows, candidate_by_id
+        )
     if review_scope is not None:
         summary["source_to_output_scope"] = review_scope["mode"]
         summary["full_parent_region_review_performed"] = False

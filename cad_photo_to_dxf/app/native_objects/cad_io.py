@@ -3,6 +3,7 @@
 from .performance import profiled
 from pathlib import Path
 from collections import Counter
+from functools import lru_cache
 import hashlib
 import json
 import math
@@ -10,12 +11,16 @@ import shutil
 import numpy as np
 import ezdxf
 import fitz
+from fontTools.pens.boundsPen import BoundsPen
+from fontTools.ttLib import TTFont
 from ezdxf.math import Matrix44
 from ezdxf.lldxf.tagwriter import TagWriter
 from ezdxf.tools.text_size import text_size
+from ezdxf.fonts import fonts
 from ezdxf.addons.drawing import Frontend, RenderContext, config, layout
 from ezdxf.addons.drawing.recorder import Recorder
 from ezdxf.addons.drawing.pymupdf import PyMuPdfRenderBackend
+from ezdxf.addons.drawing.unified_text_renderer import UnifiedTextRenderer
 from scipy.ndimage import map_coordinates, distance_transform_edt
 from .contracts import save_json
 from .connection_retrace_audit import certify_saved_retraces
@@ -29,6 +34,7 @@ LAYERS = (
     "WALL_SEGMENTS",
     "DOOR",
     "CONNECTIONS",
+    "CIRCULAR_MARKERS",
 )
 
 
@@ -41,10 +47,26 @@ def identity(e):
 
 
 def mark(e, o):
+    data = {"id": o["id"], "kind": o["kind"]}
+    if o.get("source_evidence", {}).get("circle_endpoint_contacts"):
+        data["circle_endpoint_contacts"] = True
+    if o.get("source_evidence", {}).get("circle_white_gap_protection"):
+        data["circle_white_gap_protection"] = True
     e.set_xdata(
         APPID,
-        [(1000, json.dumps({"id": o["id"], "kind": o["kind"]}, ensure_ascii=True))],
+        [(1000, json.dumps(data, ensure_ascii=True))],
     )
+
+
+def _circle_parameters(geometry):
+    """A full circle has a finite centre and positive source-pixel radius."""
+    centre = np.asarray(geometry["center"], dtype=float)
+    radius = float(geometry["radius_px"])
+    if centre.shape != (2,) or not np.isfinite(centre).all():
+        raise ValueError("NATIVE_CIRCLE_CENTER_MUST_BE_FINITE_XY")
+    if not math.isfinite(radius) or radius <= 0:
+        raise ValueError("NATIVE_CIRCLE_RADIUS_MUST_BE_POSITIVE")
+    return centre, radius
 
 
 def _font(out):
@@ -76,6 +98,86 @@ def _font(out):
         "bundled_license": "FONT_LICENSE_DejaVu.txt",
         "source": str(source),
     }
+
+
+@lru_cache(maxsize=128)
+def _circular_character_ink_metrics(font_path, font_sha256, character):
+    """Measure literal ink in the actual portable font, not advance width.
+
+    A source glyph box includes descenders and excludes side bearings. DXF
+    TEXT height instead means cap height, and its insertion is a baseline.
+    The font hash is part of the cache key so changed bytes cannot reuse old
+    metrics. Paths are measured only; output remains one native TEXT.
+    """
+    with TTFont(font_path) as font:
+        cmap = font.getBestCmap() or {}
+        glyphs = font.getGlyphSet()
+
+        def bounds(letter):
+            if ord(letter) not in cmap:
+                raise ValueError("CIRCULAR_CHARACTER_NOT_IN_PORTABLE_FONT")
+            pen = BoundsPen(glyphs)
+            glyphs[cmap[ord(letter)]].draw(pen)
+            if pen.bounds is None:
+                raise ValueError("CIRCULAR_CHARACTER_HAS_NO_FONT_INK")
+            return tuple(float(value) for value in pen.bounds)
+
+        # These are font metrics, not recognized content. ezdxf's TrueType
+        # renderer defines the baseline from x and the cap height from A.
+        baseline = bounds("x")[1]
+        cap_height = bounds("A")[3] - baseline
+        xmin, ymin, xmax, ymax = bounds(character)
+    values = (xmin, ymin - baseline, xmax, ymax - baseline, cap_height)
+    if not all(math.isfinite(value) for value in values) or not (
+        xmax > xmin and ymax > ymin and cap_height > 0
+    ):
+        raise ValueError("UNMEASURABLE_CIRCULAR_CHARACTER_FONT_INK")
+    return values
+
+
+def _circular_text_placement(g, mm, font_path):
+    """Fit the complete font ink box to the proven source glyph box."""
+    height, width = float(g["height_px"]) * mm, float(g["width_px"]) * mm
+    if not all(math.isfinite(value) and value > 0 for value in (height, width)):
+        raise ValueError("CIRCULAR_CHARACTER_REQUIRES_POSITIVE_SOURCE_INK_BOX")
+    metrics = _circular_character_ink_metrics(str(font_path), sha(font_path), g["text"])
+    xmin, ymin, xmax, ymax, cap = metrics
+    sx, sy = width / (xmax - xmin), height / (ymax - ymin)
+    angle = -math.radians(float(g.get("rotation_deg_image", 0.0)))
+    c, s = math.cos(angle), math.sin(angle)
+    # Subtract the transformed ink bearing from the source box's lower-left
+    # anchor. This preserves the original white gap beneath a descender.
+    offset = (c * xmin * sx - s * ymin * sy, s * xmin * sx + c * ymin * sy)
+    return {
+        "height": cap * sy,
+        "width": sx / sy,
+        "baseline_offset_mm": offset,
+        "font_ink_bounds_units": list(metrics[:4]),
+        "font_cap_height_units": cap,
+        "font_sha256": sha(font_path),
+        "basis": "complete_source_ink_box_to_portable_font_ink_bounds",
+    }
+
+
+def circular_text_ink_corners(entity):
+    """Read actual saved TEXT ink corners using its portable font bytes."""
+    style = entity.doc.styles.get(entity.dxf.style)
+    filename = str(style.dxf.font)
+    if filename != "DejaVuSans.ttf":
+        raise ValueError("CIRCULAR_CHARACTER_PORTABLE_FONT_REFERENCE_CHANGED")
+    font_path = Path(entity.doc.filename).parent / filename
+    xmin, ymin, xmax, ymax, cap = _circular_character_ink_metrics(
+        str(font_path), sha(font_path), entity.dxf.text
+    )
+    sy = float(entity.dxf.height) / cap
+    sx = sy * float(entity.dxf.get("width", 1.0))
+    angle = math.radians(float(entity.dxf.get("rotation", 0.0)))
+    c, s = math.cos(angle), math.sin(angle)
+    origin = np.array([entity.dxf.insert.x, entity.dxf.insert.y])
+    return [
+        origin + np.array([c * x * sx - s * y * sy, s * x * sx + c * y * sy])
+        for x, y in ((xmin, ymin), (xmax, ymin), (xmax, ymax), (xmin, ymax))
+    ]
 
 
 class _ExplicitMTextDirectionWriter(TagWriter):
@@ -224,8 +326,68 @@ def export_objects(
         attrs = {"layer": o["layer"], "color": 256}
         member_info = []
         mtext_line_layout = None
+        circular_text_layout = None
         if kind == "LINE":
             e = msp.add_line(xy(g["start"]), xy(g["end"]), dxfattribs=attrs)
+        elif kind == "CIRCLE":
+            centre, radius = _circle_parameters(g)
+            e = msp.add_circle(xy(centre), radius * mm, dxfattribs=attrs)
+        elif kind == "ARC":
+            centre, radius = _circle_parameters(g)
+            sweep = float(
+                g.get("sweep_deg_image", g["end_deg_image"] - g["start_deg_image"])
+            )
+            if not math.isfinite(sweep) or not 0 < abs(sweep) < 360:
+                raise ValueError("NATIVE_ARC_REQUIRES_OBSERVED_OPEN_SWEEP")
+            start, end = -float(g["start_deg_image"]), -float(g["end_deg_image"])
+            if not math.isfinite(start) or not math.isfinite(end):
+                raise ValueError("NATIVE_ARC_ANGLES_MUST_BE_FINITE")
+            if sweep > 0:
+                start, end = end, start
+            e = msp.add_arc(
+                xy(centre),
+                radius * mm,
+                start_angle=start % 360,
+                end_angle=end % 360,
+                dxfattribs=attrs,
+            )
+        elif kind == "CIRCULAR_MARKER":
+            centre, radius = _circle_parameters(g["circle_geometry"])
+            if o.get("source_evidence", {}).get("components_complete") is not True:
+                raise ValueError("CIRCULAR_MARKER_REQUIRES_COMPLETE_COMPONENT_EVIDENCE")
+            tg = g["text_geometry"]
+            if (
+                not isinstance(tg.get("text"), str)
+                or len(tg["text"]) != 1
+                or not tg["text"].isprintable()
+                or tg["text"].isspace()
+            ):
+                raise ValueError("CIRCULAR_MARKER_REQUIRES_ONE_LITERAL_CHARACTER")
+            # Each marker owns only its border and literal character. Exterior
+            # connections stay in modelspace and cannot move with this block.
+            name = "I2CAD_" + o["id"].replace("-", "_")
+            block = doc.blocks.new(name)
+            anchor = xy(centre)
+            block.add_circle((0, 0), radius * mm, dxfattribs={"layer": "0", "color": 0})
+            circular_text_layout = _circular_text_placement(
+                tg, mm, path.parent / font["font"]
+            )
+            point = xy((tg["x"], tg["y"]))
+            offset = circular_text_layout["baseline_offset_mm"]
+            block.add_text(
+                tg["text"],
+                dxfattribs={
+                    "layer": "0",
+                    "color": 0,
+                    "style": "I2CAD_TEXT",
+                    "insert": tuple(point[i] - anchor[i] - offset[i] for i in (0, 1)),
+                    "height": circular_text_layout["height"],
+                    "width": circular_text_layout["width"],
+                    "rotation": -float(tg.get("rotation_deg_image", 0.0)),
+                },
+            )
+            e = msp.add_blockref(name, anchor, dxfattribs=attrs)
+            member_info = [m.dxftype() for m in block]
         elif kind == "CONNECTION_PATH":
             points = g["points"]
             bulges = g.get("bulges", [0.0] * len(points))
@@ -458,6 +620,8 @@ def export_objects(
         )
         if mtext_line_layout is not None:
             written[-1]["mtext_line_layout"] = mtext_line_layout
+        if circular_text_layout is not None:
+            written[-1]["circular_text_layout"] = circular_text_layout
     regions = []
     for row in range(4):
         for col in range(6):
@@ -542,6 +706,190 @@ def snapshot(doc):
     return result
 
 
+def _same_circle_parameters(left, right):
+    """Only serialization round-off is allowed in a candidate correspondence."""
+    left, right = np.asarray(left, dtype=float), np.asarray(right, dtype=float)
+    if (
+        left.shape != right.shape
+        or not np.isfinite(left).all()
+        or not np.isfinite(right).all()
+    ):
+        return False
+    scale = np.maximum(np.maximum(np.abs(left), np.abs(right)), 1.0)
+    return bool(np.all(np.abs(left - right) <= 64 * np.spacing(scale)))
+
+
+def circular_candidate_contract(entity, obj, pixel_from_cad, mm):
+    """Check the actual saved marker members, including literal TEXT layout.
+
+    Both the cold source audit and the broader review call this same contract.
+    It never obtains a candidate from its entity's appearance or guessed text.
+    """
+    kind, g = obj["kind"], obj["geometry"]
+    complete = kind == "CIRCULAR_MARKER"
+    checks = {
+        "native_circular_representation": entity.dxftype()
+        == ("INSERT" if complete else "CIRCLE"),
+        "component_status_explicit": obj.get("source_evidence", {}).get(
+            "components_complete"
+        )
+        is complete,
+    }
+    if not checks["native_circular_representation"]:
+        return checks
+    expanded = list(entity.virtual_entities()) if complete else [entity]
+    checks["exact_circle_and_character_member_set"] = Counter(
+        e.dxftype() for e in expanded
+    ) == (Counter({"CIRCLE": 1, "TEXT": 1}) if complete else Counter({"CIRCLE": 1}))
+    circles = [e for e in expanded if e.dxftype() == "CIRCLE"]
+    cg = g["circle_geometry"] if complete else g
+    centre, radius = _circle_parameters(cg)
+    checks["circle_parameters_match_candidate"] = len(circles) == 1 and (
+        _same_circle_parameters(pixel_from_cad(circles[0].dxf.center), centre)
+        and _same_circle_parameters(float(circles[0].dxf.radius) / mm, radius)
+    )
+    checks["circle_is_planar_source_xy"] = len(circles) == 1 and (
+        float(circles[0].dxf.center.z) == 0.0
+        and float(circles[0].dxf.get("thickness", 0.0)) == 0.0
+        and _same_circle_parameters(
+            circles[0].dxf.get("extrusion", (0, 0, 1)), (0, 0, 1)
+        )
+    )
+    if complete:
+        checks["independent_marker_definition"] = (
+            sum(
+                1
+                for e in entity.doc.modelspace().query("INSERT")
+                if e.dxf.name == entity.dxf.name
+            )
+            == 1
+        )
+        checks["no_attribute_or_nested_members"] = not entity.attribs and all(
+            e.dxftype() in ("CIRCLE", "TEXT")
+            for e in entity.doc.blocks.get(entity.dxf.name)
+        )
+        checks["marker_unit_transform"] = all(
+            _same_circle_parameters(float(entity.dxf.get(key, 1.0)), 1.0)
+            for key in ("xscale", "yscale", "zscale")
+        ) and _same_circle_parameters(float(entity.dxf.get("rotation", 0.0)) % 360, 0.0)
+        strings = [e for e in expanded if e.dxftype() == "TEXT"]
+        tg = g["text_geometry"]
+        checks["one_literal_source_character"] = (
+            isinstance(tg.get("text"), str)
+            and len(tg["text"]) == 1
+            and tg["text"].isprintable()
+            and not tg["text"].isspace()
+            and len(strings) == 1
+            and strings[0].dxf.text == tg["text"]
+        )
+        if len(strings) == 1:
+            t = strings[0]
+            style = t.doc.styles.get(t.dxf.style)
+            angle = math.radians(float(tg.get("rotation_deg_image", 0.0)))
+            c, s = math.cos(angle), math.sin(angle)
+            origin = np.array([tg["x"], tg["y"]], dtype=float)
+            u = np.array([c, s]) * float(tg["width_px"])
+            v = np.array([s, -c]) * float(tg["height_px"])
+            source_corners = (origin, origin + u, origin + u + v, origin + v)
+            actual_corners = [pixel_from_cad(p) for p in circular_text_ink_corners(t)]
+            rotation_difference = math.radians(
+                float(t.dxf.get("rotation", 0.0))
+                + float(tg.get("rotation_deg_image", 0.0))
+            )
+            checks["character_source_layout_matches"] = (
+                _same_circle_parameters(actual_corners, source_corners)
+                and _same_circle_parameters(
+                    (math.cos(rotation_difference), math.sin(rotation_difference)),
+                    (1.0, 0.0),
+                )
+                and int(t.dxf.get("halign", 0)) == 0
+                and int(t.dxf.get("valign", 0)) == 0
+                and int(t.dxf.get("text_generation_flag", 0)) == 0
+                and float(t.dxf.get("oblique", 0.0)) == 0.0
+                and float(t.dxf.get("thickness", 0.0)) == 0.0
+                and _same_circle_parameters(t.dxf.get("extrusion", (0, 0, 1)), (0, 0, 1))
+                and float(style.dxf.get("width", 1.0)) == 1.0
+                and float(style.dxf.get("oblique", 0.0)) == 0.0
+            )
+    return checks
+
+
+def _cold_circular_bindings(path, doc, gray, roi, dpi, evidence_root):
+    """Require replayable ring and character evidence for new circular kinds."""
+    targets = [
+        e
+        for e in doc.modelspace()
+        if e.dxf.layer != "REVIEW"
+        and identity(e).get("kind") in ("CIRCLE", "CIRCULAR_MARKER")
+    ]
+    if not targets:
+        return []
+    candidate_path = Path(path).with_suffix(".objects.json")
+    by_id, load_error = {}, None
+    try:
+        data = json.loads(candidate_path.read_text(encoding="utf-8"))
+        if data.get("dxf_sha256") != sha(path):
+            raise ValueError("CIRCULAR_CANDIDATE_NOT_BOUND_TO_ACTUAL_SAVED_DXF")
+        if list(data.get("roi_xyxy_px", [])) != list(roi) or data.get("dpi") != dpi:
+            raise ValueError("CIRCULAR_CANDIDATE_COORDINATES_OR_DPI_CHANGED")
+        rows = data["objects"]
+        by_id = {o["id"]: o for o in rows}
+        if len(by_id) != len(rows):
+            raise ValueError("DUPLICATE_CIRCULAR_CANDIDATE_IDENTITY")
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        load_error = type(exc).__name__ + ": " + str(exc)
+    mm = 25.4 / dpi
+
+    def px(point):
+        return np.array([point[0] / mm + roi[0], roi[3] - point[1] / mm])
+
+    result = []
+    for entity in targets:
+        oid, kind = identity(entity)["id"], identity(entity)["kind"]
+        row = {"id": oid, "type": "CIRCULAR_SOURCE_BINDING", "pass": False}
+        try:
+            if load_error is not None:
+                raise ValueError(load_error)
+            obj = by_id[oid]
+            if obj["kind"] != kind:
+                raise ValueError("CIRCULAR_SAVED_IDENTITY_KIND_CHANGED")
+            checks = circular_candidate_contract(entity, obj, px, mm)
+            from .circular_markers import verify_circle_source_evidence
+
+            ring = verify_circle_source_evidence(
+                gray, roi, obj, evidence_root=evidence_root
+            )
+            row.update(saved_candidate_checks=checks, ring_source=ring)
+            character_ok = True
+            if kind == "CIRCULAR_MARKER":
+                from .circle_character_recognition import (
+                    verify_circle_character_evidence,
+                )
+
+                character = verify_circle_character_evidence(
+                    gray, roi, obj, evidence_root=evidence_root
+                )
+                row["character_source"] = character
+                character_ok = character.get("pass") is True
+            row["pass"] = (
+                all(value is True for value in checks.values())
+                and ring.get("pass") is True
+                and character_ok
+            )
+        except (
+            OSError,
+            ValueError,
+            KeyError,
+            TypeError,
+            AttributeError,
+            ImportError,
+            ezdxf.DXFError,
+        ) as exc:
+            row["failure"] = type(exc).__name__ + ": " + str(exc)
+        result.append(row)
+    return result
+
+
 @profiled("cad_io.cold_audit")
 def cold_audit(path, gray, roi, dpi, out):
     before = sha(path)
@@ -564,8 +912,19 @@ def cold_audit(path, gray, roi, dpi, out):
     all_repeated = []
     certified_retraces = []
     seen = {}
+    circular_curves = []
     room_blocks = []
     evidence_root = Path(out).parent
+    circular_checks = _cold_circular_bindings(path, doc, gray, roi, dpi, evidence_root)
+    checks.extend(circular_checks)
+    from .circle_endpoint_contacts import cold_circle_endpoint_contacts
+
+    circle_contact_checks = cold_circle_endpoint_contacts(path, doc, gray, roi, dpi)
+    checks.extend(circle_contact_checks)
+    from .circle_white_gap_protection import cold_circle_white_gaps
+
+    circle_white_gap_checks = cold_circle_white_gaps(path, doc, gray, roi, dpi)
+    checks.extend(circle_white_gap_checks)
     retrace_proof = certify_saved_retraces(
         doc,
         before,
@@ -622,25 +981,20 @@ def cold_audit(path, gray, roi, dpi, out):
             elif typ == "LWPOLYLINE":
                 pts = [px(v) for v in m.get_points("xy")]
                 segments = list(zip(pts, pts[1:] + (pts[:1] if m.closed else [])))
-            elif typ == "ARC":
+            elif typ in ("ARC", "CIRCLE"):
                 c = px(m.dxf.center)
                 r = m.dxf.radius / mm
+                start = float(m.dxf.start_angle) if typ == "ARC" else 0.0
+                sweep = (
+                    (float(m.dxf.end_angle) - start) % 360 if typ == "ARC" else 360.0
+                )
                 angle = np.deg2rad(
                     np.linspace(
-                        m.dxf.start_angle,
-                        m.dxf.start_angle + (m.dxf.end_angle - m.dxf.start_angle) % 360,
+                        start,
+                        start + sweep,
                         max(
                             3,
-                            int(
-                                math.ceil(
-                                    r
-                                    * math.radians(
-                                        (m.dxf.end_angle - m.dxf.start_angle) % 360
-                                    )
-                                    / 0.05
-                                )
-                            )
-                            + 1,
+                            int(math.ceil(r * math.radians(sweep) / 0.05)) + 1,
                         ),
                     )
                 )
@@ -660,9 +1014,40 @@ def cold_audit(path, gray, roi, dpi, out):
                         "max_distance_px": float(ds.max()),
                         "samples": len(ds),
                         "tolerance_px": 2.5,
+                        "sampled_sweep_deg": sweep,
                         "pass": bool(ds.max() <= 2.5),
                     }
                 )
+                curve = {
+                    "id": oid,
+                    "handle": e.dxf.handle,
+                    "member": idx,
+                    "type": typ,
+                    "center": c.tolist(),
+                    "radius_px": r,
+                    "start_deg_cad": start,
+                    "sweep_deg": sweep,
+                }
+                for previous in circular_curves:
+                    # A CIRCLE cannot be added over a previously retained ARC
+                    # of that same circle, even when their DXF types differ.
+                    if (
+                        "CIRCLE" in (typ, previous["type"])
+                        and sweep > 0
+                        and previous["sweep_deg"] > 0
+                        and _same_circle_parameters(previous["center"], c)
+                        and _same_circle_parameters(previous["radius_px"], r)
+                    ):
+                        duplicate = {
+                            "objects": [previous["id"], oid],
+                            "actual_handles": [previous["handle"], e.dxf.handle],
+                            "expanded_member_indices": [previous["member"], idx],
+                            "duplicate_kind": "COINCIDENT_CIRCLE_OR_CIRCLE_ARC",
+                            "circular_members": [previous, curve],
+                        }
+                        duplicates.append(duplicate)
+                        all_repeated.append(duplicate)
+                circular_curves.append(curve)
                 continue
             else:
                 raise ValueError("UNEXPECTED_DXF_PRIMITIVE:" + typ)
@@ -767,8 +1152,68 @@ def cold_audit(path, gray, roi, dpi, out):
         "ROI_is_not_a_white_source_mask": True,
         "source_distance_thresholds_changed": False,
     }
+    if circular_checks:
+        report["circular_marker_source_checks"] = circular_checks
+        report["circular_member_source_sampling"] = {
+            "closed_circle_sweep_deg": 360.0,
+            "maximum_sample_spacing_px": 0.05,
+            "source_distance_tolerance_px": 2.5,
+            "circle_and_character_evidence_replayed": True,
+            "missing_or_unreadable_evidence_passes": False,
+        }
+    if circle_contact_checks:
+        report["circle_endpoint_contact_checks"] = circle_contact_checks
+    if circle_white_gap_checks:
+        report["circle_white_gap_protection_checks"] = circle_white_gap_checks
     save_json(out, report)
     return report
+
+
+class _PortableTextRenderer(UnifiedTextRenderer):
+    """Use the saved font for native text without changing system font caches.
+
+    ezdxf resolves a style's filename through its system FontManager; it does
+    not search beside the DXF. A missing installed DejaVu can silently become
+    a fallback such as Arial, although export measured the bundled font.
+    The public sideload API bypasses that fallback, and an instance per render
+    also avoids the drawing pipeline's shared, filename-only text cache.
+    """
+
+    def __init__(self, font_path):
+        super().__init__()
+        self.portable_name = font_path.name.casefold()
+        self.portable_font = fonts.sideload_ttf(font_path.resolve(), 1.0)
+
+    def get_font(self, font_face):
+        if font_face.filename.casefold() == self.portable_name:
+            return self.portable_font
+        return super().get_font(font_face)
+
+
+def _saved_text_renderer(doc, path, context):
+    native_styles = {
+        style.dxf.name.casefold()
+        for style in doc.styles
+        if style.dxf.font.casefold() == "dejavusans.ttf"
+    }
+    if not any(
+        entity.dxftype() in ("TEXT", "MTEXT", "ATTRIB", "ATTDEF")
+        and entity.dxf.get("style", "Standard").casefold() in native_styles
+        for entity in doc.entitydb.values()
+    ):
+        return None, None
+    font_path = Path(path).parent / "DejaVuSans.ttf"
+    # Missing or unreadable saved resources must fail, even if a same-named
+    # system font happens to exist. The DXF and its audit remain untouched.
+    renderer = _PortableTextRenderer(font_path)
+    for name in native_styles:
+        context.fonts[name] = fonts.FontFace(filename=font_path.name)
+    return renderer, {
+        "font": font_path.name,
+        "sha256": sha(font_path),
+        "resolution": "DXF_adjacent_file_via_ezdxf_sideload_ttf",
+        "system_font_fallback": False,
+    }
 
 
 @profiled("cad_io.render_saved")
@@ -790,7 +1235,12 @@ def render_saved(path, png_path, roi, dpi=200, include_review=False):
         min_lineweight=0.0,
     )
     recorder = Recorder()
-    Frontend(RenderContext(doc), recorder, config=cfg).draw_layout(
+    context = RenderContext(doc)
+    text_renderer, font_receipt = _saved_text_renderer(doc, path, context)
+    frontend = Frontend(context, recorder, config=cfg)
+    if text_renderer is not None:
+        frontend.pipeline.text_engine = text_renderer
+    frontend.draw_layout(
         doc.modelspace(),
         finalize=True,
         filter_func=lambda e: include_review or e.dxf.layer != "REVIEW",
@@ -822,6 +1272,7 @@ def render_saved(path, png_path, roi, dpi=200, include_review=False):
             "png_path": str(png_path),
             "size_px": [pix.width, pix.height],
             "CAD_GUI_screenshot": False,
+            "portable_text_font": font_receipt,
         }
     finally:
         backend.doc.close()
