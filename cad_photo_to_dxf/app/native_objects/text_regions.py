@@ -1050,8 +1050,11 @@ def _source_label_contacts(labels, roi, rectangle, component_ids):
     if ry0 < y1 <= ry1:
         candidates.append(("bottom", labels[y1 - 1 - ry0, xa - rx0 : xb - rx0]))
     for edge, values in candidates:
+        # This evidence is part of the saved text contract. Keep its in-memory
+        # form identical to its JSON form so later strict source checks compare
+        # the same contract, including when the current run has not resumed.
         counts = [
-            (int(lab), int((values == lab).sum()))
+            [int(lab), int((values == lab).sum())]
             for lab in np.unique(values)
             if int(lab) in component_ids
         ]
