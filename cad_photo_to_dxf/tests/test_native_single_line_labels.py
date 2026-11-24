@@ -510,6 +510,73 @@ def test_refine_updates_normal_contract_without_fabricating_old_raw_provenance(
     )["pass"]
 
 
+def test_two_engines_cannot_adopt_a_prefix_of_a_wider_observed_label():
+    _, _, _, part = _drawing()
+    t = _tview("AB-12,3", part)
+    p = {"prediction": _prediction("AB-12,3")}
+    assert labels._decision([t], [p], part)["accepted"]
+    box = part["bbox_xyxy_px"]
+    observed = {
+        "raw_text": "AB-12,34",
+        "bbox_xyxy_px": [box[0], box[1], box[2] + 18, box[3]],
+        "original_ink_past_candidate_px": 24,
+    }
+    result = labels._decision([t], [p], part, [observed])
+    assert not result["accepted"] and result["text"] is None
+    assert result["reasons"] == ["NARROW_PREFIX_OMITS_OBSERVED_ALPHANUMERIC_SUFFIX"]
+    assert result["original_observation_prefix_conflicts"] == [observed]
+    assert t["words"][0]["text"] == p["prediction"]["raw_text"] == "AB-12,3"
+
+
+@pytest.mark.parametrize("change", ["same", "different", "punctuation", "white", "same_box"])
+def test_suffix_veto_requires_literal_extra_character_and_original_extent(change):
+    _, _, _, part = _drawing()
+    box = part["bbox_xyxy_px"]
+    observed = {
+        "raw_text": "AB-12,34",
+        "bbox_xyxy_px": [box[0], box[1], box[2] + 18, box[3]],
+        "original_ink_past_candidate_px": 24,
+    }
+    if change == "same":
+        observed["raw_text"] = "AB-12,3"
+    elif change == "different":
+        observed["raw_text"] = "A8-12,34"
+    elif change == "punctuation":
+        observed["raw_text"] = "AB-12,3 \\"
+    elif change == "white":
+        observed["original_ink_past_candidate_px"] = 0
+    else:
+        observed["bbox_xyxy_px"] = box
+    assert labels._decision(
+        [_tview("AB-12,3", part)], [{"prediction": _prediction("AB-12,3")}],
+        part, [observed],
+    )["accepted"]
+
+
+@pytest.mark.parametrize("damage", ["binding", "ids", "snapshot"])
+def test_formal_label_replay_requires_actual_upstream_observation_file(
+    tmp_path, monkeypatch, damage
+):
+    gray, roi, box, _ = _drawing()
+    before = _contract(gray, roi, box)
+    _engines(monkeypatch)
+    result = labels.refine_single_line_labels(
+        gray, before, tmp_path / "single_line_labels", roi=roi,
+        recognizer=_RawModel([("AB-12,3", 0.999)]), evidence_root=tmp_path,
+    )
+    evidence = deepcopy(result["groups"][0]["single_line_recovery"])
+    assert evidence["planned_region_ids"] == ["R1"]
+    assert labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
+    if damage == "binding":
+        evidence["upstream_observations"] = None
+    elif damage == "ids":
+        evidence["upstream_observations"]["region_ids"] = ["absent"]
+    else:
+        record = evidence["upstream_observations"]["snapshot"]
+        (tmp_path / record["path"]).write_text("{}", encoding="utf-8")
+    assert not labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
+
+
 def test_malformed_earlier_raw_observation_cannot_be_hidden_by_later_success():
     _, _, _, part = _drawing()
     good = _tview("AB-12,3", part)

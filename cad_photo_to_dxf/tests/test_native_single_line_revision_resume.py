@@ -29,6 +29,7 @@ def _producers(new=True):
     names = [*resume._PRODUCERS, *resume._DERIVED_PRODUCERS]
     if new:
         names += list(resume._SINGLE_LINE_PRODUCERS)
+        names += list(resume._TEXT_CONTACT_PRODUCERS)
     return {
         "app.native_objects." + name: file_sha(
             Path(resume.__file__).with_name(name + ".py")
@@ -461,3 +462,66 @@ def test_new_producer_pair_cannot_be_missing_or_changed():
     producers["app.native_objects.single_line_labels"] = "0" * 64
     with pytest.raises(ValueError, match="HASH_MISMATCH"):
         resume._producer_checks(producers)
+
+
+def test_pending_prefix_replays_bound_wider_source_observation_without_ocr(
+    tmp_path, monkeypatch
+):
+    from tests.test_native_single_line_labels import (
+        _RawModel, _contract, _drawing, _engines,
+    )
+
+    gray, roi, seed, _ = _drawing()
+    # A separately observed suffix lies beyond this narrow derived row.  Its
+    # literal is kept in an original upstream record, never passed to either
+    # controlled recognition engine as a hint or used to complete the text.
+    cv2.putText(gray, "4", (310, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.85, 0, 1, cv2.LINE_8)
+    partition, reason = labels._partition(gray, roi, seed)
+    assert partition is not None and reason is None
+    assert partition["bbox_xyxy_px"][2] < 300
+    snapshot = _contract(gray, roi, [seed[0], seed[1], 330, seed[3]])
+    snapshot["regions"][0]["text"] = "AB-12,34"
+    upstream = tmp_path / "single_line_labels/upstream_completed_text.json"
+    save_json(upstream, snapshot)
+    plan = {
+        "id": "synthetic-pending-prefix", "region_ids": ["R1"],
+        "source_partition": partition,
+        "upstream_observations": {
+            "snapshot": labels._file_record(upstream, tmp_path),
+            "region_ids": ["R1"],
+        },
+    }
+    calls = _engines(monkeypatch, [("AB-12,3", 96), ("AB-12,3", 96)])
+    model = _RawModel([("AB-12,3", 0.999), ("AB-12,3", 0.999)])
+    observation = labels.recognize_single_line_label(
+        gray, roi, plan, tmp_path / "single_line_labels/labels/pending",
+        recognizer=model, evidence_root=tmp_path,
+    )
+    assert not observation["accepted"] and observation["geometry"] is None
+    assert observation["reasons"] == ["NARROW_PREFIX_OMITS_OBSERVED_ALPHANUMERIC_SUFFIX"]
+    proof = observation["evidence"]
+    # This was the integration defect: replaying only the already cropped raw
+    # views would approve the prefix and disagree with the saved pending row.
+    assert labels._decision(
+        proof["tesseract_views"], proof["ppocr_views"], proof["source_partition"]
+    )["accepted"]
+    before_calls = (len(calls), len(model.calls))
+
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("pending revision replay must not execute recognition")
+
+    monkeypatch.setattr(base, "_ocr", forbidden)
+    monkeypatch.setattr(independent, "IndependentRecognizer", forbidden)
+    monkeypatch.setattr(model, "recognize", forbidden)
+    replay = resume._replay_single_line_result(observation, gray, roi, tmp_path)
+    assert replay["raw_source_and_decision_replayed"]
+    assert replay["pending_observation_not_adopted"]
+    assert replay["accepted"] is False
+    assert replay["new_OCR_calls"] == replay["new_model_calls"] == 0
+    assert before_calls == (len(calls), len(model.calls)) == (2, 2)
+    # Changing the saved observation file cannot remove the suffix veto.
+    changed = deepcopy(snapshot)
+    changed["regions"][0]["text"] = "AB-12,3"
+    save_json(upstream, changed)
+    with pytest.raises(ValueError):
+        resume._replay_single_line_result(observation, gray, roi, tmp_path)

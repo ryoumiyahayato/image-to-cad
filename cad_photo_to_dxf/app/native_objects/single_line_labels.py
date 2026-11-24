@@ -32,7 +32,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "complete-source-single-line-derived-views-v2-baseline-strip",
+    "version": "complete-source-single-line-derived-views-v3-contact-graph",
     "source_threshold": 192,
     "minimum_full_height_components": 3,
     "glyph_height_px": [8, 70],
@@ -68,6 +68,10 @@ POLICY = {
     "original_source_pixels_modified": False,
     "normalization_only_for_recognition": True,
     "new_geometry_ownership_must_be_rechecked": True,
+    "contact_transcription_rule": "complete_original_row_and_strict_model_characters_with_raw_Tesseract_literal_corroboration",
+    "contact_Tesseract_word_score": "recorded_advisory_aggregate_score_not_a_character_veto",
+    "contact_repeated_raw_dash_tokens": "canonicalize_only_one_observed_continuous_midline_source_stroke",
+    "observed_alphanumeric_suffix": "a_narrower_prefix_cannot_replace_a_wider_original_observation_with_remaining_source_ink",
     "baseline_strip_separation": {
         "maximum_thickness_px": 4,
         "maximum_thickness_glyph_heights": 0.22,
@@ -554,7 +558,9 @@ def _baseline_strip_candidates(gray, roi, seed):
     return rows
 
 
-def _partition(gray, roi, seed_box, *, catalog=None):
+def _partition(
+    gray, roi, seed_box, *, catalog=None, contact_context=None, contact_seed_box=None
+):
     """Original components first; a recorded baseline-strip split is bounded."""
     partition, reason = _partition_original_row(gray, roi, seed_box, catalog=catalog)
     if partition is not None or reason not in {
@@ -682,7 +688,16 @@ def _partition(gray, roi, seed_box, *, catalog=None):
             gray[cb[1] : cb[3], cb[0] : cb[2]]
         )
         return body, None
-    return None, reason
+    from .text_contact_partition import partition_text_contact_row
+
+    body, contact_reason, _ = partition_text_contact_row(
+        gray,
+        roi,
+        seed if contact_seed_box is None else contact_seed_box,
+        catalog=catalog,
+        context=contact_context,
+    )
+    return body, None if body is not None else contact_reason
 
 
 def _single_baseline_group(group, regions):
@@ -705,6 +720,7 @@ def plan_single_line_labels(gray, texts, roi=None):
     roi = list(texts["roi_xyxy_px"] if roi is None else roi)
     validate_text_regions(texts, gray.shape, roi)
     catalog = _catalog(gray, roi)
+    contact_context = {}
     protected = {
         r["id"] for r in texts["regions"] if r.get("complete") or r.get("enclosure")
     }
@@ -743,7 +759,14 @@ def plan_single_line_labels(gray, texts, roi=None):
         )
         candidates, errors = [], []
         for seed in {tuple(s) for s in seeds}:
-            partition, reason = _partition(gray, roi, list(seed), catalog=catalog)
+            partition, reason = _partition(
+                gray,
+                roi,
+                list(seed),
+                catalog=catalog,
+                contact_context=contact_context,
+                contact_seed_box=row["bbox_xyxy_px"],
+            )
             if partition is None:
                 errors.append(reason)
                 continue
@@ -783,6 +806,12 @@ def plan_single_line_labels(gray, texts, roi=None):
             p["source_partition"]["bbox_xyxy_px"][0],
         )
     )
+    contact_plans = {}
+    for candidate in contact_context.get("plans", {}).values():
+        key = _digest(
+            sorted(_digest(path["representation"]) for path in candidate["paths"])
+        )
+        contact_plans.setdefault(key, candidate)
     return {
         "schema": "bounded-single-line-label-plan-v1",
         "policy": POLICY,
@@ -792,16 +821,25 @@ def plan_single_line_labels(gray, texts, roi=None):
         "protected_region_ids": sorted(protected),
         "new_OCR_calls": 0,
         "source_pixels_modified": False,
+        "text_contact_geometry_plans": list(contact_plans.values()),
     }
 
 
 def _producer_identity():
+    from . import text_contact_geometry, text_contact_partition
+
     return {
         "module": __name__,
         "sha256": _sha(Path(__file__).read_bytes()),
         "Tesseract_producer_sha256": _sha(Path(base.__file__).read_bytes()),
         "model_producer_sha256": _sha(Path(independent.__file__).read_bytes()),
         "raw_integrity_producer_sha256": _sha(Path(character.__file__).read_bytes()),
+        "contact_geometry_producer_sha256": _sha(
+            Path(text_contact_geometry.__file__).read_bytes()
+        ),
+        "contact_partition_producer_sha256": _sha(
+            Path(text_contact_partition.__file__).read_bytes()
+        ),
     }
 
 
@@ -885,8 +923,10 @@ def _source_canonical_text(text, partition):
     full = [p["bbox_xyxy_px"] for p in parts if p["source_role"] == "FULL_HEIGHT_GLYPH"]
     body = base._box_union(full)
     h = partition["glyph_height_px"]
-    index, result = 0, []
+    index, result, skip_raw_until = 0, [], 0
     for char_index, value in enumerate(text):
+        if char_index < skip_raw_until:
+            continue
         if value == " ":
             if not 0 < index < len(parts) or (result and result[-1] == " "):
                 report["reasons"].append("RAW_SPACE_HAS_NO_SOURCE_WORD_BOUNDARY")
@@ -907,6 +947,38 @@ def _source_canonical_text(text, partition):
         quote = value in '"“”'
         dash = value in "-‐‑‒–—−"
         canonical = '"' if quote else "-" if dash else value
+        raw_value = value
+        if dash and partition.get("text_contact_separation") and index < len(parts):
+            run_end = char_index + 1
+            while run_end < len(text) and text[run_end] in "-‐‑‒–—−":
+                run_end += 1
+            component = parts[index]
+            bb = component["bbox_xyxy_px"]
+            w, ph = bb[2] - bb[0], bb[3] - bb[1]
+            next_is_mark = (
+                index + 1 < len(parts)
+                and parts[index + 1]["source_role"] == "RETAINED_PUNCTUATION"
+            )
+            stroke = np.zeros((ph, w), dtype=np.uint8)
+            for sy, sx0, sx1 in component.get("source_runs_y_x0_x1", []):
+                if bb[1] <= sy < bb[3]:
+                    stroke[sy - bb[1], max(0, sx0 - bb[0]) : min(w, sx1 - bb[0])] = 1
+            continuous = bool(stroke.size and stroke.any(axis=0).all()) and (
+                cv2.connectedComponents(stroke, connectivity=8)[0] == 2
+            )
+            if (
+                run_end > char_index + 1
+                and component["source_role"] == "RETAINED_PUNCTUATION"
+                and not next_is_mark
+                and 0.15 * h <= w <= 1.4 * h
+                and ph <= 0.22 * h
+                and w >= 2.5 * ph
+                and body[1] + 0.25 * h <= (bb[1] + bb[3]) / 2 <= body[1] + 0.8 * h
+                and len(component["source_component_labels"]) == 1
+                and continuous
+            ):
+                raw_value = text[char_index:run_end]
+                skip_raw_until = run_end
         count = 2 if quote or value in ":;" else 1
         selected = parts[index : index + count]
         if len(selected) != count:
@@ -947,15 +1019,17 @@ def _source_canonical_text(text, partition):
             report["reasons"].append(
                 "RAW_UNICODE_CHARACTER_HAS_NO_SOURCE_CANONICAL_RULE"
             )
-        if canonical != value:
+        if canonical != raw_value:
             report["normalizations"].append(
                 {
                     "character_index": char_index,
-                    "raw_character": value,
+                    "raw_character": raw_value,
                     "canonical_character": canonical,
                     "source_component_indices": list(range(index, index + count)),
                     "rule": "TWO_ORIGINAL_UPPER_QUOTE_STROKES"
                     if quote
+                    else "ONE_ORIGINAL_CONTINUOUS_HORIZONTAL_DASH_COMPONENT"
+                    if len(raw_value) > 1
                     else "ONE_ORIGINAL_HORIZONTAL_DASH_COMPONENT",
                 }
             )
@@ -1017,17 +1091,93 @@ def _whole_source_text(text, words, partition):
     return sorted(set(reasons))
 
 
-def _decision(tesseract_views, model_views, partition):
+def _observation_spans(gray, roi, partition, binding, evidence_root):
+    """Read the actual upstream observations for a veto, never an OCR hint."""
+    if binding is None:
+        return []
+    upstream = json.loads(_read_record(evidence_root, binding["snapshot"]))
+    if (
+        upstream.get("source_array_sha256") != base.source_array_sha256(gray)
+        or upstream.get("roi_xyxy_px") != list(roi)
+    ):
+        raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATION_SOURCE_CHANGED")
+    by_id = {r["id"]: r for r in upstream["regions"]}
+    ids = binding["region_ids"]
+    if not ids or len(ids) != len(set(ids)) or any(rid not in by_id for rid in ids):
+        raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATION_IDS_INVALID")
+    box = partition["bbox_xyxy_px"]
+    spans = []
+    for rid in ids:
+        region = by_id[rid]
+        for index, observation in enumerate([region, *region.get("words", [])]):
+            observed_box = observation["bbox_xyxy_px"]
+            if (
+                len(observed_box) != 4
+                or any(isinstance(v, bool) or not isinstance(v, int) for v in observed_box)
+                or not (0 <= observed_box[0] < observed_box[2] <= gray.shape[1])
+                or not (0 <= observed_box[1] < observed_box[3] <= gray.shape[0])
+            ):
+                raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATION_BOX_INVALID")
+            x0, x1 = max(box[2], observed_box[0]), observed_box[2]
+            y0, y1 = max(box[1], observed_box[1]), min(box[3], observed_box[3])
+            ink = int(np.count_nonzero(gray[y0:y1, x0:x1] < POLICY["source_threshold"]))
+            spans.append(
+                {
+                    "region_id": rid,
+                    "observation_index": index,
+                    "raw_text": observation.get("text", ""),
+                    "bbox_xyxy_px": observed_box,
+                    "original_ink_past_candidate_px": ink,
+                }
+            )
+    return spans
+
+
+def _observed_prefix_conflicts(text, partition, spans):
+    """A wider literal observation can disprove completeness, not supply letters."""
+    candidate = "".join(text.split()).casefold()
+    box = partition["bbox_xyxy_px"]
+    conflicts = []
+    for span in spans:
+        raw = "".join(span["raw_text"].split()).casefold()
+        observed_box = span["bbox_xyxy_px"]
+        vertical_overlap = min(box[3], observed_box[3]) - max(box[1], observed_box[1])
+        if (
+            raw.startswith(candidate)
+            and any(c.isalnum() for c in raw[len(candidate):])
+            and observed_box[2] > box[2] + POLICY["source_bbox_coverage_tolerance_px"]
+            and vertical_overlap >= 0.5 * min(box[3] - box[1], observed_box[3] - observed_box[1])
+            and span["original_ink_past_candidate_px"] > 0
+        ):
+            conflicts.append(span)
+    return conflicts
+
+
+def _decision(tesseract_views, model_views, partition, source_observations=()):
     tess, model = [], []
     rejected = []
+    contact = bool(partition.get("text_contact_separation"))
+    aggregate_word_scores = []
     for index, view in enumerate(tesseract_views):
         words = view.get("words", [])
         text = " ".join(w["text"] for w in words)
         reasons = _whole_source_text(text, words, partition)
         if not view.get("raw_tsv_integrity"):
             reasons.append("RAW_TSV_HAS_INVALID_NONEMPTY_WORD")
-        if not _tesseract_confident(words):
+        if not _tesseract_confident(words) and not contact:
             reasons.append("TESSERACT_UNCHANGED_WORD_GATE_NOT_MET")
+        if contact:
+            # A word-level score conflates a retained contact and punctuation
+            # with the entire label. The contact branch still requires every
+            # original glyph/mark, complete raw word geometry, an exact literal
+            # corroboration and the unchanged PP-OCR per-character thresholds.
+            aggregate_word_scores.append(
+                {
+                    "view": index,
+                    "scores": [w.get("confidence") for w in words],
+                    "strict_legacy_word_gate_met": _tesseract_confident(words),
+                }
+            )
         if not reasons:
             canonical = _source_canonical_text(text, partition)
             tess.append((index, canonical["text"], words, canonical))
@@ -1072,6 +1222,13 @@ def _decision(tesseract_views, model_views, partition):
         reasons.append("CONFLICTING_CONFIDENT_COMPLETE_TESSERACT_VIEW")
     if accepted_text is not None and any(p[1] != accepted_text for p in model):
         reasons.append("CONFLICTING_CONFIDENT_PP_OCR_VIEW")
+    prefix_conflicts = (
+        _observed_prefix_conflicts(accepted_text, partition, source_observations)
+        if accepted_text is not None
+        else []
+    )
+    if prefix_conflicts:
+        reasons.append("NARROW_PREFIX_OMITS_OBSERVED_ALPHANUMERIC_SUFFIX")
     winning = next((t for t in tess if t[1] == accepted_text), None)
     return {
         "accepted": not reasons,
@@ -1090,6 +1247,11 @@ def _decision(tesseract_views, model_views, partition):
         "independent_engine_family_count": 2 if not reasons else 0,
         "raw_transcription_rewritten": False,
         "source_glyph_and_punctuation_counts_checked": True,
+        "adoption_basis": POLICY["contact_transcription_rule"]
+        if contact
+        else "two_confident_engines_and_complete_original_row",
+        "contact_Tesseract_aggregate_word_scores": aggregate_word_scores,
+        "original_observation_prefix_conflicts": prefix_conflicts,
     }
 
 
@@ -1109,6 +1271,15 @@ def recognize_single_line_label(
     )
     if error or partition != plan["source_partition"]:
         raise ValueError("SINGLE_LINE_PLANNED_SOURCE_PARTITION_CHANGED:" + str(error))
+    observation_binding = plan.get("upstream_observations")
+    if plan.get("region_ids") and (
+        not observation_binding
+        or observation_binding.get("region_ids") != plan["region_ids"]
+    ):
+        raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATIONS_NOT_BOUND")
+    source_observations = _observation_spans(
+        gray, roi, partition, observation_binding, root
+    )
     engine = base._resolve_tesseract(
         os.environ.get("I2CAD_TESSERACT", ""), os.environ.get("TESSDATA_PREFIX")
     )
@@ -1187,7 +1358,7 @@ def recognize_single_line_label(
                 ),
             }
         )
-        decision = _decision(t_views, p_views, partition)
+        decision = _decision(t_views, p_views, partition, source_observations)
         if decision["accepted"]:
             break
     geometry = (
@@ -1215,6 +1386,8 @@ def recognize_single_line_label(
         "ppocr_views": p_views,
         "model_identity": _file_record(output / "model_identity.json", root),
         "producer": _producer_identity(),
+        "upstream_observations": observation_binding,
+        "planned_region_ids": plan.get("region_ids", []),
         "decision": decision,
         "text_geometry": geometry,
         "expected_answers_provided": False,
@@ -1270,6 +1443,16 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
         box = partition["bbox_xyxy_px"]
         if evidence.get("source_bbox_xyxy_px") != box:
             raise ValueError("SINGLE_LINE_SOURCE_BBOX_CHANGED")
+        if "upstream_observations" not in evidence:
+            raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATION_BINDING_MISSING")
+        binding = evidence["upstream_observations"]
+        if evidence.get("planned_region_ids") and (
+            not binding or binding.get("region_ids") != evidence["planned_region_ids"]
+        ):
+            raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATION_BINDING_CHANGED")
+        source_observations = _observation_spans(
+            gray, roi, partition, binding, evidence_root
+        )
         original_png = _read_record(evidence_root, evidence["original_source"])
         if not np.array_equal(
             np.asarray(Image.open(BytesIO(original_png)).convert("L")),
@@ -1408,7 +1591,7 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
             ):
                 raise ValueError("SINGLE_LINE_MODEL_EXECUTION_RECEIPT_CHANGED")
             p_views.append({"prediction": prediction})
-        decision = _decision(t_views, p_views, partition)
+        decision = _decision(t_views, p_views, partition, source_observations)
         if decision != evidence.get("decision") or not decision["accepted"]:
             raise ValueError("SINGLE_LINE_RAW_DECISION_NOT_APPROVED")
         geometry = {
@@ -1490,8 +1673,28 @@ def refine_single_line_labels(
                     )
         return copy.deepcopy(texts)
     plan = plan_single_line_labels(gray, texts, roi)
+    upstream_path = output / "upstream_completed_text.json"
+    if not upstream_path.exists():
+        save_json(upstream_path, texts)
+    upstream = json.loads(upstream_path.read_text(encoding="utf-8"))
+    # Ordinary pipeline snapshots the completed raw stage before ownership is
+    # rewritten. Bind that exact snapshot, rather than copying a chosen string.
+    observed_keys = ("id", "text", "bbox_xyxy_px", "words")
+    if [
+        {key: row.get(key) for key in observed_keys} for row in upstream["regions"]
+    ] != [
+        {key: row.get(key) for key in observed_keys} for row in texts["regions"]
+    ]:
+        raise ValueError("SINGLE_LINE_UPSTREAM_OBSERVATIONS_DIFFER_FROM_PLAN_INPUT")
+    upstream_record = _file_record(upstream_path, root)
+    for row_plan in plan["plans"]:
+        row_plan["upstream_observations"] = {
+            "snapshot": upstream_record,
+            "region_ids": row_plan["region_ids"],
+        }
     save_json(output / "plan.json", plan)
     result = copy.deepcopy(texts)
+    result["text_contact_geometry_plans"] = plan.get("text_contact_geometry_plans", [])
     prior_by_id = {row["id"]: row for row in texts["regions"]}
     recovered, attempts, removed_groups = [], [], []
     for index, row_plan in enumerate(plan["plans"]):
@@ -1563,6 +1766,10 @@ def refine_single_line_labels(
                 else POLICY["Tesseract_word_confidence"],
                 "agreement_pass": True,
                 "agreement_basis": "single_line_complete_source_and_independent_raw_engines",
+                "Tesseract_aggregate_score_is_advisory": bool(
+                    partition.get("text_contact_separation")
+                ),
+                "source_acceptance_basis": evidence["decision"]["adoption_basis"],
                 "raw_text_unchanged": canonical_words[wi] == word["text"],
                 "source_canonicalization_recorded": canonical_words[wi] != word["text"],
                 "single_line_evidence_id": row_plan["id"],

@@ -54,6 +54,8 @@ def mark(e, o):
         data["circle_white_gap_protection"] = True
     if "single_line_recovery" in o.get("source_evidence", {}):
         data["single_line_recovery"] = True
+    if "text_contact_path" in o.get("source_evidence", {}):
+        data["text_contact_path"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -958,6 +960,12 @@ def cold_audit(path, gray, roi, dpi, out):
     )
     checks.extend(text_candidate_checks)
     checks.extend(single_line_source_checks)
+    from .text_contact_audit import cold_text_contact_bindings
+
+    text_contact_proof = cold_text_contact_bindings(
+        path, doc, gray, roi, dpi, evidence_root
+    )
+    checks.extend(text_contact_proof["checks"])
     identity_failures = []
     for entity in doc.modelspace():
         try:
@@ -1017,7 +1025,7 @@ def cold_audit(path, gray, roi, dpi, out):
     )
     allowed_retraces = {
         (row["handle"], *sorted(row["segment_indices"])): row
-        for row in retrace_proof["allowances"]
+        for row in retrace_proof["allowances"] + text_contact_proof["allowances"]
     }
 
     def px(point):
@@ -1233,6 +1241,7 @@ def cold_audit(path, gray, roi, dpi, out):
         "source_distance_thresholds_changed": False,
         "native_text_candidate_checks": text_candidate_checks,
         "single_line_text_source_checks": single_line_source_checks,
+        "text_contact_source_checks": text_contact_proof,
     }
     if circular_checks:
         report["circular_marker_source_checks"] = circular_checks

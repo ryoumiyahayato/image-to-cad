@@ -359,17 +359,29 @@ def _certify_saved_retraces(
         for entity in doc.modelspace():
             if entity.dxf.layer != "REVIEW":
                 actual_by_id.setdefault(_identity(entity).get("id"), []).append(entity)
-        all_path_edges = {
-            oid: set(_edges(o["source_evidence"]["source_path_points"]))
-            for oid, o in objects.items()
-            if o["kind"] == "CONNECTION_PATH"
-        }
-        all_path_graph_edges = {
-            oid: set(o["source_evidence"]["source_graph_edge_ids"])
-            for oid, o in objects.items()
-            if o["kind"] == "CONNECTION_PATH"
-            and (scope_object_ids is None or oid in scope_object_ids)
-        }
+        all_path_edges = {}
+        for oid, other in objects.items():
+            if other["kind"] != "CONNECTION_PATH":
+                continue
+            points = [
+                _point(point)
+                for point in other["source_evidence"]["source_path_points"]
+            ]
+            if (
+                len(points) < 2
+                or not all(
+                    x == int(x) and y == int(y)
+                    and 0 <= x < gray.shape[1] and 0 <= y < gray.shape[0]
+                    and gray[int(y), int(x)] < 128
+                    for x, y in points
+                )
+                or not all(
+                    0 < max(abs(a[0] - b[0]), abs(a[1] - b[1])) <= 1
+                    for a, b in zip(points, points[1:])
+                )
+            ):
+                raise ValueError("FORMAL_PATH_SOURCE_ADJACENCIES_MISSING_OR_INVALID")
+            all_path_edges[oid] = set(_edges(points))
         report["raw_graph_sha256"] = hashlib.sha256(graph_bytes).hexdigest()
         report["source_crop_array_sha256"] = graph["source_crop_array_sha256"]
         report["sidecar_sha256"] = hashlib.sha256(
@@ -523,29 +535,22 @@ def _certify_saved_retraces(
                 == len(set(ev["source_graph_edge_ids"])),
                 "SOURCE_GRAPH_EDGE_ID_IS_REPEATED_AS_AN_OWNER",
             )
-            require(
-                all(
-                    not (set(ev["source_graph_edge_ids"]) & other)
-                    for other_id, other in all_path_graph_edges.items()
-                    if other_id != oid
-                ),
-                "SOURCE_GRAPH_EDGE_HAS_ANOTHER_FORMAL_PATH_OWNER",
-            )
             for eid in ev["source_graph_edge_ids"]:
                 chain = edges[eid]["source_points"]
-                if scope_object_ids is not None:
-                    # Numeric graph IDs are local to each discovery. Across
-                    # scopes, compare actual source adjacencies instead; a new
-                    # namespace must never permit a second owner of this edge.
-                    chain_edges = set(_edges(chain))
-                    require(
-                        all(
-                            not (chain_edges & other)
-                            for other_id, other in all_path_edges.items()
-                            if other_id != oid
-                        ),
-                        "SOURCE_GRAPH_ADJACENCY_HAS_ANOTHER_FORMAL_PATH_OWNER",
-                    )
+                # Numeric edge IDs belong only to the bound raw graph. Other
+                # ordinary producers may use a different graph over the same
+                # source, even when legacy discovery has no explicit scopes.
+                # Compare physical source adjacencies in every case; a missing
+                # source path still fails while loading all_path_edges above.
+                chain_edges = set(_edges(chain))
+                require(
+                    all(
+                        not (chain_edges & other)
+                        for other_id, other in all_path_edges.items()
+                        if other_id != oid
+                    ),
+                    "SOURCE_GRAPH_ADJACENCY_HAS_ANOTHER_FORMAL_PATH_OWNER",
+                )
                 require(
                     any(
                         _same(source_path[i : i + len(chain)], chain)

@@ -188,7 +188,7 @@ def test_another_formal_owner_cannot_claim_the_same_source_graph_edges(saved_cas
     )
     _save(folder / "result.objects.json", meta)
     _assert_retrace_rejected(
-        _audit(saved_case), "SOURCE_GRAPH_EDGE_HAS_ANOTHER_FORMAL_PATH_OWNER"
+        _audit(saved_case), "SOURCE_GRAPH_ADJACENCY_HAS_ANOTHER_FORMAL_PATH_OWNER"
     )
 
 
