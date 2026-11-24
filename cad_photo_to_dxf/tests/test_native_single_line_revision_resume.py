@@ -30,6 +30,7 @@ def _producers(new=True):
     if new:
         names += list(resume._SINGLE_LINE_PRODUCERS)
         names += list(resume._TEXT_CONTACT_PRODUCERS)
+        names += list(resume._SOURCE_GAP_PRODUCERS)
     return {
         "app.native_objects." + name: file_sha(
             Path(resume.__file__).with_name(name + ".py")

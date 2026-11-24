@@ -32,7 +32,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "complete-source-single-line-derived-views-v3-contact-graph",
+    "version": "complete-source-single-line-derived-views-v4-source-white-gaps",
     "source_threshold": 192,
     "minimum_full_height_components": 3,
     "glyph_height_px": [8, 70],
@@ -826,7 +826,10 @@ def plan_single_line_labels(gray, texts, roi=None):
 
 
 def _producer_identity():
-    from . import text_contact_geometry, text_contact_partition
+    from . import (
+        circular_markers, single_line_neighbor_clearance, single_line_text_audit,
+        text_contact_geometry, text_contact_partition,
+    )
 
     return {
         "module": __name__,
@@ -840,7 +843,23 @@ def _producer_identity():
         "contact_partition_producer_sha256": _sha(
             Path(text_contact_partition.__file__).read_bytes()
         ),
+        "neighbor_clearance_producer_sha256": _sha(Path(single_line_neighbor_clearance.__file__).read_bytes()),
+        "text_layout_producer_sha256": _sha(Path(single_line_text_audit.__file__).read_bytes()),
+        "round_source_producer_sha256": _sha(Path(circular_markers.__file__).read_bytes()),
     }
+
+
+def _adoption_decision(decision, layout_adoption):
+    """Retain the raw transcription decision when native layout is pending."""
+    if not decision["accepted"]:
+        if layout_adoption is not None:
+            raise ValueError("SINGLE_LINE_PENDING_TRANSCRIPTION_HAS_LAYOUT_APPROVAL")
+        return False, list(decision["reasons"])
+    if not isinstance(layout_adoption, dict) or not isinstance(layout_adoption.get("pass"), bool):
+        raise ValueError("SINGLE_LINE_LAYOUT_ADOPTION_EVIDENCE_MISSING")
+    return layout_adoption["pass"], list(decision["reasons"]) + (
+        [] if layout_adoption["pass"] else [layout_adoption["reason"]]
+    )
 
 
 def _file_record(path, root):
@@ -1373,6 +1392,12 @@ def recognize_single_line_label(
         if decision["accepted"]
         else None
     )
+    from .single_line_neighbor_clearance import proposed_text_round_white_gaps
+
+    layout_adoption = proposed_text_round_white_gaps(
+        gray, roi, partition, geometry, dpi,
+    ) if geometry is not None else None
+    adopted, adoption_reasons = _adoption_decision(decision, layout_adoption)
     evidence = {
         "schema": "native-single-line-label-evidence-v1",
         "policy": POLICY,
@@ -1390,6 +1415,7 @@ def recognize_single_line_label(
         "planned_region_ids": plan.get("region_ids", []),
         "decision": decision,
         "text_geometry": geometry,
+        "layout_adoption": layout_adoption,
         "expected_answers_provided": False,
         "original_source_pixels_modified": False,
         "raw_transcription_rewritten": False,
@@ -1401,12 +1427,13 @@ def recognize_single_line_label(
         ),
     }
     result = {
-        "accepted": decision["accepted"],
+        "accepted": adopted,
+        "transcription_accepted": decision["accepted"],
         "text": decision["text"],
         "geometry": geometry,
         "bbox_xyxy_px": box,
         "evidence": evidence,
-        "reasons": decision["reasons"],
+        "reasons": adoption_reasons,
         "new_Tesseract_calls": evidence["new_Tesseract_calls"],
         "new_model_calls": evidence["new_model_calls"],
     }
@@ -1610,6 +1637,16 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
             v["model_inference_executed_for_this_request"] for v in saved_p
         ):
             raise ValueError("SINGLE_LINE_EXECUTION_COUNTS_CHANGED")
+        from .single_line_neighbor_clearance import proposed_text_round_white_gaps
+
+        layout_adoption = proposed_text_round_white_gaps(
+            gray, roi, partition, geometry, dpi,
+        )
+        if layout_adoption != evidence.get("layout_adoption"):
+            raise ValueError("SINGLE_LINE_LAYOUT_ADOPTION_EVIDENCE_CHANGED")
+        result.update(transcription_source_pass=True, layout_adoption=layout_adoption)
+        if not layout_adoption["pass"]:
+            raise ValueError("SINGLE_LINE_SOURCE_WHITE_GAP_LAYOUT_REJECTED")
         result.update(
             {
                 "pass": True,

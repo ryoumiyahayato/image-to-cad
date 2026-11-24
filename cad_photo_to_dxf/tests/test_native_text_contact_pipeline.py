@@ -210,6 +210,7 @@ def test_contact_stage_keeps_plans_and_binds_all_reused_implementation_dependenc
     required = (
         "text_contact_geometry", "text_contact_partition", "connections",
         "connection_core_routes", "text_graph_support",
+        "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",
     )
     for name in required:
         assert dependencies["app.native_objects." + name] == _producer(name)

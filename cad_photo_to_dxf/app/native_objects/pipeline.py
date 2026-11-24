@@ -223,6 +223,9 @@ def _completed_text_checkpoint(
         "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
         "app.native_objects.text_contact_geometry": "text_contact_geometry.py",
         "app.native_objects.text_contact_partition": "text_contact_partition.py",
+        "app.native_objects.single_line_neighbor_clearance": "single_line_neighbor_clearance.py",
+        "app.native_objects.single_line_text_audit": "single_line_text_audit.py",
+        "app.native_objects.circular_markers": "circular_markers.py",
         "app.native_objects.connections": "connections.py",
         "app.native_objects.text_graph_support": "text_graph_support.py",
         "app.native_objects.connection_core_routes": "connection_core_routes.py",
@@ -877,6 +880,7 @@ def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress
         "text_contact_geometry", "text_contact_partition", "connections",
         "text_graph_support",
         "connection_core_routes",
+        "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",
     ):
         dependencies["app.native_objects." + dependency] = hashlib.sha256(
             Path(__file__).with_name(dependency + ".py").read_bytes()

@@ -64,6 +64,7 @@ _DERIVED_PRODUCERS = (
 )
 _SINGLE_LINE_PRODUCERS = ("single_line_labels", "circle_character_recognition")
 _TEXT_CONTACT_PRODUCERS = ("text_contact_geometry", "text_contact_partition")
+_SOURCE_GAP_PRODUCERS = ("single_line_neighbor_clearance", "single_line_text_audit", "circular_markers")
 
 
 def _dependency_items(row):
@@ -90,7 +91,7 @@ def _revision_producer_names(row):
     }:
         names += list(_DERIVED_PRODUCERS)
     if _has_single_line_producer(row):
-        names += list(_SINGLE_LINE_PRODUCERS)
+        names += list(_SINGLE_LINE_PRODUCERS) + list(_SOURCE_GAP_PRODUCERS)
     contact = {"app.native_objects." + name for name in _TEXT_CONTACT_PRODUCERS}
     if any(name in contact for name, _ in _dependency_items(row)):
         names += list(_TEXT_CONTACT_PRODUCERS)
@@ -114,15 +115,17 @@ def _producer_checks(producers):
     required = {"app.native_objects." + x for x in _PRODUCERS}
     single_line = {"app.native_objects." + x for x in _SINGLE_LINE_PRODUCERS}
     text_contact = {"app.native_objects." + x for x in _TEXT_CONTACT_PRODUCERS}
+    source_gap = {"app.native_objects." + x for x in _SOURCE_GAP_PRODUCERS}
     allowed = (
         required
         | {"app.native_objects." + x for x in _DERIVED_PRODUCERS}
         | single_line
         | text_contact
+        | source_gap
     )
     _require(required <= set(producers) <= allowed, "REVISION_PRODUCER_SET_CHANGED")
     _require(
-        not (set(producers) & single_line) or single_line <= set(producers),
+        not (set(producers) & single_line) or single_line | source_gap <= set(producers),
         "REVISION_SINGLE_LINE_PRODUCER_SET_INCOMPLETE",
     )
     _require(
@@ -155,12 +158,15 @@ def _replay_single_line_result(observation, gray, roi, evidence):
         proof["tesseract_views"], proof["ppocr_views"], proof["source_partition"],
         source_observations,
     )
+    _require("layout_adoption" in proof, "REVISION_SINGLE_LINE_LAYOUT_PROOF_MISSING")
+    adopted, reasons = labels._adoption_decision(decision, proof["layout_adoption"])
     _require(
         decision == proof.get("decision")
         and isinstance(observation.get("accepted"), bool)
-        and observation["accepted"] is decision["accepted"]
+        and observation["accepted"] is adopted
+        and observation.get("transcription_accepted") is decision["accepted"]
         and observation.get("text") == decision["text"]
-        and observation.get("reasons") == decision["reasons"]
+        and observation.get("reasons") == reasons
         and observation.get("bbox_xyxy_px") == proof.get("source_bbox_xyxy_px")
         and observation.get("geometry") == proof.get("text_geometry"),
         "REVISION_SINGLE_LINE_SAVED_DECISION_CHANGED",
@@ -176,7 +182,11 @@ def _replay_single_line_result(observation, gray, roi, evidence):
         )
     if decision["accepted"]:
         _require(
-            replay.get("pass") is True,
+            (adopted and replay.get("pass") is True)
+            or (not adopted and replay.get("pass") is False
+                and replay.get("reason") == "SINGLE_LINE_SOURCE_WHITE_GAP_LAYOUT_REJECTED"
+                and replay.get("transcription_source_pass") is True
+                and replay.get("layout_adoption") == proof["layout_adoption"]),
             "REVISION_SINGLE_LINE_SOURCE_REPLAY_FAILED:" + str(replay),
         )
     else:
@@ -188,12 +198,13 @@ def _replay_single_line_result(observation, gray, roi, evidence):
             "REVISION_SINGLE_LINE_PENDING_SOURCE_REPLAY_FAILED:" + str(replay),
         )
     return {
-        "accepted": decision["accepted"],
+        "accepted": adopted,
+        "transcription_accepted": decision["accepted"],
         "raw_source_and_decision_replayed": True,
         "source_replay": replay,
         "new_OCR_calls": 0,
         "new_model_calls": 0,
-        "pending_observation_not_adopted": not decision["accepted"],
+        "pending_observation_not_adopted": not adopted,
     }
 
 

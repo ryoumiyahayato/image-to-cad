@@ -19,16 +19,16 @@ from app.native_objects.contracts import save_json
 from tests.test_native_single_line_labels import _RawModel, _contract, _drawing, _engines
 
 
-def _source():
+def _source(circle_x=124):
     gray = np.full((180, 360), 255, np.uint8)
     cv2.putText(gray, "AB     CD", (30, 105), cv2.FONT_HERSHEY_SIMPLEX, 1.2, 0, 1, cv2.LINE_8)
     yy, xx = np.nonzero(gray < 192)
     box = [int(xx.min()), int(yy.min()), int(xx.max() + 1), int(yy.max() + 1)]
-    cv2.circle(gray, (130, 65), 20, 0, 3)
-    cv2.line(gray, (125, 55), (125, 80), 0, 1)
-    cv2.line(gray, (125, 55), (135, 55), 0, 1)
-    cv2.line(gray, (125, 65), (134, 65), 0, 1)
-    cv2.line(gray, (150, 65), (245, 65), 0, 1)
+    cv2.circle(gray, (circle_x, 65), 20, 0, 3)
+    cv2.line(gray, (circle_x - 5, 55), (circle_x - 5, 80), 0, 1)
+    cv2.line(gray, (circle_x - 5, 55), (circle_x + 5, 55), 0, 1)
+    cv2.line(gray, (circle_x - 5, 65), (circle_x + 4, 65), 0, 1)
+    cv2.line(gray, (circle_x + 20, 65), (245, 65), 0, 1)
     return gray, [0, 0, 360, 180], box
 
 
