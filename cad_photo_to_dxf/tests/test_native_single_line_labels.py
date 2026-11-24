@@ -297,6 +297,176 @@ def test_attached_neighbor_is_not_cut_and_fragment_white_gap_is_not_filled():
     ) and np.array_equal(gray, original)
 
 
+@pytest.mark.parametrize("side,text", [("left", "2AB-24"), ("right", "AB-24,6")])
+def test_a_terminal_glyph_attached_to_a_large_graphic_cannot_be_excluded(side, text):
+    gray, roi, box, before = _drawing(text)
+    glyphs = [c for c in before["components"] if c["source_role"] == "FULL_HEIGHT_GLYPH"]
+    target = glyphs[0 if side == "left" else -1]
+    y, x0, x1 = target["source_runs_y_x0_x1"][0]
+    x = x0 if side == "left" else x1 - 1
+    outside = (4, 5) if side == "left" else (box[2] + 90, 5)
+    cv2.line(gray, (x, y), outside, 0, 1)
+    original = gray.copy()
+    part, error = labels._partition(gray, roi, box)
+    assert part is None and error == "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+    assert np.array_equal(gray, original)
+
+
+def test_a_connected_terminal_return_outside_the_narrow_band_is_not_two_leaders():
+    gray, roi, box, part = _drawing("ABC12")
+    height = part["glyph_height_px"]
+    inner = box[2] + 4
+    outer = box[2] + int(height)
+    top, bottom = box[1], box[3] - 1
+    # Both short horizontal ends enter the old narrow terminal band, but the
+    # common original return outside that band has full glyph height.
+    cv2.polylines(gray, [np.array([
+        [inner, top], [outer, top], [outer, bottom], [inner, bottom],
+    ])], False, 0, 1)
+    cv2.line(gray, (outer, top), (outer + 75, top - 25), 0, 1)
+    original = gray.copy()
+    recovered, error = labels._partition(gray, roi, box)
+    assert recovered is None and error == "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+    assert np.array_equal(gray, original)
+
+
+@pytest.mark.parametrize("neighbor", ["horizontal", "upper_vertical", "frame_corner"])
+def test_terminal_source_check_preserves_independent_frame_and_thin_leaders(neighbor):
+    gray, roi, box, before = _drawing("ABC12")
+    height = int(before["glyph_height_px"])
+    x = box[2] + 4
+    y = box[3] - height // 3
+    if neighbor == "horizontal":
+        cv2.line(gray, (x, y), (x + 65, y), 0, 2)
+    elif neighbor == "upper_vertical":
+        cv2.line(gray, (x, 5), (x, box[1] + height // 3), 0, 1)
+        cv2.line(gray, (x, 5), (x + 80, 5), 0, 1)
+    else:
+        edge = x + height - 3
+        cv2.line(gray, (x, y), (edge, y), 0, 1)
+        cv2.line(gray, (edge, y), (edge, box[3] + 4 * height), 0, 1)
+    original = gray.copy()
+    part, error = labels._partition(gray, roi, box)
+    assert not error and part["terminal_source_completeness"]["pass"]
+    assert part["source_support_runs_y_x0_x1"] == before["source_support_runs_y_x0_x1"]
+    assert part["bbox_xyxy_px"] == before["bbox_xyxy_px"]
+    assert np.array_equal(gray, original)
+
+
+def test_unknown_terminal_branch_cannot_use_a_thin_leader_exception():
+    gray, roi, box, before = _drawing("ABC12")
+    x, y = box[2] + 5, box[3] - 5
+    cv2.line(gray, (x, y), (x + 65, y), 0, 1)
+    cv2.line(gray, (x + 3, y), (x + 3, box[1]), 0, 1)
+    original = gray.copy()
+    part, error = labels._partition(gray, roi, box)
+    assert part is None and error == "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+    assert np.array_equal(gray, original)
+
+
+def test_terminal_source_certificate_is_recomputed_during_cold_read(tmp_path, monkeypatch):
+    gray, roi, box, _ = _drawing()
+    _engines(monkeypatch)
+    refined = labels.refine_single_line_labels(
+        gray, _contract(gray, roi, box), tmp_path / "labels", roi=roi,
+        recognizer=_RawModel([("AB-12,3", 0.999)]), evidence_root=tmp_path,
+    )
+    evidence = deepcopy(refined["groups"][0]["single_line_recovery"])
+    assert labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
+    evidence["source_partition"]["terminal_source_completeness"]["terminals"][0]["original_context_array_sha256"] = "0" * 64
+    cold = labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)
+    assert not cold["pass"] and cold["reason"].startswith("SINGLE_LINE_SOURCE_PARTITION_CHANGED")
+    assert not cold["source_partition_replay_comparison"]["pass"]
+
+
+@pytest.mark.parametrize("edge", ["left", "right", "no_height"])
+def test_missing_original_terminal_context_is_pending_not_empty_clean_source(edge):
+    gray, roi, box, part = _drawing()
+    assert labels._terminal_source_completeness(gray, roi, part)["pass"]
+    if edge == "left":
+        roi[0] = box[0]
+    elif edge == "right":
+        roi[2] = box[2]
+    else:
+        roi[1] = roi[3] = box[1]
+    certificate = labels._terminal_source_completeness(gray, roi, part)
+    assert not certificate["pass"]
+    assert any(t.get("reason") == "NO_ORIGINAL_ROW_TERMINAL_CONTEXT" for t in certificate["terminals"])
+    adopted, reason = labels._with_terminal_source_completeness(gray, roi, deepcopy(part))
+    assert adopted is None and reason == "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+
+
+def test_terminal_evidence_uses_source_runs_not_local_component_number_order(monkeypatch):
+    gray, roi, box, part = _drawing()
+    height = int(part["glyph_height_px"])
+    cv2.line(gray, (box[2] + 4, box[3] - 5), (box[2] + 65, box[3] - 5), 0, 1)
+    cv2.line(gray, (box[2] + 12, 5), (box[2] + 12, box[1] + height // 3), 0, 1)
+    before = labels._terminal_source_completeness(gray, roi, part)
+    original = cv2.connectedComponentsWithStats
+
+    def reversed_local_numbers(*args, **kwargs):
+        count, local, stats, centers = original(*args, **kwargs)
+        order = np.r_[0, np.arange(count - 1, 0, -1)]
+        inverse = np.argsort(order)
+        return count, inverse[local], stats[order], centers[order]
+
+    monkeypatch.setattr(cv2, "connectedComponentsWithStats", reversed_local_numbers)
+    assert labels._terminal_source_completeness(gray, roi, part) == before
+
+
+def test_complete_contact_path_and_underline_keep_separate_terminal_responsibility(tmp_path):
+    """The unchanged packaged fixture reaches the same public source path."""
+    from pathlib import Path
+    from PIL import ImageDraw, ImageFont
+    from app.native_objects import text_contact_partition as contact
+    from app.native_objects.source_row_font_registry import SOURCE_ROW_FONT
+    from scripts.windows_native_smoke import SHORT_CODE_LABEL_FIXTURE, create_short_code_fixture
+
+    root = Path(__file__).resolve().parents[1]
+    old_font = root / "resources/fonts/DejaVuSans.ttf"
+    source_font = root / "resources/fonts" / SOURCE_ROW_FONT["font"]["file"]
+    if not old_font.is_file() or not source_font.is_file():
+        pytest.skip("Pinned packaged fixture font resources are not installed")
+    source = tmp_path / "source.png"
+    create_short_code_fixture(source, old_font, source_font)
+    gray = np.asarray(Image.open(source).convert("L"))
+    original = gray.copy()
+    # Constructor truth locates its original row; no string is passed to the
+    # production partition or geometry observer.
+    text, point = SHORT_CODE_LABEL_FIXTURE[0]
+    mask = Image.new("L", (640, 480), 0)
+    font = ImageFont.truetype(str(source_font), 36, layout_engine=ImageFont.Layout.BASIC)
+    ImageDraw.Draw(mask).text(point, text, font=font, fill=255)
+    yy, xx = np.nonzero(np.asarray(mask) >= 64)
+    seed = [int(xx.min()), int(yy.min()), int(xx.max() + 1), int(yy.max() + 1)]
+    roi = [0, 0, 640, 480]
+    initial, initial_reason = labels._partition_original_row(gray, roi, seed)
+    assert initial is None and initial_reason == "UNKNOWN_SHORT_OR_SHARED_SOURCE_COMPONENT_RETAINED"
+    direct, direct_reason, plan = contact.partition_text_contact_row(gray, roi, seed)
+    assert direct is not None and direct_reason is None and plan["paths"]
+    public, reason = labels._partition(gray, roi, seed)
+    assert public is not None and reason is None
+    assert public["source_support_runs_y_x0_x1"] == direct["source_support_runs_y_x0_x1"]
+    assert public["terminal_source_completeness"] == labels._terminal_source_completeness(gray, roi, public)
+    assert public["terminal_source_completeness"]["pass"]
+    terminal = next(t for t in public["terminal_source_completeness"]["terminals"] if t["complete_path_near_source_runs_y_x0_x1"])
+    assert terminal["source_components"]
+    assert all(c["reason"] == "ORIGINAL_COMPONENT_IS_BELOW_ROW" for c in terminal["source_components"])
+    assert public["text_contact_separation"]["geometry_plan"] == plan
+    assert np.array_equal(gray, original)
+    # A new row-height branch beside that same proved path is still unknown.
+    # Proving the path must not hide the remaining terminal source samples.
+    with_unknown_branch = gray.copy()
+    branch_x = public["bbox_xyxy_px"][2] + 6
+    cv2.line(with_unknown_branch, (branch_x, seed[1]), (branch_x, seed[3] + 4), 0, 1)
+    assert not labels._terminal_source_completeness(with_unknown_branch, roi, public)["pass"]
+    pending, pending_reason = labels._partition(with_unknown_branch, roi, seed)
+    assert pending is None and pending_reason in {
+        "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL",
+        "UNKNOWN_SHORT_OR_SHARED_SOURCE_COMPONENT_RETAINED",
+    }
+
+
 def test_complete_enclosed_and_true_multiline_regions_are_protected():
     gray, roi, box, _ = _drawing()
     d = _contract(gray, roi, box, True)

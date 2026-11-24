@@ -223,6 +223,7 @@ def _completed_text_checkpoint(
         "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
         "app.native_objects.text_contact_geometry": "text_contact_geometry.py",
         "app.native_objects.text_contact_partition": "text_contact_partition.py",
+        "app.native_objects.text_contact_audit": "text_contact_audit.py",
         "app.native_objects.single_line_neighbor_clearance": "single_line_neighbor_clearance.py",
         "app.native_objects.single_line_text_audit": "single_line_text_audit.py",
         "app.native_objects.single_line_source_layout": "single_line_source_layout.py",
@@ -880,7 +881,7 @@ def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress
     # helpers. Their actual code is part of this completed-stage identity.
     for dependency in (
         "text_regions", "independent_recognizer", "circle_character_recognition",
-        "text_contact_geometry", "text_contact_partition", "connections",
+        "text_contact_geometry", "text_contact_partition", "text_contact_audit", "connections",
         "text_graph_support",
         "connection_core_routes",
         "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",

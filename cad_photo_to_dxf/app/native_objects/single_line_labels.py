@@ -33,7 +33,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "complete-source-single-line-derived-views-v5-raw-conflicts",
+    "version": "complete-source-single-line-derived-views-v6-terminal-source",
     "source_threshold": 192,
     "minimum_full_height_components": 3,
     "glyph_height_px": [8, 70],
@@ -85,6 +85,19 @@ POLICY = {
     "raw_character_conflicts": glyph_equivalence.POLICY,
     "known_raw_views": "replay_every_available_finite_plan_view_before_final_decision_no_new_call_after_provisional_acceptance",
     "observed_alphanumeric_suffix": "a_narrower_prefix_cannot_replace_a_wider_original_observation_with_remaining_source_ink",
+    "terminal_source_completeness": {
+        "original_context_required": True,
+        "context_glyph_heights": 2.0,
+        "near_glyph_heights": 0.75,
+        "maximum_horizontal_thickness_px": 4,
+        "maximum_horizontal_thickness_glyph_heights": 0.22,
+        "minimum_continuous_horizontal_length_glyph_heights": 1.0,
+        "orthogonal_neighbor_requires_continuation_one_glyph_height_outside_row": True,
+        "complete_path_source_responsibility_and_remaining_samples_checked_separately": True,
+        "crop_boundary_is_not_a_graphic_endpoint_or_exclusion_proof": True,
+        "unknown_row_terminal_branches_remain_pending": True,
+        "source_or_neighbor_geometry_modified": False,
+    },
     "baseline_strip_separation": {
         "maximum_thickness_px": 4,
         "maximum_thickness_glyph_heights": 0.22,
@@ -166,6 +179,223 @@ def _component_record(row, labels, roi, role):
         "source_runs_y_x0_x1": base._rle(mask, [x0, y0]),
         "source_white_gaps_not_filled": True,
     }
+
+
+def _terminal_source_completeness(gray, roi, partition):
+    """Check source beside both row ends before trusting a cropped transcript.
+
+    A large original component can contain both a neighbor and the missing
+    first/last character.  Its size, or its crossing a crop edge, cannot prove
+    that the local samples are only graphics.  Connected pieces are therefore
+    measured in the wider original context, before inspecting the near end.
+    This certificate never changes a source sample or any graphic ownership.
+    """
+    policy = POLICY["terminal_source_completeness"]
+    height = float(partition["glyph_height_px"])
+    full = [
+        c["bbox_xyxy_px"]
+        for c in partition["components"]
+        if c["source_role"] == "FULL_HEIGHT_GLYPH"
+    ]
+    baseline = float(np.median([b[3] for b in full]))
+    core = base._box_union(full)
+    box = partition["bbox_xyxy_px"]
+    reach = math.ceil(policy["context_glyph_heights"] * height)
+    near_reach = math.ceil(policy["near_glyph_heights"] * height)
+    near_top = max(roi[1], math.floor(core[1] - 0.15 * height))
+    near_bottom = min(roi[3], math.ceil(max(core[3], box[3]) + 0.25 * height))
+    top = max(roi[1], math.floor(core[1] - height))
+    bottom = min(roi[3], math.ceil(max(core[3], box[3]) + height))
+    contact = partition.get("text_contact_separation", {})
+    proved_runs = [
+        run
+        for path in contact.get("geometry_plan", {}).get("paths", [])
+        for run in path.get("line_runs", [])
+    ]
+    proved_runs += partition.get("baseline_line_separation", {}).get(
+        "original_line_runs_y_x0_x1", []
+    )
+    certificate = {
+        "schema": "original-row-terminal-completeness-v1",
+        "policy": policy,
+        "source_row_bbox_xyxy_px": box,
+        "source_baseline_px": baseline,
+        "glyph_height_px": height,
+        "terminals": [],
+        "original_source_pixels_modified": False,
+        "neighbor_geometry_modified": False,
+        "pass": True,
+    }
+    for side in ("left", "right"):
+        a, b = (
+            (max(roi[0], box[0] - reach), box[0])
+            if side == "left"
+            else (box[2], min(roi[2], box[2] + reach))
+        )
+        if a >= b or top >= bottom:
+            certificate["pass"] = False
+            certificate["terminals"].append({
+                "side": side,
+                "original_context_bbox_xyxy_px": [a, top, b, bottom],
+                "original_context_available": False,
+                "reason": "NO_ORIGINAL_ROW_TERMINAL_CONTEXT",
+                "source_components": [],
+            })
+            continue
+        source = np.ascontiguousarray(gray[top:bottom, a:b], dtype=np.uint8)
+        ink = source < POLICY["source_threshold"]
+        near = np.zeros(ink.shape, bool)
+        if side == "left":
+            near[near_top - top : near_bottom - top, max(0, b - a - near_reach) :] = (
+                True
+            )
+        else:
+            near[near_top - top : near_bottom - top, :near_reach] = True
+        known = np.zeros(ink.shape, bool)
+        for y, x0, x1 in proved_runs:
+            if top <= y < bottom and x0 < b and a < x1:
+                known[y - top, max(a, x0) - a : min(b, x1) - a] = True
+        # A proved complete path may meet a separate underline farther out in
+        # this context.  Their union is not one unexplained glyph.  Account for
+        # the exact original path samples first and inspect every remaining
+        # sample; the full original image and near-source RLE stay unchanged.
+        responsibility = ink & known
+        _, local, stats, _ = cv2.connectedComponentsWithStats(
+            (ink & ~responsibility).astype(np.uint8), connectivity=8
+        )
+        terminal = {
+            "side": side,
+            "original_context_available": True,
+            "original_context_bbox_xyxy_px": [a, top, b, bottom],
+            "original_context_array_sha256": base.source_array_sha256(source),
+            "near_source_runs_y_x0_x1": base._rle(ink & near, [a, top]),
+            "complete_path_near_source_runs_y_x0_x1": base._rle(
+                responsibility & near, [a, top]
+            ),
+            "remaining_component_basis": "original_samples_outside_separately_proved_complete_path_responsibility",
+            "source_components": [],
+        }
+        for label, (x, y, width, h, area) in enumerate(stats[1:], 1):
+            component = local == label
+            actual_near = component & near
+            if not actual_near.any():
+                continue
+            yy, xx = np.nonzero(actual_near)
+            local_box = [int(a + x), int(top + y), int(a + x + width), int(top + y + h)]
+            near_box = [
+                int(a + xx.min()),
+                int(top + yy.min()),
+                int(a + xx.max() + 1),
+                int(top + yy.max() + 1),
+            ]
+            record = {
+                "context_component_bbox_xyxy_px": local_box,
+                "context_source_area_px": int(area),
+                "context_source_runs_y_x0_x1": base._rle(component, [a, top]),
+                "near_source_bbox_xyxy_px": near_box,
+                "near_source_area_px": int(actual_near.sum()),
+                "reason": None,
+                "pass": False,
+            }
+            if (
+                local_box[3]
+                <= baseline - POLICY["baseline_tolerance_glyph_heights"] * height
+            ):
+                record["reason"] = "ORIGINAL_COMPONENT_ENDS_ABOVE_ROW_BASELINE_BAND"
+            elif local_box[1] >= baseline + max(2, 0.10 * height):
+                record["reason"] = "ORIGINAL_COMPONENT_IS_BELOW_ROW"
+            else:
+                thickness = near_box[3] - near_box[1]
+                if thickness <= min(
+                    policy["maximum_horizontal_thickness_px"],
+                    policy["maximum_horizontal_thickness_glyph_heights"] * height,
+                ):
+                    strip = component[yy.min() : yy.max() + 1]
+                    columns = strip.any(axis=0)
+                    intervals = np.flatnonzero(
+                        np.diff(np.r_[False, columns, False])
+                    ).reshape(-1, 2)
+                    for start, end in intervals:
+                        if not (start <= xx.min() and end > xx.max()):
+                            continue
+                        if (
+                            end - start
+                            >= policy[
+                                "minimum_continuous_horizontal_length_glyph_heights"
+                            ]
+                            * height
+                        ):
+                            record["reason"] = (
+                                "CONTINUOUS_ORIGINAL_THIN_HORIZONTAL_NEIGHBOR"
+                            )
+                        else:
+                            # A short frame shoulder may turn down/up.  Its
+                            # actual orthogonal leg must continue a full glyph
+                            # height beyond this row; a cropped L-shaped glyph
+                            # or an unproved corner cannot use this exception.
+                            margin = policy["maximum_horizontal_thickness_px"]
+                            for edge in (int(start), int(end) - 1):
+                                leg = component[
+                                    :,
+                                    max(0, edge - margin + 1) : min(
+                                        b - a, edge + margin
+                                    ),
+                                ]
+                                leg_rows = leg.any(axis=1)
+                                spans = np.flatnonzero(
+                                    np.diff(np.r_[False, leg_rows, False])
+                                ).reshape(-1, 2)
+                                span = next(
+                                    (
+                                        (int(lo), int(hi))
+                                        for lo, hi in spans
+                                        if lo <= yy.min()
+                                        and hi > yy.max()
+                                        and (
+                                            top + lo <= core[1] - height
+                                            or top + hi >= core[3] + height
+                                        )
+                                    ),
+                                    None,
+                                )
+                                if span is not None:
+                                    record["reason"] = (
+                                        "ORIGINAL_ORTHOGONAL_NEIGHBOR_CONTINUES_OUTSIDE_ROW"
+                                    )
+                                    record["orthogonal_source_leg_rows_px"] = [
+                                        top + span[0],
+                                        top + span[1],
+                                    ]
+                                    break
+                        if record["reason"] is not None:
+                            record["horizontal_source_trace_bbox_xyxy_px"] = [
+                                int(a + start),
+                                near_box[1],
+                                int(a + end),
+                                near_box[3],
+                            ]
+                            break
+            record["pass"] = record["reason"] is not None
+            if not record["pass"]:
+                record["reason"] = "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+                certificate["pass"] = False
+            terminal["source_components"].append(record)
+        terminal["source_components"].sort(
+            key=lambda record: (
+                record["context_component_bbox_xyxy_px"],
+                record["context_source_runs_y_x0_x1"],
+            )
+        )
+        certificate["terminals"].append(terminal)
+    return certificate
+
+
+def _with_terminal_source_completeness(gray, roi, partition):
+    certificate = _terminal_source_completeness(gray, roi, partition)
+    if not certificate["pass"]:
+        return None, "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL"
+    partition["terminal_source_completeness"] = certificate
+    return partition, None
 
 
 def _glyph(row, height, baseline):
@@ -485,7 +715,7 @@ def _partition_original_row(gray, roi, seed_box, *, catalog=None):
         "original_source_pixels_modified": False,
         "all_label_ink_assigned": True,
     }
-    return result, None
+    return _with_terminal_source_completeness(gray, roi, result)
 
 
 def _baseline_strip_candidates(gray, roi, seed):
@@ -579,6 +809,7 @@ def _partition(
     if partition is not None or reason not in {
         "INSUFFICIENT_COMPLETE_SOURCE_GLYPH_COMPONENTS",
         "UNKNOWN_SHORT_OR_SHARED_SOURCE_COMPONENT_RETAINED",
+        "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL",
     }:
         return partition, reason
     roi, seed = _box_tuple(roi), _box_tuple(seed_box)
@@ -700,7 +931,9 @@ def _partition(
         body["context_array_sha256"] = base.source_array_sha256(
             gray[cb[1] : cb[3], cb[0] : cb[2]]
         )
-        return body, None
+        completed, terminal_error = _with_terminal_source_completeness(gray, roi, body)
+        if completed is not None:
+            return completed, None
     from .text_contact_partition import partition_text_contact_row
 
     body, contact_reason, _ = partition_text_contact_row(
@@ -710,7 +943,11 @@ def _partition(
         catalog=catalog,
         context=contact_context,
     )
-    return body, None if body is not None else contact_reason
+    if body is not None:
+        return _with_terminal_source_completeness(gray, roi, body)
+    if reason == "UNPROVED_SOURCE_BRANCH_AT_ROW_TERMINAL":
+        return None, reason
+    return None, contact_reason
 
 
 def _single_baseline_group(group, regions):
@@ -840,9 +1077,14 @@ def plan_single_line_labels(gray, texts, roi=None):
 
 def _producer_identity():
     from . import (
-        circular_markers, single_line_neighbor_clearance, single_line_text_audit,
-        single_line_source_layout, source_row_font_registry,
-        text_contact_geometry, text_contact_partition,
+        circular_markers,
+        single_line_neighbor_clearance,
+        single_line_text_audit,
+        single_line_source_layout,
+        source_row_font_registry,
+        text_contact_audit,
+        text_contact_geometry,
+        text_contact_partition,
     )
 
     return {
@@ -857,12 +1099,27 @@ def _producer_identity():
         "contact_partition_producer_sha256": _sha(
             Path(text_contact_partition.__file__).read_bytes()
         ),
-        "neighbor_clearance_producer_sha256": _sha(Path(single_line_neighbor_clearance.__file__).read_bytes()),
-        "text_layout_producer_sha256": _sha(Path(single_line_text_audit.__file__).read_bytes()),
-        "source_component_layout_producer_sha256": _sha(Path(single_line_source_layout.__file__).read_bytes()),
-        "source_row_font_registry_sha256": _sha(Path(source_row_font_registry.__file__).read_bytes()),
-        "source_glyph_equivalence_sha256": _sha(Path(glyph_equivalence.__file__).read_bytes()),
-        "round_source_producer_sha256": _sha(Path(circular_markers.__file__).read_bytes()),
+        "source_replay_comparison_producer_sha256": _sha(
+            Path(text_contact_audit.__file__).read_bytes()
+        ),
+        "neighbor_clearance_producer_sha256": _sha(
+            Path(single_line_neighbor_clearance.__file__).read_bytes()
+        ),
+        "text_layout_producer_sha256": _sha(
+            Path(single_line_text_audit.__file__).read_bytes()
+        ),
+        "source_component_layout_producer_sha256": _sha(
+            Path(single_line_source_layout.__file__).read_bytes()
+        ),
+        "source_row_font_registry_sha256": _sha(
+            Path(source_row_font_registry.__file__).read_bytes()
+        ),
+        "source_glyph_equivalence_sha256": _sha(
+            Path(glyph_equivalence.__file__).read_bytes()
+        ),
+        "round_source_producer_sha256": _sha(
+            Path(circular_markers.__file__).read_bytes()
+        ),
     }
 
 
@@ -1618,6 +1875,7 @@ def recognize_single_line_label(
     """At most two finite image views per existing recognizer; no text hints."""
     global _RECOGNIZER
     from PIL import Image
+    from .text_contact_audit import compare_contact_source_replay
 
     check_cancel("SINGLE_LINE_LABEL_RECOGNITION")
     output = Path(output_dir)
@@ -1626,8 +1884,14 @@ def recognize_single_line_label(
     partition, error = _partition(
         gray, roi, plan["source_partition"]["seed_bbox_xyxy_px"]
     )
-    if error or partition != plan["source_partition"]:
+    partition_comparison = compare_contact_source_replay(
+        plan["source_partition"], partition, scope="partition"
+    )
+    if error or not partition_comparison["pass"]:
         raise ValueError("SINGLE_LINE_PLANNED_SOURCE_PARTITION_CHANGED:" + str(error))
+    # Retain the already bound original record.  Permitted machine-roundoff
+    # in derived round-fit statistics must not rewrite source proof digests.
+    partition = copy.deepcopy(plan["source_partition"])
     observation_binding = plan.get("upstream_observations")
     if plan.get("region_ids") and (
         not observation_binding
@@ -1672,15 +1936,22 @@ def recognize_single_line_label(
                 )
             else:
                 words, metadata = base._ocr(
-                    normalized, [0, 0, normalized.shape[1], normalized.shape[0]],
-                    psm, output, name, None, padding_px=pad, dpi=int(dpi) * scale,
+                    normalized,
+                    [0, 0, normalized.shape[1], normalized.shape[0]],
+                    psm,
+                    output,
+                    name,
+                    None,
+                    padding_px=pad,
+                    dpi=int(dpi) * scale,
                 )
             raw_valid = _raw_tsv_integrity((output / (name + ".tsv")).read_bytes())
             t_views.append(
                 {
                     "view_index": index,
                     "normalization": {
-                        **t_spec, "source_bbox_xyxy_px": box,
+                        **t_spec,
+                        "source_bbox_xyxy_px": box,
                         "resampling": "NEAREST_NEIGHBOR_REPEATED_SOURCE_SAMPLES",
                         "input_array_sha256": _sha(actual.tobytes()),
                         "original_source_pixels_modified": False,
@@ -1690,7 +1961,9 @@ def recognize_single_line_label(
                     "recognition_image": _file_record(output / (name + ".png"), root),
                     "words": _mapped_words(words, box, scale),
                     "raw_tsv_integrity": raw_valid,
-                    "command_executed_for_this_request": bool(metadata.get("command_executed_for_this_request")),
+                    "command_executed_for_this_request": bool(
+                        metadata.get("command_executed_for_this_request")
+                    ),
                 }
             )
         p_hit = known_raw.get(("PP-OCR", index))
@@ -1713,14 +1986,18 @@ def recognize_single_line_label(
                 {
                     "view_index": index,
                     "normalization": {
-                        **p_spec, "source_bbox_xyxy_px": box,
+                        **p_spec,
+                        "source_bbox_xyxy_px": box,
                         "input_array_sha256": _sha(actual_p.tobytes()),
                         "original_source_pixels_modified": False,
                     },
                     "prediction_file": _file_record(output / (pname + ".json"), root),
                     "recognition_image": _file_record(output / (pname + ".png"), root),
-                    "prediction": prediction, "observation_receipt": receipt,
-                    "model_inference_executed_for_this_request": bool(receipt.get("model_inference_executed_for_this_request", True)),
+                    "prediction": prediction,
+                    "observation_receipt": receipt,
+                    "model_inference_executed_for_this_request": bool(
+                        receipt.get("model_inference_executed_for_this_request", True)
+                    ),
                 }
             )
         decision = _decision(t_views, p_views, partition, source_observations)
@@ -1738,14 +2015,23 @@ def recognize_single_line_label(
     )
     from .single_line_neighbor_clearance import proposed_text_round_white_gaps
 
-    layout_adoption = proposed_text_round_white_gaps(
-        gray, roi, partition, geometry, dpi,
-    ) if geometry is not None else None
+    layout_adoption = (
+        proposed_text_round_white_gaps(
+            gray,
+            roi,
+            partition,
+            geometry,
+            dpi,
+        )
+        if geometry is not None
+        else None
+    )
     adopted, adoption_reasons = _adoption_decision(decision, layout_adoption)
     evidence = {
         "schema": "native-single-line-label-evidence-v1",
         "policy": POLICY,
         "source_partition": partition,
+        "planned_source_partition_replay_comparison": partition_comparison,
         "original_source": _file_record(output / "original_source.png", root),
         "source_bbox_xyxy_px": box,
         "roi_xyxy_px": list(roi),
@@ -1789,6 +2075,7 @@ def recognize_single_line_label(
 def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
     """Recompute source separation, image transforms, raw text and adoption."""
     from PIL import Image
+    from .text_contact_audit import compare_contact_source_replay
 
     result = {"pass": False, "new_OCR_calls": 0, "new_model_calls": 0}
     try:
@@ -1810,8 +2097,13 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
         partition, error = _partition(
             gray, roi, evidence["source_partition"]["seed_bbox_xyxy_px"]
         )
-        if error or partition != evidence["source_partition"]:
+        partition_comparison = compare_contact_source_replay(
+            evidence["source_partition"], partition, scope="partition"
+        )
+        result["source_partition_replay_comparison"] = partition_comparison
+        if error or not partition_comparison["pass"]:
             raise ValueError("SINGLE_LINE_SOURCE_PARTITION_CHANGED:" + str(error))
+        partition = copy.deepcopy(evidence["source_partition"])
         box = partition["bbox_xyxy_px"]
         if evidence.get("source_bbox_xyxy_px") != box:
             raise ValueError("SINGLE_LINE_SOURCE_BBOX_CHANGED")
@@ -1968,7 +2260,9 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
             ):
                 raise ValueError("SINGLE_LINE_MODEL_EXECUTION_RECEIPT_CHANGED")
             p_views.append({"prediction": prediction})
-        known_views = _verify_preexisting_raw_views(gray, partition, evidence, evidence_root)
+        known_views = _verify_preexisting_raw_views(
+            gray, partition, evidence, evidence_root
+        )
         decision = _decision(t_views, p_views, partition, source_observations)
         if decision != evidence.get("decision") or not decision["accepted"]:
             raise ValueError("SINGLE_LINE_RAW_DECISION_NOT_APPROVED")
@@ -1991,7 +2285,11 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
         from .single_line_neighbor_clearance import proposed_text_round_white_gaps
 
         layout_adoption = proposed_text_round_white_gaps(
-            gray, roi, partition, geometry, dpi,
+            gray,
+            roi,
+            partition,
+            geometry,
+            dpi,
         )
         if layout_adoption != evidence.get("layout_adoption"):
             raise ValueError("SINGLE_LINE_LAYOUT_ADOPTION_EVIDENCE_CHANGED")
