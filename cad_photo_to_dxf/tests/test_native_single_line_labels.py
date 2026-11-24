@@ -164,17 +164,94 @@ def test_unicode_dash_requires_original_horizontal_midline_component():
     )
 
 
-def test_low_word_confidence_and_reliable_character_conflict_stay_pending():
+def test_word_score_is_advisory_but_unresolved_character_conflict_stays_pending():
     _, _, _, part = _drawing()
     p = {"prediction": _prediction("AB-12,3")}
-    assert not labels._decision([_tview("AB-12,3", part, 84.99)], [p], part)["accepted"]
+    assert labels._decision([_tview("AB-12,3", part, 84.99)], [p], part)["accepted"]
     result = labels._decision(
         [_tview("AB-12,3", part), _tview("AB-12,8", part)], [p], part
     )
     assert (
         not result["accepted"]
-        and "CONFLICTING_CONFIDENT_COMPLETE_TESSERACT_VIEW" in result["reasons"]
+        and "UNRESOLVED_COMPLETE_RAW_CHARACTER_CONFLICT" in result["reasons"]
     )
+
+
+@pytest.mark.parametrize("wrong", ["Z", "P"])
+def test_conflicting_first_character_needs_an_independently_anchored_source_twin(wrong):
+    _, _, _, part = _drawing("2AB-24")
+    t = [_tview("2AB~24", part, 20), _tview(wrong + "AB-24", part, 80)]
+    p = [{"prediction": _prediction("2AB-24")}]
+    result = labels._decision(t, p, part)
+    assert result["accepted"] and result["text"] == "2AB-24"
+    proof = result["raw_character_conflict_evidence"]
+    assert proof["pass"] and len(proof["conflicts"]) == 1
+    character = proof["conflicts"][0]["characters"][0]
+    assert character["component_index"] == 0
+    assert character["matching_anchors"][0]["anchor"]["component_index"] == 4
+    assert t[1]["words"][0]["text"] == wrong + "AB-24"
+    # A true different first source shape must not borrow a later numeral.
+    _, _, _, different = _drawing(wrong + "AB-24")
+    bad = labels._decision(
+        [_tview("2AB-24", different, 20), _tview(wrong + "AB-24", different, 80)],
+        p, different,
+    )
+    assert not bad["accepted"]
+    assert "UNRESOLVED_COMPLETE_RAW_CHARACTER_CONFLICT" in bad["reasons"]
+
+
+def test_source_twins_cannot_create_an_unread_complete_string_or_anchor_each_other():
+    _, _, _, part = _drawing("2AB-24")
+    p = [{"prediction": _prediction("2AB-24")}]
+    assert not labels._decision([_tview("ZAB-24", part)], p, part)["accepted"]
+    result = labels._decision(
+        [_tview("2AB-24", part), _tview("ZAB-Z4", part)], p, part
+    )
+    assert not result["accepted"]
+    assert not any(a["component_index"] in (0, 4) for a in result["raw_character_conflict_evidence"]["anchors"])
+
+
+def test_source_twin_requires_original_topology_and_unchanged_samples():
+    from app.native_objects.source_glyph_equivalence import compare_original_glyphs
+
+    _, _, _, part = _drawing("0AB-00")
+    a, b = deepcopy(part["components"][0]), part["components"][4]
+    assert compare_original_glyphs(a, b)["pass"]
+    a["source_area_px"] += 1
+    assert not compare_original_glyphs(a, b)["pass"]
+    _, _, _, unlike = _drawing("CAB-00")
+    result = compare_original_glyphs(unlike["components"][0], unlike["components"][4])
+    assert not result["pass"] and "SOURCE_TWIN_TOPOLOGY_DIFFERS" in result["reasons"]
+
+
+def test_flat_original_stroke_can_explain_raw_wave_symbol_but_a_real_wave_cannot():
+    _, _, _, part = _drawing("AB-12")
+    assert labels._source_canonical_text("AB~12", part)["text"] == "AB-12"
+    wave = deepcopy(part)
+    c = wave["components"][2]
+    x0, y0, x1, _ = c["bbox_xyxy_px"]
+    width = x1 - x0
+    shape = np.zeros((5, width), np.uint8)
+    points = np.array([[0, 2], [width//4, 0], [width//2, 2], [3*width//4, 4], [width-1, 2]])
+    cv2.polylines(shape, [points], False, 1, 1)
+    c.update(
+        bbox_xyxy_px=[x0, y0-2, x1, y0+3],
+        source_area_px=int(shape.sum()),
+        source_runs_y_x0_x1=base._rle(shape, [x0, y0-2]),
+    )
+    assert labels._source_canonical_text("AB~12", wave)["text"] == "AB~12"
+    assert not labels._decision(
+        [_tview("AB~12", wave)], [{"prediction": _prediction("AB-12")}], wave
+    )["accepted"]
+
+
+def test_complete_ordinary_row_keeps_extra_prefix_comma_suffix_and_two_dashes():
+    _, _, _, part = _drawing("AB-12,3")
+    for raw in ["ZAB-12,3", "AB-123", "AB-12", "AB-12,"]:
+        assert not labels._decision([_tview(raw, part)], [{"prediction": _prediction(raw)}], part)["accepted"]
+    _, _, _, two = _drawing("AB--12")
+    assert labels._source_canonical_text("AB--12", two)["text"] == "AB--12"
+    assert labels._source_canonical_text("AB-12", two)["reasons"]
 
 
 def test_short_dash_at_one_pixel_gap_does_not_merge_into_complete_glyph():
@@ -354,7 +431,7 @@ def _recognized(tmp_path, monkeypatch, fallback=False):
     gray, roi, box, part = _drawing()
     original = gray.copy()
     calls = _engines(
-        monkeypatch, [("AB-12,3", 80), ("AB-12,3", 96)] if fallback else None
+        monkeypatch, [("AB-12", 80), ("AB-12,3", 96)] if fallback else None
     )
     model = _RawModel([("AB-12,3", 0.999)] * (2 if fallback else 1))
     result = labels.recognize_single_line_label(

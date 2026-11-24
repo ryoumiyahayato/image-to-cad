@@ -1,6 +1,9 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 
+# This full font license is a hash-bound resource on Linux and Windows.
+cad_photo_to_dxf/resources/fonts/osifont-lgpl3fe.LICENSE.txt text eol=lf
+
 # Frozen DXF evidence contains fixed-width linetype records; preserve bytes.
 cad_photo_to_dxf/validation/system-refactor-baselines/**/outputs/*.dxf binary
 cad_photo_to_dxf/validation/observability/**/final/*.dxf binary

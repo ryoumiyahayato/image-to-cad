@@ -16,6 +16,7 @@ import json
 import math
 import os
 from pathlib import Path, PurePosixPath
+import runpy
 import shutil
 import subprocess
 import sys
@@ -145,6 +146,74 @@ def create_contact_fixture(path: Path, font_path: Path) -> None:
     control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
     draw.text((460, 64), "STORE", font=control_font, fill=0)
     image.save(path, dpi=(200, 200))
+
+
+SHORT_CODE_LABEL_FIXTURE = (("PX-17,29", (100, 195)),)
+SHORT_CODE_CIRCLE_FIXTURE = ((153, 179), 19)
+SHORT_CODE_NEIGHBOR_FIXTURE = (
+    ((85, 236), (250, 236)),
+    ((500, 330), (520, 330)),
+)
+SHORT_CODE_CONTACT_FIXTURE = ((172, 179), (297, 279))
+
+
+def create_short_code_fixture(path: Path, font_path: Path, source_font_path: Path) -> None:
+    """A separate complete code with source-separated ring and crossing lead.
+
+    Literal text and fixed positions belong only to this public image generator
+    and the post-save inspector. The ordinary CLI receives only this PNG; no
+    text, glyph box, layout or code-specific hint is supplied to recognition.
+    The four previous inputs remain unchanged.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    source_font = ImageFont.truetype(str(source_font_path), 36, layout_engine=ImageFont.Layout.BASIC)
+    for content, point in SHORT_CODE_LABEL_FIXTURE:
+        draw.text(point, content, font=source_font, fill=0)
+    (cx, cy), radius = SHORT_CODE_CIRCLE_FIXTURE
+    draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=0, width=3)
+    for start, end in (*SHORT_CODE_NEIGHBOR_FIXTURE, SHORT_CODE_CONTACT_FIXTURE):
+        draw.line((start, end), fill=0, width=3)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    draw.text((460, 64), "STORE", font=control_font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
+def read_source_row_font_spec(app_root: Path) -> dict:
+    """Read the one verified packaged registry, without importing app runtime.
+
+    run() checks every bundled source against the build manifest first. This
+    tiny pure-data module also works while the original checkout is hidden.
+    No font identity is duplicated in the fixture or acceptance code.
+    """
+    registry = app_root / "app/native_objects/source_row_font_registry.py"
+    spec = runpy.run_path(str(registry))["FONT_SPEC"]
+    if not isinstance(spec, dict) or not all(isinstance(spec.get(key), str) for key in (
+        "font", "sha256", "style", "source_license", "bundled_license", "license_sha256",
+        "librecad_font", "librecad_sha256",
+    )):
+        raise AssertionError("Packaged source-row font registry is incomplete")
+    for name, checksum, size in ((spec["font"], spec["sha256"], spec["bytes"]),
+                                 (spec["source_license"], spec["license_sha256"], spec["license_bytes"]),
+                                 (spec["librecad_font"], spec["librecad_sha256"], spec["librecad_bytes"])):
+        path = app_root / "resources/fonts" / name
+        if path.name != name or not path.is_file() or path.stat().st_size != size or digest(path) != checksum:
+            raise AssertionError("Packaged source-row font/license differs from its fixed registry")
+    return spec
+
+
+def read_source_row_fixture_font(app_root: Path) -> Path:
+    """Keep the fifth original input fixed when the output font is derived."""
+    registry = runpy.run_path(str(app_root / "app/native_objects/source_row_font_registry.py"))["SOURCE_ROW_FONT"]
+    for role in ("font", "license"):
+        specification = registry[role]
+        path = app_root / "resources/fonts" / specification["file"]
+        if (path.name != specification["file"] or not path.is_file()
+                or path.stat().st_size != specification["bytes"] or digest(path) != specification["sha256"]):
+            raise AssertionError("Fifth fixture's fixed upstream font/license differs from the source registry")
+    return app_root / "resources/fonts" / registry["font"]["file"]
 
 
 def native_identity(entity) -> dict:
@@ -845,6 +914,281 @@ def inspect_contact_payloads(objects, cold, evidence_root, source_path, font_pat
             "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
 
 
+def _passing_checks(value, description):
+    checks = value.get("checks", {})
+    if value.get("pass") is not True or not isinstance(checks, dict) or not checks or any(v is not True for v in checks.values()):
+        raise AssertionError(description)
+
+
+def inspect_short_code_members(document, objects, cold, font_spec, companion: Path) -> dict:
+    """Require a complete saved code and actual source-constrained font layout.
+
+    This is a post-save checker, not an adoption path. A candidate, a bundled
+    font, an empty ring audit, or a passing old whole-ink fit cannot satisfy it.
+    Every formal object is accounted for; original line contact is permitted.
+    """
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    texts = [entity for entity in entities if entity.dxftype() == "TEXT"]
+    circles = [entity for entity in entities if entity.dxftype() == "CIRCLE"]
+    paths = [entity for entity in entities if entity.dxftype() in ("LINE", "LWPOLYLINE")]
+    expected_text = SHORT_CODE_LABEL_FIXTURE[0][0]
+    if (len(entities) != 6 or len(paths) != 3 or len(circles) != 1
+            or Counter(entity.dxf.text for entity in texts) != Counter([expected_text, "STORE"])):
+        raise AssertionError("Short-code input did not save one complete TEXT, control, circle, and three whole independent lines")
+    rows = objects.get("objects", [])
+    ledger = {row["id"]: row for row in rows}
+    actual_ids = [native_identity(entity)["id"] for entity in entities]
+    if len(ledger) != len(rows) or len(set(actual_ids)) != len(actual_ids) or set(ledger) != set(actual_ids):
+        raise AssertionError("Short-code input has a duplicate, unwritten object, or glyph fragment")
+    target = next(entity for entity in texts if entity.dxf.text == expected_text)
+    text_id = native_identity(target)["id"]
+    target_row = ledger[text_id]
+    recovery = target_row.get("source_evidence", {}).get("single_line_recovery", {})
+    partition = recovery.get("source_partition", {})
+    adoption = recovery.get("layout_adoption", {})
+    selected = adoption.get("selected_layout", {})
+    default = adoption.get("default_layout_rejection", {})
+    if (target_row.get("kind") != "TEXT" or target_row.get("geometry", {}).get("text") != expected_text
+            or recovery.get("schema") != "native-single-line-label-evidence-v1"
+            or recovery.get("decision", {}).get("accepted") is not True
+            or recovery["decision"].get("text") != expected_text
+            or len(partition.get("components", [])) != len(expected_text)
+            or adoption.get("pass") is not True
+            or adoption.get("font") != font_spec
+            or adoption.get("layout_selection") != "one_pinned_source_component_fit_after_default_white_gap_failure"
+            or selected.get("basis") != "proved-source-components-one-TEXT-affine-v1"
+            or selected.get("font_sha256") != font_spec["sha256"]
+            or selected.get("font_is_recognition_evidence") is not False
+            or selected.get("scan_pixel_equality_required") is not False
+            or default.get("pass") is not False
+            or default.get("reason") != "NATIVE_TEXT_CLOSES_PROVED_SOURCE_ROUND_WHITE_GAP"
+            or not any(row.get("original_white_gap_proved") is True and row.get("pass") is False for row in default.get("relations", []))):
+        raise AssertionError("Complete short code did not actually replace a rejected default with the source-component layout")
+    exported_fonts = [row for row in objects.get("fonts", []) if row.get("font") == font_spec["font"]]
+    if len(exported_fonts) != 1 or any(exported_fonts[0].get(key) != value for key, value in font_spec.items()):
+        raise AssertionError("Saved short code did not export the uniquely pinned source-row font and full license")
+    for name, checksum, size in ((font_spec["font"], font_spec["sha256"], font_spec["bytes"]),
+                                 (font_spec["bundled_license"], font_spec["license_sha256"], font_spec["license_bytes"]),
+                                 (font_spec["librecad_font"], font_spec["librecad_sha256"], font_spec["librecad_bytes"])):
+        path = companion / name
+        if path.name != name or not path.is_file() or path.stat().st_size != size or digest(path) != checksum:
+            raise AssertionError("Saved short-code font/license bytes differ from the packaged registry")
+    if (target.dxf.style != font_spec["style"]
+            or document.styles.get(target.dxf.style).dxf.font != font_spec["font"]):
+        raise AssertionError("Actual saved short code did not use its selected portable font style")
+    attributes = {"text": target.dxf.text, "insert": [float(v) for v in target.dxf.insert],
+                  "height": float(target.dxf.height), "width": float(target.dxf.get("width", 1.0)),
+                  "rotation": float(target.dxf.get("rotation", 0.0))}
+    for key in ("insert", "height", "width", "rotation"):
+        actual, expected = attributes[key], selected.get(key)
+        if canonical_value(actual) != canonical_value(expected):
+            raise AssertionError("Saved complete short-code transform differs from its selected source layout")
+    if (any(target.dxf.get(key, 0) != 0 for key in ("halign", "valign", "oblique", "text_generation_flag"))
+            or tuple(target.dxf.get("extrusion", (0, 0, 1))) != (0, 0, 1)
+            or min(attributes["height"], attributes["width"]) <= 0
+            or any(not math.isfinite(v) for v in (*attributes["insert"], attributes["height"], attributes["width"], attributes["rotation"]))):
+        raise AssertionError("Saved short code has an unsupported or invalid TEXT transform")
+    candidates = cold.get("native_text_candidate_checks", [])
+    if ({row.get("id") for row in candidates} != {native_identity(entity)["id"] for entity in texts}
+            or len(candidates) != len(texts)
+            or any(row.get("type") != "NATIVE_TEXT_CANDIDATE_BINDING" or row.get("pass") is not True for row in candidates)):
+        raise AssertionError("Saved short-code/control candidate checks are incomplete")
+    checked = [row for row in cold.get("single_line_text_source_checks", []) if row.get("id") == text_id]
+    if len(checked) != 1 or checked[0].get("type") != "SINGLE_LINE_TEXT_SOURCE_BINDING" or checked[0].get("pass") is not True:
+        raise AssertionError("Saved complete short code lacks actual source replay")
+    source_check = checked[0]
+    replay = source_check.get("source_replay", {})
+    if (replay.get("pass") is not True or replay.get("text") != expected_text
+            or replay.get("new_OCR_calls") != 0 or replay.get("new_model_calls") != 0
+            or replay.get("layout_adoption") != adoption
+            or replay.get("all_raw_artifacts_read_and_hashed") is not True):
+        raise AssertionError("Short-code source replay did not recompute the actual complete adoption without OCR")
+    component = source_check.get("actual_saved_source_component_layout", {})
+    if (component.get("pass") is not True or component.get("actual_attributes_used") is not True
+            or component.get("font_sha256") != font_spec["sha256"]
+            or component.get("source_partition_sha256") != _json_digest(partition)):
+        raise AssertionError("Saved source-component layout checker was not actually executed")
+    companion_check = component.get("actual_saved_LFF_literal_equivalence", {})
+    if (companion_check.get("pass") is not True
+            or companion_check.get("font_sha256") != font_spec["sha256"]
+            or companion_check.get("librecad_sha256") != font_spec["librecad_sha256"]
+            or companion_check.get("actual_LFF_file_read") is not True
+            or companion_check.get("all_literal_outlines_and_advances_checked") is not True
+            or companion_check.get("unverified_glyphs_are_not_exempted") is not True
+            or not 0 < companion_check.get("serialization_tolerance_unit_capheight", 0) <= 1e-9
+            or any(not 0 <= companion_check.get(key, math.inf) <= companion_check["serialization_tolerance_unit_capheight"] for key in (
+                "maximum_outline_difference_unit_capheight", "maximum_accumulated_advance_difference_unit_capheight",
+            ))):
+        raise AssertionError("Actual saved short-code TTF/LFF outlines and accumulated advance were not equivalently checked")
+    fit = component.get("source_fit", {})
+    _passing_checks(fit, "Saved whole-label glyph position, height, baseline or source bounds failed")
+    if (fit.get("one_transform_for_all_characters") is not True
+            or len(fit.get("component_center_errors_px", [])) != len(expected_text)
+            or any(fit["checks"].get(key) is not True for key in (
+                "positive_whole_TEXT_scales", "component_positions_match_source",
+                "full_glyph_height_and_baseline_match_source", "whole_ink_bounds_match_source",
+            ))):
+        raise AssertionError("Saved label fit did not check every original character with one TEXT transform")
+    neighbors = component.get("source_neighbor_clearance", {})
+    if (neighbors.get("pass") is not True or neighbors.get("all_original_neighbors_preserved") is not True
+            or neighbors.get("source_pixels_modified") is not False or not neighbors.get("checks")
+            or any(row.get("pass") is not True or row.get("whole_graphic_component_exempted") is True for row in neighbors["checks"])):
+        raise AssertionError("Saved source layout did not preserve original line/ring/underline relations")
+    circle = circles[0]
+    circle_id = native_identity(circle)["id"]
+    center, outer_radius = SHORT_CODE_CIRCLE_FIXTURE
+    radius = float(circle.dxf.radius) * 200 / 25.4
+    if not _near_point(_pixel_point(circle.dxf.center), center) or abs(radius - (outer_radius - 1)) > 2:
+        raise AssertionError("Saved independent short-code circle lost its source center/radius")
+    rounds = source_check.get("actual_saved_text_round_clearance", {})
+    relations = rounds.get("relations", [])
+    if (rounds.get("pass") is not True or rounds.get("font_sha256") != font_spec["sha256"]
+            or rounds.get("actual_text_attributes_sha256") != _json_digest(attributes)
+            or rounds.get("source_partition_sha256") != _json_digest(partition)
+            or rounds.get("source_pixels_modified") is not False or len(relations) != 1):
+        raise AssertionError("Actual saved short-code ring-white-gap check is missing or empty")
+    relation = relations[0]
+    if (relation.get("circle_id") != circle_id or relation.get("pass") is not True
+            or relation.get("original_white_gap_proved") is not True
+            or relation.get("original_glyph_and_ring_touch") is not False
+            or relation.get("actual_font_touches_native_circle") is not False
+            or relation.get("actual_font_touches_original_ring_ink") is not False
+            or relation.get("native_circle_outline_clearance_px", 0.0) <= 0.02
+            or not _near_point(relation.get("circle_geometry", {}).get("center", (math.inf, math.inf)), _pixel_point(circle.dxf.center), 1e-6)
+            or abs(relation.get("circle_geometry", {}).get("radius_px", math.inf) - radius) > 1e-6):
+        raise AssertionError("Actual short-code font closes the proved gap to its independently saved circle")
+    sweeps = [row for row in cold.get("source_checks", []) if row.get("id") == circle_id and row.get("type") == "CIRCLE"]
+    circle_checks = [row for row in cold.get("circular_marker_source_checks", []) if row.get("id") == circle_id]
+    if (len(sweeps) != 1 or sweeps[0].get("pass") is not True or sweeps[0].get("sampled_sweep_deg") != 360.0
+            or sweeps[0].get("samples", 0) < math.ceil(2 * math.pi * radius / 0.05)
+            or len(circle_checks) != 1 or circle_checks[0].get("pass") is not True
+            or circle_checks[0].get("ring_source", {}).get("pass") is not True):
+        raise AssertionError("Independent saved circle did not receive its full actual source audit")
+    line_results, used = [], set()
+    for start, end in (*SHORT_CODE_NEIGHBOR_FIXTURE, SHORT_CODE_CONTACT_FIXTURE):
+        matching = []
+        for entity in paths:
+            points = _line_points(entity)
+            if points and min(max(math.dist(points[0], start), math.dist(points[-1], end)),
+                              max(math.dist(points[0], end), math.dist(points[-1], start))) <= 2.5:
+                matching.append((entity, points))
+        if len(matching) != 1:
+            raise AssertionError("Short-code neighbor/lead is missing, duplicated, or delivered as fragments")
+        entity, points = matching[0]
+        oid = native_identity(entity)["id"]
+        if oid in used or any(_distance_to_path(point, [start, end]) > 2.5 for point in points):
+            raise AssertionError("Short-code line absorbed a glyph branch or another independent neighbor")
+        used.add(oid)
+        if (start, end) != SHORT_CODE_CONTACT_FIXTURE:
+            _saved_line_source_check(cold, oid)
+        line_results.append({"id": oid, "source_endpoints_px": [start, end], "saved_points_px": points})
+    path_id = line_results[-1]["id"]
+    path_row = ledger[path_id]
+    proof = path_row.get("source_evidence", {}).get("text_contact_path", {})
+    separation = partition.get("text_contact_separation", {})
+    plan = separation.get("geometry_plan", {})
+    path_plan = plan.get("paths", [])
+    if (len(path_plan) != 1 or proof.get("schema") != "source-text-contact-native-path-v1"
+            or proof.get("source_sha256") != objects.get("source_sha256")
+            or proof.get("plan_sha256") != _json_digest(plan) or proof.get("path_index") != 0
+            or proof.get("path") != path_plan[0] or proof.get("path_sha256") != _json_digest(path_plan[0])
+            or not separation.get("shared_original_contact_runs")
+            or separation.get("source_erasure_authorized") is not False
+            or separation.get("real_source_white_gaps_filled") is not False
+            or native_identity(next(entity for entity in paths if native_identity(entity)["id"] == path_id)).get("text_contact_path") is not True):
+        raise AssertionError("Saved independent lead lacks the complete original-contact source plan")
+    contact = cold.get("text_contact_source_checks", {})
+    contact_checks = {row.get("id"): row for row in contact.get("checks", [])}
+    path_check = contact_checks.get(path_id, {})
+    required_types = {
+        "TEXT_CONTACT_MANIFEST": "TEXT_CONTACT_MANIFEST_BINDING",
+        path_id: "SAVED_TEXT_CONTACT_PATH_SOURCE",
+        "TEXT_CONTACT_RETIREMENT": "SAVED_TEXT_CONTACT_WHOLE_RETIREMENT",
+        "TEXT_CONTACT_NEIGHBORS": "SAVED_TEXT_CONTACT_NEIGHBOR_PROTECTION",
+        "TEXT_CONTACT_DUPLICATES": "SAVED_TEXT_CONTACT_NATIVE_DUPLICATES",
+    }
+    if (contact.get("schema") != "saved-text-contact-source-audit-v1"
+            or contact.get("pass") is not True or contact.get("target_ids") != [path_id]
+            or contact.get("duplicate_conflicts") != []
+            or contact.get("source_or_DXF_geometry_modified") is not False
+            or len(contact_checks) != len(contact.get("checks", [])) or set(contact_checks) != set(required_types)
+            or any(contact_checks[key].get("type") != kind or contact_checks[key].get("pass") is not True for key, kind in required_types.items())):
+        raise AssertionError("Saved independent lead's actual contact source audit was missing or failed")
+    _passing_checks(path_check, "Saved short-code lead binding/source representation failed")
+    if any(path_check["checks"].get(key) is not True for key in (
+        "three_way_object_binding", "actual_identity_and_flag", "actual_vertices", "original_source_plan_replayed",
+        "original_source_geometry_supported", "whole_native_representation_from_source_plan",
+    )):
+        raise AssertionError("Saved short-code lead audit omitted an actual source/geometry binding")
+    planned = path_plan[0].get("representation", {})
+    actual_points = line_results[-1]["saved_points_px"]
+    if (path_row.get("kind") != "CONNECTION_PATH" or path_row.get("geometry") != planned
+            or planned.get("closed") is not False or planned.get("bulges") != [0.0] * len(actual_points)
+            or len(planned.get("points", [])) != len(actual_points)
+            or any(math.dist(a, b) > 1e-6 for a, b in zip(planned.get("points", []), actual_points))):
+        raise AssertionError("Saved whole short-code lead differs from its source-bound actual vertices")
+    for key in ("TEXT_CONTACT_MANIFEST", "TEXT_CONTACT_RETIREMENT"):
+        _passing_checks(contact_checks[key], "Saved short-code contact binding or whole-retirement check was omitted")
+    _passing_checks(path_check.get("original_source_plan_replay", {}), "Saved short-code contact plan was not replayed")
+    _passing_checks(path_check.get("actual_source_geometry", {}), "Saved short-code lead source geometry was not inspected")
+    protected = contact_checks.get("TEXT_CONTACT_NEIGHBORS", {}).get("objects", [])
+    if (len(protected) != len(entities) - 1 or {row.get("id") for row in protected} != set(ledger) - {path_id}
+            or contact_checks["TEXT_CONTACT_NEIGHBORS"].get("protected_count") != len(protected)
+            or contact_checks["TEXT_CONTACT_DUPLICATES"].get("conflicts") != []
+            or any(row.get("pass") is not True or not row.get("checks") or any(v is not True for v in row["checks"].values()) for row in protected)):
+        raise AssertionError("Independent lead adoption did not protect every other saved object")
+    control = next(entity for entity in texts if entity.dxf.text == "STORE")
+    if (control.dxf.style != "I2CAD_TEXT" or document.styles.get(control.dxf.style).dxf.font != "DejaVuSans.ttf"
+            or not _near_point(_pixel_point(control.dxf.insert), (462, 89), 3.0)):
+        raise AssertionError("Existing correct ordinary text changed font style or position")
+    return {"schema": "windows-saved-source-row-short-code-v1", "complete_label_count": 1,
+            "text_id": text_id, "text": expected_text, "circle_id": circle_id,
+            "independent_contact_path_id": path_id, "independent_line_checks": line_results,
+            "default_layout_was_actually_rejected": True, "new_source_component_layout_required": True,
+            "actual_source_component_layout": component, "actual_round_white_gap": rounds,
+            "export_font": exported_fonts[0], "font_shape_pixel_equality_required": False,
+            "all_formal_objects_accounted_for": True, "GUI_operations_claimed": False}
+
+
+def inspect_short_code_payloads(objects, cold, evidence_root, source_path, source_font_path, pipeline_report):
+    """Check original overlap/gap plus actual raw recognition, never infer text."""
+    import cv2
+    import numpy as np
+    from PIL import Image, ImageDraw, ImageFont
+
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+    glyph, ring, lead = (Image.new("L", (640, 480), 0) for _ in range(3))
+    font = ImageFont.truetype(str(source_font_path), 36, layout_engine=ImageFont.Layout.BASIC)
+    for text, point in SHORT_CODE_LABEL_FIXTURE:
+        ImageDraw.Draw(glyph).text(point, text, font=font, fill=255)
+    (cx, cy), radius = SHORT_CODE_CIRCLE_FIXTURE
+    ImageDraw.Draw(ring).ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=255, width=3)
+    ImageDraw.Draw(lead).line(SHORT_CODE_CONTACT_FIXTURE, fill=255, width=3)
+    glyph_ink, ring_ink, lead_ink = np.asarray(glyph) >= 64, np.asarray(ring) > 0, np.asarray(lead) > 0
+    shared = glyph_ink & lead_ink
+    if (source.shape != (480, 640) or not shared.any() or not np.all(source[shared] < 192)
+            or np.any(glyph_ink & cv2.dilate(np.uint8(ring_ink), np.ones((3, 3), np.uint8)))
+            or not np.all(source[ring_ink] < 192)):
+        raise AssertionError("Fifth original input lost its real line contact or proved ring white gap")
+    target = next(row for row in objects["objects"] if row.get("source_evidence", {}).get("text_contact_path"))
+    proof = target["source_evidence"]["text_contact_path"]
+    manifest_path = evidence_root / "text_contact/adoption.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if (manifest.get("source_sha256") != digest(source_path) or manifest.get("source_pixels_modified") is not False
+            or manifest.get("objects") != [target]
+            or _json_digest(manifest.get("geometry_plans", {}).get(proof["plan_sha256"])) != proof["plan_sha256"]):
+        raise AssertionError("Short-code lead's actual adoption file is not bound to the original PNG")
+    report = pipeline_report.get("text_contact_completion", {})
+    if (report.get("new_complete_graphics") != 1
+            or report.get("actual_saved_source_checks") != cold.get("text_contact_source_checks")):
+        raise AssertionError("Ordinary pipeline did not publish the saved short-code lead source checks")
+    raw = inspect_single_line_character_payloads(objects, cold, evidence_root, pipeline_report)
+    return {"source_sha256": digest(source_path), "original_shared_line_glyph_pixels": int(shared.sum()),
+            "original_glyph_ring_8_adjacent": False, "actual_label_payloads": raw,
+            "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
 def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str, path_id: str) -> dict:
     """Actual scripted save/reopen edits; this deliberately makes no GUI claim."""
     import ezdxf
@@ -897,6 +1241,103 @@ def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str,
     return result
 
 
+def _inspect_single_line_preexisting_raw_inventory(evidence, read_record):
+    """Bind every already available finite-plan raw view to its consumed bytes."""
+    reference = evidence.get("preexisting_raw_view_inventory")
+    if not isinstance(reference, dict):
+        raise AssertionError("Single-line evidence omitted its pre-recognition raw-view inventory")
+    _, raw = read_record(reference)
+    inventory = json.loads(raw)
+    source_hash = evidence.get("source_array_sha256")
+    if (inventory.get("schema") != "single-line-preexisting-raw-view-inventory-v1"
+            or not isinstance(source_hash, str) or len(source_hash) != 64
+            or inventory.get("source_array_sha256") != source_hash
+            or inventory.get("source_bbox_xyxy_px") != evidence.get("source_bbox_xyxy_px")
+            or inventory.get("recorded_before_any_recognition_or_adoption") is not True
+            or inventory.get("missing_views_do_not_request_recognition") is not True):
+        raise AssertionError("Single-line preexisting raw inventory lost its original source or timing binding")
+    saved = {"Tesseract": {view["view_index"]: view for view in evidence["tesseract_views"]},
+             "PP-OCR": {view["view_index"]: view for view in evidence["ppocr_views"]}}
+    rows = inventory.get("views", [])
+    keys = [(row.get("engine"), row.get("view_index")) for row in rows]
+    required_keys = [(family, index) for index in range(2) for family in ("Tesseract", "PP-OCR")]
+    if keys != required_keys or any(type(row.get("view_index")) is not int for row in rows):
+        raise AssertionError("Single-line preexisting raw inventory is incomplete, duplicated or reordered")
+    known = []
+    for slot in rows:
+        family, index = slot["engine"], slot["view_index"]
+        spec = (SINGLE_LINE_TESSERACT_VIEWS if family == "Tesseract" else SINGLE_LINE_PP_OCR_VIEWS)[index]
+        view = saved[family].get(index)
+        input_hash = slot.get("input_array_sha256")
+        if (slot.get("normalization") != spec or not isinstance(input_hash, str) or len(input_hash) != 64
+                or (view is not None and input_hash != view.get("normalization", {}).get("input_array_sha256"))):
+            raise AssertionError("Known raw view changed its frozen configuration or actual input samples")
+        availability = slot.get("availability")
+        if availability == "ABSENT":
+            if slot.get("raw_observation_cache") is not None or any(key in slot for key in ("raw_payload", "cache_record", "checkpoint_metadata")):
+                raise AssertionError("An absent preexisting view contains an unaccounted raw record")
+            continue
+        if availability not in ("RAW_CACHE", "OUTPUT_CHECKPOINT") or view is None:
+            raise AssertionError("A known finite-plan raw view was omitted from the saved observations")
+        if not isinstance(slot.get("raw_payload"), dict):
+            raise AssertionError("Known raw view omitted its preserved original payload")
+        _, payload = read_record(slot["raw_payload"])
+        payload_sha = hashlib.sha256(payload).hexdigest()
+        if family == "Tesseract":
+            _, consumed = read_record(view["raw_tsv"])
+            _, metadata_raw = read_record(view["metadata"])
+            metadata = json.loads(metadata_raw)
+            if payload != consumed or view.get("command_executed_for_this_request") is not False:
+                raise AssertionError("Known Tesseract bytes changed or were counted as a fresh recognition call")
+            actual_receipt = metadata.get("raw_observation_cache")
+        else:
+            if json.loads(payload) != view.get("prediction") or view.get("model_inference_executed_for_this_request") is not False:
+                raise AssertionError("Known model output changed or was counted as a fresh inference")
+            actual_receipt = view.get("observation_receipt", {}).get("raw_observation_cache")
+        if availability == "RAW_CACHE":
+            if not isinstance(slot.get("cache_record"), dict) or not isinstance(slot.get("raw_observation_cache"), dict):
+                raise AssertionError("Known raw cache view omitted its cache record or receipt")
+            _, record_bytes = read_record(slot["cache_record"])
+            record = json.loads(record_bytes)
+            specification, receipt = record.get("specification", {}), slot["raw_observation_cache"]
+            request_key = hashlib.sha256(json.dumps(specification, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode()).hexdigest()
+            expected_kinds = ("tesseract-tsv", "historical-tesseract-tsv") if family == "Tesseract" else ("ppocr-ctc",)
+            if (record.get("schema") != "native-raw-observation-cache-v1"
+                    or specification.get("schema") != "native-raw-observation-cache-v1"
+                    or specification.get("kind") not in expected_kinds or specification.get("source_pixels_modified") is not False
+                    or not isinstance(specification.get("engine"), dict) or not specification["engine"]
+                    or record.get("key") != request_key or receipt.get("key") != request_key
+                    or receipt.get("kind") != specification.get("kind") or receipt.get("producer") != record.get("producer")
+                    or actual_receipt != receipt or receipt.get("record_sha256") != slot["cache_record"]["sha256"]
+                    or receipt.get("payload_sha256") != payload_sha or record.get("payload_sha256") != payload_sha
+                    or record.get("payload_bytes") != len(payload)):
+                raise AssertionError("Known raw cache record, producer receipt or payload binding changed")
+            if family == "Tesseract":
+                if (specification.get("recognition_input", {}).get("sha256") != input_hash
+                        or specification.get("external_white_padding_px") != spec["padding"]
+                        or specification.get("psm") != spec["psm"]
+                        or specification.get("recognition_dpi") != evidence.get("recognition_dpi", 0) * spec["scale"]
+                        or any(metadata.get("consumer_installed_engine_identity", {}).get(key) != value for key, value in specification.get("engine", {}).items())):
+                    raise AssertionError("Known Tesseract cache configuration differs from the current original-source view")
+            else:
+                _, identity_bytes = read_record(evidence["model_identity"])
+                identity = json.loads(identity_bytes)
+                if (specification.get("crop", {}).get("sha256") != input_hash
+                        or specification.get("model_tensor", {}).get("sha256") != view["prediction"].get("model_tensor_sha256")
+                        or any(identity.get(key) != value for key, value in specification.get("engine", {}).items())):
+                    raise AssertionError("Known model cache configuration differs from the current original-source view")
+        elif family == "Tesseract":
+            if not isinstance(slot.get("checkpoint_metadata"), dict):
+                raise AssertionError("Known Tesseract checkpoint omitted its original metadata")
+            _, metadata_bytes = read_record(slot["checkpoint_metadata"])
+            original = json.loads(metadata_bytes)
+            if original.get("status") != "COMPLETED" or original.get("return_code") != 0 or original.get("tsv_sha256") != payload_sha:
+                raise AssertionError("Known Tesseract checkpoint no longer identifies its preserved raw bytes")
+        known.append({"engine": family, "view_index": index, "availability": availability, "raw_payload_sha256": payload_sha})
+    return {"inventory_sha256": reference["sha256"], "all_preexisting_views_replayed": True,
+            "known_view_count": len(known), "known_views": known, "new_recognition_requested_for_absent_views": False}
+
+
 def _inspect_single_line_raw_view_payloads(evidence, read_record):
     """Read actual accepted or pending producer payloads; this never adopts text."""
     from io import BytesIO
@@ -919,10 +1360,14 @@ def _inspect_single_line_raw_view_payloads(evidence, read_record):
     if json.loads(identity_raw).get("providers") != ["CPUExecutionProvider"]:
         raise AssertionError("Single-line recovery did not use its recorded CPU model")
     t_views, p_views = evidence["tesseract_views"], evidence["ppocr_views"]
-    if not 1 <= len(t_views) <= 2 or len(t_views) != len(p_views):
-        raise AssertionError("Single-line raw observations are not the frozen finite paired views")
+    for views in (t_views, p_views):
+        indices = [view.get("view_index") for view in views]
+        if (not 1 <= len(views) <= 2 or any(type(index) is not int or index not in (0, 1) for index in indices)
+                or indices != sorted(set(indices))):
+            raise AssertionError("Single-line engine views are not unique, ordered members of its frozen finite plan")
     t_calls = p_calls = 0
-    for index, view in enumerate(t_views):
+    for view in t_views:
+        index = view["view_index"]
         _, raw = read_record(view["raw_tsv"])
         _, metadata_raw = read_record(view["metadata"])
         _, image_raw = read_record(view["recognition_image"])
@@ -942,7 +1387,8 @@ def _inspect_single_line_raw_view_payloads(evidence, read_record):
         if not isinstance(called, bool) or called is not metadata.get("command_executed_for_this_request"):
             raise AssertionError("Single-line Tesseract call count includes an unexecuted observation")
         t_calls += called
-    for index, view in enumerate(p_views):
+    for view in p_views:
+        index = view["view_index"]
         _, prediction_raw = read_record(view["prediction_file"])
         _, image_raw = read_record(view["recognition_image"])
         prediction = json.loads(prediction_raw)
@@ -964,7 +1410,9 @@ def _inspect_single_line_raw_view_payloads(evidence, read_record):
         p_calls += called
     if evidence.get("new_Tesseract_calls") != t_calls or evidence.get("new_model_calls") != p_calls:
         raise AssertionError("Single-line call counters disagree with the saved producer receipts")
-    return {"Tesseract_views": len(t_views), "PP_OCR_views": len(p_views), "new_Tesseract_calls": t_calls, "new_model_calls": p_calls}
+    inventory = _inspect_single_line_preexisting_raw_inventory(evidence, read_record)
+    return {"Tesseract_views": len(t_views), "PP_OCR_views": len(p_views), "new_Tesseract_calls": t_calls,
+            "new_model_calls": p_calls, "preexisting_raw_view_inventory": inventory}
 
 
 def inspect_single_line_character_payloads(objects, cold, evidence_root: Path, pipeline_report) -> dict:
@@ -1239,7 +1687,7 @@ def entity_geometry(entity, document) -> dict:
     return result
 
 
-def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: str = "room17", single_line_contract: str = "strict-three") -> dict:
+def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: str = "room17", single_line_contract: str = "strict-three", source_row_font_spec: dict | None = None, source_row_fixture_font: Path | None = None) -> dict:
     import ezdxf
 
     target = work / "native.dxf"
@@ -1249,7 +1697,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -1291,6 +1739,17 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         )
         contact_result["scripted_edit_isolation"] = inspect_contact_edit_isolation(
             target, work / "edit-isolation", contact_result["text_id"], contact_result["independent_contact_path_id"],
+        )
+    short_code_result = None
+    if fixture_kind == "short-codes":
+        if source_row_font_spec is None or source_row_fixture_font is None:
+            raise AssertionError("Short-code saved check requires its verified packaged registry and original fixture font")
+        short_code_result = inspect_short_code_members(document, objects, cold, source_row_font_spec, companion)
+        short_code_result["actual_source_payloads"] = inspect_short_code_payloads(
+            objects, cold, companion / "evidence", work.parent / "controlled-source.png", source_row_fixture_font, pipeline_report,
+        )
+        short_code_result["scripted_edit_isolation"] = inspect_contact_edit_isolation(
+            target, work / "edit-isolation", short_code_result["text_id"], short_code_result["independent_contact_path_id"],
         )
     entry = json.loads((companion / "result.entry_trace.json").read_text(encoding="utf-8"))
     if entry["mode"] != "native-objects" or entry["legacy_processing_called"] or entry["legacy_export_called"] or entry["source_sha256"] != source_sha:
@@ -1354,6 +1813,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         "initial_raw_observation_count": 0,
         "actual_source_ocr_saved": True,
         "export_font": font,
+        "export_fonts": objects.get("fonts", [font]),
         "cold_audit_errors": 0,
         "cold_audit_fixes": 0,
     }
@@ -1363,6 +1823,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["single_line_labels"] = single_line_result
     if contact_result is not None:
         result["text_line_contact"] = contact_result
+    if short_code_result is not None:
+        result["short_codes"] = short_code_result
     return result
 
 
@@ -1397,8 +1859,9 @@ def _verify_bundle_resources(result: dict, bundle: Path) -> None:
     for model in result["independent_models"]:
         if not Path(model["model_path"]).resolve().is_relative_to(bundle):
             raise AssertionError("EXE used a model outside its bundle")
-    if not Path(result["export_font"]["source"]).resolve().is_relative_to(bundle):
-        raise AssertionError("EXE used an export font outside its bundle")
+    for font in result.get("export_fonts", [result["export_font"]]):
+        if not Path(font["source"]).resolve().is_relative_to(bundle):
+            raise AssertionError("EXE used an export font outside its bundle")
 
 
 def run(executable: Path, source_main: Path, work: Path, expected_version: str) -> dict:
@@ -1424,6 +1887,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     metadata_files = (
         "resources/native-build.json",
         "resources/ocr/tesseract/native-ocr.lock.json",
+        "resources/fonts/source-row-font.lock.json",
         "docs/product/product_status.generated.json",
     )
     for relative in metadata_files:
@@ -1435,27 +1899,35 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     for relative, expected in manifest["application_sources"].items():
         if digest(app_root / relative) != expected or digest(bundle / relative) != expected:
             raise AssertionError("Packaged code evidence differs from same-version source: " + relative)
+    source_row_font_spec = read_source_row_font_spec(bundle)
+    source_row_fixture_font = read_source_row_fixture_font(bundle)
     circular_work = work / "circular-markers"
     circular_work.mkdir()
     single_line_work = work / "single-line-labels"
     single_line_work.mkdir()
     contact_work = work / "text-line-contact"
     contact_work.mkdir()
+    short_code_work = work / "short-codes"
+    short_code_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
         {"name": "single-line-labels", "directory": single_line_work, "create": create_single_line_fixture},
         {"name": "text-line-contact", "directory": contact_work, "create": create_contact_fixture},
+        {"name": "short-codes", "directory": short_code_work, "create": create_short_code_fixture},
     ]
     environment = clean_environment()
     for case in cases:
         fixture = case["directory"] / "controlled-source.png"
-        case["create"](fixture, bundle / "resources/fonts/DejaVuSans.ttf")
+        if case["name"] == "short-codes":
+            case["create"](fixture, bundle / "resources/fonts/DejaVuSans.ttf", source_row_fixture_font)
+        else:
+            case["create"](fixture, bundle / "resources/fonts/DejaVuSans.ttf")
         case.update(fixture=fixture, source_sha256=digest(fixture))
         stage(case["name"], "source-recognition")
         run_cli([sys.executable, str(source_main.resolve())], fixture, case["directory"] / "source-run", environment)
         stage(case["name"], "source-saved-audit")
-        case["source_result"] = inspect_result(case["directory"] / "source-run", case["source_sha256"], frozen=False, fixture_kind=case["name"], single_line_contract="bounded-capability" if case["name"] == "single-line-labels" else "strict-three")
+        case["source_result"] = inspect_result(case["directory"] / "source-run", case["source_sha256"], frozen=False, fixture_kind=case["name"], single_line_contract="bounded-capability" if case["name"] == "single-line-labels" else "strict-three", source_row_font_spec=source_row_font_spec, source_row_fixture_font=source_row_fixture_font)
         stage(case["name"], "source-saved-audit", complete=True)
     # Only this controlled CI checkout is hidden, and always restored. The
     # helper, fixture and detached bundle are outside it before this point.
@@ -1481,7 +1953,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
             stage(case["name"], "packaged-exe-recognition")
             run_cli([str(executable)], case["fixture"], case["directory"] / "exe-run", exe_environment)
             stage(case["name"], "packaged-exe-saved-audit")
-            case["exe_result"] = inspect_result(case["directory"] / "exe-run", case["source_sha256"], frozen=True, fixture_kind=case["name"], single_line_contract="bounded-capability" if case["name"] == "single-line-labels" else "strict-three")
+            case["exe_result"] = inspect_result(case["directory"] / "exe-run", case["source_sha256"], frozen=True, fixture_kind=case["name"], single_line_contract="bounded-capability" if case["name"] == "single-line-labels" else "strict-three", source_row_font_spec=source_row_font_spec, source_row_fixture_font=source_row_fixture_font)
             stage(case["name"], "packaged-exe-saved-audit", complete=True)
     finally:
         hidden.rename(app_root)
@@ -1495,7 +1967,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact = cases
+    room, circles, single_lines, contact, short_codes = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -1549,16 +2021,34 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "product_GO": False,
     }
     write_json(contact_work / "native-smoke.json", contact_report)
+    short_code_report = {
+        "status": "PASS", "schema": "windows-native-source-row-short-code-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": short_codes["source_sha256"],
+        "fixed_original_fixture_font_sha256": digest(source_row_fixture_font),
+        "source_result": short_codes["source_result"], "exe_result": short_codes["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "complete_labels": 1, "complete_independent_contact_paths": 1,
+        "actual_default_white_gap_failure_and_source_component_fallback_required": True,
+        "actual_saved_nonempty_round_and_source_component_checks_required": True,
+        "new_TTF_LFF_and_full_license_match_packaged_registry": True,
+        "actual_saved_literal_LFF_outline_and_advance_check_required": True,
+        "existing_control_font_style_kept": True,
+        "actual_scripted_edit_save_reopen_isolation_checked": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "original_strict_three_label_goal_status": single_line_report["strict_three_complete_status"],
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(short_code_work / "native-smoke.json", short_code_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 6,
+        "coverage_revision": 7,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,

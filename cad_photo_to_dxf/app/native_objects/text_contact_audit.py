@@ -138,6 +138,10 @@ def _text_matches(entity, obj, roi, dpi, font_path, *, block_member=False):
 
     if entity.dxftype() != "TEXT":
         return False
+    style = entity.doc.styles.get(entity.dxf.style)
+    if (style.dxf.font != Path(font_path).name or style.dxf.width != 1.0
+            or style.dxf.height != 0.0 or style.dxf.oblique != 0.0):
+        return False
     expected, _ = _expected_attributes(
         entity,
         obj,
@@ -682,10 +686,15 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 and receipt.get("type") == actual[oid][0].dxftype()
             )
             checks["unchanged_candidate_geometry"] = object_binding(obj) == binding
+            neighbor_font = path.parent / "DejaVuSans.ttf"
+            if obj["kind"] == "TEXT":
+                from .single_line_text_audit import resolve_saved_text_font
+
+                _, neighbor_font, _ = resolve_saved_text_font(path, metadata, obj)
             checks["actual_saved_geometry_matches_protected_candidate"] = checks[
                 "one_actual_entity"
             ] and _neighbor_matches(
-                actual[oid][0], obj, roi, dpi, path.parent / "DejaVuSans.ttf"
+                actual[oid][0], obj, roi, dpi, neighbor_font
             )
         except (KeyError, ValueError, TypeError, IndexError, OSError):
             checks["actual_saved_geometry_matches_protected_candidate"] = False

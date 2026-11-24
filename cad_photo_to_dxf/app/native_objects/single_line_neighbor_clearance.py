@@ -1,6 +1,8 @@
 """Keep a proved source white gap between complete TEXT and an independent ring.
 
-This is a conservative layout veto, never recognition or a font optimizer.
+This is a source relationship check, never recognition evidence. A rejected
+default layout may use one pinned alternate whole-row layout; passing existing
+layouts retain their original font and transform.
 The caller must replay the complete source partition. Saved checks supply the
 actual TEXT attributes, not attributes reconstructed by the layout writer.
 """
@@ -214,4 +216,29 @@ def proposed_text_round_white_gaps(gray, roi, partition, geometry, dpi):
     font = native_font_path()
     layout = source_ink_text_layout(geometry, roi, dpi, font)
     attributes = {"text": geometry["text"], **{key: layout[key] for key in ("insert", "height", "width", "rotation")}}
-    return check_text_round_white_gaps(gray, roi, partition, attributes, font, dpi)
+    default = check_text_round_white_gaps(gray, roi, partition, attributes, font, dpi)
+    if default["pass"]:
+        return default
+    from .single_line_source_layout import fit_source_glyph_layout, source_row_font_path
+
+    try:
+        alternate = source_row_font_path()
+    except (OSError, ValueError) as exc:
+        return {**default, "source_layout_fallback": {"pass": False, "reason": str(exc)}}
+    fitted = fit_source_glyph_layout(geometry, partition, roi, dpi, alternate, gray=gray)
+    if not fitted["pass"]:
+        return {**default, "source_layout_fallback": fitted}
+    selected = fitted["selected_layout"]
+    actual = {"text": geometry["text"], **{key: selected[key] for key in ("insert", "height", "width", "rotation")}}
+    checked = check_text_round_white_gaps(gray, roi, partition, actual, alternate, dpi)
+    if not checked["pass"]:
+        return {**default, "source_layout_fallback": {**fitted, "round_clearance": checked, "pass": False}}
+    return {
+        **checked,
+        "selected_layout": selected,
+        "font": fitted["font"],
+        "source_fit": fitted["source_fit"],
+        "source_neighbor_clearance": fitted["source_neighbor_clearance"],
+        "default_layout_rejection": default,
+        "layout_selection": "one_pinned_source_component_fit_after_default_white_gap_failure",
+    }

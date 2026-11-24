@@ -20,6 +20,7 @@ import cv2
 import numpy as np
 
 from . import independent_recognizer as independent
+from . import source_glyph_equivalence as glyph_equivalence
 from . import text_regions as base
 from . import circle_character_recognition as character
 from .circle_character_recognition import (
@@ -32,7 +33,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "complete-source-single-line-derived-views-v4-source-white-gaps",
+    "version": "complete-source-single-line-derived-views-v5-raw-conflicts",
     "source_threshold": 192,
     "minimum_full_height_components": 3,
     "glyph_height_px": [8, 70],
@@ -71,6 +72,18 @@ POLICY = {
     "contact_transcription_rule": "complete_original_row_and_strict_model_characters_with_raw_Tesseract_literal_corroboration",
     "contact_Tesseract_word_score": "recorded_advisory_aggregate_score_not_a_character_veto",
     "contact_repeated_raw_dash_tokens": "canonicalize_only_one_observed_continuous_midline_source_stroke",
+    "complete_row_Tesseract_word_score": "recorded_advisory_aggregate_score_not_a_character_veto",
+    "complete_row_transcription_rule": "complete_original_row_and_strict_model_characters_with_raw_Tesseract_literal_corroboration",
+    "flat_source_dash": {
+        "maximum_centerline_slope": 0.125,
+        "maximum_centerline_end_change_source_px": 1.0,
+        "maximum_column_center_residual_source_px": 1.0,
+        "every_column_supports_one_common_straight_quantized_spine": True,
+        "requires_one_continuous_original_component": True,
+        "true_wave_or_two_source_marks_not_collapsed": True,
+    },
+    "raw_character_conflicts": glyph_equivalence.POLICY,
+    "known_raw_views": "replay_every_available_finite_plan_view_before_final_decision_no_new_call_after_provisional_acceptance",
     "observed_alphanumeric_suffix": "a_narrower_prefix_cannot_replace_a_wider_original_observation_with_remaining_source_ink",
     "baseline_strip_separation": {
         "maximum_thickness_px": 4,
@@ -828,6 +841,7 @@ def plan_single_line_labels(gray, texts, roi=None):
 def _producer_identity():
     from . import (
         circular_markers, single_line_neighbor_clearance, single_line_text_audit,
+        single_line_source_layout, source_row_font_registry,
         text_contact_geometry, text_contact_partition,
     )
 
@@ -845,6 +859,9 @@ def _producer_identity():
         ),
         "neighbor_clearance_producer_sha256": _sha(Path(single_line_neighbor_clearance.__file__).read_bytes()),
         "text_layout_producer_sha256": _sha(Path(single_line_text_audit.__file__).read_bytes()),
+        "source_component_layout_producer_sha256": _sha(Path(single_line_source_layout.__file__).read_bytes()),
+        "source_row_font_registry_sha256": _sha(Path(source_row_font_registry.__file__).read_bytes()),
+        "source_glyph_equivalence_sha256": _sha(Path(glyph_equivalence.__file__).read_bytes()),
         "round_source_producer_sha256": _sha(Path(circular_markers.__file__).read_bytes()),
     }
 
@@ -921,6 +938,78 @@ def _mapped_words(words, box, scale):
     return result
 
 
+def _flat_source_dash(component, partition, body):
+    """Prove a single near-horizontal source stroke before collapsing raw symbols."""
+    result = {"pass": False, "source_component_sha256": _digest(component)}
+    b = component["bbox_xyxy_px"]
+    h = partition["glyph_height_px"]
+    w, ph = b[2] - b[0], b[3] - b[1]
+    if not (
+        component["source_role"] == "RETAINED_PUNCTUATION"
+        and len(component["source_component_labels"]) == 1
+        and 0.15 * h <= w <= 1.4 * h
+        and ph <= 0.22 * h
+        and w >= 2.5 * ph
+        and body[1] + 0.25 * h <= (b[1] + b[3]) / 2 <= body[1] + 0.8 * h
+    ):
+        return result
+    try:
+        stroke, _ = glyph_equivalence.component_samples(component)
+    except (KeyError, TypeError, ValueError):
+        return result
+    if not stroke.any(axis=0).all() or cv2.connectedComponents(stroke, connectivity=8)[0] != 2:
+        return result
+    x = np.arange(w, dtype=float)
+    columns = [np.flatnonzero(stroke[:, i]) for i in range(w)]
+    if any(len(v) != v[-1] - v[0] + 1 for v in columns):
+        return result
+    # Each original sample occupies a one-pixel cell. A straight spine must
+    # intersect an occupied cell in every column, under the same slope bound.
+    # A real up/down wave cannot pass merely because its overall bbox is thin.
+    low = np.array([v[0] - 0.5 for v in columns])
+    high = np.array([v[-1] + 0.5 for v in columns])
+    limit = min(POLICY["flat_source_dash"]["maximum_centerline_slope"],
+                POLICY["flat_source_dash"]["maximum_centerline_end_change_source_px"] / (w - 1))
+    lower_slope, upper_slope = -limit, limit
+    for i in range(w):
+        for j in range(w):
+            if i == j:
+                continue
+            bound = (high[j] - low[i]) / (j - i)
+            if j > i:
+                upper_slope = min(upper_slope, bound)
+            else:
+                lower_slope = max(lower_slope, bound)
+    if lower_slope > upper_slope + 1e-12:
+        return result
+    spine_slope = (lower_slope + upper_slope) / 2.0
+    spine_low = float(np.max(low - spine_slope * x))
+    spine_high = float(np.min(high - spine_slope * x))
+    if spine_low > spine_high + 1e-12:
+        return result
+    y = np.array([v.mean() for v in columns])
+    slope, intercept = np.polyfit(x, y, 1)
+    residual = float(np.max(np.abs(y - (slope * x + intercept))))
+    end_change = float(abs(slope) * (w - 1))
+    limits = POLICY["flat_source_dash"]
+    result.update(
+        centerline_slope=float(slope),
+        centerline_end_change_source_px=end_change,
+        maximum_column_center_residual_source_px=residual,
+        original_component_continuous=True,
+        original_quantized_straight_spine={
+            "slope": float(spine_slope),
+            "intercept_interval_source_px": [spine_low, spine_high],
+            "original_pixel_cell_half_width_px": 0.5,
+        },
+        pass_=abs(slope) <= limits["maximum_centerline_slope"]
+        and end_change <= limits["maximum_centerline_end_change_source_px"]
+        and residual <= limits["maximum_column_center_residual_source_px"],
+    )
+    result["pass"] = bool(result.pop("pass_"))
+    return result
+
+
 def _source_canonical_text(text, partition):
     """Bind every character/space to its ordered original source component.
 
@@ -928,7 +1017,8 @@ def _source_canonical_text(text, partition):
     It cannot invent a digit, drop a dash, turn one quote stroke into two, or
     manufacture a word separator without an original white gap.
     """
-    report = {"text": None, "reasons": [], "normalizations": [], "word_spaces": []}
+    report = {"text": None, "reasons": [], "normalizations": [], "word_spaces": [],
+              "component_characters": []}
     if (
         not isinstance(text, str)
         or not text
@@ -965,36 +1055,25 @@ def _source_canonical_text(text, partition):
             continue
         quote = value in '"“”'
         dash = value in "-‐‑‒–—−"
+        stroke_proof = None
+        if (dash or value == "~") and index < len(parts):
+            stroke_proof = _flat_source_dash(parts[index], partition, body)
+            if value == "~" and stroke_proof["pass"]:
+                dash = True
         canonical = '"' if quote else "-" if dash else value
         raw_value = value
-        if dash and partition.get("text_contact_separation") and index < len(parts):
+        if dash and index < len(parts):
             run_end = char_index + 1
-            while run_end < len(text) and text[run_end] in "-‐‑‒–—−":
+            while run_end < len(text) and text[run_end] in "-‐‑‒–—−~":
                 run_end += 1
-            component = parts[index]
-            bb = component["bbox_xyxy_px"]
-            w, ph = bb[2] - bb[0], bb[3] - bb[1]
             next_is_mark = (
                 index + 1 < len(parts)
                 and parts[index + 1]["source_role"] == "RETAINED_PUNCTUATION"
             )
-            stroke = np.zeros((ph, w), dtype=np.uint8)
-            for sy, sx0, sx1 in component.get("source_runs_y_x0_x1", []):
-                if bb[1] <= sy < bb[3]:
-                    stroke[sy - bb[1], max(0, sx0 - bb[0]) : min(w, sx1 - bb[0])] = 1
-            continuous = bool(stroke.size and stroke.any(axis=0).all()) and (
-                cv2.connectedComponents(stroke, connectivity=8)[0] == 2
-            )
             if (
                 run_end > char_index + 1
-                and component["source_role"] == "RETAINED_PUNCTUATION"
                 and not next_is_mark
-                and 0.15 * h <= w <= 1.4 * h
-                and ph <= 0.22 * h
-                and w >= 2.5 * ph
-                and body[1] + 0.25 * h <= (bb[1] + bb[3]) / 2 <= body[1] + 0.8 * h
-                and len(component["source_component_labels"]) == 1
-                and continuous
+                and stroke_proof["pass"]
             ):
                 raw_value = text[char_index:run_end]
                 skip_raw_until = run_end
@@ -1047,12 +1126,17 @@ def _source_canonical_text(text, partition):
                     "source_component_indices": list(range(index, index + count)),
                     "rule": "TWO_ORIGINAL_UPPER_QUOTE_STROKES"
                     if quote
+                    else "ONE_ORIGINAL_FLAT_MIDLINE_STROKE_FOR_RAW_WAVE_SYMBOL"
+                    if "~" in raw_value
                     else "ONE_ORIGINAL_CONTINUOUS_HORIZONTAL_DASH_COMPONENT"
                     if len(raw_value) > 1
                     else "ONE_ORIGINAL_HORIZONTAL_DASH_COMPONENT",
                 }
             )
+            if not quote and ("~" in raw_value or len(raw_value) > 1):
+                report["normalizations"][-1]["original_stroke_proof"] = stroke_proof
         result.append(canonical)
+        report["component_characters"].extend([canonical] * count)
         index += count
     if index != len(parts):
         report["reasons"].append(
@@ -1175,7 +1259,6 @@ def _observed_prefix_conflicts(text, partition, spans):
 def _decision(tesseract_views, model_views, partition, source_observations=()):
     tess, model = [], []
     rejected = []
-    contact = bool(partition.get("text_contact_separation"))
     aggregate_word_scores = []
     for index, view in enumerate(tesseract_views):
         words = view.get("words", [])
@@ -1183,20 +1266,16 @@ def _decision(tesseract_views, model_views, partition, source_observations=()):
         reasons = _whole_source_text(text, words, partition)
         if not view.get("raw_tsv_integrity"):
             reasons.append("RAW_TSV_HAS_INVALID_NONEMPTY_WORD")
-        if not _tesseract_confident(words) and not contact:
-            reasons.append("TESSERACT_UNCHANGED_WORD_GATE_NOT_MET")
-        if contact:
-            # A word-level score conflates a retained contact and punctuation
-            # with the entire label. The contact branch still requires every
-            # original glyph/mark, complete raw word geometry, an exact literal
-            # corroboration and the unchanged PP-OCR per-character thresholds.
-            aggregate_word_scores.append(
-                {
-                    "view": index,
-                    "scores": [w.get("confidence") for w in words],
-                    "strict_legacy_word_gate_met": _tesseract_confident(words),
-                }
-            )
+        # A complete source-bound row uses the same evidence rule whether its
+        # glyphs touch a graphic or already have a real white gap. Every source
+        # component, literal corroboration and strict model character remains.
+        aggregate_word_scores.append(
+            {
+                "view": index,
+                "scores": [w.get("confidence") for w in words],
+                "strict_legacy_word_gate_met": _tesseract_confident(words),
+            }
+        )
         if not reasons:
             canonical = _source_canonical_text(text, partition)
             tess.append((index, canonical["text"], words, canonical))
@@ -1237,8 +1316,15 @@ def _decision(tesseract_views, model_views, partition, source_observations=()):
     if len(matches) != 1:
         reasons.append("NO_UNIQUE_TWO_ENGINE_COMPLETE_RAW_STRING")
     accepted_text = matches[0] if len(matches) == 1 else None
-    if accepted_text is not None and any(t[1] != accepted_text for t in tess):
-        reasons.append("CONFLICTING_CONFIDENT_COMPLETE_TESSERACT_VIEW")
+    conflict_evidence = None
+    if accepted_text is not None:
+        conflict_evidence = glyph_equivalence.verify_raw_character_conflicts(
+            partition, accepted_text,
+            [{"view_index": t[0], "text": t[1], "component_characters": t[3]["component_characters"]} for t in tess],
+            [{"view_index": p[0], "text": p[1], "component_characters": p[2]["component_characters"]} for p in model],
+        )
+        if not conflict_evidence["pass"]:
+            reasons.append("UNRESOLVED_COMPLETE_RAW_CHARACTER_CONFLICT")
     if accepted_text is not None and any(p[1] != accepted_text for p in model):
         reasons.append("CONFLICTING_CONFIDENT_PP_OCR_VIEW")
     prefix_conflicts = (
@@ -1266,12 +1352,264 @@ def _decision(tesseract_views, model_views, partition, source_observations=()):
         "independent_engine_family_count": 2 if not reasons else 0,
         "raw_transcription_rewritten": False,
         "source_glyph_and_punctuation_counts_checked": True,
-        "adoption_basis": POLICY["contact_transcription_rule"]
-        if contact
-        else "two_confident_engines_and_complete_original_row",
+        "adoption_basis": POLICY["complete_row_transcription_rule"],
         "contact_Tesseract_aggregate_word_scores": aggregate_word_scores,
+        "raw_character_conflict_evidence": conflict_evidence,
         "original_observation_prefix_conflicts": prefix_conflicts,
     }
+
+
+def _preexisting_raw_views(gray, partition, dpi, engine, recognizer, output, root):
+    """Freeze the finite existing-raw set before a provisional decision can stop calls."""
+    from .observation_cache import (
+        configured_cache, model_spec, tesseract_identity, tesseract_spec,
+    )
+
+    cache = configured_cache()
+    engine_bytes = tesseract_identity(engine) if cache is not None else None
+    prior_identity_path = output / "model_identity.json"
+    prior_identity = (
+        json.loads(prior_identity_path.read_text(encoding="utf-8"))
+        if prior_identity_path.exists() else None
+    )
+    known, slots = {}, []
+    box = partition["bbox_xyxy_px"]
+    known_dir = output / "known_raw_views"
+    known_dir.mkdir(exist_ok=True)
+    for index in range(POLICY["maximum_views_per_engine"]):
+        for family, spec in [
+            ("Tesseract", POLICY["Tesseract_views"][index]),
+            ("PP-OCR", POLICY["PP_OCR_views"][index]),
+        ]:
+            normalized, actual = _view(gray, partition, spec["scale"], spec["padding"])
+            payload, receipt, original_meta, cache_record = None, None, None, None
+            availability = "ABSENT"
+            if cache is not None:
+                if family == "Tesseract":
+                    request = tesseract_spec(
+                        normalized, actual, padding=spec["padding"], psm=spec["psm"],
+                        dpi=int(dpi) * spec["scale"], engine=engine_bytes,
+                    )
+                    hit = cache.lookup_tesseract(request)
+                else:
+                    original, tensor = independent.prepare_model_input(actual)
+                    request = model_spec(original, tensor, recognizer.identity)
+                    hit = cache.lookup(request)
+                if hit is not None:
+                    payload, receipt = hit
+                    cache_record = cache.root / "entries" / receipt["kind"] / (receipt["key"] + ".json")
+                    availability = "RAW_CACHE"
+            if payload is None and family == "Tesseract":
+                name = f'line-x{spec["scale"]}-p{spec["psm"]}'
+                meta_path, raw_path = output / (name + ".json"), output / (name + ".tsv")
+                if meta_path.exists() or raw_path.exists():
+                    if not meta_path.exists() or not raw_path.exists():
+                        raise ValueError("SINGLE_LINE_PARTIAL_RAW_CHECKPOINT")
+                    original_meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                    payload = raw_path.read_bytes()
+                    expected = {
+                        "crop_xyxy_px": [0, 0, normalized.shape[1], normalized.shape[0]],
+                        "psm": spec["psm"], "crop_array_sha256": base.source_array_sha256(normalized),
+                        "pixel_scale": [1, 1], "source_pixels_modified": False,
+                        "language": "eng", "recognition_dpi": int(dpi) * spec["scale"],
+                        "external_white_padding_px": spec["padding"],
+                        "padding_replaces_source_pixels": False,
+                    }
+                    if (
+                        original_meta.get("specification") != expected
+                        or original_meta.get("status") != "COMPLETED"
+                        or original_meta.get("return_code") != 0
+                        or original_meta.get("tsv_sha256") != _sha(payload)
+                    ):
+                        raise ValueError("SINGLE_LINE_RAW_CHECKPOINT_CHANGED")
+                    receipt = original_meta.get("raw_observation_cache")
+                    availability = "OUTPUT_CHECKPOINT"
+            if payload is None and family == "PP-OCR":
+                raw_path, png_path = (
+                    output / f"model-view-{index}{suffix}" for suffix in (".json", ".png")
+                )
+                if raw_path.exists() or png_path.exists():
+                    if not raw_path.exists() or not png_path.exists() or prior_identity != recognizer.identity:
+                        raise ValueError("SINGLE_LINE_MODEL_CHECKPOINT_IDENTITY_CHANGED")
+                    payload = raw_path.read_bytes()
+                    prediction = json.loads(payload)
+                    original, tensor = independent.prepare_model_input(actual)
+                    if (
+                        not _model_integrity(prediction)
+                        or prediction.get("input_array_sha256") != _sha(original.tobytes())
+                        or prediction.get("model_tensor_sha256") != _sha(tensor.tobytes())
+                    ):
+                        raise ValueError("SINGLE_LINE_MODEL_CHECKPOINT_CHANGED")
+                    availability = "OUTPUT_CHECKPOINT"
+            slot = {
+                "engine": family, "view_index": index, "normalization": spec,
+                "input_array_sha256": _sha(actual.tobytes()), "availability": availability,
+                "raw_observation_cache": receipt,
+            }
+            if payload is not None:
+                name = f"{'tesseract' if family == 'Tesseract' else 'ppocr'}-{index}"
+                raw_copy = known_dir / (name + ".raw")
+                raw_copy.write_bytes(payload)
+                slot["raw_payload"] = _file_record(raw_copy, root)
+                if cache_record is not None:
+                    record_copy = known_dir / (name + ".cache-record.json")
+                    record_copy.write_bytes(cache_record.read_bytes())
+                    slot["cache_record"] = _file_record(record_copy, root)
+                if original_meta is not None:
+                    meta_copy = known_dir / (name + ".checkpoint-metadata.json")
+                    save_json(meta_copy, original_meta)
+                    slot["checkpoint_metadata"] = _file_record(meta_copy, root)
+                known[(family, index)] = {
+                    "payload": payload, "receipt": receipt,
+                    "original_metadata": original_meta, "engine_identity": engine_bytes,
+                    "availability": availability,
+                }
+            slots.append(slot)
+    inventory = {
+        "schema": "single-line-preexisting-raw-view-inventory-v1",
+        "source_array_sha256": base.source_array_sha256(gray),
+        "source_bbox_xyxy_px": box,
+        "recorded_before_any_recognition_or_adoption": True,
+        "missing_views_do_not_request_recognition": True,
+        "views": slots,
+    }
+    path = output / "preexisting_raw_view_inventory.json"
+    save_json(path, inventory)
+    return known, _file_record(path, root)
+
+
+def _materialize_known_tesseract(hit, normalized, actual, spec, dpi, output, name, engine):
+    """Use captured bytes directly: a later cache miss can never launch a process."""
+    from PIL import Image
+
+    payload, receipt = hit["payload"], hit["receipt"]
+    old = hit["original_metadata"] or (receipt or {}).get("producer", {}).get("metadata") or {}
+    raw = payload.decode("utf-8")
+    base._check_reused_tsv_encoding(raw, old)
+    pad, psm, scale = spec["padding"], spec["psm"], spec["scale"]
+    png, tsv, meta_path = (output / (name + suffix) for suffix in (".png", ".tsv", ".json"))
+    Image.fromarray(actual).save(png)
+    tsv.write_bytes(payload)
+    command = old.get("command") or [
+        engine["executable"], str(png), "stdout", "-l", "eng", "--oem", "1",
+        "--psm", str(psm), "--dpi", str(int(dpi) * scale), "tsv",
+    ]
+    specification = {
+        "crop_xyxy_px": [0, 0, normalized.shape[1], normalized.shape[0]],
+        "psm": psm, "crop_array_sha256": base.source_array_sha256(normalized),
+        "pixel_scale": [1, 1], "source_pixels_modified": False,
+        "language": "eng", "recognition_dpi": int(dpi) * scale,
+        "external_white_padding_px": pad, "padding_replaces_source_pixels": False,
+    }
+    metadata = {
+        "status": "COMPLETED", "return_code": 0, "specification": specification,
+        "command": command, "command_executed_for_this_request": False,
+        "engine_version": engine.get("version", old.get("engine_version")),
+        "engine_identity": (receipt or {}).get("producer", {}).get("engine", old.get("engine_identity")),
+        "consumer_installed_engine_identity": hit["engine_identity"],
+        "recognition_output_encoding": old.get("recognition_output_encoding"),
+        "tsv_sha256": _sha(payload), "image_sha256": _sha(png.read_bytes()),
+        "raw_observation_cache": receipt,
+        "reused_checkpoint": hit["availability"] == "OUTPUT_CHECKPOINT",
+        "reused_raw_observation": hit["availability"] == "RAW_CACHE",
+        "resource_scope": "Preexisting raw bytes replayed; no recognition child launched",
+    }
+    save_json(meta_path, metadata)
+    words = base._parse_tsv(raw, [-pad, -pad, actual.shape[1] - pad, actual.shape[0] - pad], name, psm)
+    return base._bind_ocr_words(words, specification, metadata), metadata
+
+
+def _verify_preexisting_raw_views(gray, partition, evidence, root):
+    """Every known record must be present, even when the other engine has no view."""
+    from .observation_cache import (
+        SCHEMA as cache_schema,
+        digest as cache_digest,
+        historical_tesseract_spec,
+        model_spec,
+        tesseract_spec,
+    )
+
+    inventory = json.loads(_read_record(root, evidence["preexisting_raw_view_inventory"]))
+    if (
+        inventory.get("schema") != "single-line-preexisting-raw-view-inventory-v1"
+        or inventory.get("source_array_sha256") != base.source_array_sha256(gray)
+        or inventory.get("source_bbox_xyxy_px") != partition["bbox_xyxy_px"]
+        or inventory.get("recorded_before_any_recognition_or_adoption") is not True
+        or inventory.get("missing_views_do_not_request_recognition") is not True
+    ):
+        raise ValueError("SINGLE_LINE_KNOWN_RAW_INVENTORY_CHANGED")
+    saved = {
+        "Tesseract": {v["view_index"]: v for v in evidence["tesseract_views"]},
+        "PP-OCR": {v["view_index"]: v for v in evidence["ppocr_views"]},
+    }
+    expected_keys = {(family, i) for family in saved for i in range(POLICY["maximum_views_per_engine"])}
+    rows = inventory["views"]
+    keys = [(row["engine"], row["view_index"]) for row in rows]
+    if len(keys) != len(set(keys)) or set(keys) != expected_keys:
+        raise ValueError("SINGLE_LINE_KNOWN_RAW_PLAN_INCOMPLETE")
+    for slot in rows:
+        family, index = slot["engine"], slot["view_index"]
+        spec = POLICY["Tesseract_views" if family == "Tesseract" else "PP_OCR_views"][index]
+        normalized, actual = _view(gray, partition, spec["scale"], spec["padding"])
+        if slot["normalization"] != spec or slot["input_array_sha256"] != _sha(actual.tobytes()):
+            raise ValueError("SINGLE_LINE_KNOWN_RAW_SOURCE_INPUT_CHANGED")
+        availability = slot["availability"]
+        if availability == "ABSENT":
+            if any(k in slot for k in ("raw_payload", "cache_record", "checkpoint_metadata")) or slot["raw_observation_cache"] is not None:
+                raise ValueError("SINGLE_LINE_MISSING_RAW_HAS_RECORD")
+            continue
+        if availability not in {"RAW_CACHE", "OUTPUT_CHECKPOINT"} or index not in saved[family]:
+            raise ValueError("SINGLE_LINE_KNOWN_RAW_VIEW_OMITTED")
+        payload = _read_record(root, slot["raw_payload"])
+        view = saved[family][index]
+        if family == "Tesseract":
+            if payload != _read_record(root, view["raw_tsv"]) or view["command_executed_for_this_request"]:
+                raise ValueError("SINGLE_LINE_KNOWN_TESSERACT_RAW_CHANGED")
+        elif json.loads(payload) != view["prediction"] or view["model_inference_executed_for_this_request"]:
+            raise ValueError("SINGLE_LINE_KNOWN_MODEL_RAW_CHANGED")
+        if availability == "RAW_CACHE":
+            record = json.loads(_read_record(root, slot["cache_record"]))
+            receipt = slot["raw_observation_cache"]
+            if family == "Tesseract":
+                metadata = json.loads(_read_record(root, view["metadata"]))
+                expected_request = tesseract_spec(
+                    normalized, actual, padding=spec["padding"], psm=spec["psm"],
+                    dpi=evidence["recognition_dpi"] * spec["scale"],
+                    engine=metadata["consumer_installed_engine_identity"],
+                )
+                if receipt.get("kind") == "historical-tesseract-tsv":
+                    # Preserve the explicitly limited historical namespace. Its
+                    # input pixels/configuration must still match this exact
+                    # source view; this does not manufacture missing engine hashes.
+                    expected_request = historical_tesseract_spec(
+                        expected_request, record["specification"]["source_sha256"],
+                    )
+                actual_receipt = metadata.get("raw_observation_cache")
+            else:
+                identity = json.loads(_read_record(root, evidence["model_identity"]))
+                original, tensor = independent.prepare_model_input(actual)
+                expected_request = model_spec(original, tensor, identity)
+                actual_receipt = view["observation_receipt"].get("raw_observation_cache")
+            if record.get("specification") != expected_request:
+                raise ValueError("SINGLE_LINE_KNOWN_CACHE_SOURCE_CONFIGURATION_CHANGED")
+            if (
+                record.get("schema") != cache_schema
+                or record.get("key") != cache_digest(expected_request)
+                or receipt.get("key") != record["key"]
+                or receipt.get("kind") != expected_request["kind"]
+                or receipt.get("producer") != record.get("producer")
+                or actual_receipt != receipt
+                or receipt.get("record_sha256") != slot["cache_record"]["sha256"]
+                or record.get("payload_sha256") != _sha(payload)
+                or receipt.get("payload_sha256") != _sha(payload)
+                or record.get("payload_bytes") != len(payload)
+            ):
+                raise ValueError("SINGLE_LINE_KNOWN_CACHE_RECORD_CHANGED")
+        elif family == "Tesseract":
+            original_meta = json.loads(_read_record(root, slot["checkpoint_metadata"]))
+            if original_meta.get("tsv_sha256") != _sha(payload):
+                raise ValueError("SINGLE_LINE_KNOWN_CHECKPOINT_RAW_CHANGED")
+    return {"all_preexisting_views_replayed": True, "known_view_count": sum(r["availability"] != "ABSENT" for r in rows)}
 
 
 def recognize_single_line_label(
@@ -1310,76 +1648,82 @@ def recognize_single_line_label(
         if _RECOGNIZER is None:
             _RECOGNIZER = independent.IndependentRecognizer()
         recognizer = _RECOGNIZER
+    known_raw, known_inventory = _preexisting_raw_views(
+        gray, partition, dpi, engine, recognizer, output, root
+    )
     save_json(output / "model_identity.json", recognizer.identity)
     box = partition["bbox_xyxy_px"]
     original = gray[box[1] : box[3], box[0] : box[2]]
     Image.fromarray(original).save(output / "original_source.png")
-    t_views, p_views = [], []
+    t_views, p_views, decision = [], [], None
     for index, (t_spec, p_spec) in enumerate(
         zip(POLICY["Tesseract_views"], POLICY["PP_OCR_views"])
     ):
         check_cancel("SINGLE_LINE_LABEL_VIEW")
-        scale, pad, psm = t_spec["scale"], t_spec["padding"], t_spec["psm"]
-        normalized, actual = _view(gray, partition, scale, pad)
-        name = f"line-x{scale}-p{psm}"
-        words, metadata = base._ocr(
-            normalized,
-            [0, 0, normalized.shape[1], normalized.shape[0]],
-            psm,
-            output,
-            name,
-            None,
-            padding_px=pad,
-            dpi=int(dpi) * scale,
-        )
-        raw_valid = _raw_tsv_integrity((output / (name + ".tsv")).read_bytes())
-        t_views.append(
-            {
-                "view_index": index,
-                "normalization": {
-                    **t_spec,
-                    "source_bbox_xyxy_px": box,
-                    "resampling": "NEAREST_NEIGHBOR_REPEATED_SOURCE_SAMPLES",
-                    "input_array_sha256": _sha(actual.tobytes()),
-                    "original_source_pixels_modified": False,
-                },
-                "raw_tsv": _file_record(output / (name + ".tsv"), root),
-                "metadata": _file_record(output / (name + ".json"), root),
-                "recognition_image": _file_record(output / (name + ".png"), root),
-                "words": _mapped_words(words, box, scale),
-                "raw_tsv_integrity": raw_valid,
-                "command_executed_for_this_request": bool(
-                    metadata.get("command_executed_for_this_request")
-                ),
-            }
-        )
-        _, actual_p = _view(gray, partition, p_spec["scale"], p_spec["padding"])
-        prediction = recognizer.recognize(actual_p)
-        pname = f"model-view-{index}"
-        Image.fromarray(actual_p).save(output / (pname + ".png"))
-        save_json(output / (pname + ".json"), prediction)
-        receipt = getattr(recognizer, "last_observation", {})
-        p_views.append(
-            {
-                "view_index": index,
-                "normalization": {
-                    **p_spec,
-                    "source_bbox_xyxy_px": box,
-                    "input_array_sha256": _sha(actual_p.tobytes()),
-                    "original_source_pixels_modified": False,
-                },
-                "prediction_file": _file_record(output / (pname + ".json"), root),
-                "recognition_image": _file_record(output / (pname + ".png"), root),
-                "prediction": prediction,
-                "observation_receipt": receipt,
-                "model_inference_executed_for_this_request": bool(
-                    receipt.get("model_inference_executed_for_this_request", True)
-                ),
-            }
-        )
+        allow_new = decision is None or not decision["accepted"]
+        t_hit = known_raw.get(("Tesseract", index))
+        if allow_new or t_hit is not None:
+            scale, pad, psm = t_spec["scale"], t_spec["padding"], t_spec["psm"]
+            normalized, actual = _view(gray, partition, scale, pad)
+            name = f"line-x{scale}-p{psm}"
+            if t_hit is not None:
+                words, metadata = _materialize_known_tesseract(
+                    t_hit, normalized, actual, t_spec, dpi, output, name, engine
+                )
+            else:
+                words, metadata = base._ocr(
+                    normalized, [0, 0, normalized.shape[1], normalized.shape[0]],
+                    psm, output, name, None, padding_px=pad, dpi=int(dpi) * scale,
+                )
+            raw_valid = _raw_tsv_integrity((output / (name + ".tsv")).read_bytes())
+            t_views.append(
+                {
+                    "view_index": index,
+                    "normalization": {
+                        **t_spec, "source_bbox_xyxy_px": box,
+                        "resampling": "NEAREST_NEIGHBOR_REPEATED_SOURCE_SAMPLES",
+                        "input_array_sha256": _sha(actual.tobytes()),
+                        "original_source_pixels_modified": False,
+                    },
+                    "raw_tsv": _file_record(output / (name + ".tsv"), root),
+                    "metadata": _file_record(output / (name + ".json"), root),
+                    "recognition_image": _file_record(output / (name + ".png"), root),
+                    "words": _mapped_words(words, box, scale),
+                    "raw_tsv_integrity": raw_valid,
+                    "command_executed_for_this_request": bool(metadata.get("command_executed_for_this_request")),
+                }
+            )
+        p_hit = known_raw.get(("PP-OCR", index))
+        if allow_new or p_hit is not None:
+            _, actual_p = _view(gray, partition, p_spec["scale"], p_spec["padding"])
+            if p_hit is not None:
+                prediction = json.loads(p_hit["payload"])
+                receipt = {
+                    "raw_observation_cache": p_hit["receipt"],
+                    "model_inference_executed_for_this_request": False,
+                    "reused_checkpoint": p_hit["availability"] == "OUTPUT_CHECKPOINT",
+                }
+            else:
+                prediction = recognizer.recognize(actual_p)
+                receipt = getattr(recognizer, "last_observation", {})
+            pname = f"model-view-{index}"
+            Image.fromarray(actual_p).save(output / (pname + ".png"))
+            save_json(output / (pname + ".json"), prediction)
+            p_views.append(
+                {
+                    "view_index": index,
+                    "normalization": {
+                        **p_spec, "source_bbox_xyxy_px": box,
+                        "input_array_sha256": _sha(actual_p.tobytes()),
+                        "original_source_pixels_modified": False,
+                    },
+                    "prediction_file": _file_record(output / (pname + ".json"), root),
+                    "recognition_image": _file_record(output / (pname + ".png"), root),
+                    "prediction": prediction, "observation_receipt": receipt,
+                    "model_inference_executed_for_this_request": bool(receipt.get("model_inference_executed_for_this_request", True)),
+                }
+            )
         decision = _decision(t_views, p_views, partition, source_observations)
-        if decision["accepted"]:
-            break
     geometry = (
         {
             "text": decision["text"],
@@ -1409,6 +1753,7 @@ def recognize_single_line_label(
         "source_array_sha256": base.source_array_sha256(gray),
         "tesseract_views": t_views,
         "ppocr_views": p_views,
+        "preexisting_raw_view_inventory": known_inventory,
         "model_identity": _file_record(output / "model_identity.json", root),
         "producer": _producer_identity(),
         "upstream_observations": observation_binding,
@@ -1487,7 +1832,12 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
         ):
             raise ValueError("SINGLE_LINE_ORIGINAL_IMAGE_CHANGED")
         saved_t, saved_p = evidence["tesseract_views"], evidence["ppocr_views"]
-        if not 1 <= len(saved_t) <= 2 or len(saved_t) != len(saved_p):
+        if (
+            not 1 <= len(saved_t) <= POLICY["maximum_views_per_engine"]
+            or not 1 <= len(saved_p) <= POLICY["maximum_views_per_engine"]
+            or [v["view_index"] for v in saved_t] != list(range(len(saved_t)))
+            or [v["view_index"] for v in saved_p] != list(range(len(saved_p)))
+        ):
             raise ValueError("SINGLE_LINE_FINITE_VIEW_COUNT_CHANGED")
         dpi = evidence.get("recognition_dpi")
         if isinstance(dpi, bool) or not isinstance(dpi, int) or dpi <= 0:
@@ -1618,6 +1968,7 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
             ):
                 raise ValueError("SINGLE_LINE_MODEL_EXECUTION_RECEIPT_CHANGED")
             p_views.append({"prediction": prediction})
+        known_views = _verify_preexisting_raw_views(gray, partition, evidence, evidence_root)
         decision = _decision(t_views, p_views, partition, source_observations)
         if decision != evidence.get("decision") or not decision["accepted"]:
             raise ValueError("SINGLE_LINE_RAW_DECISION_NOT_APPROVED")
@@ -1663,6 +2014,7 @@ def verify_single_line_label_evidence(gray, roi, evidence, evidence_root):
                 "PP_OCR_views_replayed": len(saved_p),
                 "all_raw_artifacts_read_and_hashed": True,
                 "original_pixels_derived_views_model_tensors_and_adoption_recomputed": True,
+                **known_views,
             }
         )
     except (

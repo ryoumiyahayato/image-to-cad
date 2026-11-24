@@ -211,6 +211,10 @@ def _controlled_records(monkeypatch, evidence):
 
         def recognize(self, image):
             text = observations[calls["model"]][0]
+            # The second complete row must stay genuinely pending under the
+            # unchanged PP character gate. Its Tesseract aggregate score of
+            # 70 is now advisory and cannot by itself create a pending row.
+            confidence = 0.999 if calls["model"] == 0 else 0.90
             calls["model"] += 1
             original, tensor = independent.prepare_model_input(image)
             self.last_observation = {"model_inference_executed_for_this_request": True}
@@ -221,12 +225,12 @@ def _controlled_records(monkeypatch, evidence):
                         "time_step": index + 1,
                         "token_index": index + 50,
                         "character": char,
-                        "score": 0.999,
+                        "score": confidence,
                     }
                     for index, char in enumerate(text)
                 ],
-                "model_mean_confidence": 0.999,
-                "minimum_emitted_character_confidence": 0.999,
+                "model_mean_confidence": confidence,
+                "minimum_emitted_character_confidence": confidence,
                 "input_array_sha256": _hash(original.tobytes()),
                 "input_shape_px": list(original.shape),
                 "model_tensor_sha256": _hash(tensor.tobytes()),
@@ -275,6 +279,25 @@ def _fixture(tmp_path, monkeypatch, prior_ownership=False):
     )
     assert single["single_line_label_recovery"]["accepted_labels"] == 1
     assert single["single_line_label_recovery"]["pending_labels"] == 1
+    pending_id = single["single_line_label_recovery"]["attempts"][1]["id"]
+    pending = read_json(
+        evidence / "single_line_labels/labels" / pending_id / "label_result.json"
+    )
+    decision = pending["evidence"]["decision"]
+    assert pending["accepted"] is False and pending["geometry"] is None
+    assert decision["reasons"] == ["NO_UNIQUE_TWO_ENGINE_COMPLETE_RAW_STRING"]
+    rejected = decision["unaccepted_raw_views_retained"]
+    assert len(rejected) == 2
+    assert all(
+        row["engine"] == "PP-OCR"
+        and row["raw_text"] == "CD-45,6"
+        and row["reasons"] == ["PP_OCR_UNCHANGED_CHARACTER_GATE_NOT_MET"]
+        for row in rejected
+    )
+    assert decision["contact_Tesseract_aggregate_word_scores"] == [
+        {"view": index, "scores": [70.0], "strict_legacy_word_gate_met": False}
+        for index in range(2)
+    ]
     final, row = _ownership(evidence, single, stage, producers)
     stage["text"] = row
     save_json(evidence / "completed_stages.json", stage)

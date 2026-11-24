@@ -67,6 +67,56 @@ def _source_evidence(obj):
     return value if isinstance(value, dict) else {}
 
 
+def source_row_layout_adoption(obj):
+    """Validate a specialized font declaration without accepting arbitrary paths."""
+    evidence = _source_evidence(obj).get(FIELD)
+    adoption = evidence.get("layout_adoption", {}) if isinstance(evidence, dict) else {}
+    if not isinstance(adoption, dict) or adoption.get("selected_layout") is None:
+        return None
+    from .source_row_font_registry import FONT_SPEC
+
+    if (adoption.get("pass") is not True or adoption.get("font") != FONT_SPEC
+            or not isinstance(adoption.get("selected_layout"), dict)):
+        raise ValueError("SOURCE_ROW_LAYOUT_OR_FONT_DECLARATION_INVALID")
+    return adoption
+
+
+def resolve_saved_text_font(path, metadata, obj):
+    """Bind the actual adjacent bytes and permission to the fixed font profile."""
+    path = Path(path)
+    adopted = source_row_layout_adoption(obj)
+    if adopted is None:
+        record = metadata["font"]
+        filename, style = "DejaVuSans.ttf", "I2CAD_TEXT"
+        if record.get("font") != filename:
+            raise ValueError("NATIVE_TEXT_LEGACY_FONT_DECLARATION_CHANGED")
+    else:
+        from .source_row_font_registry import FONT_SPEC
+
+        filename, style = FONT_SPEC["font"], FONT_SPEC["style"]
+        entries = [row for row in metadata.get("fonts", []) if row.get("font") == filename]
+        if len(entries) != 1 or any(entries[0].get(k) != v for k, v in FONT_SPEC.items()):
+            raise ValueError("SOURCE_ROW_SAVED_FONT_REGISTRY_BINDING_MISSING_OR_CHANGED")
+        record = entries[0]
+        license_path = path.parent / FONT_SPEC["bundled_license"]
+        if (not license_path.is_file() or license_path.is_symlink()
+                or license_path.stat().st_size != FONT_SPEC["license_bytes"]
+                or _sha(license_path) != FONT_SPEC["license_sha256"]):
+            raise ValueError("SOURCE_ROW_SAVED_FONT_PERMISSION_CHANGED")
+        companion = path.parent / FONT_SPEC["librecad_font"]
+        if (not companion.is_file() or companion.is_symlink()
+                or companion.stat().st_size != FONT_SPEC["librecad_bytes"]
+                or _sha(companion) != FONT_SPEC["librecad_sha256"]):
+            raise ValueError("SOURCE_ROW_SAVED_LFF_COMPANION_CHANGED")
+    font_path = path.parent / filename
+    if (not font_path.is_file() or font_path.is_symlink()
+            or _sha(font_path) != record.get("sha256")):
+        raise ValueError("NATIVE_TEXT_ACTUAL_ADJACENT_FONT_BYTES_CHANGED")
+    if adopted is not None and font_path.stat().st_size != record["bytes"]:
+        raise ValueError("SOURCE_ROW_SAVED_FONT_SIZE_CHANGED")
+    return record, font_path, style
+
+
 def _same(left, right):
     if isinstance(left, (str, bool)) or left is None:
         return left == right
@@ -209,9 +259,8 @@ def export_text_geometry_binding(entity, obj, font_record, layout=None):
         "actual_text_attributes": text_attributes(entity),
         "style_attributes": _style_attributes(entity.doc, entity.dxf.style),
         "font": {"font": font_record["font"], "sha256": font_record["sha256"]},
-        "layout_basis": "source_ink_box"
-        if required
-        else "legacy_cap_height_and_advance_width",
+        "layout_basis": "source_component_affine" if source_row_layout_adoption(obj)
+        else "source_ink_box" if required else "legacy_cap_height_and_advance_width",
         "source_ink_layout": layout,
         "requires_single_line_source_replay": required,
         "recovery_evidence_sha256": _digest(evidence) if required else None,
@@ -236,7 +285,20 @@ def _expected_attributes(entity, obj, roi, dpi, font_path, recovered):
         "color": 256,
     }
     if recovered:
-        layout = source_ink_text_layout(geometry, roi, dpi, font_path)
+        adopted = source_row_layout_adoption(obj)
+        if adopted is not None:
+            from .single_line_source_layout import fit_source_glyph_layout
+
+            fitted = fit_source_glyph_layout(
+                geometry, _source_evidence(obj)[FIELD]["source_partition"], roi, dpi, font_path,
+            )
+            if (not fitted["pass"]
+                    or fitted["selected_layout"] != adopted["selected_layout"]):
+                raise ValueError("SOURCE_ROW_SAVED_LAYOUT_SOURCE_REPLAY_MISMATCH")
+            layout = fitted["selected_layout"]
+            common["style"] = adopted["font"]["style"]
+        else:
+            layout = source_ink_text_layout(geometry, roi, dpi, font_path)
         return {
             **common,
             **{k: layout[k] for k in ("insert", "height", "width", "rotation")},
@@ -369,23 +431,18 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
             )
             if entity.dxftype() != "TEXT":
                 raise ValueError("NATIVE_TEXT_ENTITY_TYPE_CHANGED")
-            font_record = metadata["font"]
-            font_path = path.parent / "DejaVuSans.ttf"
+            font_record, font_path, expected_style = resolve_saved_text_font(path, metadata, obj)
             checks["portable_font_identity_matches"] = (
-                font_record.get("font") == "DejaVuSans.ttf"
-                and font_path.is_file()
-                and not font_path.is_symlink()
-                and _sha(font_path) == font_record.get("sha256")
-                and binding.get("font")
-                == {"font": "DejaVuSans.ttf", "sha256": font_record.get("sha256")}
+                binding.get("font")
+                == {"font": font_record["font"], "sha256": font_record["sha256"]}
             )
             current_style = _style_attributes(doc, entity.dxf.style)
             checks["style_is_expected_portable_font"] = (
-                entity.dxf.style == "I2CAD_TEXT"
+                entity.dxf.style == expected_style
                 and current_style
                 == {
-                    "name": "I2CAD_TEXT",
-                    "font": "DejaVuSans.ttf",
+                    "name": expected_style,
+                    "font": font_record["font"],
                     "bigfont": "",
                     "width": 1.0,
                     "height": 0.0,
@@ -412,7 +469,8 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
                 actual_attributes
             )
             checks["layout_contract_matches"] = binding.get("layout_basis") == (
-                "source_ink_box" if required else "legacy_cap_height_and_advance_width"
+                "source_component_affine" if source_row_layout_adoption(obj)
+                else "source_ink_box" if required else "legacy_cap_height_and_advance_width"
             )
             checks["source_ink_layout_matches"] = (
                 binding.get("source_ink_layout") == layout
@@ -461,17 +519,31 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
 
                 if len(entries) != 1 or entries[0].dxftype() != "TEXT":
                     raise ValueError("SINGLE_LINE_CLEARANCE_ACTUAL_TEXT_MISSING_OR_AMBIGUOUS")
+                _, actual_font_path, expected_style = resolve_saved_text_font(path, metadata, obj)
+                if entries[0].dxf.style != expected_style:
+                    raise ValueError("SINGLE_LINE_CLEARANCE_ACTUAL_STYLE_CHANGED")
                 # This independently reads the saved entity's actual transform.
                 # Repeating the writer's expected layout can approve the same
                 # newly closed source white gap twice.
                 clearance = check_text_round_white_gaps(
                     gray, roi, obj["source_evidence"][FIELD]["source_partition"],
-                    text_attributes(entries[0]), path.parent / "DejaVuSans.ttf", dpi,
+                    text_attributes(entries[0]), actual_font_path, dpi,
                 ) if replay.get("pass") is True else {
                     "pass": False, "reason": "SINGLE_LINE_CLEARANCE_SOURCE_NOT_REPLAYED",
                     "actual_geometry_inspection_not_run": True,
                 }
                 source["actual_saved_text_round_clearance"] = clearance
+                component_layout = {"pass": True, "required": False}
+                if source_row_layout_adoption(obj) is not None:
+                    from .single_line_source_layout import verify_source_glyph_layout
+
+                    component_layout = verify_source_glyph_layout(
+                        obj["geometry"], obj["source_evidence"][FIELD]["source_partition"],
+                        roi, dpi, actual_font_path, text_attributes(entries[0]), gray=gray,
+                    ) if replay.get("pass") is True else {
+                        "pass": False, "reason": "SINGLE_LINE_LAYOUT_SOURCE_NOT_REPLAYED",
+                    }
+                source["actual_saved_source_component_layout"] = component_layout
                 source["source_text_matches_candidate"] = (
                     replay.get("text") == obj["geometry"]["text"]
                 )
@@ -488,6 +560,7 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
                     and source["source_bbox_matches_candidate"]
                     and source["source_rotation_is_supported"]
                     and clearance["pass"]
+                    and component_layout["pass"]
                 )
             except (
                 OSError,

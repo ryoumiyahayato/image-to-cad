@@ -29,6 +29,11 @@ test-output/
 resources/fonts/DejaVuSans.ttf
 resources/fonts/DejaVuSans.LICENSE.txt
 resources/fonts/native-dejavu.lock.json
+resources/fonts/osifont-lgpl3fe.ttf
+resources/fonts/source-row-font.lock.json
+resources/fonts/osifont-cad-metrics.ttf
+resources/fonts/I2CAD_SOURCE_ROW.lff
+resources/fonts/osifont-cad-metrics.LICENSE.txt
 resources/ocr/
 resources/native-build.json
 
