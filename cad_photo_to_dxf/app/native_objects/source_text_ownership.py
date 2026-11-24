@@ -31,7 +31,7 @@ from .text_line_domains import POLICY as ROW_POLICY
 from .text_regions import POLICY as TEXT_POLICY
 from .text_regions import _rle, source_array_sha256
 
-VERSION = "isolated_source_component_text_ownership_v3_complete_line_glyphs"
+VERSION = "isolated_source_component_text_ownership_v4_verified_complete_rows"
 
 
 def _digest(value):
@@ -727,8 +727,74 @@ def _complete_line_glyph_ownership(texts, image, roi, labels, stats, candidates)
     return additions, events
 
 
+def _verified_complete_row_components(texts, image, roi, labels, stats, evidence_root):
+    """Preserve proved whole glyph/mark components when a raw word score is low.
+
+    A rectangle or a successful sidecar flag cannot establish this ownership.
+    Replay the complete saved row, then match each component to its entire
+    original ink. Shared contact/graphic ink never grants exclusive ownership.
+    """
+    from . import single_line_labels
+
+    witnesses, replays = {}, []
+    for region in texts["regions"]:
+        proof = region.get("single_line_recovery")
+        if not proof or not region.get("complete"):
+            continue
+        if evidence_root is None:
+            replays.append({"region_id": region["id"], "pass": False,
+                            "reason": "COMPLETE_ROW_EVIDENCE_ROOT_MISSING"})
+            continue
+        check = single_line_labels.verify_single_line_label_evidence(
+            image, roi, proof, evidence_root
+        )
+        bound = (
+            check.get("pass") is True
+            and check.get("text") == region.get("text")
+            and check.get("bbox_xyxy_px") == region.get("bbox_xyxy_px")
+        )
+        replays.append({"region_id": region["id"], "pass": bound,
+                        "source_replay": check})
+        if not bound:
+            continue
+        partition = proof["source_partition"]
+        separation = partition.get("text_contact_separation", {})
+        graphic_runs = [
+            *partition.get("recognition_excluded_graphic_runs_y_x0_x1", []),
+            *separation.get("recognition_excluded_source_runs", []),
+        ]
+        shared_runs = separation.get("shared_original_contact_runs", [])
+        for index, component in enumerate(partition["components"]):
+            runs = component["source_runs_y_x0_x1"]
+            if not runs:
+                continue
+            ys = np.array([y for y, x0, x1 in runs for _ in range(x0, x1)], dtype=int)
+            xs = np.array([x for _, x0, x1 in runs for x in range(x0, x1)], dtype=int)
+            source_labels = np.unique(labels[ys - roi[1], xs - roi[0]])
+            if len(source_labels) != 1 or not source_labels[0]:
+                continue
+            label = int(source_labels[0])
+            x, y, width, height, area = map(int, stats[label])
+            actual_runs = _rle(labels[y:y+height, x:x+width] == label,
+                               [x + roi[0], y + roi[1]])
+            if actual_runs != runs or len(xs) != area:
+                continue
+            if any(np.any((ys == gy) & (xs >= lo) & (xs < hi))
+                   for gy, lo, hi in [*graphic_runs, *shared_runs]):
+                continue
+            witnesses.setdefault(label, []).append({
+                "region_id": region["id"], "component_index": index,
+                "source_role": component["source_role"],
+                "whole_original_component_runs_y_x0_x1": actual_runs,
+                "source_partition_sha256": _digest(partition),
+                "complete_row_source_and_raw_recognition_replayed": True,
+                "independent_graphic_or_shared_contact_pixels_claimed": False,
+            })
+    return witnesses, replays
+
+
 def reconcile_source_text_ownership(
-    text_data, image, roi, geometry_candidates, output_dir=None
+    text_data, image, roi, geometry_candidates, output_dir=None, *, evidence_root=None
 ):
     """Return a deep-copied text result and a complete source-ownership audit.
 
@@ -798,6 +864,9 @@ def reconcile_source_text_ownership(
     }
     glyph_additions, glyph_events = _complete_line_glyph_ownership(
         result, image, roi, labels, stats, all_candidates_by_label
+    )
+    complete_row_witnesses, complete_row_replays = _verified_complete_row_components(
+        result, image, roi, labels, stats, evidence_root
     )
     for label, candidates in sorted(candidates_by_label.items()):
         x, y, width, height, area = map(int, stats[label])
@@ -870,6 +939,7 @@ def reconcile_source_text_ownership(
             ),
             "no_neighboring_source_glyph_row_witness": not neighbor_witnesses,
             "no_fragmented_character_source_witness": not fragmented_character_witnesses,
+            "no_verified_complete_row_component_ownership": not complete_row_witnesses.get(label),
             "component_is_in_existing_text_candidate_mask": bool(mask_regions),
         }
         release = all(checks.values())
@@ -889,6 +959,7 @@ def reconcile_source_text_ownership(
                 "neighboring_source_glyph_row_witnesses": neighbor_witnesses,
                 "independent_geometry_evidence": independent,
                 "fragmented_character_source_witnesses": fragmented_character_witnesses,
+                "verified_complete_row_component_witnesses": complete_row_witnesses.get(label, []),
                 "checks": checks,
                 "decision": "RELEASE_TO_SOURCE_GEOMETRY_CLASSIFICATION"
                 if release
@@ -987,6 +1058,7 @@ def reconcile_source_text_ownership(
         },
         "events": events,
         "complete_line_glyph_events": glyph_events,
+        "complete_row_source_replays": complete_row_replays,
         "mask_changes": mask_changes,
         "released_component_labels": sorted(released),
         "released_unique_source_pixels": sum(

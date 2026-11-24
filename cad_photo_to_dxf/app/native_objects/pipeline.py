@@ -221,6 +221,14 @@ def _completed_text_checkpoint(
         "app.native_objects.text_confirmation": "text_confirmation.py",
         "app.native_objects.text_context_ownership": "text_context_ownership.py",
         "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
+        "app.native_objects.text_contact_geometry": "text_contact_geometry.py",
+        "app.native_objects.text_contact_partition": "text_contact_partition.py",
+        "app.native_objects.single_line_neighbor_clearance": "single_line_neighbor_clearance.py",
+        "app.native_objects.single_line_text_audit": "single_line_text_audit.py",
+        "app.native_objects.circular_markers": "circular_markers.py",
+        "app.native_objects.connections": "connections.py",
+        "app.native_objects.text_graph_support": "text_graph_support.py",
+        "app.native_objects.connection_core_routes": "connection_core_routes.py",
     }
     for module_name, expected in dependency_items:
         if (
@@ -261,6 +269,20 @@ def _completed_text_checkpoint(
         "new_OCR_calls": 0,
         "producer_row": row,
     }
+
+
+def _restore_text_contact_evidence(out, completion):
+    """Restore the receipt embedded in an authenticated completed assembly."""
+    if not completion:
+        return
+    from .text_contact_adoption import SCHEMA
+
+    if completion.get("schema") != SCHEMA:
+        raise ValueError("TEXT_CONTACT_ASSEMBLY_RECEIPT_SCHEMA_CHANGED")
+    destination = Path(out) / "text_contact/adoption.json"
+    if destination.exists() and json.loads(destination.read_text(encoding="utf-8")) != completion:
+        raise ValueError("TEXT_CONTACT_ASSEMBLY_RECEIPT_ALREADY_DIFFERS")
+    save_json(destination, completion)
 
 
 def _completed_geometry_checkpoint(cache_dir, source_sha, roi, texts, gray, out):
@@ -854,7 +876,11 @@ def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress
     # The new producer reuses the existing raw recognizer integrity/score
     # helpers. Their actual code is part of this completed-stage identity.
     for dependency in (
-        "text_regions", "independent_recognizer", "circle_character_recognition"
+        "text_regions", "independent_recognizer", "circle_character_recognition",
+        "text_contact_geometry", "text_contact_partition", "connections",
+        "text_graph_support",
+        "connection_core_routes",
+        "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",
     ):
         dependencies["app.native_objects." + dependency] = hashlib.sha256(
             Path(__file__).with_name(dependency + ".py").read_bytes()
@@ -1178,6 +1204,8 @@ def run_native_objects(
                 )
             )
             circular_markers = restored_assembly["circular_markers"]
+            text_contact_completion = restored_assembly.get("text_contact_completion", {})
+            _restore_text_contact_evidence(out, text_contact_completion)
             _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
@@ -1499,7 +1527,8 @@ def run_native_objects(
                 )
                 texts, ownership_audit = (
                     source_text_ownership.reconcile_source_text_ownership(
-                        texts, gray, roi, geometry, output_dir=responsibility_root
+                        texts, gray, roi, geometry, output_dir=responsibility_root,
+                        evidence_root=out,
                     )
                 )
                 upstream_text_root = (out / text_producer["path"]).parent
@@ -1761,6 +1790,18 @@ def run_native_objects(
                 ).get("replacements", [])
             })
             objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
+            text_contact_completion = {}
+            if texts.get("text_contact_geometry_plans"):
+                progress("COMPLETE_INDEPENDENT_TEXT_CONTACT_PATHS", 0.74)
+                from .text_contact_adoption import complete_text_contact_paths
+
+                text_contact_completion = complete_text_contact_paths(
+                    gray, roi, source_sha, objects,
+                    texts["text_contact_geometry_plans"], out / "text_contact",
+                )
+                retired_contact_parts = set(text_contact_completion["retired_ids"])
+                objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]
+                objects += text_contact_completion["objects"]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1770,6 +1811,7 @@ def run_native_objects(
             )
             issues += connections["uncertainties"]
             issues += circular_markers["uncertainties"]
+            issues += text_contact_completion.get("uncertainties", [])
             issues += walls.get("uncertainties", [])
             issues += [
                 {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
@@ -1788,6 +1830,7 @@ def run_native_objects(
                         "wall_segments": len(walls["objects"]),
                         "doors": len(door_objects),
                         "whole_connection_paths": len(connections["objects"]),
+                        "independent_text_contact_paths": len(text_contact_completion.get("objects", [])),
                         "complete_circular_markers": circular_markers["summary"]["new_complete_markers"],
                         "circle_text_compositions": circular_markers["summary"]["circle_text_compositions"],
                         "partial_circular_boundaries": circular_markers["summary"]["new_partial_boundaries"],
@@ -1807,6 +1850,7 @@ def run_native_objects(
                 "door_completion": door_completion,
                 "connections": connections,
                 "circular_markers": circular_markers,
+                "text_contact_completion": text_contact_completion,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -1904,6 +1948,13 @@ def run_native_objects(
             },
             "circular_marker_completion": circular_markers["summary"],
             "single_line_label_recovery": texts.get("single_line_label_recovery"),
+            "text_contact_completion": {
+                "new_complete_graphics": len(text_contact_completion.get("objects", [])),
+                "retired_old_graphic_ids": text_contact_completion.get("retired_ids", []),
+                "decisions": text_contact_completion.get("decisions", []),
+                "actual_saved_source_checks": audit.get("text_contact_source_checks"),
+                "text_and_graphic_objects_counted_separately": True,
+            },
             "wall_partition_source_gate": walls.get("partition_source_gate"),
         }
         report.update(

@@ -510,6 +510,119 @@ def test_refine_updates_normal_contract_without_fabricating_old_raw_provenance(
     )["pass"]
 
 
+def test_two_engines_cannot_adopt_a_prefix_of_a_wider_observed_label():
+    _, _, _, part = _drawing()
+    t = _tview("AB-12,3", part)
+    p = {"prediction": _prediction("AB-12,3")}
+    assert labels._decision([t], [p], part)["accepted"]
+    box = part["bbox_xyxy_px"]
+    observed = {
+        "raw_text": "AB-12,34",
+        "bbox_xyxy_px": [box[0], box[1], box[2] + 18, box[3]],
+        "original_ink_past_candidate_px": 24,
+    }
+    result = labels._decision([t], [p], part, [observed])
+    assert not result["accepted"] and result["text"] is None
+    assert result["reasons"] == ["NARROW_PREFIX_OMITS_OBSERVED_ALPHANUMERIC_SUFFIX"]
+    assert result["original_observation_prefix_conflicts"] == [observed]
+    assert t["words"][0]["text"] == p["prediction"]["raw_text"] == "AB-12,3"
+
+
+@pytest.mark.parametrize("change", ["same", "different", "punctuation", "white", "same_box"])
+def test_suffix_veto_requires_literal_extra_character_and_original_extent(change):
+    _, _, _, part = _drawing()
+    box = part["bbox_xyxy_px"]
+    observed = {
+        "raw_text": "AB-12,34",
+        "bbox_xyxy_px": [box[0], box[1], box[2] + 18, box[3]],
+        "original_ink_past_candidate_px": 24,
+    }
+    if change == "same":
+        observed["raw_text"] = "AB-12,3"
+    elif change == "different":
+        observed["raw_text"] = "A8-12,34"
+    elif change == "punctuation":
+        observed["raw_text"] = "AB-12,3 \\"
+    elif change == "white":
+        observed["original_ink_past_candidate_px"] = 0
+    else:
+        observed["bbox_xyxy_px"] = box
+    assert labels._decision(
+        [_tview("AB-12,3", part)], [{"prediction": _prediction("AB-12,3")}],
+        part, [observed],
+    )["accepted"]
+
+
+@pytest.mark.parametrize("damage", ["binding", "ids", "snapshot"])
+def test_formal_label_replay_requires_actual_upstream_observation_file(
+    tmp_path, monkeypatch, damage
+):
+    gray, roi, box, _ = _drawing()
+    before = _contract(gray, roi, box)
+    _engines(monkeypatch)
+    result = labels.refine_single_line_labels(
+        gray, before, tmp_path / "single_line_labels", roi=roi,
+        recognizer=_RawModel([("AB-12,3", 0.999)]), evidence_root=tmp_path,
+    )
+    evidence = deepcopy(result["groups"][0]["single_line_recovery"])
+    assert evidence["planned_region_ids"] == ["R1"]
+    assert labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
+    if damage == "binding":
+        evidence["upstream_observations"] = None
+    elif damage == "ids":
+        evidence["upstream_observations"]["region_ids"] = ["absent"]
+    else:
+        record = evidence["upstream_observations"]["snapshot"]
+        (tmp_path / record["path"]).write_text("{}", encoding="utf-8")
+    assert not labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
+
+
+@pytest.mark.parametrize("damage", [None, "raw_file", "no_evidence_root"])
+def test_verified_complete_row_keeps_its_punctuation_ownership(
+    tmp_path, monkeypatch, damage
+):
+    from app.native_objects import source_text_ownership as ownership
+    from app.native_objects.pipeline import _reclassify_source_fitted_lines
+
+    gray, roi, box, observation, _, _ = _recognized(tmp_path, monkeypatch)
+    proof = observation["evidence"]
+    part = proof["source_partition"]
+    data = _contract(gray, roi, box, complete=True)
+    row = data["regions"][0]
+    row.update(
+        text=observation["text"], single_line_recovery=proof,
+        words=[{"text": observation["text"], "confidence": 20.0, "bbox_xyxy_px": box}],
+        compact_source_ink_mask={"runs_y_x0_x1": part["source_support_runs_y_x0_x1"]},
+    )
+    data["groups"][0]["text"] = observation["text"]
+    dash = next(c for c in part["components"] if c["source_role"] == "RETAINED_PUNCTUATION")
+    points = np.array([[x, y] for y, a, b in dash["source_runs_y_x0_x1"] for x in range(a, b)])
+    geometry = {"start": [float(points[:,0].min()), float(points[:,1].mean())],
+                "end": [float(points[:,0].max()), float(points[:,1].mean())]}
+    proposal = {"id": "source-mark", "geometry": geometry,
+                "source_component_area": len(points), "decision": "DEFER_TEXT_OWNERSHIP"}
+    candidates = {"objects": [], "short_source_components": [proposal],
+                  "uncertainties": [{**deepcopy(proposal), "reason": "DEFER_TEXT_OWNERSHIP"}]}
+    if damage == "raw_file":
+        (tmp_path/proof["tesseract_views"][0]["raw_tsv"]["path"]).write_text("damaged")
+    fixed, audit = ownership.reconcile_source_text_ownership(
+        data, gray, roi, candidates,
+        evidence_root=None if damage == "no_evidence_root" else tmp_path,
+    )
+    event = next(e for e in audit["events"] if e["cached_source_candidate_ids"] == ["source-mark"])
+    protected = damage is None
+    assert bool(event["verified_complete_row_component_witnesses"]) == protected
+    assert event["checks"]["no_verified_complete_row_component_ownership"] != protected
+    if protected:
+        assert event["decision"] == "RETAIN_TEXT_OR_UNKNOWN_OWNERSHIP"
+        assert fixed["regions"][0]["compact_source_ink_mask"] == row["compact_source_ink_mask"]
+        reclassified = _reclassify_source_fitted_lines(
+            candidates, fixed, gray.shape, roi, original_dictionary_sha256="a"*64
+        )
+        assert not reclassified["objects"]
+    assert fixed["groups"] == data["groups"]
+
+
 def test_malformed_earlier_raw_observation_cannot_be_hidden_by_later_success():
     _, _, _, part = _drawing()
     good = _tview("AB-12,3", part)

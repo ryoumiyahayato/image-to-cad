@@ -43,6 +43,7 @@ def _object(recovered=True):
             "single_line_recovery": {
                 "schema": "native-single-line-label-evidence-v1",
                 "test_only": "raw replay mocked exclusively to isolate saved layout checks",
+                "source_partition": {"text_contact_separation": {"independent_round_observations": []}},
             }
         }
     return obj

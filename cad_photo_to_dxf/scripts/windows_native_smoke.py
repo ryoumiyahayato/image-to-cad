@@ -111,6 +111,42 @@ def create_single_line_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+CONTACT_LABEL_FIXTURE = (("STORAGE42", (110, 170)),)
+CONTACT_NEIGHBOR_FIXTURE = (
+    ((100, 260), (230, 260)),
+    ((480, 300), (500, 300)),
+)
+
+
+def _contact_curve_points():
+    """Generated source geometry, used only by this external smoke harness."""
+    return [(round(230 + 0.55 * (y - 188) + 0.0015 * (y - 188) ** 2), y)
+            for y in range(90, 311)]
+
+
+def create_contact_fixture(path: Path, font_path: Path) -> None:
+    """One whole alphanumeric label with a curve crossing the middle glyphs.
+
+    Both real curve endpoints, a separate underline, a short stroke, and a
+    correct ordinary text control are present. No expected string or location
+    is provided to the ordinary source/EXE command, which receives only PNG.
+    The previous three fixture creators and their pixels remain unchanged.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype(str(font_path), 32, layout_engine=ImageFont.Layout.BASIC)
+    for content, point in CONTACT_LABEL_FIXTURE:
+        draw.text(point, content, font=font, fill=0)
+    draw.line(_contact_curve_points(), fill=0, width=3)
+    for start, end in CONTACT_NEIGHBOR_FIXTURE:
+        draw.line((start, end), fill=0, width=3)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    draw.text((460, 64), "STORE", font=control_font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
 def native_identity(entity) -> dict:
     """Read the saved public XDATA format without importing hidden app code."""
     try:
@@ -479,7 +515,12 @@ def inspect_single_line_members(document, objects: dict, cold: dict, font_path: 
     )
 
 
-def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict, font_path: Path, required_labels) -> dict:
+def _inspect_single_line_members_for_labels(
+    document, objects: dict, cold: dict, font_path: Path, required_labels, *,
+    fixture_labels=SINGLE_LINE_LABEL_FIXTURE,
+    neighbor_fixture=SINGLE_LINE_NEIGHBOR_FIXTURE,
+    label_font_size=26, additional_path_count=0,
+) -> dict:
     """Check actual saved whole labels, source bindings, and independent neighbors.
 
     This is a post-save assertion for the fixed generated fixture. It cannot
@@ -495,7 +536,7 @@ def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict,
     if (len(entities) != len(texts) + len(paths)
             or Counter(entity.dxf.text for entity in texts) != Counter(expected_strings)):
         raise AssertionError("Single-line fixture did not save one complete literal TEXT per label/control")
-    if len(paths) != len(SINGLE_LINE_NEIGHBOR_FIXTURE):
+    if len(paths) != len(neighbor_fixture) + additional_path_count:
         raise AssertionError("Single-line fixture lost, duplicated, or fragmented an independent source line")
     rows = objects.get("objects", [])
     ledger = {row["id"]: row for row in rows}
@@ -513,8 +554,7 @@ def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict,
         raise AssertionError("Single-line source checks have duplicate identities")
     saved_checks = {row.get("id"): row for row in checks}
     mm = 25.4 / 200
-    font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
-    positions = dict(SINGLE_LINE_LABEL_FIXTURE)
+    positions = dict(fixture_labels)
     positions["STORE"] = (460, 64)
     text_results = []
     recovered_ids = []
@@ -523,6 +563,7 @@ def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict,
         row = ledger.get(oid, {})
         geometry = row.get("geometry", {})
         content = entity.dxf.text
+        font = ImageFont.truetype(str(font_path), 26 if content == "STORE" else label_font_size, layout_engine=ImageFont.Layout.BASIC)
         if row.get("kind") != "TEXT" or geometry.get("text") != content:
             raise AssertionError("Actual single-line TEXT content/identity differs from its bound candidate")
         recovery = row.get("source_evidence", {}).get("single_line_recovery")
@@ -577,7 +618,7 @@ def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict,
         raise AssertionError("Single-line source check inventory differs from the recovered actual TEXT objects")
     line_results = []
     used = set()
-    for start, end in SINGLE_LINE_NEIGHBOR_FIXTURE:
+    for start, end in neighbor_fixture:
         candidates = []
         for entity in paths:
             points = _line_points(entity)
@@ -617,6 +658,243 @@ def _inspect_single_line_members_for_labels(document, objects: dict, cold: dict,
         "independent_short_stroke_preserved": True,
         "fixture_expectations_sent_to_recognizer": False,
     }
+
+
+def _json_digest(value):
+    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+
+
+def _distance_to_path(point, points):
+    distances = []
+    for start, end in zip(points, points[1:]):
+        delta = (end[0] - start[0], end[1] - start[1])
+        length2 = sum(value * value for value in delta)
+        parameter = sum((point[i] - start[i]) * delta[i] for i in (0, 1)) / length2 if length2 else 0
+        parameter = max(0.0, min(1.0, parameter))
+        distances.append(math.dist(point, [start[i] + parameter * delta[i] for i in (0, 1)]))
+    return min(distances, default=math.inf)
+
+
+def inspect_contact_members(document, objects: dict, cold: dict, font_path: Path) -> dict:
+    """Require a saved complete TEXT and a separate whole original-contact path.
+
+    An empty contact audit or an unrelated ordinary LINE cannot satisfy this
+    capability gate. All formal entities are accounted for, so text fragments,
+    duplicate curves, missing underlines and short strokes fail the check.
+    """
+    result = _inspect_single_line_members_for_labels(
+        document, objects, cold, font_path, CONTACT_LABEL_FIXTURE,
+        fixture_labels=CONTACT_LABEL_FIXTURE, neighbor_fixture=CONTACT_NEIGHBOR_FIXTURE,
+        label_font_size=32, additional_path_count=1,
+    )
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    identities = [native_identity(entity) for entity in entities]
+    ledger = {row["id"]: row for row in objects["objects"]}
+    if len(identities) != len({row["id"] for row in identities}) or set(ledger) != {row["id"] for row in identities}:
+        raise AssertionError("Contact fixture has missing, duplicate, or unwritten formal identities")
+    target = next(entity for entity in entities if entity.dxftype() == "TEXT" and entity.dxf.text == CONTACT_LABEL_FIXTURE[0][0])
+    text_id = native_identity(target)["id"]
+    recovery = ledger[text_id].get("source_evidence", {}).get("single_line_recovery", {})
+    separation = recovery.get("source_partition", {}).get("text_contact_separation", {})
+    plan = separation.get("geometry_plan", {})
+    if (separation.get("schema") != "complete-original-contact-row-separation-v1"
+            or separation.get("source_erasure_authorized") is not False
+            or separation.get("source_pixels_added") != 0
+            or separation.get("real_source_white_gaps_filled") is not False
+            or separation.get("independent_graphics_require_separate_adoption") is not True
+            or not separation.get("shared_original_contact_runs")
+            or not separation.get("recognition_excluded_source_runs")
+            or plan.get("original_source_pixels_modified") is not False
+            or plan.get("transcription_supplied") is not False
+            or len(plan.get("paths", [])) != 1):
+        raise AssertionError("Whole TEXT did not exercise original-source contact separation")
+    contact_entities = [entity for entity in entities if native_identity(entity).get("text_contact_path") is True]
+    if len(contact_entities) != 1:
+        raise AssertionError("Contact fixture lacks one actual independently flagged complete path")
+    path_entity = contact_entities[0]
+    path_id = native_identity(path_entity)["id"]
+    path_row = ledger[path_id]
+    proof = path_row.get("source_evidence", {}).get("text_contact_path", {})
+    selected = plan["paths"][0]
+    if (path_row.get("kind") != "CONNECTION_PATH"
+            or proof.get("schema") != "source-text-contact-native-path-v1"
+            or proof.get("source_sha256") != objects.get("source_sha256")
+            or proof.get("plan_sha256") != _json_digest(plan)
+            or proof.get("path_index") != 0 or proof.get("path") != selected
+            or proof.get("path_sha256") != _json_digest(selected)
+            or not selected.get("contact_continuations")
+            or not selected.get("shared_contact_runs")
+            or selected.get("line_and_text_may_share_source_pixels") is not True):
+        raise AssertionError("Saved independent path is not bound to the TEXT's actual original-source plan")
+    points = _line_points(path_entity)
+    expected = _contact_curve_points()
+    if not points or len(points) < 3:
+        raise AssertionError("Contact curve is not a whole editable native polyline")
+    endpoint_error = min(max(math.dist(points[0], expected[0]), math.dist(points[-1], expected[-1])),
+                         max(math.dist(points[0], expected[-1]), math.dist(points[-1], expected[0])))
+    curve_error = max(max(_distance_to_path(point, expected) for point in points),
+                      max(_distance_to_path(point, points) for point in expected))
+    if endpoint_error > 2.5 or curve_error > 2.5:
+        raise AssertionError("Saved contact curve lost a real endpoint, includes a glyph branch, or does not follow the whole source")
+    geometry = path_row.get("geometry", {})
+    if (geometry != selected.get("representation")
+            or len(geometry.get("points", [])) != len(points)
+            or any(math.dist(a, b) > 1e-6 for a, b in zip(geometry["points"], points))
+            or geometry.get("closed") is not False
+            or geometry.get("bulges") != [0.0] * len(points)):
+        raise AssertionError("Actual contact curve differs from its source-bound saved candidate")
+    contact_cold = cold.get("text_contact_source_checks", {})
+    checks = contact_cold.get("checks", [])
+    by_id = {row.get("id"): row for row in checks}
+    required_types = {
+        "TEXT_CONTACT_MANIFEST": "TEXT_CONTACT_MANIFEST_BINDING",
+        path_id: "SAVED_TEXT_CONTACT_PATH_SOURCE",
+        "TEXT_CONTACT_RETIREMENT": "SAVED_TEXT_CONTACT_WHOLE_RETIREMENT",
+        "TEXT_CONTACT_NEIGHBORS": "SAVED_TEXT_CONTACT_NEIGHBOR_PROTECTION",
+        "TEXT_CONTACT_DUPLICATES": "SAVED_TEXT_CONTACT_NATIVE_DUPLICATES",
+    }
+    if (contact_cold.get("schema") != "saved-text-contact-source-audit-v1"
+            or contact_cold.get("pass") is not True
+            or contact_cold.get("target_ids") != [path_id]
+            or contact_cold.get("duplicate_conflicts") != []
+            or contact_cold.get("source_or_DXF_geometry_modified") is not False
+            or len(by_id) != len(checks) or set(by_id) != set(required_types)
+            or any(by_id[key].get("type") != kind or by_id[key].get("pass") is not True for key, kind in required_types.items())):
+        raise AssertionError("Actual contact saved-source checker was empty, incomplete, or failed")
+    for key in ("TEXT_CONTACT_MANIFEST", path_id, "TEXT_CONTACT_RETIREMENT"):
+        if not by_id[key].get("checks") or any(value is not True for value in by_id[key]["checks"].values()):
+            raise AssertionError("Actual contact binding/geometry/retirement checks did not all pass")
+    path_check = by_id[path_id]
+    if any(path_check["checks"].get(key) is not True for key in (
+        "three_way_object_binding", "actual_identity_and_flag", "actual_vertices",
+        "original_source_plan_replayed", "original_source_geometry_supported",
+        "whole_native_representation_from_source_plan",
+    )):
+        raise AssertionError("Saved path audit omitted an actual source/geometry binding")
+    for key in ("original_source_plan_replay", "actual_source_geometry"):
+        value = path_check.get(key, {})
+        if value.get("pass") is not True or not value.get("checks") or any(v is not True for v in value["checks"].values()):
+            raise AssertionError("Actual saved contact source geometry was not independently replayed")
+    neighbor_check = by_id["TEXT_CONTACT_NEIGHBORS"]
+    protected = neighbor_check.get("objects", [])
+    if (neighbor_check.get("protected_count") != len(entities) - 1
+            or {row.get("id") for row in protected} != set(ledger) - {path_id}
+            or len(protected) != len(entities) - 1
+            or any(row.get("pass") is not True or not row.get("checks") or any(v is not True for v in row["checks"].values()) for row in protected)
+            or by_id["TEXT_CONTACT_DUPLICATES"].get("conflicts") != []):
+        raise AssertionError("Saved contact completion did not protect every other actual object")
+    covered = {row["id"] for row in result["independent_neighbor_line_checks"]} | {path_id, text_id}
+    covered |= {native_identity(entity)["id"] for entity in entities if entity.dxftype() == "TEXT"}
+    if covered != set(ledger):
+        raise AssertionError("Saved contact fixture contains an unaccounted fragment or duplicate")
+    result.update(
+        schema="windows-saved-text-contact-check-v1", complete_location_count=1,
+        new_complete_TEXT_count=1, new_complete_independent_path_count=1,
+        text_id=text_id, independent_contact_path_id=path_id,
+        contact_path_source_audit=path_check, contact_path_saved_points_px=points,
+        maximum_contact_curve_error_px=curve_error,
+        maximum_contact_endpoint_error_px=endpoint_error,
+        new_contact_separation_required=True, empty_contact_audit_can_pass=False,
+        original_contact_shared_evidence_preserved=True,
+        no_text_only_glyph_fragments_or_duplicate_lines=True,
+        graphic_inside_original_text_rectangle_is_allowed=True,
+    )
+    return result
+
+
+def inspect_contact_payloads(objects, cold, evidence_root, source_path, font_path, pipeline_report):
+    """Reopen actual source and adoption records, in addition to raw OCR proof."""
+    import numpy as np
+    from PIL import Image, ImageDraw, ImageFont
+
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+    glyph_mask = Image.new("L", (640, 480), 0)
+    glyph_draw = ImageDraw.Draw(glyph_mask)
+    font = ImageFont.truetype(str(font_path), 32, layout_engine=ImageFont.Layout.BASIC)
+    for text, point in CONTACT_LABEL_FIXTURE:
+        glyph_draw.text(point, text, font=font, fill=255)
+    curve_mask = Image.new("L", (640, 480), 0)
+    ImageDraw.Draw(curve_mask).line(_contact_curve_points(), fill=255, width=3)
+    overlap = (np.asarray(glyph_mask) >= 64) & (np.asarray(curve_mask) > 0)
+    if source.shape != (480, 640) or not overlap.any() or not np.all(source[overlap] < 192):
+        raise AssertionError("Original controlled input has no actual shared glyph/curve ink")
+    target = next(row for row in objects["objects"] if row.get("source_evidence", {}).get("text_contact_path"))
+    proof = target["source_evidence"]["text_contact_path"]
+    manifest_path = evidence_root / "text_contact/adoption.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if (manifest.get("schema") != "source-text-contact-adoption-v1"
+            or manifest.get("source_sha256") != digest(source_path)
+            or manifest.get("source_pixels_modified") is not False
+            or manifest.get("partial_old_entity_retirement_permitted") is not False
+            or manifest.get("objects") != [target]
+            or manifest.get("geometry_plans", {}).get(proof["plan_sha256"]) is None
+            or _json_digest(manifest["geometry_plans"][proof["plan_sha256"]]) != proof["plan_sha256"]):
+        raise AssertionError("Saved contact manifest does not bind actual source, path, and original geometry plan")
+    report = pipeline_report.get("text_contact_completion", {})
+    adopted = [row.get("id") for row in report.get("decisions", []) if row.get("adopted") is True]
+    if (report.get("new_complete_graphics") != 1 or adopted != [target["id"]]
+            or report.get("actual_saved_source_checks") != cold.get("text_contact_source_checks")
+            or report.get("text_and_graphic_objects_counted_separately") is not True):
+        raise AssertionError("Ordinary pipeline did not publish the checked contact completion")
+    raw = inspect_single_line_character_payloads(objects, cold, evidence_root, pipeline_report)
+    if raw.get("accepted_label_new_model_calls", 0) <= 0 or raw.get("accepted_label_new_Tesseract_calls", 0) <= 0:
+        raise AssertionError("Contact fixture did not actually recognize its new whole label")
+    return {"source_sha256": digest(source_path), "original_shared_ink_pixels": int(overlap.sum()),
+            "adoption_manifest_sha256": digest(manifest_path), "actual_label_payloads": raw,
+            "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
+def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str, path_id: str) -> dict:
+    """Actual scripted save/reopen edits; this deliberately makes no GUI claim."""
+    import ezdxf
+
+    def inventory(document):
+        return {native_identity(entity)["id"]: entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"}
+
+    def edit_geometry(entity, document):
+        value = entity_geometry(entity, document)
+        if entity.dxftype() == "LWPOLYLINE":
+            # translate() materializes default plane attributes which the DXF
+            # writer is allowed to omit. Compare their actual values as well.
+            value["attributes"].update(elevation=float(entity.dxf.get("elevation", 0)),
+                                       extrusion=canonical_value(entity.dxf.get("extrusion", (0, 0, 1))))
+        return value
+
+    original_sha = digest(saved_path)
+    baseline = ezdxf.readfile(saved_path)
+    before = {key: edit_geometry(entity, baseline) for key, entity in inventory(baseline).items()}
+    output.mkdir(exist_ok=True)
+    results = []
+    for action, target_id in (("change-text", text_id), ("move-text", text_id), ("delete-text", text_id), ("move-path", path_id), ("delete-path", path_id)):
+        document = ezdxf.readfile(saved_path)
+        target = inventory(document)[target_id]
+        if action == "change-text":
+            target.dxf.text = "EDITED59"
+        elif action.startswith("move"):
+            target.translate(7, 3, 0)
+        else:
+            document.modelspace().delete_entity(target)
+        expected = None if action.startswith("delete") else edit_geometry(target, document)
+        edited_path = output / (action + ".dxf")
+        document.saveas(edited_path)
+        reopened = ezdxf.readfile(edited_path)
+        audit = reopened.audit()
+        actual = {key: edit_geometry(entity, reopened) for key, entity in inventory(reopened).items()}
+        expected_ids = set(before) - ({target_id} if expected is None else set())
+        if (audit.errors or audit.fixes or set(actual) != expected_ids
+                or any(actual[key] != value for key, value in before.items() if key != target_id)
+                or (expected is not None and (actual[target_id] != expected or actual[target_id] == before[target_id]))):
+            raise AssertionError("Contact text/line edit did not survive cold save with every neighbor unchanged")
+        results.append({"action": action, "changed_id": target_id, "saved_dxf_sha256": digest(edited_path),
+                        "unchanged_other_formal_objects": len(before) - 1, "pass": True})
+    if digest(saved_path) != original_sha:
+        raise AssertionError("Scripted editing changed the published native fixture result")
+    result = {"schema": "windows-contact-scripted-edit-isolation-v1", "pass": True,
+              "scope": "ezdxf ordinary save and cold reopen, not LibreCAD GUI",
+              "GUI_operations_claimed": False, "source_DXF_unchanged": True, "checks": results}
+    write_json(output / "edit-isolation.json", result)
+    return result
 
 
 def _inspect_single_line_raw_view_payloads(evidence, read_record):
@@ -971,7 +1249,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -1004,6 +1282,16 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
             single_line_result = inspect_single_line_members(document, objects, cold, companion / font["font"])
         else:
             single_line_result = inspect_bounded_single_line_members(document, objects, cold, companion / font["font"], companion / "evidence", work.parent / "controlled-source.png", pipeline_report)
+    contact_result = None
+    if fixture_kind == "text-line-contact":
+        contact_result = inspect_contact_members(document, objects, cold, companion / font["font"])
+        contact_result["actual_contact_payloads"] = inspect_contact_payloads(
+            objects, cold, companion / "evidence", work.parent / "controlled-source.png",
+            companion / font["font"], pipeline_report,
+        )
+        contact_result["scripted_edit_isolation"] = inspect_contact_edit_isolation(
+            target, work / "edit-isolation", contact_result["text_id"], contact_result["independent_contact_path_id"],
+        )
     entry = json.loads((companion / "result.entry_trace.json").read_text(encoding="utf-8"))
     if entry["mode"] != "native-objects" or entry["legacy_processing_called"] or entry["legacy_export_called"] or entry["source_sha256"] != source_sha:
         raise AssertionError("EXE did not enter the source-bound native pipeline")
@@ -1073,6 +1361,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["circular_markers"] = circle_result
     if single_line_result is not None:
         result["single_line_labels"] = single_line_result
+    if contact_result is not None:
+        result["text_line_contact"] = contact_result
     return result
 
 
@@ -1149,10 +1439,13 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     circular_work.mkdir()
     single_line_work = work / "single-line-labels"
     single_line_work.mkdir()
+    contact_work = work / "text-line-contact"
+    contact_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
         {"name": "single-line-labels", "directory": single_line_work, "create": create_single_line_fixture},
+        {"name": "text-line-contact", "directory": contact_work, "create": create_contact_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -1202,7 +1495,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines = cases
+    room, circles, single_lines, contact = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -1239,16 +1532,33 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "product_GO": False,
     }
     write_json(single_line_work / "native-smoke.json", single_line_report)
+    contact_report = {
+        "status": "PASS", "schema": "windows-native-text-line-contact-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": contact["source_sha256"],
+        "source_result": contact["source_result"], "exe_result": contact["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "complete_locations": 1, "new_complete_TEXT_objects": 1,
+        "new_complete_independent_graphic_objects": 1,
+        "actual_new_contact_partition_and_saved_path_source_audit_required": True,
+        "independent_underline_short_stroke_and_correct_text_preserved": True,
+        "actual_scripted_edit_save_reopen_isolation_checked": True,
+        "GUI_operations_claimed": False,
+        "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True,
+        "original_strict_three_label_goal_status": single_line_report["strict_three_complete_status"],
+        "product_GO": False,
+    }
+    write_json(contact_work / "native-smoke.json", contact_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 5,
+        "coverage_revision": 6,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,

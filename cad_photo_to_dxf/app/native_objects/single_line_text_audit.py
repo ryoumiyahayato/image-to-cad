@@ -457,6 +457,21 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
                     evidence_root=evidence_root,
                 )
                 source["source_replay"] = replay
+                from .single_line_neighbor_clearance import check_text_round_white_gaps
+
+                if len(entries) != 1 or entries[0].dxftype() != "TEXT":
+                    raise ValueError("SINGLE_LINE_CLEARANCE_ACTUAL_TEXT_MISSING_OR_AMBIGUOUS")
+                # This independently reads the saved entity's actual transform.
+                # Repeating the writer's expected layout can approve the same
+                # newly closed source white gap twice.
+                clearance = check_text_round_white_gaps(
+                    gray, roi, obj["source_evidence"][FIELD]["source_partition"],
+                    text_attributes(entries[0]), path.parent / "DejaVuSans.ttf", dpi,
+                ) if replay.get("pass") is True else {
+                    "pass": False, "reason": "SINGLE_LINE_CLEARANCE_SOURCE_NOT_REPLAYED",
+                    "actual_geometry_inspection_not_run": True,
+                }
+                source["actual_saved_text_round_clearance"] = clearance
                 source["source_text_matches_candidate"] = (
                     replay.get("text") == obj["geometry"]["text"]
                 )
@@ -472,6 +487,7 @@ def cold_native_text_bindings(path, doc, gray, roi, dpi, evidence_root):
                     and source["source_text_matches_candidate"]
                     and source["source_bbox_matches_candidate"]
                     and source["source_rotation_is_supported"]
+                    and clearance["pass"]
                 )
             except (
                 OSError,
