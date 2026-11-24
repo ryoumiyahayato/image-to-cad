@@ -223,8 +223,12 @@ def _completed_text_checkpoint(
         "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
         "app.native_objects.text_contact_geometry": "text_contact_geometry.py",
         "app.native_objects.text_contact_partition": "text_contact_partition.py",
+        "app.native_objects.text_contact_audit": "text_contact_audit.py",
         "app.native_objects.single_line_neighbor_clearance": "single_line_neighbor_clearance.py",
         "app.native_objects.single_line_text_audit": "single_line_text_audit.py",
+        "app.native_objects.single_line_source_layout": "single_line_source_layout.py",
+        "app.native_objects.source_row_font_registry": "source_row_font_registry.py",
+        "app.native_objects.source_glyph_equivalence": "source_glyph_equivalence.py",
         "app.native_objects.circular_markers": "circular_markers.py",
         "app.native_objects.connections": "connections.py",
         "app.native_objects.text_graph_support": "text_graph_support.py",
@@ -877,10 +881,11 @@ def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress
     # helpers. Their actual code is part of this completed-stage identity.
     for dependency in (
         "text_regions", "independent_recognizer", "circle_character_recognition",
-        "text_contact_geometry", "text_contact_partition", "connections",
+        "text_contact_geometry", "text_contact_partition", "text_contact_audit", "connections",
         "text_graph_support",
         "connection_core_routes",
         "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",
+        "single_line_source_layout", "source_row_font_registry", "source_glyph_equivalence",
     ):
         dependencies["app.native_objects." + dependency] = hashlib.sha256(
             Path(__file__).with_name(dependency + ".py").read_bytes()

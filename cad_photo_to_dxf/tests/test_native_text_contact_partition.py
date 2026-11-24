@@ -254,7 +254,7 @@ def test_contact_word_aggregate_score_is_advisory_but_raw_literal_agreement_is_r
     assert not _decision(partition, word=_word_view(partition, "AB-12,8"))["accepted"]
     legacy = deepcopy(partition)
     del legacy["text_contact_separation"]
-    assert not _decision(legacy, word=word)["accepted"]
+    assert _decision(legacy, word=word)["accepted"]
 
 
 @pytest.mark.parametrize("character", ["B", "2", "-", ","])

@@ -104,6 +104,28 @@ def _font(out):
     }
 
 
+def _source_row_font(out, requested):
+    """Copy the one pinned alternate font; a receipt cannot select a host font."""
+    from .single_line_source_layout import FONT_SPEC, source_row_font_path
+
+    if any(requested.get(key) != FONT_SPEC[key] for key in (
+        "font", "sha256", "style", "bundled_license", "librecad_font", "librecad_sha256",
+    )):
+        raise ValueError("SOURCE_ROW_FONT_RECEIPT_DIFFERS_FROM_PINNED_RESOURCE")
+    source = source_row_font_path()
+    target = out / FONT_SPEC["font"]
+    shutil.copy2(source, target)
+    license_source = source.parent / FONT_SPEC["source_license"]
+    shutil.copy2(license_source, out / FONT_SPEC["bundled_license"])
+    lff_source = source.parent / FONT_SPEC["librecad_font"]
+    if (not lff_source.is_file() or lff_source.is_symlink()
+            or lff_source.stat().st_size != FONT_SPEC["librecad_bytes"]
+            or sha(lff_source) != FONT_SPEC["librecad_sha256"]):
+        raise ValueError("SOURCE_ROW_LIBRECAD_RESOURCE_DIFFERS_FROM_PINNED_RESOURCE")
+    shutil.copy2(lff_source, out / FONT_SPEC["librecad_font"])
+    return {**FONT_SPEC, "source": str(source)}
+
+
 @lru_cache(maxsize=128)
 def _circular_character_ink_metrics(font_path, font_sha256, character):
     """Measure literal ink in the actual portable font, not advance width.
@@ -302,6 +324,7 @@ def export_objects(
     review.off()
     review.freeze()
     doc.styles.new("I2CAD_TEXT", dxfattribs={"font": "DejaVuSans.ttf"})
+    font_records = {"I2CAD_TEXT": font}
     msp = doc.modelspace()
     written = []
 
@@ -339,6 +362,7 @@ def export_objects(
         mtext_line_layout = None
         circular_text_layout = None
         single_line_text_layout = None
+        entity_font = font
         if kind == "LINE":
             e = msp.add_line(xy(g["start"]), xy(g["end"]), dxfattribs=attrs)
         elif kind == "CIRCLE":
@@ -421,14 +445,35 @@ def export_objects(
             if "single_line_recovery" in o.get("source_evidence", {}):
                 from .single_line_text_audit import source_ink_text_layout
 
-                single_line_text_layout = source_ink_text_layout(
-                    g, roi, dpi, path.parent / font["font"]
-                )
+                recovery = o["source_evidence"]["single_line_recovery"]
+                adopted_layout = recovery.get("layout_adoption") or {}
+                style = "I2CAD_TEXT"
+                if adopted_layout.get("selected_layout") is not None:
+                    from .single_line_source_layout import fit_source_glyph_layout
+
+                    requested_font = adopted_layout["font"]
+                    style = requested_font["style"]
+                    if style not in font_records:
+                        font_records[style] = _source_row_font(path.parent, requested_font)
+                        doc.styles.new(style, dxfattribs={"font": requested_font["font"]})
+                    entity_font = font_records[style]
+                    fit = fit_source_glyph_layout(
+                        g, recovery["source_partition"], roi, dpi,
+                        path.parent / entity_font["font"],
+                    )
+                    single_line_text_layout = fit["selected_layout"]
+                    if (not fit["pass"] or not adopted_layout.get("pass")
+                            or single_line_text_layout != adopted_layout["selected_layout"]):
+                        raise ValueError("SOURCE_ROW_EXPORT_LAYOUT_DIFFERS_FROM_SOURCE_FIT")
+                else:
+                    single_line_text_layout = source_ink_text_layout(
+                        g, roi, dpi, path.parent / font["font"]
+                    )
                 e = msp.add_text(
                     g["text"],
                     dxfattribs={
                         **attrs,
-                        "style": "I2CAD_TEXT",
+                        "style": style,
                         **{
                             key: single_line_text_layout[key]
                             for key in ("insert", "height", "width", "rotation")
@@ -658,7 +703,7 @@ def export_objects(
             from .single_line_text_audit import export_text_geometry_binding
 
             written[-1]["text_geometry_binding"] = export_text_geometry_binding(
-                e, o, font, single_line_text_layout
+                e, o, entity_font, single_line_text_layout
             )
     regions = []
     for row in range(4):
@@ -703,6 +748,7 @@ def export_objects(
         "objects": objects,
         "written": written,
         "font": font,
+        "fonts": list(font_records.values()),
         "repair_regions": regions,
         "native_schema": "complete_objects_v2",
         "serialization": serialization,
@@ -1270,22 +1316,26 @@ class _PortableTextRenderer(UnifiedTextRenderer):
     also avoids the drawing pipeline's shared, filename-only text cache.
     """
 
-    def __init__(self, font_path):
+    def __init__(self, font_paths):
         super().__init__()
-        self.portable_name = font_path.name.casefold()
-        self.portable_font = fonts.sideload_ttf(font_path.resolve(), 1.0)
+        self.portable_fonts = {
+            path.name.casefold(): fonts.sideload_ttf(path.resolve(), 1.0)
+            for path in font_paths
+        }
 
     def get_font(self, font_face):
-        if font_face.filename.casefold() == self.portable_name:
-            return self.portable_font
+        if font_face.filename.casefold() in self.portable_fonts:
+            return self.portable_fonts[font_face.filename.casefold()]
         return super().get_font(font_face)
 
 
 def _saved_text_renderer(doc, path, context):
+    from .source_row_font_registry import FONT_SPEC
+
     native_styles = {
-        style.dxf.name.casefold()
+        style.dxf.name.casefold(): style.dxf.font
         for style in doc.styles
-        if style.dxf.font.casefold() == "dejavusans.ttf"
+        if style.dxf.font.casefold() in ("dejavusans.ttf", FONT_SPEC["font"].casefold())
     }
     if not any(
         entity.dxftype() in ("TEXT", "MTEXT", "ATTRIB", "ATTDEF")
@@ -1293,18 +1343,19 @@ def _saved_text_renderer(doc, path, context):
         for entity in doc.entitydb.values()
     ):
         return None, None
-    font_path = Path(path).parent / "DejaVuSans.ttf"
+    font_paths = [Path(path).parent / name for name in sorted(set(native_styles.values()))]
     # Missing or unreadable saved resources must fail, even if a same-named
     # system font happens to exist. The DXF and its audit remain untouched.
-    renderer = _PortableTextRenderer(font_path)
-    for name in native_styles:
-        context.fonts[name] = fonts.FontFace(filename=font_path.name)
-    return renderer, {
+    renderer = _PortableTextRenderer(font_paths)
+    for name, filename in native_styles.items():
+        context.fonts[name] = fonts.FontFace(filename=filename)
+    records = [{
         "font": font_path.name,
         "sha256": sha(font_path),
         "resolution": "DXF_adjacent_file_via_ezdxf_sideload_ttf",
         "system_font_fallback": False,
-    }
+    } for font_path in font_paths]
+    return renderer, records[0] if len(records) == 1 else {"fonts": records, "system_font_fallback": False}
 
 
 @profiled("cad_io.render_saved")

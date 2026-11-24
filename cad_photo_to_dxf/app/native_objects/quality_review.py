@@ -443,9 +443,24 @@ def _candidate_geometry_checks(
                     source_roi is not None and text_font_path is not None
                 )
                 if checks["source_ink_layout_context_available"]:
-                    layout = source_ink_text_layout(
-                        g, source_roi, 25.4 / mm, text_font_path
-                    )
+                    recovery = obj["source_evidence"]["single_line_recovery"]
+                    adopted = recovery.get("layout_adoption") or {}
+                    if adopted.get("selected_layout") is not None:
+                        from .single_line_source_layout import fit_source_glyph_layout
+
+                        fit = fit_source_glyph_layout(
+                            g, recovery["source_partition"], source_roi,
+                            25.4 / mm, text_font_path,
+                        )
+                        layout = fit["selected_layout"]
+                        checks["source_component_layout_matches_adoption"] = (
+                            fit["pass"] and adopted.get("pass") is True
+                            and adopted["selected_layout"] == layout
+                        )
+                    else:
+                        layout = source_ink_text_layout(
+                            g, source_roi, 25.4 / mm, text_font_path
+                        )
                     checks["height_matches_source_ink_layout"] = _numeric_equal(
                         float(entity.dxf.height), layout["height"]
                     )
@@ -565,6 +580,27 @@ def _font_dependencies(doc, dxf_path):
         )
         if license_path.is_file():
             assets.append(license_path)
+    from .source_row_font_registry import FONT_SPEC
+
+    if any(row.get("font_reference") == FONT_SPEC["font"] for row in rows):
+        font_path = directory / FONT_SPEC["font"]
+        license_path = directory / FONT_SPEC["bundled_license"]
+        lff_path = directory / FONT_SPEC["librecad_font"]
+        rows.append({
+            "dependency": "source_row_font_and_license",
+            "filename": font_path.name,
+            "license": license_path.name,
+            "librecad_font": lff_path.name,
+            "pass": (font_path.is_file() and license_path.is_file() and lff_path.is_file()
+                     and not any(p.is_symlink() for p in (font_path, license_path, lff_path))
+                     and file_sha256(font_path) == FONT_SPEC["sha256"]
+                     and file_sha256(license_path) == FONT_SPEC["license_sha256"]
+                     and file_sha256(lff_path) == FONT_SPEC["librecad_sha256"]),
+        })
+        if license_path.is_file():
+            assets.append(license_path)
+        if lff_path.is_file():
+            assets.append(lff_path)
     return rows, assets
 
 
@@ -1059,9 +1095,15 @@ def run_quality_review(
         bbox = _box(obj)
         object_bounds[oid] = bbox
         members = _expanded(entity)
+        text_font = dxf_path.parent / "DejaVuSans.ttf"
+        if entity.dxftype() == "TEXT":
+            filename = str(doc.styles.get(entity.dxf.style).dxf.font)
+            if Path(filename).name != filename or "\\" in filename:
+                raise ValueError("REVIEW_NATIVE_TEXT_FONT_NOT_PORTABLE_BASENAME")
+            text_font = dxf_path.parent / filename
         checks = _candidate_geometry_checks(
             entity, obj, members, pixel_from_cad, mm,
-            source_roi=roi, text_font_path=dxf_path.parent / "DejaVuSans.ttf",
+            source_roi=roi, text_font_path=text_font,
         )
         checks["identity_kind_matches_candidate"] = kind == obj["kind"]
         layer = doc.layers.get(entity.dxf.layer)

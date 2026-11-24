@@ -62,9 +62,14 @@ _DERIVED_PRODUCERS = (
     "text_confirmation",
     "text_context_ownership",
 )
-_SINGLE_LINE_PRODUCERS = ("single_line_labels", "circle_character_recognition")
+_SINGLE_LINE_PRODUCERS = (
+    "single_line_labels", "circle_character_recognition", "source_glyph_equivalence",
+)
 _TEXT_CONTACT_PRODUCERS = ("text_contact_geometry", "text_contact_partition")
-_SOURCE_GAP_PRODUCERS = ("single_line_neighbor_clearance", "single_line_text_audit", "circular_markers")
+_SOURCE_GAP_PRODUCERS = (
+    "single_line_neighbor_clearance", "single_line_text_audit", "circular_markers",
+    "single_line_source_layout", "source_row_font_registry", "text_contact_audit",
+)
 
 
 def _dependency_items(row):

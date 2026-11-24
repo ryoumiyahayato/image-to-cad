@@ -34,6 +34,240 @@ from .text_contact_adoption import (
 EPS = 1e-7
 
 
+SOURCE_REPLAY_NUMERICS = {
+    "version": "source-round-fit-derived-statistics-ulp-v1",
+    "radius_ulps": 4,
+    "radial_distance_ulps": 2,
+    "radial_statistic_ulps": 2,
+    "area_ratio_arithmetic_ulps": 4,
+    "pixel_geometry_or_adoption_tolerance_added": False,
+    "round_centers_source_samples_and_native_representations": "exact",
+}
+_ROUND_STATISTICS = frozenset({
+    "inner_boundary_radius_px", "radial_p95_px", "radial_max_px", "area_ratio",
+})
+
+
+def _source_exact(left, right):
+    if type(left) is not type(right):
+        return False
+    if isinstance(left, dict):
+        return left.keys() == right.keys() and all(_source_exact(left[k], right[k]) for k in left)
+    if isinstance(left, list):
+        return len(left) == len(right) and all(_source_exact(a, b) for a, b in zip(left, right))
+    if isinstance(left, float):
+        return math.isfinite(left) and math.isfinite(right) and left == right
+    return left == right
+
+
+def _round_statistic_bounds(left, right):
+    """An operational binary64 bound, not a tolerance on source geometry.
+
+    Radius permits four adjacent binary64 values. A radial residual subtracts
+    that radius from an independently evaluated distance: propagate the radius
+    bound plus two distance ULPs and two statistic ULPs. Absolute value/max are
+    non-expansive; the latter allowance also covers quantile interpolation.
+    For area/(pi*r*r), propagate dr with A*(2*dr/r + (dr/r)**2), then add four
+    ULPs for arithmetic. Only these named observations can use these bounds.
+    """
+    if not isinstance(left, dict) or not isinstance(right, dict) or left.keys() != right.keys():
+        return None
+    if not _ROUND_STATISTICS <= left.keys():
+        return None
+    if any(not _source_exact(left[k], right[k]) for k in left.keys() - _ROUND_STATISTICS):
+        return None
+    if (left.get("class") != "OBSERVED_ROUND_INNER_BOUNDARY_SEMANTICS_UNKNOWN"
+            or not isinstance(left.get("id"), str)
+            or any(type(row[k]) is not float or not math.isfinite(row[k]) or row[k] < 0
+                   for row in (left, right) for k in _ROUND_STATISTICS)):
+        return None
+    radii = [left["inner_boundary_radius_px"], right["inner_boundary_radius_px"]]
+    if min(radii) <= 0:
+        return None
+    scale = max(radii)
+    radius_bound = SOURCE_REPLAY_NUMERICS["radius_ulps"] * math.ulp(scale)
+    distance_scale = scale + max(left["radial_max_px"], right["radial_max_px"])
+    distance_bound = SOURCE_REPLAY_NUMERICS["radial_distance_ulps"] * math.ulp(distance_scale)
+    common = {
+        "round_id": left["id"], "radius_scale_px": scale,
+        "radius_ulp_px": math.ulp(scale), "radius_bound_px": radius_bound,
+        "distance_scale_px": distance_scale, "distance_roundoff_bound_px": distance_bound,
+    }
+    bounds = {"inner_boundary_radius_px": {
+        **common, "absolute_bound": radius_bound, "units": "source_px",
+        "basis": "four_binary64_radius_ULPs",
+    }}
+    for key in ("radial_p95_px", "radial_max_px"):
+        arithmetic = SOURCE_REPLAY_NUMERICS["radial_statistic_ulps"] * math.ulp(max(left[key], right[key]))
+        bounds[key] = {
+            **common, "absolute_bound": radius_bound + distance_bound + arithmetic,
+            "statistic_roundoff_bound": arithmetic, "units": "source_px",
+            "basis": "radius_plus_distance_plus_statistic_roundoff",
+        }
+    area_scale = max(left["area_ratio"], right["area_ratio"])
+    ratio = radius_bound / min(radii)
+    propagation = area_scale * (2 * ratio + ratio * ratio)
+    arithmetic = SOURCE_REPLAY_NUMERICS["area_ratio_arithmetic_ulps"] * math.ulp(area_scale)
+    bounds["area_ratio"] = {
+        **common, "absolute_bound": propagation + arithmetic, "units": "dimensionless",
+        "radius_propagation_bound": propagation, "arithmetic_roundoff_bound": arithmetic,
+        "basis": "area_ratio_times_two_dr_over_r_plus_squared_term_and_four_ratio_ULPs",
+    }
+    return bounds if all(math.isfinite(row["absolute_bound"]) for row in bounds.values()) else None
+
+
+def _plan_roundoff_fields(saved, replayed, prefix=()):
+    fields, round_bounds = {}, {}
+    if not isinstance(saved, dict) or not isinstance(replayed, dict):
+        return fields
+    if saved.get("schema") != "source-text-contact-path-plan-v1" or replayed.get("schema") != saved["schema"]:
+        return fields
+    left, right = saved.get("round_observations", []), replayed.get("round_observations", [])
+    if not isinstance(left, list) or not isinstance(right, list) or len(left) != len(right):
+        return fields
+    ids = [row.get("id") for row in left if isinstance(row, dict)]
+    if len(ids) != len(left) or len(set(ids)) != len(ids):
+        return fields
+    for index, (old, new) in enumerate(zip(left, right)):
+        bounds = _round_statistic_bounds(old, new)
+        if bounds is not None:
+            round_bounds[old["id"]] = bounds
+            for key, bound in bounds.items():
+                fields[prefix + ("round_observations", index, key)] = bound
+    old_paths, new_paths = saved.get("paths", []), replayed.get("paths", [])
+    if not isinstance(old_paths, list) or not isinstance(new_paths, list) or len(old_paths) != len(new_paths):
+        return fields
+    for index, (old, new) in enumerate(zip(old_paths, new_paths)):
+        if not isinstance(old, dict) or not isinstance(new, dict):
+            continue
+        a, b = old.get("endpoint_evidence", []), new.get("endpoint_evidence", [])
+        if not isinstance(a, list) or not isinstance(b, list) or len(a) != len(b):
+            continue
+        for endpoint, (first, second) in enumerate(zip(a, b)):
+            key = "radial_contact_residual_px"
+            if (not isinstance(first, dict) or not isinstance(second, dict)
+                    or first.keys() != second.keys()
+                    or first.get("kind") != "OBSERVED_ROUND_BOUNDARY_CONTACT"
+                    or first.get("round_id") not in round_bounds
+                    or key not in first
+                    or any(not _source_exact(first[k], second[k]) for k in first.keys() - {key})
+                    or any(type(row[key]) is not float or not math.isfinite(row[key]) or row[key] < 0
+                           for row in (first, second))):
+                continue
+            bound = round_bounds[first["round_id"]]["inner_boundary_radius_px"]
+            arithmetic = SOURCE_REPLAY_NUMERICS["radial_statistic_ulps"] * math.ulp(max(first[key], second[key]))
+            fields[prefix + ("paths", index, "endpoint_evidence", endpoint, key)] = {
+                **bound,
+                "absolute_bound": bound["radius_bound_px"] + bound["distance_roundoff_bound_px"] + arithmetic,
+                "statistic_roundoff_bound": arithmetic,
+                "basis": "bound_original_round_radius_plus_endpoint_distance_roundoff",
+            }
+    return fields
+
+
+def compare_contact_source_replay(saved, replayed, *, scope):
+    """Compare original-source records; never approximate a coordinate or mask.
+
+    Whitelist locations are constructed from the two real schema-bound round
+    observations. A similarly named field elsewhere receives no allowance.
+    The original records and all checks/thresholds are left unchanged.
+    """
+    fields, errors = {}, []
+    schema = {"plan": "source-text-contact-path-plan-v1", "partition": "complete-single-source-row-partition-v1"}.get(scope)
+    if schema is None or not isinstance(saved, dict) or not isinstance(replayed, dict) or saved.get("schema") != schema or replayed.get("schema") != schema:
+        errors.append("SOURCE_REPLAY_SCOPE_OR_SCHEMA_INVALID")
+    elif scope == "plan":
+        fields = _plan_roundoff_fields(saved, replayed)
+    else:
+        old, new = saved.get("text_contact_separation"), replayed.get("text_contact_separation")
+        if isinstance(old, dict) and isinstance(new, dict):
+            plan_a, plan_b = old.get("geometry_plan"), new.get("geometry_plan")
+            prefix = ("text_contact_separation", "geometry_plan")
+            fields = _plan_roundoff_fields(plan_a, plan_b, prefix)
+            for record, plan in ((old, plan_a), (new, plan_b)):
+                if not isinstance(plan, dict):
+                    continue
+                rounds = {row["id"]: row for row in plan.get("round_observations", []) if isinstance(row, dict) and isinstance(row.get("id"), str)}
+                for row in record.get("independent_round_observations", []):
+                    if not isinstance(row, dict) or not _source_exact(row, rounds.get(row.get("id"))):
+                        errors.append("PARTITION_INDEPENDENT_ROUND_NOT_EXACTLY_BOUND_TO_ITS_PLAN")
+            a, b = old.get("independent_round_observations", []), new.get("independent_round_observations", [])
+            if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+                for index, (first, second) in enumerate(zip(a, b)):
+                    bounds = _round_statistic_bounds(first, second)
+                    if bounds is not None:
+                        for key, bound in bounds.items():
+                            fields[("text_contact_separation", "independent_round_observations", index, key)] = bound
+
+    differences = []
+
+    def compare(left, right, path):
+        if _source_exact(left, right):
+            return
+        if isinstance(left, dict) and isinstance(right, dict):
+            if left.keys() != right.keys():
+                differences.append({"path": list(path), "kind": "FIELD_SET_CHANGED", "saved_fields": sorted(left), "replayed_fields": sorted(right), "accepted": False})
+            for key in sorted(left.keys() & right.keys()):
+                compare(left[key], right[key], path + (key,))
+            return
+        if isinstance(left, list) and isinstance(right, list):
+            if len(left) != len(right):
+                differences.append({"path": list(path), "kind": "LIST_LENGTH_CHANGED", "saved_length": len(left), "replayed_length": len(right), "accepted": False})
+            for index, (first, second) in enumerate(zip(left, right)):
+                compare(first, second, path + (index,))
+            return
+        bound = fields.get(path)
+        finite = type(left) is float and type(right) is float and math.isfinite(left) and math.isfinite(right)
+        distance = abs(left - right) if finite else None
+        accepted = bound is not None and finite and distance <= bound["absolute_bound"]
+        differences.append({
+            "path": list(path), "kind": "DERIVED_ROUND_STATISTIC" if bound is not None else "EXACT_FIELD_CHANGED",
+            "saved_value": left if not isinstance(left, float) or math.isfinite(left) else repr(left),
+            "replayed_value": right if not isinstance(right, float) or math.isfinite(right) else repr(right),
+            "absolute_difference": distance, "allowed_absolute_difference": bound["absolute_bound"] if bound else 0,
+            "bound": bound, "accepted": bool(accepted),
+        })
+
+    compare(saved, replayed, ())
+    passed = not errors and all(row["accepted"] for row in differences)
+    return {
+        "pass": passed, "bit_exact": passed and not differences,
+        "numeric_equivalent": passed, "scope": scope,
+        "policy": dict(SOURCE_REPLAY_NUMERICS),
+        "whitelisted_statistic_fields": len(fields), "differences": differences,
+        "errors": errors, "original_records_modified": False,
+        "all_non_whitelisted_fields_exact": not any(row["kind"] != "DERIVED_ROUND_STATISTIC" for row in differences),
+    }
+
+
+def verify_contact_plan_source_replay(gray, roi, plan, *, source_graph=None):
+    """Keep the former exact result and attach only bounded statistic evidence."""
+    from .text_contact_geometry import plan_text_contact_geometry, verify_text_contact_geometry_plan
+
+    original = verify_text_contact_geometry_plan(gray, roi, plan, source_graph=source_graph)
+    if original["reason"] == "CONTACT_PLAN_POLICY_OR_PRODUCER_CHANGED":
+        return original
+    try:
+        replayed = plan_text_contact_geometry(gray, roi, plan["seed_bbox_xyxy_px"], source_graph=source_graph)
+        comparison = compare_contact_source_replay(plan, replayed, scope="plan")
+    except (KeyError, TypeError, ValueError) as exc:
+        return {**original, "pass": False, "reason": str(exc)}
+    checks = dict(original["checks"])
+    for name, key in (("all_complete_paths_replayed", "paths"), ("round_observations_replayed", "round_observations")):
+        checks[name] = (
+            isinstance(plan.get(key), list) and isinstance(replayed.get(key), list)
+            and not any(row["path"] and row["path"][0] == key and not row["accepted"] for row in comparison["differences"])
+        )
+    checks["all_other_plan_fields_exact_and_statistic_bounds_met"] = comparison["pass"]
+    return {
+        **original, "pass": all(checks.values()), "checks": checks,
+        "bit_exact_replay": {key: value for key, value in original.items() if key != "replayed_paths"},
+        "source_replay_comparison": comparison,
+        "reason": "SOURCE_CONTACT_PLAN_REPLAYED_WITH_BOUND_ROUNDOFF" if all(checks.values()) else "CONTACT_PLAN_SOURCE_OR_PATH_CHANGED",
+        "replayed_paths": replayed.get("paths", []),
+    }
+
+
 def _source_evidence(obj):
     evidence = obj.get("source_evidence") if isinstance(obj, dict) else None
     return evidence if isinstance(evidence, dict) else {}
@@ -137,6 +371,10 @@ def _text_matches(entity, obj, roi, dpi, font_path, *, block_member=False):
     from .single_line_text_audit import _expected_attributes, text_attributes
 
     if entity.dxftype() != "TEXT":
+        return False
+    style = entity.doc.styles.get(entity.dxf.style)
+    if (style.dxf.font != Path(font_path).name or style.dxf.width != 1.0
+            or style.dxf.height != 0.0 or style.dxf.oblique != 0.0):
         return False
     expected, _ = _expected_attributes(
         entity,
@@ -508,7 +746,6 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
     plan_checks, context = {}, None
     from .text_contact_geometry import (
         build_text_contact_source_graph,
-        verify_text_contact_geometry_plan,
     )
 
     target_handles = set()
@@ -585,7 +822,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             if key not in plan_checks:
                 if context is None:
                     context = build_text_contact_source_graph(np.asarray(gray), roi)
-                plan_checks[key] = verify_text_contact_geometry_plan(
+                plan_checks[key] = verify_contact_plan_source_replay(
                     gray, roi, plan, source_graph=context
                 )
             row["original_source_plan_replay"] = {
@@ -682,10 +919,15 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 and receipt.get("type") == actual[oid][0].dxftype()
             )
             checks["unchanged_candidate_geometry"] = object_binding(obj) == binding
+            neighbor_font = path.parent / "DejaVuSans.ttf"
+            if obj["kind"] == "TEXT":
+                from .single_line_text_audit import resolve_saved_text_font
+
+                _, neighbor_font, _ = resolve_saved_text_font(path, metadata, obj)
             checks["actual_saved_geometry_matches_protected_candidate"] = checks[
                 "one_actual_entity"
             ] and _neighbor_matches(
-                actual[oid][0], obj, roi, dpi, path.parent / "DejaVuSans.ttf"
+                actual[oid][0], obj, roi, dpi, neighbor_font
             )
         except (KeyError, ValueError, TypeError, IndexError, OSError):
             checks["actual_saved_geometry_matches_protected_candidate"] = False

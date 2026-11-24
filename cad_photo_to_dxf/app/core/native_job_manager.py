@@ -1321,6 +1321,21 @@ class NativeJobManager:
             "DejaVuSans.ttf": source.parent / "DejaVuSans.ttf",
             "FONT_LICENSE_DejaVu.txt": source.parent / "FONT_LICENSE_DejaVu.txt",
         }
+        portable_resources = {"DejaVuSans.ttf", "FONT_LICENSE_DejaVu.txt"}
+        from app.native_objects.source_row_font_registry import FONT_SPEC
+
+        if any(style.dxf.font == FONT_SPEC["font"] for style in doc.styles):
+            for name, digest in (
+                (FONT_SPEC["font"], FONT_SPEC["sha256"]),
+                (FONT_SPEC["bundled_license"], FONT_SPEC["license_sha256"]),
+                (FONT_SPEC["librecad_font"], FONT_SPEC["librecad_sha256"]),
+            ):
+                resource = source.parent / name
+                if (not resource.is_file() or resource.is_symlink()
+                        or file_sha(resource) != digest):
+                    raise ValueError("SOURCE_ROW_EXPORT_RESOURCE_IDENTITY_CHANGED:" + name)
+                files[name] = resource
+                portable_resources.add(name)
         created = []
         created_directories = []
         try:
@@ -1351,7 +1366,7 @@ class NativeJobManager:
                     )
                 target = destination.parent / name
                 if target.exists() and (
-                    name not in {"DejaVuSans.ttf", "FONT_LICENSE_DejaVu.txt"}
+                    name not in portable_resources
                     or file_sha(target) != file_sha(original)
                 ):
                     raise FileExistsError(
@@ -1411,10 +1426,7 @@ class NativeJobManager:
             ]:
                 target = destination.parent / name
                 if target.exists():
-                    if name in {
-                        "DejaVuSans.ttf",
-                        "FONT_LICENSE_DejaVu.txt",
-                    } and file_sha(target) == file_sha(temporary / name):
+                    if name in portable_resources and file_sha(target) == file_sha(temporary / name):
                         continue
                     raise FileExistsError(
                         "Export destination appeared during publication: " + str(target)

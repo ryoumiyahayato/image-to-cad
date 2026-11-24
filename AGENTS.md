@@ -23,24 +23,14 @@
 5. 每次写入前核对远端 HEAD；新提交不允许覆盖其他代理的更新。遇到登录／权限阻塞，立即在私有持久存储保存 commit、补丁与恢复信息，不反复等待登录或 CI；可用连接器时再安全同步。
 6. 私人扫描、原始OCR、专用字体/模型、未授权材料、密钥和实验ZIP不得加入公开仓库。真实图纸与大型证据保存在受控私有资料库。
 
-## 当前字线接触文字任务与核验入口
+## 当前短编号任务与核验入口
 
-本轮冻结执行提交为 `cbac773b197daee7c8f0baec1a8abfdeb33e30d1`，tree `bc5e5b0e554870b54d009672c361bfd74e2e4a1d`；本地回归 **2858 passed／28 skipped，ruff PASS**。普通主图、Windows EXE 与最终 `main` 集成分别绑定实际提交和文件指纹；后续文档提交不替代运行锚点。最终普通主图与同执行提交的 Windows 实际 EXE 检查均已完成；[PR #48](https://github.com/ryoumiyahayato/image-to-cad/pull/48) 已合入 main `5e146bedc95c6dabef178d575a4a88f8b90272dc`，合入 tree 与执行 tree 精确相同。源码主图与 Windows 构建分别绑定实际字体资源，不宣称两平台资源字节相同。
+当前任务从 main `241d99dabecbb4d23f7a724727dcea5127359aea` 与 `QUARTER_contact_cbac773.dxf` 的 **423 个正式对象**接续。只处理五条固定完整短编号：`2LP-10,12` 优先，其次 `2LP-6,8`、`2LP-20`、`2LP-19`、`2LP-22`。这些都是已有开发／回归位置，不称新留出。标签答案不能进入生产逻辑。
 
-以 `QUARTER_labels_343e0f7.dxf` 的 **417 个正式顶层对象**为基线，沿用同一冻结 A2 四分之一区域与普通 `native-objects`。本轮只处理字线接触：完整一行用一个可改字 TEXT，穿越线、下划线与引线保持独立完整对象。实际接触可共享原图证据，真实白缝不能连接。案例编号、坐标、预期答案和设备含义不得进入生产采用。
+本轮四条固定编号已在 `2b3bf9a` 首份普通整区中保存；20 首字仍待修。该首稿还自然采用了两条缺首字／缺尾数的残串，因此明确不交付，不能将 423 对象结构账无退化当作所有新 TEXT 完整。共用行端原图检查现已阻止残串，四条局部保存及归档源码冷读保持；修复版完整回归 3029 passed／28 skipped、Ruff 与 diff 检查通过。`2b3bf9a` Windows 实际五组转换通过，但独立跨平台来源重放遇到圆拟合末位差；新比较仅允许已绑定派生统计的机器精度误差，源像素、路径、圆心及归属仍严格。后续新普通主图、实际 EXE 与代表 LibreCAD 编辑分别重验，不继承旧首稿结论。
 
-最终保存主图确认 **LAUNDRY 和 213 上方 BEDROOM 两处完整字线恢复**。`2LP-10,12` 转写可靠，但现有字体会封闭原图中字符与独立圆边的白缝，已由通用布局门拒绝采用，仍待修；EBB-3 只恢复完整曲线；冻结后保留位置因外部分叉未解决而待修。实际新增 2 条 TEXT、三条目标曲线及一条额外独立下划线，正式对象 **417 + 2 + 4 = 423**；旧 417 个逐属性及 BLOCK 全部保持，0 退场、0 改变。LAUNDRY 右 D 圆和 BEDROOM 远端 E 圆仍未正式恢复，完整仅指本轮文字与路径。
+严格保护原有房号、圆形标记、门墙、正确文字和完整路径。新 TEXT 接管的字内横划可以有证退场，独立下划线、引线和短划必须保持。普通 `native-objects` 重算受影响阶段，不向旧 DXF 拼接新文字。来源转写和排版分别记录；所有已有 raw 冲突重放，不靠先遇到的一致候选停止检查。
 
-历史失败原样保留：`ab9a08d` 保存来源门 PASS／417 旧对象保护 FAIL；`c241191` 修复了原 F 圆及旧曲线端点保护，却在真实对照中出现上述白缝闭合，视觉 FAIL。当前修复使用重放通过的原始字形／标点责任保护邻圆，并以实际字体轮廓否决新增接触；不缩放挤过白缝、不改圆、不补字、不引入新字体。采用、实际保存冷读及完成检查点均不能绕过新门。
-
-c241 的 LibreCAD 已实际完成两个代表的删字、删独立线、直接改字、普通保存及退出重开，共 14 张截图。`GUI_DIFF_DIAGNOSTIC_c241191.json` 保留严格审计 **FAIL／LIMITED**：改字附带字体样式变化，保存另有 PLOTSETTINGS 结构问题，不能宣称严格保存通过。最终版与 c241 的 422 个共同正式对象、47 个 BLOCK、文字样式及相邻字体字节精确相同，四个 GUI 代表对象的版本桥接 PASS；不得称 cbac 已再次 GUI 操作或所有实例都人工检查。
-
-正式文件 `QUARTER_contact_cbac773.dxf` 保存来源门、417 保护账本均 PASS；新增 6 个对象的 14 次程序编辑及一次普通保存重开检查 PASS；已实际打开 11 张重点对照和一张整区预览。Windows #681 实际 EXE 接触输入 PASS，四组共 8 份保存 DXF 来源冷读和 10 份 CI 编辑保存读回 PASS；后续文档提交只更新说明，不替代执行和构建锚点。候选、局部来源、构建和实际 EXE 转换分别记结果。Windows 保留 ROOM17、圆形标记、单行标签及原 strict-three-complete **FAIL（2 完整／1 待修）**；新增能力不能覆盖旧失败。
-
-既有 XDATA、INSERT `zscale=0`、字体与版本保存限制继续 **LIMITED**，产品仍 `0.3.0-dev / LOCAL_NO_GO`，工程师工时验收 `NOT_RUN`。本轮不扩展通用 CAD 保存兼容、三行 MTEXT 或安装器研究。
-
-恢复使用私有交付 `CONTACT_FINAL_RECOVERY_cbac773.zip` 对应的 `recover_contact.py`；已保存可用阶段包 `CONTACT_STAGE02_FINAL_MAIN_cbac773.zip`，入口已实际查询成功，保留累计预算与审批边界。旧历史远端分支清理 `BLOCKED_CREDENTIALS` 不重试；本轮开发提交已由 main 合入父提交精确可达。
-
-方法与版本见[字线接触记录](docs/native/TEXT_CONTACT_20261124.md)、[当前任务](docs/project/CURRENT_TASK.md)和[项目状态](docs/project/PROJECT_STATUS.md)。历史继续引用[单行标签记录](docs/native/SINGLE_LINE_LABELS_20261122.md)及[圆形标记记录](docs/native/CIRCULAR_MARKERS_20261122.md)，不重新编排原证据。
+当前实证和恢复阶段见[当前任务](docs/project/CURRENT_TASK.md)及[短编号记录](docs/native/SHORT_CODES_20261125.md)。历史继续引用[字线接触记录](docs/native/TEXT_CONTACT_20261124.md)、[单行标签](docs/native/SINGLE_LINE_LABELS_20261122.md)及[圆形标记](docs/native/CIRCULAR_MARKERS_20261122.md)。旧 Windows strict-three 失败、XDATA、INSERT `zscale=0` 等保存限制不改写。产品仍 `0.3.0-dev / LOCAL_NO_GO`，兼容 LIMITED，工程师工时 NOT_RUN。
 
 **验收总方向**：同一冻结图纸四分之一区域，尽可能多、干净、完整地恢复线、文字、门、墙、符号和连接对象；专业人员实际修图（包括全部漏画补绘、校验、纠错）时间不超过同范围同质量从零绘制的一半，才能对外声称达到最终采用目标。此正式工时测试目前仍为 `NOT_RUN`。

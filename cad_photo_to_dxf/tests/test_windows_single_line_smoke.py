@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import hashlib
 from io import BytesIO
 import json
@@ -251,6 +252,15 @@ def _raw_checker_fixture(tmp_path):
         "ppocr_views": [{"view_index": 0, "normalization": {**common_view, **SINGLE_LINE_PP_OCR_VIEWS[0]}, "prediction_file": prediction_record, "recognition_image": view_image, "prediction": prediction, "model_inference_executed_for_this_request": True, "observation_receipt": {"model_inference_executed_for_this_request": True}}],
         "new_Tesseract_calls": 1, "new_model_calls": 1,
     }
+    evidence["source_array_sha256"] = prediction["input_array_sha256"]
+    evidence["preexisting_raw_view_inventory"] = record("preexisting_raw_view_inventory.json", json.dumps({
+        "schema": "single-line-preexisting-raw-view-inventory-v1",
+        "source_array_sha256": evidence["source_array_sha256"], "source_bbox_xyxy_px": evidence["source_bbox_xyxy_px"],
+        "recorded_before_any_recognition_or_adoption": True, "missing_views_do_not_request_recognition": True,
+        "views": [{"engine": family, "view_index": index, "normalization": specs[index],
+                   "input_array_sha256": prediction["input_array_sha256"], "availability": "ABSENT", "raw_observation_cache": None}
+                  for index in range(2) for family, specs in (("Tesseract", SINGLE_LINE_TESSERACT_VIEWS), ("PP-OCR", SINGLE_LINE_PP_OCR_VIEWS))],
+    }).encode())
     objects = {"objects": [{"id": "checker-label", "kind": "TEXT", "geometry": {"text": "PANEL-08A"}, "source_evidence": {"single_line_recovery": evidence}}]}
     cold = {"single_line_text_source_checks": [{"id": "checker-label", "type": "SINGLE_LINE_TEXT_SOURCE_BINDING", "pass": True, "source_replay": {"pass": True, "checker_test_only": True, "new_OCR_calls": 0, "new_model_calls": 0, "source_text_normalization": normalization, "Tesseract_canonical_word_texts": ["PANEL-08A"]}}]}
     summary = {"new_Tesseract_calls": 1, "new_model_calls": 1, "checker_test_only": True}
@@ -261,10 +271,121 @@ def _raw_checker_fixture(tmp_path):
 def test_single_line_raw_reader_reopens_all_named_payloads_and_counts_actual_receipts(tmp_path):
     objects, cold, report = _raw_checker_fixture(tmp_path)
     result = inspect_single_line_character_payloads(objects, cold, tmp_path, report)
-    assert result["accepted_label_raw_files_read_and_hashed"] == 6
+    assert result["accepted_label_raw_files_read_and_hashed"] == 7
     assert result["accepted_label_new_Tesseract_calls"] == 1
     assert result["accepted_label_new_model_calls"] == 1
     assert result["inspection_executed_recognition"] is False
+
+
+def _asymmetric_known_raw_fixture(tmp_path, availability="OUTPUT_CHECKPOINT"):
+    """An artificial 2+1 transport graph, never an optical agreement claim."""
+    objects, cold, report = _raw_checker_fixture(tmp_path)
+    evidence = objects["objects"][0]["source_evidence"]["single_line_recovery"]
+    evidence["recognition_dpi"] = 200
+
+    def record(name, data):
+        path = tmp_path / "single_line_labels" / name
+        path.write_bytes(data)
+        return {"path": path.relative_to(tmp_path).as_posix(), "sha256": hashlib.sha256(data).hexdigest()}
+
+    raw = b"known second Tesseract view; checker-only transport fixture"
+    view = deepcopy(evidence["tesseract_views"][0])
+    view.update(view_index=1, command_executed_for_this_request=False)
+    view["normalization"].update(SINGLE_LINE_TESSERACT_VIEWS[1])
+    view["raw_tsv"] = record("known-consumed.tsv", raw)
+    metadata = json.loads((tmp_path / evidence["tesseract_views"][0]["metadata"]["path"]).read_text())
+    metadata.update(command_executed_for_this_request=False, tsv_sha256=hashlib.sha256(raw).hexdigest())
+    reference = evidence["preexisting_raw_view_inventory"]
+    inventory = json.loads((tmp_path / reference["path"]).read_text())
+    slot = inventory["views"][2]
+    slot.update(availability=availability, raw_payload=record("known-original.raw", raw))
+    if availability == "OUTPUT_CHECKPOINT":
+        slot["checkpoint_metadata"] = record("known-original-metadata.json", json.dumps({**metadata, "command_executed_for_this_request": True}).encode())
+    else:
+        engine = {"name": "tesseract", "version": "checker-only", "language": "eng", "oem": 1, "CPU_threads": 1,
+                  "executable_sha256": "0" * 64, "traineddata_sha256": "1" * 64}
+        specification = {"schema": "native-raw-observation-cache-v1", "kind": "tesseract-tsv",
+                         "recognition_input": {"sha256": view["normalization"]["input_array_sha256"]},
+                         "external_white_padding_px": 16, "psm": 13, "recognition_dpi": 400,
+                         "source_pixels_modified": False, "engine": engine}
+        key = hashlib.sha256(json.dumps(specification, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
+        producer = {"checker_test_only": True}
+        cache = {"schema": "native-raw-observation-cache-v1", "key": key, "specification": specification,
+                 "producer": producer, "payload_sha256": hashlib.sha256(raw).hexdigest(), "payload_bytes": len(raw)}
+        slot["cache_record"] = record("known-cache-record.json", json.dumps(cache).encode())
+        receipt = {"kind": specification["kind"], "key": key, "producer": producer,
+                   "payload_sha256": cache["payload_sha256"], "record_sha256": slot["cache_record"]["sha256"],
+                   "same_observation_no_extra_vote": True}
+        slot["raw_observation_cache"] = receipt
+        metadata.update(raw_observation_cache=receipt, consumer_installed_engine_identity=engine)
+    view["metadata"] = record("known-consumed-metadata.json", json.dumps(metadata).encode())
+    evidence["tesseract_views"].append(view)
+    replacement = record("preexisting_raw_view_inventory.json", json.dumps(inventory).encode())
+    reference.update(replacement)
+    return objects, cold, report
+
+
+@pytest.mark.parametrize("availability", ["OUTPUT_CHECKPOINT", "RAW_CACHE"])
+def test_raw_reader_accepts_two_Tesseract_one_model_with_every_known_view(availability, tmp_path):
+    objects, cold, report = _asymmetric_known_raw_fixture(tmp_path, availability)
+    result = inspect_single_line_character_payloads(objects, cold, tmp_path, report)
+    label = result["verified_saved_recovery_TEXT"][0]
+    assert (label["Tesseract_views"], label["PP_OCR_views"]) == (2, 1)
+    assert (label["new_Tesseract_calls"], label["new_model_calls"]) == (1, 1)
+    assert label["preexisting_raw_view_inventory"]["known_view_count"] == 1
+    assert label["preexisting_raw_view_inventory"]["all_preexisting_views_replayed"] is True
+
+
+@pytest.mark.parametrize("damage", [
+    "known-second-omitted", "view-index-reordered", "duplicate-view-index", "view-index-outside-plan",
+    "inventory-missing", "inventory-slot-omitted", "inventory-slot-reordered", "inventory-slot-duplicate",
+    "inventory-source-changed", "inventory-input-changed", "inventory-config-changed", "known-original-changed",
+    "known-metadata-omitted", "known-view-counted-new", "absent-with-hidden-raw",
+])
+def test_raw_reader_rejects_hidden_or_changed_preexisting_views(tmp_path, damage):
+    objects, cold, report = _asymmetric_known_raw_fixture(tmp_path)
+    evidence = objects["objects"][0]["source_evidence"]["single_line_recovery"]
+    reference = evidence["preexisting_raw_view_inventory"]
+    inventory = json.loads((tmp_path / reference["path"]).read_text())
+    slot = inventory["views"][2]
+    if damage == "known-second-omitted":
+        evidence["tesseract_views"].pop()
+    elif damage == "view-index-reordered":
+        evidence["tesseract_views"].reverse()
+    elif damage == "duplicate-view-index":
+        evidence["tesseract_views"][1]["view_index"] = 0
+    elif damage == "view-index-outside-plan":
+        evidence["tesseract_views"][1]["view_index"] = 2
+    elif damage == "inventory-missing":
+        evidence.pop("preexisting_raw_view_inventory")
+    elif damage == "inventory-slot-omitted":
+        inventory["views"].pop()
+    elif damage == "inventory-slot-reordered":
+        inventory["views"].reverse()
+    elif damage == "inventory-slot-duplicate":
+        inventory["views"][3] = deepcopy(slot)
+    elif damage == "inventory-source-changed":
+        inventory["source_array_sha256"] = "2" * 64
+    elif damage == "inventory-input-changed":
+        slot["input_array_sha256"] = "3" * 64
+    elif damage == "inventory-config-changed":
+        slot["normalization"]["psm"] = 6
+    elif damage == "known-original-changed":
+        path = tmp_path / slot["raw_payload"]["path"]
+        path.write_bytes(b"altered known original")
+        slot["raw_payload"]["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    elif damage == "known-metadata-omitted":
+        slot.pop("checkpoint_metadata")
+    elif damage == "known-view-counted-new":
+        evidence["tesseract_views"][1]["command_executed_for_this_request"] = True
+        evidence["new_Tesseract_calls"] = 2
+    elif damage == "absent-with-hidden-raw":
+        slot["availability"] = "ABSENT"
+    payload = json.dumps(inventory).encode()
+    (tmp_path / reference["path"]).write_bytes(payload)
+    reference["sha256"] = hashlib.sha256(payload).hexdigest()
+    with pytest.raises(AssertionError):
+        inspect_single_line_character_payloads(objects, cold, tmp_path, report)
 
 
 @pytest.mark.parametrize("damage", [
@@ -439,6 +560,16 @@ def _bounded_checker_fixture(tmp_path, font_path):
                          "model_inference_executed_for_this_request": True, "observation_receipt": {"model_inference_executed_for_this_request": True}}],
         "new_Tesseract_calls": 1, "new_model_calls": 1,
     }
+    evidence["source_array_sha256"] = source_array_sha
+    evidence["preexisting_raw_view_inventory"] = record("preexisting_raw_view_inventory.json", json.dumps({
+        "schema": "single-line-preexisting-raw-view-inventory-v1", "source_array_sha256": source_array_sha,
+        "source_bbox_xyxy_px": box, "recorded_before_any_recognition_or_adoption": True,
+        "missing_views_do_not_request_recognition": True,
+        "views": [{"engine": family, "view_index": index, "normalization": specs[index],
+                   "input_array_sha256": (tn if family == "Tesseract" else pn)["input_array_sha256"],
+                   "availability": "ABSENT", "raw_observation_cache": None}
+                  for index in range(2) for family, specs in (("Tesseract", SINGLE_LINE_TESSERACT_VIEWS), ("PP-OCR", SINGLE_LINE_PP_OCR_VIEWS))],
+    }).encode())
     result = {"accepted": False, "text": None, "geometry": None, "bbox_xyxy_px": box, "reasons": reasons,
               "evidence": evidence, "new_Tesseract_calls": 1, "new_model_calls": 1}
     record("label_result.json", json.dumps(result).encode())
