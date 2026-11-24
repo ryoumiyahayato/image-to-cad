@@ -577,6 +577,52 @@ def test_formal_label_replay_requires_actual_upstream_observation_file(
     assert not labels.verify_single_line_label_evidence(gray, roi, evidence, tmp_path)["pass"]
 
 
+@pytest.mark.parametrize("damage", [None, "raw_file", "no_evidence_root"])
+def test_verified_complete_row_keeps_its_punctuation_ownership(
+    tmp_path, monkeypatch, damage
+):
+    from app.native_objects import source_text_ownership as ownership
+    from app.native_objects.pipeline import _reclassify_source_fitted_lines
+
+    gray, roi, box, observation, _, _ = _recognized(tmp_path, monkeypatch)
+    proof = observation["evidence"]
+    part = proof["source_partition"]
+    data = _contract(gray, roi, box, complete=True)
+    row = data["regions"][0]
+    row.update(
+        text=observation["text"], single_line_recovery=proof,
+        words=[{"text": observation["text"], "confidence": 20.0, "bbox_xyxy_px": box}],
+        compact_source_ink_mask={"runs_y_x0_x1": part["source_support_runs_y_x0_x1"]},
+    )
+    data["groups"][0]["text"] = observation["text"]
+    dash = next(c for c in part["components"] if c["source_role"] == "RETAINED_PUNCTUATION")
+    points = np.array([[x, y] for y, a, b in dash["source_runs_y_x0_x1"] for x in range(a, b)])
+    geometry = {"start": [float(points[:,0].min()), float(points[:,1].mean())],
+                "end": [float(points[:,0].max()), float(points[:,1].mean())]}
+    proposal = {"id": "source-mark", "geometry": geometry,
+                "source_component_area": len(points), "decision": "DEFER_TEXT_OWNERSHIP"}
+    candidates = {"objects": [], "short_source_components": [proposal],
+                  "uncertainties": [{**deepcopy(proposal), "reason": "DEFER_TEXT_OWNERSHIP"}]}
+    if damage == "raw_file":
+        (tmp_path/proof["tesseract_views"][0]["raw_tsv"]["path"]).write_text("damaged")
+    fixed, audit = ownership.reconcile_source_text_ownership(
+        data, gray, roi, candidates,
+        evidence_root=None if damage == "no_evidence_root" else tmp_path,
+    )
+    event = next(e for e in audit["events"] if e["cached_source_candidate_ids"] == ["source-mark"])
+    protected = damage is None
+    assert bool(event["verified_complete_row_component_witnesses"]) == protected
+    assert event["checks"]["no_verified_complete_row_component_ownership"] != protected
+    if protected:
+        assert event["decision"] == "RETAIN_TEXT_OR_UNKNOWN_OWNERSHIP"
+        assert fixed["regions"][0]["compact_source_ink_mask"] == row["compact_source_ink_mask"]
+        reclassified = _reclassify_source_fitted_lines(
+            candidates, fixed, gray.shape, roi, original_dictionary_sha256="a"*64
+        )
+        assert not reclassified["objects"]
+    assert fixed["groups"] == data["groups"]
+
+
 def test_malformed_earlier_raw_observation_cannot_be_hidden_by_later_success():
     _, _, _, part = _drawing()
     good = _tview("AB-12,3", part)

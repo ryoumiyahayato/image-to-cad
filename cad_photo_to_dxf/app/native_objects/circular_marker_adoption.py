@@ -19,6 +19,7 @@ import numpy as np
 from .circle_character_recognition import recognize_circle_character
 from .circular_markers import (
     _mask_from_runs,
+    _protected_ring_conflicts,
     discover_circular_markers,
     verify_circle_source_evidence,
 )
@@ -29,7 +30,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "native-circular-marker-whole-object-adoption-v1",
+    "version": "native-circular-marker-whole-object-adoption-v2-source-text-protection",
     "native_sampling_step_px": 0.25,
     "replacement_geometry_distance_px": 0.85,
     "source_responsibility_distance_px": 0.85,
@@ -43,6 +44,7 @@ POLICY = {
     "block_member_retirement_permitted": False,
     "external_connections_in_marker_block": False,
     "source_pixels_unique_partition_required": False,
+    "formal_text_protection": "replayed_complete_single_line_glyph_runs_else_whole_bbox",
 }
 
 
@@ -68,23 +70,80 @@ def _text_box(obj):
     return [*points.min(axis=0).tolist(), *points.max(axis=0).tolist()]
 
 
-def _formal_text_protection(prior_objects, text_regions):
+def _single_line_source_protection(record, gray, roi, evidence_root, cache, *, geometry=None):
+    """Narrow a formal text box only with its replayed original glyph support."""
+    proof = record.get("single_line_recovery")
+    fallback = {"source_protection_basis": "WHOLE_FORMAL_TEXT_BBOX"}
+    if not isinstance(proof, dict):
+        return fallback
+    from .single_line_labels import verify_single_line_label_evidence
+
+    key = _digest(proof)
+    if key not in cache:
+        cache[key] = verify_single_line_label_evidence(gray, roi, proof, evidence_root)
+    replay = cache[key]
+    if not replay.get("pass"):
+        return {**fallback, "source_partition_replay_failure": replay.get("reason", "SOURCE_REPLAY_NOT_APPROVED")}
+    expected = replay["geometry"]
+    if geometry is None:
+        bound = record.get("text") == replay["text"] and record.get("bbox_xyxy_px") == replay["bbox_xyxy_px"]
+    else:
+        try:
+            bound = geometry.get("text") == replay["text"] and all(
+                math.isfinite(float(geometry[name]))
+                and abs(float(geometry[name]) - float(expected[name])) <= 1e-8
+                for name in ("x", "y", "height_px", "width_px")
+            ) and abs(float(geometry.get("rotation_deg_image", geometry.get("rotation_deg", 0)))
+                      - float(expected.get("rotation_deg_image", 0))) <= 1e-8
+        except (KeyError, TypeError, ValueError):
+            bound = False
+    if not bound:
+        return {**fallback, "source_partition_replay_failure": "FORMAL_TEXT_DIFFERS_FROM_REPLAYED_SOURCE_LAYOUT"}
+    runs = proof["source_partition"]["source_support_runs_y_x0_x1"]
+    if not runs:
+        return {**fallback, "source_partition_replay_failure": "REPLAYED_FORMAL_GLYPH_SUPPORT_EMPTY"}
+    return {
+        "source_protection_basis": "REPLAYED_COMPLETE_SINGLE_LINE_GLYPH_SUPPORT",
+        "source_partition_sha256": _digest(proof["source_partition"]),
+        "single_line_evidence_sha256": key,
+        "glyph_source_runs": deepcopy(runs),
+        "source_partition_replay_pass": True,
+    }
+
+
+def _formal_text_protection(prior_objects, text_regions, *, gray, roi, evidence_root):
     boxes = []
+    replay_cache = {}
     for obj in prior_objects:
         if obj.get("kind") not in ("TEXT", "MTEXT", "ROOM_LABEL", "CIRCULAR_MARKER"):
             continue
         box = _text_box(obj)
         if box:
-            boxes.append({"id": obj["id"], "bbox_xyxy_px": box, "confirmed": True})
+            protection = (
+                _single_line_source_protection(
+                    obj.get("source_evidence", {}), gray, roi, evidence_root,
+                    replay_cache, geometry=obj.get("geometry", {}),
+                )
+                if obj.get("kind") == "TEXT"
+                else {"source_protection_basis": "WHOLE_FORMAL_TEXT_BBOX"}
+            )
+            boxes.append({"id": obj["id"], "bbox_xyxy_px": box, "confirmed": True, **protection})
     regions = text_regions.get("regions", []) if isinstance(text_regions, dict) else []
     for region in regions:
         if not (region.get("accepted") or region.get("source_review", {}).get("accepted")):
             continue
         if region.get("bbox_xyxy_px"):
+            if isinstance(region.get("single_line_recovery"), dict):
+                protection = _single_line_source_protection(
+                    region, gray, roi, evidence_root, replay_cache,
+                )
+            else:
+                protection = {
+                    "glyph_source_runs": region["compact_source_ink_mask"]["runs_y_x0_x1"]
+                } if region.get("compact_source_ink_mask", {}).get("runs_y_x0_x1") else {}
             boxes.append({"id": region.get("id"), "bbox_xyxy_px": region["bbox_xyxy_px"],
                           "confirmed": True,
-                          **({"glyph_source_runs": region["compact_source_ink_mask"]["runs_y_x0_x1"]}
-                             if region.get("compact_source_ink_mask", {}).get("runs_y_x0_x1") else {})})
+                          **protection})
     return boxes
 
 
@@ -218,7 +277,7 @@ def _matching_existing_boundary(candidate, prior_objects):
     return None
 
 
-def _responsibility(candidate, prior_objects):
+def _responsibility(candidate, prior_objects, *, protected_text=()):
     source = candidate["source_evidence"]
     bbox = source["crop_bbox_xyxy_px"]
     origin = np.asarray(bbox[:2])
@@ -229,6 +288,7 @@ def _responsibility(candidate, prior_objects):
     complete = candidate["kind"] == "CIRCULAR_MARKER"
     result = {"retired_ids": [], "certificates": [], "conflicts": [], "unchanged_contacts": []}
     glyph_box = source.get("glyph_bbox_xyxy_px")
+    text_sources = {row["id"]: row for row in protected_text if row.get("source_partition_replay_pass")}
     for old in prior_objects:
         if complete and old.get("kind") in ("TEXT", "MTEXT", "ROOM_LABEL", "CIRCULAR_MARKER"):
             previous_box = _text_box(old)
@@ -236,7 +296,16 @@ def _responsibility(candidate, prior_objects):
                 previous_box[0] < glyph_box[2] and previous_box[2] > glyph_box[0]
                 and previous_box[1] < glyph_box[3] and previous_box[3] > glyph_box[1]
             ):
-                result["conflicts"].append({"old_object_id": old["id"], "reason": "EXISTING_FORMAL_TEXT_IS_NOT_RETIRED_OR_DUPLICATED"})
+                protected = text_sources.get(old["id"])
+                if protected is None or _protected_ring_conflicts(interior, origin, [protected]):
+                    result["conflicts"].append({"old_object_id": old["id"], "reason": "EXISTING_FORMAL_TEXT_IS_NOT_RETIRED_OR_DUPLICATED"})
+                else:
+                    result["unchanged_contacts"].append({
+                        "old_object_id": old["id"],
+                        "reason": "OVERLAPPING_TEXT_BOX_HAS_SEPARATE_REPLAYED_ORIGINAL_GLYPH_SUPPORT",
+                        "source_partition_sha256": protected["source_partition_sha256"],
+                        "old_text_retired": False,
+                    })
         for member_index, (kind, geometry, block_member) in enumerate(_primitive_members(old)):
             points = _samples(kind, geometry)
             if len(points) < 2 or not np.isfinite(points).all():
@@ -315,8 +384,14 @@ def complete_circular_markers(
     before = _digest(prior_objects)
     if len({obj["id"] for obj in prior_objects}) != len(prior_objects):
         raise ValueError("CIRCULAR_PRIOR_OBJECT_IDENTITIES_NOT_UNIQUE")
-    protected = _formal_text_protection(prior_objects, text_regions)
+    protected = _formal_text_protection(
+        prior_objects, text_regions, gray=gray, roi=roi, evidence_root=output.parent,
+    )
     discovery = discover_circular_markers(gray, roi, protected_text_boxes=protected, observed_rounds=observed_rounds)
+    discovery["formal_text_protection"] = [
+        {key: value for key, value in row.items() if key != "glyph_source_runs"}
+        for row in protected
+    ]
     save_json(output / "circular_marker_discovery.json", discovery)
     objects, uncertainties, decisions, retirement_records = [], [], [], []
     retired = set()
@@ -347,7 +422,7 @@ def complete_circular_markers(
             uncertainties.append(decision)
             decisions.append(decision)
             continue
-        boundary_responsibility = _responsibility(candidate, active)
+        boundary_responsibility = _responsibility(candidate, active, protected_text=protected)
         if not boundary_responsibility["pass"]:
             decision.update(status="BOUNDARY_WHOLE_OBJECT_RESPONSIBILITY_PENDING", responsibility=boundary_responsibility)
             uncertainties.append(decision)
@@ -367,7 +442,7 @@ def complete_circular_markers(
                         geometry={"circle_geometry": deepcopy(row["geometry"]),
                                   "text_geometry": deepcopy(character["text_geometry"])})
             full["source_evidence"]["components_complete"] = True
-            full_responsibility = _responsibility(full, active)
+            full_responsibility = _responsibility(full, active, protected_text=protected)
             if full_responsibility["pass"]:
                 candidate, responsibility = full, full_responsibility
             else:

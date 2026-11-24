@@ -1523,7 +1523,8 @@ def run_native_objects(
                 )
                 texts, ownership_audit = (
                     source_text_ownership.reconcile_source_text_ownership(
-                        texts, gray, roi, geometry, output_dir=responsibility_root
+                        texts, gray, roi, geometry, output_dir=responsibility_root,
+                        evidence_root=out,
                     )
                 )
                 upstream_text_root = (out / text_producer["path"]).parent
