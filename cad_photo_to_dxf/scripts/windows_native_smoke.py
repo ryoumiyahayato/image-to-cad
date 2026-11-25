@@ -150,6 +150,50 @@ def create_terminal_core_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+def _structure_contact_curve_points():
+    """External drawing construction, never an input to production tracing."""
+    points = []
+    for index in range(181):
+        t = index / 180
+        points.append((
+            round((1 - t) ** 2 * 132 + 2 * (1 - t) * t * 210 + t * t * 380),
+            round((1 - t) ** 2 * 150 + 2 * (1 - t) * t * 35 + t * t * 260),
+        ))
+    return points + [(380, 330)]
+
+
+def create_structure_contact_fixture(path: Path, font_path: Path) -> None:
+    """A whole round-to-carrier path shares two contacts with unadopted ink.
+
+    The vertical target passes through an S-shaped pen stroke before reaching
+    an independently drawn horizontal receiver. The separate round/line gap
+    repeats the already exercised circular fixture, translated to empty space.
+    Ordinary source and EXE commands receive only this generated PNG.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    marker_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    for cx, cy, radius in ((110, 150, 22),):
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=0, width=3)
+        box = draw.textbbox((0, 0), "F", font=marker_font)
+        draw.text((cx - (box[0] + box[2]) / 2, cy - (box[1] + box[3]) / 2), "F", font=marker_font, fill=0)
+    draw.line(_structure_contact_curve_points(), fill=0, width=3)
+    contact_font = ImageFont.truetype(str(font_path), 46, layout_engine=ImageFont.Layout.BASIC)
+    box = draw.textbbox((0, 0), "S", font=contact_font)
+    draw.text((380 - (box[0] + box[2]) / 2, 307 - (box[1] + box[3]) / 2), "S", font=contact_font, fill=0)
+    draw.line((300, 330, 580, 330), fill=0, width=3)
+    # Exact translation (+100, -250) of the existing circular fixture's
+    # empty border, independent white-gap line and attached right-hand lead.
+    draw.ellipse((474, 54, 526, 106), outline=0, width=3)
+    draw.line((526, 80, 630, 80), fill=0, width=3)
+    draw.line((390, 80, 471, 80), fill=0, width=3)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    draw.text((80, 400), "STORE", font=control_font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
 
 SINGLE_LINE_LABEL_FIXTURE = (
     ("AHU-27B, Z4", (80, 64)),
@@ -514,7 +558,7 @@ def inspect_circular_members(document, objects: dict, cold: dict, *, curve_end_b
                 certificate = rows.get(oid, {}).get("source_evidence", {}).get("circle_endpoint_contacts")
                 new_contacts = []
                 if certificate is not None:
-                    if certificate.get("schema") != "native-direct-circle-end-contact-v2-observed-terminal-core" or not isinstance(certificate.get("ends"), list):
+                    if certificate.get("schema") != "native-direct-circle-end-contact-v3-independent-source-branches" or not isinstance(certificate.get("ends"), list):
                         raise AssertionError("Saved lead has an unreadable circle endpoint contact certificate")
                     new_contacts = [end for end in certificate["ends"] if end.get("circle_id") == circle_geometry[center]["object"]["id"]]
                     if len(new_contacts) > 1:
@@ -523,6 +567,7 @@ def inspect_circular_members(document, objects: dict, cold: dict, *, curve_end_b
                         certified_circle = restored.get("circle_geometry", {})
                         if abs(signed_gap) > 1e-6 or restored.get("endpoint_number") != near_endpoint_number or not _near_point(restored.get("restored_endpoint_px", (math.inf, math.inf)), points[0], 1e-6) or not _near_point(certified_circle.get("center", (math.inf, math.inf)), actual_center, 1e-6) or abs(certified_circle.get("radius_px", math.inf) - radius) > 1e-6:
                             raise AssertionError("A newly certified endpoint is not exactly on its actual saved circle")
+                        _inspect_shared_circle_port(document, objects, cold, restored)
                 glyph = circle_geometry[center]["object"].get("geometry", {}).get("text_geometry")
                 if glyph is not None:
                     box = [glyph["x"], glyph["y"] - glyph["height_px"], glyph["x"] + glyph["width_px"], glyph["y"]]
@@ -1635,6 +1680,153 @@ def _inspect_observed_terminal_core(gray, endpoint, center, radius, width, end, 
     return direction, bound, points, allowance
 
 
+def _inspect_shared_circle_port(document, objects, cold, end, gray=None):
+    """Read actual source-branch ownership for a newly separated coarse port."""
+    import numpy as np
+    from PIL import Image
+
+    shared = end.get("shared_source_port_decomposition")
+    if shared is None:
+        return None
+    ledger = {row["id"]: row for row in objects["objects"]}
+    actual = {native_identity(e)["id"]: e for e in document.modelspace() if e.dxf.layer != "REVIEW"}
+    arrivals = shared.get("independent_arrivals", [])
+    licensed = shared.get("licensed_structure_path_ids", [])
+    if (shared.get("schema") != "coarse-circle-port-independent-source-arrivals-v1"
+            or shared.get("circle_id") != end.get("circle_id")
+            or shared.get("observed_port_index") != end.get("observed_port_index")
+            or len(arrivals) < 2 or not licensed
+            or any(shared.get(key) is not True for key in (
+                "all_competing_eligible_arrivals_checked", "original_graph_rebuilt",
+                "distinct_external_source_prefixes", "native_extensions_have_no_positive_overlap_or_interior_crossing",
+                "external_paths_remain_separate_native_objects"))):
+        raise AssertionError("Shared circle port has no complete independent source-branch proof")
+    if gray is None:
+        source_path = Path(document.filename).parent.parent / "controlled-source.png"
+        if digest(source_path) != objects.get("source_sha256"):
+            raise AssertionError("Shared circle port has no matching original source PNG")
+        with Image.open(source_path) as image:
+            gray = np.asarray(image.convert("L"))
+    cold_by_id = {row["id"]: row for row in cold.get("circle_endpoint_contact_checks", [])}
+    cores = []
+    for oid in licensed:
+        row = ledger.get(oid, {})
+        proof = row.get("source_evidence", {}).get("text_contact_path", {})
+        path = proof.get("path", {})
+        if (proof.get("geometry_plan_schema") != "source-structure-contact-path-plan-v1"
+                or path.get("path_role") != "ROUND_TO_CARRIER"
+                or path.get("required_carrier_id") not in actual
+                or path.get("reverse_source_path_agreement", {}).get("pass") is not True):
+            raise AssertionError("Shared circle port is not licensed by a complete structure path")
+        cores.extend(core for core in path.get("endpoint_source_cores", []) if core)
+    identities = {(row.get("object_id"), row.get("endpoint_number")) for row in arrivals}
+    recorded = {(row["id"], item["endpoint_number"]) for row in ledger.values()
+                for item in row.get("source_evidence", {}).get("circle_endpoint_contacts", {}).get("ends", [])
+                if item.get("circle_id") == end["circle_id"]
+                and item.get("observed_port_index") == end["observed_port_index"]}
+    if (len(identities) != len(arrivals) or identities != recorded
+            or len({row.get("source_graph_node_id") for row in arrivals}) != 1
+            or len({row.get("source_round_id") for row in arrivals}) != 1
+            or len({tuple(row.get("incoming_source_graph_port", [])) for row in arrivals}) != len(arrivals)):
+        raise AssertionError("Shared circle port repeats or omits a competing original graph arrival")
+    marker = ledger[end["circle_id"]]
+    circle = marker["geometry"] if marker["kind"] == "CIRCLE" else marker["geometry"]["circle_geometry"]
+    outside_sets, native_prefixes, tails = [], [], []
+    for arrival in arrivals:
+        oid, number = arrival["object_id"], arrival["endpoint_number"]
+        obj = ledger[oid]
+        cert = obj.get("source_evidence", {}).get("circle_endpoint_contacts", {})
+        matching = [row for row in cert.get("ends", []) if row.get("endpoint_number") == number]
+        if (len(matching) != 1 or matching[0].get("shared_source_port_decomposition") != shared
+                or cold_by_id.get(oid, {}).get("pass") is not True
+                or cold_by_id[oid].get("actual_saved_geometry_checked") is not True
+                or cert.get("original_geometry_sha256") != arrival.get("native_original_geometry_sha256")
+                or _json_digest(cert.get("original_geometry")) != arrival.get("native_original_geometry_sha256")
+                or matching[0].get("original_endpoint_px") != arrival.get("original_endpoint_px")
+                or matching[0].get("restored_endpoint_px") != arrival.get("restored_endpoint_px")):
+            raise AssertionError("Shared arrival differs from its actual saved whole object or cold check")
+        prefix = arrival.get("source_prefix_px", [])
+        core_matches = [core for core in cores if core.get("source_graph_node_id") == arrival["source_graph_node_id"]
+                        and any(port.get("source_graph_port") == arrival["incoming_source_graph_port"]
+                                and port.get("original_source_prefix_px") == prefix
+                                for port in core.get("all_adjacent_source_prefixes", []))]
+        if not core_matches:
+            raise AssertionError("Shared arrival does not belong to an original replayed graph port")
+        points = np.asarray(prefix, float)
+        if (points.ndim != 2 or points.shape[1] != 2 or len(points) < 3
+                or not np.isfinite(points).all() or not np.array_equal(points, np.rint(points))
+                or np.any(points < 0) or np.any(points[:, 0] >= gray.shape[1]) or np.any(points[:, 1] >= gray.shape[0])):
+            raise AssertionError("Shared arrival has no finite original source prefix")
+        integers = points.astype(int)
+        steps = np.linalg.norm(np.diff(points, axis=0), axis=1)
+        length = float(steps.sum())
+        radial = np.linalg.norm(points - circle["center"], axis=1)
+        if (not np.all(gray[integers[:, 1], integers[:, 0]] < 128)
+                or np.any(steps <= 0) or steps.max() > math.sqrt(2) + 1e-9 or length < 8
+                or abs(length - arrival.get("source_prefix_length_px", math.inf)) > 1e-7
+                or radial[-1] - radial[0] < 4 or radial.min() < circle["radius_px"] - 0.85):
+            raise AssertionError("Shared arrival is not a distinct outward path on original ink")
+        raw = obj.get("source_evidence", {}).get("source_path_points", [])
+        ordered = raw if number == 0 else raw[::-1]
+        if ordered[:len(prefix)] != prefix:
+            raise AssertionError("Shared graph prefix is not owned by the actual original whole path")
+        core_points = set(map(tuple, core_matches[0]["source_core_points_px"]))
+        outside = [p for p in prefix if tuple(p) not in core_points]
+        if outside != arrival.get("outside_core_source_prefix_px"):
+            raise AssertionError("Shared arrival changed its non-core source ownership")
+        outside_sets.append(set(map(tuple, outside)))
+        geometry = cert["original_geometry"]
+        dense = []
+        if obj["kind"] == "LINE":
+            vertices, bulges = [geometry["start"], geometry["end"]], [0.0, 0.0]
+        else:
+            vertices, bulges = geometry["points"], geometry["bulges"]
+        for a, b, bulge in zip(vertices, vertices[1:], bulges):
+            a, b = np.asarray(a), np.asarray(b)
+            chord = float(np.linalg.norm(b - a))
+            if abs(bulge) < 1e-12:
+                segment = np.linspace(a, b, max(2, math.ceil(chord / 0.25) + 1))
+            else:
+                normal = np.array([-(b - a)[1], (b - a)[0]]) / chord
+                center = (a + b) / 2 + normal * chord * (1 - bulge * bulge) / (4 * bulge)
+                radius = float(np.linalg.norm(a - center))
+                start = math.atan2(*(a - center)[::-1])
+                sweep = 4 * math.atan(bulge)
+                angles = np.linspace(start, start + sweep, max(2, math.ceil(radius * abs(sweep) / 0.25) + 1))
+                segment = center + radius * np.column_stack((np.cos(angles), np.sin(angles)))
+            dense.extend(segment[:-1].tolist())
+        dense.append(list(vertices[-1]))
+        dense = np.asarray(dense if number == 0 else dense[::-1])
+        spans = np.r_[0.0, np.linalg.norm(np.diff(dense, axis=0), axis=1).cumsum()]
+        native_prefixes.append(dense[spans <= 8].tolist())
+        tails.append((arrival["original_endpoint_px"], arrival["restored_endpoint_px"]))
+
+    def intersects(a, b, c, d, common_end=False):
+        a, b, c, d = (np.asarray(p, float) for p in (a, b, c, d))
+        u, v, offset = b - a, d - c, c - a
+        cross = float(u[0] * v[1] - u[1] * v[0])
+        if abs(cross) <= 1e-10:
+            if abs(float(offset[0] * u[1] - offset[1] * u[0])) > 1e-9 or float(u @ u) <= 1e-12:
+                return False
+            left, right = sorted((float(offset @ u / (u @ u)), float((d - a) @ u / (u @ u))))
+            return min(1.0, right) - max(0.0, left) > 1e-8
+        t = float((offset[0] * v[1] - offset[1] * v[0]) / cross)
+        s = float((offset[0] * u[1] - offset[1] * u[0]) / cross)
+        return (-1e-9 <= t <= 1 + 1e-9 and -1e-9 <= s <= 1 + 1e-9
+                and not (common_end and abs(t - 1) <= 1e-8 and abs(s - 1) <= 1e-8))
+
+    for i, (a, b) in enumerate(tails):
+        for j, (c, d) in enumerate(tails):
+            if i == j:
+                continue
+            if (outside_sets[i] & outside_sets[j] or intersects(a, b, c, d, True)
+                    or any(intersects(a, b, p, q) for p, q in zip(native_prefixes[j], native_prefixes[j][1:]))):
+                raise AssertionError("Shared circle arrivals overlap or cross before their actual circle endpoints")
+    return {"pass": True, "independent_arrivals_checked": len(arrivals),
+            "source_graph_ports_and_prefix_ownership_checked": True,
+            "actual_saved_cold_checks_bound": True, "native_tails_checked_for_overlap_and_crossing": True}
+
+
 def inspect_contact_path_vertices(document, objects, cold, entity, path_row, planned, source_path=None):
     """Replay short straight end proofs while retaining the entire old path.
 
@@ -1660,7 +1852,7 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
         from PIL import Image
 
         policy = {
-            "version": "native-direct-circle-end-contact-v2-observed-terminal-core", "source_threshold": 128,
+            "version": "native-direct-circle-end-contact-v3-independent-source-branches", "source_threshold": 128,
             "maximum_extension_stroke_widths": 1.0, "existing_native_fit_allowance_px": 0.85,
             "absolute_extension_limit_px": 6.0, "candidate_search_stroke_widths": 2.0,
             "existing_terminal_witness_length_px": 3.0, "endpoint_precision_px": 1e-6,
@@ -1670,6 +1862,8 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
             "source_contact_test": "EVERY_CLOSED_PIXEL_CELL_INTERSECTED_BY_THE_STRAIGHT_EXTENSION_IS_ORIGINAL_INK",
             "source_morphology": "NONE", "existing_interior_overlap": "RETAIN_UNCHANGED",
             "external_connection_owned_by_marker": False,
+            "shared_observed_port": "STRICT_STRUCTURE_PATH_AND_DISTINCT_RAW_GRAPH_BRANCHES_WITH_NONCROSSING_NATIVE_TAILS",
+            "shared_port_minimum_external_prefix_px": 8.0,
         }
         original_evidence = {key: value for key, value in evidence.items() if key != "circle_endpoint_contacts"}
         if (not isinstance(certificate, dict) or certificate.get("schema") != policy["version"]
@@ -1809,9 +2003,11 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
             saved_end = actual_points[0 if number == 0 else -1]
             if abs(math.dist(saved_end, _pixel_point(circles[0].dxf.center)) - float(circles[0].dxf.radius) * 200 / 25.4) > 1e-6:
                 raise AssertionError("Actual saved contact endpoint does not touch its actual independent CIRCLE")
+            shared_check = _inspect_shared_circle_port(document, objects, cold, end, gray)
             reports.append({"endpoint_number": number, "circle_id": end["circle_id"],
                             "extension_length_px": length, "original_black_cells_replayed": len(set(map(tuple, cells))),
-                            "actual_saved_circle_contact_checked": True})
+                            "actual_saved_circle_contact_checked": True,
+                            "shared_source_port_check": shared_check})
         if certificate.get("restored_geometry_sha256") != _json_digest(expected):
             raise AssertionError("Contact endpoint certificate changed the restored whole-path geometry")
     elif identity.get("circle_endpoint_contacts"):
@@ -2102,6 +2298,328 @@ def inspect_short_code_payloads(objects, cold, evidence_root, source_path, sourc
     return {"source_sha256": digest(source_path), "original_shared_line_glyph_pixels": int(shared.sum()),
             "original_glyph_ring_8_adjacent": False, "actual_label_payloads": raw,
             "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
+def inspect_structure_fixture_source_gap(source_path: Path) -> dict:
+    """Read the original gap of the reused independent round/line control."""
+    from PIL import Image
+
+    with Image.open(source_path) as image:
+        source = image.convert("L")
+        if (source.size != (640, 480)
+                or source.getpixel((471, 80)) >= 128
+                or source.getpixel((474, 80)) >= 128
+                or any(source.getpixel((x, y)) != 255
+                       for x in (472, 473) for y in (79, 80, 81))):
+            raise AssertionError("Structure fixture lost its two original white source columns")
+    return {"source_sha256": digest(source_path), "original_white_columns": [472, 473],
+            "source_gap_width_px": 2, "source_pixels_changed_by_inspection": False}
+
+
+def inspect_structure_path_shape(entity) -> dict:
+    """Check this public drawing's whole shape, independently of producer proofs."""
+    points = _line_points(entity)
+    if (entity.dxftype() != "LWPOLYLINE" or entity.closed or len(points) < 3
+            or any(abs(point[4]) > 1e-12 for point in entity.get_points("xyseb"))):
+        raise AssertionError("Structure target is not one complete open native path")
+    expected = _structure_contact_curve_points()
+    # The round port is checked against the actual separate CIRCLE below.
+    # Its finite source contact band precedes the first unambiguous curve run.
+    curve_error = max(max(_distance_to_path(point, expected) for point in points),
+                      max(_distance_to_path(point, points) for point in expected[6:]))
+    # Pixel-centre drawing agreement uses the same source-fit allowance as
+    # the full curve. Exact contact with the separately fitted saved carrier
+    # is required below at 1e-6 px; it is not snapped to this drawing literal.
+    if (curve_error > 2.5 or not _near_point(points[-1], (380, 330), 2.5)
+            or any(abs(point[0] - 380) > 2 for point in points if 260 <= point[1] <= 330)):
+        raise AssertionError("Structure target is truncated, follows a glyph side branch, or misses its carrier")
+    tail = [point for point in points if point[0] >= 377 and point[1] >= 120]
+    if any(b[1] < a[1] - 1e-7 for a, b in zip(tail, tail[1:])):
+        raise AssertionError("Structure target incorrectly walks back around the contact glyph")
+    return {"actual_vertex_count": len(points), "whole_curve_maximum_error_px": curve_error,
+            "actual_start_px": points[0], "actual_carrier_endpoint_px": points[-1],
+            "single_native_path": True, "no_glyph_contour_detour": True}
+
+
+def inspect_structure_contact_members(document, objects: dict, cold: dict, source_path: Path,
+                                      *, evidence_root: Path | None = None) -> dict:
+    """Require an actually saved whole contact path and separate supported carrier.
+
+    No producer, OCR or adoption function is called here. The actual generated
+    source, saved geometry, complete plan, retained competing branches and
+    nonempty cold-audit records must agree. Test answers stay in this harness.
+    """
+    import numpy as np
+    from PIL import Image
+
+    gap = inspect_structure_fixture_source_gap(source_path)
+    with Image.open(source_path) as image:
+        gray = np.asarray(image.convert("L"))
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    actual = {native_identity(entity)["id"]: entity for entity in entities}
+    ledger = {row["id"]: row for row in objects["objects"]}
+    if len(actual) != len(entities) or len(ledger) != len(objects["objects"]) or set(actual) != set(ledger):
+        raise AssertionError("Structure fixture has missing, duplicate, or unwritten formal identities")
+    targets = [row for row in ledger.values() if row.get("source_evidence", {}).get(
+        "text_contact_path", {}).get("path", {}).get("path_role") == "ROUND_TO_CARRIER"]
+    if len(targets) != 1:
+        raise AssertionError("Structure fixture did not save exactly one complete new round-to-carrier path")
+    target = targets[0]
+    path_id = target["id"]
+    entity = actual[path_id]
+    proof = target["source_evidence"]["text_contact_path"]
+    selected = proof["path"]
+    root = evidence_root or Path(document.filename).with_suffix(".native") / "evidence"
+    manifest = json.loads((root / "text_contact/adoption.json").read_text(encoding="utf-8"))
+    plan = manifest.get("geometry_plans", {}).get(proof.get("plan_sha256"), {})
+    if (proof.get("schema") != "source-text-contact-native-path-v1"
+            or objects.get("source_sha256") != gap["source_sha256"]
+            or proof.get("source_sha256") != gap["source_sha256"]
+            or manifest.get("source_sha256") != gap["source_sha256"]
+            or manifest.get("source_pixels_modified") is not False
+            or plan.get("schema") != "source-structure-contact-path-plan-v1"
+            or plan.get("original_source_pixels_modified") is not False
+            or plan.get("transcription_supplied") is not False
+            or _json_digest(plan) != proof.get("plan_sha256")
+            or selected != plan.get("paths", [])[proof["path_index"]]
+            or _json_digest(selected) != proof.get("path_sha256")
+            or native_identity(entity).get("text_contact_path") is not True
+            or selected.get("text_content_decision") != "NOT_PERFORMED"
+            or selected.get("original_branches_retained") is not True
+            or selected.get("line_and_text_may_share_source_pixels") is not True):
+        raise AssertionError("Structure target is not bound to its actual unmodified-source geometry plan")
+    crop = plan["original_source_crop_xyxy_px"]
+    if (crop != [0, 0, 640, 480]
+            or hashlib.sha256(gray.tobytes()).hexdigest() != plan["original_source_crop_array_sha256"]):
+        raise AssertionError("Structure plan is not bound to the original full generated source pixels")
+    kinds = [row.get("kind") for row in selected.get("endpoint_evidence", [])]
+    terminal = selected.get("structural_terminal_evidence", {})
+    carrier_id = selected.get("required_carrier_id")
+    reverse = selected.get("reverse_source_path_agreement", {})
+    if (kinds != ["OBSERVED_ROUND_BOUNDARY_CONTACT", "OBSERVED_SUPPORTED_LINE_CONTACT"]
+            or terminal != selected["endpoint_evidence"][1]
+            or carrier_id != terminal.get("carrier_id") or carrier_id == path_id
+            or carrier_id not in actual or actual[carrier_id].dxftype() != "LINE"
+            or terminal.get("all_source_ports_accounted") is not True
+            or terminal.get("equally_aligned_forward_port_count") != 0
+            or reverse.get("pass") is not True
+            or not reverse.get("forward_edge_ids")
+            or set(reverse["forward_edge_ids"]) != set(reverse.get("reverse_edge_ids", []))):
+        raise AssertionError("Structure endpoint has no separate carrier or reciprocal whole-route proof")
+    carrier_points = _line_points(actual[carrier_id])
+    declared_carrier = terminal.get("carrier_geometry", {})
+    if (not _near_point(carrier_points[0], declared_carrier.get("start", (math.inf, math.inf)), 1e-6)
+            or not _near_point(carrier_points[1], declared_carrier.get("end", (math.inf, math.inf)), 1e-6)
+            or min(max(math.dist(a, b) for a, b in zip(carrier_points, ((300, 330), (580, 330)))),
+                   max(math.dist(a, b) for a, b in zip(carrier_points[::-1], ((300, 330), (580, 330))))) > 2.5
+            or len(terminal.get("carrier_source_ports", [])) != 2
+            or len(terminal.get("carrier_source_arm_lengths_px", [])) != 2
+            or min(terminal["carrier_source_arm_lengths_px"]) < 24):
+        raise AssertionError("Actual independent carrier does not retain continuous source on both sides")
+    for field in ("carrier_source_path_px", "source_core_points_px", "arrival_to_intersection_original_black_cells"):
+        points = np.asarray(terminal.get(field, []), float)
+        if (points.ndim != 2 or points.shape[1] != 2 or not len(points)
+                or not np.isfinite(points).all() or np.any(points < 0)
+                or np.any(points[:, 0] >= 640) or np.any(points[:, 1] >= 480)):
+            raise AssertionError("Structure terminal omitted its finite original source evidence")
+        integer = np.rint(points).astype(int)
+        if not np.all(gray[integer[:, 1], integer[:, 0]] < 128):
+            raise AssertionError("Structure terminal crosses original white source pixels")
+    contacts = selected.get("contact_continuations", [])
+    shared = [row for row in contacts if row.get("unselected_branch_edge_ids")]
+    if len(shared) < 2 or len({row["node_id"] for row in shared}) != len(shared):
+        raise AssertionError("Structure target did not traverse both independent contact decisions")
+    for row in shared:
+        if (row.get("reason") not in ("RECIPROCAL_UNIQUE_SOURCE_PAIR", "EXISTING_UNIQUE_FOUR_PORT_SOURCE_PAIR")
+                or row.get("source_branches_deleted") is not False
+                or len(row.get("unselected_branch_source_paths", [])) != len(row["unselected_branch_edge_ids"])):
+            raise AssertionError("Structure contact swallowed or omitted its non-target source branches")
+        if row["reason"] == "RECIPROCAL_UNIQUE_SOURCE_PAIR" and (
+                row.get("trace_origin_excluded_from_decision") is not True
+                or row.get("maximum_pair_deviation_deg", math.inf) > 20
+                or min(row.get("forward_margin_deg", 0), row.get("reverse_margin_deg", 0)) < 18
+                or not row.get("all_port_candidates")):
+            raise AssertionError("Structure contact bypassed the reciprocal competing-direction checks")
+        for branch in row["unselected_branch_source_paths"]:
+            points = np.asarray(branch, int)
+            if not len(points) or not np.all(gray[points[:, 1], points[:, 0]] < 128):
+                raise AssertionError("Retained contact branches are not the actual original ink")
+    shape = inspect_structure_path_shape(entity)
+    points = _line_points(entity)
+    if _distance_to_path(points[-1], carrier_points) > 1e-6:
+        raise AssertionError("Complete target does not reach its actual independently saved carrier")
+    path_binding = inspect_contact_path_vertices(
+        document, objects, cold, entity, target, selected["representation"], source_path,
+    )
+    circles = []
+    for oid, candidate in actual.items():
+        members = list(candidate.virtual_entities()) if candidate.dxftype() == "INSERT" else [candidate]
+        for member in members:
+            if member.dxftype() == "CIRCLE" and _near_point(_pixel_point(member.dxf.center), (110, 150), 2):
+                circles.append((oid, _pixel_point(member.dxf.center), float(member.dxf.radius) / (25.4 / 200)))
+    if (len(circles) != 1 or circles[0][0] == path_id
+            or not _finite_circle_intersections(points, circles[0][1], circles[0][2])):
+        raise AssertionError("Whole structure path no longer contacts its separate original round marker")
+    starting_id = selected.get("required_start_circle_id")
+    starting = selected.get("starting_circle_evidence", {})
+    bindings = plan.get("prior_circle_source_bindings", [])
+    certificates = [row for row in bindings if row.get("id") == starting_id]
+    prior = [row for row in plan.get("prior_object_bindings", []) if row.get("id") == starting_id]
+    core = selected.get("endpoint_source_cores", [None])[0]
+    if (starting_id != circles[0][0] or starting.get("circle_id") != starting_id
+            or starting.get("pass") is not True
+            or starting.get("formal_circle_original_source_reverified") is not True
+            or starting.get("original_graph_prefix_matches_measured_circle_source_port") is not True
+            or len(certificates) != 1 or len(prior) != 1
+            or _json_digest(bindings) != plan.get("prior_circle_source_bindings_sha256")
+            or _json_digest(certificates[0]) != starting.get("circle_source_binding_sha256")
+            or _json_digest(prior[0]) != starting.get("circle_object_binding_sha256")
+            or certificates[0].get("source_evidence") != {
+                key: ledger[starting_id].get("source_evidence", {}).get(key)
+                for key in certificates[0].get("source_evidence", {})}
+            or not core
+            or core.get("source_graph_node_id") != starting.get("source_graph_node_id")
+            or core.get("incoming_source_graph_port") != starting.get("incoming_source_graph_port")
+            or selected["endpoint_evidence"][0].get("round_id") != starting.get("source_graph_round_id")):
+        raise AssertionError("Whole structure path has no bound, source-verified formal starting circle")
+    prefixes = [row["original_source_prefix_px"] for row in core.get("all_adjacent_source_prefixes", [])
+                if row.get("source_graph_port") == starting["incoming_source_graph_port"]]
+    ports = certificates[0]["source_evidence"].get("contact_ports", [])
+    port_index = starting.get("observed_circle_contact_port_index")
+    if (len(prefixes) != 1 or not isinstance(port_index, int) or not 0 <= port_index < len(ports)
+            or selected["source_path_px"][:len(prefixes[0])] != prefixes[0]):
+        raise AssertionError("Starting circle is not owned by the actual whole path source prefix")
+    prefix = np.asarray(prefixes[0], int)
+    runs = ports[port_index]["source_runs_y_x0_x1"]
+    matches = sum(any(y == row and left <= x < right for row, left, right in runs) for x, y in prefix)
+    circle_checks = [row for row in cold.get("circular_marker_source_checks", []) if row.get("id") == starting_id]
+    if (matches < 2 or not np.all(gray[prefix[:, 1], prefix[:, 0]] < 128)
+            or len(circle_checks) != 1 or circle_checks[0].get("pass") is not True):
+        raise AssertionError("Starting circle source port or actual saved circular audit does not agree")
+    gap_lines, gap_circles = [], []
+    expected = ((390, 80), (471, 80))
+    for oid, candidate in actual.items():
+        if candidate.dxftype() == "LINE":
+            line = _line_points(candidate)
+            error = min(max(math.dist(a, b) for a, b in zip(line, expected)),
+                        max(math.dist(a, b) for a, b in zip(line[::-1], expected)))
+            if error <= 2.5:
+                gap_lines.append((oid, line))
+        members = list(candidate.virtual_entities()) if candidate.dxftype() == "INSERT" else [candidate]
+        for member in members:
+            if member.dxftype() == "CIRCLE" and _near_point(_pixel_point(member.dxf.center), (500, 80), 2):
+                gap_circles.append((oid, _pixel_point(member.dxf.center), float(member.dxf.radius) / (25.4 / 200)))
+    if len(gap_lines) != 1 or len(gap_circles) != 1 or gap_lines[0][0] == gap_circles[0][0]:
+        raise AssertionError("Structure fixture lost, duplicated, or split a real gap neighbor")
+    gap_id, gap_line = gap_lines[0]
+    gap_circle_id, gap_center, gap_radius = gap_circles[0]
+    gap_distance = _distance_to_path(gap_center, gap_line) - gap_radius
+    if gap_distance < 2 or _finite_circle_intersections(gap_line, gap_center, gap_radius):
+        raise AssertionError("Structure fixture bridged or reduced its original round/line white gap")
+    gap_source_check = _saved_line_source_check(cold, gap_id)
+    gap_cold = [row for row in cold.get("circle_white_gap_protection_checks", []) if row.get("id") == gap_id]
+    if len(gap_cold) != 1 or gap_cold[0].get("pass") is not True:
+        raise AssertionError("The reused white-gap line has no actual saved source protection check")
+    # No newly added fragment may quietly fill the otherwise protected gap.
+    for oid, candidate in actual.items():
+        line = _line_points(candidate)
+        if line and any(_distance_to_path((x, 80), line) < 0.5 for x in (472, 473)):
+            raise AssertionError("A saved path crosses the protected original white strip: " + oid)
+    contact_audit = cold.get("text_contact_source_checks", {})
+    records = contact_audit.get("checks", [])
+    by_id = {row.get("id"): row for row in records}
+    required = ("TEXT_CONTACT_MANIFEST", path_id, "TEXT_CONTACT_RETIREMENT", "TEXT_CONTACT_NEIGHBORS", "TEXT_CONTACT_DUPLICATES")
+    if (contact_audit.get("pass") is not True or contact_audit.get("duplicate_conflicts") != []
+            or contact_audit.get("source_or_DXF_geometry_modified") is not False
+            or len(by_id) != len(records)
+            or any(by_id.get(oid, {}).get("pass") is not True for oid in required)):
+        raise AssertionError("Structure saved-source audit is missing, empty, or failed")
+    check = by_id[path_id]
+    for name in ("structural_context_matches_actual_prior_manifest", "starting_circle_sources_match_saved_object_sources",
+                 "one_separate_saved_starting_circle", "actual_starting_circle_geometry_preserved",
+                 "one_separate_saved_receiving_object",
+                 "actual_receiving_geometry_preserved", "original_source_plan_replayed",
+                 "original_source_geometry_supported", "whole_native_representation_from_source_plan"):
+        if check.get("checks", {}).get(name) is not True:
+            raise AssertionError("Actual saved structure path lacks its required cold check: " + name)
+    if (not check.get("original_source_plan_replay", {}).get("pass")
+            or not check.get("actual_source_geometry", {}).get("pass")):
+        raise AssertionError("Structure target has no successful original-source replay")
+    return {"pass": True, "independent_path_id": path_id, "independent_carrier_id": carrier_id,
+            "independent_round_marker_id": circles[0][0], "path_role": selected["path_role"],
+            "formal_starting_circle_source_binding": starting,
+            "actual_saved_shape": shape, "whole_path_source_binding": path_binding,
+            "structural_terminal_evidence": terminal, "contact_decision_count": len(contacts),
+            "retained_branch_decision_count": len(shared), "reciprocal_whole_route_agreement": reverse,
+            "protected_gap_line_ids": [gap_id], "protected_gap_circle_id": gap_circle_id,
+            "actual_gap_line_saved_source_check": gap_source_check,
+            "minimum_saved_gap_px": gap_distance, "original_real_gap_evidence": gap,
+            "contact_text_adoption_required": False, "fixture_expectations_sent_to_recognizer": False,
+            "inspection_executed_recognition": False}
+
+
+def inspect_structure_path_edit_isolation(saved_path: Path, output: Path, path_id: str) -> dict:
+    """Move/delete one whole path and cold-read every saved independent neighbor."""
+    import ezdxf
+
+    def inventory(document):
+        entities = [e for e in document.modelspace() if e.dxf.layer != "REVIEW"]
+        result = {native_identity(e)["id"]: e for e in entities}
+        if len(result) != len(entities):
+            raise AssertionError("Structure edit has duplicate source identities")
+        return result
+
+    def geometry(entity, document):
+        result = entity_geometry(entity, document)
+        if entity.dxftype() == "LWPOLYLINE":
+            result["attributes"].update(elevation=float(entity.dxf.get("elevation", 0)),
+                                        extrusion=canonical_value(entity.dxf.get("extrusion", (0, 0, 1))))
+        return result
+
+    original_sha = digest(saved_path)
+    baseline = ezdxf.readfile(saved_path)
+    before = {key: geometry(entity, baseline) for key, entity in inventory(baseline).items()}
+    before_review = [geometry(e, baseline) for e in baseline.modelspace() if e.dxf.layer == "REVIEW"]
+    before_blocks = {block.name: [geometry(e, baseline) for e in block]
+                     for block in baseline.blocks if not block.name.startswith("*")}
+    if inventory(baseline)[path_id].dxftype() not in ("LINE", "ARC", "LWPOLYLINE"):
+        raise AssertionError("Structure editing target is not one native path")
+    output.mkdir(exist_ok=True)
+    checks = []
+    for action in ("move-path", "delete-path"):
+        document = ezdxf.readfile(saved_path)
+        target = inventory(document)[path_id]
+        if action == "move-path":
+            target.translate(7, 3, 0)
+            expected = geometry(target, document)
+        else:
+            document.modelspace().delete_entity(target)
+            expected = None
+        saved = output / (action + ".dxf")
+        document.saveas(saved)
+        reopened = ezdxf.readfile(saved)
+        audit = reopened.audit()
+        after = {key: geometry(entity, reopened) for key, entity in inventory(reopened).items()}
+        after_review = [geometry(e, reopened) for e in reopened.modelspace() if e.dxf.layer == "REVIEW"]
+        after_blocks = {block.name: [geometry(e, reopened) for e in block]
+                        for block in reopened.blocks if not block.name.startswith("*")}
+        if (audit.errors or audit.fixes
+                or set(after) != set(before) - ({path_id} if expected is None else set())
+                or any(after.get(key) != value for key, value in before.items() if key != path_id)
+                or after_review != before_review or after_blocks != before_blocks
+                or (expected is not None and (after[path_id] != expected or after[path_id] == before[path_id]))):
+            raise AssertionError("Whole structure path move/delete failed cold save or changed a neighbor")
+        checks.append({"action": action, "changed_id": path_id, "pass": True,
+                       "saved_dxf_sha256": digest(saved), "unchanged_other_formal_objects": len(before) - 1,
+                       "unchanged_review_entities": len(before_review), "unchanged_named_blocks": len(before_blocks),
+                       "target_removed_or_translated_as_one_entity": True})
+    if digest(saved_path) != original_sha:
+        raise AssertionError("Structure editing modified the published source result")
+    result = {"schema": "windows-structure-path-edit-isolation-v1", "pass": True,
+              "scope": "Actual ezdxf ordinary save and cold reopen, not LibreCAD GUI",
+              "GUI_operations_claimed": False, "source_DXF_unchanged": True, "checks": checks}
+    write_json(output / "edit-isolation.json", result)
+    return result
 
 
 def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str, path_id: str) -> dict:
@@ -2687,7 +3205,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -2731,6 +3249,14 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         terminal_core_result = inspect_terminal_core_members(document, objects, cold, work.parent / "controlled-source.png")
         terminal_core_result["scripted_edit_isolation"] = inspect_circle_path_edit_isolation(
             target, work / "edit-isolation", terminal_core_result["target_marker_id"], terminal_core_result["independent_path_id"]
+        )
+    structure_result = None
+    if fixture_kind == "structure-contact-paths":
+        structure_result = inspect_structure_contact_members(
+            document, objects, cold, work.parent / "controlled-source.png", evidence_root=companion / "evidence",
+        )
+        structure_result["scripted_edit_isolation"] = inspect_structure_path_edit_isolation(
+            target, work / "edit-isolation", structure_result["independent_path_id"],
         )
     if single_line_contract not in ("strict-three", "bounded-capability"):
         raise ValueError("Unknown single-line saved-output contract")
@@ -2852,6 +3378,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["circle_character_completion"] = completion_result
     if terminal_core_result is not None:
         result["observed_terminal_core"] = terminal_core_result
+    if structure_result is not None:
+        result["structure_contact_paths"] = structure_result
     return result
 
 
@@ -2942,6 +3470,8 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     completion_work.mkdir()
     terminal_core_work = work / "observed-terminal-core"
     terminal_core_work.mkdir()
+    structure_work = work / "structure-contact-paths"
+    structure_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
@@ -2951,6 +3481,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         {"name": "curve-end-boundaries", "directory": curve_end_work, "create": create_curve_end_boundary_fixture},
         {"name": "circle-character-completion", "directory": completion_work, "create": create_circle_character_completion_fixture},
         {"name": "observed-terminal-core", "directory": terminal_core_work, "create": create_terminal_core_fixture},
+        {"name": "structure-contact-paths", "directory": structure_work, "create": create_structure_contact_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -3003,7 +3534,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core = cases
+    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -3120,16 +3651,32 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
     }
     write_json(terminal_core_work / "native-smoke.json", terminal_core_report)
+    structure_report = {
+        "status": "PASS", "schema": "windows-native-structure-contact-paths-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": structure["source_sha256"],
+        "source_result": structure["source_result"], "exe_result": structure["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "one_complete_round_to_independent_carrier_path_required": True,
+        "actual_shared_contact_choices_and_competing_branches_checked": True,
+        "actual_reciprocal_whole_route_and_structural_terminal_checked": True,
+        "contact_character_adoption_not_required": True,
+        "whole_path_move_delete_saved_and_reopened": True,
+        "independent_circle_carrier_and_white_gap_neighbors_preserved": True,
+        "previous_eight_inputs_preserved": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(structure_work / "native-smoke.json", structure_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 9,
+        "coverage_revision": 10,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,
