@@ -30,7 +30,7 @@ from .execution import check_cancel
 
 
 POLICY = {
-    "version": "native-circular-marker-whole-object-adoption-v2-source-text-protection",
+    "version": "native-circular-marker-whole-object-adoption-v3-source-glyph-references",
     "native_sampling_step_px": 0.25,
     "replacement_geometry_distance_px": 0.85,
     "source_responsibility_distance_px": 0.85,
@@ -45,6 +45,7 @@ POLICY = {
     "external_connections_in_marker_block": False,
     "source_pixels_unique_partition_required": False,
     "formal_text_protection": "replayed_complete_single_line_glyph_runs_else_whole_bbox",
+    "pending_character_second_route": "frozen_authenticated_same_source_glyph_references",
 }
 
 
@@ -472,6 +473,82 @@ def complete_circular_markers(
             progress_callback({"stage": "circular_marker_complete", "processed": index + 1,
                                "total": len(discovery["rows"]), "complete": complete,
                                "object_id": row["id"], "new_model_calls": new_model_calls})
+    # Freeze the trustworthy first pass before resolving any pending glyph.
+    # A successful second-pass character can never become a donor for a later
+    # character. The original failed character_result.json is left intact.
+    reference_resolutions = []
+    pending = [obj for obj in objects if obj["kind"] == "CIRCLE"
+               and (obj["source_evidence"].get("character_evidence") or {}).get("schema")
+               == "native-circle-character-evidence-v2"]
+    if pending:
+        from .circle_glyph_resolution import create_reference_pool, resolve_circle_from_source_references
+
+        active = [old for old in prior_objects if old["id"] not in retired] + objects
+        pool, pool_record = create_reference_pool(
+            gray, roi, source_sha, active, text_regions,
+            output / "source_glyph_reference_pool.json", output.parent,
+        )
+        for candidate in pending:
+            check_cancel("CIRCULAR_MARKER_SOURCE_GLYPH_RESOLUTION")
+            resolved = resolve_circle_from_source_references(
+                gray, roi, candidate, pool, pool_record, output.parent,
+            )
+            save_json(output / "characters" / candidate["id"] / "source_reference_result.json", resolved)
+            record = {"id": candidate["id"], "character_accepted": resolved["accepted"],
+                      "marker_upgraded": False, "reasons": list(resolved["reasons"])}
+            reference_resolutions.append(record)
+            if resolved.get("evidence"):
+                candidate["source_evidence"]["character_evidence"]["source_reference_resolution"] = deepcopy(resolved["evidence"])
+            if not resolved["accepted"]:
+                continue
+            active = [old for old in prior_objects if old["id"] not in retired]
+            active += [obj for obj in objects if obj["id"] != candidate["id"]]
+            full = deepcopy(candidate)
+            full.update(kind="CIRCULAR_MARKER", geometry={
+                "circle_geometry": deepcopy(candidate["geometry"]),
+                "text_geometry": deepcopy(resolved["text_geometry"]),
+            })
+            responsibility = _responsibility(full, active, protected_text=protected)
+            if not responsibility["pass"]:
+                record["reasons"].append("CHARACTER_ASSEMBLY_WHOLE_OBJECT_RESPONSIBILITY_PENDING")
+                record["responsibility_conflicts"] = responsibility["conflicts"]
+                continue
+            source = full["source_evidence"]
+            source["original_two_engine_character_pending_reasons"] = source["character_pending_reasons"]
+            source["character_pending_reasons"] = []
+            source["components_complete"] = True
+            source["boundary_to_marker_upgrade"] = {
+                "old_object_id": candidate["id"], "old_kind": "CIRCLE",
+                "old_circle_geometry_sha256": _digest(candidate["geometry"]),
+                "new_kind": "CIRCULAR_MARKER", "circle_geometry_unchanged": True,
+                "duplicate_circle_retained": False,
+                "external_connections_in_marker_block": False,
+            }
+            prior_responsibility = source["whole_object_retirement"]
+            merged = deepcopy(responsibility)
+            for key in ("retired_ids", "certificates", "unchanged_contacts"):
+                merged[key] = deepcopy(prior_responsibility.get(key, [])) + merged[key]
+            merged["retired_ids"] = sorted(set(merged["retired_ids"]))
+            source["whole_object_retirement"] = merged
+            full["status"] = "COMPLETE_CIRCULAR_MARKER_PENDING_SAVED_AUDIT"
+            objects[objects.index(candidate)] = full
+            retired.update(responsibility["retired_ids"])
+            retirement_records.extend(responsibility["certificates"])
+            uncertainties = [row for row in uncertainties if not (
+                row.get("id") == candidate["id"] and row.get("reason") == "CIRCULAR_MARKER_INTERIOR_CHARACTER_PENDING"
+            )]
+            decision = next(row for row in decisions if row["id"] == candidate["id"])
+            decision.update(kind=full["kind"], status=full["status"],
+                            character_reasons=[], responsibility=merged,
+                            retired_ids=merged["retired_ids"],
+                            character_adoption_basis="SAME_SOURCE_FROZEN_GLYPH_REFERENCES",
+                            original_two_engine_character_reasons=source["original_two_engine_character_pending_reasons"])
+            record["marker_upgraded"] = True
+        save_json(output / "source_reference_adoption.json", {
+            "reference_pool": pool_record, "decisions": reference_resolutions,
+            "references_frozen_before_any_resolution": True,
+            "upgraded_characters_used_as_references": False,
+        })
     if _digest(prior_objects) != before:
         raise AssertionError("CIRCULAR_ADOPTION_MUTATED_PRIOR_OBJECTS")
     from .circle_endpoint_contacts import restore_circle_endpoint_contacts
@@ -529,6 +606,7 @@ def complete_circular_markers(
         "uncertainties": uncertainties, "decisions": decisions, "discovery": discovery,
         "external_endpoint_contacts": contacts,
         "source_white_gap_protection": white_gaps,
+        "source_reference_character_resolutions": reference_resolutions,
         "prior_objects_sha256_before": before, "prior_objects_sha256_after": _digest(prior_objects),
         "source_pixels_modified": False,
         "summary": {
@@ -544,6 +622,7 @@ def complete_circular_markers(
             "pending_positions": len({row["id"] for row in uncertainties}),
             "pending_positions_deduplicated_by_circle_id": True,
             "new_Tesseract_calls": new_tesseract_calls, "new_model_calls": new_model_calls,
+            "characters_completed_from_frozen_source_references": sum(row["marker_upgraded"] for row in reference_resolutions),
             "circle_and_text_counted_as_one_complete_marker": True,
             "external_endpoint_contacts": contacts["summary"],
             "source_white_gap_protection": white_gaps["summary"],

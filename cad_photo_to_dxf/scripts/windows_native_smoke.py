@@ -102,6 +102,55 @@ def create_curve_end_boundary_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+def create_circle_character_completion_fixture(path: Path, font_path: Path) -> None:
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new('L', (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    for center, letter, size in (
+        ((150, 130), 'E', 30), ((430, 130), 'E', 31),
+        ((150, 340), 'E', 29), ((430, 340), 'F', 32),
+    ):
+        cx, cy = center
+        font = ImageFont.truetype(str(font_path), size)
+        bbox = draw.textbbox((0, 0), letter, font=font)
+        draw.ellipse((cx - 26, cy - 26, cx + 26, cy + 26), outline=0, width=3)
+        draw.text((cx - (bbox[0] + bbox[2]) / 2, cy - (bbox[1] + bbox[3]) / 2), letter, font=font, fill=0)
+        draw.line((cx + 26, cy, cx + 130, cy), fill=0, width=3)
+    # Three genuinely blank source columns (121..123) before the lower-left ring.
+    draw.line((40, 340, 120, 340), fill=0, width=3)
+    image.save(path, dpi=(200, 200))
+
+
+
+def create_terminal_core_fixture(path: Path, font_path: Path) -> None:
+    import cv2
+    import numpy as np
+    from PIL import Image, ImageDraw, ImageFont
+
+    gray = np.full((480, 640), 255, np.uint8)
+    curve = [(round(230 + 0.55 * (y - 188) + 0.0015 * (y - 188) ** 2), y)
+             for y in range(90, 330)]
+    cv2.polylines(gray, [np.asarray(curve[:215], np.int32)], False, 0, 2)
+    cv2.polylines(gray, [np.asarray(curve[214:], np.int32)], False, 0, 5)
+    cv2.circle(gray, (355, 330), 18, 0, 2)
+    cv2.line(gray, (305, 329), (338, 329), 0, 5)
+    cv2.putText(gray, "F", (349, 336), cv2.FONT_HERSHEY_SIMPLEX, 0.55, 0, 1)
+    cv2.circle(gray, (160, 350), 18, 0, 2)
+    cv2.line(gray, (80, 350), (141, 350), 0, 2)
+    cv2.line(gray, (183, 350), (260, 350), 0, 2)
+    cv2.putText(gray, "F", (154, 356), cv2.FONT_HERSHEY_SIMPLEX, 0.55, 0, 1)
+    image = Image.fromarray(gray)
+    draw = ImageDraw.Draw(image)
+    source_font = ImageFont.truetype(str(font_path), 32, layout_engine=ImageFont.Layout.BASIC)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    draw.text((110, 170), "STORAGE42", font=source_font, fill=0)
+    draw.text((460, 64), "STORE", font=control_font, fill=0)
+    draw.text((460, 120), "AX7", font=control_font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
+
 SINGLE_LINE_LABEL_FIXTURE = (
     ("AHU-27B, Z4", (80, 64)),
     ("PANEL-08A", (80, 176)),
@@ -465,7 +514,7 @@ def inspect_circular_members(document, objects: dict, cold: dict, *, curve_end_b
                 certificate = rows.get(oid, {}).get("source_evidence", {}).get("circle_endpoint_contacts")
                 new_contacts = []
                 if certificate is not None:
-                    if certificate.get("schema") != "native-direct-circle-end-contact-v1" or not isinstance(certificate.get("ends"), list):
+                    if certificate.get("schema") != "native-direct-circle-end-contact-v2-observed-terminal-core" or not isinstance(certificate.get("ends"), list):
                         raise AssertionError("Saved lead has an unreadable circle endpoint contact certificate")
                     new_contacts = [end for end in certificate["ends"] if end.get("circle_id") == circle_geometry[center]["object"]["id"]]
                     if len(new_contacts) > 1:
@@ -564,7 +613,10 @@ def _checked_record(root: Path, record: dict) -> tuple[Path, bytes]:
     return path, data
 
 
-def inspect_circular_character_payloads(objects, cold, evidence_root: Path, source_path: Path, pipeline_report) -> dict:
+def inspect_circular_character_payloads(
+    objects, cold, evidence_root: Path, source_path: Path, pipeline_report,
+    *, expected_markers=2, expected_partial=1, require_source_reference_resolution=False,
+) -> dict:
     """Read v2 source payloads without importing app code or running either OCR."""
     from io import BytesIO
 
@@ -584,14 +636,18 @@ def inspect_circular_character_payloads(objects, cold, evidence_root: Path, sour
     actual_model = sum(row["new_model_calls"] for row in result_rows)
     if summary["new_Tesseract_calls"] != actual_tesseract or summary["new_model_calls"] != actual_model or actual_tesseract <= 0 or actual_model <= 0:
         raise AssertionError("Circle stage did not record real new Tesseract and model calls")
-    if (summary.get("new_complete_markers") != 2 or summary.get("circle_text_compositions") != 2
-            or summary.get("circle_text_compositions_with_external_contacts_pending") != 0
-            or summary.get("new_partial_boundaries") != 1 or summary.get("partial_compositions") != 1):
-        raise AssertionError("Ordinary pipeline summary does not separate two complete markers from the partial border")
+    complete = summary.get("new_complete_markers", 0)
+    pending_contacts = summary.get("circle_text_compositions_with_external_contacts_pending", 0)
+    if (summary.get("circle_text_compositions") != expected_markers
+            or complete + pending_contacts != expected_markers
+            or (not require_source_reference_resolution and pending_contacts != 0)
+            or summary.get("new_partial_boundaries") != expected_partial
+            or summary.get("partial_compositions") != expected_partial):
+        raise AssertionError("Ordinary pipeline summary does not separate adopted circle/TEXT compositions from partial borders and pending external contacts")
     with Image.open(source_path) as image:
         original = np.asarray(image.convert("L"))
     checks = {row["id"]: row for row in cold["circular_marker_source_checks"]}
-    verified = []
+    verified, reference_resolutions = [], []
     for obj in objects["objects"]:
         if obj["kind"] != "CIRCULAR_MARKER":
             continue
@@ -605,7 +661,14 @@ def inspect_circular_character_payloads(objects, cold, evidence_root: Path, sour
         if len(box) != 4 or not all(isinstance(value, int) and not isinstance(value, bool) for value in box) or not (0 <= box[0] < box[2] <= original.shape[1] and 0 <= box[1] < box[3] <= original.shape[0]):
             raise AssertionError("Character crop is not a complete original image region")
         crop = np.ascontiguousarray(original[box[1]:box[3], box[0]:box[2]])
-        if hashlib.sha256(crop.tobytes()).hexdigest() != evidence["source_crop_array_sha256"] or evidence["text_geometry"] != obj["geometry"]["text_geometry"] or evidence["decision"].get("accepted") is not True:
+        adopted_geometry = evidence["text_geometry"]
+        resolution = evidence.get("source_reference_resolution")
+        if resolution is not None:
+            reference_resolutions.append(inspect_source_reference_adoption(evidence_root, obj, character))
+            adopted_geometry = resolution["text_geometry"]
+        elif evidence["decision"].get("accepted") is not True:
+            raise AssertionError("Saved marker has neither a strict raw decision nor a replayed source reference resolution")
+        if hashlib.sha256(crop.tobytes()).hexdigest() != evidence["source_crop_array_sha256"] or adopted_geometry != obj["geometry"]["text_geometry"]:
             raise AssertionError("Saved marker character lost its original glyph/content binding")
         t_views, p_views = evidence["tesseract_views"], evidence["ppocr_views"]
         if not 1 <= len(t_views) <= 2 or len(t_views) != len(p_views) or character["Tesseract_views_replayed"] != len(t_views) or character["PP_OCR_views_replayed"] != len(p_views):
@@ -650,10 +713,480 @@ def inspect_circular_character_payloads(objects, cold, evidence_root: Path, sour
             p_calls += called
         if evidence["new_Tesseract_calls"] != t_calls or evidence["new_model_calls"] != p_calls:
             raise AssertionError("Character call counters disagree with actual producer receipts")
-        verified.append({"id": obj["id"], "text": evidence["decision"]["text"], "new_Tesseract_calls": t_calls, "new_model_calls": p_calls, "Tesseract_views": len(t_views), "PP_OCR_views": len(p_views)})
-    if len(verified) != 2:
+        verified.append({"id": obj["id"], "text": adopted_geometry["text"], "adoption_basis": character.get("adoption_basis"), "new_Tesseract_calls": t_calls, "new_model_calls": p_calls, "Tesseract_views": len(t_views), "PP_OCR_views": len(p_views)})
+    if len(verified) != expected_markers:
         raise AssertionError("Not every complete marker has verified original character payloads")
-    return {"verified_complete_characters": verified, "raw_stage_files_read_and_hashed": len(payloads), "new_Tesseract_calls": actual_tesseract, "new_model_calls": actual_model, "global_cross_engine_calls_required": False, "inspection_executed_recognition": False}
+    if require_source_reference_resolution and not reference_resolutions:
+        raise AssertionError("Actual ordinary conversion did not exercise same-source circle character resolution")
+    return {"verified_complete_characters": verified, "source_reference_resolutions": reference_resolutions, "raw_stage_files_read_and_hashed": len(payloads), "new_Tesseract_calls": actual_tesseract, "new_model_calls": actual_model, "global_cross_engine_calls_required": False, "inspection_executed_recognition": False}
+
+
+def inspect_source_reference_adoption(evidence_root, obj, character):
+    """Bind the new adoption route to its actual frozen source witnesses."""
+    evidence = obj["source_evidence"]["character_evidence"]
+    resolution = evidence["source_reference_resolution"]
+    decision = resolution["decision"]
+    replay = character.get("source_reference_verification", {})
+    if (evidence["decision"].get("accepted") is not False
+            or resolution.get("schema") != "native-circle-source-reference-resolution-v1"
+            or resolution.get("adoption_basis") != "SAME_SOURCE_FROZEN_GLYPH_REFERENCES"
+            or resolution.get("original_raw_decision_and_conflicts_retained") is not True
+            or resolution.get("new_OCR_calls") != 0 or resolution.get("new_model_calls") != 0
+            or decision.get("accepted") is not True
+            or decision.get("raw_observations_rewritten") is not False
+            or decision.get("confidence_thresholds_changed") is not False
+            or decision.get("missing_raw_competing_reference_classes") != []
+            or decision.get("unexcluded_competing_reference_classes") != []
+            or character.get("adoption_basis") != "SAME_SOURCE_FROZEN_GLYPH_REFERENCES"
+            or character.get("source_reference_resolution_recomputed") is not True
+            or replay.get("pass") is not True
+            or replay.get("reference_raw_sources_and_original_pixels_replayed") is not True
+            or replay.get("comparison_and_adoption_recomputed") is not True):
+        raise AssertionError("Actual circle character source resolution or original failed raw decision was not replayed")
+    _, raw_pool = _checked_record(evidence_root, resolution["reference_pool"])
+    pool = json.loads(raw_pool)
+    if (pool.get("frozen_before_any_resolution") is not True
+            or pool.get("upgraded_characters_used_as_references") is not False
+            or pool.get("source_sha256") != obj["source_evidence"].get("source_sha256")):
+        raise AssertionError("Circle reference pool is not a frozen original-source pool")
+    refs = {row["reference_key"]: row for row in pool["references"]}
+    keys = decision["positive_reference_keys_by_character"][decision["text"]]
+    if len(keys) < 2 or len(set(keys)) != len(keys) or keys != replay.get("verified_positive_reference_keys"):
+        raise AssertionError("Resolved circle character lacks two independently replayed source positions")
+    boxes = [evidence["source_bbox_xyxy_px"]]
+    for key in keys:
+        ref = refs[key]
+        box = ref["source_component"]["bbox_xyxy_px"]
+        if ref["character"] != decision["text"] or any(
+            max(box[0], old[0]) < min(box[2], old[2]) and max(box[1], old[1]) < min(box[3], old[3])
+            for old in boxes
+        ):
+            raise AssertionError("Character reference reused the target or another reference source domain")
+        boxes.append(box)
+    if len(decision["all_available_reference_classes"]) < 2:
+        raise AssertionError("Generated source reference input did not exercise a competing character class")
+    return {"id": obj["id"], "text": decision["text"], "original_raw_decision_retained": True,
+            "positive_original_reference_keys": keys,
+            "competing_classes_checked": [x for x in decision["all_available_reference_classes"] if x != decision["text"]],
+            "frozen_pool_sha256": resolution["reference_pool"]["sha256"], "actual_source_replay_checked": True}
+
+
+def inspect_circle_completion_members(document, objects, cold, source_path) -> dict:
+    """Check the saved four-circle public fixture, independently of recognition.
+
+    Fixture positions/content below are assertions only. Production receives
+    the PNG through its ordinary entry point and receives no expected labels.
+    The caller separately replays every raw character and reference-bank file.
+    Existing smoke helpers are intentionally used without importing app code.
+    """
+    from collections import Counter
+    import hashlib
+    import math
+    from pathlib import Path
+
+    import numpy as np
+    from PIL import Image
+
+    source_path = Path(source_path)
+    with Image.open(source_path) as source:
+        gray = np.asarray(source.convert("L"))
+    if gray.shape != (480, 640):
+        raise AssertionError("Circle completion fixture has changed source dimensions")
+    if any(int(gray[y, x]) != 255 for x in (121, 122, 123) for y in (339, 340, 341)):
+        raise AssertionError("The generated circle completion source lost its three-column real white gap")
+    if int(gray[340, 120]) != 0 or int(gray[340, 124]) != 0:
+        raise AssertionError("The real gap is not bounded by the intended independent line and original ring ink")
+
+    formal = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    rows = {obj["id"]: obj for obj in objects["objects"]}
+    if len(rows) != len(objects["objects"]):
+        raise AssertionError("Circle completion ledger repeats an object identity")
+    identities = [(entity, native_identity(entity)) for entity in formal]
+    if len({identity["id"] for _, identity in identities}) != len(identities):
+        raise AssertionError("Saved circle completion drawing repeats a formal object")
+    markers = [(entity, identity) for entity, identity in identities if identity["kind"] == "CIRCULAR_MARKER"]
+    if len(markers) != 4 or any(entity.dxftype() != "INSERT" for entity, _ in markers):
+        raise AssertionError("Circle completion requires four actual editable circle/text INSERTs")
+    if any(entity.dxftype() == "CIRCLE" or identity["kind"] == "CIRCLE" for entity, identity in identities):
+        raise AssertionError("A boundary-only circle or a duplicate circle remains beside an upgraded marker")
+    names = [entity.dxf.name for entity, _ in markers]
+    if len(set(names)) != 4 or any(sum(entity.dxftype() == "INSERT" and entity.dxf.name == name for entity in formal) != 1 for name in names):
+        raise AssertionError("Circle completion instances share a block definition")
+    checks = cold.get("circular_marker_source_checks", [])
+    if len(checks) != 4 or len({row["id"] for row in checks}) != 4:
+        raise AssertionError("The saved audit did not individually check all four circle/text objects")
+    by_id = {row["id"]: row for row in checks}
+    sampling = cold.get("circular_member_source_sampling", {})
+    if (sampling.get("closed_circle_sweep_deg") != 360.0
+            or not 0 < sampling.get("maximum_sample_spacing_px", 0) <= 0.05
+            or sampling.get("circle_and_character_evidence_replayed") is not True
+            or sampling.get("missing_or_unreadable_evidence_passes") is not False):
+        raise AssertionError("Saved circle source sampling or evidence replay was not performed")
+
+    expected = {(150, 130): "E", (430, 130): "E", (150, 340): "E", (430, 340): "F"}
+    circles, marker_reports = {}, []
+    target_marker_id = None
+    for entity, identity in markers:
+        oid = identity["id"]
+        obj = rows.get(oid, {})
+        if obj.get("kind") != "CIRCULAR_MARKER" or obj.get("source_evidence", {}).get("components_complete") is not True:
+            raise AssertionError("A saved circle/text INSERT is not explicitly a complete composition")
+        members = list(document.blocks.get(entity.dxf.name))
+        if Counter(member.dxftype() for member in members) != {"CIRCLE": 1, "TEXT": 1} or entity.attribs:
+            raise AssertionError("A circle/text block must contain exactly one genuine CIRCLE and one editable TEXT")
+        if any(float(entity.dxf.get(axis, 1.0)) != 1.0 for axis in ("xscale", "yscale", "zscale")):
+            raise AssertionError("Circle/text INSERT has a singular or non-unit transform")
+        if abs(float(entity.dxf.get("rotation", 0))) > 1e-8:
+            raise AssertionError("The saved fixture marker has an unexpected block rotation")
+        expanded = list(entity.virtual_entities())
+        circle = next(member for member in expanded if member.dxftype() == "CIRCLE")
+        text = next(member for member in expanded if member.dxftype() == "TEXT")
+        center = _pixel_point(circle.dxf.center)
+        radius = float(circle.dxf.radius) * 200 / 25.4
+        matches = [point for point in expected if _near_point(center, point, 0.5)]
+        if len(matches) != 1 or matches[0] in circles or abs(radius - 25.0) > 0.5:
+            raise AssertionError("A final circle is missing, duplicated, displaced or incorrectly sized")
+        position = matches[0]
+        letter = expected[position]
+        if text.dxf.text != letter or obj.get("geometry", {}).get("text_geometry", {}).get("text") != letter:
+            raise AssertionError("A saved editable inner character differs from its generated source")
+        if abs(float(text.dxf.get("rotation", 0.0))) > 1e-8:
+            raise AssertionError("An inner character has an unexpected rotation")
+
+        # Read the actual interior ink of this small generated source. The
+        # 20px disk is wholly inside its 23px inner ring and does not alter OCR.
+        cx, cy = position
+        yy, xx = np.indices(gray.shape)
+        interior = (np.hypot(xx - cx, yy - cy) < 20) & (gray < 128)
+        sy, sx = np.nonzero(interior)
+        if not len(sx):
+            raise AssertionError("A generated inner character has no original ink")
+        source_box = [int(sx.min()), int(sy.min()), int(sx.max()) + 1, int(sy.max()) + 1]
+        glyph = obj["geometry"]["text_geometry"]
+        expected_geometry = {"text": letter, "x": source_box[0], "y": source_box[3],
+                             "width_px": source_box[2] - source_box[0],
+                             "height_px": source_box[3] - source_box[1], "rotation_deg_image": 0.0}
+        if glyph != expected_geometry:
+            raise AssertionError("The saved glyph's source location or dimensions differ from the complete original interior")
+        actual_height_px = float(text.dxf.height) * 200 / 25.4
+        actual_baseline = _pixel_point(text.dxf.insert)
+        if abs(actual_height_px - glyph["height_px"]) > 1e-7 or abs(actual_baseline[1] - glyph["y"]) > 1e-7:
+            raise AssertionError("Actual TEXT height or baseline differs from its original glyph")
+        if not 0 < float(text.dxf.get("width", 1.0)) < 3:
+            raise AssertionError("Actual TEXT has an invalid width transform")
+        corners = [(source_box[x], source_box[y]) for x in (0, 2) for y in (1, 3)]
+        glyph_circle_gap = radius - max(math.dist(point, center) for point in corners)
+        if glyph_circle_gap < 5:
+            raise AssertionError("The newly editable character touches or overlaps its circle boundary")
+        check = by_id.get(oid, {})
+        contracts = check.get("saved_candidate_checks", {})
+        character_check = check.get("character_source", {})
+        if (check.get("pass") is not True or not contracts or not all(value is True for value in contracts.values())
+                or check.get("ring_source", {}).get("pass") is not True or character_check.get("pass") is not True):
+            raise AssertionError("Actual saved circle/text source geometry or character evidence failed its cold check")
+        sweeps = [row for row in cold.get("source_checks", []) if row.get("id") == oid and row.get("type") == "CIRCLE"]
+        if (len(sweeps) != 1 or sweeps[0].get("pass") is not True or sweeps[0].get("sampled_sweep_deg") != 360.0
+                or sweeps[0].get("samples", 0) < math.ceil(2 * math.pi * radius / 0.05)):
+            raise AssertionError("The saved circle was not audited over its complete finite circumference")
+        original = obj["source_evidence"]["character_evidence"]
+        if position == (150, 340):
+            resolved = original.get("source_reference_resolution", {})
+            verified = character_check.get("source_reference_verification", {})
+            if (original.get("decision", {}).get("accepted") is not False
+                    or resolved.get("schema") != "native-circle-source-reference-resolution-v1"
+                    or resolved.get("adoption_basis") != "SAME_SOURCE_FROZEN_GLYPH_REFERENCES"
+                    or resolved.get("decision", {}).get("accepted") is not True
+                    or resolved.get("decision", {}).get("text") != letter
+                    or resolved.get("original_raw_decision_and_conflicts_retained") is not True
+                    or character_check.get("adoption_basis") != "SAME_SOURCE_FROZEN_GLYPH_REFERENCES"
+                    or character_check.get("source_reference_resolution_recomputed") is not True
+                    or verified.get("pass") is not True
+                    or len(set(verified.get("verified_positive_reference_keys", []))) < 2
+                    or set(verified.get("compared_reference_classes", [])) != {"E", "F"}
+                    or verified.get("comparison_and_adoption_recomputed") is not True):
+                raise AssertionError("The actual target did not trigger and cold-replay the new source-reference character route")
+            target_marker_id = oid
+        elif original.get("decision", {}).get("accepted") is not True or original.get("source_reference_resolution") is not None:
+            raise AssertionError("The two donor characters and competing F must retain their original strict recognition route")
+        circles[position] = {"id": oid, "center": center, "radius": radius, "glyph_box": source_box}
+        marker_reports.append({"id": oid, "block_name": entity.dxf.name, "character": letter,
+                               "actual_circle_center_px": list(center), "actual_radius_px": radius,
+                               "source_glyph_bbox_xyxy_px": source_box,
+                               "actual_TEXT_height_px": actual_height_px,
+                               "glyph_box_minimum_circle_gap_px": glyph_circle_gap,
+                               "adoption_basis": character_check.get("adoption_basis"),
+                               "actual_saved_structure_and_character_source_pass": True})
+    if set(circles) != set(expected) or target_marker_id is None:
+        raise AssertionError("The final drawing did not contain the complete four-position fixture")
+
+    leads, lead_ids = [], []
+    for position, circle in circles.items():
+        cx, cy = position
+        near = (cx + circle["radius"], cy)
+        endpoint = (cx + 130, cy)
+        matching = []
+        for entity, identity in identities:
+            points = _line_points(entity)
+            if len(points) < 2:
+                continue
+            if points[0][0] > points[-1][0]:
+                points.reverse()
+            if not (_near_point(points[0], near, 4.0) and _near_point(points[-1], endpoint, 2.0)
+                    and all(abs(point[1] - cy) <= 2.0 for point in points)
+                    and all(right[0] > left[0] for left, right in zip(points, points[1:]))):
+                continue
+            oid = identity["id"]
+            support = _saved_line_source_check(cold, oid)
+            intersections = _finite_circle_intersections(points, circle["center"], circle["radius"])
+            signed_gap = math.dist(points[0], circle["center"]) - circle["radius"]
+            if signed_gap > 1e-6 or signed_gap < -4.0 or not intersections:
+                raise AssertionError("A saved right-hand independent line no longer meets its circle")
+            # Monotone rightward geometry cannot enter a glyph box wholly left
+            # of its first point; reject any deeper interior path explicitly.
+            if points[0][0] <= circle["glyph_box"][2]:
+                raise AssertionError("A separately editable external line enters the inner character")
+            matching.append(oid)
+            leads.append({"id": oid, "circle_id": circle["id"], "circle_position_px": list(position),
+                          "actual_start_px": list(points[0]), "actual_end_px": list(points[-1]),
+                          "signed_endpoint_gap_px": signed_gap, "finite_circle_intersections_px": intersections,
+                          "contact_kind": "existing_supported_ring_overlap" if signed_gap < -1e-6 else "endpoint_on_circle",
+                          "saved_source_check": support})
+        if len(matching) != 1:
+            raise AssertionError("A complete right-hand path is missing, fragmented, duplicated or absorbed into its block")
+        lead_ids += matching
+    if len(set(lead_ids)) != 4:
+        raise AssertionError("Four external paths are not independently represented")
+
+    gap_lines = []
+    target_circle = circles[(150, 340)]
+    for entity, identity in identities:
+        points = _line_points(entity)
+        if len(points) < 2:
+            continue
+        if points[0][0] > points[-1][0]:
+            points.reverse()
+        if not (_near_point(points[0], (40, 340), 2.0) and _near_point(points[-1], (120, 340), 1.0)
+                and all(abs(point[1] - 340) <= 2.0 for point in points)
+                and all(right[0] > left[0] for left, right in zip(points, points[1:]))):
+            continue
+        oid = identity["id"]
+        support = _saved_line_source_check(cold, oid)
+        minimum_gap = math.inf
+        for left, right in zip(points, points[1:]):
+            dx, dy = right[0] - left[0], right[1] - left[1]
+            cx, cy = target_circle["center"]
+            t = min(1.0, max(0.0, ((cx - left[0]) * dx + (cy - left[1]) * dy) / (dx * dx + dy * dy)))
+            nearest = (left[0] + t * dx, left[1] + t * dy)
+            minimum_gap = min(minimum_gap, math.dist(nearest, target_circle["center"]) - target_circle["radius"])
+        if minimum_gap < 3.0 or _finite_circle_intersections(points, target_circle["center"], target_circle["radius"]):
+            raise AssertionError("The real three-column white gap was bridged by a saved native path")
+        gap_check = [row for row in cold.get("circle_white_gap_protection_checks", []) if row.get("id") == oid]
+        if len(gap_check) != 1 or gap_check[0].get("pass") is not True or gap_check[0].get("actual_saved_line_checked") is not True:
+            raise AssertionError("The actual saved gap line did not receive its source white-gap check")
+        gap_lines.append({"id": oid, "actual_start_px": list(points[0]), "actual_end_px": list(points[-1]),
+                          "minimum_saved_geometry_gap_px": minimum_gap,
+                          "original_white_columns": [121, 122, 123], "source_white_gap_width_px": 3,
+                          "finite_geometry_intersects_circle": False, "saved_source_check": support,
+                          "saved_white_gap_check": gap_check[0]})
+    if len(gap_lines) != 1:
+        raise AssertionError("The independent real-gap line is missing, fragmented or duplicated")
+    permitted_ids = {circle["id"] for circle in circles.values()} | set(lead_ids) | {gap_lines[0]["id"]}
+    if len(formal) != 9 or {identity["id"] for _, identity in identities} != permitted_ids or set(rows) != permitted_ids:
+        raise AssertionError("Circle completion gained a duplicate glyph, stray circle, fragment or unexplained formal object")
+    if cold.get("exact_duplicate_segments"):
+        raise AssertionError("The final circle completion drawing contains duplicate native segments")
+    path_id = next(row["id"] for row in leads if row["circle_position_px"] == [150, 340])
+    return {"complete_marker_count": 4, "partial_circle_boundary_count": 0,
+            "unique_block_definitions": names, "complete_marker_characters": ["E", "E", "E", "F"],
+            "target_marker_id": target_marker_id, "independent_path_id": path_id,
+            "path_id": path_id, "independent_marker_for_edit_id": target_marker_id,
+            "independent_boundary_contact_path_id": path_id,
+            "independent_external_line_ids": lead_ids + [gap_lines[0]["id"]],
+            "actual_marker_geometry_and_TEXT_checks": marker_reports,
+            "independent_line_shared_contact_checks": leads,
+            "protected_real_gap_line_checks": gap_lines,
+            "original_source_gap": {"source_sha256": hashlib.sha256(source_path.read_bytes()).hexdigest(),
+                                    "original_white_columns": [121, 122, 123], "source_gap_width_px": 3,
+                                    "source_pixels_modified": False},
+            "actual_new_source_reference_route_triggered_and_replayed": True,
+            "original_target_two_engine_rejection_retained": True,
+            "all_right_paths_independent_and_touching_circle": True,
+            "fixture_expectations_sent_to_recognizer": False}
+
+
+"""Standalone Windows smoke member check; paste into windows_native_smoke.py.
+
+The function uses that script's existing public-format helpers. It imports no
+application code and inspects the real saved DXF, its bound cold audit, and PNG.
+The target of the new contact may remain a partial bare circle; the separate
+complete F control is then the explicit block-edit target.
+"""
+
+
+def inspect_terminal_core_members(document, objects, cold, source_path) -> dict:
+    import numpy as np
+    from PIL import Image
+
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    rows = objects.get("objects", [])
+    ledger = {row["id"]: row for row in rows}
+    identities = [native_identity(entity) for entity in entities]
+    saved = {identity["id"]: entity for identity, entity in zip(identities, entities)}
+    texts = [entity for entity in entities if entity.dxftype() == "TEXT"]
+    circles = [entity for entity in entities if entity.dxftype() in ("CIRCLE", "INSERT")]
+    lines = [entity for entity in entities if entity.dxftype() == "LINE"]
+    paths = [entity for entity in entities if entity.dxftype() == "LWPOLYLINE"]
+    if (len(entities) != 7 or len(texts) != 3 or len(circles) != 2 or len(lines) != 1 or len(paths) != 1
+            or Counter(entity.dxf.text for entity in texts) != Counter(["STORAGE42", "STORE", "AX7"])
+            or len(ledger) != len(rows) or len(saved) != len(entities) or set(saved) != set(ledger)):
+        raise AssertionError("Terminal-core input did not save three complete TEXTs, two circles, one whole path and one gap LINE")
+    if (cold.get("source_gate_pass") is not True or cold.get("ezdxf_errors") != []
+            or cold.get("ezdxf_in_memory_fixes") != [] or cold.get("exact_duplicate_segments")):
+        raise AssertionError("Actual saved terminal-core input failed its cold source/duplicate gate")
+    if digest(Path(source_path)) != objects.get("source_sha256"):
+        raise AssertionError("Terminal-core fixture source identity changed")
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+    if source.shape != (480, 640):
+        raise AssertionError("Terminal-core source coordinate contract changed")
+    text_checks = {row.get("id"): row for row in cold.get("native_text_candidate_checks", [])}
+    for entity in texts:
+        oid = native_identity(entity)["id"]
+        if (ledger[oid].get("kind") != "TEXT" or ledger[oid].get("geometry", {}).get("text") != entity.dxf.text
+                or text_checks.get(oid, {}).get("pass") is not True
+                or entity.dxf.style != "I2CAD_TEXT"
+                or document.styles.get(entity.dxf.style).dxf.font != "DejaVuSans.ttf"):
+            raise AssertionError("A complete fixture TEXT changed content, style or saved source binding")
+    marker_checks = {row.get("id"): row for row in cold.get("circular_marker_source_checks", [])}
+    round_members, complete_markers = {}, []
+    for entity in circles:
+        oid = native_identity(entity)["id"]
+        row = ledger[oid]
+        complete = row.get("kind") == "CIRCULAR_MARKER"
+        if row.get("kind") not in ("CIRCLE", "CIRCULAR_MARKER") or row.get("source_evidence", {}).get("components_complete") is not complete:
+            raise AssertionError("Terminal-core fixture circle components are not explicitly complete or pending")
+        if complete:
+            if entity.dxftype() != "INSERT" or entity.attribs:
+                raise AssertionError("Complete circle control lost its independent editable block")
+            if (Counter(member.dxftype() for member in document.blocks.get(entity.dxf.name)) != {"CIRCLE": 1, "TEXT": 1}
+                    or any(float(entity.dxf.get(key, 1)) != 1 for key in ("xscale", "yscale", "zscale"))):
+                raise AssertionError("Circle block has duplicate members, nested paths or a singular transform")
+            expanded = list(entity.virtual_entities())
+            circle = next(member for member in expanded if member.dxftype() == "CIRCLE")
+            character = next(member.dxf.text for member in expanded if member.dxftype() == "TEXT")
+            if character != "F" or row.get("geometry", {}).get("text_geometry", {}).get("text") != character:
+                raise AssertionError("Saved editable circle control has the wrong complete character")
+            complete_markers.append(oid)
+        else:
+            if entity.dxftype() != "CIRCLE":
+                raise AssertionError("An uncertain target character was presented as a completed circle block")
+            circle, character = entity, None
+        center, radius = _pixel_point(circle.dxf.center), float(circle.dxf.radius) * 200 / 25.4
+        check = marker_checks.get(oid, {})
+        if (check.get("pass") is not True or check.get("ring_source", {}).get("pass") is not True
+                or not check.get("saved_candidate_checks") or any(value is not True for value in check["saved_candidate_checks"].values())
+                or (complete and check.get("character_source", {}).get("pass") is not True)):
+            raise AssertionError("Saved circle geometry or actual editable character failed its raw-source audit")
+        round_members[oid] = {"center": center, "radius": radius, "complete": complete, "text": character}
+    path = paths[0]
+    path_id = native_identity(path)["id"]
+    path_row = ledger[path_id]
+    evidence = path_row.get("source_evidence", {})
+    proof = evidence.get("text_contact_path", {})
+    certificate = evidence.get("circle_endpoint_contacts", {})
+    ends = certificate.get("ends", [])
+    if (path_row.get("kind") != "CONNECTION_PATH" or proof.get("schema") != "source-text-contact-native-path-v1"
+            or len(ends) != 1 or ends[0].get("endpoint_extension_shape") != "REPLAYED_ORIGINAL_TERMINAL_CORE_TO_OPPOSITE_RING_BRANCHES"):
+        raise AssertionError("Ordinary input did not actually adopt one whole path using the new original-terminal-core rule")
+    end = ends[0]
+    circle_id = end.get("circle_id")
+    target_circle = round_members.get(circle_id)
+    if (target_circle is None or not _near_point(target_circle["center"], (355, 330), 0.5)
+            or abs(target_circle["radius"] - 18) > 0.5):
+        raise AssertionError("Completed source core touches the wrong actual saved circle")
+    planned = proof.get("path", {}).get("representation", {})
+    geometry_check = inspect_contact_path_vertices(document, objects, cold, path, path_row, planned, source_path)
+    if (geometry_check.get("added_terminal_segments") != 1
+            or geometry_check.get("endpoint_certificate_replayed") is not True
+            or geometry_check.get("original_vertices_continuously_preserved") != len(planned.get("points", []))
+            or sum(math.dist(a, b) for a, b in zip(_line_points(path), _line_points(path)[1:])) < 200):
+        raise AssertionError("New terminal span replaced the old body or became a separate fragment")
+    endpoint_checks = [row for row in cold.get("circle_endpoint_contact_checks", []) if row.get("id") == path_id]
+    if (len(endpoint_checks) != 1 or endpoint_checks[0].get("pass") is not True
+            or endpoint_checks[0].get("actual_saved_geometry_checked") is not True
+            or endpoint_checks[0].get("external_entity_is_independent") is not True):
+        raise AssertionError("Actual saved whole-path endpoint was not independently cold checked")
+    contact = cold.get("text_contact_source_checks", {})
+    checked = {row.get("id"): row for row in contact.get("checks", [])}
+    selected = checked.get(path_id, {})
+    if (contact.get("pass") is not True or contact.get("target_ids") != [path_id]
+            or selected.get("pass") is not True
+            or selected.get("original_source_plan_replay", {}).get("pass") is not True
+            or selected.get("checks", {}).get("original_source_plan_replayed") is not True
+            or selected.get("checks", {}).get("actual_vertices") is not True
+            or checked.get("TEXT_CONTACT_DUPLICATES", {}).get("conflicts") != []):
+        raise AssertionError("Saved original terminal core was not replayed from the actual source graph and path plan")
+    protected = checked.get("TEXT_CONTACT_NEIGHBORS", {})
+    if (protected.get("pass") is not True or protected.get("protected_count") != len(entities) - 1
+            or {row.get("id") for row in protected.get("objects", [])} != set(ledger) - {path_id}
+            or any(row.get("pass") is not True for row in protected.get("objects", []))):
+        raise AssertionError("Whole-path completion changed an unrelated saved neighbor")
+    control_id = next(oid for oid, geometry in round_members.items() if oid != circle_id)
+    control = round_members[control_id]
+    if not _near_point(control["center"], (160, 350), 0.5) or abs(control["radius"] - 18) > 0.5 or control_id not in complete_markers:
+        raise AssertionError("Independent complete circle control was lost")
+    line = lines[0]
+    line_id = native_identity(line)["id"]
+    line_row = ledger[line_id]
+    actual_line = _line_points(line)
+    planned_line = [line_row.get("geometry", {}).get(key) for key in ("start", "end")]
+    if (line_row.get("kind") != "LINE" or len(actual_line) != 2
+            or any(not _near_point(a, b, 1e-6) for a, b in zip(actual_line, planned_line))
+            or not _near_point(actual_line[0], (182, 350), 1.0)
+            or not _near_point(actual_line[1], (262, 350), 1.0)):
+        raise AssertionError("Independent finite white-gap LINE was changed or merged into a marker")
+    start, finish = map(np.asarray, actual_line)
+    axis = finish - start
+    t = float(np.clip((np.asarray(control["center"]) - start) @ axis / (axis @ axis), 0, 1))
+    distance = float(np.linalg.norm(start + t * axis - control["center"])) - control["radius"]
+    gap_proof = line_row.get("source_evidence", {}).get("circle_white_gap_protection", {})
+    gaps = gap_proof.get("ends", [])
+    cold_gaps = [row for row in cold.get("circle_white_gap_protection_checks", []) if row.get("id") == line_id]
+    if (not 2.5 < distance < 5 or not np.all(source[346:355, 180:182] >= 128)
+            or len(gaps) != 1 or gaps[0].get("circle_id") != control_id
+            or gaps[0].get("status") != "PROTECTED_SOURCE_WHITE_GAP_NO_CONNECTION_REQUIRED"
+            or gaps[0].get("exterior_and_ring_are_different_local_eight_connected_components") is not True
+            or gaps[0].get("complete_white_strip_width_px", 0) < 1.9
+            or len(cold_gaps) != 1 or cold_gaps[0].get("pass") is not True
+            or cold_gaps[0].get("actual_saved_line_checked") is not True):
+        raise AssertionError("Original two-column white gap was bridged by the finite saved LINE")
+    # The source-core target is currently partial. Never describe this as a
+    # completed circle+text; edit the independently proved control instance.
+    edit_marker = circle_id if target_circle["complete"] else control_id
+    return {
+        "schema": "windows-saved-original-terminal-core-v1",
+        "complete_TEXTs": sorted(entity.dxf.text for entity in texts),
+        "formal_object_count": len(entities),
+        "complete_circle_text_objects": len(complete_markers),
+        "partial_circle_boundary_objects": len(circles) - len(complete_markers),
+        "target_marker_id": edit_marker,
+        "independent_path_id": path_id,
+        "contact_target_circle_id": circle_id,
+        "contact_target_circle_text_complete": target_circle["complete"],
+        "edit_marker_is_separate_complete_control": edit_marker != circle_id,
+        "core_completion_shape": end["endpoint_extension_shape"],
+        "core_extension_length_px": end["extension_length_px"],
+        "saved_whole_path_geometry": geometry_check,
+        "new_rule_actual_saved_endpoint_check": endpoint_checks[0],
+        "gap_line_id": line_id,
+        "gap_control_circle_id": control_id,
+        "actual_finite_line_circle_gap_px": distance,
+        "original_white_columns": [180, 181],
+        "actual_saved_white_gap_check": cold_gaps[0],
+        "all_formal_objects_accounted_for": True,
+        "all_original_neighbor_paths_claimed_complete": False,
+        "GUI_operations_claimed": False,
+    }
 
 
 def inspect_single_line_members(document, objects: dict, cold: dict, font_path: Path) -> dict:
@@ -1022,6 +1555,86 @@ def _closed_source_segment_cells(start, end):
     return cells
 
 
+def _inspect_observed_terminal_core(gray, endpoint, center, radius, width, end, original_evidence):
+    """Replay bounded source-core geometry independently of application imports.
+
+    The actual saved-source audit additionally rebuilds the original graph.
+    Here its saved plan, every source pixel, both opposite ring prefixes and
+    both finite core routes must account for the new direction and bound.
+    """
+    import numpy as np
+
+    shape = "REPLAYED_ORIGINAL_TERMINAL_CORE_TO_OPPOSITE_RING_BRANCHES"
+    path = original_evidence["text_contact_path"]["path"]
+    core = path["endpoint_source_cores"][end["endpoint_number"]]
+    if (end.get("endpoint_extension_shape") != shape
+            or end.get("terminal_core_source_evidence") != core
+            or end.get("raw_source_graph_rebuilt") is not True
+            or end.get("unselected_external_branches_retained") is not True
+            or core.get("schema") != "observed-round-terminal-source-core-v1"
+            or core.get("source_pixels_modified") is not False
+            or core.get("semantic_connection_inferred") is not False
+            or core.get("original_branches_retained") is not True
+            or end.get("terminal_core_source_crop_sha256") != original_evidence.get("original_source_crop_array_sha256")):
+        raise AssertionError("Observed terminal core differs from the original whole-path source plan")
+    points = core["source_core_points_px"]
+    if (not 1 <= len(points) <= 48 or len({tuple(p) for p in points}) != len(points)
+            or any(len(p) != 2 or any(type(v) is not int for v in p) for p in points)
+            or np.max(np.ptp(np.asarray(points), axis=0)) > 16
+            or list(endpoint) not in points):
+        raise AssertionError("Terminal core is not the original bounded integer source junction")
+    prefixes = core["all_adjacent_source_prefixes"]
+    ports = [row["source_graph_port"] for row in prefixes]
+    incoming = core["incoming_source_graph_port"]
+    if len({tuple(p) for p in ports}) != len(ports) or incoming not in ports:
+        raise AssertionError("Terminal core repeats or omits an original graph port")
+    all_pixels = points + [p for row in prefixes for p in row["original_source_prefix_px"]]
+    if any(not (0 <= x < gray.shape[1] and 0 <= y < gray.shape[0] and gray[y, x] < 128) for x, y in all_pixels):
+        raise AssertionError("Terminal core or an observed adjacent prefix differs from original black source pixels")
+    allowance = width / 2 + 0.85
+    ring = []
+    for row in prefixes:
+        if row["source_graph_port"] == incoming:
+            continue
+        prefix = row["original_source_prefix_px"]
+        if len(prefix) < 3:
+            continue
+        radial = [prefix[0][axis] - center[axis] for axis in (0, 1)]
+        delta = [prefix[-1][axis] - prefix[0][axis] for axis in (0, 1)]
+        denominator = math.hypot(*radial) * math.hypot(*delta)
+        sine = (radial[0] * delta[1] - radial[1] * delta[0]) / denominator if denominator else 0
+        span = sum(math.dist(a, b) for a, b in zip(prefix, prefix[1:]))
+        if (span >= min(radius / 2, width * 2)
+                and max(abs(math.dist(p, center) - radius) for p in prefix) <= allowance
+                and abs(sine) >= 0.5):
+            ring.append((row, sine))
+    if len(ring) != 2 or ring[0][1] * ring[1][1] >= 0:
+        raise AssertionError("Terminal core lacks one unique opposite pair of original circle branches")
+    anchors = [row["original_source_prefix_px"][0] for row, _ in ring]
+    anchor = [(anchors[0][axis] + anchors[1][axis]) / 2 for axis in (0, 1)]
+    if (math.dist(*anchors) > width + 1.7
+            or end.get("ring_source_graph_ports") != [row["source_graph_port"] for row, _ in ring]
+            or end.get("ring_branch_core_anchors_px") != anchors
+            or end.get("original_core_connector_anchor_px") != anchor):
+        raise AssertionError("Terminal direction is not bound to its two source ring-branch endpoints")
+    routes = end.get("original_core_routes_to_ring_branches_px", [])
+    if len(routes) != 2:
+        raise AssertionError("Observed terminal core lacks both finite original routes")
+    for route, finish in zip(routes, anchors):
+        if (not route or route[0] != list(endpoint) or route[-1] != finish
+                or any(p not in points for p in route)
+                or any(not 0 < math.dist(a, b) <= math.sqrt(2) for a, b in zip(route, route[1:]))):
+            raise AssertionError("Terminal route leaves the original observed core")
+    magnitude = math.dist(anchor, endpoint)
+    if magnitude <= 1e-6:
+        raise AssertionError("Observed terminal core has no missing arrival span")
+    direction = [(anchor[axis] - endpoint[axis]) / magnitude for axis in (0, 1)]
+    bound = math.hypot(*(max(p[axis] for p in points) - min(p[axis] for p in points) for axis in (0, 1))) + allowance
+    if not _near_point(end.get("core_completion_direction", (math.inf, math.inf)), direction, 1e-7):
+        raise AssertionError("Terminal core direction differs from the original source anchors")
+    return direction, bound, points, allowance
+
+
 def inspect_contact_path_vertices(document, objects, cold, entity, path_row, planned, source_path=None):
     """Replay short straight end proofs while retaining the entire old path.
 
@@ -1047,10 +1660,13 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
         from PIL import Image
 
         policy = {
-            "version": "native-direct-circle-end-contact-v1", "source_threshold": 128,
+            "version": "native-direct-circle-end-contact-v2-observed-terminal-core", "source_threshold": 128,
             "maximum_extension_stroke_widths": 1.0, "existing_native_fit_allowance_px": 0.85,
             "absolute_extension_limit_px": 6.0, "candidate_search_stroke_widths": 2.0,
             "existing_terminal_witness_length_px": 3.0, "endpoint_precision_px": 1e-6,
+            "core_ring_prefix_minimum_span_stroke_widths": 2.0,
+            "core_ring_prefix_minimum_tangential_sine": 0.5,
+            "core_completion": "REPLAY_ORIGINAL_TERMINAL_CORE_AND_TWO_OPPOSITE_RING_BRANCHES",
             "source_contact_test": "EVERY_CLOSED_PIXEL_CELL_INTERSECTED_BY_THE_STRAIGHT_EXTENSION_IS_ORIGINAL_INK",
             "source_morphology": "NONE", "existing_interior_overlap": "RETAIN_UNCHANGED",
             "external_connection_owned_by_marker": False,
@@ -1116,17 +1732,33 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
                 raise AssertionError("Contact endpoint target differs from its actual circle or original source crop")
             width = float(source["ring_geometry"]["stroke_width_px"])
             bound = min(6.0, width + 0.85)
+            actual_direction = direction
+            shape = end.get("endpoint_extension_shape")
+            core_limits = None
+            if shape == "REPLAYED_ORIGINAL_TERMINAL_CORE_TO_OPPOSITE_RING_BRANCHES":
+                if math.dist(endpoint, center) - radius <= bound:
+                    raise AssertionError("Observed core route must not bypass the unchanged ordinary short-tail gate")
+                actual_direction, bound, core_points, allowance = _inspect_observed_terminal_core(
+                    gray, endpoint, center, radius, width, end, original_evidence
+                )
+                core_limits = (core_points, allowance)
+            elif shape is not None:
+                raise AssertionError("This generated whole-path case contains an unexamined endpoint extension shape")
             radial = [endpoint[axis] - center[axis] for axis in (0, 1)]
-            projection = sum(a * b for a, b in zip(radial, direction))
+            projection = sum(a * b for a, b in zip(radial, actual_direction))
             discriminant = projection ** 2 - (sum(value * value for value in radial) - radius ** 2)
             if projection >= 0 or discriminant <= 0:
                 raise AssertionError("Contact endpoint straight terminal does not enter the actual circle")
             length = -projection - math.sqrt(discriminant)
-            target = [endpoint[axis] + length * direction[axis] for axis in (0, 1)]
+            target = [endpoint[axis] + length * actual_direction[axis] for axis in (0, 1)]
+            if core_limits is not None:
+                core_points, allowance = core_limits
+                if any(not min(p[axis] for p in core_points) - allowance <= target[axis]
+                       <= max(p[axis] for p in core_points) + allowance for axis in (0, 1)):
+                    raise AssertionError("Restored core endpoint leaves its bounded original source junction")
             if (not 0 < length <= bound or math.dist(endpoint, center) - radius <= 1e-6
                     or end.get("object_id") != path_row["id"] or end.get("accepted") is not True
                     or end.get("reason") != "DIRECT_ORIGINAL_INK_CONTACT_TO_MEASURED_CIRCLE"
-                    or end.get("endpoint_extension_shape") is not None
                     or not _near_point(end.get("original_endpoint_px", (math.inf, math.inf)), endpoint, 1e-7)
                     or not _near_point(end.get("endpoint_direction", (math.inf, math.inf)), direction, 1e-7)
                     or not _near_point(end.get("restored_endpoint_px", (math.inf, math.inf)), target, 1e-7)
@@ -2055,7 +2687,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -2087,6 +2719,18 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         curve_end_result["scripted_edit_isolation"] = inspect_circle_path_edit_isolation(
             target, work / "edit-isolation", curve_end_result["independent_marker_for_edit_id"],
             curve_end_result["independent_boundary_contact_path_id"],
+        )
+    completion_result = None
+    if fixture_kind == "circle-character-completion":
+        completion_result = inspect_circle_completion_members(document, objects, cold, work.parent / "controlled-source.png")
+        completion_result["scripted_edit_isolation"] = inspect_circle_path_edit_isolation(
+            target, work / "edit-isolation", completion_result["target_marker_id"], completion_result["independent_path_id"]
+        )
+    terminal_core_result = None
+    if fixture_kind == "observed-terminal-core":
+        terminal_core_result = inspect_terminal_core_members(document, objects, cold, work.parent / "controlled-source.png")
+        terminal_core_result["scripted_edit_isolation"] = inspect_circle_path_edit_isolation(
+            target, work / "edit-isolation", terminal_core_result["target_marker_id"], terminal_core_result["independent_path_id"]
         )
     if single_line_contract not in ("strict-three", "bounded-capability"):
         raise ValueError("Unknown single-line saved-output contract")
@@ -2153,11 +2797,20 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         payloads = inspect_circular_character_payloads(objects, cold, companion / "evidence", work.parent / "controlled-source.png", pipeline_report)
         (circle_result if circle_result is not None else curve_end_result)["actual_character_payloads"] = payloads
         circle_calls = payloads["new_model_calls"]
+    if completion_result is not None or terminal_core_result is not None:
+        payloads = inspect_circular_character_payloads(
+            objects, cold, companion / "evidence", work.parent / "controlled-source.png", pipeline_report,
+            expected_markers=4 if completion_result is not None else 1,
+            expected_partial=0 if completion_result is not None else 1,
+            require_source_reference_resolution=completion_result is not None,
+        )
+        (completion_result if completion_result is not None else terminal_core_result)["actual_character_payloads"] = payloads
+        circle_calls = payloads["new_model_calls"]
     if single_line_result is not None:
         payloads = inspect_single_line_character_payloads(objects, cold, companion / "evidence", pipeline_report)
         single_line_result["actual_label_payloads"] = payloads
         single_line_calls = payloads["new_model_calls"]
-    if (fixture_kind == "room17" and global_calls <= 0) or (fixture_kind in ("circular-markers", "curve-end-boundaries") and circle_calls <= 0):
+    if (fixture_kind == "room17" and global_calls <= 0) or (fixture_kind in ("circular-markers", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core") and circle_calls <= 0):
         raise AssertionError("Native flow did not execute its independent recognizer")
     snapshot = sorted([entity_geometry(entity, document) for entity in entities], key=lambda row: json.dumps(row, sort_keys=True))
     write_json(work / "geometry.json", {"entities": snapshot})
@@ -2195,6 +2848,10 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["short_codes"] = short_code_result
     if curve_end_result is not None:
         result["curve_end_boundaries"] = curve_end_result
+    if completion_result is not None:
+        result["circle_character_completion"] = completion_result
+    if terminal_core_result is not None:
+        result["observed_terminal_core"] = terminal_core_result
     return result
 
 
@@ -2281,6 +2938,10 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     short_code_work.mkdir()
     curve_end_work = work / "curve-end-boundaries"
     curve_end_work.mkdir()
+    completion_work = work / "circle-character-completion"
+    completion_work.mkdir()
+    terminal_core_work = work / "observed-terminal-core"
+    terminal_core_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
@@ -2288,6 +2949,8 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         {"name": "text-line-contact", "directory": contact_work, "create": create_contact_fixture},
         {"name": "short-codes", "directory": short_code_work, "create": create_short_code_fixture},
         {"name": "curve-end-boundaries", "directory": curve_end_work, "create": create_curve_end_boundary_fixture},
+        {"name": "circle-character-completion", "directory": completion_work, "create": create_circle_character_completion_fixture},
+        {"name": "observed-terminal-core", "directory": terminal_core_work, "create": create_terminal_core_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -2340,7 +3003,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact, short_codes, curve_ends = cases
+    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -2428,16 +3091,45 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
     }
     write_json(curve_end_work / "native-smoke.json", curve_end_report)
+    completion_report = {
+        "status": "PASS", "schema": "windows-native-circle-character-completion-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": circle_completion["source_sha256"],
+        "source_result": circle_completion["source_result"], "exe_result": circle_completion["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "original_failed_two_engine_decision_and_raw_readings_retained": True,
+        "two_independent_original_glyph_references_and_competing_class_checked": True,
+        "actual_saved_source_reference_resolution_required": True,
+        "each_circle_and_TEXT_one_unique_editable_block": True,
+        "independent_paths_and_original_white_gap_preserved": True,
+        "scripted_block_text_edit_move_delete_and_path_delete_checked": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(completion_work / "native-smoke.json", completion_report)
+    terminal_core_report = {
+        "status": "PASS", "schema": "windows-native-observed-terminal-core-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": terminal_core["source_sha256"],
+        "source_result": terminal_core["source_result"], "exe_result": terminal_core["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "new_observed_core_transfer_required_in_actual_saved_path": True,
+        "original_whole_path_vertices_retained": True,
+        "complete_main_connection_and_other_pending_branches_separately_reported": True,
+        "whole_path_delete_leaves_no_added_terminal_fragment": True,
+        "original_white_gap_and_independent_neighbors_preserved": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(terminal_core_work / "native-smoke.json", terminal_core_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 8,
+        "coverage_revision": 9,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,

@@ -64,6 +64,7 @@ _DERIVED_PRODUCERS = (
 )
 _SINGLE_LINE_PRODUCERS = (
     "single_line_labels", "circle_character_recognition", "source_glyph_equivalence",
+    "circle_glyph_resolution",
 )
 _TEXT_CONTACT_PRODUCERS = ("text_contact_geometry", "text_contact_partition")
 _SOURCE_GAP_PRODUCERS = (

@@ -25,7 +25,7 @@ from . import connections as paths
 
 SCHEMA = "source-text-contact-path-plan-v1"
 POLICY = {
-    "version": "bounded-source-direction-contact-v2-outside-word-free-ends",
+    "version": "bounded-source-direction-contact-v3-observed-terminal-cores",
     "minimum_anchor_length_heights": 1.25,
     "minimum_anchor_length_px": 24.0,
     "maximum_contact_extension_heights": 0.7,
@@ -631,6 +631,9 @@ def _trace_direction(graph, first_port, contact_box):
                 "contact_choices": contacts,
                 "terminal_node_id": node_id,
                 "terminal": node["terminal"],
+                "terminal_source_core": round_terminal_source_core(
+                    graph, node_id, (eid, 1 - end)
+                ),
                 "cycle_covers": cycle_covers,
             }
         if node.get("reason") == "ROI_BOUNDARY_IS_NOT_A_SOURCE_ENDPOINT":
@@ -693,6 +696,45 @@ def _trace_direction(graph, first_port, contact_box):
                 "source_path_px": graph.xy(pixels).tolist(),
             }
     return {"reason": "SOURCE_ROUTE_EXCEEDS_EDGE_LIMIT"}
+
+
+def round_terminal_source_core(graph, node_id, incoming_port):
+    """Carry the original terminal junction, without assigning its branches.
+
+    A round-contact node can contain several original skeleton pixels.  The
+    arriving edge ends at the *outside* of that node, not necessarily at the
+    measured circle.  Previously only the terminal label survived assembly.
+    These bounded, integer source records let the final assembly replay the
+    omitted core against a freshly built original graph.  They neither extend
+    the path here nor select an adjacent external branch.
+    """
+    node = graph.nodes[node_id]
+    if not node.get("terminal") or node["terminal"].get("kind") != "OBSERVED_ROUND_BOUNDARY_CONTACT":
+        return None
+    points = graph.xy(node["pixels"]).astype(int)
+    if (not 1 <= len(points) <= POLICY["maximum_microcore_pixels"]
+            or np.max(np.ptp(points, axis=0)) > POLICY["maximum_microcore_extent_px"]
+            or tuple(incoming_port) not in node["edges"]):
+        return None
+    ports = []
+    for port in sorted(node["edges"]):
+        source = graph.xy(graph.oriented(port))
+        length = np.r_[0.0, np.linalg.norm(np.diff(source, axis=0), axis=1).cumsum()]
+        prefix = source[length <= POLICY["maximum_microcore_extent_px"]]
+        ports.append({
+            "source_graph_port": list(port),
+            "original_source_prefix_px": prefix.astype(int).tolist(),
+        })
+    return {
+        "schema": "observed-round-terminal-source-core-v1",
+        "source_graph_node_id": int(node_id),
+        "incoming_source_graph_port": list(incoming_port),
+        "source_core_points_px": points.tolist(),
+        "all_adjacent_source_prefixes": ports,
+        "original_branches_retained": True,
+        "source_pixels_modified": False,
+        "semantic_connection_inferred": False,
+    }
 
 
 def _mask_runs(mask, origin):
@@ -995,6 +1037,10 @@ def plan_text_contact_geometry(gray, roi, seed_bbox, *, source_graph=None):
                 "source_support": support,
                 "endpoint_evidence": terminals,
                 "endpoint_source_points_px": [points[0].tolist(), points[-1].tolist()],
+                "endpoint_source_cores": [
+                    reverse.get("terminal_source_core"),
+                    forward.get("terminal_source_core"),
+                ],
                 "contact_continuations": contacts,
                 "bounded_original_cycle_covers": covers,
                 "line_runs": _mask_runs(line_mask, [x0, y0]),

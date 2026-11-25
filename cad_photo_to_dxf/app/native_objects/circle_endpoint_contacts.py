@@ -20,13 +20,16 @@ from .contracts import plain
 
 FIELD = "circle_endpoint_contacts"
 POLICY = {
-    "version": "native-direct-circle-end-contact-v1",
+    "version": "native-direct-circle-end-contact-v2-observed-terminal-core",
     "source_threshold": 128,
     "maximum_extension_stroke_widths": 1.0,
     "existing_native_fit_allowance_px": 0.85,
     "absolute_extension_limit_px": 6.0,
     "candidate_search_stroke_widths": 2.0,
     "existing_terminal_witness_length_px": 3.0,
+    "core_ring_prefix_minimum_span_stroke_widths": 2.0,
+    "core_ring_prefix_minimum_tangential_sine": 0.5,
+    "core_completion": "REPLAY_ORIGINAL_TERMINAL_CORE_AND_TWO_OPPOSITE_RING_BRANCHES",
     "endpoint_precision_px": 1e-6,
     "source_contact_test": "EVERY_CLOSED_PIXEL_CELL_INTERSECTED_BY_THE_STRAIGHT_EXTENSION_IS_ORIGINAL_INK",
     "source_morphology": "NONE",
@@ -156,7 +159,160 @@ def _terminal_cells(obj, end):
     return [list(point) for point in sorted(cells, key=lambda p: (p[1], p[0]))]
 
 
-def _offer(gray, roi, obj, end, endpoint, direction, marker):
+class _TerminalCoreReplay:
+    """One lazy original-graph rebuild, shared by all end candidates/audits."""
+
+    def __init__(self, gray, roi, source_graph=None):
+        self.gray, self.roi, self.context = gray, list(roi), source_graph
+        self.checked_context = False
+        self.results = {}
+
+    def get(self, obj, end):
+        from .text_contact_adoption import EVIDENCE_SCHEMA, digest
+        from .text_contact_geometry import build_text_contact_source_graph, round_terminal_source_core
+
+        evidence = obj.get("source_evidence", {})
+        proof = evidence.get("text_contact_path", {})
+        path = proof.get("path", {})
+        cores = path.get("endpoint_source_cores", [])
+        if obj["kind"] != "CONNECTION_PATH" or len(cores) != 2 or not cores[end]:
+            return None
+        key = (obj["id"], end, _digest(evidence))
+        if key in self.results:
+            return self.results[key]
+        if (proof.get("schema") != EVIDENCE_SCHEMA or proof.get("path_sha256") != digest(path)
+                or evidence.get("source_pixels_modified") is not False
+                or evidence.get("source_path_points") != path.get("source_path_px")
+                or obj["geometry"] != path.get("representation")):
+            raise ValueError("TERMINAL_CORE_COMPLETE_ORIGINAL_PATH_BINDING_CHANGED")
+        if self.context is None:
+            self.context = build_text_contact_source_graph(self.gray, self.roi)
+        context, graph = self.context, self.context.graph
+        if not self.checked_context:
+            x0, y0, x1, y1 = context.crop_bbox
+            if (list(graph.roi) != self.roi
+                    or not (0 <= x0 < x1 <= self.gray.shape[1] and 0 <= y0 < y1 <= self.gray.shape[0])
+                    or hashlib.sha256(np.ascontiguousarray(self.gray[y0:y1, x0:x1]).tobytes()).hexdigest()
+                    != context.source_crop_hash):
+                raise ValueError("TERMINAL_CORE_REPLAY_SOURCE_OR_ROI_CHANGED")
+            self.checked_context = True
+        if (evidence.get("original_source_crop_xyxy_px") != context.crop_bbox
+                or evidence.get("original_source_crop_array_sha256") != context.source_crop_hash):
+            raise ValueError("TERMINAL_CORE_ORIGINAL_CROP_CHANGED")
+        claim = cores[end]
+        node_id, incoming = claim["source_graph_node_id"], tuple(claim["incoming_source_graph_port"])
+        node = graph.nodes[node_id]
+        actual = round_terminal_source_core(graph, node_id, incoming)
+        if actual is None or actual != claim or incoming[0] not in path["source_graph_edge_ids"]:
+            raise ValueError("TERMINAL_CORE_DOES_NOT_REPLAY_FROM_RAW_SOURCE_GRAPH")
+        terminal = path["endpoint_evidence"][end]
+        if (terminal.get("kind") != "OBSERVED_ROUND_BOUNDARY_CONTACT"
+                or terminal.get("round_id") != node["terminal"]["round_id"]):
+            raise ValueError("TERMINAL_CORE_ROUND_OBSERVATION_CHANGED")
+        arrived = next(row["original_source_prefix_px"] for row in actual["all_adjacent_source_prefixes"]
+                       if tuple(row["source_graph_port"]) == incoming)
+        ordered = path["source_path_px"] if end == 0 else path["source_path_px"][::-1]
+        if (len(arrived) < 2 or ordered[:len(arrived)] != arrived
+                or path["endpoint_source_points_px"][end] != arrived[0]):
+            raise ValueError("TERMINAL_CORE_ARRIVING_EDGE_IS_NOT_THE_ACTUAL_PATH_END")
+        result = (actual, context, node_id, incoming)
+        self.results[key] = result
+        return result
+
+
+def _observed_core_target(gray, roi, obj, end, endpoint, marker, replay):
+    """Recover a dropped original terminal core, never a nearest-circle snap.
+
+    Two independently observed opposite ring branches locate the circle-side
+    junction.  Their original core endpoints define the connector direction.
+    Only this finite original core may exceed the ordinary short-tail bound;
+    all original neighboring branches remain observations of separate paths.
+    """
+    from .text_contact_geometry import _core_route
+
+    source = replay.get(obj, end)
+    if source is None:
+        return None
+    core, context, node_id, incoming = source
+    graph = context.graph
+    geometry = _circle(marker)
+    center, radius = np.asarray(geometry["center"], float), float(geometry["radius_px"])
+    width = float(marker["source_evidence"]["ring_geometry"]["stroke_width_px"])
+    allowance = width / 2 + POLICY["existing_native_fit_allowance_px"]
+    observed_round = next(row for row in context.rounds
+                          if row["id"] == graph.nodes[node_id]["terminal"]["round_id"])
+    if (np.linalg.norm(np.asarray(observed_round["center"]) - center) > allowance
+            or not 0 < radius - observed_round["inner_boundary_radius_px"] <= width + allowance):
+        raise ValueError("TERMINAL_CORE_ROUND_DIFFERS_FROM_MEASURED_CIRCLE")
+    ring_ports = []
+    minimum_span = min(radius / 2, width * POLICY["core_ring_prefix_minimum_span_stroke_widths"])
+    for row in core["all_adjacent_source_prefixes"]:
+        if tuple(row["source_graph_port"]) == incoming:
+            continue
+        points = np.asarray(row["original_source_prefix_px"], float)
+        if len(points) < 3:
+            continue
+        radial = points - center
+        deviations = np.abs(np.linalg.norm(radial, axis=1) - radius)
+        span = float(np.linalg.norm(np.diff(points, axis=0), axis=1).sum())
+        delta = points[-1] - points[0]
+        divisor = float(np.linalg.norm(radial[0]) * np.linalg.norm(delta))
+        sine = float((radial[0, 0] * delta[1] - radial[0, 1] * delta[0]) / divisor) if divisor else 0.0
+        if (span >= minimum_span and np.max(deviations) <= allowance
+                and abs(sine) >= POLICY["core_ring_prefix_minimum_tangential_sine"]):
+            ring_ports.append({**row, "signed_tangential_sine": sine})
+    if len(ring_ports) != 2 or ring_ports[0]["signed_tangential_sine"] * ring_ports[1]["signed_tangential_sine"] >= 0:
+        raise ValueError("TERMINAL_CORE_HAS_NO_UNIQUE_OPPOSITE_RING_BRANCH_PAIR")
+    anchors = np.asarray([row["original_source_prefix_px"][0] for row in ring_ports], float)
+    if np.linalg.norm(anchors[1] - anchors[0]) > width + 2 * POLICY["existing_native_fit_allowance_px"]:
+        raise ValueError("TERMINAL_CORE_RING_BRANCHES_HAVE_DISTINCT_CONTACT_PORTS")
+    core_points = np.asarray(core["source_core_points_px"], float)
+    if not any(np.array_equal(endpoint, point) for point in core_points):
+        raise ValueError("TERMINAL_CORE_PATH_ENDPOINT_OUTSIDE_ORIGINAL_CORE")
+    original_pixels = set(graph.nodes[node_id]["pixels"])
+    incoming_pixel = graph.oriented(incoming)[0]
+    routes = []
+    for row in ring_ports:
+        target_pixel = graph.oriented(tuple(row["source_graph_port"]))[0]
+        route = _core_route(graph, node_id, incoming_pixel, target_pixel)
+        if not set(route) <= original_pixels:
+            raise ValueError("TERMINAL_CORE_ROUTE_LEAVES_BOUNDED_ORIGINAL_CORE")
+        routes.append(graph.xy(route).astype(int).tolist())
+    anchor = anchors.mean(axis=0)
+    direction = anchor - endpoint
+    norm = float(np.linalg.norm(direction))
+    if norm <= POLICY["endpoint_precision_px"]:
+        raise ValueError("TERMINAL_CORE_HAS_NO_OMITTED_ARRIVAL_TO_RING_SPAN")
+    direction /= norm
+    radial = endpoint - center
+    projection = float(radial @ direction)
+    discriminant = projection ** 2 - (float(radial @ radial) - radius ** 2)
+    if projection >= 0 or discriminant <= 0:
+        raise ValueError("OBSERVED_TERMINAL_CORE_DIRECTION_DOES_NOT_ENTER_CIRCLE")
+    length = -projection - math.sqrt(discriminant)
+    bound = float(np.linalg.norm(np.ptp(core_points, axis=0))) + allowance
+    target = endpoint + length * direction
+    if not 0 < length <= bound:
+        raise ValueError("TERMINAL_CORE_COMPLETION_LEAVES_OBSERVED_CORE_BOUND")
+    lo, hi = core_points.min(axis=0) - allowance, core_points.max(axis=0) + allowance
+    if np.any(target < lo) or np.any(target > hi):
+        raise ValueError("TERMINAL_CORE_COMPLETION_LEAVES_LOCAL_SOURCE_BOUNDS")
+    return target, length, {
+        "endpoint_extension_shape": "REPLAYED_ORIGINAL_TERMINAL_CORE_TO_OPPOSITE_RING_BRANCHES",
+        "maximum_extension_px": bound,
+        "terminal_core_source_evidence": deepcopy(core),
+        "terminal_core_source_crop_sha256": context.source_crop_hash,
+        "ring_source_graph_ports": [row["source_graph_port"] for row in ring_ports],
+        "ring_branch_core_anchors_px": anchors.tolist(),
+        "original_core_routes_to_ring_branches_px": routes,
+        "original_core_connector_anchor_px": anchor.tolist(),
+        "core_completion_direction": direction.tolist(),
+        "unselected_external_branches_retained": True,
+        "raw_source_graph_rebuilt": True,
+    }
+
+
+def _offer(gray, roi, obj, end, endpoint, direction, marker, core_replay=None):
     # A separately certified source white gap is a proved non-connection,
     # not an unresolved contact to be repaired or snapped back onto the ring.
     gap_proof = obj.get("source_evidence", {}).get("circle_white_gap_protection", {})
@@ -176,9 +332,17 @@ def _offer(gray, roi, obj, end, endpoint, direction, marker):
     row = {"object_id": obj["id"], "endpoint_number": end, "circle_id": marker["id"],
            "accepted": False, "original_endpoint_px": endpoint.tolist(),
            "original_radial_gap_px": gap, "maximum_extension_px": bound}
+    core_target = None
     if gap > bound:
-        row["reason"] = "NEARBY_END_OUTSIDE_BOUNDED_CONTACT_RESTORATION_RANGE"
-        return row
+        try:
+            core_target = _observed_core_target(
+                gray, roi, obj, end, endpoint, marker,
+                core_replay or _TerminalCoreReplay(gray, roi))
+        except (KeyError, TypeError, ValueError, IndexError, StopIteration) as exc:
+            row["terminal_core_rejection"] = str(exc)
+        if core_target is None:
+            row["reason"] = "NEARBY_END_OUTSIDE_BOUNDED_CONTACT_RESTORATION_RANGE"
+            return row
     projection = float(radial @ direction)
     discriminant = projection ** 2 - (float(radial @ radial) - radius ** 2)
     tangent_reason = None
@@ -187,7 +351,10 @@ def _offer(gray, roi, obj, end, endpoint, direction, marker):
         tangent_reason = "EXISTING_END_TANGENT_DOES_NOT_ENTER_THE_CIRCLE"
     elif not 0 < length <= bound:
         tangent_reason = "TANGENT_EXTENSION_EXCEEDS_ONE_OBSERVED_STROKE_WIDTH_PLUS_EXISTING_FIT_ALLOWANCE"
-    if tangent_reason:
+    if core_target is not None:
+        target, length, core_evidence = core_target
+        row.update(core_evidence)
+    elif tangent_reason:
         # A source skeleton may stop on the outside of a rounded junction.
         # Its final native chord can then be oblique to the ring even though
         # one short bent tail lies wholly inside the observed ink.  Only a
@@ -297,18 +464,19 @@ def _native_vertex_limit(gray, obj, additional_vertices):
         return ordinary_limit
 
 
-def restore_circle_endpoint_contacts(gray, roi, objects):
+def restore_circle_endpoint_contacts(gray, roi, objects, *, source_graph=None):
     """Return independently edited replacements; never mutate caller objects."""
     originals = [_original(obj) for obj in objects]
     if len({obj["id"] for obj in originals}) != len(originals):
         raise ValueError("CIRCLE_CONTACT_OBJECT_IDS_NOT_UNIQUE")
     circles = [obj for obj in originals if obj.get("kind") in ("CIRCLE", "CIRCULAR_MARKER")
                and verify_circle_source_evidence(gray, roi, obj).get("pass") is True]
+    core_replay = _TerminalCoreReplay(gray, roi, source_graph)
     decisions = []
     for obj in originals:
         for end, endpoint, direction in _ends(obj):
             for marker in circles:
-                row = _offer(gray, roi, obj, end, endpoint, direction, marker)
+                row = _offer(gray, roi, obj, end, endpoint, direction, marker, core_replay)
                 if row:
                     decisions.append(row)
     accepted = [row for row in decisions if row["accepted"]]
@@ -358,7 +526,7 @@ def restore_circle_endpoint_contacts(gray, roi, objects):
                         "new_OCR_calls": 0, "source_pixels_modified": False}}
 
 
-def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None):
+def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None, *, source_graph=None, _core_replay=None):
     """Cold replay binds new ends to raw pixels and the unaltered old object."""
     certificate = obj["source_evidence"][FIELD]
     if certificate.get("schema") != POLICY["version"] or certificate.get("policy") != POLICY:
@@ -379,25 +547,26 @@ def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None):
     by_id = {item["id"]: _original(item) for item in objects}
     if len(by_id) != len(objects) or obj["id"] not in by_id:
         raise ValueError("CIRCLE_CONTACT_OBJECT_BINDING_NOT_UNIQUE")
+    core_replay = _core_replay or _TerminalCoreReplay(gray, roi, source_graph)
     for claimed in ends:
         marker = by_id[claimed["circle_id"]]
         if marker["kind"] not in ("CIRCLE", "CIRCULAR_MARKER") or verify_circle_source_evidence(gray, roi, marker).get("pass") is not True:
             raise ValueError("CIRCLE_CONTACT_TARGET_SOURCE_NOT_VERIFIED")
         end = next((item for item in _ends(original) if item[0] == claimed["endpoint_number"]), None)
-        replay = _offer(gray, roi, original, *end, marker) if end else None
+        replay = _offer(gray, roi, original, *end, marker, core_replay) if end else None
         if not replay or not replay["accepted"] or _digest(replay) != _digest(claimed):
             raise ValueError("CIRCLE_CONTACT_RAW_ENDPOINT_PROOF_DOES_NOT_REPLAY")
         for other in by_id.values():
             for n, endpoint, direction in _ends(other):
                 if (other["id"], n) == (obj["id"], claimed["endpoint_number"]):
                     continue
-                offer = _offer(gray, roi, other, n, endpoint, direction, marker)
+                offer = _offer(gray, roi, other, n, endpoint, direction, marker, core_replay)
                 if offer and offer["accepted"] and offer["observed_port_index"] == claimed["observed_port_index"]:
                     raise ValueError("CIRCLE_CONTACT_PORT_HAS_ANOTHER_ELIGIBLE_END")
         for other in by_id.values():
             if other["id"] == marker["id"] or other["kind"] not in ("CIRCLE", "CIRCULAR_MARKER"):
                 continue
-            offer = _offer(gray, roi, original, *end, other)
+            offer = _offer(gray, roi, original, *end, other, core_replay)
             if offer and offer["accepted"]:
                 if verify_circle_source_evidence(gray, roi, other).get("pass") is True:
                     raise ValueError("CIRCLE_CONTACT_END_HAS_ANOTHER_ELIGIBLE_CIRCLE")
@@ -461,6 +630,7 @@ def cold_circle_endpoint_contacts(path, doc, gray, roi, dpi):
         return np.array([p[0] / mm + roi[0], roi[3] - p[1] / mm])
 
     rows = []
+    core_replay = _TerminalCoreReplay(gray, roi)
     for oid in sorted(targets):
         row = {"id": oid, "type": "CIRCLE_ENDPOINT_CONTACT", "pass": False}
         try:
@@ -488,7 +658,7 @@ def cold_circle_endpoint_contacts(path, doc, gray, roi, dpi):
                             "bulges": [-float(p[4]) for p in vertices], "closed": entity.closed}
             else:
                 raise ValueError("CIRCLE_CONTACT_EXTERNAL_ENTITY_TYPE_CHANGED")
-            verified_original_geometry(gray, roi, obj, objects, geometry)
+            verified_original_geometry(gray, roi, obj, objects, geometry, _core_replay=core_replay)
             for end in obj["source_evidence"][FIELD]["ends"]:
                 circle_id = end["circle_id"]
                 if len(actual.get(circle_id, [])) != 1:

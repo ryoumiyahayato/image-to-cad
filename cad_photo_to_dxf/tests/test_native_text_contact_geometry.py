@@ -57,6 +57,11 @@ def test_shared_glyph_contact_is_one_complete_original_path_with_two_actual_term
     assert np.all(gray[points[:, 1], points[:, 0]] < 128)
     assert np.max(np.linalg.norm(np.diff(points, axis=0), axis=1)) <= np.sqrt(2) + 1e-9
     assert row["line_runs"] and row["shared_contact_runs"]
+    assert len(row["endpoint_source_cores"]) == 2
+    for core, endpoint in zip(row["endpoint_source_cores"], row["endpoint_source_points_px"]):
+        assert core["schema"] == "observed-round-terminal-source-core-v1"
+        assert endpoint in core["source_core_points_px"]
+        assert core["original_branches_retained"] and core["source_pixels_modified"] is False
     assert any(
         item["unselected_branch_source_paths"] for item in row["contact_continuations"]
     )
@@ -91,6 +96,7 @@ def test_shared_ink_mask_and_endpoint_evidence_are_replayed_not_trusted():
         "line_runs",
         "shared_contact_runs",
         "endpoint_evidence",
+        "endpoint_source_cores",
         "source_path_px",
     ):
         forged = deepcopy(plan)
