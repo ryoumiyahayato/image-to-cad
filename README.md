@@ -9,9 +9,11 @@
 1. **取得同次交付的程序包和结果包。** 完整程序 ZIP 可直接解压，运行其中的 `CADPhotoToDXF.exe`。如果使用分卷，将全部 `.partXX`、`PORTABLE_RESTORE_MANIFEST.json`、`Restore-Windows-portable.cmd` 和 `Restore-Windows-portable.ps1` 放在同一新目录，双击 **`Restore-Windows-portable.cmd`**；它完成校验、恢复、解压和启动。无需手工拼接命令，也不会永久修改 PowerShell 执行策略。
 2. **在软件启动页点击“打开已有 DXF / 准备 CAD 字体…”**，选择结果包中的 DXF。文件菜单也有同一入口，已有图纸无需再次识别。应用会检查该图纸所需字体并查找 LibreCAD；找不到时点击“选择 LibreCAD…”，选择安装好的 `LibreCAD.exe` 即可。
 3. **点击“准备 CAD 字体”。** 软件使用随包固定资源完成准备；不需要选择字体目录或手工修改 CAD 配置。若显示“需要重新打开 CAD”，请先保存图纸、完全退出 LibreCAD，再点“重新检查”。只有显示“已准备，可打开 CAD”后才点击“在 LibreCAD 中打开”。“已准备”表示资源准备完成，不是已验证当前 CAD 窗口显示。
-4. **在 LibreCAD 中编辑并保存副本。** 完整标签可通过“工具 → 修改 → 属性”修改整串内容；移动和删除时选择整条文字。具体步骤、四种字体状态及分卷出错处理见[一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+4. **在 LibreCAD 中编辑并保存副本。** 先在结果文件夹内另存为编辑副本，保留随附字体和许可。完整标签可通过“工具 → 修改 → 属性”修改整串内容；移动和删除时选择整条文字。具体步骤、四种字体状态及分卷出错处理见[一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 
 本轮继续使用 **`QUARTER_shortcodes_2fd4373.dxf`** 和匹配字体，保留 423 个正式对象、六条新增完整文字及已有几何；本轮交付改进不增加识别对象。图纸版本、应用构建版本分别记录，不把旧图纸生成提交写成新 EXE 提交。短编号成果及既有未完成项见[短编号记录](docs/native/SHORT_CODES_20261125.md)，最新构建与真实 Windows GUI 覆盖范围以[当前任务](docs/project/CURRENT_TASK.md)的实际执行记录为准。Qt 界面测试、文件级验证和 Windows 人工 GUI 操作分别统计。
+
+已验证的 Windows 程序构建为 **943c721 / #687**，已通过 [PR #50](https://github.com/ryoumiyahayato/image-to-cad/pull/50) 合入 main。完整包实际取回校验与 Windows 恢复测试一致；真实主图 Windows GUI 尚未验。准确覆盖范围及版本对应见 [Windows 交付记录](docs/native/WINDOWS_CAD_DELIVERY_20261125.md)。
 
 ## 我们要得到什么
 

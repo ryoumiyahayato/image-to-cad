@@ -25,7 +25,7 @@
 
 ## 3. 改字、删除和保存
 
-在 LibreCAD 中先将主图**另存为编辑副本**。要改整行编号，选 **工具 → 修改 → 属性（Tools → Modify → Properties）**，再点该文字，在弹出的文字属性中修改完整字符串，例如 `TEST-A7,03`，确认即可。保持原字体、字高和宽度因子，除非您也希望调整排版。此操作入口见 [LibreCAD 官方实体编辑说明](https://docs.librecad.org/en/2.2.0_a/guides/dwg-edit.html#changing-attributes-and-properties)。
+在 LibreCAD 中先在结果文件夹内将主图**另存为编辑副本**。要改整行编号，选 **工具 → 修改 → 属性（Tools → Modify → Properties）**，再点该文字，在弹出的文字属性中修改完整字符串，例如 `TEST-A7,03`，确认即可。保持原字体、字高和宽度因子，除非您也希望调整排版。此操作入口见 [LibreCAD 官方实体编辑说明](https://docs.librecad.org/en/2.2.0_a/guides/dwg-edit.html#changing-attributes-and-properties)。
 
 要删除整条文字，在另一个副本中只选中该文字并按 Delete；圆、引线或下划线是独立对象。使用普通“保存”，退出 LibreCAD，再重新打开编辑副本。`2LP-10,12` 旁 F 圆白缝、独立引线，`2LP-6,8` 下划线以及原有 `LAUNDRY` 可作为查看位置。
 
