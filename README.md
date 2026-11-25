@@ -6,14 +6,24 @@
 
 ## Windows：取得程序后打开已有 DXF
 
-1. **取得同次交付的程序包和结果包。** 完整程序 ZIP 可直接解压，运行其中的 `CADPhotoToDXF.exe`。如果使用分卷，将全部 `.partXX`、`PORTABLE_RESTORE_MANIFEST.json`、`Restore-Windows-portable.cmd` 和 `Restore-Windows-portable.ps1` 放在同一新目录，双击 **`Restore-Windows-portable.cmd`**；它完成校验、恢复、解压和启动。无需手工拼接命令，也不会永久修改 PowerShell 执行策略。
+**[程序构建与下载入口：Windows #690](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45599753968)**。主图与字体在同次配套结果包中取得；直接完整包入口也列在本次交付的一页说明。
+
+1. **下载本次完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-398b8b9-Windows-Complete.zip`，解压到一个新目录。** 双击解压后的 **`Restore-Windows-portable.cmd`**；包内已有完整程序 ZIP，它自动校验、解压并启动 `CADPhotoToDXF.exe`，不需要分卷或手工命令。另解压同次结果包，保留主 DXF、字体和许可。若使用其他普通便携 ZIP 或历史分卷，步骤见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 2. **在软件启动页点击“打开已有 DXF / 准备 CAD 字体…”**，选择结果包中的 DXF。文件菜单也有同一入口，已有图纸无需再次识别。应用会检查该图纸所需字体并查找 LibreCAD；找不到时点击“选择 LibreCAD…”，选择安装好的 `LibreCAD.exe` 即可。
 3. **点击“准备 CAD 字体”。** 软件使用随包固定资源完成准备；不需要选择字体目录或手工修改 CAD 配置。若显示“需要重新打开 CAD”，请先保存图纸、完全退出 LibreCAD，再点“重新检查”。只有显示“已准备，可打开 CAD”后才点击“在 LibreCAD 中打开”。“已准备”表示资源准备完成，不是已验证当前 CAD 窗口显示。
 4. **在 LibreCAD 中编辑并保存副本。** 先在结果文件夹内另存为编辑副本，保留随附字体和许可。完整标签可通过“工具 → 修改 → 属性”修改整串内容；移动和删除时选择整条文字。具体步骤、四种字体状态及分卷出错处理见[一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 
-本轮继续使用 **`QUARTER_shortcodes_2fd4373.dxf`** 和匹配字体，保留 423 个正式对象、六条新增完整文字及已有几何；本轮交付改进不增加识别对象。图纸版本、应用构建版本分别记录，不把旧图纸生成提交写成新 EXE 提交。短编号成果及既有未完成项见[短编号记录](docs/native/SHORT_CODES_20261125.md)，最新构建与真实 Windows GUI 覆盖范围以[当前任务](docs/project/CURRENT_TASK.md)的实际执行记录为准。Qt 界面测试、文件级验证和 Windows 人工 GUI 操作分别统计。
+## 当前成果：端部圆边的部分恢复
 
-已验证的 Windows 程序构建为 **943c721 / #687**，已通过 [PR #50](https://github.com/ryoumiyahayato/image-to-cad/pull/50) 合入 main。完整包实际取回校验与 Windows 恢复测试一致；真实主图 Windows GUI 尚未验。准确覆盖范围及版本对应见 [Windows 交付记录](docs/native/WINDOWS_CAD_DELIVERY_20261125.md)。
+**程序入口：[Windows #690 完整构建与下载](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45599753968)。** 在构建页的 Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-398b8b924ebf0f8e61ed8db2eb8b705c3a3b2711`；本次交付的一页说明同时提供已核验的直接完整便携包。主图、匹配字体／许可、七张原图／旧版／新版对照和 GUI 证据作为同次配套结果包提供，私人图纸不在公开仓库发布。
+
+最新主图是 **`QUARTER_end_boundaries_d136aaf.dxf`**，187072 B，SHA-256 **`dd2958c27242f4ba22ec5eca008c6501a3572a9bbab21e3a983bffbba3abfe28`**。旧 423 个正式对象全部可追溯：418 个旧几何保持，5 条已有路径增加 7 个有证短末段顶点，另新增 3 个可靠 CIRCLE，最终 426 正式对象／48 REVIEW。三条新圆边的内字均待修。
+
+**四个冻结目标尚无完整恢复：** LAUNDRY 右端补了圆边，但应连接的 5.36 px 末段和内字仍缺；BEDROOM 远端补圆边及接头，内字待修；F 圆右上缺失路径与固定第四圆位均未采用。F 处已有左上接线的改善不计作右上缺线恢复。两项保护对照及额外第三圆分别记录，详见[本批结果与限制](docs/native/CURVE_END_BOUNDARIES_20261125.md)。
+
+Linux LibreCAD 已实际完成圆字图块整删、独立完整路径整删，各自普通保存、完全退出并新进程重开；每个副本其余 473 个实体保持。首次普通保存二维内容通过，XDATA、INSERT `zscale=0`、字体别名、REVIEW 开关／颜色及样式／表／指针限制仍单列，严格往返仍 **LIMITED**。Windows 真实私有主图 GUI 仍 **NOT_RUN**。
+
+Windows [#690](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45599753968) 在构建提交 `398b8b924ebf0f8e61ed8db2eb8b705c3a3b2711` 全部适用步骤成功；六组 source／实际 EXE 普通入口、恢复与字体准备、安装／启动／卸载均通过。已取回核验的完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-398b8b9-Windows-Complete.zip`，417986281 B，SHA-256 `7f6c6ef0c82d145384002d073b3ce27da94ff241d8e92e3f88080771c4dcd945`。将该包解压到新目录后双击 `Restore-Windows-portable.cmd`，自动校验内层完整 ZIP、解压并启动 EXE，无需分卷。 [PR #51](https://github.com/ryoumiyahayato/image-to-cad/pull/51) 已正常合入 main `cdc49c3097850a82cac9e449516ce2ac4043fa6f`。实际出图绑定 `d136aaf`，Windows 构建绑定 `398b8b9`，两者生产模块逐文件相同；后者仅增加 Windows 检查器修复。准确版本与未验范围见[当前任务](docs/project/CURRENT_TASK.md)。
 
 ## 我们要得到什么
 
@@ -67,7 +77,7 @@ python3.12 -m venv .venv
 
 已有受控来源检查点时，正式无界面入口可使用 `--connection-checkpoint PATH`，配合原有 `--input`、`--roi`、`--dpi`、`--output`。JSON 绑定原图、既有 DXF／来源账本、保存的文字观察和 1—8 个局部窗口；manager 捕获后重新校验哈希与参数，worker 仍执行保存、冷读和来源审核门禁。它不是旧采用白名单，也不自动调用 OCR 或扩大到全区转换。该检查点模式用于明确授权的局部任务；本次普通整区没有使用它。私人输入和大型模型不进入公开仓库。
 
-首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，本轮新增表示的实际软件验证以圆形标记记录为准。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
+首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，本轮新增表示的实际软件验证以[端部圆边记录](docs/native/CURVE_END_BOUNDARIES_20261125.md)为准。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
 
 ## 研发及合并原则
 

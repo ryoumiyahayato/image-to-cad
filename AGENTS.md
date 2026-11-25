@@ -23,7 +23,17 @@
 5. 每次写入前核对远端 HEAD；新提交不允许覆盖其他代理的更新。遇到登录／权限阻塞，立即在私有持久存储保存 commit、补丁与恢复信息，不反复等待登录或 CI；可用连接器时再安全同步。
 6. 私人扫描、原始OCR、专用字体/模型、未授权材料、密钥和实验ZIP不得加入公开仓库。真实图纸与大型证据保存在受控私有资料库。
 
-## 当前交付阶段（2026-11-25）
+## 当前阶段：端部圆边与邻接线（2026-11-25）
+
+从 main `fadd0f7` 和 423 正式对象的短编号主图接续。实际主图 **`QUARTER_end_boundaries_d136aaf.dxf`** 为 426 正式对象／48 REVIEW：旧 423 ID 全保留，418 旧几何保持，5 条路径追加 7 个有证短末段顶点，新增 3 个仅圆边 CIRCLE。四个冻结目标没有完整恢复；T1 圆边已补而应连接的 5.36 px 末段／内字待修，T2 圆边与接头已补而内字待修，T3 右上缺线和 T4 圆边未采用。不得把已有左上路径改善记为 T3 成功，不得把 T1 缺口称为真实白缝。
+
+Linux 两种代表删除均普通保存、退出并新进程重开，每个副本其余 473 个实体保持；首次普通保存二维内容 PASS_2D_CONTENT_WITH_SAVE_LIMITATIONS，XDATA、zscale、字体映射、REVIEW 开关／颜色及样式／表／指针限制单列。Windows 私有主图真实 GUI 仍 NOT_RUN。
+
+[PR #51](https://github.com/ryoumiyahayato/image-to-cad/pull/51) 已正常合入 main `cdc49c3097850a82cac9e449516ce2ac4043fa6f`。主图生成锚点为 `d136aaf`，Windows 实际构建为 `398b8b9`，生产模块逐文件相同。Windows [#690](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45599753968) 在构建提交 `398b8b924ebf0f8e61ed8db2eb8b705c3a3b2711` 全部适用步骤成功；六组 source／实际 EXE 普通入口、恢复与字体准备、安装／启动／卸载均通过。已取回核验的完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-398b8b9-Windows-Complete.zip`，417986281 B，SHA-256 `7f6c6ef0c82d145384002d073b3ce27da94ff241d8e92e3f88080771c4dcd945`。将该包解压到新目录后双击 `Restore-Windows-portable.cmd`，自动校验内层完整 ZIP、解压并启动 EXE，无需分卷。已核对合并可达性并清理本轮无独有内容的本地临时分支。远端分支清理受限：GitHub 连接器没有删除 ref 能力，Git 推送缺少凭据；浏览器只能看到未登录的已合并 PR 页面，没有删除分支按钮。未登录或反复等待，`development/curve-end-boundaries` 的删除未完成。 后续文档提交不改变执行锚点。
+
+继续复用已有字体准备、完整程序／双击恢复入口。下一阶段从实际未恢复的圆内字、可靠末段与邻接路径继续；按原图证据和共同规则处理，不因距离近强接或为数字凑完整。详见[本批记录](docs/native/CURVE_END_BOUNDARIES_20261125.md)、[当前任务](docs/project/CURRENT_TASK.md)与[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。历史失败与来源审批边界保持，产品仍 LOCAL_NO_GO。
+
+## 历史：上一轮 Windows 字体准备与交付（2026-11-25）
 
 本轮交付代码 `943c721` 已经 PR #50 合入 main `97c0fb2`，Windows #687 全部通过；完整417683910字节便携包与最终取回文件已校验为同一份。应用已有字体准备/已有DXF入口，恢复脚本实际在新Windows目录通过。主图仍是 `QUARTER_shortcodes_2fd4373.dxf`，未新识别。Windows真实主图人工GUI仍NOT_RUN，不能以Windows进程/PDF/ezdxf或Linux GUI代替。详见 [Windows交付记录](docs/native/WINDOWS_CAD_DELIVERY_20261125.md)及当前任务。之后的文档提交不替代实际EXE构建锚点。
 
