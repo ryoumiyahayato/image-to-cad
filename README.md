@@ -6,28 +6,31 @@
 
 ## Windows：取得程序后打开已有 DXF
 
-**[程序构建与下载入口：Windows #692](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45635504374)**。在 Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-3f510488cfd61558435a0c6e1812655caf76d930`。主图与匹配字体在同次配套结果包中取得，私人图纸不在公开仓库发布。
+**[程序构建与下载入口：Windows #694](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45673521187)**。在 Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-26b1b6e14106726fd9b1f66a747e8be16320b815`。主图与匹配字体在同次配套结果包中取得，私人图纸不在公开仓库发布。
 
-1. **下载本次完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-3f51048-Windows-Complete.zip`，解压到一个新目录。** 双击解压后的 **`Restore-Windows-portable.cmd`**；包内已有完整程序 ZIP，它自动校验、解压并启动 `CADPhotoToDXF.exe`，不需要分卷或手工命令。另解压同次结果包，保留主 DXF、字体和许可。若使用其他普通便携 ZIP 或历史分卷，步骤见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+1. **下载本次完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-26b1b6e-Windows-Complete.zip`，解压到一个新目录。** 双击解压后的 **`Restore-Windows-portable.cmd`**；包内已有完整程序 ZIP，它自动校验、解压并启动 `CADPhotoToDXF.exe`，不需要分卷或手工命令。另解压同次结果包，保留主 DXF、匹配字体、许可及原有子目录。若使用其他普通便携 ZIP 或历史分卷，步骤见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 2. **在软件启动页点击“打开已有 DXF / 准备 CAD 字体…”**，选择结果包中的 DXF。文件菜单也有同一入口，已有图纸无需再次识别。应用会检查该图纸所需字体并查找 LibreCAD；找不到时点击“选择 LibreCAD…”，选择安装好的 `LibreCAD.exe` 即可。
 3. **点击“准备 CAD 字体”。** 软件使用随包固定资源完成准备；不需要选择字体目录或手工修改 CAD 配置。若显示“需要重新打开 CAD”，请先保存图纸、完全退出 LibreCAD，再点“重新检查”。只有显示“已准备，可打开 CAD”后才点击“在 LibreCAD 中打开”。“已准备”表示资源准备完成，不是已验证当前 CAD 窗口显示。
-4. **在 LibreCAD 中先用“File → Save as”另存编辑副本。** 圆字对象在右侧块列表选择对应唯一实例，右键 **Edit Block**，双击内字修改真正的 TEXT；从 **Drawings** 菜单返回主图再普通保存。整块或独立路径分别选中后用 **Edit → Delete selected** 删除。`Ctrl+Shift+S` 是 Save All，不是另存为。具体步骤见[一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+4. **在 LibreCAD 中先用“File → Save as”另存编辑副本。** 点击曲线主体选中整条路径，用 **Tools → Modify → Move / Copy** 移动并选择 **Delete Original**，或用 **Tools → Modify → Delete selected** 整条删除。圆字仍可通过块列表 **Edit Block** 修改内部 TEXT；从 **Drawings** 返回主图。普通保存后完全退出并重开副本。`Ctrl+Shift+S` 是 Save All，不是另存为，详见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 
-## 当前成果：三个圆字对象与 LAUNDRY 指定接头完成
+## 当前成果：两条穿过接触笔迹的完整独立路径进入主图
 
-最新主图 **`QUARTER_circle_characters_3f51048.dxf`**，**191372 B**，SHA-256 **`7a627317ec40b508a9140232531352fdb107b9499c3cc66a624158d5458809bb`**。从 426 个正式对象接续：419 个严格保持，6 个旧裸圆同 ID 升级为每实例唯一的 CIRCLE＋TEXT 图块，1 条 LAUNDRY 长曲线补齐尾段。最终仍为 426 正式对象／48 REVIEW，没有为了计数保留重复圆。
+最新主图 **`QUARTER_structure_contacts_26b1b6e.dxf`**，**195818 B**，SHA-256 **`b7bbaa765575d1d7e89ef9c7ee0185aaeac22768b84cb09ea8026e956e01b144`**。普通 `native-objects` 整区流程复用已核验原始观察并重算受影响阶段。基线 426 个正式对象全部严格保持，新增两条目标路径、一条自然适用的 E 圆相关路径及一条独立承接 LINE，最终 **430 正式对象／48 REVIEW**。
 
-| 位置 | 圆字对象 | 指定接线 | 仍待修 |
-| --- | --- | --- | --- |
-| LAUNDRY 右端 | D，完成 | 追加有源墨迹支持的 5.711458 px 末段，并入原路径；31 → 32 顶点 | 其他邻线 |
-| 213 上方 BEDROOM 远端 | E，完成 | 已有圆边和接头保持 | 其他邻接线 |
-| 修改前冻结的右侧 `2LP-11` 上方验证圆 | D，完成 | 原有曲线保持，本批未新增接线 | 其他邻接范围未扩大验收 |
+| 目标 | 最终主图实际恢复 | 完整性与仍待修范围 |
+| --- | --- | --- |
+| C07 右侧 F 圆上方缺线 | 从 F 圆来源端口穿过 S 形接触区，抵达独立承接线；一条完整 LWPOLYLINE，承接 LINE 单独保存 | 指定路径完成；原 C07 主曲线、左上路径和 F 圆字保持。S 字符及其他支路仍待修 |
+| LAUNDRY 左侧 D 圆向右、通往 S3／结构线一带的缺线 | 从 D 圆来源端口经过短划及接触区，抵达已有独立承接线；一条完整 LWPOLYLINE | 指定路径完成；S3、三条短划、其他邻线及旧近似重叠仍待修 |
 
-三目标通过同源原字形和竞争读法核验；另外三处 D/J/F 是共同规则的附带结果，单列记录。原始 `D/0` 分歧没有删除，案例名称不作为识别答案。三处原图／旧版／最终保存主图对照与两个保护对照随结果交付。上批四处未完整结论按历史保留；C07 右上缺线、上批第四圆位及周围其他网络仍待修，详见[本批方法与事实](docs/native/CIRCLE_CHARACTER_COMPLETION_20261125.md)。
+两处的起圆、共享墨迹、竞争路径和真实终点均经过来源核对及最终保存文件冷读。圆字、文字、承接线和既有路径保持独立；真实白缝保持。旧近似对象 `LINE-16db792c3c06` 的完整来源责任尚未证明，本批保留待修；“路径完成”不表示整片网络、所有字符或全部重叠已解决。详细范围见[本批记录](docs/native/STRUCTURE_CONTACT_PATHS_20261126.md)。
 
-Linux LibreCAD 2.2.1.6 已实际完成新圆字 D→K、另一圆字块整删、LAUNDRY 整路径删除；三份均普通保存、完全退出并新进程重开，独立冷审计通过，每次其余 425 正式对象＋48 REVIEW 保持。改字对话框对目标宽度因子的六位小数舍入单列。首次普通保存二维内容通过；XDATA、INSERT `zscale=0`、字体别名、REVIEW 和格式变化仍 **LIMITED**。Windows 真实私有主图 GUI 仍 **NOT_RUN**。
+Linux LibreCAD 2.2.1.6 已实际整体移动 C07 目标路径、整体删除 LAUNDRY 目标路径，并分别普通保存、完全退出、新进程重开；独立冷审计状态：**`PASS_2D_EDIT_ISOLATION_WITH_FORMAT_LIMITATIONS`**，每份其余 429 正式对象、48 REVIEW 和全部 53 图块保持。Windows 私有主图 GUI 仍 **NOT_RUN**。XDATA、INSERT `zscale=0`、字体别名、REVIEW 和格式往返限制仍 **LIMITED**；正式主图保留原始生成字节，GUI 副本另存。
 
-Windows [#692](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45635504374) 的八组 source／实际 EXE 普通入口、恢复、字体准备及安装／启动／卸载通过。完整包实际下载 **418023784 B**，SHA-256 **`06145f839f1bf15ba459eb7f04bb728528c124cd97c4a9a84805f9d1bd4d7ffe`**；1474 个程序文件与 76 份应用源码字节绑定已核验。主图与 EXE 均由 `3f510488cfd61558435a0c6e1812655caf76d930` 生成，经 [PR #52](https://github.com/ryoumiyahayato/image-to-cad/pull/52) 正常合入 main `c6ca18f468dd1139f69bba1badd2843eeafb09de`。正式交付保留原始生成字节，GUI 副本单独交付；后续文档提交不替代执行锚点。
+同版 [Windows #694](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45673521187) 九组 source／实际 EXE、恢复、字体及安装／启动／卸载均通过；新小输入实际触发接触区划分和结构线终接，保存后的整体删移与白缝另行冷读。完整包实际下载 **418085481 B**，SHA-256 **`5044c5d885183245ecdf09358950690b60d7b90f2e49011939d2913e630da0fa`**；1475 个程序文件与 77 份随包源码已核验。主图与 EXE 同绑 **`26b1b6e14106726fd9b1f66a747e8be16320b815`**，[PR #53](https://github.com/ryoumiyahayato/image-to-cad/pull/53)；main 合并回执：**`5ed7490e7c0c5ddfdaf002496256f2e5477c816a`**。后续文档提交不替代出图／构建锚点。
+
+### 历史：圆字对象与 LAUNDRY 指定接头（3f51048）
+
+上一批 `QUARTER_circle_characters_3f51048.dxf` 为 426 正式对象：三个固定目标 D/E/D 圆字完成，六处旧裸圆同 ID 升级，LAUNDRY 原长曲线补齐有证末段。其实际改字、圆字整删与路径整删、Windows #692 和保存限制均按原执行版本保留，见[圆字阶段记录](docs/native/CIRCLE_CHARACTER_COMPLETION_20261125.md)。该阶段的 C07 缺线未完成结论属于历史；本批只更新上表两条指定路径，未改写其他旧待修项。
 
 ## 我们要得到什么
 
@@ -81,7 +84,7 @@ python3.12 -m venv .venv
 
 已有受控来源检查点时，正式无界面入口可使用 `--connection-checkpoint PATH`，配合原有 `--input`、`--roi`、`--dpi`、`--output`。JSON 绑定原图、既有 DXF／来源账本、保存的文字观察和 1—8 个局部窗口；manager 捕获后重新校验哈希与参数，worker 仍执行保存、冷读和来源审核门禁。它不是旧采用白名单，也不自动调用 OCR 或扩大到全区转换。该检查点模式用于明确授权的局部任务；本次普通整区没有使用它。私人输入和大型模型不进入公开仓库。
 
-首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，本轮新增能力的实际软件验证以[圆字与主接线记录](docs/native/CIRCLE_CHARACTER_COMPLETION_20261125.md)为准。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
+首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，本轮新增能力的实际软件验证以[接触路径与结构线终接记录](docs/native/STRUCTURE_CONTACT_PATHS_20261126.md)为准。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
 
 ## 研发及合并原则
 
