@@ -9,7 +9,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 import json
-import subprocess
 
 import numpy as np
 from PIL import Image
@@ -214,6 +213,9 @@ class NativeTaskPanel(QWidget):
         )
         self.capability.setWordWrap(True)
         outer.addWidget(self.capability)
+        self.existing_dxf_button = QPushButton("打开已有 DXF / 准备 CAD 字体…")
+        self.existing_dxf_button.clicked.connect(self.open_existing_dxf)
+        outer.addWidget(self.existing_dxf_button)
         file_row = QHBoxLayout()
         self.path_edit = QLineEdit()
         self.path_edit.setReadOnly(True)
@@ -397,9 +399,9 @@ class NativeTaskPanel(QWidget):
         self.export_button.clicked.connect(self.export_dxf)
         self.folder_button = QPushButton("打开任务目录")
         self.folder_button.clicked.connect(self.open_folder)
-        self.cad_button = QPushButton("在 CAD 中打开")
+        self.cad_button = QPushButton("在 LibreCAD 中打开")
         self.cad_button.clicked.connect(self.open_in_cad)
-        self.cad_settings_button = QPushButton("选择 CAD…")
+        self.cad_settings_button = QPushButton("准备 CAD 字体…")
         self.cad_settings_button.clicked.connect(self.choose_cad)
         for index, widget in enumerate(
             (
@@ -1058,14 +1060,24 @@ class NativeTaskPanel(QWidget):
             self._error("无法打开目录", str(directory))
 
     def choose_cad(self):
-        filename, _ = QFileDialog.getOpenFileName(
-            self, "选择日常 CAD 程序", str(Path.home()), "应用程序 (*)"
-        )
-        if filename:
-            self.settings.setValue("cad_executable", filename)
-            self._event("CAD_program_selected", executable=filename)
-            self.status_label.setText(
-                f"关联 CAD：{Path(filename).name}。实际兼容性仍须在该版本验证。"
+        if self.cad_button.isEnabled():
+            self.open_in_cad()
+        else:
+            self.open_existing_dxf()
+
+    def open_existing_dxf(self):
+        self._show_cad_delivery()
+
+    def _show_cad_delivery(self, dxf_path=None):
+        from app.gui.cad_font_dialog import CadFontPreparationDialog
+
+        dialog = CadFontPreparationDialog(self, dxf_path=dxf_path)
+        self._event("CAD_font_preparation_opened", dxf=dxf_path)
+        dialog.exec()
+        if dialog.last_launch:
+            self._event(
+                "actual_saved_DXF_open_requested", dxf=dialog.last_launch["dxf"],
+                executable=dialog.last_launch.get("cad_executable"),
             )
 
     def open_in_cad(self):
@@ -1077,21 +1089,7 @@ class NativeTaskPanel(QWidget):
         ):
             return
         path = Path(self.state["result_dxf"])
-        executable = self.settings.value("cad_executable", "", str)
-        try:
-            if executable:
-                subprocess.Popen([executable, str(path)], close_fds=True)
-            elif not QDesktopServices.openUrl(QUrl.fromLocalFile(str(path))):
-                raise RuntimeError(
-                    "系统未找到 DXF 关联程序，请用“选择 CAD…”指定已安装的程序"
-                )
-            self._event(
-                "actual_saved_DXF_open_requested",
-                dxf=str(path),
-                executable=executable or "system_association",
-            )
-        except Exception as exc:
-            self._error("无法打开 CAD", exc)
+        self._show_cad_delivery(dxf_path=path)
 
     def _enable_controls(self):
         busy = self.running or self.preview_running

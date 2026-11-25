@@ -459,6 +459,9 @@ def run_gui(mode: str = "native-objects") -> int:
 
 
 def main() -> int:
+    if len(sys.argv) > 1 and sys.argv[1] == "cad-fonts":
+        from app.cad_delivery import run_cad_fonts_cli
+        return run_cad_fonts_cli(sys.argv[2:])
     prepare_onnx_privacy()
     args = build_parser().parse_args()
     if args.native_worker is not None or args.mode == "native-objects":
