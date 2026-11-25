@@ -2,7 +2,16 @@
 
 **研发版：`0.3.0-dev` · 整体产品 `LOCAL_NO_GO`；`main` 持续保存最新经过验证的有效开发源码，不是正式发行版。**
 
-**[产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)** · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md) · [本轮研发 PR #46](https://github.com/ryoumiyahayato/image-to-cad/pull/46)
+**[Windows 一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)** · [产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md)
+
+## Windows：取得程序后打开已有 DXF
+
+1. **取得同次交付的程序包和结果包。** 完整程序 ZIP 可直接解压，运行其中的 `CADPhotoToDXF.exe`。如果使用分卷，将全部 `.partXX`、`PORTABLE_RESTORE_MANIFEST.json`、`Restore-Windows-portable.cmd` 和 `Restore-Windows-portable.ps1` 放在同一新目录，双击 **`Restore-Windows-portable.cmd`**；它完成校验、恢复、解压和启动。无需手工拼接命令，也不会永久修改 PowerShell 执行策略。
+2. **在软件启动页点击“打开已有 DXF / 准备 CAD 字体…”**，选择结果包中的 DXF。文件菜单也有同一入口，已有图纸无需再次识别。应用会检查该图纸所需字体并查找 LibreCAD；找不到时点击“选择 LibreCAD…”，选择安装好的 `LibreCAD.exe` 即可。
+3. **点击“准备 CAD 字体”。** 软件使用随包固定资源完成准备；不需要选择字体目录或手工修改 CAD 配置。若显示“需要重新打开 CAD”，请先保存图纸、完全退出 LibreCAD，再点“重新检查”。只有显示“已准备，可打开 CAD”后才点击“在 LibreCAD 中打开”。“已准备”表示资源准备完成，不是已验证当前 CAD 窗口显示。
+4. **在 LibreCAD 中编辑并保存副本。** 完整标签可通过“工具 → 修改 → 属性”修改整串内容；移动和删除时选择整条文字。具体步骤、四种字体状态及分卷出错处理见[一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+
+本轮继续使用 **`QUARTER_shortcodes_2fd4373.dxf`** 和匹配字体，保留 423 个正式对象、六条新增完整文字及已有几何；本轮交付改进不增加识别对象。图纸版本、应用构建版本分别记录，不把旧图纸生成提交写成新 EXE 提交。短编号成果及既有未完成项见[短编号记录](docs/native/SHORT_CODES_20261125.md)，最新构建与真实 Windows GUI 覆盖范围以[当前任务](docs/project/CURRENT_TASK.md)的实际执行记录为准。Qt 界面测试、文件级验证和 Windows 人工 GUI 操作分别统计。
 
 ## 我们要得到什么
 
@@ -18,7 +27,7 @@
 
 交付以**实际保存 DXF**为准，重新打开之后需要能够删、移、改，且旧对象/邻居保持。像素覆盖率、测试数和实体数量均只是诊断，不代表产品成功。
 
-## 当前实际实现范围
+## 历史：圆形标记阶段的实际实现范围（2026-11-22）
 
 **本轮已在普通整区主图恢复圆形标记。** 最新执行提交为 `38a77a487784763d0919baaf718744aa446421b0`，主 DXF 已正式保存发布并通过自身来源冷读。同提交 Windows 源码、实际 EXE、安装／卸载及下载产物独立来源冷读均通过；主图旧对象与跨版本独立后审也已通过。版本和实际文件统一见[本轮圆形标记记录](docs/native/CIRCULAR_MARKERS_20261122.md)。
 

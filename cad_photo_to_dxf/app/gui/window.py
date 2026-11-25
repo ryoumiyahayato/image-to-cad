@@ -263,6 +263,11 @@ class MainWindow(QMainWindow):
         else:
             self.export_file()
 
+    def open_existing_dxf_in_cad(self) -> None:
+        from app.gui.cad_font_dialog import CadFontPreparationDialog
+
+        CadFontPreparationDialog(self).exec()
+
     def _active_canvas(self) -> ImageCanvas | None:
         if self._native_task_panel_active():
             return self.native_task_panel.canvas
@@ -314,6 +319,9 @@ class MainWindow(QMainWindow):
         export_action.triggered.connect(self._export_active_result)
         file_menu.addAction(open_action)
         file_menu.addAction(export_action)
+        self._cad_delivery_action = QAction("打开已有 DXF / 准备 CAD 字体…", self)
+        self._cad_delivery_action.triggered.connect(self.open_existing_dxf_in_cad)
+        file_menu.addAction(self._cad_delivery_action)
         save_review = QAction("保存校对项目…", self)
         save_review.setShortcut("Ctrl+S")
         save_review.triggered.connect(self.save_review_project)

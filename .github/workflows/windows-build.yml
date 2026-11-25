@@ -68,6 +68,12 @@ jobs:
           python scripts/prepare_source_row_font.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      - name: Prepare verified LibreCAD companion for native text
+        shell: pwsh
+        run: |
+          python scripts/prepare_native_librecad_font.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Run regression and static checks
         shell: pwsh
         run: |
@@ -79,6 +85,11 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python -m compileall -q app tests validation main.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $parseTokens = $null
+          $parseErrors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile(
+            "$PWD/scripts/restore_windows_portable.ps1", [ref] $parseTokens, [ref] $parseErrors) | Out-Null
+          if ($parseErrors.Count) { throw ($parseErrors | Out-String) }
 
       - name: Build portable application
         id: portable
@@ -100,6 +111,20 @@ jobs:
             -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-portable-smoke" `
             -ExpectedVersion $env:VERSION `
             -NativeSourceMain "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/main.py"
+
+      - name: Verify actual Windows recovery and CAD font preparation
+        id: delivery
+        shell: pwsh
+        run: |
+          $sourceCommit = (git rev-parse HEAD).Trim()
+          python scripts/windows_cad_delivery_smoke.py `
+            --executable "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/dist/CADPhotoToDXF/CADPhotoToDXF.exe" `
+            --native-result "$env:RUNNER_TEMP/cad-photo-portable-smoke/native/short-codes/exe-run/native.dxf" `
+            --work "$env:RUNNER_TEMP/cad-photo-delivery-smoke" `
+            --delivery "$env:RUNNER_TEMP/cad-photo-verified-delivery" `
+            --source-commit $sourceCommit `
+            --version $env:VERSION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Inno Setup
         shell: pwsh
@@ -151,3 +176,32 @@ jobs:
           path: |
             ${{ runner.temp }}/cad-photo-portable-smoke/native/**
             !${{ runner.temp }}/cad-photo-portable-smoke/native/detached-package/**
+
+      - name: Upload exact verified user delivery
+        if: always() && steps.delivery.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: CADPhotoToDXF-Windows-Verified-Delivery-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: error
+          compression-level: 0
+          path: |
+            ${{ runner.temp }}/cad-photo-verified-delivery/*.zip
+            ${{ runner.temp }}/cad-photo-verified-delivery/PORTABLE_RESTORE_MANIFEST.json
+            ${{ runner.temp }}/cad-photo-verified-delivery/Restore-Windows-portable.cmd
+            ${{ runner.temp }}/cad-photo-verified-delivery/Restore-Windows-portable.ps1
+            ${{ runner.temp }}/cad-photo-verified-delivery/README_RESTORE.txt
+
+      - name: Upload Windows recovery and CAD delivery evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows-CAD-delivery-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          if-no-files-found: ignore
+          path: |
+            ${{ runner.temp }}/cad-photo-delivery-smoke/delivery-smoke.json
+            ${{ runner.temp }}/cad-photo-delivery-smoke/restoration/restoration-checks.json
+            ${{ runner.temp }}/cad-photo-delivery-smoke/restoration/*/*report.json
+            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.json
+            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.pdf
+            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.png
+            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.dxf

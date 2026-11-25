@@ -1,10 +1,19 @@
 # Image to CAD（开发预览）
 
+**Windows 用户入口：[一页使用说明](../docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。** 解压完整便携 ZIP 后运行 `CADPhotoToDXF.exe`；使用分卷时双击同目录的 `Restore-Windows-portable.cmd`，自动校验、恢复、解压并启动。启动页点击 **“打开已有 DXF / 准备 CAD 字体…”**，选择图纸，再准备字体并在 LibreCAD 中打开。找不到 LibreCAD 时只需选择 `LibreCAD.exe`，无需寻找字体目录或编辑配置。提示需要重新打开 CAD 时，先保存、完全退出 LibreCAD，再点击“重新检查”。
+
+本轮接续 `QUARTER_shortcodes_2fd4373.dxf` 的 423 个正式对象，改进交付和使用流程；不新增识别成果。最新源码／构建对应关系和实际验证范围见[当前任务](../docs/project/CURRENT_TASK.md)，产品仍为 `0.3.0-dev / LOCAL_NO_GO`。下面的历史记录不代替本轮 Windows GUI 验证。
+
+<details>
+<summary>2026-11-22 入口历史快照</summary>
+
 > **2026-11-22 当前状态：0.3.0-dev / LOCAL_NO_GO。** 本应用已有正式 `native-objects` CLI／GUI、NativeJobManager／worker 与实际原生 DXF 导出；legacy 作为显式选项保留。当前产品目标是完整、独立可编辑的原生二维 CAD 对象，见 [产品合同](../docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) 和 [当前任务](../docs/project/CURRENT_TASK.md)。
 >
 > 最新主 DXF 实际执行于 `6225980503c3627f8f5fab3fe82eab78e10c2922`（377 正式实体、48 REVIEW）；Windows 实际构建／执行于 `4bf6554526e9f247060a1a3a493bb4717c4c9ad5`，7 项适用 CI 成功，Windows 2235 passed／8 skipped，源码和实际 EXE 各输出 5 LINE＋1 TEXT，开发安装器已取得。两个提交只差测试夹具常量与注释，包内 60 个生产源码文件的 Git 内容完全相同，不能称为同一提交。新主图已重新渲染及直接核对旧内容；既有 GUI 证据仍绑定 `2adc3ee` 原文件，通过实体、BLOCK 与 XDATA 精确对应复用，兼容仍为 LIMITED。本轮单一合入入口为 [PR #45](https://github.com/ryoumiyahayato/image-to-cad/pull/45)，合入状态与最新 HEAD 以 PR 记录和远端核对为准。版本、文件、失败历史与限制见 [本轮简报](../docs/native/QUARTER_NATIVE_EXE_20261122.md)。
 >
 > 从源码运行请以 [原生复现说明](../docs/native/REPRODUCE.md) 为准；Windows 随包 OCR／模型／字体与 smoke 见 [Windows 原生检查](../docs/native/WINDOWS_NATIVE_SMOKE.md)。完整图纸质量、复杂文字／符号、跨 CAD 完整性、工程师工时等仍未通过；实际打包成功不改为正式 Release 或产品 GO。
+
+</details>
 
 <details>
 <summary>2026-11-20 入口历史快照（已由上述现状取代）</summary>
