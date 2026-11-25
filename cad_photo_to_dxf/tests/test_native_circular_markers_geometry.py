@@ -54,6 +54,64 @@ def test_ring_character_and_external_ports_have_separate_original_support():
     np.testing.assert_array_equal(gray, original)
 
 
+def _variable_stroke_ring(*, offset=(0, 0), gap=0, elliptic=False):
+    """A circular pen centre with varying width, drawn without circle fitting."""
+    cx, cy = 80 + offset[0], 80 + offset[1]
+    yy, xx = np.indices((240, 240))
+    distance = np.hypot(xx - cx, yy - cy)
+    angle = np.arctan2(yy - cy, xx - cx)
+    half_width = 2.5 + 1.2 * np.sin(3 * angle + 0.3)
+    centre_radius = 22 + (2 * np.cos(2 * angle) if elliptic else 0)
+    gray = np.where(np.abs(distance - centre_radius) <= half_width, 0, 255).astype(np.uint8)
+    cv2.line(gray, (cx - 5, cy - 8), (cx - 5, cy + 8), 0, 2)
+    cv2.line(gray, (cx - 5, cy - 8), (cx + 5, cy - 8), 0, 2)
+    cv2.line(gray, (cx + 22, cy), (cx + 60, cy - 10), 0, 2)
+    if gap:
+        gray[cy:cy + gap, cx - 29:cx - 14] = 255
+    return gray
+
+
+@pytest.mark.parametrize("offset", [(0, 0), (17, 31)])
+def test_variable_pen_width_is_measured_at_the_original_stroke_center(offset):
+    gray = _variable_stroke_ring(offset=offset)
+    original = gray.copy()
+    (row,), _ = _accepted(gray)
+    evidence = row["source_evidence"]
+    fit = evidence["radial_fit"]
+    assert fit["measurement"] == "PAIRED_ORIGINAL_INK_STROKE_EDGES_V1"
+    assert row["geometry"]["center"] == pytest.approx([80 + offset[0], 80 + offset[1]], abs=0.2)
+    assert row["geometry"]["radius_px"] == pytest.approx(22, abs=0.2)
+    assert fit["p95_radial_error_px"] <= 0.85
+    assert fit["max_radial_error_px"] <= 1.35
+    assert fit["maximum_centerline_source_distance_px"] <= 0.85
+    assert evidence["closed_source_enclosure"]["pass"]
+    # The thickest inward stroke reaches the conservative interior mask.  A
+    # proved ring does not authorize calling that mixed mask a complete glyph.
+    assert evidence["interior_connected_to_boundary"]
+    assert not evidence["interior_is_complete_separate_components"]
+    assert row["composition_status"] == "BOUNDARY_ONLY_CHARACTER_NOT_YET_RECOGNIZED"
+    assert len(evidence["contact_ports"]) == 1
+    assert verify_circle_source_evidence(gray, [0, 0, 240, 240], row)["pass"]
+    np.testing.assert_array_equal(gray, original)
+
+
+@pytest.mark.parametrize("gap", [1, 2])
+def test_paired_edge_fit_does_not_fill_a_real_open_ring(gap):
+    (original,), _ = _accepted(_variable_stroke_ring())
+    gray = _variable_stroke_ring(gap=gap)
+    accepted, _ = _accepted(gray, observed_rounds=[original["seed_observation"]])
+    assert accepted == []
+    assert not verify_circle_source_evidence(gray, [0, 0, 240, 240], original)["pass"]
+
+
+def test_paired_edge_fit_does_not_reclassify_an_elliptic_stroke_as_circle():
+    gray = _variable_stroke_ring(elliptic=True)
+    accepted, _ = _accepted(gray, observed_rounds=[{
+        "center": [80, 80], "inner_boundary_radius_px": 19.5,
+    }])
+    assert accepted == []
+
+
 @pytest.mark.parametrize("translation", [(0, 0), (37, 11), (11, 47)])
 def test_geometry_is_translation_invariant_and_has_no_case_selector(translation):
     dx, dy = translation

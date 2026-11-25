@@ -9,6 +9,7 @@ an unchanged, replayed original source-core cover.
 from __future__ import annotations
 
 from collections import Counter, defaultdict
+from copy import deepcopy
 import hashlib
 import itertools
 import json
@@ -495,7 +496,7 @@ def _edge(a, b):
     return tuple(sorted((tuple(map(float, a)), tuple(map(float, b)))))
 
 
-def _cover_allowances(entity, path, plan_key):
+def _cover_allowances(entity, path, plan_key, *, segment_offset=0):
     if entity.dxftype() != "LWPOLYLINE" or entity.closed:
         return []
     geometry = path["representation"]
@@ -523,7 +524,7 @@ def _cover_allowances(entity, path, plan_key):
             allowances.append(
                 {
                     "handle": entity.dxf.handle,
-                    "segment_indices": list(pair),
+                    "segment_indices": [index + segment_offset for index in pair],
                     "source_edge": [list(point) for point in edge],
                     "plan_sha256": plan_key,
                     "source_cover_index": owners[0],
@@ -532,6 +533,30 @@ def _cover_allowances(entity, path, plan_key):
                 }
             )
     return allowances
+
+
+def _before_circle_relation_edits(gray, roi, obj, objects):
+    """Recover a source-plan binding only through fully replayed end proofs.
+
+    The actual native entity is still compared to the current geometry by the
+    caller.  This does not authorize a generic geometry mismatch or rewrite
+    the earlier text-contact plan and its neighbor contract.
+    """
+    original = deepcopy(obj)
+    evidence = original.setdefault("source_evidence", {})
+    if not isinstance(evidence, dict):
+        raise ValueError("CIRCLE_RELATION_ORIGINAL_SOURCE_EVIDENCE_INVALID")
+    if evidence.get("circle_endpoint_contacts"):
+        from .circle_endpoint_contacts import verified_original_geometry
+
+        original["geometry"] = verified_original_geometry(gray, roi, original, objects, original["geometry"])
+        evidence.pop("circle_endpoint_contacts")
+    if evidence.get("circle_white_gap_protection"):
+        from .circle_white_gap_protection import verify_white_gap_protection
+
+        verify_white_gap_protection(gray, roi, original, objects, original["geometry"])
+        original["geometry"] = deepcopy(evidence.pop("circle_white_gap_protection")["original_geometry"])
+    return original
 
 
 def _actual_geometry(doc, roi, dpi):
@@ -776,9 +801,10 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 )
             entity = actual[oid][0]
             target_handles.add(entity.dxf.handle)
+            source_obj = _before_circle_relation_edits(gray, roi, obj, list(objects.values()))
             proof = _source_evidence(obj).get(FIELD, {})
             proof = proof if isinstance(proof, dict) else {}
-            checks["three_way_object_binding"] = object_binding(obj) == object_binding(
+            checks["three_way_object_binding"] = object_binding(source_obj) == object_binding(
                 claimed
             ) and _source_evidence(obj).get(FIELD) == _source_evidence(claimed).get(
                 FIELD
@@ -817,7 +843,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 selected["representation"]
             )
             checks["whole_native_representation_from_source_plan"] = (
-                expected_kind == obj["kind"] and expected_geometry == obj["geometry"]
+                expected_kind == source_obj["kind"] and expected_geometry == source_obj["geometry"]
             )
             if key not in plan_checks:
                 if context is None:
@@ -848,7 +874,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             ):
                 old = prior_bindings[declaration["prior_object_id"]]
                 fresh = shared_existing_line_contact(
-                    gray, _as_path(obj), old, declaration["overlap"]
+                    gray, _as_path(source_obj), old, declaration["overlap"]
                 )
                 shared_checks.append(
                     {
@@ -862,7 +888,9 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             )
             row["pass"] = all(checks.values())
             if row["pass"]:
-                result["allowances"].extend(_cover_allowances(entity, selected, key))
+                offset = int(any(end["endpoint_number"] == 0 for end in
+                    _source_evidence(obj).get("circle_endpoint_contacts", {}).get("ends", [])))
+                result["allowances"].extend(_cover_allowances(entity, selected, key, segment_offset=offset))
         except (KeyError, ValueError, TypeError, IndexError, OSError) as exc:
             row["failure"] = type(exc).__name__ + ": " + str(exc)
         result["checks"].append(row)
@@ -918,7 +946,11 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 and receipt.get("kind") == obj["kind"]
                 and receipt.get("type") == actual[oid][0].dxftype()
             )
-            checks["unchanged_candidate_geometry"] = object_binding(obj) == binding
+            unchanged = object_binding(obj) == binding
+            if not unchanged:
+                original = _before_circle_relation_edits(gray, roi, obj, list(objects.values()))
+                unchanged = object_binding(original) == binding
+            checks["unchanged_candidate_geometry"] = unchanged
             neighbor_font = path.parent / "DejaVuSans.ttf"
             if obj["kind"] == "TEXT":
                 from .single_line_text_audit import resolve_saved_text_font

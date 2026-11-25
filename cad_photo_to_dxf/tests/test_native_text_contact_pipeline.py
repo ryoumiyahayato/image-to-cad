@@ -20,6 +20,7 @@ from app.native_objects.contracts import save_json
 from app.native_objects.text_contact_adoption import complete_text_contact_paths
 from app.native_objects.text_contact_geometry import plan_text_contact_geometry
 from tests.test_native_single_line_pipeline import _stage
+from tests.test_native_text_contact_geometry import _contact_source, ROI, SEED
 
 
 def _sha(path):
@@ -89,6 +90,63 @@ def test_whole_saved_audit_proves_legacy_and_contact_graphs_independently(mixed_
     assert pixels.shape == (240, 600)
     assert np.count_nonzero(pixels[45:105, 35:185] < 192) > 100
     assert np.count_nonzero(pixels[135:185, 265:575] < 192) > 200
+
+
+@pytest.mark.parametrize("many_vertices", [False, True])
+def test_late_contact_paths_receive_circle_relations_and_keep_the_original_plan(tmp_path, many_vertices):
+    from app.native_objects.circular_markers import discover_circular_markers
+    from app.native_objects.circle_endpoint_contacts import restore_circle_endpoint_contacts
+
+    gray = _contact_source()
+    if many_vertices:
+        gray = np.full((240, 420), 255, np.uint8)
+        for center in ((60, 170), (360, 170)):
+            cv2.circle(gray, center, 13, 0, 2)
+        xs = np.arange(72, 349)
+        ys = 85 + 80 * ((xs - 210) / 138) ** 2
+        outside_text = ((xs > 84) & (xs < 140)) | ((xs > 270) & (xs < 336))
+        ys += np.where(outside_text, 5 * np.sin((xs - 84) * 2 * np.pi / 12), 0)
+        cv2.polylines(gray, [np.rint(np.column_stack((xs, ys))).astype(np.int32)], False, 0, 2)
+        cv2.putText(gray, "AX7", (160, 107), cv2.FONT_HERSHEY_SIMPLEX, 1, 0, 2, cv2.LINE_8)
+    source_sha = hashlib.sha256(gray.tobytes()).hexdigest()
+    markers = [{
+        "id": row["id"], "kind": "CIRCLE", "layer": "CIRCULAR_MARKERS",
+        "geometry": deepcopy(row["geometry"]), "bbox_xyxy_px": row["bbox_xyxy_px"],
+        "source_evidence": {**deepcopy(row["source_evidence"]), "components_complete": False},
+        "status": "PARTIAL_BOUNDARY_ONLY_CHARACTER_PENDING",
+    } for row in discover_circular_markers(gray, ROI)["rows"] if row["geometry_accepted"]]
+    assert len(markers) == 2
+    assert not restore_circle_endpoint_contacts(gray, ROI, markers)["replacements"]
+    root = tmp_path / "evidence"
+    plan = plan_text_contact_geometry(gray, ROI, SEED)
+    contact = complete_text_contact_paths(gray, ROI, source_sha, markers, [plan], root / "text_contact")
+    original_plan = deepcopy(contact)
+    assert len(contact["objects"]) == 1
+    if many_vertices:
+        assert len(contact["objects"][0]["geometry"]["points"]) > 48
+        unproved = deepcopy(contact["objects"][0])
+        unproved["source_evidence"].pop("text_contact_path")
+        refused = restore_circle_endpoint_contacts(gray, ROI, markers + [unproved])
+        assert not refused["replacements"]
+        assert any(row["reason"] == "EXISTING_NATIVE_VERTEX_BUDGET_MUST_REMAIN_UNCHANGED"
+                   for row in refused["decisions"])
+    completion = {"objects": markers, "uncertainties": [], "decisions": [], "summary": {}}
+    objects, reviewed = pipeline._finalize_circle_relations(
+        gray, ROI, markers + contact["objects"], completion, root / "circular_markers",
+    )
+    assert reviewed["external_endpoint_contacts"]["summary"]["restored_external_endpoints"] == 2
+    assert contact == original_plan
+    second, repeated = pipeline._finalize_circle_relations(
+        gray, ROI, objects, reviewed, root / "circular_markers",
+    )
+    assert second == objects and repeated == reviewed
+    path = tmp_path / "late-contacts.dxf"
+    export_objects(objects, path, ROI, 200, source_sha)
+    report = cold_audit(path, gray, ROI, 200, root / "cold_audit.json")
+    assert report["source_gate_pass"], report["source_checks"]
+    assert report["text_contact_source_checks"]["pass"]
+    assert all(row["pass"] for row in report["circle_endpoint_contact_checks"])
+    assert not report["exact_duplicate_segments"]
 
 
 def test_assembly_receipt_restoration_recovers_same_actual_cold_proof(mixed_saved):
