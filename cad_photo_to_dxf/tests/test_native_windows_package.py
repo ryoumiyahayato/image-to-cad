@@ -332,7 +332,7 @@ def test_new_certified_circle_endpoint_cannot_claim_preserved_old_overlap(
     line.dxf.start = ((175 + restored_gap_px) * 25.4 / 200, line.dxf.start.y)
     row = next(row for row in objects["objects"] if row["id"] == "checker-lead-0")
     row["source_evidence"] = {"circle_endpoint_contacts": {
-        "schema": "native-direct-circle-end-contact-v2-observed-terminal-core",
+        "schema": "native-direct-circle-end-contact-v3-independent-source-branches",
         "ends": [{"circle_id": "checker-circle-0", "endpoint_number": 0, "restored_endpoint_px": [175 + restored_gap_px, 150], "circle_geometry": {"center": [150, 150], "radius_px": 25}}],
     }}
     path = tmp_path / "new-contact.dxf"

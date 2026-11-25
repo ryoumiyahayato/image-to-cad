@@ -270,6 +270,104 @@ def test_two_distinct_original_paths_competing_for_one_core_circle_port_both_rem
     assert objects == before
 
 
+def _independent_shared_port_fixture(tmp_path):
+    """Two independent original arrivals share the ring detector's coarse port.
+
+    The old path comes from normal connection extraction.  The second is a
+    complete new round-to-carrier path, through actual shared S ink.  Neither
+    source graph ports nor endpoint proof decisions are supplied by the test.
+    """
+    from app.native_objects.connections import extract_connections
+    from app.native_objects.structure_contact_geometry import plan_structure_contact_geometry
+    from app.native_objects.text_contact_adoption import complete_text_contact_paths
+
+    roi = [0, 0, 420, 320]
+    gray = np.full((320, 420), 255, np.uint8)
+    cv2.circle(gray, (80, 170), 18, 0, 3)
+    cv2.putText(gray, "F", (75, 177), cv2.FONT_HERSHEY_SIMPLEX, 0.55, 0, 1)
+    cv2.polylines(gray, [np.array([(80, 152), (60, 110), (40, 85), (25, 20)])], False, 0, 3)
+    cv2.polylines(gray, [np.array([(80, 152), (110, 100), (175, 70), (240, 68), (300, 90), (300, 270)])], False, 0, 3)
+    cv2.putText(gray, "S", (284, 233), cv2.FONT_HERSHEY_SIMPLEX, 1.6, 0, 2)
+    cv2.line(gray, (230, 270), (390, 270), 0, 2)
+    circles = [{"id": row["id"], "kind": "CIRCLE", "layer": "CIRCULAR_MARKERS",
+                "geometry": row["geometry"], "bbox_xyxy_px": row["bbox_xyxy_px"],
+                "source_evidence": {**row["source_evidence"], "components_complete": False}}
+               for row in discover_circular_markers(gray, roi)["rows"] if row["geometry_accepted"]]
+    old = extract_connections(gray, roi, [], tmp_path / "connections")["objects"]
+    carrier = {"id": "independent-carrier", "kind": "LINE", "layer": "GEOMETRY",
+               "geometry": {"start": [230, 270], "end": [390, 270]}}
+    prior = circles + old + [carrier]
+    plan = plan_structure_contact_geometry(gray, roi, prior)
+    adopted = complete_text_contact_paths(gray, roi, hashlib.sha256(gray.tobytes()).hexdigest(),
+                                         prior, [plan], tmp_path / "evidence" / "text_contact")
+    assert len(circles) == len(old) == len(adopted["objects"]) == 1
+    return gray, roi, prior + adopted["objects"]
+
+
+def test_distinct_source_branches_share_coarse_circle_port_without_merging_native_paths(tmp_path):
+    gray, roi, objects = _independent_shared_port_fixture(tmp_path)
+    before, source = deepcopy(objects), gray.copy()
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects)
+    assert len(result["replacements"]) == 2
+    by_id = {obj["id"]: obj for obj in result["replacements"]}
+    restored = [by_id.get(obj["id"], obj) for obj in objects]
+    assert objects == before and np.array_equal(gray, source)
+    certificates = [obj["source_evidence"][contacts.FIELD]["ends"][0]
+                    for obj in result["replacements"]]
+    assert len({(row["circle_id"], row["observed_port_index"]) for row in certificates}) == 1
+    shared = certificates[0]["shared_source_port_decomposition"]
+    assert shared == certificates[1]["shared_source_port_decomposition"]
+    assert shared["all_competing_eligible_arrivals_checked"]
+    assert shared["native_extensions_have_no_positive_overlap_or_interior_crossing"]
+    assert len({tuple(row["incoming_source_graph_port"]) for row in shared["independent_arrivals"]}) == 2
+    for obj in restored:
+        if obj["id"] in by_id:
+            assert contacts.verified_original_geometry(gray, roi, obj, restored, obj["geometry"]) == next(
+                original["geometry"] for original in before if original["id"] == obj["id"])
+        else:
+            assert obj == next(original for original in before if original["id"] == obj["id"])
+    assert contacts.restore_circle_endpoint_contacts(gray, roi, restored)["replacements"] == result["replacements"]
+    path = tmp_path / "independent-shared-port.dxf"
+    cad_io.export_objects(restored, path, roi, DPI, hashlib.sha256(gray.tobytes()).hexdigest())
+    rows = contacts.cold_circle_endpoint_contacts(path, ezdxf.readfile(path), gray, roi, DPI)
+    assert len(rows) == 2 and all(row["pass"] for row in rows), rows
+    # Each complete lead, including its own new terminal tail, is one entity.
+    doc = ezdxf.readfile(path)
+    target = result["replacements"][0]["id"]
+    doc.modelspace().delete_entity(next(e for e in doc.modelspace() if cad_io.identity(e).get("id") == target))
+    doc.saveas(tmp_path / "deleted.dxf")
+    after_ids = {cad_io.identity(e).get("id") for e in ezdxf.readfile(tmp_path / "deleted.dxf").modelspace()}
+    assert target not in after_ids and set(by_id) - {target} <= after_ids
+    assert {obj["id"] for obj in before if obj["id"] not in by_id} <= after_ids
+
+
+@pytest.mark.parametrize("mutation", ["source_port", "source_prefix", "remove_competitor"])
+def test_saved_shared_port_certificate_replays_all_original_competing_arrivals(tmp_path, mutation):
+    gray, roi, objects = _independent_shared_port_fixture(tmp_path)
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects)
+    by_id = {obj["id"]: obj for obj in result["replacements"]}
+    assert len(by_id) == 2
+    restored = [by_id.get(obj["id"], obj) for obj in objects]
+    path = tmp_path / "shared-port-proof.dxf"
+    cad_io.export_objects(restored, path, roi, DPI, hashlib.sha256(gray.tobytes()).hexdigest())
+    meta_path = path.with_suffix(".objects.json")
+    meta = json.loads(meta_path.read_text())
+    for obj in meta["objects"]:
+        if obj["id"] not in by_id:
+            continue
+        shared = obj["source_evidence"][contacts.FIELD]["ends"][0]["shared_source_port_decomposition"]
+        if mutation == "source_port":
+            shared["independent_arrivals"][0]["incoming_source_graph_port"][0] += 1
+        elif mutation == "source_prefix":
+            shared["independent_arrivals"][0]["source_prefix_px"][-1][0] += 1
+        else:
+            shared["independent_arrivals"].pop()
+    meta_path.write_text(json.dumps(meta))
+    rows = contacts.cold_circle_endpoint_contacts(path, ezdxf.readfile(path), gray, roi, DPI)
+    assert len(rows) == 2 and all(not row["pass"] for row in rows), rows
+    assert all(row["failure"] == "CIRCLE_CONTACT_PORT_HAS_ANOTHER_ELIGIBLE_END" for row in rows), rows
+
+
 def _oblique_source(*, gap=False):
     gray = np.full((160, 180), 255, np.uint8)
     cv2.circle(gray, (80, 80), 20, 0, 3)

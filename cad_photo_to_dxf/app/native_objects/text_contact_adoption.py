@@ -109,16 +109,23 @@ def _as_path(obj):
     return result
 
 
-def _plan_source_checks(gray, roi, plan):
+def _plan_source_checks(gray, roi, plan, prior_objects=None):
     from . import text_contact_geometry
     from .text_contact_geometry import POLICY, SCHEMA as PLAN_SCHEMA
 
+    producer = text_contact_geometry
+    structural = plan.get("schema") == "source-structure-contact-path-plan-v1"
+    if structural:
+        from . import structure_contact_geometry
+
+        producer = structure_contact_geometry
+        POLICY, PLAN_SCHEMA = producer.POLICY, producer.SCHEMA
     checks = {
         "schema_matches": plan.get("schema") == PLAN_SCHEMA,
         "current_geometry_policy": plan.get("policy") == POLICY,
         "same_geometry_producer": plan.get("producer_sha256")
         == hashlib.sha256(
-            Path(text_contact_geometry.__file__).read_bytes()
+            Path(producer.__file__).read_bytes()
         ).hexdigest(),
         "unchanged_connection_source_policy": plan.get(
             "unchanged_connection_source_policy"
@@ -128,6 +135,25 @@ def _plan_source_checks(gray, roi, plan):
         "source_not_modified": plan.get("original_source_pixels_modified") is False,
         "no_transcription_supplied": plan.get("transcription_supplied") is False,
     }
+    if structural:
+        bindings = plan.get("prior_object_bindings")
+        try:
+            checks["receiving_context_bound_to_existing_objects"] = (
+                isinstance(bindings, list)
+                and prior_objects is not None
+                and sorted(bindings, key=lambda row: row["id"])
+                == sorted(
+                    (object_binding(obj) for obj in prior_objects),
+                    key=lambda row: row["id"],
+                )
+            )
+        except (KeyError, TypeError):
+            checks["receiving_context_bound_to_existing_objects"] = False
+        checks["starting_circle_sources_bound_to_existing_objects"] = (
+            prior_objects is not None
+            and plan.get("prior_circle_source_bindings")
+            == producer.circle_source_bindings(prior_objects)
+        )
     try:
         x0, y0, x1, y1 = plan["original_source_crop_xyxy_px"]
         checks["source_crop_bounds_valid"] = (
@@ -177,13 +203,41 @@ def _path_source_checks(gray, plan, path):
         checks["no_source_gap_bridged"] = bool(
             np.all(steps > 0) and np.max(steps) <= math.sqrt(2) + 1e-9
         )
+        terminal_kinds = {
+            "OBSERVED_FREE_SOURCE_ENDPOINT", "OBSERVED_ROUND_BOUNDARY_CONTACT"
+        }
+        structural = (
+            plan.get("schema") == "source-structure-contact-path-plan-v1"
+            or plan.get(FIELD, {}).get("geometry_plan_schema")
+            == "source-structure-contact-path-plan-v1"
+        )
+        if structural:
+            terminal_kinds |= {
+                "OBSERVED_SUPPORTED_LINE_CONTACT", "OBSERVED_SOURCE_CARRIER_CORNER"
+            }
         checks["two_real_source_terminals"] = len(
             path["endpoint_evidence"]
         ) == 2 and all(
-            terminal.get("kind")
-            in ("OBSERVED_FREE_SOURCE_ENDPOINT", "OBSERVED_ROUND_BOUNDARY_CONTACT")
+            terminal.get("kind") in terminal_kinds
             for terminal in path["endpoint_evidence"]
         )
+        if structural:
+            kinds = [item.get("kind") for item in path["endpoint_evidence"]]
+            role = path.get("path_role")
+            checks["structural_path_has_explicit_independent_role"] = (
+                role == "ROUND_TO_CARRIER"
+                and sorted(kinds) == sorted([
+                    "OBSERVED_ROUND_BOUNDARY_CONTACT", "OBSERVED_SUPPORTED_LINE_CONTACT"
+                ])
+                and isinstance(path.get("required_carrier_id"), str)
+                and isinstance(path.get("required_start_circle_id"), str)
+                and bool(path.get("starting_circle_evidence"))
+                and bool(path.get("structural_terminal_evidence"))
+            ) or (
+                role == "SUPPORTING_CARRIER"
+                and kinds == ["OBSERVED_SOURCE_CARRIER_CORNER"] * 2
+                and bool(path.get("structural_carrier_evidence"))
+            )
         checks["terminal_coordinates_match_complete_path"] = path[
             "endpoint_source_points_px"
         ] == [points[0].tolist(), points[-1].tolist()]
@@ -210,9 +264,62 @@ def _path_source_checks(gray, plan, path):
         )
         if not checks["valid_open_native_path"]:
             raise ValueError("INVALID_CONTACT_NATIVE_PATH")
-        checks["native_endpoints_are_original_terminals"] = bool(
-            np.allclose(vertices[[0, -1]], points[[0, -1]], atol=1e-7, rtol=0)
-        )
+        if structural:
+            # Original walks keep integer source pixels.  A fitted receiving
+            # LINE can meet that walk at a subpixel intersection inside the
+            # same observed terminal core.  This separate representation is
+            # licensed only by the replayed structural plan and black cells.
+            from .circle_endpoint_contacts import _segment_cells
+
+            endpoints = np.asarray(path["native_endpoint_points_px"], float)
+            checks["native_endpoints_match_proved_terminal_representations"] = bool(
+                endpoints.shape == (2, 2)
+                and np.isfinite(endpoints).all()
+                and np.allclose(vertices[[0, -1]], endpoints, atol=1e-7, rtol=0)
+            )
+            adjustments = path.get("endpoint_representation_adjustments", [])
+            by_end = {item["end"]: item for item in adjustments}
+            adjusted = {
+                end for end in (0, 1)
+                if not np.array_equal(points[[0, -1]][end], endpoints[end])
+            }
+            certificates_pass = (
+                len(by_end) == len(adjustments)
+                and adjusted <= set(by_end) <= {0, 1}
+                and checks["native_endpoints_match_proved_terminal_representations"]
+            )
+            for end, declaration in by_end.items():
+                old, new = points[[0, -1]][end], endpoints[end]
+                cells = np.asarray(declaration["closed_source_pixel_cells"])
+                cells_valid = bool(
+                    cells.ndim == 2 and cells.shape[1] == 2 and len(cells)
+                    and np.isfinite(cells).all()
+                    and np.array_equal(cells, np.rint(cells))
+                    and np.all(cells >= 0)
+                    and np.all(cells[:, 0] < gray.shape[1])
+                    and np.all(cells[:, 1] < gray.shape[0])
+                )
+                certificates_pass &= (
+                    declaration["original_source_endpoint_px"] == old.tolist()
+                    and declaration["native_endpoint_px"] == new.tolist()
+                    and declaration.get("all_original_ink") is True
+                    and cells_valid
+                )
+                if cells_valid:
+                    integer_cells = cells.astype(int)
+                    certificates_pass &= bool(
+                        np.all(gray[integer_cells[:, 1], integer_cells[:, 0]]
+                               < PATH_POLICY["source_threshold"])
+                        and set(map(tuple, _segment_cells(old, new)))
+                        <= set(map(tuple, integer_cells))
+                    )
+            checks["terminal_representation_adjustments_have_original_ink"] = bool(
+                certificates_pass
+            )
+        else:
+            checks["native_endpoints_are_original_terminals"] = bool(
+                np.allclose(vertices[[0, -1]], points[[0, -1]], atol=1e-7, rtol=0)
+            )
         x0, y0, x1, y1 = plan["original_source_crop_xyxy_px"]
         distance = distance_transform_edt(
             gray[y0:y1, x0:x1] >= PATH_POLICY["source_threshold"]
@@ -524,7 +631,7 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
         if plan_key in stored_plans:
             continue
         stored_plans[plan_key] = deepcopy(plan)
-        plan_check = _plan_source_checks(source, roi, plan)
+        plan_check = _plan_source_checks(source, roi, plan, objects)
         if not plan_check["pass"]:
             rejected.append(
                 {
@@ -578,7 +685,15 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
                 "editing_scope": "one complete independent observed line; text and endpoint symbols remain separate",
                 "status": "SOURCE_SUPPORTED_COMPLETE_TEXT_CONTACT_PATH",
             }
+            if plan.get("schema") == "source-structure-contact-path-plan-v1":
+                obj["source_evidence"][FIELD]["geometry_plan_schema"] = plan["schema"]
             proposals.append(obj)
+    # A newly proved receiving line remains a separate entity.  Adopt it
+    # before its dependent round-to-line path; a rejected receiving object
+    # cannot turn into a fictitious saved terminal merely by being proposed.
+    proposals.sort(key=lambda obj: (
+        obj["source_evidence"][FIELD]["path"].get("path_role") != "SUPPORTING_CARRIER"
+    ))
     # This established finite-segment refusal gate also sees all old paths.
     # It grants no exemption merely because text-contact evidence exists.
     prior_members = _existing_line_members(objects)
@@ -613,6 +728,28 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
             "shared_existing_line_contacts": [],
         }
         active = [obj for obj in objects if obj["id"] not in retired] + internal_adopted
+        selected_path = proposal["source_evidence"][FIELD]["path"]
+        if selected_path.get("path_role") == "ROUND_TO_CARRIER":
+            start_id = selected_path["required_start_circle_id"]
+            start = next((old for old in active if old["id"] == start_id), None)
+            row["required_source_verified_start_circle_id"] = start_id
+            row["source_verified_start_circle_present"] = (
+                start is not None and start["kind"] in ("CIRCLE", "CIRCULAR_MARKER")
+            )
+            if not row["source_verified_start_circle_present"]:
+                row["reasons"].append("SOURCE_VERIFIED_START_CIRCLE_NOT_PRESENT")
+                row["decision"] = "PENDING_SOURCE_VERIFIED_START_CIRCLE"
+                decisions.append(row)
+                continue
+            carrier_id = selected_path["required_carrier_id"]
+            carrier = next((old for old in active if old["id"] == carrier_id), None)
+            row["required_independent_receiving_object_id"] = carrier_id
+            row["independent_receiving_object_present"] = carrier is not None
+            if carrier is None:
+                row["reasons"].append("INDEPENDENT_RECEIVING_OBJECT_NOT_ADOPTED")
+                row["decision"] = "PENDING_INDEPENDENT_RECEIVING_OBJECT"
+                decisions.append(row)
+                continue
         responsibility_active = []
         for old in active:
             if old["id"] == proposal["id"] and old["kind"] != "CONNECTION_PATH":

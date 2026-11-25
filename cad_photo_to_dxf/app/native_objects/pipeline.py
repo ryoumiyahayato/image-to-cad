@@ -1866,13 +1866,26 @@ def run_native_objects(
             })
             objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
             text_contact_completion = {}
-            if texts.get("text_contact_geometry_plans"):
+            # Graphic continuity is independently useful when the touching
+            # character remains unresolved.  Discover round-to-line paths
+            # from original pixels and independently supported receiving
+            # geometry, without making a text adoption a prerequisite.
+            from .structure_contact_geometry import plan_structure_contact_geometry
+            from .text_contact_partition import _source_graph
+
+            progress("SOURCE_CONTACT_PATHS_TO_INDEPENDENT_RECEIVING_LINES", 0.738)
+            structure_contact_plan = plan_structure_contact_geometry(
+                gray, roi, objects, source_graph=_source_graph(gray, roi),
+            )
+            contact_plans = list(texts.get("text_contact_geometry_plans", []))
+            contact_plans.append(structure_contact_plan)
+            if contact_plans:
                 progress("COMPLETE_INDEPENDENT_TEXT_CONTACT_PATHS", 0.74)
                 from .text_contact_adoption import complete_text_contact_paths
 
                 text_contact_completion = complete_text_contact_paths(
                     gray, roi, source_sha, objects,
-                    texts["text_contact_geometry_plans"], out / "text_contact",
+                    contact_plans, out / "text_contact",
                 )
                 retired_contact_parts = set(text_contact_completion["retired_ids"])
                 objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]

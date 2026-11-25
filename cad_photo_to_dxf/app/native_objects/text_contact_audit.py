@@ -243,6 +243,12 @@ def compare_contact_source_replay(saved, replayed, *, scope):
 
 def verify_contact_plan_source_replay(gray, roi, plan, *, source_graph=None):
     """Keep the former exact result and attach only bounded statistic evidence."""
+    if plan.get("schema") == "source-structure-contact-path-plan-v1":
+        from .structure_contact_geometry import verify_structure_contact_geometry_plan
+
+        return verify_structure_contact_geometry_plan(
+            gray, roi, plan, source_graph=source_graph
+        )
     from .text_contact_geometry import plan_text_contact_geometry, verify_text_contact_geometry_plan
 
     original = verify_text_contact_geometry_plan(gray, roi, plan, source_graph=source_graph)
@@ -308,6 +314,75 @@ def _angle_same(a, b):
 def _px(point, roi, dpi):
     mm = 25.4 / float(dpi)
     return [float(point[0]) / mm + roi[0], roi[3] - float(point[1]) / mm]
+
+
+def _saved_structural_endpoint_contacts(
+    entity, obj, circle_entity, carrier_entity, roi, dpi, *, carrier_member_index=None
+):
+    """Measure the saved finite objects, including a path with no tail receipt.
+
+    Source-plan membership and preserved neighbours do not establish that the
+    final native endpoints touch.  In particular, an unextended source walk
+    must not pass merely because its starting circle is independently valid.
+    """
+    kind = entity.dxftype()
+    if kind == "LINE":
+        ends = [entity.dxf.start, entity.dxf.end]
+    elif kind == "LWPOLYLINE" and not entity.closed:
+        vertices = list(entity.get_points("xy"))
+        if len(vertices) < 2:
+            raise ValueError("SAVED_STRUCTURAL_PATH_HAS_NO_TWO_ENDPOINTS")
+        ends = [vertices[0], vertices[-1]]
+    elif kind == "ARC":
+        ends = [entity.start_point, entity.end_point]
+        geometry = obj["geometry"]
+        sweep = float(geometry.get(
+            "sweep_deg_image", geometry["end_deg_image"] - geometry["start_deg_image"]
+        ))
+        if sweep > 0:
+            ends.reverse()  # DXF CCW reverses positive image-coordinate arcs.
+    else:
+        raise ValueError("SAVED_STRUCTURAL_PATH_TYPE_UNSUPPORTED")
+    points = np.asarray([_px(point, roi, dpi) for point in ends], float)
+    if circle_entity.dxftype() == "INSERT":
+        circles = [member for member in circle_entity.virtual_entities()
+                   if member.dxftype() == "CIRCLE"]
+        if len(circles) != 1:
+            raise ValueError("SAVED_START_INSTANCE_HAS_NO_UNIQUE_CIRCLE")
+        circle_entity = circles[0]
+    if carrier_member_index is not None:
+        if (type(carrier_member_index) is not int or carrier_member_index < 0
+                or carrier_entity.dxftype() != "INSERT"):
+            raise ValueError("SAVED_RECEIVING_MEMBER_BINDING_INVALID")
+        members = list(carrier_entity.virtual_entities())
+        if carrier_member_index >= len(members):
+            raise ValueError("SAVED_RECEIVING_MEMBER_ABSENT")
+        carrier_entity = members[carrier_member_index]
+    if circle_entity.dxftype() != "CIRCLE" or carrier_entity.dxftype() != "LINE":
+        raise ValueError("SAVED_STRUCTURAL_TERMINAL_TYPE_UNSUPPORTED")
+    center = np.asarray(_px(circle_entity.dxf.center, roi, dpi), float)
+    radius = float(circle_entity.dxf.radius) * float(dpi) / 25.4
+    start_residual = abs(float(np.linalg.norm(points[0] - center)) - radius)
+    a, b = np.asarray([
+        _px(carrier_entity.dxf.start, roi, dpi),
+        _px(carrier_entity.dxf.end, roi, dpi),
+    ], float)
+    vector = b - a
+    squared_length = float(vector @ vector)
+    if squared_length <= 0:
+        raise ValueError("SAVED_RECEIVING_LINE_HAS_ZERO_LENGTH")
+    projection = float((points[1] - a) @ vector / squared_length)
+    closest = a + np.clip(projection, 0.0, 1.0) * vector
+    end_residual = float(np.linalg.norm(points[1] - closest))
+    return {
+        "actual_source_order_endpoints_px": points.tolist(),
+        "starting_circle_radial_residual_px": start_residual,
+        "receiving_finite_line_residual_px": end_residual,
+        "receiving_line_projection_fraction": projection,
+        "tolerance_px": EPS,
+        "actual_start_contacts_required_circle": math.isfinite(start_residual) and start_residual <= EPS,
+        "actual_end_contacts_required_finite_carrier": math.isfinite(end_residual) and end_residual <= EPS,
+    }
 
 
 def _primitive_matches(entity, kind, geometry, roi, dpi):
@@ -845,6 +920,67 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 proof.get("path_sha256") == digest(selected)
                 and proof.get("path") == selected
             )
+            if plan.get("schema") == "source-structure-contact-path-plan-v1":
+                from .structure_contact_geometry import circle_source_bindings
+
+                checks["structural_producer_kind_bound_to_actual_plan"] = (
+                    proof.get("geometry_plan_schema") == plan["schema"]
+                )
+                checks["structural_context_matches_actual_prior_manifest"] = (
+                    sorted(plan.get("prior_object_bindings", []), key=lambda old: old["id"])
+                    == sorted(manifest.get("prior_object_bindings", []), key=lambda old: old["id"])
+                )
+                checks["starting_circle_sources_match_saved_object_sources"] = (
+                    plan.get("prior_circle_source_bindings")
+                    == circle_source_bindings(list(objects.values()))
+                )
+                if selected.get("path_role") == "ROUND_TO_CARRIER":
+                    starting_id = selected.get("required_start_circle_id")
+                    starting = objects.get(starting_id)
+                    checks["one_separate_saved_starting_circle"] = (
+                        starting_id != oid
+                        and starting is not None
+                        and starting["kind"] in ("CIRCLE", "CIRCULAR_MARKER")
+                        and len(actual.get(starting_id, [])) == 1
+                        and actual[starting_id][0].dxf.handle != entity.dxf.handle
+                    )
+                    checks["actual_starting_circle_geometry_preserved"] = (
+                        checks["one_separate_saved_starting_circle"]
+                        and _neighbor_matches(
+                            actual[starting_id][0], starting, roi, dpi,
+                            path.parent / "DejaVuSans.ttf",
+                        )
+                    )
+                    receiving_id = selected.get("required_carrier_id")
+                    receiving = objects.get(receiving_id)
+                    checks["one_separate_saved_receiving_object"] = (
+                        receiving_id != oid
+                        and receiving is not None
+                        and len(actual.get(receiving_id, [])) == 1
+                        and actual[receiving_id][0].dxf.handle != entity.dxf.handle
+                    )
+                    checks["actual_receiving_geometry_preserved"] = (
+                        checks["one_separate_saved_receiving_object"]
+                        and _neighbor_matches(
+                            actual[receiving_id][0], receiving, roi, dpi,
+                            path.parent / "DejaVuSans.ttf",
+                        )
+                    )
+                    checks["structural_source_endpoint_order"] = [
+                        endpoint.get("kind") for endpoint in selected["endpoint_evidence"]
+                    ] == ["OBSERVED_ROUND_BOUNDARY_CONTACT", "OBSERVED_SUPPORTED_LINE_CONTACT"]
+                    checks["actual_start_contacts_required_circle"] = False
+                    checks["actual_end_contacts_required_finite_carrier"] = False
+                    if (checks["one_separate_saved_starting_circle"]
+                            and checks["one_separate_saved_receiving_object"]):
+                        contacts = _saved_structural_endpoint_contacts(
+                            entity, obj, actual[starting_id][0], actual[receiving_id][0], roi, dpi,
+                            carrier_member_index=selected["structural_terminal_evidence"]["carrier_member_index"],
+                        )
+                        row["actual_structural_endpoint_contacts"] = contacts
+                        for name in ("actual_start_contacts_required_circle",
+                                     "actual_end_contacts_required_finite_carrier"):
+                            checks[name] = contacts[name]
             expected_kind, expected_geometry = _native_object(
                 selected["representation"]
             )

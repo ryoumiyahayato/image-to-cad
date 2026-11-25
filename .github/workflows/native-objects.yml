@@ -79,6 +79,10 @@ jobs:
             tests/test_native_text_graph_support.py \
             tests/test_native_checkpoint_review_scope.py \
             tests/test_native_connection_core_routes.py \
+            tests/test_native_structure_contact_geometry.py \
+            tests/test_native_structure_contact_adoption.py \
+            tests/test_native_circle_endpoint_contacts.py \
+            tests/test_windows_structure_contact_smoke.py \
             tests/test_native_retrace_cold_audit.py \
             tests/test_native_bounded_retrace_audit.py \
             tests/test_native_connection_evidence_resume.py \

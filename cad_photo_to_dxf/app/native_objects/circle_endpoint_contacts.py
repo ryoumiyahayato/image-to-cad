@@ -20,7 +20,7 @@ from .contracts import plain
 
 FIELD = "circle_endpoint_contacts"
 POLICY = {
-    "version": "native-direct-circle-end-contact-v2-observed-terminal-core",
+    "version": "native-direct-circle-end-contact-v3-independent-source-branches",
     "source_threshold": 128,
     "maximum_extension_stroke_widths": 1.0,
     "existing_native_fit_allowance_px": 0.85,
@@ -35,6 +35,8 @@ POLICY = {
     "source_morphology": "NONE",
     "existing_interior_overlap": "RETAIN_UNCHANGED",
     "external_connection_owned_by_marker": False,
+    "shared_observed_port": "STRICT_STRUCTURE_PATH_AND_DISTINCT_RAW_GRAPH_BRANCHES_WITH_NONCROSSING_NATIVE_TAILS",
+    "shared_port_minimum_external_prefix_px": 8.0,
 }
 
 
@@ -218,6 +220,164 @@ class _TerminalCoreReplay:
         result = (actual, context, node_id, incoming)
         self.results[key] = result
         return result
+
+    def branch(self, obj, end):
+        """Reidentify an old or new native path's actual original graph port.
+
+        Earlier complete connection objects predate terminal-core transport.
+        They must still match an entire original external prefix in the same
+        freshly reconstructed graph; an object ID or previous approval alone
+        never identifies a branch.
+        """
+        from .text_contact_geometry import build_text_contact_source_graph, round_terminal_source_core
+
+        modern = self.get(obj, end)
+        if modern is not None:
+            return modern
+        evidence = obj.get("source_evidence", {})
+        raw = evidence.get("source_path_points", [])
+        if (obj.get("kind") != "CONNECTION_PATH" or len(raw) < 3
+                or evidence.get("source_pixels_modified") is not False):
+            return None
+        ordered = raw if end == 0 else raw[::-1]
+        point = np.asarray(ordered[0], float)
+        endpoint = next(row[1] for row in _ends(obj) if row[0] == end)
+        if not np.array_equal(endpoint, point) or not np.array_equal(point, np.rint(point)):
+            return None
+        if self.context is None:
+            self.context = build_text_contact_source_graph(self.gray, self.roi)
+        context, graph = self.context, self.context.graph
+        x0, y0, x1, y1 = context.crop_bbox
+        if (list(graph.roi) != self.roi
+                or hashlib.sha256(np.ascontiguousarray(self.gray[y0:y1, x0:x1]).tobytes()).hexdigest() != context.source_crop_hash
+                or evidence.get("original_source_crop_xyxy_px") != context.crop_bbox
+                or evidence.get("original_source_crop_array_sha256") != context.source_crop_hash):
+            return None
+        x, y = np.rint(point - graph.origin).astype(int)
+        if not (0 <= x < graph.w and 0 <= y < graph.h):
+            return None
+        nid = int(graph.node_map[y * graph.w + x])
+        if nid not in graph.nodes:
+            return None
+        matches = []
+        for incoming in graph.nodes[nid]["edges"]:
+            claim = round_terminal_source_core(graph, nid, incoming)
+            if claim is None:
+                continue
+            prefix = next(row["original_source_prefix_px"] for row in claim["all_adjacent_source_prefixes"]
+                          if tuple(row["source_graph_port"]) == incoming)
+            if len(prefix) >= 3 and ordered[:len(prefix)] == prefix:
+                matches.append((claim, context, nid, incoming))
+        return matches[0] if len(matches) == 1 else None
+
+
+def _segments_conflict(a, b, c, d, *, allow_common_circle_end=False):
+    """Reject positive collinear overlap and crossings before the actual ring."""
+    a, b, c, d = (np.asarray(p, float) for p in (a, b, c, d))
+    u, v = b - a, d - c
+    cross = float(u[0] * v[1] - u[1] * v[0])
+    offset = c - a
+    if abs(cross) <= 1e-10:
+        if abs(float(offset[0] * u[1] - offset[1] * u[0])) > 1e-9:
+            return False
+        length2 = float(u @ u)
+        if length2 <= 1e-12:
+            return False
+        t0, t1 = sorted((float(offset @ u / length2), float((d - a) @ u / length2)))
+        return min(1.0, t1) - max(0.0, t0) > 1e-8
+    t = float((offset[0] * v[1] - offset[1] * v[0]) / cross)
+    s = float((offset[0] * u[1] - offset[1] * u[0]) / cross)
+    if not (-1e-9 <= t <= 1 + 1e-9 and -1e-9 <= s <= 1 + 1e-9):
+        return False
+    if allow_common_circle_end and abs(t - 1) <= 1e-8 and abs(s - 1) <= 1e-8:
+        return False
+    return True
+
+
+def _shared_port_decomposition(gray, rows, by_id, marker, replay):
+    """A coarse raster port can contain several independently proved arrivals.
+
+    This additional route is enabled only by a complete new structure-contact
+    path. Every old and new owner is then re-proved, including all competing
+    arrivals. Existing unresolved circle-port cases keep their old rule.
+    """
+    from .structure_contact_geometry import SCHEMA as STRUCTURE_SCHEMA
+    from .text_contact_adoption import _path_source_checks
+
+    if len(rows) < 2:
+        return None
+    licensed = []
+    for row in rows:
+        obj = by_id[row["object_id"]]
+        evidence = obj.get("source_evidence", {})
+        proof = evidence.get("text_contact_path", {})
+        path = proof.get("path", {})
+        if (proof.get("geometry_plan_schema") == STRUCTURE_SCHEMA
+                and path.get("path_role") == "ROUND_TO_CARRIER"
+                and path.get("required_carrier_id") in by_id
+                and path.get("reverse_source_path_agreement", {}).get("pass") is True
+                and _path_source_checks(gray, evidence, path)["pass"]):
+            licensed.append(obj["id"])
+    if not licensed:
+        return None
+    circle = _circle(marker)
+    center, radius = np.asarray(circle["center"]), circle["radius_px"]
+    identities = []
+    seen = set()
+    for row in sorted(rows, key=lambda r: (r["object_id"], r["endpoint_number"])):
+        obj, end = by_id[row["object_id"]], row["endpoint_number"]
+        try:
+            source = replay.branch(obj, end)
+        except (KeyError, TypeError, ValueError, IndexError, StopIteration):
+            return None
+        if source is None:
+            return None
+        core, context, nid, incoming = source
+        if (nid, incoming) in seen:
+            return None
+        seen.add((nid, incoming))
+        prefix = next(p["original_source_prefix_px"] for p in core["all_adjacent_source_prefixes"]
+                      if tuple(p["source_graph_port"]) == incoming)
+        points = np.asarray(prefix, float)
+        length = float(np.linalg.norm(np.diff(points, axis=0), axis=1).sum())
+        radial = np.linalg.norm(points - center, axis=1)
+        if (length < POLICY["shared_port_minimum_external_prefix_px"]
+                or radial[-1] - radial[0] < POLICY["shared_port_minimum_external_prefix_px"] / 2
+                or radial.min() < radius - PATH_POLICY["single_arc_radial_error_px"]):
+            return None
+        outside = [p for p in prefix if p not in core["source_core_points_px"]]
+        identities.append({"object_id": obj["id"], "endpoint_number": end,
+                           "source_graph_node_id": nid, "incoming_source_graph_port": list(incoming),
+                           "source_round_id": context.graph.nodes[nid]["terminal"]["round_id"],
+                           "source_prefix_px": prefix, "outside_core_source_prefix_px": outside,
+                           "source_prefix_length_px": length,
+                           "native_original_geometry_sha256": _digest(obj["geometry"]),
+                           "original_endpoint_px": row["original_endpoint_px"],
+                           "restored_endpoint_px": row["restored_endpoint_px"]})
+    if len({r["source_graph_node_id"] for r in identities}) != 1 or len({r["source_round_id"] for r in identities}) != 1:
+        return None
+    for i, a in enumerate(identities):
+        for b in identities[i + 1:]:
+            if set(map(tuple, a["outside_core_source_prefix_px"])) & set(map(tuple, b["outside_core_source_prefix_px"])):
+                return None
+            if _segments_conflict(a["original_endpoint_px"], a["restored_endpoint_px"], b["original_endpoint_px"], b["restored_endpoint_px"], allow_common_circle_end=True):
+                return None
+            for tail, other in ((a, b), (b, a)):
+                obj = by_id[other["object_id"]]
+                dense = _dense_geometry(obj["geometry"], step=0.25)
+                if other["endpoint_number"]:
+                    dense = dense[::-1]
+                span = np.r_[0.0, np.linalg.norm(np.diff(dense, axis=0), axis=1).cumsum()]
+                dense = dense[span <= POLICY["shared_port_minimum_external_prefix_px"]]
+                if any(_segments_conflict(tail["original_endpoint_px"], tail["restored_endpoint_px"], c, d)
+                       for c, d in zip(dense, dense[1:])):
+                    return None
+    return {"schema": "coarse-circle-port-independent-source-arrivals-v1", "circle_id": marker["id"],
+            "observed_port_index": rows[0]["observed_port_index"], "licensed_structure_path_ids": sorted(licensed),
+            "independent_arrivals": identities, "all_competing_eligible_arrivals_checked": True,
+            "original_graph_rebuilt": True, "distinct_external_source_prefixes": True,
+            "native_extensions_have_no_positive_overlap_or_interior_crossing": True,
+            "external_paths_remain_separate_native_objects": True}
 
 
 def _observed_core_target(gray, roi, obj, end, endpoint, marker, replay):
@@ -472,6 +632,7 @@ def restore_circle_endpoint_contacts(gray, roi, objects, *, source_graph=None):
     circles = [obj for obj in originals if obj.get("kind") in ("CIRCLE", "CIRCULAR_MARKER")
                and verify_circle_source_evidence(gray, roi, obj).get("pass") is True]
     core_replay = _TerminalCoreReplay(gray, roi, source_graph)
+    by_id = {obj["id"]: obj for obj in originals}
     decisions = []
     for obj in originals:
         for end, endpoint, direction in _ends(obj):
@@ -480,15 +641,33 @@ def restore_circle_endpoint_contacts(gray, roi, objects, *, source_graph=None):
                 if row:
                     decisions.append(row)
     accepted = [row for row in decisions if row["accepted"]]
+    shared_groups = {}
     for row in accepted:
         same_end = [r for r in accepted if (r["object_id"], r["endpoint_number"]) == (row["object_id"], row["endpoint_number"])]
         same_port = [r for r in accepted if (r["circle_id"], r["observed_port_index"]) == (row["circle_id"], row["observed_port_index"])]
-        if len(same_end) != 1 or len(same_port) != 1:
+        if len(same_end) != 1:
             row.update(accepted=False, reason="CONTACT_HAS_AMBIGUOUS_EXISTING_END_OR_CIRCLE_PORT")
+        elif len(same_port) > 1:
+            key = (row["circle_id"], row["observed_port_index"])
+            if key not in shared_groups:
+                shared_groups[key] = _shared_port_decomposition(gray, same_port, by_id, by_id[row["circle_id"]], core_replay)
+            proof = shared_groups[key]
+            if proof is None:
+                row.update(accepted=False, reason="CONTACT_HAS_AMBIGUOUS_EXISTING_END_OR_CIRCLE_PORT")
+            else:
+                row["shared_source_port_decomposition"] = proof
     replacements, changes = [], []
     for obj in originals:
         ends = [row for row in decisions if row["accepted"] and row["object_id"] == obj["id"]]
         if not ends:
+            continue
+        previous = next(item for item in objects if item["id"] == obj["id"]).get("source_evidence", {}).get(FIELD, {})
+        previous_ends = {item["endpoint_number"] for item in previous.get("ends", [])}
+        if not previous_ends <= {item["endpoint_number"] for item in ends}:
+            # A later partial re-evaluation must not silently roll back a
+            # previously source-proved end when replacing the same whole path.
+            for row in ends:
+                row.update(accepted=False, reason="EXISTING_VERIFIED_ENDPOINT_SET_MUST_BE_RETAINED")
             continue
         if (obj["kind"] == "CONNECTION_PATH"
                 and len(obj["geometry"]["points"]) + len(ends) > _native_vertex_limit(gray, obj, len(ends))):
@@ -554,15 +733,23 @@ def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None, *,
             raise ValueError("CIRCLE_CONTACT_TARGET_SOURCE_NOT_VERIFIED")
         end = next((item for item in _ends(original) if item[0] == claimed["endpoint_number"]), None)
         replay = _offer(gray, roi, original, *end, marker, core_replay) if end else None
-        if not replay or not replay["accepted"] or _digest(replay) != _digest(claimed):
+        original_claim = {k: v for k, v in claimed.items() if k != "shared_source_port_decomposition"}
+        if not replay or not replay["accepted"] or _digest(replay) != _digest(original_claim):
             raise ValueError("CIRCLE_CONTACT_RAW_ENDPOINT_PROOF_DOES_NOT_REPLAY")
+        competing = [replay]
         for other in by_id.values():
             for n, endpoint, direction in _ends(other):
                 if (other["id"], n) == (obj["id"], claimed["endpoint_number"]):
                     continue
                 offer = _offer(gray, roi, other, n, endpoint, direction, marker, core_replay)
                 if offer and offer["accepted"] and offer["observed_port_index"] == claimed["observed_port_index"]:
-                    raise ValueError("CIRCLE_CONTACT_PORT_HAS_ANOTHER_ELIGIBLE_END")
+                    competing.append(offer)
+        if len(competing) > 1:
+            observed = _shared_port_decomposition(gray, competing, by_id, marker, core_replay)
+            if observed is None or _digest(observed) != _digest(claimed.get("shared_source_port_decomposition")):
+                raise ValueError("CIRCLE_CONTACT_PORT_HAS_ANOTHER_ELIGIBLE_END")
+        elif claimed.get("shared_source_port_decomposition"):
+            raise ValueError("CIRCLE_CONTACT_SHARED_PORT_OWNERSHIP_CHANGED")
         for other in by_id.values():
             if other["id"] == marker["id"] or other["kind"] not in ("CIRCLE", "CIRCULAR_MARKER"):
                 continue
