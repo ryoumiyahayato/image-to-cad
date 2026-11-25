@@ -56,13 +56,27 @@ function Assert-NoReparsePoint([string] $Path) {
     }
 }
 
+function Get-FileSha256([string] $Path) {
+    # The launcher uses inbox Windows PowerShell. Do not depend on module
+    # discovery inherited from PowerShell 7 or another parent process.
+    $stream = [IO.File]::OpenRead($Path)
+    $algorithm = $null
+    try {
+        $algorithm = [Security.Cryptography.SHA256]::Create()
+        return [BitConverter]::ToString($algorithm.ComputeHash($stream)).Replace('-', '').ToLowerInvariant()
+    } finally {
+        if ($null -ne $algorithm) { $algorithm.Dispose() }
+        $stream.Dispose()
+    }
+}
+
 function Assert-File([string] $Path, [long] $Bytes, [string] $Hash, [string] $Code) {
     if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
         Stop-Restore $Code ('文件不存在：' + [IO.Path]::GetFileName($Path))
     }
     Assert-NoReparsePoint $Path
     if ((Get-Item -LiteralPath $Path).Length -ne $Bytes -or
-        (Get-FileHash -LiteralPath $Path -Algorithm SHA256).Hash.ToLowerInvariant() -cne $Hash) {
+        (Get-FileSha256 $Path) -cne $Hash) {
         Stop-Restore $Code ('文件不完整或内容不同，原文件已保留：' + [IO.Path]::GetFileName($Path))
     }
 }

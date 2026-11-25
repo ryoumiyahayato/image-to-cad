@@ -184,9 +184,13 @@ def _resources(required: list[dict], parent: Path, create=False) -> list[dict]:
     resources = []
     for item in required:
         name, font = item["style"].upper(), item["font"].replace("\\", "/").split("/")[-1]
-        if name == "I2CAD_TEXT" and font.casefold() == "dejavusans.ttf":
+        # LibreCAD 2.2.1.6 writeTextstyles() writes the style name back into
+        # STYLE.font on an ordinary save. Accept only these known aliases so
+        # the same entry can reopen a user's edited copy. Both forms still
+        # run the identical pinned source, license and glyph checks below.
+        if name == "I2CAD_TEXT" and font.casefold() in {"dejavusans.ttf", "i2cad_text"}:
             resource = _native_resource(item, parent, create)
-        elif name == "I2CAD_SOURCE_ROW" and font.casefold() == "osifont-cad-metrics.ttf":
+        elif name == "I2CAD_SOURCE_ROW" and font.casefold() in {"osifont-cad-metrics.ttf", "i2cad_source_row"}:
             resource = _row_resource(item, parent)
         else:
             raise PreparationError("UNSUPPORTED_TEXT_STYLE", "此图有尚未绑定配套资源的文字样式，无法保证字体正确。",

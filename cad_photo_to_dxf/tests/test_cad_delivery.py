@@ -2,6 +2,7 @@
 
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -173,3 +174,68 @@ def test_unknown_source_font_is_not_replaced_by_bundle(tmp_path):
     (tmp_path / "DejaVuSans.ttf").write_bytes(b"different file with same name")
     with pytest.raises(service.PreparationError, match="NATIVE_FONT_SOURCE_MISMATCH"):
         service._native_resource({"characters": "ABC"}, tmp_path, False)
+
+
+def test_librecad_saved_style_names_reopen_with_same_pinned_resources(tmp_path, monkeypatch):
+    """Exercise real resources with the STYLE table written by LibreCAD.
+
+    This is a file-level regression, not a claim of a new GUI save test.
+    Windows CI prepares both fonts before running this test; local runs may
+    select the matching result folder through the existing source override.
+    """
+    configured = os.environ.get("I2CAD_NATIVE_FONT_TEST_SOURCE")
+    font_directory = (
+        Path(configured).parent if configured
+        else Path(__file__).resolve().parents[1] / "resources" / "fonts"
+    )
+    required_assets = ("DejaVuSans.ttf", "osifont-cad-metrics.ttf", "I2CAD_SOURCE_ROW.lff")
+    if not all((font_directory / filename).is_file() for filename in required_assets):
+        pytest.skip("Prepare both pinned fonts before the actual saved-style resource check")
+    monkeypatch.setattr(service, "_bundle_fonts", lambda: font_directory)
+    monkeypatch.setattr(service, "_cache_dir", lambda: tmp_path / "cache")
+    document = ezdxf.new()
+    for style, source in (("I2CAD_TEXT", "DejaVuSans.ttf"),
+                          ("I2CAD_SOURCE_ROW", "osifont-cad-metrics.ttf")):
+        document.styles.new(style, dxfattribs={"font": source})
+        document.modelspace().add_text("TEST-A7,03", dxfattribs={"style": style, "height": 3})
+    result = tmp_path / "edited-copy.dxf"
+    document.saveas(result)
+    original_resources = service._resources(service._drawing_fonts(result), font_directory)
+
+    # The official writer assigns ts.name=sty and ts.font=sty for used styles.
+    for style in ("I2CAD_TEXT", "I2CAD_SOURCE_ROW"):
+        document.styles.get(style).dxf.font = style
+    document.saveas(result)
+    before = result.read_bytes()
+    saved_resources = service._resources(service._drawing_fonts(result), font_directory)
+    assert saved_resources == original_resources
+    assert result.read_bytes() == before
+    assert not (tmp_path / "cache").exists()
+
+    for entity in document.modelspace().query("TEXT"):
+        entity.dxf.text = "TEST-\U0010ffff"
+    document.saveas(result)
+    for required in service._drawing_fonts(result):
+        with pytest.raises(service.PreparationError, match="GLYPHS_UNAVAILABLE"):
+            service._resources([required], font_directory)
+
+
+@pytest.mark.parametrize("style, source, expected", [
+    ("I2CAD_TEXT", "DejaVuSans.ttf", "NATIVE_FONT_SOURCE_MISMATCH"),
+    ("I2CAD_SOURCE_ROW", "osifont-cad-metrics.ttf", "FONT_RESOURCE_MISMATCH"),
+])
+def test_saved_style_alias_does_not_bypass_source_identity(tmp_path, style, source, expected):
+    (tmp_path / source).write_bytes(b"Different source font; do not accept the alias alone")
+    with pytest.raises(service.PreparationError, match=expected):
+        service._resources([{"style": style, "font": style, "characters": "TEST-A7,03", "entities": 1}], tmp_path)
+
+
+@pytest.mark.parametrize("style, font", [
+    ("I2CAD_TEXT", "I2CAD_SOURCE_ROW"),
+    ("I2CAD_SOURCE_ROW", "I2CAD_TEXT"),
+    ("I2CAD_TEXT", "unknown.ttf"),
+    ("OTHER", "I2CAD_TEXT"),
+])
+def test_saved_style_support_rejects_unbound_font_combinations(tmp_path, style, font):
+    with pytest.raises(service.PreparationError, match="UNSUPPORTED_TEXT_STYLE"):
+        service._resources([{"style": style, "font": font, "characters": "A", "entities": 1}], tmp_path)
