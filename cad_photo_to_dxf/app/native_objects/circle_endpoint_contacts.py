@@ -14,7 +14,7 @@ import math
 import numpy as np
 
 from .circular_markers import verify_circle_source_evidence
-from .connections import _dense_geometry
+from .connections import POLICY as PATH_POLICY, _dense_geometry
 from .contracts import plain
 
 
@@ -181,14 +181,31 @@ def _offer(gray, roi, obj, end, endpoint, direction, marker):
         return row
     projection = float(radial @ direction)
     discriminant = projection ** 2 - (float(radial @ radial) - radius ** 2)
-    if projection >= 0 or discriminant <= 0:
-        row["reason"] = "EXISTING_END_TANGENT_DOES_NOT_ENTER_THE_CIRCLE"
-        return row
-    length = -projection - math.sqrt(discriminant)
-    if not 0 < length <= bound:
-        row["reason"] = "TANGENT_EXTENSION_EXCEEDS_ONE_OBSERVED_STROKE_WIDTH_PLUS_EXISTING_FIT_ALLOWANCE"
-        return row
-    target = endpoint + length * direction
+    tangent_reason = None
+    length = -projection - math.sqrt(discriminant) if projection < 0 and discriminant > 0 else None
+    if length is None:
+        tangent_reason = "EXISTING_END_TANGENT_DOES_NOT_ENTER_THE_CIRCLE"
+    elif not 0 < length <= bound:
+        tangent_reason = "TANGENT_EXTENSION_EXCEEDS_ONE_OBSERVED_STROKE_WIDTH_PLUS_EXISTING_FIT_ALLOWANCE"
+    if tangent_reason:
+        # A source skeleton may stop on the outside of a rounded junction.
+        # Its final native chord can then be oblique to the ring even though
+        # one short bent tail lies wholly inside the observed ink.  Only a
+        # polyline can own that bend: LINEs keep their original axis.  The
+        # unchanged length, unique-port and exact black-cell tests below are
+        # still required; proximity alone never licenses this fallback.
+        if obj["kind"] != "CONNECTION_PATH" or projection >= 0:
+            row["reason"] = tangent_reason
+            return row
+        target = center + radial * (radius / np.linalg.norm(radial))
+        length = float(np.linalg.norm(target - endpoint))
+        if not 0 < length <= bound:
+            row["reason"] = tangent_reason
+            return row
+        row.update(endpoint_extension_shape="BOUNDED_SOURCE_INK_POLYLINE_TERMINAL_BEND",
+                   original_tangent_rejection=tangent_reason)
+    else:
+        target = endpoint + length * direction
     if not (roi[0] <= target[0] < roi[2] and roi[1] <= target[1] < roi[3]):
         row["reason"] = "CONTACT_OUTSIDE_CURRENT_ROI"
         return row
@@ -242,6 +259,44 @@ def _apply_geometry(obj, ends):
     return result
 
 
+def _native_vertex_limit(gray, obj, additional_vertices):
+    """Keep each original path producer's existing, source-proved budget.
+
+    Text-contact paths already have a separate representation policy.  A
+    field name alone cannot select that larger budget: the whole original
+    path, its crop identity and its native representation must still agree.
+    The final text-contact audit independently replays its complete plan.
+    """
+    ordinary_limit = PATH_POLICY["maximum_control_vertices"]
+    if len(obj["geometry"]["points"]) + additional_vertices <= ordinary_limit:
+        return ordinary_limit
+    evidence = obj.get("source_evidence")
+    if not isinstance(evidence, dict) or not evidence.get("text_contact_path"):
+        return ordinary_limit
+    from .text_contact_adoption import EVIDENCE_SCHEMA, _path_source_checks, digest
+    from .text_contact_geometry import POLICY as CONTACT_POLICY
+
+    try:
+        proof = evidence["text_contact_path"]
+        path = proof["path"]
+        if (proof.get("schema") != EVIDENCE_SCHEMA
+                or proof.get("path_sha256") != digest(path)
+                or evidence.get("source_pixels_modified") is not False
+                or evidence.get("source_path_points") != path["source_path_px"]
+                or obj["geometry"] != path["representation"]):
+            return ordinary_limit
+        x0, y0, x1, y1 = evidence["original_source_crop_xyxy_px"]
+        if (not all(isinstance(v, int) for v in (x0, y0, x1, y1))
+                or not (0 <= x0 < x1 <= gray.shape[1] and 0 <= y0 < y1 <= gray.shape[0])
+                or hashlib.sha256(np.ascontiguousarray(gray[y0:y1, x0:x1]).tobytes()).hexdigest()
+                != evidence["original_source_crop_array_sha256"]
+                or not _path_source_checks(gray, evidence, path)["pass"]):
+            return ordinary_limit
+        return CONTACT_POLICY["maximum_control_vertices"]
+    except (KeyError, TypeError, ValueError, IndexError):
+        return ordinary_limit
+
+
 def restore_circle_endpoint_contacts(gray, roi, objects):
     """Return independently edited replacements; never mutate caller objects."""
     originals = [_original(obj) for obj in objects]
@@ -267,7 +322,8 @@ def restore_circle_endpoint_contacts(gray, roi, objects):
         ends = [row for row in decisions if row["accepted"] and row["object_id"] == obj["id"]]
         if not ends:
             continue
-        if obj["kind"] == "CONNECTION_PATH" and len(obj["geometry"]["points"]) + len(ends) > 48:
+        if (obj["kind"] == "CONNECTION_PATH"
+                and len(obj["geometry"]["points"]) + len(ends) > _native_vertex_limit(gray, obj, len(ends))):
             for row in ends:
                 row.update(accepted=False, reason="EXISTING_NATIVE_VERTEX_BUDGET_MUST_REMAIN_UNCHANGED")
             continue
@@ -317,6 +373,9 @@ def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None):
     ends = certificate["ends"]
     if not 1 <= len(ends) <= 2 or len({r["endpoint_number"] for r in ends}) != len(ends):
         raise ValueError("CIRCLE_CONTACT_INVALID_ENDPOINT_SET")
+    if (original["kind"] == "CONNECTION_PATH"
+            and len(original["geometry"]["points"]) + len(ends) > _native_vertex_limit(gray, original, len(ends))):
+        raise ValueError("CIRCLE_CONTACT_ORIGINAL_NATIVE_VERTEX_BUDGET_EXCEEDED")
     by_id = {item["id"]: _original(item) for item in objects}
     if len(by_id) != len(objects) or obj["id"] not in by_id:
         raise ValueError("CIRCLE_CONTACT_OBJECT_BINDING_NOT_UNIQUE")

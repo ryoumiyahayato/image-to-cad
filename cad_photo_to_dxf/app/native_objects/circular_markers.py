@@ -102,11 +102,90 @@ def _dense_circle(center, radius):
     return np.asarray(center) + radius * np.column_stack((np.cos(angle), np.sin(angle)))
 
 
+def _measure_paired_stroke_edges(component, seed, seed_radius):
+    """Measure the centre of a stroke when its inner edge is not a circle.
+
+    Scanner stair steps and varying pen width can make an otherwise supported
+    circular centreline fail a fit to the inner edge alone.  Each used ray must
+    enter and leave the same original-ink run.  Fit their midpoints, retaining
+    the existing radial-error, quadrant-coverage and full-source limits.  The
+    caller still verifies an exact closed white enclosure; this is no gap fill.
+    """
+    step = POLICY["radial_sample_step_px"]
+    distances = np.arange(max(0, seed_radius - 2), seed_radius * 1.6 + 3, step)
+    samples = (np.asarray(seed) + _RAYS[:, None] * distances[None, :, None]).reshape(-1, 2)
+    values = _sample(component, samples).reshape(len(_RAYS), -1)
+    ink = values >= 0.5
+    enters = np.argmax(ink, axis=1)
+    exits = ~ink & (np.arange(len(distances))[None, :] > enters[:, None])
+    leaves = np.argmax(exits, axis=1)
+    measured = ink.any(axis=1) & exits.any(axis=1) & (enters > 0)
+    if measured.sum() < 0.75 * len(_RAYS):
+        return None, "PAIRED_RING_EDGES_HAVE_TOO_FEW_COMPLETE_ORIGINAL_INK_RUNS"
+
+    def crossing(indices):
+        previous = np.maximum(indices - 1, 0)
+        before = values[np.arange(len(_RAYS)), previous]
+        after = values[np.arange(len(_RAYS)), indices]
+        fraction = np.divide(0.5 - before, after - before,
+                             out=np.zeros(len(_RAYS)), where=after != before)
+        return distances[previous] + step * fraction
+
+    inner, outer = crossing(enters), crossing(leaves)
+    middle_outer = np.median(outer[measured])
+    clean = measured & (np.abs(outer - middle_outer) <= max(1.2, 0.08 * seed_radius))
+    quadrants = clean.reshape(4, -1).sum(axis=1)
+    if (clean.mean() < POLICY["minimum_clean_outer_fraction"]
+            or min(quadrants) < len(_RAYS) / 8):
+        return None, "PAIRED_RING_EDGES_OBSCURED_BY_NEIGHBORS"
+    midpoint = (inner + outer) / 2
+    edge = _RAYS[clean] * midpoint[clean, None]
+    matrix = np.column_stack((2 * edge, np.ones(len(edge))))
+    dx, dy, intercept = np.linalg.lstsq(matrix, np.sum(edge * edge, axis=1), rcond=None)[0]
+    offset = np.asarray((dx, dy))
+    squared = intercept + offset @ offset
+    if squared <= 0 or np.linalg.norm(offset) > 1.5:
+        return None, "PAIRED_RING_CENTER_IS_NOT_BOUND_BY_THE_OBSERVED_SEED"
+    center, radius = np.asarray(seed) + offset, float(np.sqrt(squared))
+    error = np.abs(np.linalg.norm(edge - offset, axis=1) - radius)
+    p95, maximum = float(np.percentile(error, 95)), float(error.max())
+    if p95 > POLICY["inner_boundary_p95_px"] or maximum > POLICY["inner_boundary_max_px"]:
+        return None, "PAIRED_RING_CENTERLINE_NOT_CIRCULAR_WITHIN_NATIVE_FIT_LIMITS"
+    width = float(np.median((outer - inner)[clean]))
+    if not 1 <= width < (radius - width / 2) / 2:
+        return None, "RING_STROKE_WIDTH_NOT_SEPARABLE_FROM_FILLED_BODY"
+    dense = _dense_circle(center, radius)
+    center_ink = _sample(component, dense)
+    source_distance = _sample(cv2.distanceTransform(
+        np.uint8(~component), cv2.DIST_L2, cv2.DIST_MASK_PRECISE
+    ), dense)
+    if source_distance.max() > POLICY["maximum_centerline_source_distance_px"]:
+        return None, "FULL_CIRCLE_CENTERLINE_HAS_UNSUPPORTED_SOURCE_GAP"
+    return (center, radius, width, {
+        "measurement": "PAIRED_ORIGINAL_INK_STROKE_EDGES_V1",
+        "sampled_rays": len(_RAYS), "boundary_rays": int(clean.sum()),
+        "quadrant_rays": quadrants.tolist(), "sample_step_px": step,
+        "p95_radial_error_px": p95, "max_radial_error_px": maximum,
+        "p95_limit_px": POLICY["inner_boundary_p95_px"],
+        "max_limit_px": POLICY["inner_boundary_max_px"],
+        "radial_error_measured_on": "PAIRED_STROKE_CENTERLINE",
+        "clean_outer_rays": int(clean.sum()),
+        "dense_centerline_samples": len(dense),
+        "minimum_center_ink": float(center_ink.min()),
+        "maximum_centerline_source_distance_px": float(source_distance.max()),
+        "full_circle_source_fraction": float(np.mean(
+            source_distance <= POLICY["maximum_centerline_source_distance_px"])),
+        "source_pixels_modified": False,
+    }), None
+
+
 def _measure_ring(component, seed, seed_radius):
     """Reuse the established native radial fit without its legacy exporter."""
     fitted = _fit_boundary(np.uint8(component) * 255, *seed, seed_radius, _RAYS)
     if fitted is None:
-        return None, "INNER_BOUNDARY_NOT_CIRCULAR_WITHIN_NATIVE_FIT_LIMITS"
+        # Keep every successful legacy measurement unchanged.  The alternate
+        # fits the actual stroke centre, not an expanded inner-edge tolerance.
+        return _measure_paired_stroke_edges(component, seed, seed_radius)
     center, inner_radius, inner_metrics = fitted
     center = np.asarray(center)
     step = POLICY["radial_sample_step_px"]

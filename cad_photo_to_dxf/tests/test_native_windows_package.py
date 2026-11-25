@@ -16,10 +16,13 @@ from scripts import prepare_windows_native_runtime as setup
 from scripts.windows_native_smoke import (
     _checked_record,
     create_circular_fixture,
+    create_curve_end_boundary_fixture,
     entity_geometry,
+    inspect_circle_path_edit_isolation,
     inspect_circular_character_payloads,
     inspect_circular_fixture_source_gap,
     inspect_circular_members,
+    inspect_curve_end_fixture_source_gap,
 )
 
 
@@ -374,3 +377,106 @@ def test_circular_smoke_cannot_substitute_global_or_cached_recognition_calls(tmp
     pipeline = {"circular_marker_completion": summary, "cross_engine_text": {"actual_model_calls": 99}}
     with pytest.raises(AssertionError, match="real new Tesseract and model calls"):
         inspect_circular_character_payloads({}, {}, tmp_path, source, pipeline)
+
+
+def _saved_curve_end_checker_fixture(tmp_path):
+    """Artificial checker data only; ordinary CLI/EXE supplies real receipts."""
+    document, objects, cold = _saved_circular_checker_fixture(tmp_path)
+    mm = 25.4 / 200
+    circle = document.modelspace().query("CIRCLE")[0]
+    circle.dxf.radius = 22 * mm
+    boundary = next(row for row in objects["objects"] if row["kind"] == "CIRCLE")
+    boundary["source_evidence"].update(
+        radial_fit={"measurement": "PAIRED_ORIGINAL_INK_STROKE_EDGES_V1",
+                    "radial_error_measured_on": "PAIRED_STROKE_CENTERLINE",
+                    "source_pixels_modified": False, "full_circle_source_fraction": 1.0,
+                    "minimum_center_ink": 1.0, "clean_outer_rays": 90,
+                    "p95_radial_error_px": 0.3, "max_radial_error_px": 0.4,
+                    "checker_test_only": True},
+        ring_geometry={"stroke_width_px": 5.0},
+    )
+    contact, gap = list(document.modelspace().query("LINE"))[2:]
+    contact.dxf.start = (422 * mm, (480 - 330) * mm)
+    contact.dxf.end = (536 * mm, (480 - 300) * mm)
+    gap.dxf.end = (373 * mm, (480 - 330) * mm)
+    path = tmp_path / "curve-end-checker-only.dxf"
+    document.saveas(path)
+    return path, ezdxf.readfile(path), objects, cold
+
+
+def test_curve_end_fixture_really_triggers_paired_edges_and_keeps_source_gap(tmp_path):
+    import numpy as np
+    from PIL import Image
+    from app.native_objects.circular_markers import discover_circular_markers, verify_circle_source_evidence
+
+    font = Path(__file__).resolve().parents[1] / "resources/fonts/DejaVuSans.ttf"
+    old, source = tmp_path / "old.png", tmp_path / "curve-ends.png"
+    create_circular_fixture(old, font)
+    create_curve_end_boundary_fixture(source, font)
+    original_bytes = source.read_bytes()
+    create_curve_end_boundary_fixture(source, font)
+    assert source.read_bytes() == original_bytes
+    with Image.open(source) as image, Image.open(old) as previous:
+        gray = np.asarray(image.convert("L"))
+        assert image.crop((0, 0, 640, 280)).tobytes() == previous.crop((0, 0, 640, 280)).tobytes()
+        assert image.crop((0, 280, 280, 480)).tobytes() == previous.crop((0, 280, 280, 480)).tobytes()
+        assert image.getpixel((536, 300)) == 0
+    assert inspect_curve_end_fixture_source_gap(source)["original_white_columns"] == [374, 375]
+    report = discover_circular_markers(gray, [0, 0, 640, 480])
+    boundaries = [row for row in report["rows"] if row["geometry_accepted"]
+                  and row["source_evidence"]["radial_fit"].get("measurement") == "PAIRED_ORIGINAL_INK_STROKE_EDGES_V1"]
+    assert len(boundaries) == 1
+    boundary = boundaries[0]
+    assert boundary["geometry"]["center"] == pytest.approx([400, 330], abs=0.2)
+    assert boundary["geometry"]["radius_px"] == pytest.approx(22, abs=0.2)
+    assert verify_circle_source_evidence(gray, [0, 0, 640, 480], boundary)["pass"]
+    assert source.read_bytes() == original_bytes
+    with Image.open(source) as image:
+        damaged = image.copy()
+    damaged.putpixel((374, 330), 0)
+    damaged.save(source)
+    with pytest.raises(AssertionError, match="white source gap"):
+        inspect_curve_end_fixture_source_gap(source)
+
+
+def test_curve_end_saved_checker_and_actual_edit_save_reopen_isolation(tmp_path):
+    path, document, objects, cold = _saved_curve_end_checker_fixture(tmp_path)
+    result = inspect_circular_members(document, objects, cold, curve_end_boundaries=True)
+    assert result["paired_original_stroke_edge_fallback_executed"]
+    assert result["uncertain_inner_character_not_counted_as_complete"]
+    assert result["paired_edge_boundary_radius_px"] == pytest.approx(22)
+    assert result["protected_real_gap_line_checks"][0]["minimum_saved_geometry_gap_px"] == pytest.approx(5)
+    edits = inspect_circle_path_edit_isolation(
+        path, tmp_path / "edits", result["independent_marker_for_edit_id"],
+        result["independent_boundary_contact_path_id"],
+    )
+    assert edits["pass"] and edits["GUI_operations_claimed"] is False
+    assert [row["action"] for row in edits["checks"]] == ["move-marker", "delete-marker", "change-marker-text", "delete-path"]
+    assert all(row["unchanged_other_formal_objects"] == 6 for row in edits["checks"])
+
+
+@pytest.mark.parametrize("damage", ["missing-fallback", "circle-shift", "missing-contact-path",
+                                   "broken-contact", "bridged-gap", "duplicate-contact-path", "missing-saved-circle-sweep"])
+def test_curve_end_saved_checker_rejects_missing_boundary_path_gap_or_actual_audit(tmp_path, damage):
+    _, document, objects, cold = _saved_curve_end_checker_fixture(tmp_path)
+    boundary = next(row for row in objects["objects"] if row["kind"] == "CIRCLE")
+    lines = list(document.modelspace().query("LINE"))
+    mm = 25.4 / 200
+    if damage == "missing-fallback":
+        boundary["source_evidence"]["radial_fit"]["measurement"] = "INNER_CONTOUR_ONLY"
+    elif damage == "circle-shift":
+        document.modelspace().query("CIRCLE")[0].translate(mm, 0, 0)
+    elif damage == "missing-contact-path":
+        document.modelspace().delete_entity(lines[2])
+    elif damage == "broken-contact":
+        lines[2].dxf.start = (423 * mm, (480 - 330) * mm)
+    elif damage == "bridged-gap":
+        lines[3].dxf.end = (378 * mm, (480 - 330) * mm)
+    elif damage == "duplicate-contact-path":
+        document.modelspace().add_entity(lines[2].copy())
+    else:
+        cold["source_checks"] = [row for row in cold["source_checks"] if row["id"] != boundary["id"]]
+    path = tmp_path / "damaged-curve-end.dxf"
+    document.saveas(path)
+    with pytest.raises(AssertionError):
+        inspect_circular_members(ezdxf.readfile(path), objects, cold, curve_end_boundaries=True)

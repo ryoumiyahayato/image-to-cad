@@ -289,6 +289,75 @@ def _restore_text_contact_evidence(out, completion):
     save_json(destination, completion)
 
 
+def _finalize_circle_relations(gray, roi, objects, completion, out):
+    """Check the assembled external paths, including later text-contact paths.
+
+    Both source checks are idempotent and retain their original geometry
+    certificates.  Their order matters: a proved white gap must not be offered
+    to the contact restorer.  No character recognition is performed here.
+    """
+    from .circle_endpoint_contacts import restore_circle_endpoint_contacts
+    from .circle_white_gap_protection import protect_circle_white_gaps
+
+    result = copy.deepcopy(completion)
+    gaps = protect_circle_white_gaps(gray, roi, objects)
+    updates = {obj["id"]: obj for obj in gaps["replacements"]}
+    active = [updates.get(obj["id"], obj) for obj in objects]
+    contacts = restore_circle_endpoint_contacts(gray, roi, active)
+    updates = {obj["id"]: obj for obj in contacts["replacements"]}
+    active = [updates.get(obj["id"], obj) for obj in active]
+    pending = [row for row in contacts["decisions"] if not row["accepted"]]
+    pending += gaps["pending_relations"]
+    pending_ids = {row["circle_id"] for row in pending}
+    markers = {obj["id"]: obj for obj in result["objects"]}
+    for marker in markers.values():
+        marker["source_evidence"]["external_endpoint_contact_review"] = {
+            "status": "NEARBY_EXTERNAL_ENDPOINT_RELATION_PENDING" if marker["id"] in pending_ids else "NO_UNRESOLVED_OBSERVED_EXTERNAL_ENDPOINT",
+            "pending_contacts": [row for row in pending if row["circle_id"] == marker["id"]],
+            "complete_network_connectivity_claimed": False,
+            "pending_is_not_a_claim_that_source_pixels_should_be_connected": True,
+            "protected_source_white_gaps": [end for obj in gaps["replacements"]
+                for end in obj["source_evidence"]["circle_white_gap_protection"]["ends"]
+                if end["circle_id"] == marker["id"]],
+        }
+        if marker["kind"] == "CIRCULAR_MARKER":
+            marker["status"] = ("COMPLETE_CIRCULAR_COMPONENTS_EXTERNAL_CONTACT_PENDING"
+                                if marker["id"] in pending_ids else
+                                "COMPLETE_CIRCULAR_MARKER_PENDING_SAVED_AUDIT")
+    active = [markers.get(obj["id"], obj) for obj in active]
+    result["uncertainties"] = [row for row in result["uncertainties"]
+                                if row.get("reason") != "CIRCULAR_EXTERNAL_ENDPOINT_CONTACT_PENDING"]
+    result["uncertainties"].extend({
+        "id": row["circle_id"], "reason": "CIRCULAR_EXTERNAL_ENDPOINT_CONTACT_PENDING",
+        "external_object_id": row["object_id"], "endpoint_number": row["endpoint_number"],
+        "original_geometry_retained": True, "details": row,
+        "bbox_xyxy_px": markers[row["circle_id"]]["bbox_xyxy_px"],
+    } for row in pending if row["circle_id"] in markers)
+    for decision in result["decisions"]:
+        if decision.get("accepted"):
+            decision["external_endpoint_contact_status"] = "PENDING" if decision["id"] in pending_ids else "VERIFIED_OR_NO_OBSERVED_PENDING_END"
+            if decision["id"] in markers:
+                decision["status"] = markers[decision["id"]]["status"]
+    complete = sum(obj["kind"] == "CIRCULAR_MARKER" for obj in markers.values())
+    partial = sum(obj["kind"] == "CIRCLE" for obj in markers.values())
+    unresolved = sum(obj["kind"] == "CIRCULAR_MARKER" and obj["id"] in pending_ids
+                     for obj in markers.values())
+    result.update(external_endpoint_contacts=contacts, source_white_gap_protection=gaps,
+                  external_relations_checked_after_text_contact_assembly=True)
+    result["summary"].update(
+        new_complete_markers=complete - unresolved,
+        circle_text_compositions_with_external_contacts_pending=unresolved,
+        partial_compositions=partial + unresolved,
+        pending_positions=len({row["id"] for row in result["uncertainties"]}),
+        external_endpoint_contacts=contacts["summary"], source_white_gap_protection=gaps["summary"],
+        component_complete_markers_with_external_contact_pending=unresolved,
+        component_complete_markers_without_observed_external_contact_pending=complete - unresolved,
+        pending_external_contact_circle_ids=sorted(pending_ids),
+    )
+    save_json(Path(out) / "circular_markers.json", result)
+    return active, result
+
+
 def _completed_geometry_checkpoint(cache_dir, source_sha, roi, texts, gray, out):
     """Reuse fitted source lines, then reapply the current text responsibility.
 
@@ -1807,6 +1876,9 @@ def run_native_objects(
                 retired_contact_parts = set(text_contact_completion["retired_ids"])
                 objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]
                 objects += text_contact_completion["objects"]
+            objects, circular_markers = _finalize_circle_relations(
+                gray, roi, objects, circular_markers, out / "circular_markers",
+            )
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]

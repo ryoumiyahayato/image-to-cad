@@ -166,6 +166,51 @@ def test_far_observed_endpoint_is_reported_pending_without_increasing_adoption_l
     assert result["decisions"][0]["reason"] == "NEARBY_END_OUTSIDE_BOUNDED_CONTACT_RESTORATION_RANGE"
 
 
+def _oblique_source(*, gap=False):
+    gray = np.full((160, 180), 255, np.uint8)
+    cv2.circle(gray, (80, 80), 20, 0, 3)
+    cv2.line(gray, (75, 73), (75, 87), 0, 2)
+    cv2.line(gray, (75, 73), (85, 73), 0, 2)
+    cv2.line(gray, (75, 80), (82, 80), 0, 2)
+    first = (105, 80) if gap else (103, 80)
+    cv2.polylines(gray, [np.asarray([(100, 80), first, (112, 120)], np.int32)],
+                  False, 0, 3)
+    if gap:
+        gray[:, 103] = 255
+    return gray, _line(first=first, last=(112, 120))
+
+
+def test_oblique_polyline_terminal_bend_is_saved_without_changing_the_old_path(tmp_path):
+    gray, line = _oblique_source()
+    objects = [_circle(gray), line]
+    original = deepcopy(objects)
+    result, restored = _restore(gray, objects)
+    assert result["summary"]["restored_external_endpoints"] == 1
+    proof = restored[1]["source_evidence"][contacts.FIELD]["ends"][0]
+    assert proof["endpoint_extension_shape"] == "BOUNDED_SOURCE_INK_POLYLINE_TERMINAL_BEND"
+    assert proof["extension_length_px"] <= proof["maximum_extension_px"]
+    assert proof["every_intersected_source_pixel_is_black"]
+    assert restored[1]["geometry"]["points"][1:] == line["geometry"]["points"]
+    assert objects == original
+    path = tmp_path / "oblique-contact.dxf"
+    cad_io.export_objects(restored, path, ROI, DPI, hashlib.sha256(gray.tobytes()).hexdigest())
+    checks = contacts.cold_circle_endpoint_contacts(path, ezdxf.readfile(path), gray, ROI, DPI)
+    assert len(checks) == 1 and checks[0]["pass"], checks
+    assert _restore(gray, restored)[1] == restored
+
+
+def test_oblique_terminal_fallback_keeps_LINE_axis_and_real_white_gap():
+    gray, path = _oblique_source()
+    line = _line(kind="LINE", first=path["geometry"]["points"][0],
+                 last=path["geometry"]["points"][-1])
+    assert not _restore(gray, [_circle(gray), line])[0]["replacements"]
+    gray, path = _oblique_source(gap=True)
+    before = gray.copy()
+    result, restored = _restore(gray, [_circle(gray), path])
+    assert not result["replacements"]
+    assert restored[-1] == path and np.array_equal(gray, before)
+
+
 def test_existing_circle_overlap_is_preserved_without_trimming():
     gray, objects = _objects(line=_line(first=(99, 80), kind="LINE"))
     result, restored = _restore(gray, objects)
