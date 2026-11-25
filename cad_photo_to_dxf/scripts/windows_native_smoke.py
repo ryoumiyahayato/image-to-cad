@@ -999,7 +999,201 @@ def _passing_checks(value, description):
         raise AssertionError(description)
 
 
-def inspect_short_code_members(document, objects, cold, font_spec, companion: Path) -> dict:
+def _closed_source_segment_cells(start, end):
+    """Enumerate closed source pixel cells touched by a finite terminal segment."""
+    cells = []
+    delta = [end[axis] - start[axis] for axis in (0, 1)]
+    low = [math.ceil(min(start[axis], end[axis]) - 0.5) for axis in (0, 1)]
+    high = [math.floor(max(start[axis], end[axis]) + 0.5) for axis in (0, 1)]
+    for y in range(low[1], high[1] + 1):
+        for x in range(low[0], high[0] + 1):
+            enter, leave = 0.0, 1.0
+            for axis, coordinate in enumerate((x, y)):
+                if abs(delta[axis]) <= 1e-14:
+                    if not coordinate - 0.5 <= start[axis] <= coordinate + 0.5:
+                        leave = -1.0
+                        break
+                else:
+                    first, last = sorted(((coordinate - 0.5 - start[axis]) / delta[axis],
+                                          (coordinate + 0.5 - start[axis]) / delta[axis]))
+                    enter, leave = max(enter, first), min(leave, last)
+            if enter <= leave + 1e-12:
+                cells.append([x, y])
+    return cells
+
+
+def inspect_contact_path_vertices(document, objects, cold, entity, path_row, planned, source_path=None):
+    """Replay short straight end proofs while retaining the entire old path.
+
+    This standalone checker imports no hidden application code. Its original
+    1e-6 CAD precision is unchanged; other geometry mismatches still fail.
+    """
+    from copy import deepcopy
+
+    actual_points = _line_points(entity)
+    original_points = planned.get("points", [])
+    if (path_row.get("kind") != "CONNECTION_PATH" or entity.dxftype() != "LWPOLYLINE"
+            or planned.get("closed") is not False or len(original_points) < 2
+            or planned.get("bulges") != [0.0] * len(original_points)
+            or not actual_points or any(not all(math.isfinite(v) for v in point) for point in original_points + actual_points)):
+        raise AssertionError("Saved whole contact lead has no finite open source-plan representation")
+    evidence = path_row.get("source_evidence", {})
+    certificate = evidence.get("circle_endpoint_contacts")
+    expected = deepcopy(planned)
+    identity = native_identity(entity)
+    reports = []
+    if certificate is not None:
+        import numpy as np
+        from PIL import Image
+
+        policy = {
+            "version": "native-direct-circle-end-contact-v1", "source_threshold": 128,
+            "maximum_extension_stroke_widths": 1.0, "existing_native_fit_allowance_px": 0.85,
+            "absolute_extension_limit_px": 6.0, "candidate_search_stroke_widths": 2.0,
+            "existing_terminal_witness_length_px": 3.0, "endpoint_precision_px": 1e-6,
+            "source_contact_test": "EVERY_CLOSED_PIXEL_CELL_INTERSECTED_BY_THE_STRAIGHT_EXTENSION_IS_ORIGINAL_INK",
+            "source_morphology": "NONE", "existing_interior_overlap": "RETAIN_UNCHANGED",
+            "external_connection_owned_by_marker": False,
+        }
+        original_evidence = {key: value for key, value in evidence.items() if key != "circle_endpoint_contacts"}
+        if (not isinstance(certificate, dict) or certificate.get("schema") != policy["version"]
+                or certificate.get("policy") != policy or identity.get("circle_endpoint_contacts") is not True
+                or certificate.get("original_geometry") != planned
+                or certificate.get("original_geometry_sha256") != _json_digest(planned)
+                or certificate.get("original_source_evidence_sha256") != _json_digest(original_evidence)
+                or certificate.get("original_source_path_points_sha256") != _json_digest(original_evidence.get("source_path_points"))
+                or certificate.get("same_independent_object_id_retained") is not True
+                or certificate.get("polyline_old_vertices_and_bulges_retained") is not True
+                or certificate.get("existing_geometry_removed") is not False
+                or certificate.get("original_source_records_modified") is not False):
+            raise AssertionError("Contact endpoint certificate changed its policy or original geometry/source records")
+        if source_path is None or digest(Path(source_path)) != objects.get("source_sha256"):
+            raise AssertionError("Contact endpoint replay requires the exact original source PNG")
+        with Image.open(source_path) as image:
+            gray = np.asarray(image.convert("L"))
+
+        def crop_digest(box):
+            if (not isinstance(box, list) or len(box) != 4 or any(type(v) is not int for v in box)
+                    or not (0 <= box[0] < box[2] <= gray.shape[1] and 0 <= box[1] < box[3] <= gray.shape[0])):
+                raise AssertionError("Contact endpoint crop is outside the original source")
+            return hashlib.sha256(np.ascontiguousarray(gray[box[1]:box[3], box[0]:box[2]]).tobytes()).hexdigest()
+
+        ends = certificate.get("ends", [])
+        if (not 1 <= len(ends) <= 2 or any(row.get("endpoint_number") not in (0, 1) for row in ends)
+                or len({row["endpoint_number"] for row in ends}) != len(ends)):
+            raise AssertionError("Contact endpoint proof has an invalid or repeated terminal")
+        ledger = {row["id"]: row for row in objects["objects"]}
+        saved = {native_identity(value)["id"]: value for value in document.modelspace() if value.dxf.layer != "REVIEW"}
+        checks = [row for row in cold.get("circle_endpoint_contact_checks", []) if row.get("id") == path_row["id"]]
+        if (len(checks) != 1 or checks[0].get("type") != "CIRCLE_ENDPOINT_CONTACT"
+                or checks[0].get("restored_endpoints") != len(ends)
+                or any(checks[0].get(key) is not True for key in ("pass", "actual_saved_geometry_checked", "original_source_records_preserved", "external_entity_is_independent"))):
+            raise AssertionError("Contact endpoint lacks its actual independent saved-source cold check")
+        for end in sorted(ends, key=lambda row: row["endpoint_number"]):
+            number = end["endpoint_number"]
+            points = original_points if number == 0 else list(reversed(original_points))
+            endpoint, neighbor = points[:2]
+            span = math.dist(endpoint, neighbor)
+            if span <= 0:
+                raise AssertionError("Contact endpoint has no original outward direction")
+            direction = [(endpoint[axis] - neighbor[axis]) / span for axis in (0, 1)]
+            marker = ledger.get(end.get("circle_id"), {})
+            saved_marker = saved.get(end.get("circle_id"))
+            if marker.get("kind") not in ("CIRCLE", "CIRCULAR_MARKER") or saved_marker is None:
+                raise AssertionError("Contact endpoint is not bound to a separately saved circle")
+            geometry = marker["geometry"] if marker["kind"] == "CIRCLE" else marker["geometry"]["circle_geometry"]
+            members = [saved_marker] if saved_marker.dxftype() == "CIRCLE" else list(saved_marker.virtual_entities())
+            circles = [member for member in members if member.dxftype() == "CIRCLE"]
+            if len(circles) != 1:
+                raise AssertionError("Contact endpoint target lost its actual single CIRCLE")
+            center, radius = geometry["center"], float(geometry["radius_px"])
+            source = marker["source_evidence"]
+            if (not _near_point(_pixel_point(circles[0].dxf.center), center, 1e-6)
+                    or abs(float(circles[0].dxf.radius) * 200 / 25.4 - radius) > 1e-6
+                    or end.get("circle_geometry") != geometry
+                    or end.get("circle_source_crop_sha256") != source.get("crop_sha256")
+                    or crop_digest(source.get("crop_bbox_xyxy_px")) != source.get("crop_sha256")):
+                raise AssertionError("Contact endpoint target differs from its actual circle or original source crop")
+            width = float(source["ring_geometry"]["stroke_width_px"])
+            bound = min(6.0, width + 0.85)
+            radial = [endpoint[axis] - center[axis] for axis in (0, 1)]
+            projection = sum(a * b for a, b in zip(radial, direction))
+            discriminant = projection ** 2 - (sum(value * value for value in radial) - radius ** 2)
+            if projection >= 0 or discriminant <= 0:
+                raise AssertionError("Contact endpoint straight terminal does not enter the actual circle")
+            length = -projection - math.sqrt(discriminant)
+            target = [endpoint[axis] + length * direction[axis] for axis in (0, 1)]
+            if (not 0 < length <= bound or math.dist(endpoint, center) - radius <= 1e-6
+                    or end.get("object_id") != path_row["id"] or end.get("accepted") is not True
+                    or end.get("reason") != "DIRECT_ORIGINAL_INK_CONTACT_TO_MEASURED_CIRCLE"
+                    or end.get("endpoint_extension_shape") is not None
+                    or not _near_point(end.get("original_endpoint_px", (math.inf, math.inf)), endpoint, 1e-7)
+                    or not _near_point(end.get("endpoint_direction", (math.inf, math.inf)), direction, 1e-7)
+                    or not _near_point(end.get("restored_endpoint_px", (math.inf, math.inf)), target, 1e-7)
+                    or abs(end.get("extension_length_px", math.inf) - length) > 1e-7
+                    or abs(end.get("maximum_extension_px", math.inf) - bound) > 1e-7
+                    or abs(end.get("original_radial_gap_px", math.inf) - (math.dist(endpoint, center) - radius)) > 1e-7
+                    or any(end.get(key) is not False for key in ("source_pixels_modified", "source_path_points_modified", "external_connection_in_marker_block"))
+                    or end.get("every_intersected_source_pixel_is_black") is not True):
+                raise AssertionError("Contact endpoint's short measured-circle extension does not replay")
+            direct = _closed_source_segment_cells(endpoint, end["restored_endpoint_px"])
+            witness, remaining = set(), 3.0
+            for start, finish in zip(points, points[1:]):
+                distance = math.dist(start, finish)
+                if distance == 0:
+                    continue
+                stop = [start[axis] + (finish[axis] - start[axis]) * min(1.0, remaining / distance) for axis in (0, 1)]
+                witness.update(map(tuple, _closed_source_segment_cells(start, stop)))
+                remaining -= min(remaining, distance)
+                if remaining <= 0:
+                    break
+            witness = [list(point) for point in sorted(witness, key=lambda point: (point[1], point[0]))]
+            cells = direct + witness
+            if (not direct or not witness or end.get("direct_segment_cells_xy") != direct
+                    or end.get("existing_terminal_witness_cells_xy") != witness
+                    or any(not (0 <= x < gray.shape[1] and 0 <= y < gray.shape[0] and gray[y, x] < 128) for x, y in cells)):
+                raise AssertionError("Contact endpoint crosses an original white cell or changed its finite pixel proof")
+            box = [min(point[0] for point in cells), min(point[1] for point in cells),
+                   max(point[0] for point in cells) + 1, max(point[1] for point in cells) + 1]
+            if end.get("source_crop_xyxy_px") != box or end.get("source_crop_sha256") != crop_digest(box):
+                raise AssertionError("Contact endpoint source pixels do not match their bound original crop")
+            dense = []
+            for start, finish in zip(points, points[1:]):
+                dense.extend(np.linspace(start, finish, max(2, math.ceil(math.dist(start, finish) / 0.25) + 1))[:-1].tolist())
+            dense.append(points[-1])
+            dense = np.asarray(dense)
+            travelled = np.r_[0.0, np.cumsum(np.linalg.norm(np.diff(dense, axis=0), axis=1))]
+            pixels = np.unique(np.rint(dense[travelled <= max(3.0, 2 * width + 2)]).astype(int), axis=0)
+            ports = [index for index, port in enumerate(source["contact_ports"])
+                     if sum(any(y == row and left <= x < right for row, left, right in port["source_runs_y_x0_x1"]) for x, y in pixels) >= 2]
+            if ports != [end.get("observed_port_index")]:
+                raise AssertionError("Contact endpoint does not replay exactly one originally observed circle port")
+            if number == 0:
+                expected["points"].insert(0, end["restored_endpoint_px"])
+                expected["bulges"].insert(0, 0.0)
+            else:
+                expected["points"].append(end["restored_endpoint_px"])
+                expected["bulges"].append(0.0)
+            saved_end = actual_points[0 if number == 0 else -1]
+            if abs(math.dist(saved_end, _pixel_point(circles[0].dxf.center)) - float(circles[0].dxf.radius) * 200 / 25.4) > 1e-6:
+                raise AssertionError("Actual saved contact endpoint does not touch its actual independent CIRCLE")
+            reports.append({"endpoint_number": number, "circle_id": end["circle_id"],
+                            "extension_length_px": length, "original_black_cells_replayed": len(set(map(tuple, cells))),
+                            "actual_saved_circle_contact_checked": True})
+        if certificate.get("restored_geometry_sha256") != _json_digest(expected):
+            raise AssertionError("Contact endpoint certificate changed the restored whole-path geometry")
+    elif identity.get("circle_endpoint_contacts"):
+        raise AssertionError("Actual contact endpoint flag has no replayable certificate")
+    if (path_row.get("geometry") != expected or len(expected["points"]) != len(actual_points)
+            or any(math.dist(a, b) > 1e-6 for a, b in zip(expected["points"], actual_points))):
+        raise AssertionError("Saved whole short-code lead differs from its source-bound actual vertices")
+    return {"original_vertices_continuously_preserved": len(original_points),
+            "original_bulges_unchanged": True, "added_terminal_segments": len(reports),
+            "endpoint_certificate_replayed": bool(reports), "source_pixels_modified": False,
+            "saved_vertex_tolerance_px": 1e-6, "terminal_checks": reports}
+
+
+def inspect_short_code_members(document, objects, cold, font_spec, companion: Path, *, source_path=None) -> dict:
     """Require a complete saved code and actual source-constrained font layout.
 
     This is a post-save checker, not an adoption path. A candidate, a bundled
@@ -1200,12 +1394,10 @@ def inspect_short_code_members(document, objects, cold, font_spec, companion: Pa
     )):
         raise AssertionError("Saved short-code lead audit omitted an actual source/geometry binding")
     planned = path_plan[0].get("representation", {})
-    actual_points = line_results[-1]["saved_points_px"]
-    if (path_row.get("kind") != "CONNECTION_PATH" or path_row.get("geometry") != planned
-            or planned.get("closed") is not False or planned.get("bulges") != [0.0] * len(actual_points)
-            or len(planned.get("points", [])) != len(actual_points)
-            or any(math.dist(a, b) > 1e-6 for a, b in zip(planned.get("points", []), actual_points))):
-        raise AssertionError("Saved whole short-code lead differs from its source-bound actual vertices")
+    path_geometry_check = inspect_contact_path_vertices(
+        document, objects, cold, next(entity for entity in paths if native_identity(entity)["id"] == path_id),
+        path_row, planned, source_path,
+    )
     for key in ("TEXT_CONTACT_MANIFEST", "TEXT_CONTACT_RETIREMENT"):
         _passing_checks(contact_checks[key], "Saved short-code contact binding or whole-retirement check was omitted")
     _passing_checks(path_check.get("original_source_plan_replay", {}), "Saved short-code contact plan was not replayed")
@@ -1223,13 +1415,14 @@ def inspect_short_code_members(document, objects, cold, font_spec, companion: Pa
     return {"schema": "windows-saved-source-row-short-code-v1", "complete_label_count": 1,
             "text_id": text_id, "text": expected_text, "circle_id": circle_id,
             "independent_contact_path_id": path_id, "independent_line_checks": line_results,
+            "whole_path_and_terminal_source_check": path_geometry_check,
             "default_layout_was_actually_rejected": True, "new_source_component_layout_required": True,
             "actual_source_component_layout": component, "actual_round_white_gap": rounds,
             "export_font": exported_fonts[0], "font_shape_pixel_equality_required": False,
             "all_formal_objects_accounted_for": True, "GUI_operations_claimed": False}
 
 
-def inspect_short_code_payloads(objects, cold, evidence_root, source_path, source_font_path, pipeline_report):
+def inspect_short_code_payloads(objects, cold, evidence_root, source_path, source_font_path, pipeline_report, *, document=None):
     """Check original overlap/gap plus actual raw recognition, never infer text."""
     import cv2
     import numpy as np
@@ -1252,10 +1445,21 @@ def inspect_short_code_payloads(objects, cold, evidence_root, source_path, sourc
         raise AssertionError("Fifth original input lost its real line contact or proved ring white gap")
     target = next(row for row in objects["objects"] if row.get("source_evidence", {}).get("text_contact_path"))
     proof = target["source_evidence"]["text_contact_path"]
+    original_target = target
+    if "circle_endpoint_contacts" in target["source_evidence"]:
+        from copy import deepcopy
+
+        if document is None:
+            raise AssertionError("Original contact manifest binding requires the actual saved terminal geometry")
+        entity = next(value for value in document.modelspace() if value.dxf.layer != "REVIEW" and native_identity(value)["id"] == target["id"])
+        inspect_contact_path_vertices(document, objects, cold, entity, target, proof["path"]["representation"], source_path)
+        original_target = deepcopy(target)
+        certificate = original_target["source_evidence"].pop("circle_endpoint_contacts")
+        original_target["geometry"] = certificate["original_geometry"]
     manifest_path = evidence_root / "text_contact/adoption.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     if (manifest.get("source_sha256") != digest(source_path) or manifest.get("source_pixels_modified") is not False
-            or manifest.get("objects") != [target]
+            or manifest.get("objects") != [original_target]
             or _json_digest(manifest.get("geometry_plans", {}).get(proof["plan_sha256"])) != proof["plan_sha256"]):
         raise AssertionError("Short-code lead's actual adoption file is not bound to the original PNG")
     report = pipeline_report.get("text_contact_completion", {})
@@ -1906,9 +2110,11 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
     if fixture_kind == "short-codes":
         if source_row_font_spec is None or source_row_fixture_font is None:
             raise AssertionError("Short-code saved check requires its verified packaged registry and original fixture font")
-        short_code_result = inspect_short_code_members(document, objects, cold, source_row_font_spec, companion)
+        short_code_result = inspect_short_code_members(
+            document, objects, cold, source_row_font_spec, companion, source_path=work.parent / "controlled-source.png",
+        )
         short_code_result["actual_source_payloads"] = inspect_short_code_payloads(
-            objects, cold, companion / "evidence", work.parent / "controlled-source.png", source_row_fixture_font, pipeline_report,
+            objects, cold, companion / "evidence", work.parent / "controlled-source.png", source_row_fixture_font, pipeline_report, document=document,
         )
         short_code_result["scripted_edit_isolation"] = inspect_contact_edit_isolation(
             target, work / "edit-isolation", short_code_result["text_id"], short_code_result["independent_contact_path_id"],
