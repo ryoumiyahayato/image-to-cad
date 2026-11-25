@@ -166,6 +166,110 @@ def test_far_observed_endpoint_is_reported_pending_without_increasing_adoption_l
     assert result["decisions"][0]["reason"] == "NEARBY_END_OUTSIDE_BOUNDED_CONTACT_RESTORATION_RANGE"
 
 
+def _observed_core_fixture(tmp_path, *, gap=False, competing=False):
+    """A thick original lead terminates outside a thinner observed ring.
+
+    The source graph already contains the junction core.  Both the complete
+    path and its core come from the ordinary planner/adopter, without an
+    invented terminal certificate or a supplied character recognition result.
+    """
+    from app.native_objects import text_contact_geometry as planner
+    from app.native_objects.text_contact_adoption import complete_text_contact_paths
+
+    roi = [0, 0, 420, 240]
+    gray = np.full((240, 420), 255, np.uint8)
+    cv2.circle(gray, (330, 160), 18, 0, 2)
+    cv2.polylines(gray, [np.array([(160, 20), (210, 60), (250, 90), (307, 153), (313, 159)])], False, 0, 5)
+    cv2.line(gray, (240 if competing else 280, 159), (313, 159), 0, 5)
+    cv2.putText(gray, "AX7", (205, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.7, 0, 2)
+    cv2.putText(gray, "F", (324, 166), cv2.FONT_HERSHEY_SIMPLEX, 0.55, 0, 1)
+    if gap:
+        gray[145:172, 309:311] = 255
+    context = planner.build_text_contact_source_graph(gray, roi)
+    seeds = [[203, 57, 250, 78]] + ([[257, 151, 275, 166]] if competing else [])
+    plans = [planner.plan_text_contact_geometry(gray, roi, seed, source_graph=context) for seed in seeds]
+    circles = [{"id": row["id"], "kind": "CIRCLE", "layer": "CIRCULAR_MARKERS",
+                "geometry": row["geometry"], "bbox_xyxy_px": row["bbox_xyxy_px"],
+                "source_evidence": {**row["source_evidence"], "components_complete": False}}
+               for row in discover_circular_markers(gray, roi)["rows"] if row["geometry_accepted"]]
+    adopted = complete_text_contact_paths(gray, roi, hashlib.sha256(gray.tobytes()).hexdigest(),
+                                         circles, plans, tmp_path / "evidence" / "text_contact")
+    assert len(circles) == 1 and len(adopted["objects"]) == (2 if competing else 1)
+    return gray, roi, circles + adopted["objects"], context
+
+
+def test_observed_original_terminal_core_completes_same_saved_path_beyond_plain_tail_limit(tmp_path):
+    gray, roi, objects, context = _observed_core_fixture(tmp_path)
+    before = deepcopy(objects)
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects, source_graph=context)
+    assert len(result["replacements"]) == 1
+    restored = result["replacements"][0]
+    proof = restored["source_evidence"][contacts.FIELD]["ends"][0]
+    assert proof["endpoint_extension_shape"] == "REPLAYED_ORIGINAL_TERMINAL_CORE_TO_OPPOSITE_RING_BRANCHES"
+    plain_limit = objects[0]["source_evidence"]["ring_geometry"]["stroke_width_px"] + contacts.POLICY["existing_native_fit_allowance_px"]
+    assert proof["original_radial_gap_px"] > plain_limit
+    assert len(proof["ring_source_graph_ports"]) == 2
+    assert proof["unselected_external_branches_retained"]
+    assert proof["every_intersected_source_pixel_is_black"]
+    old_points = objects[1]["geometry"]["points"]
+    points = restored["geometry"]["points"]
+    assert len(points) == len(old_points) + 1
+    assert old_points == (points[1:] if proof["endpoint_number"] == 0 else points[:-1])
+    assert objects == before
+    actual = [objects[0], restored]
+    path = tmp_path / "observed-core.dxf"
+    cad_io.export_objects(actual, path, roi, DPI, hashlib.sha256(gray.tobytes()).hexdigest())
+    rows = contacts.cold_circle_endpoint_contacts(path, ezdxf.readfile(path), gray, roi, DPI)
+    assert len(rows) == 1 and rows[0]["pass"], rows
+    assert contacts.restore_circle_endpoint_contacts(gray, roi, actual)["replacements"] == [restored]
+    # Whole-path deletion removes its tail as part of the same native entity.
+    doc = ezdxf.readfile(path)
+    doc.modelspace().delete_entity(next(e for e in doc.modelspace() if cad_io.identity(e).get("id") == restored["id"]))
+    doc.saveas(tmp_path / "deleted.dxf")
+    assert not [e for e in ezdxf.readfile(tmp_path / "deleted.dxf").modelspace().query("LWPOLYLINE") if e.dxf.layer != "REVIEW"]
+    assert len(ezdxf.readfile(tmp_path / "deleted.dxf").modelspace().query("CIRCLE")) == 1
+
+
+def test_observed_core_claim_is_rebuilt_from_raw_graph_even_when_its_hashes_are_rebound(tmp_path):
+    from app.native_objects.text_contact_adoption import digest
+
+    gray, roi, objects, context = _observed_core_fixture(tmp_path)
+    restored = contacts.restore_circle_endpoint_contacts(gray, roi, objects, source_graph=context)["replacements"][0]
+    forged = deepcopy(restored)
+    evidence = forged["source_evidence"]
+    certificate = evidence[contacts.FIELD]
+    end = certificate["ends"][0]["endpoint_number"]
+    path_proof = evidence["text_contact_path"]
+    core = path_proof["path"]["endpoint_source_cores"][end]
+    core["source_core_points_px"][0][0] -= 1
+    path_proof["path_sha256"] = digest(path_proof["path"])
+    certificate["original_source_evidence_sha256"] = contacts._digest(contacts._original(forged)["source_evidence"])
+    certificate["ends"][0]["terminal_core_source_evidence"] = deepcopy(core)
+    with pytest.raises(ValueError, match="RAW_ENDPOINT_PROOF_DOES_NOT_REPLAY"):
+        contacts.verified_original_geometry(gray, roi, forged, [objects[0], forged], forged["geometry"])
+
+
+def test_original_white_gap_near_a_terminal_core_remains_unconnected(tmp_path):
+    gray, roi, objects, context = _observed_core_fixture(tmp_path, gap=True)
+    before = deepcopy(objects)
+    original = gray.copy()
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects, source_graph=context)
+    assert not result["replacements"]
+    assert objects == before and np.array_equal(gray, original)
+    assert np.all(gray[145:172, 309:311] == 255)
+
+
+def test_two_distinct_original_paths_competing_for_one_core_circle_port_both_remain_pending(tmp_path):
+    gray, roi, objects, context = _observed_core_fixture(tmp_path, competing=True)
+    assert objects[1]["geometry"] != objects[2]["geometry"]
+    before = deepcopy(objects)
+    result = contacts.restore_circle_endpoint_contacts(gray, roi, objects, source_graph=context)
+    assert len(result["decisions"]) == 2
+    assert not result["replacements"]
+    assert all(row["reason"] == "CONTACT_HAS_AMBIGUOUS_EXISTING_END_OR_CIRCLE_PORT" for row in result["decisions"])
+    assert objects == before
+
+
 def _oblique_source(*, gap=False):
     gray = np.full((160, 180), 255, np.uint8)
     cv2.circle(gray, (80, 80), 20, 0, 3)

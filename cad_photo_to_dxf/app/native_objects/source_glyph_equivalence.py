@@ -170,7 +170,7 @@ def _distance_failures(metrics):
     ]
 
 
-def compare_original_glyphs(left, right):
+def compare_original_glyphs(left, right, *, require_distinct_row_positions=True):
     """Compare in source-pixel units under a fixed, symmetric quantization bound."""
     result = {"pass": False, "policy": POLICY, "reasons": []}
     if any(c.get("source_role") != "FULL_HEIGHT_GLYPH" for c in (left, right)):
@@ -183,8 +183,13 @@ def compare_original_glyphs(left, right):
         result["reasons"].append(str(error))
         return result
     lbox, rbox = left["bbox_xyxy_px"], right["bbox_xyxy_px"]
-    if max(lbox[0], rbox[0]) < min(lbox[2], rbox[2]):
-        result["reasons"].append("SOURCE_TWIN_GLYPHS_ARE_NOT_DISTINCT_ROW_POSITIONS")
+    x_overlap = max(lbox[0], rbox[0]) < min(lbox[2], rbox[2])
+    y_overlap = max(lbox[1], rbox[1]) < min(lbox[3], rbox[3])
+    if x_overlap and (require_distinct_row_positions or y_overlap):
+        result["reasons"].append(
+            "SOURCE_TWIN_GLYPHS_ARE_NOT_DISTINCT_ROW_POSITIONS"
+            if require_distinct_row_positions else "SOURCE_TWIN_ORIGINAL_GLYPH_BOXES_OVERLAP"
+        )
     lh, lw = lm.shape
     rh, rw = rm.shape
     dimension_difference = [abs(lw - rw), abs(lh - rh)]

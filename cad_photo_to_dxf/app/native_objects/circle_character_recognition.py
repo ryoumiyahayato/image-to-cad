@@ -411,8 +411,13 @@ def recognize_circle_character(
     return result
 
 
-def verify_circle_character_evidence(gray, roi, obj, evidence_root=None):
-    """Cold verify complete source, all raw views and actual adopted content."""
+def replay_circle_character_observations(gray, roi, obj, evidence_root=None):
+    """Recompute complete source and every raw observation, including rejections.
+
+    A successful replay authenticates observations; it does not adopt a letter.
+    The unchanged two-engine decision remains available to the separate source
+    reference route and cannot be overwritten by that route.
+    """
     result = {"pass": False, "new_OCR_calls": 0, "new_model_calls": 0}
     try:
         from .circular_markers import verify_circle_source_evidence
@@ -500,7 +505,7 @@ def verify_circle_character_evidence(gray, roi, obj, evidence_root=None):
         initial = _decision(t_views[:1], p_views[:1], box)
         decision = _decision(t_views, p_views, box)
         if (
-            not decision["accepted"] or decision != evidence.get("decision")
+            decision != evidence.get("decision")
             or initial != evidence.get("initial_decision")
             or (initial["accepted"] and len(t_views) != 1)
         ):
@@ -508,11 +513,25 @@ def verify_circle_character_evidence(gray, roi, obj, evidence_root=None):
         geometry = {
             "text": decision["text"], "x": box[0], "y": box[3],
             "height_px": box[3] - box[1], "width_px": box[2] - box[0], "rotation_deg_image": 0.0,
-        }
-        if geometry != evidence.get("text_geometry") or geometry != obj["geometry"].get("text_geometry"):
-            raise ValueError("CHARACTER_SAVED_GEOMETRY_OR_CONTENT_CHANGED")
+        } if decision["accepted"] else None
+        if geometry != evidence.get("text_geometry"):
+            raise ValueError("CHARACTER_ORIGINAL_DECISION_GEOMETRY_CHANGED")
         result.update({
             "pass": True, "source_bbox_xyxy_px": box, "text": decision["text"],
+            "decision": decision, "text_geometry": geometry,
+            "complete_source_raw_characters": sorted({
+                view["words"][0]["text"] for view in t_views
+                if len(view["words"]) == 1
+                and _single_character(view["words"][0].get("text"))
+                and len(view["words"][0].get("bbox_xyxy_px", [])) == 4
+                and max(abs(float(a) - float(b)) for a, b in zip(
+                    view["words"][0]["bbox_xyxy_px"], box
+                )) <= POLICY["Tesseract_glyph_bbox_tolerance_source_px"]
+            } | {
+                view["prediction"]["raw_text"] for view in p_views
+                if _single_character(view["prediction"].get("raw_text"))
+                and len(view["prediction"].get("raw_CTC_tokens", [])) == 1
+            }),
             "independent_engine_families": ["Tesseract", "PP-OCR"],
             "all_raw_artifacts_read_and_hashed": True,
             "Tesseract_views_replayed": len(t_views), "PP_OCR_views_replayed": len(p_views),
@@ -520,4 +539,35 @@ def verify_circle_character_evidence(gray, roi, obj, evidence_root=None):
         })
     except (KeyError, TypeError, ValueError, OSError) as exc:
         result["reason"] = str(exc)
+    return result
+
+
+def verify_circle_character_evidence(gray, roi, obj, evidence_root=None):
+    """Cold verify the actual TEXT through its unchanged, source-bound route."""
+    result = replay_circle_character_observations(gray, roi, obj, evidence_root)
+    if not result.get("pass"):
+        return result
+    evidence = obj["source_evidence"]["character_evidence"]
+    decision = result["decision"]
+    if decision["accepted"]:
+        if evidence.get("source_reference_resolution") is not None:
+            return {**result, "pass": False, "reason": "STRICT_CHARACTER_CANNOT_REPLACE_ITS_ORIGINAL_ADOPTION_ROUTE"}
+        geometry = result["text_geometry"]
+        result["adoption_basis"] = "STRICT_TWO_ENGINE_COMPLETE_SOURCE_CHARACTER"
+    else:
+        from .circle_glyph_resolution import verify_source_reference_resolution
+
+        resolved = verify_source_reference_resolution(gray, roi, obj, evidence_root, result)
+        if not resolved.get("pass"):
+            return {**result, "pass": False, "reason": resolved.get("reason", "CHARACTER_RAW_ENGINES_DO_NOT_CONFIRM_SAVED_TEXT")}
+        geometry = resolved["text_geometry"]
+        result.update(
+            text=geometry["text"],
+            text_geometry=geometry,
+            adoption_basis="SAME_SOURCE_FROZEN_GLYPH_REFERENCES",
+            source_reference_resolution_recomputed=True,
+            source_reference_verification=resolved,
+        )
+    if geometry != obj["geometry"].get("text_geometry"):
+        return {**result, "pass": False, "reason": "CHARACTER_SAVED_GEOMETRY_OR_CONTENT_CHANGED"}
     return result

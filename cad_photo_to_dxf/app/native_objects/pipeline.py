@@ -221,6 +221,7 @@ def _completed_text_checkpoint(
         "app.native_objects.text_confirmation": "text_confirmation.py",
         "app.native_objects.text_context_ownership": "text_context_ownership.py",
         "app.native_objects.circle_character_recognition": "circle_character_recognition.py",
+        "app.native_objects.circle_glyph_resolution": "circle_glyph_resolution.py",
         "app.native_objects.text_contact_geometry": "text_contact_geometry.py",
         "app.native_objects.text_contact_partition": "text_contact_partition.py",
         "app.native_objects.text_contact_audit": "text_contact_audit.py",
@@ -949,7 +950,7 @@ def _complete_single_line_stage(gray, texts, out, source_sha, roi, dpi, progress
     # The new producer reuses the existing raw recognizer integrity/score
     # helpers. Their actual code is part of this completed-stage identity.
     for dependency in (
-        "text_regions", "independent_recognizer", "circle_character_recognition",
+        "text_regions", "independent_recognizer", "circle_character_recognition", "circle_glyph_resolution",
         "text_contact_geometry", "text_contact_partition", "text_contact_audit", "connections",
         "text_graph_support",
         "connection_core_routes",

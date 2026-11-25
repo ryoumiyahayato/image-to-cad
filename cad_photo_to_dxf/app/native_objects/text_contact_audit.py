@@ -535,7 +535,7 @@ def _cover_allowances(entity, path, plan_key, *, segment_offset=0):
     return allowances
 
 
-def _before_circle_relation_edits(gray, roi, obj, objects):
+def _before_circle_relation_edits(gray, roi, obj, objects, *, source_graph=None):
     """Recover a source-plan binding only through fully replayed end proofs.
 
     The actual native entity is still compared to the current geometry by the
@@ -549,7 +549,9 @@ def _before_circle_relation_edits(gray, roi, obj, objects):
     if evidence.get("circle_endpoint_contacts"):
         from .circle_endpoint_contacts import verified_original_geometry
 
-        original["geometry"] = verified_original_geometry(gray, roi, original, objects, original["geometry"])
+        original["geometry"] = verified_original_geometry(
+            gray, roi, original, objects, original["geometry"], source_graph=source_graph
+        )
         evidence.pop("circle_endpoint_contacts")
     if evidence.get("circle_white_gap_protection"):
         from .circle_white_gap_protection import verify_white_gap_protection
@@ -801,7 +803,11 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 )
             entity = actual[oid][0]
             target_handles.add(entity.dxf.handle)
-            source_obj = _before_circle_relation_edits(gray, roi, obj, list(objects.values()))
+            if context is None:
+                context = build_text_contact_source_graph(np.asarray(gray), roi)
+            source_obj = _before_circle_relation_edits(
+                gray, roi, obj, list(objects.values()), source_graph=context
+            )
             proof = _source_evidence(obj).get(FIELD, {})
             proof = proof if isinstance(proof, dict) else {}
             checks["three_way_object_binding"] = object_binding(source_obj) == object_binding(
@@ -948,7 +954,9 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             )
             unchanged = object_binding(obj) == binding
             if not unchanged:
-                original = _before_circle_relation_edits(gray, roi, obj, list(objects.values()))
+                original = _before_circle_relation_edits(
+                    gray, roi, obj, list(objects.values()), source_graph=context
+                )
                 unchanged = object_binding(original) == binding
             checks["unchanged_candidate_geometry"] = unchanged
             neighbor_font = path.parent / "DejaVuSans.ttf"
