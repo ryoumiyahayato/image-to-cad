@@ -1284,6 +1284,11 @@ def run_native_objects(
             carrier_reconciliation = restored_assembly.get("carrier_reconciliation", {})
             if carrier_reconciliation:
                 save_json(out / "carrier_reconciliation/adoption.json", carrier_reconciliation)
+            short_contact_completion = restored_assembly.get("short_contact_completion", {})
+            if short_contact_completion:
+                from .short_contact_text import restore_short_contact_evidence
+
+                restore_short_contact_evidence(cache_dir, out, short_contact_completion)
             _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
@@ -1944,6 +1949,19 @@ def run_native_objects(
             objects, circular_markers = _finalize_circle_relations(
                 gray, roi, objects, circular_markers, out / "circular_markers",
             )
+            # Geometry is now final, including source-proved circle terminals.
+            # Complete only finite side glyphs of those adopted paths once;
+            # unresolved text never has to license a path before recognition.
+            from .short_contact_text import complete_short_contact_text
+
+            progress("COMPLETE_SHORT_TEXT_BESIDE_ADOPTED_PATHS", 0.745)
+            short_contact_completion = complete_short_contact_text(
+                gray, roi, source_sha, objects, texts, out / "short_contact_text",
+                dpi=dpi, source_graph=contact_source_graph,
+                contact_completion=text_contact_completion,
+            )
+            objects += short_contact_completion["objects"]
+            text_objects += short_contact_completion["objects"]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1953,6 +1971,7 @@ def run_native_objects(
             )
             issues += connections["uncertainties"]
             issues += circular_markers["uncertainties"]
+            issues += short_contact_completion["pending"]
             issues += text_contact_completion.get("uncertainties", [])
             issues += carrier_reconciliation.get("uncertainties", [])
             issues += walls.get("uncertainties", [])
@@ -1980,6 +1999,7 @@ def run_native_objects(
                         "partial_circular_compositions": circular_markers["summary"]["partial_compositions"],
                         "TEXT": sum(o["kind"] == "TEXT" for o in text_objects),
                         "MTEXT": sum(o["kind"] == "MTEXT" for o in text_objects),
+                        "TEXT_GROUP": sum(o["kind"] == "TEXT_GROUP" for o in text_objects),
                     },
                 },
             )
@@ -1995,6 +2015,7 @@ def run_native_objects(
                 "circular_markers": circular_markers,
                 "text_contact_completion": text_contact_completion,
                 "carrier_reconciliation": carrier_reconciliation,
+                "short_contact_completion": short_contact_completion,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -2092,6 +2113,13 @@ def run_native_objects(
             },
             "circular_marker_completion": circular_markers["summary"],
             "single_line_label_recovery": texts.get("single_line_label_recovery"),
+            "short_contact_text_completion": {
+                **short_contact_completion.get("summary", {}),
+                "complete_group_ids": [obj["id"] for obj in short_contact_completion.get("objects", [])],
+                "actual_saved_source_checks": audit.get("short_contact_text_source_checks"),
+                "pending": short_contact_completion.get("pending", []),
+                "text_and_independent_graphics_counted_separately": True,
+            },
             "text_contact_completion": {
                 "new_complete_graphics": len(text_contact_completion.get("objects", [])),
                 "retired_old_graphic_ids": text_contact_completion.get("retired_ids", []),

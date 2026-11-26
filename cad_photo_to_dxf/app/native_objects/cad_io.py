@@ -58,6 +58,8 @@ def mark(e, o):
         data["text_contact_path"] = True
     if "carrier_reconciliation" in o.get("source_evidence", {}):
         data["carrier_reconciliation"] = True
+    if "short_contact_text" in o.get("source_evidence", {}):
+        data["short_contact_text"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -424,6 +426,18 @@ def export_objects(
                     "rotation": -float(tg.get("rotation_deg_image", 0.0)),
                 },
             )
+            e = msp.add_blockref(name, anchor, dxfattribs=attrs)
+            member_info = [m.dxftype() for m in block]
+        elif kind == "TEXT_GROUP":
+            members = g.get("text_members", [])
+            if (len(members) < 2 or "short_contact_text" not in o.get("source_evidence", {})
+                    or "".join(member.get("text", "") for member in members) != g.get("text")):
+                raise ValueError("SHORT_TEXT_GROUP_REQUIRES_COMPLETE_LITERAL_TEXT_MEMBERS")
+            name = "I2CAD_" + o["id"].replace("-", "_")
+            block = doc.blocks.new(name)
+            anchor = xy((members[0]["x"], members[0]["y"]))
+            for member in members:
+                text(block, member, {"layer": "0", "color": 0}, anchor)
             e = msp.add_blockref(name, anchor, dxfattribs=attrs)
             member_info = [m.dxftype() for m in block]
         elif kind == "CONNECTION_PATH":
@@ -1020,6 +1034,12 @@ def cold_audit(path, gray, roi, dpi, out):
         path, doc, gray, roi, dpi, evidence_root
     )
     checks.extend(carrier_proof["checks"])
+    from .short_contact_audit import cold_short_contact_text_bindings
+
+    short_contact_proof = cold_short_contact_text_bindings(
+        path, doc, gray, roi, dpi, evidence_root
+    )
+    checks.extend(short_contact_proof["checks"])
     identity_failures = []
     for entity in doc.modelspace():
         try:
@@ -1297,6 +1317,7 @@ def cold_audit(path, gray, roi, dpi, out):
         "single_line_text_source_checks": single_line_source_checks,
         "text_contact_source_checks": text_contact_proof,
         "carrier_reconciliation_source_checks": carrier_proof,
+        "short_contact_text_source_checks": short_contact_proof,
     }
     if circular_checks:
         report["circular_marker_source_checks"] = circular_checks

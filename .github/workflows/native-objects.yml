@@ -93,6 +93,7 @@ jobs:
             tests/test_native_connection_evidence_resume.py \
             tests/test_native_completion_dependencies.py \
             tests/test_native_text_context_ownership.py \
+            tests/test_native_short_contact_text.py \
             tests/test_native_wall_candidate_ownership.py \
             tests/test_native_glyph_domain_recovery.py \
             tests/test_native_cad_compatibility.py
