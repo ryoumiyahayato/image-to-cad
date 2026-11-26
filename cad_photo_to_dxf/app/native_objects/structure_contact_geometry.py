@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 
 from . import connections as paths
+from . import source_endpoint_caps as endpoint_caps
 from . import text_contact_geometry as contact
 from .contracts import stable_id
 from .circle_endpoint_contacts import (
@@ -29,11 +30,12 @@ from .circular_markers import verify_circle_source_evidence
 
 SCHEMA = "source-structure-contact-path-plan-v1"
 POLICY = {
-    "version": "reciprocal-source-contact-to-independent-carrier-v1",
+    "version": "reciprocal-source-contact-to-independent-carrier-v3-complete-source-caps",
     "minimum_direction_span_px": 4.0,
     "direction_span_px": 14.0,
     "maximum_direction_depth": 8,
     "maximum_direction_states": 64,
+    "maximum_direction_dependency_nodes": 64,
     "maximum_pair_deviation_deg": 20.0,
     "minimum_pair_margin_deg": 18.0,
     "minimum_carrier_arm_px": 24.0,
@@ -342,6 +344,248 @@ def _source_parallel_witness(graph, a, b):
     return None if best is None else best[1]
 
 
+def _free_terminal_source_cap(graph, node_id, incoming, start):
+    """Observe the full original cap, leaving the source graph unchanged."""
+    node = graph.nodes[node_id]
+    if ((node.get("terminal") or {}).get("kind") != "OBSERVED_FREE_SOURCE_ENDPOINT"
+            or node.get("reason") == "ROI_BOUNDARY_IS_NOT_A_SOURCE_ENDPOINT"
+            or node["edges"] != [incoming]
+            or node["core_topology"]["components"] != 1
+            or node["core_topology"]["cycle_rank"] != 0
+            or graph.source_ink is None):
+        return None
+    ends = [p for p in node["pixels"] if graph.degree.ravel()[p] == 1]
+    if len(ends) != 1:
+        return None
+    try:
+        core = contact._core_route(graph, node_id, start, ends[0])
+    except ValueError:
+        return None
+    y, x = divmod(ends[0], graph.w)
+    margin = int(math.ceil(endpoint_caps.POLICY["maximum_extension_px"]
+                           + endpoint_caps.POLICY["tangent_source_span_px"] + 8))
+    x0, y0 = max(0, x - margin), max(0, y - margin)
+    x1, y1 = min(graph.w, x + margin + 1), min(graph.h, y + margin + 1)
+    skeleton = graph.skel[y0:y1, x0:x1]
+    ink = graph.source_ink[y0:y1, x0:x1]
+    distance = cv2.distanceTransform(ink.astype(np.uint8), cv2.DIST_L2, cv2.DIST_MASK_PRECISE)
+    tail, reason, proof = endpoint_caps._extension(
+        skeleton, ink, distance, (int(y - y0), int(x - x0)), observe_short_cap=True
+    )
+    if tail is None:
+        return None
+    pixels = core + [(int(py + y0) * graph.w + int(px + x0)) for py, px in tail[1:]]
+    points = graph.xy(pixels)
+    if (np.any(points[:, 0] <= graph.roi[0] + 2) or np.any(points[:, 0] >= graph.roi[2] - 2)
+            or np.any(points[:, 1] <= graph.roi[1] + 2) or np.any(points[:, 1] >= graph.roi[3] - 2)):
+        return None
+    return pixels, {
+        "schema": "finite-owner-complete-free-source-cap-v1",
+        "source_graph_node_id": node_id,
+        "incoming_source_graph_port": list(incoming),
+        "source_core_points_px": graph.xy(node["pixels"]).tolist(),
+        "original_core_route_px": graph.xy(core).tolist(),
+        "complete_source_cap_path_px": points.tolist(),
+        "source_crop_bbox_xyxy_px": (np.array([x0, y0, x1, y1])
+                                      + np.tile(graph.origin, 2)).tolist(),
+        "source_ink_crop_sha256": endpoint_caps._sha(ink),
+        "original_skeleton_crop_sha256": endpoint_caps._sha(skeleton),
+        "source_cap_policy": deepcopy(endpoint_caps.POLICY),
+        "source_cap_producer_sha256": hashlib.sha256(Path(endpoint_caps.__file__).read_bytes()).hexdigest(),
+        "local_cap_proof": proof,
+        "local_cap_decision": reason,
+        "graph_skeleton_modified": False,
+        "source_pixels_modified": False,
+        "finite_owner_endpoint_tolerance_px": 3.0,
+    }
+
+
+def _finite_owned_arm(graph, first, owner):
+    """Carry one finite, independently owned straight edge across source contacts.
+
+    A source junction can split a long carrier into short graph edges.  Following
+    that already owned line requires one source route at every intervening core;
+    adjacent character branches and competing collinear routes are retained.
+    The full supported finite run is carried, not merely the minimum arm length.
+    """
+    oid, member, geometry = owner
+    a, b = np.asarray(geometry["start"], float), np.asarray(geometry["end"], float)
+    length = float(np.linalg.norm(b - a))
+    if length < 2 * POLICY["minimum_carrier_arm_px"]:
+        return None
+    axis = (b - a) / length
+    normal = np.array([-axis[1], axis[0]])
+    initial = graph.xy(graph.oriented(first))
+    if len(initial) < 3:
+        return None
+    projection = (initial - a) @ axis
+    sign = 1.0 if projection[-1] >= projection[0] else -1.0
+    if (
+        not POLICY["minimum_carrier_arm_px"]
+        <= projection[0]
+        <= length - POLICY["minimum_carrier_arm_px"]
+        or np.linalg.norm(initial[-1] - initial[0]) < POLICY["minimum_direction_span_px"]
+    ):
+        return None
+    finite_end = b if sign > 0 else a
+    pixels, edges, continuations = [], [], []
+    stop = None
+    port = first
+    for _ in range(POLICY["maximum_route_edges"]):
+        if port[0] in edges:
+            return None
+        part = list(graph.oriented(port))
+        if pixels:
+            nid = graph.edges[port[0]]["nodes"][port[1]]
+            try:
+                core = contact._core_route(graph, nid, pixels[-1], part[0])
+            except ValueError:
+                return None
+            part = core[1:] + part[1:]
+        points = graph.xy(part)
+        along = (points - a) @ axis
+        residual = np.abs((points - a) @ normal)
+        valid = (
+            (residual <= POLICY["maximum_carrier_normal_px"])
+            & (along >= -1.0)
+            & (along <= length + 1.0)
+        )
+        invalid = np.flatnonzero(~valid)
+        if len(invalid):
+            part = part[: int(invalid[0])]
+            if not part or np.linalg.norm(graph.xy(part[-1:])[0] - finite_end) > 3.0:
+                return None
+        if len(part) > 1:
+            signed_progress = np.diff((graph.xy(part) - a) @ axis) * sign
+            if np.min(signed_progress) < -0.5:
+                return None
+        pixels.extend(part)
+        edges.append(port[0])
+        if np.linalg.norm(graph.xy(pixels[-1:])[0] - finite_end) <= 3.0:
+            stop = {"reason": "OBSERVED_SOURCE_REACHES_FINITE_OWNER_ENDPOINT"}
+            break
+        nid = graph.edges[port[0]]["nodes"][1 - port[1]]
+        incoming = (port[0], 1 - port[1])
+        node = graph.nodes[nid]
+        if node["terminal"]:
+            complete = _free_terminal_source_cap(graph, nid, incoming, pixels[-1])
+            if complete is None:
+                return None
+            cap, proof = complete
+            raw = graph.xy(cap)
+            raw_along = (raw - a) @ axis
+            if (np.linalg.norm(raw[-1] - finite_end) > 3.0
+                    or np.any(np.abs((raw - a) @ normal) > POLICY["maximum_carrier_normal_px"])
+                    or np.any(raw_along < -1.0) or np.any(raw_along > length + 1.0)
+                    or np.any(np.diff(raw_along) * sign < -0.5)):
+                return None
+            pixels.extend(cap[1:])
+            stop = {"reason": "COMPLETE_OBSERVED_SOURCE_CAP_REACHES_FINITE_OWNER_ENDPOINT",
+                    "complete_free_source_cap": proof}
+            break
+        if node.get("reason") == "ROI_BOUNDARY_IS_NOT_A_SOURCE_ENDPOINT":
+            return None
+        candidates, observations = [], []
+        for following in node["edges"]:
+            if following == incoming:
+                continue
+            raw = graph.xy(graph.oriented(following))
+            raw_along = (raw - a) @ axis
+            residual = np.abs((raw - a) @ normal)
+            progress = float((raw_along[-1] - raw_along[0]) * sign)
+            follows = bool(
+                following[0] not in edges
+                and progress > 0
+                and np.all(np.diff(raw_along) * sign >= -0.5)
+                and np.all(residual <= POLICY["maximum_carrier_normal_px"])
+                and np.all(raw_along >= -1.0)
+                and np.all(raw_along <= length + 1.0)
+            )
+            observations.append(
+                {
+                    "port": list(following),
+                    "source_points_px": raw.tolist(),
+                    "maximum_owner_normal_px": float(residual.max()),
+                    "signed_progress_px": progress,
+                    "follows_finite_owner": follows,
+                }
+            )
+            if follows:
+                candidates.append(following)
+        if not candidates and paths._length(graph.xy(pixels)) >= POLICY["minimum_carrier_arm_px"]:
+            stop = {
+                "reason": "END_OF_UNIQUE_STRAIGHT_SOURCE_ARM_AT_OBSERVED_JUNCTION",
+                "node_id": nid,
+                "all_port_candidates": observations,
+                "further_source_branches_not_assigned": True,
+            }
+            break
+        if len(candidates) != 1:
+            return None
+        port = candidates[0]
+        continuations.append(
+            {
+                "reason": "UNIQUE_ORIGINAL_SOURCE_CONTINUATION_OF_FINITE_OWNER",
+                "node_id": nid,
+                "source_core_pixels": graph.xy(node["pixels"]).tolist(),
+                "incoming_port": list(incoming),
+                "selected_outgoing_port": list(port),
+                "all_port_candidates": observations,
+                "source_branches_deleted": False,
+                "no_source_gap_bridged": True,
+            }
+        )
+    else:
+        return None
+    points = graph.xy(pixels)
+    span = paths._length(points)
+    if span < POLICY["minimum_carrier_arm_px"]:
+        return None
+    center = points.mean(axis=0)
+    _, _, vh = np.linalg.svd(points - center, full_matrices=False)
+    direction = vh[0]
+    if (points[-1] - points[0]) @ direction < 0:
+        direction = -direction
+    return {
+        "port": list(first),
+        "pixels": pixels,
+        "points": points,
+        "direction": direction,
+        "length_px": span,
+        "corner": None,
+        "finite_owner_source_continuation": {
+            "owner_id": oid,
+            "owner_member_index": member,
+            "owner_geometry": geometry,
+            "source_edge_ids": edges,
+            "source_continuations": continuations,
+            "source_points_px": points.tolist(),
+            "finite_owner_endpoint_px": finite_end.tolist(),
+            "minimum_arm_span_preserved_px": POLICY["minimum_carrier_arm_px"],
+            "full_unique_supported_arm_carried": True,
+            "source_continuation_stop": stop,
+        },
+    }
+
+
+def _continued_owned_arm(graph, port, prior_lines):
+    observations = []
+    start = graph.xy(graph.oriented(port)[:1])[0]
+    for owner in prior_lines:
+        geometry = owner[2]
+        a, b = np.asarray(geometry["start"]), np.asarray(geometry["end"])
+        axis = _unit(b - a)
+        if abs(float((start - a) @ np.array([-axis[1], axis[0]]))) > POLICY["maximum_carrier_normal_px"]:
+            continue
+        row = _finite_owned_arm(graph, port, owner)
+        if row is not None:
+            observations.append(row)
+    unique = {_digest(row["points"].tolist()) for row in observations}
+    # Existing native duplicate-owner checks still run over every prior owner.
+    # Distinct source routes cannot be hidden by selecting one owner here.
+    return observations[0] if len(unique) == 1 else None
+
+
 def _carrier_candidates(graph, prior_objects):
     carriers, pending = {}, []
     prior_lines = list(_members(prior_objects))
@@ -350,6 +594,9 @@ def _carrier_candidates(graph, prior_objects):
         if node["terminal"] or len(ports) != 3 or node["core_topology"]["cycle_rank"]:
             continue
         arms = {port: _arm(graph, port) for port in ports}
+        for port in ports:
+            if arms[port] is None:
+                arms[port] = _continued_owned_arm(graph, port, prior_lines)
         candidates = []
         for i, a in enumerate(ports):
             for b in ports[i + 1 :]:
@@ -518,6 +765,13 @@ def _carrier_candidates(graph, prior_objects):
             "equally_aligned_forward_port_count": 0,
             "semantics_inferred": False,
         }
+        continuations = [
+            arms[p]["finite_owner_source_continuation"]
+            for p in (a, b)
+            if "finite_owner_source_continuation" in arms[p]
+        ]
+        if continuations:
+            terminal["carrier_arm_source_continuations"] = continuations
         carriers[(nid, arriving)] = {
             "terminal": terminal,
             "geometry": geometry,
@@ -529,13 +783,13 @@ def _carrier_candidates(graph, prior_objects):
     return carriers, pending
 
 
-def _port_directions(graph, port, carriers):
+def _port_directions(graph, port, carriers, *, resolved_pairs=None, dependency_nodes=None):
     """Local tangent hypotheses independent of the chosen trace origin."""
-    queue = [(port, [], [], 0)]
+    queue = [(port, [], [], 0, [])]
     result = []
     complete = True
     while queue and len(result) < POLICY["maximum_direction_states"]:
-        current, pixels, used, depth = queue.pop()
+        current, pixels, used, depth, dependencies = queue.pop()
         if current[0] in used:
             complete = False
             continue
@@ -571,33 +825,42 @@ def _port_directions(graph, port, carriers):
             )
             vector = points[k] - points[0]
             if np.linalg.norm(vector) >= POLICY["minimum_direction_span_px"]:
-                result.append(
-                    {
+                row = {
                         "vector": _unit(vector),
                         "edge_ids": used,
                         "span_px": float(spans[k]),
                         "source_start_px": points[0].tolist(),
                         "source_end_px": points[k].tolist(),
                     }
-                )
+                if dependencies:
+                    row["verified_direction_dependencies"] = dependencies
+                result.append(row)
             else:
                 complete = False
             continue
-        choices = (
-            [node["pairing"][incoming]]
-            if incoming in node["pairing"]
-            else [p for p in node["edges"] if p != incoming]
-        )
+        known = (resolved_pairs or {}).get((nid, incoming))
+        if incoming in node["pairing"]:
+            choices = [node["pairing"][incoming]]
+        elif known:
+            choices = [known["outgoing"]]
+            dependencies = dependencies + [known["proof_id"]]
+        else:
+            choices = [p for p in node["edges"] if p != incoming]
+            if dependency_nodes is not None:
+                dependency_nodes.add(nid)
         for candidate in choices:
-            queue.append((candidate, pixels, used, depth + 1))
+            queue.append((candidate, pixels, used, depth + 1, dependencies))
     return result, complete and not queue
 
 
-def _reciprocal_pair(graph, nid, incoming, carriers, cache):
+def _reciprocal_pair(graph, nid, incoming, carriers, cache, *, resolved_pairs=None):
     if nid not in cache:
         node = graph.nodes[nid]
         ports = node["edges"]
-        observed = {p: _port_directions(graph, p, carriers) for p in ports}
+        observed = {
+            p: _port_directions(graph, p, carriers, resolved_pairs=resolved_pairs)
+            for p in ports
+        }
         looks = {p: value[0] for p, value in observed.items()}
         incomplete_ports = [
             p for p, value in observed.items() if not value[1] or not value[0]
@@ -679,7 +942,99 @@ def _reciprocal_pair(graph, nid, incoming, carriers, cache):
         "trace_origin_excluded_from_decision": True,
         "line_and_other_ink_may_share_core": True,
     }
+    dependencies = sorted({
+        dependency
+        for alternatives in looks.values()
+        for row in alternatives
+        for dependency in row.get("verified_direction_dependencies", [])
+    })
+    if dependencies:
+        evidence["verified_direction_dependencies"] = dependencies
     return (outgoing if passed else None), evidence
+
+
+def _robust_direction_pair_margins(evidence, incoming, outgoing):
+    """Only uniformly winning direction intervals may constrain another core."""
+    table = {tuple(row["port"]): row["alternatives"] for row in evidence["all_port_candidates"]}
+    margins = []
+    for start, end in ((incoming, outgoing), (outgoing, incoming)):
+        own = next(row for row in table[start] if tuple(row["port"]) == end)
+        others = [row["minimum_deviation_deg"] for row in table[start] if tuple(row["port"]) != end]
+        margins.append(min(others, default=180.0) - own["maximum_deviation_deg"])
+    return margins
+
+
+def _dependency_verified_pair(graph, nid, incoming, carriers, original):
+    """Resolve nearby source tangents in finite, acyclic proof rounds.
+
+    Every local port is examined before any pair from that round is used.
+    A propagation pair must beat every alternative even at its worst observed
+    direction, in both directions.  Neither a trace origin nor a desired end
+    removes a competing branch, and mutually unresolved cycles cannot bootstrap.
+    """
+    visited, queue = set(), [nid]
+    while queue:
+        current = queue.pop()
+        if current in visited:
+            continue
+        visited.add(current)
+        if len(visited) > POLICY["maximum_direction_dependency_nodes"]:
+            return None, original
+        dependencies = set()
+        for port in graph.nodes[current]["edges"]:
+            _port_directions(graph, port, carriers, dependency_nodes=dependencies)
+        queue.extend(sorted(dependencies - visited))
+    resolved, proofs = {}, []
+    for round_index in range(POLICY["maximum_direction_depth"]):
+        cache, additions = {}, []
+        for current in sorted(visited):
+            for port in graph.nodes[current]["edges"]:
+                if port in graph.nodes[current]["pairing"] or (current, port) in resolved:
+                    continue
+                following, evidence = _reciprocal_pair(
+                    graph, current, port, carriers, cache, resolved_pairs=resolved
+                )
+                if following is None:
+                    continue
+                margins = _robust_direction_pair_margins(evidence, port, following)
+                if min(margins) < POLICY["minimum_pair_margin_deg"]:
+                    continue
+                proof = {
+                    "round": round_index,
+                    "node_id": current,
+                    "incoming_port": list(port),
+                    "outgoing_port": list(following),
+                    "worst_case_competition_margins_deg": margins,
+                    "evidence": evidence,
+                    "only_earlier_round_dependencies_used": True,
+                }
+                proof_id = _digest(proof)
+                additions.append((current, port, following, proof_id, proof))
+        if not additions:
+            break
+        for current, port, following, proof_id, proof in additions:
+            resolved[(current, port)] = {"outgoing": following, "proof_id": proof_id}
+            proofs.append({"proof_id": proof_id, **proof})
+        following, evidence = _reciprocal_pair(
+            graph, nid, incoming, carriers, {}, resolved_pairs=resolved
+        )
+        if following is not None:
+            margins = _robust_direction_pair_margins(evidence, incoming, following)
+            if min(margins) < POLICY["minimum_pair_margin_deg"]:
+                continue
+            evidence["direction_dependency_proofs"] = {
+                "schema": "acyclic-reciprocal-direction-dependencies-v1",
+                "source_node_ids": sorted(visited),
+                "proofs": proofs,
+                "original_unresolved_direction_evidence": original,
+                "final_worst_case_competition_margins_deg": margins,
+                "unchanged_pair_deviation_limit_deg": POLICY["maximum_pair_deviation_deg"],
+                "unchanged_competition_margin_deg": POLICY["minimum_pair_margin_deg"],
+                "graph_pairings_modified": False,
+                "trace_origin_used_to_drop_competition": False,
+            }
+            return following, evidence
+    return None, original
 
 
 def _trace(graph, first, carriers, pair_cache):
@@ -775,6 +1130,10 @@ def _trace(graph, first, carriers, pair_cache):
                 )
             continue
         port, evidence = _reciprocal_pair(graph, nid, incoming, carriers, pair_cache)
+        if port is None and evidence["reason"] == "CONTACT_PAIR_OR_COMPETITION_NOT_UNIQUE":
+            port, evidence = _dependency_verified_pair(
+                graph, nid, incoming, carriers, evidence
+            )
         contacts.append(evidence)
         if port is None:
             return {
@@ -903,8 +1262,24 @@ def plan_structure_contact_geometry(gray, roi, prior_objects, *, source_graph=No
                 continue
             endpoint = np.asarray(forward["terminal"]["source_contact_point_px"])
             end_node = graph.nodes[forward["terminal_node_id"]]
+            arrival_cells = set(map(tuple, forward["terminal"][
+                "arrival_to_intersection_original_black_cells"
+            ]))
+            arrival_core = [
+                pixel for pixel in end_node["pixels"]
+                if tuple(graph.xy([pixel])[0]) in arrival_cells
+            ]
+            if not arrival_core:
+                result["pending"].append({
+                    "start_node_id": nid,
+                    "reason": "TERMINAL_CORE_HAS_NO_ARRIVAL_OWNED_SOURCE_POINT",
+                })
+                continue
+            # The closest junction pixel can belong to a lateral carrier arm.
+            # End the source walk on the already proved arriving ink corridor;
+            # its finite intersection certificate must cover the actual end.
             source_end = min(
-                end_node["pixels"],
+                arrival_core,
                 key=lambda p: (float(np.linalg.norm(graph.xy([p])[0] - endpoint)), p),
             )
             try:

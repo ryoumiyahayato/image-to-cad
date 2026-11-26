@@ -34,7 +34,7 @@ FIELD = "short_contact_text"
 SCHEMA = "native-short-contact-text-evidence-v1"
 ADOPTION_SCHEMA = "native-short-contact-text-adoption-v1"
 POLICY = {
-    "version": "complete-short-contact-components-raw-literal-v1",
+    "version": "complete-short-contact-components-raw-literal-v2",
     "whole_group_model_mean_confidence": 0.98,
     "whole_group_model_minimum_character_confidence": 0.95,
     "whole_group_model_rule_unchanged_from_complete_single_line": True,
@@ -44,6 +44,8 @@ POLICY = {
     "Tesseract_external_white_padding_px": 12,
     "PP_external_white_padding_px": 4,
     "Tesseract_component_bbox_tolerance_px": 1.0,
+    "unchanged_whole_word_literal_minimum_confidence": 85.0,
+    "empty_carrier_component_alternative": "same_unchanged_literal_in_complete_original_and_ownership_words_plus_strict_component_model",
     "Tesseract_word_score": "recorded_advisory_aggregate_not_character_veto",
     "adoption_basis": "complete_source_components_and_strict_whole_group_model_with_literal_component_corroboration",
     "all_raw_competing_readings_retained": True,
@@ -193,9 +195,110 @@ def _original_word_graphic_bindings(partition, observation, value, differing):
             if found:
                 break
         if found is None:
+            # A real finite structural contact is a separate source route,
+            # never a fictitious continuation beyond the raw crop bottom.
+            for view in observation["tesseract"]:
+                words = view["words"]
+                if "".join(w["text"] for w in words) != value:
+                    continue
+                offset = 0
+                for word_index,word in enumerate(words):
+                    start,stop = offset,offset+len(word["text"])
+                    offset = stop
+                    if not start <= component_index < stop:
+                        continue
+                    word_box = word["bbox_xyxy_px"]
+                    for contact in partition.get("raw_context_finite_receiver_contacts",[]):
+                        crossing = contact["complete_glyph_crossing"]
+                        end = contact["source_contact_point_px"]
+                        if (contact["owner_id"] not in owner_ids
+                                or not contact["single_contiguous_source_visit"]
+                                or not contact["path_ends_outside_complete_glyph_on_independent_receiver"]
+                                or not contact["receiver_source_continues_past_both_horizontal_crop_edges"]
+                                or not shared.intersection(map(tuple,crossing["shared_core_points_used"]))
+                                or word_box[1]>scale
+                                or word_box[3]<scale*(end[1]-box[1])-scale):
+                            continue
+                        sample_points = [contact["first_original_point_inside"],end]
+                        if not all(word_box[0]-scale <= scale*(p[0]-box[0]) <= word_box[2]+scale
+                                   for p in sample_points):
+                            continue
+                        found = {
+                            "component_index":component_index,"word_index":word_index,
+                            "word_literal":word["text"],"literal_index_in_word":component_index-start,
+                            "word_bbox_xyxy_in_scaled_original_crop":word_box,
+                            "Tesseract_PSM":view["psm"],"owner_id":contact["owner_id"],
+                            "source_responsibility_basis":"COMPLETE_GLYPH_CROSSING_TO_ACTUAL_FINITE_RECEIVER",
+                            "original_point_before_crop":contact["original_point_before_crop"],
+                            "source_contact_point_px":end,"carrier_binding":contact["carrier_binding"],
+                            "recorded_shared_core_points":crossing["shared_core_points_used"],
+                            "same_word_same_component_same_source_owner":True,
+                            "source_path_continues_beyond_original_context":False,
+                        }
+                        break
+                    if found:
+                        break
+                if found:
+                    break
+        if found is None:
             return []
         bindings.append(found)
     return bindings
+
+
+def _unchanged_carrier_component_literal(partition,raw,index,expected):
+    """Corroborate an empty isolated OCR result from existing complete words.
+
+    This route cannot override a nonempty isolated reading. The original and
+    ownership words must have exactly one literal per complete source component
+    and agree at this position in every recorded view. Other positions retain
+    their own disagreements and require their own source responsibility proof.
+    """
+    component=partition["components"][index]
+    observation=raw["components"][index]
+    if (not component.get("carrier_contact_evidence",{}).get("all_attachment_core_and_intervening_source_samples_retained")
+            or [view["psm"] for view in observation["tesseract"]] != [POLICY["Tesseract_component_PSM"]]
+            or any(view["words"] for view in observation["tesseract"])
+            or not _strong_model(observation["model"]["prediction"])
+            or observation["model"]["prediction"].get("raw_text")!=expected):
+        return None
+    original_model=raw["original_group"]["model"]["prediction"]
+    count=len(partition["components"])
+    if (not _strong_model(original_model) or len(original_model.get("raw_text",""))!=count
+            or original_model["raw_text"][index]!=expected):
+        return None
+    records=[]
+    scale=POLICY["Tesseract_scale"]
+    group_box=partition["bbox_xyxy_px"]
+    for domain in ("original_group","ownership_group"):
+        origin_box=partition["raw_original_bbox_xyxy_px"] if domain=="original_group" else group_box
+        views=raw[domain]["tesseract"]
+        if [v["psm"] for v in views]!=POLICY["Tesseract_context_PSMs"]:
+            return None
+        expected_box=[scale*(group_box[0]-origin_box[0]),scale*(group_box[1]-origin_box[1]),
+                      scale*(group_box[2]-origin_box[0]),scale*(group_box[3]-origin_box[1])]
+        for view in views:
+            words=view["words"]
+            if len(words)!=1 or len(words[0]["text"])!=count or words[0]["text"][index]!=expected:
+                return None
+            word=words[0]
+            box=word["bbox_xyxy_px"]
+            tolerance=scale*POLICY["Tesseract_component_bbox_tolerance_px"]
+            if (box[0]>expected_box[0]+tolerance or box[1]>expected_box[1]+tolerance
+                    or box[2]<expected_box[2]-tolerance or box[3]<expected_box[3]-tolerance
+                    or domain=="original_group" and word["confidence"]<POLICY["unchanged_whole_word_literal_minimum_confidence"]):
+                return None
+            records.append({"domain":domain,"PSM":view["psm"],"complete_word":word["text"],
+                            "word_bbox_in_scaled_crop":box,"literal_index":index,
+                            "unchanged_literal":expected,"word_confidence":word["confidence"],
+                            "all_complete_source_component_boxes_covered":True})
+    return {"basis":"UNCHANGED_LITERAL_IN_COMPLETE_WORDS_WITH_STRICT_COMPONENT_MODEL",
+            "isolated_PSM10_was_empty":True,"nonempty_isolated_reading_overridden":False,
+            "source_component_count":count,"source_component_index":index,
+            "independent_carrier_binding":component["carrier_contact_evidence"]["carrier_binding"],
+            "original_group_model_literal":original_model["raw_text"][index],
+            "strict_component_model_literal":expected,"word_observations":records,
+            "new_target_or_other_instance_transcription_used":False}
 
 
 def decide_short_contact_text(partition, raw):
@@ -221,6 +324,9 @@ def decide_short_contact_text(partition, raw):
         corroborated = complete and words[0]["text"]==expected
         pm = observation["model"]["prediction"]
         model_conflict = (_strong_model(pm) and pm.get("raw_text")!=expected)
+        alternative=(_unchanged_carrier_component_literal(partition,raw,i,expected)
+                     if not corroborated and expected is not None else None)
+        corroborated=corroborated or alternative is not None
         if not corroborated:
             reasons.append("COMPONENT_LITERAL_HAS_NO_COMPLETE_TESSERACT_CORROBORATION:"+str(i))
         if model_conflict:
@@ -229,7 +335,9 @@ def decide_short_contact_text(partition, raw):
             "Tesseract_raw_texts":[w["text"] for w in words],
             "Tesseract_aggregate_word_scores":[w["confidence"] for w in words],
             "component_model_raw_text":pm.get("raw_text"),
-            "whole_source_component_bbox_covered":bool(complete),
+            "whole_source_component_bbox_covered":bool(complete or alternative),
+            "isolated_component_TSV_bbox_covered":bool(complete),
+            "complete_word_literal_corroboration":alternative,
             "literal_corroborated":bool(corroborated),
             "strict_component_model_conflict":bool(model_conflict)})
     contact_components = {i for i,c in enumerate(components) if c["shared_core_points_px"]}
@@ -262,15 +370,20 @@ def decide_short_contact_text(partition, raw):
             # strong reading there remains a real competing transcription.
             bindings = (_original_word_graphic_bindings(partition,raw["original_group"],value,differing)
                         if domain=="original_group" and contact_only else [])
-            original_line_cut = bool(bindings) and len(bindings)==len(differing)
-            resolved = bool(source_responsibility and contact_only and original_line_cut)
-            explanation = ("INDEPENDENT_CONTINUING_GRAPHIC_HAS_NO_FINITE_CHARACTER_ENDPOINTS"
+            bound_graphic = bool(bindings) and len(bindings)==len(differing)
+            finite_receiver = bound_graphic and any(
+                b.get("source_responsibility_basis")=="COMPLETE_GLYPH_CROSSING_TO_ACTUAL_FINITE_RECEIVER" for b in bindings)
+            original_line_cut = bound_graphic and not finite_receiver
+            resolved = bool(source_responsibility and contact_only and bound_graphic)
+            explanation = ("INDEPENDENT_COMPLETE_GRAPHIC_TERMINATES_ON_PROVEN_FINITE_RECEIVER"
+                           if resolved and finite_receiver else "INDEPENDENT_CONTINUING_GRAPHIC_HAS_NO_FINITE_CHARACTER_ENDPOINTS"
                            if resolved else "LOW_CONFIDENCE_CONTEXT_READING_RETAINED"
                            if not strong else "UNRESOLVED_STRONG_RAW_READING")
             competitors.append({"domain":domain,"engine":engine,"view":view,"raw_text":value,
                 "strong_raw_reading":bool(strong),"competing_component_indices":differing,
                 "source_responsibility_resolved":resolved,"disposition":explanation,
                 "original_TSV_reading_reaches_both_graphic_crop_edges":original_line_cut,
+                "original_TSV_word_bound_to_actual_finite_receiver":finite_receiver,
                 "original_word_graphic_edge_bindings":bindings,
                 "source_path_continues_beyond_original_context":original_line_cut,
                 "semantic_identity_claimed":False})

@@ -289,6 +289,73 @@ def create_short_contact_text_fixture(path: Path, font_path: Path) -> None:
 
 
 
+RECEIVER_ATTACHED_TEXT_FIXTURE = (("S3", 235), ("S3", 525))
+RECEIVER_ATTACHED_LETTER_SIZE = 46
+RECEIVER_ATTACHED_LETTER_CENTER_Y = 307
+RECEIVER_ATTACHED_DIGIT_OFFSET_X = 10
+RECEIVER_ATTACHED_DIGIT_SCALE = 1.6
+RECEIVER_ATTACHED_DIGIT_THICKNESS = 2
+
+
+def create_receiver_attached_text_fixture(path: Path, font_path: Path) -> None:
+    """Whole glyphs retain the ink shared with a finite independent receiver.
+
+    The first path crosses close independent pen strokes as well as its S.
+    Each complete digit is drawn before its receiving line, so its lower arc
+    really shares source ink with that separate graphic. A second full group
+    protects instance isolation. All positions and strings stay in this
+    external drawing/checking harness; production receives the PNG only.
+    """
+    import cv2
+    import numpy as np
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    marker_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    letter_font = ImageFont.truetype(str(font_path), RECEIVER_ATTACHED_LETTER_SIZE, layout_engine=ImageFont.Layout.BASIC)
+    for text, cx in RECEIVER_ATTACHED_TEXT_FIXTURE:
+        offset = cx - 235
+        mx, my = 60 + offset, 150
+        draw.ellipse((mx - 22, my - 22, mx + 22, my + 22), outline=0, width=3)
+        box = draw.textbbox((0, 0), "F", font=marker_font)
+        draw.text((mx - (box[0] + box[2]) / 2, my - (box[1] + box[3]) / 2),
+                  "F", font=marker_font, fill=0)
+        draw.line(_short_contact_curve_points(offset), fill=0, width=3)
+        box = draw.textbbox((0, 0), text[0], font=letter_font)
+        draw.text((cx - (box[0] + box[2]) / 2, RECEIVER_ATTACHED_LETTER_CENTER_Y - (box[1] + box[3]) / 2),
+                  text[0], font=letter_font, fill=0)
+    curve = _short_contact_curve_points()
+    for index in (95, 118, 123):
+        point = np.asarray(curve[index], float)
+        tangent = np.asarray(curve[index + 4], float) - np.asarray(curve[index - 4], float)
+        normal = np.asarray([-tangent[1], tangent[0]]) / np.linalg.norm(tangent)
+        if index == 123:
+            angle = math.pi / 4
+            normal = np.asarray([[math.cos(angle), -math.sin(angle)],
+                                 [math.sin(angle), math.cos(angle)]]) @ normal
+        distances = (-16, 16) if index == 95 else (-16, 0)
+        ends = [tuple(np.rint(point + normal * distance).astype(int)) for distance in distances]
+        draw.line(ends, fill=0, width=2)
+    draw.ellipse((474, 54, 526, 106), outline=0, width=3)
+    draw.line((526, 80, 630, 80), fill=0, width=3)
+    draw.line((390, 80, 471, 80), fill=0, width=3)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    for point, text in (((60, 400), "STORE 3"), ((350, 400), "SPARE 13")):
+        draw.text(point, text, font=control_font, fill=0)
+    gray = np.asarray(image).copy()
+    for text, cx in RECEIVER_ATTACHED_TEXT_FIXTURE:
+        # The shipped OpenCV stroke font supplies a whole thin digit; no
+        # clipping, erasure, outline repair or private scan pixels are used.
+        cv2.putText(gray, text[1], (cx + RECEIVER_ATTACHED_DIGIT_OFFSET_X, 330), cv2.FONT_HERSHEY_SIMPLEX,
+                    RECEIVER_ATTACHED_DIGIT_SCALE, 0, RECEIVER_ATTACHED_DIGIT_THICKNESS)
+    image = Image.fromarray(gray)
+    draw = ImageDraw.Draw(image)
+    for _, cx in RECEIVER_ATTACHED_TEXT_FIXTURE:
+        draw.line((cx - 80, 330, cx + 80, 330), fill=0, width=3)
+    image.save(path, dpi=(200, 200))
+
+
 SINGLE_LINE_LABEL_FIXTURE = (
     ("AHU-27B, Z4", (80, 64)),
     ("PANEL-08A", (80, 176)),
@@ -3116,7 +3183,7 @@ def _short_contact_saved_glyph_boxes(entity, font_path, document):
     return boxes
 
 
-def inspect_short_contact_text_layout(document, objects, font_path) -> dict:
+def inspect_short_contact_text_layout(document, objects, font_path, *, complete_source_boxes=None) -> dict:
     """Measure every saved glyph against the full external two-character source."""
     from PIL import Image, ImageDraw, ImageFont
 
@@ -3144,6 +3211,8 @@ def inspect_short_contact_text_layout(document, objects, font_path) -> dict:
             offset = draw.textlength(expected[:index], font=font)
             draw.text((point[0] + offset, point[1]), char, font=font, fill=255)
             source_boxes.append((char, raster.getbbox()))
+        if complete_source_boxes is not None:
+            source_boxes = complete_source_boxes[cx]
         candidates = []
         for entity, members, glyphs in text_units:
             if "".join(char for char, _ in glyphs) != expected or len(glyphs) != len(source_boxes):
@@ -3311,6 +3380,9 @@ def inspect_short_contact_payloads(objects, cold, source_path, evidence_root, te
             if not cm.any() or np.any(cm & (image >= 128)):
                 raise AssertionError("A complete short character component contains invented source ink")
             for x, y in component.get("shared_core_points_px", []):
+                if not float(x).is_integer() or not float(y).is_integer():
+                    raise AssertionError("Shared character source core is not an original integer pixel centre")
+                x, y = int(x), int(y)
                 if not (cb[0] <= x < cb[2] and cb[1] <= y < cb[3] and cm[y - cb[1], x - cb[0]]):
                     raise AssertionError("Shared graphic/character source cores were removed from the recognized glyph")
             component_masks.append(np.where(cm, image, 255).astype(np.uint8))
@@ -3496,6 +3568,210 @@ def inspect_short_contact_members(document, objects, cold, source_path, evidence
         raise AssertionError("Short-contact fixture retains an unexplained duplicate, glyph outline or path fragment")
     return {"pass": True, "complete_group_count": len(text["complete_groups"]),
             "complete_text": text, "independent_geometry": geometry, "actual_source_payloads": payloads,
+            "all_formal_objects_accounted_for": True, "one_complete_group_per_editing_object": True,
+            "expected_text_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
+def inspect_receiver_attached_members(document, objects, cold, source_path, evidence_root, font_path) -> dict:
+    """Independently inspect complete shared glyphs and the new path evidence."""
+    import cv2
+    import numpy as np
+    from PIL import Image, ImageDraw, ImageFont
+
+    geometry = inspect_short_contact_geometry(document, objects, cold, source_path, evidence_root)
+    source_boxes = {}
+    font = ImageFont.truetype(str(font_path), RECEIVER_ATTACHED_LETTER_SIZE, layout_engine=ImageFont.Layout.BASIC)
+    for expected, cx in RECEIVER_ATTACHED_TEXT_FIXTURE:
+        glyphs = []
+        for index, char in enumerate(expected):
+            raster = Image.new("L", (640, 480), 0)
+            if index == 0:
+                box = font.getbbox(char)
+                ImageDraw.Draw(raster).text(
+                    (cx - (box[0] + box[2]) / 2, RECEIVER_ATTACHED_LETTER_CENTER_Y - (box[1] + box[3]) / 2),
+                    char, font=font, fill=255,
+                )
+            else:
+                pixels = np.asarray(raster).copy()
+                cv2.putText(pixels, char, (cx + RECEIVER_ATTACHED_DIGIT_OFFSET_X, 330), cv2.FONT_HERSHEY_SIMPLEX,
+                            RECEIVER_ATTACHED_DIGIT_SCALE, 255, RECEIVER_ATTACHED_DIGIT_THICKNESS)
+                raster = Image.fromarray(pixels)
+            glyphs.append((char, raster.getbbox()))
+        source_boxes[cx] = glyphs
+    text = inspect_short_contact_text_layout(document, objects, font_path, complete_source_boxes=source_boxes)
+    payloads = inspect_short_contact_payloads(objects, cold, source_path, evidence_root, text, geometry)
+    ledger = {row["id"]: row for row in objects["objects"]}
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+
+    def original_ink(points, *, walk=False):
+        values = np.asarray(points, float)
+        if (values.ndim != 2 or values.shape[1] != 2 or not len(values)
+                or not np.array_equal(values, np.rint(values))
+                or np.any(values < 0) or np.any(values[:, 0] >= 640) or np.any(values[:, 1] >= 480)):
+            raise AssertionError("Receiver/contact source samples are missing or not original pixel centres")
+        pixels = values.astype(int)
+        if not np.all(source[pixels[:, 1], pixels[:, 0]] < 128):
+            raise AssertionError("Receiver/contact proof invents ink across the original source")
+        if walk and len(values) > 1 and np.max(np.linalg.norm(np.diff(values, axis=0), axis=1)) > math.sqrt(2) + 1e-9:
+            raise AssertionError("Receiver source walk skips a real gap")
+
+    dependency_checks, receiver_checks, character_checks = [], [], []
+    for row in geometry["paths"]:
+        path = ledger[row["path_id"]]["source_evidence"]["text_contact_path"]["path"]
+        dependency_count = 0
+        for contact in path["contact_continuations"]:
+            proof = contact.get("direction_dependency_proofs")
+            if not proof:
+                continue
+            dependency_count += 1
+            proofs = proof.get("proofs", [])
+            by_id = {p.get("proof_id"): p for p in proofs}
+            if (proof.get("schema") != "acyclic-reciprocal-direction-dependencies-v1" or not proofs
+                    or len(by_id) != len(proofs)
+                    or proof.get("graph_pairings_modified") is not False
+                    or proof.get("trace_origin_used_to_drop_competition") is not False
+                    or proof.get("unchanged_pair_deviation_limit_deg") != 20
+                    or proof.get("unchanged_competition_margin_deg") != 18
+                    or proof.get("original_unresolved_direction_evidence", {}).get("reason") != "CONTACT_PAIR_OR_COMPETITION_NOT_UNIQUE"
+                    or len(proof.get("final_worst_case_competition_margins_deg", [])) != 2
+                    or min(proof["final_worst_case_competition_margins_deg"]) < 18
+                    or contact.get("maximum_pair_deviation_deg", 180) > 20):
+                raise AssertionError("New nearby-contact continuation lacks unchanged, acyclic competition evidence")
+            used = contact.get("verified_direction_dependencies", [])
+            if not used or not set(used) <= set(by_id):
+                raise AssertionError("New contact proof did not actually use earlier reciprocal directions")
+            for item in proofs:
+                if (_json_digest({k: v for k, v in item.items() if k != "proof_id"}) != item["proof_id"]
+                        or item.get("only_earlier_round_dependencies_used") is not True
+                        or len(item.get("worst_case_competition_margins_deg", [])) != 2
+                        or min(item["worst_case_competition_margins_deg"]) < 18):
+                    raise AssertionError("A reciprocal dependency proof was rewritten or lost its competition margin")
+                earlier = item["evidence"].get("verified_direction_dependencies", [])
+                if any(ref not in by_id or by_id[ref]["round"] >= item["round"] for ref in earlier):
+                    raise AssertionError("Contact dependencies are circular or use the same unproved round")
+                original_ink(item["evidence"]["source_core_pixels"])
+            dependency_checks.append({"path_id": row["path_id"], "node_id": contact["node_id"],
+                                      "earlier_reciprocal_proof_count": len(proofs), "acyclic_proofs_rehashed": True,
+                                      "original_competition_retained": True, "pass": True})
+        if row["source_center_x"] == 235 and not dependency_count:
+            raise AssertionError("The new ordinary entry did not trigger nearby-contact direction propagation")
+        terminal = path["structural_terminal_evidence"]
+        continuations = terminal.get("carrier_arm_source_continuations", [])
+        if not continuations:
+            raise AssertionError("The new ordinary entry did not trigger finite-carrier traversal across short glyph contacts")
+        carrier = ledger[row["carrier_id"]]
+        original_ink(terminal["carrier_source_path_px"], walk=True)
+        junction_count, cap_count = 0, 0
+        for arm in continuations:
+            if (arm.get("owner_id") != carrier["id"] or arm.get("owner_geometry") != carrier["geometry"]
+                    or arm.get("minimum_arm_span_preserved_px") != 24
+                    or arm.get("full_unique_supported_arm_carried") is not True
+                    or not arm.get("source_edge_ids") or not arm.get("source_continuations")):
+                raise AssertionError("Extended receiver source does not belong to its actual finite LINE")
+            original_ink(arm["source_points_px"], walk=True)
+            stop = arm.get("source_continuation_stop", {})
+            cap = stop.get("complete_free_source_cap")
+            if cap:
+                cap_count += 1
+                local = cap.get("local_cap_proof", {})
+                if (stop.get("reason") != "COMPLETE_OBSERVED_SOURCE_CAP_REACHES_FINITE_OWNER_ENDPOINT"
+                        or cap.get("schema") != "finite-owner-complete-free-source-cap-v1"
+                        or cap.get("graph_skeleton_modified") is not False
+                        or cap.get("source_pixels_modified") is not False
+                        or cap.get("finite_owner_endpoint_tolerance_px") != 3
+                        or any(local.get(key) is not True for key in (
+                            "all_added_points_on_original_ink", "old_skeleton_vertices_and_adjacencies_preserved",
+                            "no_gap_filled", "no_branch_pruned", "complete_short_cap_observation_requested"))
+                        or local.get("white_cap_original_pixel_count", 0) <= 0):
+                    raise AssertionError("Finite receiver lost its complete original free cap or weakened its unchanged endpoint gate")
+                cap_points = cap["complete_source_cap_path_px"]
+                original_ink(cap_points, walk=True)
+                original_ink(cap["original_core_route_px"], walk=True)
+                if (arm["source_points_px"][-len(cap_points):] != cap_points
+                        or math.dist(cap_points[-1], arm["finite_owner_endpoint_px"]) > 3):
+                    raise AssertionError("Actual finite-arm walk did not carry its proved terminal source cap")
+            for junction in arm["source_continuations"]:
+                junction_count += 1
+                candidates = junction.get("all_port_candidates", [])
+                selected = [p for p in candidates if p.get("follows_finite_owner")]
+                if (len(selected) != 1 or selected[0]["port"] != junction.get("selected_outgoing_port")
+                        or junction.get("reason") != "UNIQUE_ORIGINAL_SOURCE_CONTINUATION_OF_FINITE_OWNER"
+                        or junction.get("source_branches_deleted") is not False
+                        or junction.get("no_source_gap_bridged") is not True):
+                    raise AssertionError("Receiver continuation dropped a competitor or consumed a glyph branch")
+                original_ink(junction["source_core_pixels"])
+                for candidate in candidates:
+                    original_ink(candidate["source_points_px"], walk=True)
+        if junction_count < 2:
+            raise AssertionError("Finite receiver proof omitted one of the full digit's two source attachments")
+        if not cap_count:
+            raise AssertionError("The new ordinary input did not carry the actual free-source cap omitted by the old arm representation")
+        receiver_checks.append({"path_id": row["path_id"], "carrier_id": carrier["id"],
+                                "original_shared_attachment_core_count": junction_count,
+                                "complete_original_free_source_caps_checked": cap_count,
+                                "complete_source_walk_and_all_port_competitors_checked": True, "pass": True})
+        target = next(t for t in text["complete_groups"] if t["source_center_x"] == row["source_center_x"])
+        partition = ledger[target["id"]]["source_evidence"]["short_contact_text"]["source_partition"]
+        contacts = partition.get("carrier_contact_evidence", [])
+        components = [c for c in partition["components"] if c.get("carrier_contact_evidence")]
+        finite = partition.get("raw_context_finite_receiver_contacts", [])
+        binding = {key: carrier[key] for key in ("id", "kind", "layer", "geometry")}
+        if (len(contacts) != 1 or len(components) != 1 or len(finite) != 1
+                or contacts[0] != components[0]["carrier_contact_evidence"]
+                or contacts[0].get("owner_path_id") != row["path_id"]
+                or contacts[0].get("carrier_binding") != binding
+                or finite[0].get("carrier_binding") != binding
+                or finite[0].get("owner_id") != row["path_id"]
+                or finite[0].get("path_ends_outside_complete_glyph_on_independent_receiver") is not True
+                or finite[0].get("receiver_source_continues_past_both_horizontal_crop_edges") is not True):
+            raise AssertionError("Complete short group is not bound to its own independent finite path and receiver")
+        proof, component = contacts[0], components[0]
+        carrier_points = terminal["carrier_source_path_px"]
+        lo, hi = proof["shared_span_index_range"]
+        if (proof.get("carrier_source_path_sha256") != _json_digest(carrier_points)
+                or finite[0].get("carrier_source_path_sha256") != _json_digest(carrier_points)
+                or component.get("carrier_shared_span_points_px") != carrier_points[lo:hi + 1]
+                or proof.get("all_attachment_core_and_intervening_source_samples_retained") is not True
+                or proof.get("both_branches_on_same_carrier_side") is not True
+                or proof.get("competing_complete_return_count") != 0
+                or proof.get("unassigned_intervening_source_branches") != []
+                or len(proof.get("original_free_endpoints_px", [])) != 2
+                or min(proof.get("source_continuation_outside_glyph_px", [0])) < 24):
+            raise AssertionError("Digit body, return or shared carrier span is incomplete or ambiguously owned")
+        own_pixels = {(x, y) for y, left, right in component["source_runs_y_x0_x1"] for x in range(left, right)}
+        required = (proof["complete_side_body_skeleton_px"] + proof["complete_short_return_skeleton_px"]
+                    + proof["original_free_endpoints_px"] + component["shared_core_points_px"]
+                    + component["carrier_shared_span_points_px"])
+        original_ink(required)
+        if any((x, y) not in own_pixels for x, y in required):
+            raise AssertionError("Character recognition erased its shared digit bottom, short return or free endpoint")
+        character_checks.append({"id": target["id"], "text": target["text"], "carrier_id": carrier["id"],
+                                 "whole_body_return_shared_span_and_free_endpoints_retained": True,
+                                 "shared_original_source_samples_checked": len(required), "pass": True})
+    accounted = set(geometry["independent_geometry_ids"]) | set(text["ordinary_control_ids"].values())
+    accounted.update(t["id"] for t in text["complete_groups"])
+    extra = []
+    actual = {native_identity(e)["id"]: e for e in document.modelspace() if e.dxf.layer != "REVIEW"}
+    for oid in set(ledger) - accounted:
+        entity, obj = actual[oid], ledger[oid]
+        points = _line_points(entity)
+        if (entity.dxftype() != "LINE" or len(points) != 2
+                or min(max(math.dist(a, b) for a, b in zip(points, expected))
+                       for expected in (((163, 110), (145, 136)), ((145, 136), (163, 110)))) > 2.5
+                or obj.get("source_evidence", {}).get("text_contact_path", {}).get("path", {}).get("path_role") != "TRANSVERSE_STROKE"):
+            raise AssertionError("Receiver fixture contains an unexplained outline, duplicate or partial native path: " + oid)
+        checks = [c for c in cold.get("text_contact_source_checks", {}).get("checks", []) if c.get("id") == oid]
+        if len(checks) != 1 or checks[0].get("pass") is not True:
+            raise AssertionError("Additional independent source stroke lacks an actual saved-source check")
+        extra.append(oid)
+        accounted.add(oid)
+    if accounted != set(ledger):
+        raise AssertionError("Receiver fixture has unaccounted native editing responsibility")
+    return {"pass": True, "complete_group_count": len(text["complete_groups"]),
+            "complete_text": text, "independent_geometry": geometry, "actual_source_payloads": payloads,
+            "nearby_contact_dependencies": dependency_checks, "finite_receiver_continuations": receiver_checks,
+            "complete_carrier_attached_characters": character_checks, "other_independent_source_strokes": extra,
             "all_formal_objects_accounted_for": True, "one_complete_group_per_editing_object": True,
             "expected_text_sent_to_recognizer": False, "inspection_executed_recognition": False}
 
@@ -4083,7 +4359,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths", "transverse-strokes-receiver", "short-contact-text"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths", "transverse-strokes-receiver", "short-contact-text", "receiver-attached-text"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -4149,8 +4425,10 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
             oid: inspect_structure_path_edit_isolation(target, edit_root / oid, oid) for oid in edit_ids
         }
     short_contact_result = None
-    if fixture_kind == "short-contact-text":
-        short_contact_result = inspect_short_contact_members(
+    if fixture_kind in ("short-contact-text", "receiver-attached-text"):
+        inspect_short_group = (inspect_short_contact_members if fixture_kind == "short-contact-text"
+                               else inspect_receiver_attached_members)
+        short_contact_result = inspect_short_group(
             document, objects, cold, work.parent / "controlled-source.png", companion / "evidence", companion / font["font"],
         )
         summary = pipeline_report.get("short_contact_text_completion", {})
@@ -4293,7 +4571,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
     if transverse_result is not None:
         result["transverse_strokes_receiver"] = transverse_result
     if short_contact_result is not None:
-        result["short_contact_text"] = short_contact_result
+        result["short_contact_text" if fixture_kind == "short-contact-text" else "receiver_attached_text"] = short_contact_result
         result["short_contact_text_model_calls"] = short_contact_calls
     return result
 
@@ -4391,6 +4669,8 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     transverse_work.mkdir()
     short_contact_work = work / "short-contact-text"
     short_contact_work.mkdir()
+    receiver_attached_work = work / "receiver-attached-text"
+    receiver_attached_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
@@ -4403,6 +4683,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         {"name": "structure-contact-paths", "directory": structure_work, "create": create_structure_contact_fixture},
         {"name": "transverse-strokes-receiver", "directory": transverse_work, "create": create_transverse_receiver_fixture},
         {"name": "short-contact-text", "directory": short_contact_work, "create": create_short_contact_text_fixture},
+        {"name": "receiver-attached-text", "directory": receiver_attached_work, "create": create_receiver_attached_text_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -4455,7 +4736,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure, transverse, short_contact = cases
+    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure, transverse, short_contact, receiver_attached = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -4621,16 +4902,35 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
     }
     write_json(short_contact_work / "native-smoke.json", short_contact_report)
+    receiver_attached_report = {
+        "status": "PASS", "schema": "windows-native-receiver-attached-text-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": receiver_attached["source_sha256"],
+        "source_result": receiver_attached["source_result"], "exe_result": receiver_attached["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "two_complete_two_character_groups_required": True,
+        "actual_nonempty_acyclic_reciprocal_direction_dependencies_required": True,
+        "actual_finite_carrier_source_continuation_across_two_attachments_required": True,
+        "whole_glyph_body_short_return_shared_carrier_span_and_free_endpoints_checked": True,
+        "original_and_derived_competitors_and_empty_readings_retained": True,
+        "minimum_genuine_TEXT_members_and_independent_instances_checked": True,
+        "two_independent_whole_paths_and_finite_receivers_preserved": True,
+        "real_circle_line_white_gap_preserved": True,
+        "literal_edit_whole_group_move_delete_and_whole_path_delete_cold_reopened": True,
+        "previous_eleven_inputs_preserved": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(receiver_attached_work / "native-smoke.json", receiver_attached_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 12,
+        "coverage_revision": 13,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report, "transverse_strokes_receiver": transverse_report, "short_contact_text": short_contact_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report, "transverse_strokes_receiver": transverse_report, "short_contact_text": short_contact_report, "receiver_attached_text": receiver_attached_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,
