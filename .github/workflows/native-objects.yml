@@ -81,6 +81,11 @@ jobs:
             tests/test_native_connection_core_routes.py \
             tests/test_native_structure_contact_geometry.py \
             tests/test_native_structure_contact_adoption.py \
+            tests/test_native_transverse_stroke_geometry.py \
+            tests/test_native_transverse_stroke_adoption.py \
+            tests/test_native_carrier_reconciliation.py \
+            tests/test_native_carrier_reconciliation_audit.py \
+            tests/test_windows_transverse_receiver_smoke.py \
             tests/test_native_circle_endpoint_contacts.py \
             tests/test_windows_structure_contact_smoke.py \
             tests/test_native_retrace_cold_audit.py \

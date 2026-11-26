@@ -53,6 +53,104 @@ def object_binding(obj):
     return {key: deepcopy(obj[key]) for key in ("id", "kind", "layer", "geometry")}
 
 
+def contact_completion_stages(manifest):
+    """Replay the context chain of sequential independent path adoption.
+
+    A later path may share ink with an earlier complete path.  Its context
+    must be the actual preceding adoption result, not a supplied extra owner.
+    Ordinary one-stage receipts keep their existing representation.
+    """
+    stages = manifest.get("adoption_stages")
+    if stages is None:
+        return {
+            "pass": True, "checks": {"single_adoption_stage": True},
+            "plan_prior_bindings": {
+                key: manifest.get("prior_object_bindings", [])
+                for key in manifest.get("geometry_plans", {})
+            },
+        }
+    checks, plan_priors = {}, {}
+    try:
+        prior_rows = manifest["prior_object_bindings"]
+        active = {row["id"]: row for row in prior_rows}
+        adopted_rows = manifest["objects"]
+        adopted = {row["id"]: object_binding(row) for row in adopted_rows}
+        checks["unique_initial_context"] = len(active) == len(prior_rows)
+        checks["unique_staged_adoptions"] = len(adopted) == len(adopted_rows)
+        checks["nonempty_stage_chain"] = isinstance(stages, list) and bool(stages)
+        seen_adopted, seen_retired, seen_plans = set(), set(), set()
+        for index, stage in enumerate(stages):
+            prefix = f"stage_{index}:"
+            checks[prefix + "exact_prior_context"] = sorted(
+                stage["prior_object_bindings"], key=lambda row: row["id"]
+            ) == sorted(active.values(), key=lambda row: row["id"])
+            ids, retired = set(stage["adopted_ids"]), set(stage["retired_ids"])
+            plans = set(stage["plan_sha256s"])
+            checks[prefix + "unique_members"] = (
+                len(ids) == len(stage["adopted_ids"])
+                and len(retired) == len(stage["retired_ids"])
+                and len(plans) == len(stage["plan_sha256s"])
+            )
+            checks[prefix + "new_independent_objects"] = (
+                ids <= set(adopted) and not (ids & (set(active) | seen_adopted))
+            )
+            checks[prefix + "only_initial_whole_objects_retired"] = (
+                retired <= set(active) and not (retired & seen_adopted)
+            )
+            checks[prefix + "plans_have_one_context"] = not (plans & seen_plans)
+            for key in plans:
+                plan_priors[key] = stage["prior_object_bindings"]
+            for oid in retired:
+                active.pop(oid, None)
+            active.update({oid: adopted[oid] for oid in ids})
+            seen_adopted.update(ids)
+            seen_retired.update(retired)
+            seen_plans.update(plans)
+        checks["all_adoptions_in_chain"] = seen_adopted == set(adopted)
+        checks["all_retirements_in_chain"] = seen_retired == set(manifest["retired_ids"])
+        checks["all_plans_in_chain"] = seen_plans == set(manifest["geometry_plans"])
+    except (KeyError, TypeError, ValueError, AttributeError):
+        checks["well_formed_stage_chain"] = False
+    return {"pass": all(checks.values()), "checks": checks,
+            "plan_prior_bindings": plan_priors}
+
+
+def merge_contact_completions(first, following, out):
+    """Join independently adopted stages without losing source contexts."""
+    def stage_rows(completion):
+        return deepcopy(completion.get("adoption_stages", [{
+            "prior_object_bindings": completion["prior_object_bindings"],
+            "adopted_ids": [obj["id"] for obj in completion["objects"]],
+            "retired_ids": completion["retired_ids"],
+            "plan_sha256s": sorted(completion["geometry_plans"]),
+        }]))
+
+    for key in ("schema", "source_sha256", "roi_xyxy_px",
+                "source_pixels_modified", "partial_old_entity_retirement_permitted",
+                "text_content_decisions_performed", "new_complete_text_labels"):
+        if first.get(key) != following.get(key):
+            raise ValueError("CONTACT_STAGE_CONTRACT_CHANGED:" + key)
+    if set(first["geometry_plans"]) & set(following["geometry_plans"]):
+        raise ValueError("CONTACT_STAGE_PLAN_HAS_MULTIPLE_CONTEXTS")
+    result = deepcopy(first)
+    for key in ("objects", "decisions", "uncertainties"):
+        result[key].extend(deepcopy(following[key]))
+    result["retired_ids"] = sorted(set(first["retired_ids"]) | set(following["retired_ids"]))
+    result["geometry_plans"].update(deepcopy(following["geometry_plans"]))
+    result["adoption_stages"] = stage_rows(first) + stage_rows(following)
+    result["staged_native_duplicate_group_quarantines"] = (
+        deepcopy(first.get("staged_native_duplicate_group_quarantines", [
+            first["native_duplicate_group_quarantine"]
+        ])) + deepcopy(following.get("staged_native_duplicate_group_quarantines", [
+            following["native_duplicate_group_quarantine"]
+        ]))
+    )
+    if not contact_completion_stages(result)["pass"]:
+        raise ValueError("CONTACT_STAGE_CONTEXT_CHAIN_INVALID")
+    save_json(Path(out) / "adoption.json", result)
+    return result
+
+
 def path_geometry(obj):
     """Represent native LINE/ARC/path without changing any native geometry."""
     geometry, kind = obj["geometry"], obj["kind"]
@@ -109,16 +207,59 @@ def _as_path(obj):
     return result
 
 
+def transverse_shared_source_views(proposal, existing):
+    """Adapt proved contact cores for the unchanged independent-pair gate.
+
+    The views never change stored old objects or grant a native overlap.
+    Both source walks still undergo the existing current-pixel four-port
+    replay.  A new stroke cannot lend a core to an unrelated prior owner.
+    """
+    selected = proposal.get("source_evidence", {}).get(FIELD, {}).get("path", {})
+    if selected.get("path_role") != "TRANSVERSE_STROKE":
+        return proposal, existing
+    from .transverse_stroke_geometry import _binding
+
+    owner_id = selected.get("required_crossing_path_id")
+    owner = next((old for old in existing if old["id"] == owner_id), None)
+    if (owner is None or _binding(owner) != selected.get("required_crossing_path_binding")
+            or digest(_binding(owner)) != selected.get("required_crossing_path_binding_sha256")):
+        return proposal, existing
+    old_contacts = owner.get("source_evidence", {}).get(FIELD, {}).get("path", {}).get(
+        "contact_continuations", []
+    )
+    cores = []
+    for contact in selected.get("contact_continuations", []):
+        proof = contact.get("bounded_shared_source_core")
+        if not proof or contact.get("crossing_path_id") != owner_id:
+            continue
+        current_points = sorted(proof.get("source_core_points", []))
+        if current_points and any(sorted(old.get("source_core_pixels", [])) == current_points
+                                  for old in old_contacts):
+            cores.append({"bounded_shared_source_core": deepcopy(proof)})
+    if not cores:
+        return proposal, existing
+    candidate_view, owner_view = deepcopy(proposal), deepcopy(owner)
+    for view in (candidate_view, owner_view):
+        view["source_evidence"].setdefault("crossing_evidence", []).extend(deepcopy(cores))
+    return candidate_view, [owner_view if old["id"] == owner_id else old for old in existing]
+
+
 def _plan_source_checks(gray, roi, plan, prior_objects=None):
     from . import text_contact_geometry
     from .text_contact_geometry import POLICY, SCHEMA as PLAN_SCHEMA
 
     producer = text_contact_geometry
     structural = plan.get("schema") == "source-structure-contact-path-plan-v1"
+    transverse = plan.get("schema") == "source-transverse-stroke-plan-v1"
     if structural:
         from . import structure_contact_geometry
 
         producer = structure_contact_geometry
+        POLICY, PLAN_SCHEMA = producer.POLICY, producer.SCHEMA
+    elif transverse:
+        from . import transverse_stroke_geometry
+
+        producer = transverse_stroke_geometry
         POLICY, PLAN_SCHEMA = producer.POLICY, producer.SCHEMA
     checks = {
         "schema_matches": plan.get("schema") == PLAN_SCHEMA,
@@ -154,6 +295,17 @@ def _plan_source_checks(gray, roi, plan, prior_objects=None):
             and plan.get("prior_circle_source_bindings")
             == producer.circle_source_bindings(prior_objects)
         )
+    if transverse:
+        try:
+            checks["crossing_context_bound_to_existing_objects_and_source"] = (
+                prior_objects is not None
+                and plan.get("prior_object_bindings") == [
+                    producer._binding(obj)
+                    for obj in sorted(prior_objects, key=lambda row: row["id"])
+                ]
+            )
+        except (KeyError, TypeError):
+            checks["crossing_context_bound_to_existing_objects_and_source"] = False
     try:
         x0, y0, x1, y1 = plan["original_source_crop_xyxy_px"]
         checks["source_crop_bounds_valid"] = (
@@ -237,6 +389,16 @@ def _path_source_checks(gray, plan, path):
                 role == "SUPPORTING_CARRIER"
                 and kinds == ["OBSERVED_SOURCE_CARRIER_CORNER"] * 2
                 and bool(path.get("structural_carrier_evidence"))
+            )
+        if plan.get("schema") == "source-transverse-stroke-plan-v1":
+            checks["independent_complete_transverse_role"] = (
+                path.get("path_role") == "TRANSVERSE_STROKE"
+                and [item.get("kind") for item in path["endpoint_evidence"]]
+                == ["OBSERVED_FREE_SOURCE_ENDPOINT"] * 2
+                and isinstance(path.get("required_crossing_path_id"), str)
+                and bool(path.get("contact_continuations"))
+                and bool(path.get("parallel_stroke_group_evidence"))
+                and path.get("existing_objects_may_be_retired") is False
             )
         checks["terminal_coordinates_match_complete_path"] = path[
             "endpoint_source_points_px"
@@ -685,7 +847,9 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
                 "editing_scope": "one complete independent observed line; text and endpoint symbols remain separate",
                 "status": "SOURCE_SUPPORTED_COMPLETE_TEXT_CONTACT_PATH",
             }
-            if plan.get("schema") == "source-structure-contact-path-plan-v1":
+            if plan.get("schema") in {
+                "source-structure-contact-path-plan-v1", "source-transverse-stroke-plan-v1"
+            }:
                 obj["source_evidence"][FIELD]["geometry_plan_schema"] = plan["schema"]
             proposals.append(obj)
     # A newly proved receiving line remains a separate entity.  Adopt it
@@ -729,6 +893,23 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
         }
         active = [obj for obj in objects if obj["id"] not in retired] + internal_adopted
         selected_path = proposal["source_evidence"][FIELD]["path"]
+        if selected_path.get("path_role") == "TRANSVERSE_STROKE":
+            from .transverse_stroke_geometry import _binding
+
+            crossing_id = selected_path["required_crossing_path_id"]
+            crossing = next((old for old in active if old["id"] == crossing_id), None)
+            row["required_separate_crossing_path_id"] = crossing_id
+            row["separate_complete_crossing_path_present"] = (
+                crossing is not None
+                and _binding(crossing) == selected_path.get("required_crossing_path_binding")
+                and digest(_binding(crossing))
+                == selected_path.get("required_crossing_path_binding_sha256")
+            )
+            if not row["separate_complete_crossing_path_present"]:
+                row["reasons"].append("SEPARATE_COMPLETE_CROSSING_PATH_NOT_PRESENT")
+                row["decision"] = "PENDING_SEPARATE_COMPLETE_CROSSING_PATH"
+                decisions.append(row)
+                continue
         if selected_path.get("path_role") == "ROUND_TO_CARRIER":
             start_id = selected_path["required_start_circle_id"]
             start = next((old for old in active if old["id"] == start_id), None)
@@ -762,9 +943,12 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
                     "geometry": proposal["geometry"],
                 }
             responsibility_active.append(old)
-        row.update(
-            _connection_path_responsibility(source, proposal, responsibility_active)
+        responsibility_proposal, responsibility_active = transverse_shared_source_views(
+            proposal, responsibility_active
         )
+        row.update(_connection_path_responsibility(
+            source, responsibility_proposal, responsibility_active
+        ))
         members = _existing_line_members(active)
         # Test adequacy before overlap/replacement.  A source-supported old
         # long LINE is not replaced by a noisy shorter graph subpath.
@@ -828,6 +1012,8 @@ def complete_text_contact_paths(gray, roi, source_sha, objects, plans, out):
         row["arc_overlap_records"] = arc_overlap
         if arc_overlap:
             row["reasons"].append("EXISTING_NATIVE_CURVE_RESPONSIBILITY_PENDING")
+        if selected_path.get("existing_objects_may_be_retired") is False and replacing:
+            row["reasons"].append("TRANSVERSE_STROKE_CANNOT_RETIRE_EXISTING_OBJECTS")
         if row["reasons"]:
             row["decision"] = "PENDING_WHOLE_OBJECT_RESPONSIBILITY"
         else:
