@@ -47,7 +47,7 @@ def checkpoint(tmp_path):
 
 def events(checkpoint):
     path = checkpoint.context.event_file
-    return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()] if path.exists() else []
 
 
 @pytest.mark.parametrize("winerror", [5, 32, 33])
@@ -61,14 +61,14 @@ def test_released_windows_lock_commits_whole_payload(checkpoint, monkeypatch, wi
     def once(source, destination):
         attempts.append((source, destination))
         assert checkpoint.path.read_bytes() == checkpoint.original
-        assert json.loads(Path(source).read_text()) == {"new": "完整证据"}
+        assert json.loads(Path(source).read_text(encoding="utf-8")) == {"new": "完整证据"}
         if len(attempts) == 1:
             raise denied(winerror)
         return replace(source, destination)
 
     monkeypatch.setattr(contracts.os, "replace", once)
     contracts.save_json(checkpoint.path, {"new": "完整证据"})
-    assert json.loads(checkpoint.path.read_text()) == {"new": "完整证据"}
+    assert json.loads(checkpoint.path.read_text(encoding="utf-8")) == {"new": "完整证据"}
     assert attempts[0] == attempts[1]
     assert clock.delays == [0.05]
     assert not list(checkpoint.path.parent.glob("*.pending-*"))
@@ -127,7 +127,7 @@ def test_cancel_during_lock_prevents_replacement(checkpoint, monkeypatch):
     monkeypatch.setattr(contracts, "sys", SimpleNamespace(platform="win32"))
 
     def cancel_then_fail(source, destination):
-        checkpoint.context.cancel_file.write_text('{"reason":"user"}')
+        checkpoint.context.cancel_file.write_text('{"reason":"user"}', encoding="utf-8")
         raise denied()
 
     monkeypatch.setattr(contracts.os, "replace", cancel_then_fail)
@@ -155,7 +155,7 @@ def test_cleanup_denial_preserves_original_failure_and_owned_temporary(checkpoin
     assert checkpoint.path.read_bytes() == checkpoint.original
     remaining = list(checkpoint.path.parent.glob("*.pending-*"))
     assert len(remaining) == 1
-    assert json.loads(remaining[0].read_text()) == {"new": "unpublished evidence"}
+    assert json.loads(remaining[0].read_text(encoding="utf-8")) == {"new": "unpublished evidence"}
     assert any("temporary retained" in note for note in failure.__notes__)
 
 
@@ -208,6 +208,6 @@ def test_real_windows_file_handle_release_recovers(checkpoint, monkeypatch):
         thread.join(4)
     assert not thread.is_alive() and not close_errors
     assert errors and set(errors) <= {5, 32, 33}
-    assert json.loads(checkpoint.path.read_text()) == {"new": "actual Windows checkpoint"}
+    assert json.loads(checkpoint.path.read_text(encoding="utf-8")) == {"new": "actual Windows checkpoint"}
     assert not list(checkpoint.path.parent.glob("*.pending-*"))
     assert events(checkpoint)[-1]["kind"] == "checkpoint_replace_recovered"
