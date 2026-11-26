@@ -3256,6 +3256,81 @@ def inspect_short_contact_text_layout(document, objects, font_path, *, complete_
             "true_TEXT_members_only": True, "independent_instances": True}
 
 
+def short_contact_component_reobservation_context(partition, raw, index, character):
+    """Derive the extra-view contract independently from pre-supplement source data."""
+    component = partition["components"][index]
+    observation = raw["components"][index]
+    views = observation.get("tesseract", [])
+    if not views or views[0].get("psm") != 10:
+        return None
+    words = views[0].get("words", [])
+    cb = component["bbox_xyxy_px"]
+    box = [0, 0, 2 * (cb[2] - cb[0]), 2 * (cb[3] - cb[1])]
+    if (len(words) != 1 or len(words[0]["text"]) != 1 or words[0]["text"] == character
+            or not 0 <= words[0]["confidence"] < 85
+            or max(abs(a - b) for a, b in zip(words[0]["bbox_xyxy_px"], box)) > 2):
+        return None
+    count = len(partition["components"])
+    for domain in ("original_group", "ownership_group"):
+        model = raw[domain]["model"]["prediction"]
+        if (model.get("model_mean_confidence", 0) < 0.98 or model.get("minimum_emitted_character_confidence", 0) < 0.95
+                or len(model.get("raw_text", "")) != count or model["raw_text"][index] != character):
+            return None
+    model = observation["model"]["prediction"]
+    if (model.get("model_mean_confidence", 0) < 0.98 or model.get("minimum_emitted_character_confidence", 0) < 0.95
+            or model.get("raw_text") != character):
+        return None
+    carrier = component.get("carrier_contact_evidence", {})
+    owner = carrier.get("owner_path_id")
+    crossings = [row for row in partition.get("graphic_crossings", []) if row.get("owner_id") == owner]
+    contacts = [row for row in partition.get("raw_context_finite_receiver_contacts", [])
+                if row.get("owner_id") == owner and row.get("carrier_binding") == carrier.get("carrier_binding")
+                and row.get("carrier_source_path_sha256") == carrier.get("carrier_source_path_sha256")]
+    if (not crossings or len(contacts) != 1
+            or not all(row.get("source_continuity_both_sides") is True and row.get("glyph_box_is_not_path_terminal") is True for row in crossings)
+            or carrier.get("all_attachment_core_and_intervening_source_samples_retained") is not True
+            or carrier.get("both_branches_on_same_carrier_side") is not True
+            or carrier.get("competing_complete_return_count") != 0
+            or carrier.get("unassigned_intervening_source_branches") != []
+            or len(carrier.get("original_free_endpoints_px", [])) != 2
+            or partition.get("all_side_glyph_skeleton_and_shared_core_samples_retained") is not True
+            or contacts[0].get("single_contiguous_source_visit") is not True
+            or contacts[0].get("path_ends_outside_complete_glyph_on_independent_receiver") is not True
+            or contacts[0].get("receiver_source_continues_past_both_horizontal_crop_edges") is not True):
+        return None
+    records = []
+    gb = partition["bbox_xyxy_px"]
+    for domain in ("original_group", "ownership_group"):
+        origin = partition["raw_original_bbox_xyxy_px"] if domain == "original_group" else gb
+        full = [2 * (gb[0] - origin[0]), 2 * (gb[1] - origin[1]), 2 * (gb[2] - origin[0]), 2 * (gb[3] - origin[1])]
+        views = raw[domain]["tesseract"]
+        if [view["psm"] for view in views] != [7, 13]:
+            return None
+        for view in views:
+            row = view["words"]
+            if len(row) != 1 or len(row[0]["text"]) != count or row[0]["text"][index] != character:
+                return None
+            word = row[0]
+            wb = word["bbox_xyxy_px"]
+            if (wb[0] > full[0] + 2 or wb[1] > full[1] + 2 or wb[2] < full[2] - 2 or wb[3] < full[3] - 2
+                    or domain == "original_group" and word["confidence"] < 85):
+                return None
+            records.append({"domain": domain, "PSM": view["psm"], "complete_word": word["text"],
+                            "word_bbox_in_scaled_crop": wb, "literal_index": index, "unchanged_literal": character,
+                            "word_confidence": word["confidence"], "all_complete_source_component_boxes_covered": True})
+    return {"whole_word_literal_proof": {
+                "basis": "UNCHANGED_LITERAL_IN_COMPLETE_WORDS_WITH_STRICT_COMPONENT_MODEL",
+                "source_component_count": count, "source_component_index": index,
+                "independent_carrier_binding": carrier["carrier_binding"],
+                "original_group_model_literal": character, "strict_component_model_literal": character,
+                "word_observations": records, "new_target_or_other_instance_transcription_used": False},
+            "owner_path_id": owner, "carrier_binding": carrier["carrier_binding"],
+            "carrier_source_path_sha256": carrier["carrier_source_path_sha256"],
+            "primary_PSM": 10, "primary_nonempty_literal": words[0]["text"], "primary_word_confidence": words[0]["confidence"],
+            "fixed_additional_PSM": 13, "trigger_derived_before_additional_observation": True,
+            "original_nonempty_observation_preserved": True, "source_pixels_scale_padding_unchanged": True}
+
+
 def inspect_short_contact_payloads(objects, cold, source_path, evidence_root, text_checks, geometry_checks):
     """Read the real late-stage proof, original/shared ink and every raw view."""
     import csv
@@ -3397,26 +3472,58 @@ def inspect_short_contact_payloads(objects, cold, source_path, evidence_root, te
                         ("ownership_group", ownership, raw["ownership_group"])]
         if len(raw.get("components", [])) != len(component_masks):
             raise AssertionError("Full short-character group omitted a component observation")
+        component_contexts, component_competitors = {}, []
         for index, (character, component, observation) in enumerate(zip(target["text"], partition["components"], raw["components"])):
             cb = component["bbox_xyxy_px"]
             words = observation["tesseract"][0]["words"]
             expected_box = [0, 0, 2 * (cb[2] - cb[0]), 2 * (cb[3] - cb[1])]
             corroboration = decision.get("components", [])[index]
-            if (len(words) != 1 or words[0].get("text") != character
-                    or max(abs(a - b) for a, b in zip(words[0]["bbox_xyxy_px"], expected_box)) > 2
-                    or corroboration.get("literal") != character
+            direct = (len(words) == 1 and words[0].get("text") == character
+                      and max(abs(a - b) for a, b in zip(words[0]["bbox_xyxy_px"], expected_box)) <= 2)
+            context = short_contact_component_reobservation_context(partition, raw, index, character)
+            component_contexts[id(observation)] = context
+            reobserved = corroboration.get("bounded_component_reobservation")
+            if not direct:
+                views = observation["tesseract"]
+                if context is None or [view["psm"] for view in views] != [10, 13]:
+                    raise AssertionError("Short-character conflict has no source-qualified fixed extra observation")
+                extra = views[1]["words"]
+                if (len(extra) != 1 or extra[0]["text"] != character or extra[0]["confidence"] < 85
+                        or max(abs(a - b) for a, b in zip(extra[0]["bbox_xyxy_px"], expected_box)) > 2):
+                    raise AssertionError("Fixed component observation is incomplete, conflicting or too weak")
+                expected_proof = {**context, "basis": "FIXED_COMPLETE_COMPONENT_VIEW_WITH_UNCHANGED_WHOLE_WORD_AND_STRICT_MODELS",
+                                  "additional_literal": character, "additional_word_confidence": extra[0]["confidence"],
+                                  "additional_component_bbox": extra[0]["bbox_xyxy_px"], "additional_observation_count": 1,
+                                  "independent_OCR_engine_claimed": False, "prior_nonempty_reading_reclassified_as_empty": False}
+                if reobserved != expected_proof or corroboration.get("complete_word_literal_corroboration") is not None:
+                    raise AssertionError("Nonempty primary reading was erased or borrowed the empty-only fallback")
+            elif reobserved is not None:
+                raise AssertionError("An already corroborated component acquired an unjustified extra observation")
+            if (corroboration.get("literal") != character
                     or corroboration.get("literal_corroborated") is not True
                     or corroboration.get("whole_source_component_bbox_covered") is not True
                     or corroboration.get("strict_component_model_conflict") is not False):
                 raise AssertionError("Short-character group lacks the complete independent literal observation for one member")
+            for view in observation["tesseract"]:
+                for word in view["words"]:
+                    if word["text"] != character:
+                        component_competitors.append({"component_index": index, "engine": "Tesseract", "view": view["psm"],
+                            "raw_text": word["text"], "word_confidence": word["confidence"], "strong_raw_reading": word["confidence"] >= 85,
+                            "original_nonempty_observation_preserved": True, "resolved_by_fixed_additional_view": reobserved is not None,
+                            "prior_nonempty_reading_reclassified_as_empty": False})
+        if component_competitors != decision.get("component_raw_competing_readings", []):
+            raise AssertionError("A primary or supplemental component competitor was omitted or rewritten")
+        if any(row["strong_raw_reading"] or not row["resolved_by_fixed_additional_view"] for row in component_competitors):
+            raise AssertionError("A real component conflict remains unresolved after the fixed observation")
         observations += [("component", image, observation) for image, observation in zip(component_masks, raw["components"])]
         competition_inventory = []
         for domain, image, observation in observations:
             if observation.get("input_array_sha256") != hashlib.sha256(image.tobytes()).hexdigest():
                 raise AssertionError("Short-contact recognition input is not its recorded original ownership view")
-            expected_psms = [10] if domain == "component" else [7, 13]
+            expected_psms = ([10, 13] if component_contexts[id(observation)] is not None else [10]) if domain == "component" else [7, 13]
             if [view.get("psm") for view in observation.get("tesseract", [])] != expected_psms:
                 raise AssertionError("Short-contact raw OCR views changed their finite recognition plan")
+            primary_engine = None
             for view in observation["tesseract"]:
                 _, raw_tsv = read(view["raw_tsv"])
                 _, metadata_raw = read(view["metadata"])
@@ -3429,6 +3536,21 @@ def inspect_short_contact_payloads(objects, cold, source_path, evidence_root, te
                         or not isinstance(view.get("new_call"), bool)
                         or metadata.get("command_executed_for_this_request") is not view["new_call"]):
                     raise AssertionError("Short-contact TSV was not actually recognized from the fixed complete input")
+                specification = metadata.get("specification", {})
+                repeated = np.repeat(np.repeat(image, 2, axis=0), 2, axis=1)
+                if (specification.get("psm") != view["psm"] or specification.get("recognition_dpi") != 400
+                        or specification.get("crop_xyxy_px") != [0, 0, repeated.shape[1], repeated.shape[0]]
+                        or specification.get("crop_array_sha256") != hashlib.sha256(repeated.tobytes()).hexdigest()
+                        or specification.get("external_white_padding_px") != 12 or specification.get("source_pixels_modified") is not False):
+                    raise AssertionError("Short-contact fixed view specification was changed")
+                if domain == "component" and len(expected_psms) > 1:
+                    engine = metadata.get("engine_identity")
+                    if not isinstance(engine, dict) or not engine.get("executable_sha256") or not engine.get("traineddata_sha256"):
+                        raise AssertionError("Component observation engine identity is absent")
+                    if primary_engine is None:
+                        primary_engine = engine
+                    elif engine != primary_engine:
+                        raise AssertionError("Fixed component view changed its OCR engine or language resource")
                 if not view["new_call"]:
                     cached = metadata.get("raw_observation_cache", {})
                     if (cached.get("payload_sha256") != hashlib.sha256(raw_tsv).hexdigest()

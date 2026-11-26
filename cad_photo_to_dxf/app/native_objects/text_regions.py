@@ -339,7 +339,8 @@ def _check_reused_tsv_encoding(raw, metadata):
 
 
 @profiled("text_regions._ocr")
-def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, dpi=200):
+def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, dpi=200,
+         record_engine_identity=False):
     from PIL import Image
     import numpy as np
     from .observation_cache import (
@@ -425,7 +426,10 @@ def _ocr(image, box, psm, directory, name, progress_callback, padding_px=0, *, d
     ]
     cache_lookup_started = time.perf_counter()
     cache = configured_cache()
-    engine_bytes = tesseract_identity(engine) if cache is not None else None
+    # Some fixed multi-view contracts require exact byte identity even in a
+    # normal run without a raw cache. Measure before this new call; never
+    # attribute today's installed bytes to an older identity-free checkpoint.
+    engine_bytes = tesseract_identity(engine) if cache is not None or record_engine_identity else None
     cache_spec = (
         tesseract_spec(
             crop,
