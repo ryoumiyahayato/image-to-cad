@@ -10,6 +10,13 @@ The executed real-source findings and four-target comparison are recorded in
 [RESULTS_20261127.md](RESULTS_20261127.md). The outcome is **zero complete
 formally recovered objects**; this directory remains an experiment.
 
+Historical local freeze commits and their publicly available equivalents are
+listed in [PUBLICATION_MAP.json](PUBLICATION_MAP.json). Every mapped publication
+has exactly the same full Git tree as its local frozen commit; only commit
+metadata differs. The final local source execution at `e71aeed` corresponds to
+public code commit `704a8ea0a76fdab64e4ac1e05b06c4da8f727e00`. The subsequent
+publication index adds documentation only.
+
 ## Model
 
 1. Threshold the supplied unmodified grayscale image at the existing 128 ink

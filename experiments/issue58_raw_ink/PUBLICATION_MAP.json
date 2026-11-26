@@ -1,0 +1,32 @@
+{
+  "schema": "issue58-route-b-publication-map-v1",
+  "base_commit": "a2aec1596e82b3a92c7b76f89e9e46e068029e90",
+  "branch": "experiment/issue58-raw-ink-b",
+  "publication_scope": "Independent experimental branch only; no main merge",
+  "commits": [
+    {
+      "local_frozen_commit": "23e5e07fb830a844f3855ac04c5b865783b4a843",
+      "published_commit": "a9123e31949e7f4f5fe0a2adf4ccb9fe466e0f16",
+      "identical_full_git_tree": "ff37fe75b8b2ede981ad4f17fedde5a1c8ae41c9"
+    },
+    {
+      "local_frozen_commit": "e97803176d2cb95c2d63a7bf0d4943353dfd55a6",
+      "published_commit": "6c0e7d51c82c9f4a5f207ba0c723d09bb207fca1",
+      "identical_full_git_tree": "214cd9b0bafb5ef8af31b37286da452c3015fbad"
+    },
+    {
+      "local_frozen_commit": "e71aeedced819e4cae86eee2ad25ee2238ece454",
+      "published_commit": "704a8ea0a76fdab64e4ac1e05b06c4da8f727e00",
+      "identical_full_git_tree": "6c25c38b05a283a46c16fb6676b503f844f01838"
+    }
+  ],
+  "local_run_commit": "e71aeedced819e4cae86eee2ad25ee2238ece454",
+  "public_code_commit": "704a8ea0a76fdab64e4ac1e05b06c4da8f727e00",
+  "all_publication_trees_exactly_equal_the_local_frozen_trees": true,
+  "commit_identity_note": "Git data publication uses new GitHub commit metadata. Historical local commit IDs are preserved as execution provenance, not represented as public commit IDs.",
+  "final_metadata_commit_scope": "Adds this mapping and documentation pointers only; candidate code remains exactly that of public_code_commit.",
+  "private_execution_receipt": "PUBLISHED_COMMIT_EXECUTION.json",
+  "private_execution_receipt_candidate_file_sha256": "cf773e3ebee3a1e0de83b596f930e4b75322907c05ace8a025de7d0dfa6b7d1e",
+  "private_execution_status": "PASS_EXACT_REPLAY_EXCEPT_WALL_SECONDS",
+  "formally_recovered_complete_objects": 0
+}
