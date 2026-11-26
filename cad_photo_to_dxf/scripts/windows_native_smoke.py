@@ -236,6 +236,58 @@ def create_transverse_receiver_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+SHORT_CONTACT_TEXT_FIXTURE = (("S3", 235), ("S3", 525))
+
+
+def _short_contact_curve_points(offset=0):
+    """Public test-drawing geometry, never supplied to a production stage."""
+    points = []
+    for index in range(181):
+        t = index / 180
+        points.append((
+            offset + round((1 - t) ** 2 * 82 + 2 * (1 - t) * t * 140 + t * t * 235),
+            round((1 - t) ** 2 * 150 + 2 * (1 - t) * t * 35 + t * t * 260),
+        ))
+    return points + [(offset + 235, 330)]
+
+
+def create_short_contact_text_fixture(path: Path, font_path: Path) -> None:
+    """Two whole short groups share ink with separately supported paths.
+
+    Each independent circle-to-carrier path crosses the first glyph of a
+    complete two-character group. Both groups use real packaged-font glyphs;
+    clean ordinary text supplies possible independent source references.
+    Neither their text nor these drawing coordinates enters recognition.
+    The existing two-column circle/line white gap is drawn in clear space.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    image = Image.new("L", (640, 480), 255)
+    draw = ImageDraw.Draw(image)
+    marker_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    contact_font = ImageFont.truetype(str(font_path), 46, layout_engine=ImageFont.Layout.BASIC)
+    for text, cx in SHORT_CONTACT_TEXT_FIXTURE:
+        offset = cx - 235
+        marker_center = (60 + offset, 150)
+        mx, my = marker_center
+        draw.ellipse((mx - 22, my - 22, mx + 22, my + 22), outline=0, width=3)
+        marker_box = draw.textbbox((0, 0), "F", font=marker_font)
+        draw.text((mx - (marker_box[0] + marker_box[2]) / 2,
+                   my - (marker_box[1] + marker_box[3]) / 2), "F", font=marker_font, fill=0)
+        draw.line(_short_contact_curve_points(offset), fill=0, width=3)
+        box = draw.textbbox((0, 0), text[0], font=contact_font)
+        draw.text((cx - (box[0] + box[2]) / 2, 307 - (box[1] + box[3]) / 2),
+                  text, font=contact_font, fill=0)
+        draw.line((cx - 80, 330, cx + 80, 330), fill=0, width=3)
+    draw.ellipse((474, 54, 526, 106), outline=0, width=3)
+    draw.line((526, 80, 630, 80), fill=0, width=3)
+    draw.line((390, 80, 471, 80), fill=0, width=3)
+    control_font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    for point, text in (((60, 400), "STORE 3"), ((350, 400), "SPARE 13")):
+        draw.text(point, text, font=control_font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
 
 SINGLE_LINE_LABEL_FIXTURE = (
     ("AHU-27B, Z4", (80, 64)),
@@ -2865,6 +2917,589 @@ def inspect_transverse_receiver_members(document, objects, cold, source_path, ev
             "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
 
 
+def inspect_short_contact_geometry(document, objects, cold, source_path, evidence_root) -> dict:
+    """Cold-read both public paths, their separate receivers and the real gap."""
+    import numpy as np
+    from PIL import Image
+
+    gap = inspect_structure_fixture_source_gap(source_path)
+    with Image.open(source_path) as image:
+        gray = np.asarray(image.convert("L"))
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    actual = {native_identity(entity)["id"]: entity for entity in entities}
+    ledger = {row["id"]: row for row in objects["objects"]}
+    if len(actual) != len(entities) or len(ledger) != len(objects["objects"]) or set(actual) != set(ledger):
+        raise AssertionError("Short-contact fixture has missing, duplicate, or unwritten formal identities")
+    manifest = json.loads((evidence_root / "text_contact/adoption.json").read_text(encoding="utf-8"))
+    plans = manifest.get("geometry_plans", {})
+    targets = [row for row in ledger.values() if row.get("source_evidence", {}).get(
+        "text_contact_path", {}).get("path", {}).get("path_role") == "ROUND_TO_CARRIER"]
+    if len(targets) != 2 or manifest.get("source_sha256") != gap["source_sha256"]:
+        raise AssertionError("Short-contact fixture did not save both source-bound independent whole paths")
+    checks = cold.get("text_contact_source_checks", {})
+    if not checks.get("pass") or checks.get("duplicate_conflicts") != []:
+        raise AssertionError("Short-contact whole paths failed the actual saved-source audit")
+    by_id = {row.get("id"): row for row in checks.get("checks", [])}
+    used, results = set(), []
+    for _, cx in SHORT_CONTACT_TEXT_FIXTURE:
+        matches = [row for row in targets if _near_point(
+            _line_points(actual[row["id"]])[-1], (cx, 330), 2.5)]
+        if len(matches) != 1:
+            raise AssertionError("An independent contact path was fragmented, duplicated or bound to the wrong receiver")
+        row = matches[0]
+        path_id, proof = row["id"], row["source_evidence"]["text_contact_path"]
+        selected = proof["path"]
+        plan = plans.get(proof.get("plan_sha256"), {})
+        points, entity = _line_points(actual[path_id]), actual[path_id]
+        expected = _short_contact_curve_points(cx - 235)
+        error = max(max(_distance_to_path(point, expected) for point in points),
+                    max(_distance_to_path(point, points) for point in expected[6:]))
+        if (entity.dxftype() != "LWPOLYLINE" or entity.closed or len(points) < 3 or error > 2.5
+                or any(abs(point[4]) > 1e-12 for point in entity.get_points("xyseb"))
+                or any(abs(point[0] - cx) > 2 for point in points if point[1] >= 260)):
+            raise AssertionError("Short-contact path is truncated or follows a character side branch")
+        if (proof.get("source_sha256") != gap["source_sha256"]
+                or proof.get("schema") != "source-text-contact-native-path-v1"
+                or plan.get("schema") != "source-structure-contact-path-plan-v1"
+                or _json_digest(plan) != proof.get("plan_sha256")
+                or plan.get("original_source_pixels_modified") is not False
+                or plan.get("transcription_supplied") is not False
+                or plan.get("original_source_crop_xyxy_px") != [0, 0, 640, 480]
+                or plan.get("original_source_crop_array_sha256") != hashlib.sha256(gray.tobytes()).hexdigest()
+                or selected != plan.get("paths", [])[proof["path_index"]]
+                or _json_digest(selected) != proof.get("path_sha256")
+                or selected.get("original_branches_retained") is not True
+                or selected.get("line_and_text_may_share_source_pixels") is not True):
+            raise AssertionError("Short-contact path is not bound to its unmodified original geometry evidence")
+        terminal = selected.get("structural_terminal_evidence", {})
+        carrier_id = selected.get("required_carrier_id")
+        if (carrier_id not in actual or actual[carrier_id].dxftype() != "LINE"
+                or carrier_id != terminal.get("carrier_id")
+                or terminal.get("all_source_ports_accounted") is not True
+                or terminal.get("equally_aligned_forward_port_count") != 0
+                or len(terminal.get("carrier_source_ports", [])) != 2
+                or len(terminal.get("carrier_source_arm_lengths_px", [])) != 2
+                or min(terminal["carrier_source_arm_lengths_px"]) < 24):
+            raise AssertionError("Short-contact path has no independent receiver supported on both sides")
+        carrier = _line_points(actual[carrier_id])
+        expected_carrier = ((cx - 80, 330), (cx + 80, 330))
+        if (min(max(math.dist(a, b) for a, b in zip(carrier, expected_carrier)),
+                max(math.dist(a, b) for a, b in zip(carrier[::-1], expected_carrier))) > 2.5
+                or _distance_to_path(points[-1], carrier) > 1e-6):
+            raise AssertionError("Actual whole path does not end on its complete finite independent receiver")
+        marker_id = selected.get("required_start_circle_id")
+        marker = actual.get(marker_id)
+        members = list(marker.virtual_entities()) if marker is not None and marker.dxftype() == "INSERT" else []
+        if Counter(member.dxftype() for member in members) != {"CIRCLE": 1, "TEXT": 1}:
+            raise AssertionError("Short-contact fixture lost a complete separate starting circle and editable character")
+        circle = next(member for member in members if member.dxftype() == "CIRCLE")
+        if (next(member.dxf.text for member in members if member.dxftype() == "TEXT") != "F"
+                or not _near_point(_pixel_point(circle.dxf.center), (cx - 175, 150), 2)
+                or not _finite_circle_intersections(points, _pixel_point(circle.dxf.center),
+                                                    float(circle.dxf.radius) / (25.4 / 200))):
+            raise AssertionError("Independent starting marker changed or detached from its own complete path")
+        shared = [item for item in selected.get("contact_continuations", [])
+                  if item.get("unselected_branch_edge_ids")]
+        if len(shared) < 2 or selected.get("reverse_source_path_agreement", {}).get("pass") is not True:
+            raise AssertionError("Both sides of the real glyph contacts were not independently traced")
+        for contact in shared:
+            if (contact.get("source_branches_deleted") is not False
+                    or len(contact.get("unselected_branch_source_paths", [])) != len(contact["unselected_branch_edge_ids"])):
+                raise AssertionError("A short glyph branch was consumed by its separate graphic path")
+            for branch in contact["unselected_branch_source_paths"]:
+                pixels = np.asarray(branch, int)
+                if not len(pixels) or not np.all(gray[pixels[:, 1], pixels[:, 0]] < 128):
+                    raise AssertionError("Short-contact retained branches do not match original source ink")
+        cold_check = by_id.get(path_id, {})
+        required = ("one_separate_saved_starting_circle", "actual_starting_circle_geometry_preserved",
+                    "one_separate_saved_receiving_object", "actual_receiving_geometry_preserved",
+                    "original_source_plan_replayed", "original_source_geometry_supported",
+                    "whole_native_representation_from_source_plan")
+        if cold_check.get("pass") is not True or any(cold_check.get("checks", {}).get(key) is not True for key in required):
+            raise AssertionError("Short-contact path lacks nonempty, passing actual saved-source checks")
+        geometry = row.get("geometry", {})
+        if (len(points) != len(geometry.get("points", []))
+                or any(not _near_point(a, b, 1e-6) for a, b in zip(points, geometry["points"]))
+                or geometry.get("bulges") != [0.0] * len(points) or geometry.get("closed") is not False):
+            raise AssertionError("Short-contact actual saved vertices differ from their whole-object ledger")
+        endpoint = row.get("source_evidence", {}).get("circle_endpoint_contacts")
+        original = selected["representation"]
+        if endpoint is None:
+            if geometry != original:
+                raise AssertionError("Short-contact path changed its original planned whole shape")
+        else:
+            ends = endpoint.get("ends", [])
+            if (endpoint.get("original_geometry") != original
+                    or endpoint.get("original_geometry_sha256") != _json_digest(original)
+                    or endpoint.get("restored_geometry_sha256") != _json_digest(geometry)
+                    or endpoint.get("polyline_old_vertices_and_bulges_retained") is not True
+                    or endpoint.get("same_independent_object_id_retained") is not True
+                    or len(ends) != 1 or ends[0].get("endpoint_number") != 0
+                    or len(points) != len(original["points"]) + 1
+                    or any(not _near_point(a, b, 1e-6) for a, b in zip(points[1:], original["points"]))):
+                raise AssertionError("Short-contact circle end adjustment changed or detached the original path body")
+            end = ends[0]
+            cells = _closed_source_segment_cells(points[1], points[0])
+            crop = end.get("source_crop_xyxy_px", [])
+            endpoint_checks = [item for item in cold.get("circle_endpoint_contact_checks", [])
+                               if item.get("id") == path_id]
+            if (end.get("accepted") is not True or end.get("circle_id") != marker_id
+                    or end.get("every_intersected_source_pixel_is_black") is not True
+                    or end.get("source_pixels_modified") is not False
+                    or end.get("source_path_points_modified") is not False
+                    or end.get("external_connection_in_marker_block") is not False
+                    or not _near_point(end.get("restored_endpoint_px", []), points[0], 1e-6)
+                    or not _near_point(end.get("original_endpoint_px", []), points[1], 1e-6)
+                    or end.get("direct_segment_cells_xy") != cells
+                    or not all(gray[y, x] < 128 for x, y in cells)
+                    or not 0 < math.dist(points[0], points[1]) <= end.get("maximum_extension_px", 0)
+                    or len(crop) != 4
+                    or hashlib.sha256(np.ascontiguousarray(gray[crop[1]:crop[3], crop[0]:crop[2]]).tobytes()).hexdigest() != end.get("source_crop_sha256")
+                    or len(endpoint_checks) != 1 or endpoint_checks[0].get("pass") is not True
+                    or endpoint_checks[0].get("actual_saved_geometry_checked") is not True):
+                raise AssertionError("Short-contact circle end lacks original continuous ink and its actual saved audit")
+        binding = {"actual_saved_vertices_equal_whole_object": True,
+                   "original_planned_body_vertices_retained": True,
+                   "separate_circle_port_contact_checked": True,
+                   "endpoint_completion_checked": endpoint is not None}
+        used.update((path_id, carrier_id, marker_id))
+        results.append({"source_center_x": cx, "path_id": path_id, "carrier_id": carrier_id,
+                        "marker_id": marker_id, "maximum_whole_path_error_px": error,
+                        "saved_path_binding": binding, "retained_contact_count": len(shared)})
+    gap_id, gap_line = _unique_fixture_line(actual, ((390, 80), (471, 80)))
+    lead_id, _ = _unique_fixture_line(actual, ((526, 80), (630, 80)), tolerance=5)
+    circles = [(oid, entity) for oid, entity in actual.items() if entity.dxftype() == "CIRCLE"
+               and _near_point(_pixel_point(entity.dxf.center), (500, 80), 2)]
+    if len(circles) != 1:
+        raise AssertionError("Short-contact fixture lost or duplicated its independent white-gap circle")
+    circle_id, circle = circles[0]
+    center, radius = _pixel_point(circle.dxf.center), float(circle.dxf.radius) / (25.4 / 200)
+    distance = _distance_to_path(center, gap_line) - radius
+    if distance < 2 or _finite_circle_intersections(gap_line, center, radius):
+        raise AssertionError("Short-character recovery bridged the genuine source white gap")
+    for oid, entity in actual.items():
+        line = _line_points(entity)
+        if line and any(_distance_to_path((x, 80), line) < 0.5 for x in (472, 473)):
+            raise AssertionError("An unexpected graphic fragment bridges the original white strip: " + oid)
+    gap_checks = [row for row in cold.get("circle_white_gap_protection_checks", []) if row.get("id") == gap_id]
+    if len(gap_checks) != 1 or gap_checks[0].get("pass") is not True:
+        raise AssertionError("Short-contact white-gap control lacks its actual saved source audit")
+    used.update((gap_id, lead_id, circle_id))
+    return {"pass": True, "paths": results, "independent_geometry_ids": sorted(used),
+            "original_white_gap": gap, "minimum_saved_gap_px": distance,
+            "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
+def _short_contact_saved_glyph_boxes(entity, font_path, document):
+    from ezdxf.fonts import fonts
+
+    if (entity.dxftype() != "TEXT" or entity.dxf.get("halign", 0) != 0
+            or entity.dxf.get("valign", 0) != 0 or entity.dxf.get("text_generation_flag", 0) != 0
+            or abs(entity.dxf.get("rotation", 0)) > 1e-8 or abs(entity.dxf.get("oblique", 0)) > 1e-8
+            or tuple(entity.dxf.get("extrusion", (0, 0, 1))) != (0, 0, 1)
+            or document.styles.get(entity.dxf.style).dxf.font != font_path.name):
+        raise AssertionError("Short-contact character has a noneditable type, changed font, or unexpected transform")
+    mm = 25.4 / 200
+    x, y = _pixel_point(entity.dxf.insert)
+    width = float(entity.dxf.get("width", 1.0))
+    if not math.isfinite(width) or width <= 0 or not math.isfinite(entity.dxf.height) or entity.dxf.height <= 0:
+        raise AssertionError("Short-contact character has invalid native TEXT dimensions")
+    measured = fonts.sideload_ttf(font_path, entity.dxf.height)
+    boxes = []
+    for index, char in enumerate(entity.dxf.text):
+        if char.isspace():
+            continue
+        lower, upper = measured.text_path(char).bbox()
+        offset = measured.text_width(entity.dxf.text[:index])
+        boxes.append((char, (x + (offset + lower.x) * width / mm, y - upper.y / mm,
+                             x + (offset + upper.x) * width / mm, y - lower.y / mm)))
+    return boxes
+
+
+def inspect_short_contact_text_layout(document, objects, font_path) -> dict:
+    """Measure every saved glyph against the full external two-character source."""
+    from PIL import Image, ImageDraw, ImageFont
+
+    entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
+    ledger = {row["id"]: row for row in objects["objects"]}
+    font = ImageFont.truetype(str(font_path), 46, layout_engine=ImageFont.Layout.BASIC)
+    text_units = []
+    for entity in entities:
+        members = list(entity.virtual_entities()) if entity.dxftype() == "INSERT" else [entity]
+        if not members or any(member.dxftype() != "TEXT" for member in members):
+            continue
+        if len(members) > 2:
+            raise AssertionError("A short source group was fragmented into unnecessary TEXT members")
+        glyphs = [item for member in members for item in _short_contact_saved_glyph_boxes(member, font_path, document)]
+        glyphs.sort(key=lambda item: item[1][0])
+        text_units.append((entity, members, glyphs))
+    results, used = [], set()
+    for expected, cx in SHORT_CONTACT_TEXT_FIXTURE:
+        first_box = font.getbbox(expected[0])
+        point = (cx - (first_box[0] + first_box[2]) / 2, 307 - (first_box[1] + first_box[3]) / 2)
+        source_boxes = []
+        for index, char in enumerate(expected):
+            raster = Image.new("L", (640, 480), 0)
+            draw = ImageDraw.Draw(raster)
+            offset = draw.textlength(expected[:index], font=font)
+            draw.text((point[0] + offset, point[1]), char, font=font, fill=255)
+            source_boxes.append((char, raster.getbbox()))
+        candidates = []
+        for entity, members, glyphs in text_units:
+            if "".join(char for char, _ in glyphs) != expected or len(glyphs) != len(source_boxes):
+                continue
+            error = max(abs(a - b) for (_, actual_box), (_, source_box) in zip(glyphs, source_boxes)
+                        for a, b in zip(actual_box, source_box))
+            if error <= 2.5:
+                candidates.append((entity, members, glyphs, error))
+        if len(candidates) != 1:
+            raise AssertionError("Short-contact fixture lacks one complete correctly positioned editable two-character group")
+        entity, members, glyphs, error = candidates[0]
+        gap_errors = [abs((glyphs[index + 1][1][0] - glyphs[index][1][2])
+                          - (source_boxes[index + 1][1][0] - source_boxes[index][1][2]))
+                      for index in range(len(glyphs) - 1)]
+        if any(value > 2.0 for value in gap_errors):
+            raise AssertionError("Short-contact native glyph spacing no longer follows the complete source group")
+        oid = native_identity(entity)["id"]
+        if oid in used or oid not in ledger:
+            raise AssertionError("Short-contact instances share or lack a complete formal object identity")
+        if entity.dxftype() == "INSERT":
+            if (len(document.blocks[entity.dxf.name]) != len(members)
+                    or len([other for other in entities if other.dxftype() == "INSERT"
+                            and other.dxf.name == entity.dxf.name]) != 1):
+                raise AssertionError("Short-contact TEXT group is not an independent editable instance")
+        used.add(oid)
+        results.append({"id": oid, "source_center_x": cx, "text": expected,
+                        "native_type": entity.dxftype(), "member_types": [member.dxftype() for member in members],
+                        "member_texts": [member.dxf.text for member in members],
+                        "actual_glyph_boxes_px": [[char, list(box)] for char, box in glyphs],
+                        "source_glyph_boxes_px": [[char, list(box)] for char, box in source_boxes],
+                        "inter_character_gap_errors_px": gap_errors,
+                        "maximum_individual_glyph_edge_error_px": error})
+    controls = {}
+    for expected in ("STORE 3", "SPARE 13"):
+        members = [entity for entity in entities if entity.dxftype() == "TEXT" and entity.dxf.text == expected]
+        if len(members) != 1 or members[0].dxf.style != "I2CAD_TEXT":
+            raise AssertionError("Short-contact recovery changed or duplicated an independent ordinary reference text")
+        controls[expected] = native_identity(members[0])["id"]
+    return {"pass": True, "complete_groups": results, "ordinary_control_ids": controls,
+            "true_TEXT_members_only": True, "independent_instances": True}
+
+
+def inspect_short_contact_payloads(objects, cold, source_path, evidence_root, text_checks, geometry_checks):
+    """Read the real late-stage proof, original/shared ink and every raw view."""
+    import csv
+    from io import BytesIO, StringIO
+
+    import numpy as np
+    from PIL import Image
+
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+    source_sha, array_sha = digest(source_path), hashlib.sha256(source.tobytes()).hexdigest()
+    stage = json.loads((evidence_root / "short_contact_text/adoption.json").read_text(encoding="utf-8"))
+    plan = json.loads((evidence_root / "short_contact_text/plan.json").read_text(encoding="utf-8"))
+    targets = {row["id"]: row for row in text_checks["complete_groups"]}
+    ledger = {row["id"]: row for row in objects["objects"]}
+    adopted = {row["id"]: row for row in stage.get("objects", [])}
+    decisions = {row["id"]: row for row in stage.get("decisions", [])}
+    planned = {row["id"]: row for row in plan.get("plans", [])}
+    audit = cold.get("short_contact_text_source_checks", {})
+    checks = {row.get("id"): row for row in audit.get("checks", [])}
+    if (stage.get("schema") != "native-short-contact-text-adoption-v1"
+            or stage.get("source_sha256") != source_sha or stage.get("source_array_sha256") != array_sha
+            or stage.get("source_plan") != plan or stage.get("completion_passes") != 1
+            or stage.get("prior_complete_objects_modified") is not False
+            or stage.get("original_source_pixels_modified") is not False
+            or stage.get("new_targets_used_as_references") is not False
+            or set(adopted) != set(targets) or stage.get("retired_ids") != []
+            or not audit.get("pass") or set(audit.get("targets", [])) != set(targets)
+            or set(checks) != set(targets) or audit.get("new_OCR_calls") != 0
+            or audit.get("new_model_calls") != 0):
+        raise AssertionError("Actual two complete short groups have no current finite late-stage adoption and cold replay")
+    payloads, results, t_calls, p_calls, engines = {}, [], 0, 0, []
+
+    def read(record):
+        path, data = _checked_record(evidence_root, record)
+        if record.get("bytes") != len(data):
+            raise AssertionError("Short-contact evidence file size changed")
+        if record["path"] in payloads and payloads[record["path"]] != record["sha256"]:
+            raise AssertionError("Short-contact raw observation has inconsistent bound hashes")
+        payloads[record["path"]] = record["sha256"]
+        return path, data
+
+    def read_image(record):
+        _, data = read(record)
+        with Image.open(BytesIO(data)) as image:
+            return np.asarray(image.convert("L"))
+
+    def mask(runs, box):
+        answer = np.zeros((box[3] - box[1], box[2] - box[0]), dtype=bool)
+        for y, lo, hi in runs:
+            if not (box[1] <= y < box[3] and box[0] <= lo < hi <= box[2]):
+                raise AssertionError("Short-contact original source support escapes its whole glyph group")
+            answer[y - box[1], lo - box[0]:hi - box[0]] = True
+        return answer
+
+    for oid, target in targets.items():
+        obj, saved_check = ledger[oid], checks[oid]
+        evidence = obj.get("source_evidence", {}).get("short_contact_text", {})
+        decision = evidence.get("decision", {})
+        partition = evidence.get("source_partition", {})
+        replay = saved_check.get("source_replay", {})
+        declared = decisions.get(oid, {})
+        if (adopted.get(oid) != obj or planned.get(oid, {}).get("source_partition") != partition
+                or evidence.get("schema") != "native-short-contact-text-evidence-v1"
+                or evidence.get("source_sha256") != source_sha or evidence.get("source_array_sha256") != array_sha
+                or evidence.get("expected_text_provided") is not False
+                or evidence.get("raw_transcription_rewritten") is not False
+                or evidence.get("producer") != stage.get("producer") or evidence.get("policy") != stage.get("policy")
+                or not decision.get("accepted") or decision.get("text") != target["text"]
+                or decision.get("reasons") != [] or decision.get("same_source_target_to_target_support") is not False
+                or decision.get("OCR_transcriptions_rewritten") is not False
+                or decision.get("all_original_and_derived_readings_retained") is not True
+                or declared.get("accepted") is not True or declared.get("text") != target["text"]
+                or saved_check.get("type") != "SHORT_CONTACT_SAVED_SOURCE_AND_EDITING_RESPONSIBILITY"
+                or saved_check.get("pass") is not True or saved_check.get("text") != target["text"]
+                or saved_check.get("kind") != obj.get("kind")
+                or saved_check.get("actual_native_TEXT_members") != len(target["member_types"])
+                or saved_check.get("minimum_complete_editing_group_verified") is not True
+                or replay.get("pass") is not True
+                or any(replay.get(key) is not True for key in ("complete_original_components_replayed",
+                        "original_and_derived_raw_replayed", "all_competing_readings_retained_and_rechecked"))):
+            raise AssertionError("Saved short text lacks a complete literal decision and independently replayed source evidence")
+        layout = evidence.get("layout", {})
+        if (layout.get("kind") != obj["kind"] or layout.get("geometry") != obj["geometry"]
+                or layout.get("minimum_native_member_count") != len(target["member_types"])
+                or layout.get("independent_paths_in_group") is not False
+                or layout.get("font", {}).get("sha256") != objects["font"]["sha256"]
+                or (obj["kind"] == "TEXT_GROUP" and layout.get("one_TEXT_attempt", {}).get("pass") is not False)):
+            raise AssertionError("Short-contact object does not use the minimum genuine TEXT members justified by source layout")
+        if json.loads(read(declared["evidence"])[1]) != evidence:
+            raise AssertionError("Short-contact result payload differs from the final adopted object proof")
+        box = partition["bbox_xyxy_px"]
+        if (len(box) != 4 or any(type(value) is not int for value in box)
+                or not (0 < box[0] < box[2] < 640 and 0 < box[1] < box[3] < 480)
+                or len(partition.get("components", [])) != len(target["text"])
+                or partition.get("original_source_pixels_modified") is not False
+                or partition.get("derived_view_alone_proves_transcription") is not False
+                or partition.get("all_side_glyph_skeleton_and_shared_core_samples_retained") is not True
+                or partition.get("independent_graphics_require_separate_adoption") is not True):
+            raise AssertionError("Short-contact proof has only a fragment, a rewritten source, or no separate graphic responsibility")
+        crop = source[box[1]:box[3], box[0]:box[2]]
+        support = mask(partition["source_support_runs_y_x0_x1"], box)
+        excluded = mask(partition["excluded_independent_graphic_runs_y_x0_x1"], box)
+        shared = mask(partition["shared_contact_runs_y_x0_x1"], box)
+        if (not support.any() or not shared.any() or np.any(shared & ~support)
+                or np.any(support & excluded) or not np.array_equal(support | excluded, crop < 128)
+                or partition.get("source_crop_array_sha256") != hashlib.sha256(crop.tobytes()).hexdigest()):
+            raise AssertionError("Original glyph/shared ink was erased, invented, or left without an editing owner")
+        raw_box = partition["raw_original_bbox_xyxy_px"]
+        original = source[raw_box[1]:raw_box[3], raw_box[0]:raw_box[2]]
+        ownership = np.where(support, crop, 255).astype(np.uint8)
+        if not np.array_equal(read_image(evidence["original_source"]), original) or not np.array_equal(read_image(evidence["ownership_view"]), ownership):
+            raise AssertionError("Short-contact original or ownership image differs from its unchanged source pixels")
+        owners = {item["owner_id"] for item in partition.get("graphic_crossings", [])}
+        path_ids = {row["path_id"] for row in geometry_checks["paths"] if row["source_center_x"] == target["source_center_x"]}
+        if owners != path_ids or set(saved_check.get("independent_graphic_owner_ids", [])) != owners:
+            raise AssertionError("Short character borrowed another instance's independent path proof")
+        component_masks = []
+        for component in partition["components"]:
+            cb = component["bbox_xyxy_px"]
+            cm = mask(component["source_runs_y_x0_x1"], cb)
+            image = source[cb[1]:cb[3], cb[0]:cb[2]]
+            if not cm.any() or np.any(cm & (image >= 128)):
+                raise AssertionError("A complete short character component contains invented source ink")
+            for x, y in component.get("shared_core_points_px", []):
+                if not (cb[0] <= x < cb[2] and cb[1] <= y < cb[3] and cm[y - cb[1], x - cb[0]]):
+                    raise AssertionError("Shared graphic/character source cores were removed from the recognized glyph")
+            component_masks.append(np.where(cm, image, 255).astype(np.uint8))
+        raw = evidence["raw_observations"]
+        whole_model = raw["ownership_group"]["model"]["prediction"]
+        if (whole_model.get("raw_text") != target["text"]
+                or whole_model.get("model_mean_confidence", 0) < 0.98
+                or whole_model.get("minimum_emitted_character_confidence", 0) < 0.95):
+            raise AssertionError("Complete short-group literal was not the actual strict whole-input model reading")
+        observations = [("original_group", original, raw["original_group"]),
+                        ("ownership_group", ownership, raw["ownership_group"])]
+        if len(raw.get("components", [])) != len(component_masks):
+            raise AssertionError("Full short-character group omitted a component observation")
+        for index, (character, component, observation) in enumerate(zip(target["text"], partition["components"], raw["components"])):
+            cb = component["bbox_xyxy_px"]
+            words = observation["tesseract"][0]["words"]
+            expected_box = [0, 0, 2 * (cb[2] - cb[0]), 2 * (cb[3] - cb[1])]
+            corroboration = decision.get("components", [])[index]
+            if (len(words) != 1 or words[0].get("text") != character
+                    or max(abs(a - b) for a, b in zip(words[0]["bbox_xyxy_px"], expected_box)) > 2
+                    or corroboration.get("literal") != character
+                    or corroboration.get("literal_corroborated") is not True
+                    or corroboration.get("whole_source_component_bbox_covered") is not True
+                    or corroboration.get("strict_component_model_conflict") is not False):
+                raise AssertionError("Short-character group lacks the complete independent literal observation for one member")
+        observations += [("component", image, observation) for image, observation in zip(component_masks, raw["components"])]
+        competition_inventory = []
+        for domain, image, observation in observations:
+            if observation.get("input_array_sha256") != hashlib.sha256(image.tobytes()).hexdigest():
+                raise AssertionError("Short-contact recognition input is not its recorded original ownership view")
+            expected_psms = [10] if domain == "component" else [7, 13]
+            if [view.get("psm") for view in observation.get("tesseract", [])] != expected_psms:
+                raise AssertionError("Short-contact raw OCR views changed their finite recognition plan")
+            for view in observation["tesseract"]:
+                _, raw_tsv = read(view["raw_tsv"])
+                _, metadata_raw = read(view["metadata"])
+                metadata = json.loads(metadata_raw)
+                expected_image = np.pad(np.repeat(np.repeat(image, 2, axis=0), 2, axis=1), 12, constant_values=255)
+                if (view.get("scale") != 2 or view.get("padding_px") != 12
+                        or not np.array_equal(read_image(view["recognition_image"]), expected_image)
+                        or metadata.get("return_code") != 0 or metadata.get("status") != "COMPLETED"
+                        or metadata.get("tsv_sha256") != hashlib.sha256(raw_tsv).hexdigest()
+                        or not isinstance(view.get("new_call"), bool)
+                        or metadata.get("command_executed_for_this_request") is not view["new_call"]):
+                    raise AssertionError("Short-contact TSV was not actually recognized from the fixed complete input")
+                if not view["new_call"]:
+                    cached = metadata.get("raw_observation_cache", {})
+                    if (cached.get("payload_sha256") != hashlib.sha256(raw_tsv).hexdigest()
+                            or cached.get("producer", {}).get("job", {}).get("source_sha256") != source_sha
+                            or cached.get("producer", {}).get("raw_text_rewritten") is not False):
+                        raise AssertionError("Short-contact reused TSV lacks its same-input raw producer receipt")
+                words = []
+                for row in csv.DictReader(StringIO(raw_tsv.decode("utf-8")), delimiter="\t", quoting=csv.QUOTE_NONE):
+                    if row.get("level") == "5" and (row.get("text") or "").strip():
+                        x, y, w, h = (int(row[key]) for key in ("left", "top", "width", "height"))
+                        words.append({"text": row["text"].strip(), "confidence": float(row["conf"]),
+                                      "bbox_xyxy_px": [x - 12, y - 12, x + w - 12, y + h - 12]})
+                if words != view.get("words"):
+                    raise AssertionError("Short-contact literal raw TSV reading or confidence was rewritten")
+                t_calls += int(view["new_call"])
+                if isinstance(metadata.get("engine_identity"), dict):
+                    engines.append({**metadata["engine_identity"], "executable": metadata["command"][0]})
+                if domain != "component":
+                    value = "".join(word["text"] for word in words)
+                    if value and value != target["text"]:
+                        competition_inventory.append((domain, "Tesseract", view["psm"], value))
+            model = observation["model"]
+            prediction = json.loads(read(model["prediction_file"])[1])
+            identity = json.loads(read(model["identity"])[1])
+            expected_image = np.pad(image, 4, constant_values=255)
+            tokens = prediction.get("raw_CTC_tokens", [])
+            scores = [token["score"] for token in tokens]
+            if (prediction != model.get("prediction") or not np.array_equal(read_image(model["recognition_image"]), expected_image)
+                    or prediction.get("input_array_sha256") != hashlib.sha256(expected_image.tobytes()).hexdigest()
+                    or prediction.get("raw_transcription_rewritten") is not False
+                    or prediction.get("source_geometry_modified") is not False
+                    or prediction.get("raw_text") != "".join(token["character"] for token in tokens)
+                    or identity.get("providers") != ["CPUExecutionProvider"]
+                    or not isinstance(model.get("observation_receipt", {}).get("model_inference_executed_for_this_request"), bool)
+                    or any(not isinstance(score, (int, float)) or not math.isfinite(score) or not 0 <= score <= 1 for score in scores)
+                    or (scores and (abs(prediction["model_mean_confidence"] - sum(scores) / len(scores)) > 1e-7
+                                    or abs(prediction["minimum_emitted_character_confidence"] - min(scores)) > 1e-7))):
+                raise AssertionError("Short-contact model source, actual inference receipt, or literal CTC reading changed")
+            called = model["observation_receipt"]["model_inference_executed_for_this_request"]
+            if not called:
+                cached = model["observation_receipt"].get("raw_observation_cache", {})
+                payload = json.dumps(prediction, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode("utf-8")
+                if (cached.get("payload_sha256") != hashlib.sha256(payload).hexdigest()
+                        or cached.get("producer", {}).get("job", {}).get("source_sha256") != source_sha
+                        or cached.get("producer", {}).get("raw_text_rewritten") is not False):
+                    raise AssertionError("Short-contact reused model reading lacks its same-input raw producer receipt")
+            p_calls += int(called)
+            if domain != "component" and prediction.get("raw_text") and prediction["raw_text"] != target["text"]:
+                competition_inventory.append((domain, "PP-OCR", None, prediction["raw_text"]))
+        competitors = decision.get("raw_competing_readings", [])
+        if Counter(competition_inventory) != Counter((row["domain"], row["engine"], row["view"], row["raw_text"]) for row in competitors):
+            raise AssertionError("Short-contact original/derived competing readings were omitted or replaced")
+        if any(row.get("strong_raw_reading") and not row.get("source_responsibility_resolved") for row in competitors):
+            raise AssertionError("Short-contact text was accepted with an unresolved strong competing reading")
+        if any(row.get("semantic_identity_claimed") is not False for row in competitors):
+            raise AssertionError("Short-contact transcription was justified by an inferred engineering meaning")
+        results.append({"id": oid, "complete_text": target["text"], "component_count": len(component_masks),
+                        "original_shared_ink_preserved": True, "independent_path_owner_ids": sorted(owners),
+                        "original_and_ownership_inputs_recomputed": True,
+                        "retained_raw_competing_readings": competitors, "actual_saved_source_replay": replay})
+    if t_calls <= 0 or p_calls <= 0 or stage.get("summary", {}).get("new_OCR_calls") != t_calls:
+        raise AssertionError("Short-contact late stage did not account for actual independent recognition calls")
+    return {"pass": True, "groups": results, "raw_files_read_and_hashed": len(payloads),
+            "new_Tesseract_calls": t_calls, "new_model_calls": p_calls,
+            "actual_tesseract_engine_metadata": engines, "summary": stage["summary"],
+            "inspection_executed_recognition": False, "fixture_expectations_sent_to_recognizer": False}
+
+
+def inspect_short_contact_edit_isolation(saved_path, output, text_checks, geometry_checks) -> dict:
+    """Save/reopen independent copies after literal editing, whole-group and path edits."""
+    import ezdxf
+
+    def inventory(document):
+        return {native_identity(entity)["id"]: entity for entity in document.modelspace()
+                if entity.dxf.layer != "REVIEW"}
+
+    def geometry(entity, document):
+        value = entity_geometry(entity, document)
+        if entity.dxftype() == "LWPOLYLINE":
+            value["attributes"].update(elevation=float(entity.dxf.get("elevation", 0)),
+                                       extrusion=canonical_value(entity.dxf.get("extrusion", (0, 0, 1))))
+        return value
+
+    before_sha = digest(saved_path)
+    baseline = ezdxf.readfile(saved_path)
+    before = {oid: geometry(entity, baseline) for oid, entity in inventory(baseline).items()}
+    text_ids = [row["id"] for row in text_checks["complete_groups"]]
+    path_ids = [row["path_id"] for row in geometry_checks["paths"]]
+    if len(set(text_ids + path_ids)) != 4:
+        raise AssertionError("Short-contact edit targets are not four independent whole objects")
+    output.mkdir(exist_ok=False)
+    checks = []
+    for action, target_id in (("change-first-group-text", text_ids[0]),
+                              ("move-first-whole-group", text_ids[0]),
+                              ("delete-second-whole-group", text_ids[1]),
+                              ("delete-first-whole-path", path_ids[0])):
+        document = ezdxf.readfile(saved_path)
+        target = inventory(document)[target_id]
+        if action.startswith("change"):
+            members = list(document.blocks[target.dxf.name]) if target.dxftype() == "INSERT" else [target]
+            if not members or any(member.dxftype() != "TEXT" for member in members):
+                raise AssertionError("Short-contact edit target contains geometry instead of genuine TEXT")
+            members[0].dxf.text = "EDIT-A7,03"
+        elif action.startswith("move"):
+            target.translate(9, 4, 0)
+        else:
+            document.modelspace().delete_entity(target)
+        expected = None if action.startswith("delete") else geometry(target, document)
+        destination = output / (action + ".dxf")
+        document.saveas(destination)
+        reopened = ezdxf.readfile(destination)
+        audit = reopened.audit()
+        actual = {oid: geometry(entity, reopened) for oid, entity in inventory(reopened).items()}
+        expected_ids = set(before) - ({target_id} if expected is None else set())
+        if (audit.errors or audit.fixes or set(actual) != expected_ids
+                or any(actual[oid] != value for oid, value in before.items() if oid != target_id)
+                or (expected is not None and (actual[target_id] != expected or actual[target_id] == before[target_id]))):
+            raise AssertionError("Whole short-character or path edit changed an independent instance or neighbor")
+        checks.append({"action": action, "target_id": target_id,
+                       "saved_DXF_sha256": digest(destination), "unchanged_other_formal_objects": len(before) - 1,
+                       "whole_target_only_changed": True, "pass": True})
+    if digest(saved_path) != before_sha:
+        raise AssertionError("Short-contact scripted editing changed the delivered baseline drawing")
+    result = {"schema": "windows-short-contact-scripted-edit-isolation-v1", "pass": True,
+              "checks": checks, "source_DXF_unchanged": True,
+              "scope": "Actual ezdxf save and cold reopen; no LibreCAD GUI claim", "GUI_operations_claimed": False}
+    write_json(output / "edit-isolation.json", result)
+    return result
+
+
+def inspect_short_contact_members(document, objects, cold, source_path, evidence_root, font_path) -> dict:
+    geometry = inspect_short_contact_geometry(document, objects, cold, source_path, evidence_root)
+    text = inspect_short_contact_text_layout(document, objects, font_path)
+    payloads = inspect_short_contact_payloads(objects, cold, source_path, evidence_root, text, geometry)
+    accounted = set(geometry["independent_geometry_ids"]) | set(text["ordinary_control_ids"].values())
+    accounted.update(row["id"] for row in text["complete_groups"])
+    if accounted != {row["id"] for row in objects["objects"]}:
+        raise AssertionError("Short-contact fixture retains an unexplained duplicate, glyph outline or path fragment")
+    return {"pass": True, "complete_group_count": len(text["complete_groups"]),
+            "complete_text": text, "independent_geometry": geometry, "actual_source_payloads": payloads,
+            "all_formal_objects_accounted_for": True, "one_complete_group_per_editing_object": True,
+            "expected_text_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
 def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str, path_id: str) -> dict:
     """Actual scripted save/reopen edits; this deliberately makes no GUI claim."""
     import ezdxf
@@ -3448,7 +4083,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths", "transverse-strokes-receiver"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths", "transverse-strokes-receiver", "short-contact-text"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -3513,6 +4148,21 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         transverse_result["scripted_edit_isolation"] = {
             oid: inspect_structure_path_edit_isolation(target, edit_root / oid, oid) for oid in edit_ids
         }
+    short_contact_result = None
+    if fixture_kind == "short-contact-text":
+        short_contact_result = inspect_short_contact_members(
+            document, objects, cold, work.parent / "controlled-source.png", companion / "evidence", companion / font["font"],
+        )
+        summary = pipeline_report.get("short_contact_text_completion", {})
+        raw = short_contact_result["actual_source_payloads"]
+        if (any(summary.get(key) != value for key, value in raw["summary"].items())
+                or set(summary.get("complete_group_ids", [])) != {row["id"] for row in short_contact_result["complete_text"]["complete_groups"]}
+                or summary.get("actual_saved_source_checks") != cold.get("short_contact_text_source_checks")
+                or summary.get("text_and_independent_graphics_counted_separately") is not True):
+            raise AssertionError("Short-contact result report is not bound to its actual ordinary stage and saved checks")
+        short_contact_result["scripted_edit_isolation"] = inspect_short_contact_edit_isolation(
+            target, work / "edit-isolation", short_contact_result["complete_text"], short_contact_result["independent_geometry"],
+        )
     if single_line_contract not in ("strict-three", "bounded-capability"):
         raise ValueError("Unknown single-line saved-output contract")
     single_line_result = None
@@ -3593,6 +4243,11 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         single_line_calls = payloads["new_model_calls"]
     if (fixture_kind == "room17" and global_calls <= 0) or (fixture_kind in ("circular-markers", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core") and circle_calls <= 0):
         raise AssertionError("Native flow did not execute its independent recognizer")
+    short_contact_calls = 0
+    if short_contact_result is not None:
+        raw = short_contact_result["actual_source_payloads"]
+        short_contact_calls = raw["new_model_calls"]
+        engines += raw["actual_tesseract_engine_metadata"]
     snapshot = sorted([entity_geometry(entity, document) for entity in entities], key=lambda row: json.dumps(row, sort_keys=True))
     write_json(work / "geometry.json", {"entities": snapshot})
     result = {
@@ -3608,7 +4263,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         "algorithm": state["algorithm"],
         "tesseract_engines": engines,
         "independent_models": models,
-        "actual_independent_model_calls": global_calls + circle_calls + single_line_calls,
+        "actual_independent_model_calls": global_calls + circle_calls + single_line_calls + short_contact_calls,
         "global_cross_engine_model_calls": global_calls,
         "circle_character_model_calls": circle_calls,
         "single_line_label_model_calls": single_line_calls,
@@ -3637,6 +4292,9 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["structure_contact_paths"] = structure_result
     if transverse_result is not None:
         result["transverse_strokes_receiver"] = transverse_result
+    if short_contact_result is not None:
+        result["short_contact_text"] = short_contact_result
+        result["short_contact_text_model_calls"] = short_contact_calls
     return result
 
 
@@ -3731,6 +4389,8 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     structure_work.mkdir()
     transverse_work = work / "transverse-strokes-receiver"
     transverse_work.mkdir()
+    short_contact_work = work / "short-contact-text"
+    short_contact_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
@@ -3742,6 +4402,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         {"name": "observed-terminal-core", "directory": terminal_core_work, "create": create_terminal_core_fixture},
         {"name": "structure-contact-paths", "directory": structure_work, "create": create_structure_contact_fixture},
         {"name": "transverse-strokes-receiver", "directory": transverse_work, "create": create_transverse_receiver_fixture},
+        {"name": "short-contact-text", "directory": short_contact_work, "create": create_short_contact_text_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -3794,7 +4455,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure, transverse = cases
+    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure, transverse, short_contact = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -3943,16 +4604,33 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
     }
     write_json(transverse_work / "native-smoke.json", transverse_report)
+    short_contact_report = {
+        "status": "PASS", "schema": "windows-native-short-contact-text-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": short_contact["source_sha256"],
+        "source_result": short_contact["source_result"], "exe_result": short_contact["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "two_complete_two_character_groups_required": True,
+        "minimum_genuine_TEXT_members_and_independent_instances_checked": True,
+        "each_actual_glyph_position_size_and_spacing_checked": True,
+        "original_shared_ink_and_all_raw_competition_payloads_checked": True,
+        "two_independent_whole_paths_and_finite_receivers_preserved": True,
+        "real_circle_line_white_gap_preserved": True,
+        "literal_edit_whole_group_move_delete_and_whole_path_delete_cold_reopened": True,
+        "previous_ten_inputs_preserved": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(short_contact_work / "native-smoke.json", short_contact_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 11,
+        "coverage_revision": 12,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report, "transverse_strokes_receiver": transverse_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report, "transverse_strokes_receiver": transverse_report, "short_contact_text": short_contact_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,

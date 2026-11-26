@@ -320,6 +320,7 @@ def _candidate_geometry_checks(
         "CIRCULAR_MARKER": "INSERT",
         "CONNECTION_PATH": "LWPOLYLINE",
         "TEXT": "TEXT",
+        "TEXT_GROUP": "INSERT",
         "MTEXT": "MTEXT",
         "ROOM_LABEL": "INSERT",
         "WALL_SEGMENT": "INSERT",
@@ -492,6 +493,21 @@ def _candidate_geometry_checks(
             checks["source_baseline_alignment"] = (
                 int(entity.dxf.get("halign", 0)) == 0
                 and int(entity.dxf.get("valign", 0)) == 0
+            )
+        elif kind == "TEXT_GROUP":
+            expected = g.get("text_members", [])
+            checks["minimum_literal_TEXT_group"] = (
+                len(expected) >= 2 and len(members) == len(expected)
+                and all(member.dxftype() == "TEXT" for member in members)
+                and "".join(member.dxf.text for member in members) == g.get("text")
+            )
+            checks["all_literal_member_geometries_match"] = checks["minimum_literal_TEXT_group"] and all(
+                all(value is True for value in _candidate_geometry_checks(
+                    member, {"kind":"TEXT","geometry":geometry,"layer":member.dxf.layer},
+                    [member], pixel_from_cad, mm, source_roi=source_roi,
+                    text_font_path=text_font_path,
+                ).values())
+                for member,geometry in zip(members,expected)
             )
         elif kind == "MTEXT":
             checks["all_literal_lines_match_candidate"] = (
