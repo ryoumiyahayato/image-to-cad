@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+from copy import deepcopy
 import hashlib
 import heapq
 import json
@@ -58,6 +59,35 @@ POLICY = {
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
                                      allow_nan=False).encode()).hexdigest()
+
+
+def retain_axis_evidence(rows, row):
+    """Deduplicate geometry while retaining every distinct axis explanation.
+
+    The historical top-level evidence fields remain a representative witness.
+    They must not be mistaken for a union or consensus of the axis witnesses.
+    Copies are necessary: merging seed provenance may not mutate the first
+    axis's independently replayable explanation.
+    """
+    fields = (
+        "seed_axes", "finite_projected_interval_local_px", "section_sequence",
+        "section_sequence_competitors_in_same_axis",
+        "original_ink_support_pixels_px", "unassigned_adjacent_source_pixels_px",
+        "original_white_holes_touching_band", "endpoint_evidence", "rejection_reasons",
+    )
+    variant = {name: deepcopy(row[name]) for name in fields}
+    variant["source_path_sha256"] = digest(row["source_path_px"])
+    ident = row["candidate_id"]
+    if ident in rows:
+        if rows[ident]["source_path_px"] != row["source_path_px"]:
+            raise ValueError("CANDIDATE_ID_COLLISION_WITH_DIFFERENT_SOURCE_PATH")
+        rows[ident]["seed_axes"].extend(deepcopy(row["seed_axes"]))
+        rows[ident]["axis_evidence_variants"].append(variant)
+    else:
+        row["axis_evidence_variants"] = [variant]
+        row["primary_evidence_fields_are_representative_only"] = True
+        row["axis_evidence_schema"] = "all-axis-explanations-for-identical-source-path-v1"
+        rows[ident] = row
 
 
 def _neighbors(point):
@@ -364,11 +394,7 @@ def discover(gray, roi):
             candidates, summary = _one_axis(ink, points, edt, width, seed, origin, roi, holes)
             axes.append(summary)
             for row in candidates:
-                ident = row["candidate_id"]
-                if ident in rows:
-                    rows[ident]["seed_axes"].extend(row["seed_axes"])
-                else:
-                    rows[ident] = row
+                retain_axis_evidence(rows, row)
                 if len(rows) > POLICY["maximum_candidate_paths"]:
                     global_overflow = True
                     break

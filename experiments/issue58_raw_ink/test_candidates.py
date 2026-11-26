@@ -109,6 +109,30 @@ class CandidateRiskTests(unittest.TestCase):
         second.pop("wall_seconds")
         self.assertEqual(first, second)
 
+    def test_same_path_retains_different_axis_ownership_explanations(self):
+        source = self.image()
+        cv2.line(source, (10, 70), (95, 25), 0, 5)
+        result = self.run_model(source)
+        original = deepcopy(result["candidates"][0])
+        alternate = deepcopy(original)
+        alternate["seed_axes"] = [{"angle_deg": 77.0, "test_witness": "distinct_axis"}]
+        alternate["unassigned_adjacent_source_pixels_px"] = [[5, 5]]
+        alternate["original_white_holes_touching_band"] = [{"test_hole": "kept"}]
+        alternate["endpoint_evidence"] = [{"interpretation": "DISTINCT_ATTACHMENT"}]
+        alternate["section_sequence"] = [101, 102]
+        rows = {}
+        m.retain_axis_evidence(rows, original)
+        first = deepcopy(rows[original["candidate_id"]]["axis_evidence_variants"][0])
+        m.retain_axis_evidence(rows, alternate)
+        saved = rows[original["candidate_id"]]
+        self.assertEqual(len(saved["axis_evidence_variants"]), 2)
+        self.assertEqual(saved["axis_evidence_variants"][0], first)
+        self.assertEqual(saved["axis_evidence_variants"][1]["endpoint_evidence"], alternate["endpoint_evidence"])
+        self.assertEqual(saved["axis_evidence_variants"][1]["unassigned_adjacent_source_pixels_px"], [[5, 5]])
+        self.assertEqual(saved["axis_evidence_variants"][1]["original_white_holes_touching_band"], [{"test_hole": "kept"}])
+        self.assertEqual(saved["source_path_px"], original["source_path_px"])
+        self.assertTrue(saved["primary_evidence_fields_are_representative_only"])
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

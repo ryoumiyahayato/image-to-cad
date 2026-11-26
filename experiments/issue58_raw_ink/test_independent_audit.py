@@ -3,7 +3,9 @@ import hashlib
 
 import numpy as np
 
-from experiments.issue58_raw_ink.independent_audit import audit_candidate, audit_plan
+from experiments.issue58_raw_ink.independent_audit import (
+    audit_candidate, audit_plan, positive_collinear_overlap_length,
+)
 
 
 def _candidate(points, identity="example"):
@@ -88,3 +90,11 @@ def test_resource_withheld_output_is_not_reported_as_zero_error_validation():
     assert not result["all_candidates_rechecked_from_original_pixels"]
     assert not result["declared_discovery_budget_completed"]
     assert result["candidate_audit_status"] == "NOT_EVALUATED_RESOURCE_LIMIT"
+
+
+def test_finite_duplicate_geometry_is_distinct_from_a_crossing_or_endpoint():
+    baseline = [[0, 0], [5, 0], [10, 0]]
+    assert positive_collinear_overlap_length([[3, 0], [8, 0]], baseline) == 5.0
+    assert positive_collinear_overlap_length([[5, -5], [5, 5]], baseline) == 0.0
+    assert positive_collinear_overlap_length([[10, 0], [13, 0]], baseline) == 0.0
+    assert positive_collinear_overlap_length([[3, 1], [8, 1]], baseline) == 0.0

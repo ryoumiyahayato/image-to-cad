@@ -116,11 +116,7 @@ def discover(gray, roi):
             candidates, summary = base._one_axis(ink, points, edt, width, seed, origin, roi, holes)
             axes.append(summary)
             for row in candidates:
-                ident = row["candidate_id"]
-                if ident in rows:
-                    rows[ident]["seed_axes"].extend(row["seed_axes"])
-                else:
-                    rows[ident] = row
+                base.retain_axis_evidence(rows, row)
                 if len(rows) > POLICY["maximum_candidate_paths"]:
                     global_overflow = True
                     break

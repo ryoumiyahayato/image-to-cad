@@ -1,0 +1,25 @@
+{
+  "schema": "raw-ink-evidence-schema-freeze-v3",
+  "frozen_at_utc": "2026-11-26T16:59:02.540509+00:00",
+  "initial_model_code_commit": "23e5e07fb830a844f3855ac04c5b865783b4a843",
+  "scope": "Retain all per-axis explanations of identical source paths; candidate rules, thresholds, IDs, paths and seed provenance unchanged.",
+  "model_policy_sha256": "ce6caf67fd75a20a596fbe737c8cc9aaf58e52cf190ed1298d7433add6efb70f",
+  "effective_policy_sha256": "80e9a50bf2a67d1c20c8cac2fd91cdcd460d29dd2a2488034301cd0d642c0b0f",
+  "source_files": [
+    {
+      "path": "candidates.py",
+      "sha256": "32dad7a9b3dcf9c0502616eca3506f1560294962faad323894f79f3ce57f8740"
+    },
+    {
+      "path": "candidates_v2.py",
+      "sha256": "22ab1ae3ed86520a2dbb036ae8a3d70e83012c47b2eb8a5508d051cb1e032381"
+    },
+    {
+      "path": "run_v2_budget.py",
+      "sha256": "756b5eb2d176356c774998df04758945d18772a38e22d7bb936570c7df114806"
+    }
+  ],
+  "frozen_before_actual_source_replay": true,
+  "synthetic_risk_results": "9 v1/evidence tests and 3 v2 tests passed",
+  "private_input_is_known_development_sample_not_holdout": true
+}

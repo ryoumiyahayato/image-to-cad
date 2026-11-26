@@ -33,6 +33,10 @@ class NonConsumingSeedRiskTests(unittest.TestCase):
                     nearby.append(seed)
             self.assertTrue(nearby)
         self.assertEqual(result['adopted_objects'], [])
+        for row in result['candidates']:
+            self.assertEqual(len(row['axis_evidence_variants']), len(row['seed_axes']))
+            for witness in row['axis_evidence_variants']:
+                self.assertEqual(witness['source_path_sha256'], m.base.digest(row['source_path_px']))
 
     def test_real_gap_still_partitions_source_paths(self):
         source = np.full((80, 130), 255, np.uint8)

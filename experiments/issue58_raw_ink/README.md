@@ -114,3 +114,23 @@ remain nominated in the presence of a crossing line, a genuine white gap still
 partitions paths, and identical input/model replay identically. Real candidate
 counts, complete-object status and source ownership must still be independently
 audited; the generator never adopts these paths.
+
+## Evidence schema correction after the initial freeze
+
+The initial models and their original freeze files are preserved in commit
+`23e5e07fb830a844f3855ac04c5b865783b4a843`. Those source hashes bind the original
+receipts, not later source files. The subsequent metadata-only correction retains
+**every axis explanation** when identical source paths are deduplicated:
+`axis_evidence_variants` contains each axis's support pixels, side contacts,
+original holes, endpoint descriptions, section sequence and seed provenance.
+The earlier top-level fields are explicitly representative only. A matching
+source path is not proof that its different axis explanations agree on ownership.
+The correction must reproduce the same candidate identities and source paths;
+`FREEZE_EVIDENCE_V3.json` binds its source files before that real replay.
+
+**Loop limitation:** an original white hole is recorded and preserved, but this
+model does not construct an explicit local return-stroke/loop geometry. A
+section-sequence alternative around a hole remains a candidate interpretation;
+its shortest raw-pixel representative cannot claim full responsibility for both
+sides of a loop. A small cycle in a derived skeleton is not taken as a raw white
+hole and does not enter this model as ground truth.

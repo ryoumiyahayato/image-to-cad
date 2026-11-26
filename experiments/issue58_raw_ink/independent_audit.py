@@ -70,6 +70,87 @@ def _edge_set(points):
     return {tuple(sorted((tuple(a), tuple(b)))) for a, b in zip(points, points[1:])}
 
 
+def positive_collinear_overlap_length(first, second):
+    """Union collinear finite overlaps per first segment, excluding point contacts."""
+    first, second = np.asarray(first, float), np.asarray(second, float)
+    total = 0.0
+    for a, b in zip(first, first[1:]):
+        v = b - a
+        length = float(np.linalg.norm(v))
+        if length <= 1e-10:
+            continue
+        unit = v / length
+        normal = np.array([-unit[1], unit[0]])
+        intervals = []
+        for c, d in zip(second, second[1:]):
+            if max(abs(float((c - a) @ normal)), abs(float((d - a) @ normal))) > 1e-8:
+                continue
+            low, high = sorted((float((c - a) @ unit), float((d - a) @ unit)))
+            low, high = max(0.0, low), min(length, high)
+            if high - low > 1e-8:
+                intervals.append((low, high))
+        end = -np.inf
+        for low, high in sorted(intervals):
+            total += max(0.0, high - max(low, end))
+            end = max(end, high)
+    return total
+
+
+def audit_saved_protected_path(baseline_dxf, baseline_objects, plan, reference):
+    """Read actual saved geometry rather than the candidate's ownership receipt.
+
+    This is a read-only baseline check, not integration-preservation acceptance.
+    It measures the conflict if candidate polylines were exported unchanged.
+    """
+    import ezdxf
+
+    doc = ezdxf.readfile(baseline_dxf)
+    baseline = json.loads(Path(baseline_objects).read_text(encoding="utf-8"))
+    formal = [entity for entity in doc.modelspace() if entity.dxf.layer != "REVIEW"]
+    identities = {}
+    for entity in formal:
+        if entity.has_xdata("I2CAD_NATIVE_V2"):
+            chunks = [tag.value for tag in entity.get_xdata("I2CAD_NATIVE_V2") if tag.code == 1000]
+            identity = json.loads("".join(chunks))
+            identities.setdefault(identity["id"], []).append(entity)
+    expected_ids = {row["id"] for row in baseline["objects"]}
+    checks = {
+        "saved_baseline_dxf_hash_matches_sidecar": file_sha(baseline_dxf) == baseline["dxf_sha256"],
+        "all_formal_ids_match_baseline_sidecar": set(identities) == expected_ids,
+        "every_formal_identity_is_unique": all(len(rows) == 1 for rows in identities.values()),
+        "every_formal_entity_has_one_identity": len(identities) == len(formal),
+    }
+    target_id = reference["protected_main_path"]["id"]
+    entity = identities[target_id][0]
+    if entity.dxftype() != "LWPOLYLINE" or entity.closed:
+        raise ValueError("PROTECTED_MAIN_PATH_NOT_SAVED_OPEN_LWPOLYLINE")
+    if any(abs(row[2]) > 1e-12 for row in entity.get_points("xyb")):
+        raise ValueError("THIS_LINEAR_CONFLICT_AUDIT_REQUIRES_ZERO_BULGES")
+    mm = 25.4 / baseline["dpi"]
+    roi = baseline["roi_xyxy_px"]
+    saved = [[row[0] / mm + roi[0], roi[3] - row[1] / mm]
+             for row in entity.get_points("xy")]
+    expected_geometry = reference["protected_main_path"]["geometry"]["points"]
+    checks["saved_main_vertices_match_bound_reference"] = bool(
+        np.asarray(saved).shape == np.asarray(expected_geometry).shape
+        and np.allclose(saved, expected_geometry, atol=1e-8, rtol=0))
+    return {
+        "scope": "READ_ONLY_BASELINE_AND_HYPOTHETICAL_UNCHANGED_CANDIDATE_EXPORT",
+        "baseline_dxf_sha256": file_sha(baseline_dxf),
+        "checks": checks, "formal_count": len(formal),
+        "review_count": sum(e.dxf.layer == "REVIEW" for e in doc.modelspace()),
+        "named_block_count": sum(not b.name.startswith("*") for b in doc.blocks),
+        "protected_path_vertex_count": len(saved),
+        "candidate_conflicts_with_saved_protected_path": [
+            {"candidate_id": c["candidate_id"], "positive_duplicate_length_px": overlap,
+             "positive_duplicate_length_paper_mm": overlap * mm}
+            for c in plan["candidates"]
+            for overlap in [positive_collinear_overlap_length(c["source_path_px"], saved)]
+            if overlap > 1e-8],
+        "integrated_new_dxf_preservation_test": "NOT_RUN_NO_NEW_FORMAL_DXF",
+    }
+
+
 def _endpoint_ring(gray, point, radius):
     """Count raw-ink arcs on a bounded square ring, without declaring terminals."""
     x, y = map(int, point)
@@ -284,12 +365,21 @@ def main():
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--candidates", type=Path, required=True)
     parser.add_argument("--reference", type=Path)
+    parser.add_argument("--baseline-dxf", type=Path)
+    parser.add_argument("--baseline-objects", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     gray = np.array(Image.open(args.input).convert("L"))
     plan = json.loads(args.candidates.read_text(encoding="utf-8"))
     reference = json.loads(args.reference.read_text(encoding="utf-8")) if args.reference else None
     result = audit_plan(gray, plan, reference)
+    if bool(args.baseline_dxf) != bool(args.baseline_objects):
+        parser.error("--baseline-dxf and --baseline-objects must be provided together")
+    if args.baseline_dxf:
+        if reference is None:
+            parser.error("saved baseline check requires the evaluation-only --reference")
+        result["saved_baseline_check"] = audit_saved_protected_path(
+            args.baseline_dxf, args.baseline_objects, plan, reference)
     result["input_file_sha256"] = file_sha(args.input)
     result["candidate_file_sha256"] = file_sha(args.candidates)
     result["reference_file_sha256"] = file_sha(args.reference) if args.reference else None
