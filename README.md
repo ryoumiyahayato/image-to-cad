@@ -4,6 +4,40 @@
 
 **[Windows 一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)** · [产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md)
 
+## Windows 程序与当前主图
+
+**[本版程序下载入口：Windows #699 完整交付项](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851/artifacts/15103796104)**。图纸、匹配字体及许可由配套结果包提供，私人图纸不在公开仓库发布。
+
+1. 将该交付项中的完整恢复包解压到新目录，双击 **`Restore-Windows-portable.cmd`**，自动校验、解压并启动 `CADPhotoToDXF.exe`。另完整解压结果包，保留字体、许可与子目录。
+2. 在软件启动页或文件菜单点 **“打开已有 DXF / 准备 CAD 字体…”**，选择 **`QUARTER_short_contact_text_17415ed.dxf`**。已有图纸无需重新识别；找不到 LibreCAD 时选择安装好的 `LibreCAD.exe`。
+3. 点 **“准备 CAD 字体”**。若提示重新打开 CAD，先保存并完全退出 LibreCAD，再回软件重新检查；显示资源已准备后打开图纸。
+4. 用 **File → Save as** 另存编辑副本。`S` 可直接双击改字；左侧 `S3` 是含两个 TEXT 的独立块，选中组查看块名，再在块列表选择同名项进入 **Edit Block** 改字；接线保持独立。整组移动／删除步骤见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+
+## 当前成果：完整短字符与贯穿图线分别编辑
+
+普通整区主图 **`QUARTER_short_contact_text_17415ed.dxf`**，**197578 B**，SHA-256 **`497a521d1b079fba4b80b126d8096e4f859e588bc13827391f685fa03936dfe6`**。原 **432 个正式对象全部严格保持**，新增两个完整文字对象，最终 **434 正式对象／48 REVIEW**；既有 53 个图块保持，新增一个独立文字组块。
+
+| 位置 | 最终主图实际恢复 | 完整性与剩余范围 |
+| --- | --- | --- |
+| C07 新路径末端、承接线以上 | 完整 `S`，一个可直接改字的 TEXT | 字符完成；原完整路径和承接线保持独立 |
+| LAUNDRY 左侧短组 | 完整 `S3`，唯一实例图块内两个真实 TEXT | 整组完成；贯穿路径、三短划和承接线保持独立 |
+| 修改前冻结的 LAUNDRY 右侧验证点 | 未采用字符对象 | 缺少已采用的独立贯穿路径承担者，未进入本次短字符补全阶段；不能称为该阶段 OCR 拒绝 |
+
+Linux LibreCAD 2.2.1.6 已实际完成 `S → K7,03` 改字、左组 `S3` 整删、贯穿该组的完整路径整删，三份均普通保存、完全退出并以新进程重开。每份 433 个非目标正式对象、48 REVIEW 和全部 54 个块定义保持；两个删除严格通过，目标在原位无自身残片。改字仅目标字高与宽度系数发生精确五位小数回写，初始严格失败保留并单列，邻居比较未放宽。
+
+[Windows #699](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851) 的十一组 source／实际隔离 EXE 普通入口及已有字体、恢复、安装流程通过；本批新增小输入的 source／EXE 共八份实际编辑文件已下载后冷读通过。两个证据 ZIP 已实际下载并校验；**完整程序包本工作区未下载核验（`NOT_DOWNLOADED_HERE`）**，一次请求超时后保留[官方完整交付入口](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851/artifacts/15103796104)，没有将元数据写成完整包字节核验通过。
+
+主图执行提交 **`17415edf96fb611a40caa5c6495bca077cd23cc6`**，Windows／远端源码提交 **`338a9226cde9789570da2d19b2fcbb23c1ed0a5c`**，经 [PR #55](https://github.com/ryoumiyahayato/image-to-cad/pull/55) 正常合入 main **`f0519d2c7cbc945874c2c138136fb270cf629092`**；三个提交的完整 Git tree 均为 **`e75f4e35f1ac091f0fcad75825edee16a325f556`**。后续文档提交另列，不替代出图与 EXE 执行锚点。
+
+**Windows 私有主图桌面 GUI 和工程师工时仍 NOT_RUN；CAD 保存格式、XDATA、INSERT `zscale=0`、字体别名和 REVIEW 往返仍 LIMITED；产品仍 `0.3.0-dev / LOCAL_NO_GO`。** 第三处仍需后续明确任务先补足独立图线来源责任，再评估完整字符组；本批没有扩展相邻细竖线、其他邻接网络、困难 EBB-3 或三行注释，也不把局部完成写成整片恢复。
+
+方法、实际编辑与版本边界见[本批记录](docs/native/SHORT_CONTACT_TEXT_20261126.md)。
+
+<details>
+<summary>历史：三条短划、承接线纠正与 Windows #696（6a27c0f 阶段）</summary>
+
+> 以下“当前／本批／下一步”属于 6a27c0f 阶段，按原执行事实保留；最新范围见上文。
+
 ## Windows：取得程序后打开已有 DXF
 
 **[程序构建与下载入口：Windows #696](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45755563007)**。Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-f988424b9dcf697d42fac8244acb96abce2b4fc7`。主图与匹配字体由同次配套结果包提供，私人图纸不在公开仓库发布。
@@ -33,6 +67,9 @@ Linux LibreCAD 2.2.1.6 已实际完成三项操作：**删除整条 LAUNDRY 路�
 主图执行提交 **`6a27c0f031f2e2d26ebdf4b485d85d7a42262ee0`**，Windows 执行提交 **`f988424b9dcf697d42fac8244acb96abce2b4fc7`**；两者完整 Git tree 均为 **`761e9a41b76120161c0ce01d61927946959467ff`**。这是相同源码树的两个提交。[PR #54](https://github.com/ryoumiyahayato/image-to-cad/pull/54) 已正常合入 main **`bb165884e16ac61a08ad46c337cb317d63445e8c`**，合并树也与该执行树相同。后续文档提交不替代出图／构建锚点。
 
 详细规则、旧对象替代关系和证据边界见[本批记录](docs/native/LAUNDRY_CROSS_STROKES_20261126.md)。
+
+
+</details>
 
 <details>
 <summary>历史：完整接触路径与 Windows #694（26b1b6e 阶段）</summary>
@@ -123,7 +160,7 @@ python3.12 -m venv .venv
 
 已有受控来源检查点时，正式无界面入口可使用 `--connection-checkpoint PATH`，配合原有 `--input`、`--roi`、`--dpi`、`--output`。JSON 绑定原图、既有 DXF／来源账本、保存的文字观察和 1—8 个局部窗口；manager 捕获后重新校验哈希与参数，worker 仍执行保存、冷读和来源审核门禁。它不是旧采用白名单，也不自动调用 OCR 或扩大到全区转换。该检查点模式用于明确授权的局部任务；本次普通整区没有使用它。私人输入和大型模型不进入公开仓库。
 
-首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，本轮新增能力的实际软件验证以[接触路径与结构线终接记录](docs/native/STRUCTURE_CONTACT_PATHS_20261126.md)为准。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
+首选交付 DXF，比例来源不足时使用纸面毫米；不能把 DPI 冒充工程设计比例。Windows 构建与原生检查沿用已建立的流程，基础用法见 [Windows 检查说明](docs/native/WINDOWS_NATIVE_SMOKE.md)，当前短字符能力的实际软件验证见[本批记录](docs/native/SHORT_CONTACT_TEXT_20261126.md)，接触路径历史保留原执行记录。真实工程图的 Windows 用户验收、Android APK、DWG 全流程和跨 CAD 完整性仍待验证。
 
 ## 研发及合并原则
 

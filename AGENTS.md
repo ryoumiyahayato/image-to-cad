@@ -23,7 +23,23 @@
 5. 每次写入前核对远端 HEAD；新提交不允许覆盖其他代理的更新。遇到登录／权限阻塞，立即在私有持久存储保存 commit、补丁与恢复信息，不反复等待登录或 CI；可用连接器时再安全同步。
 6. 私人扫描、原始OCR、专用字体/模型、未授权材料、密钥和实验ZIP不得加入公开仓库。真实图纸与大型证据保存在受控私有资料库。
 
-## 当前阶段：LAUNDRY 交叉短划与承接线重复表达（2026-11-26）
+## 当前阶段：完整短字符与独立贯穿路径（2026-11-26）
+
+普通整区主图 **`QUARTER_short_contact_text_17415ed.dxf`**，**197578 B**，SHA-256 **`497a521d1b079fba4b80b126d8096e4f859e588bc13827391f685fa03936dfe6`**。原 **432 个正式对象全部严格保持**，新增两个完整文字对象，最终 **434 正式对象／48 REVIEW**；既有 53 个图块保持，新增一个独立文字组块。
+
+C07 的完整 `S` 为一个 TEXT，LAUNDRY 左侧完整 `S3` 为唯一实例的两个 TEXT 组成图块；字组与完整接线分别编辑。右侧冻结验证点因缺少已采用的贯穿路径承担者，未进入本次短字符补全阶段，不能记成 OCR 采用拒绝或用别处成功替代。
+
+Linux LibreCAD 2.2.1.6 已实际完成 `S → K7,03` 改字、左组 `S3` 整删、贯穿该组的完整路径整删，三份均普通保存、完全退出并以新进程重开。每份 433 个非目标正式对象、48 REVIEW 和全部 54 个块定义保持；两个删除严格通过，目标在原位无自身残片。改字仅目标字高与宽度系数发生精确五位小数回写，初始严格失败保留并单列，邻居比较未放宽。
+
+[Windows #699](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851) 的十一组 source／实际隔离 EXE 普通入口及已有字体、恢复、安装流程通过；本批新增小输入的 source／EXE 共八份实际编辑文件已下载后冷读通过。两个证据 ZIP 已实际下载并校验；**完整程序包本工作区未下载核验（`NOT_DOWNLOADED_HERE`）**，一次请求超时后保留[官方完整交付入口](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851/artifacts/15103796104)，没有将元数据写成完整包字节核验通过。
+
+主图执行提交 **`17415edf96fb611a40caa5c6495bca077cd23cc6`**，Windows／远端源码提交 **`338a9226cde9789570da2d19b2fcbb23c1ed0a5c`**，经 [PR #55](https://github.com/ryoumiyahayato/image-to-cad/pull/55) 正常合入 main **`f0519d2c7cbc945874c2c138136fb270cf629092`**；三个提交的完整 Git tree 均为 **`e75f4e35f1ac091f0fcad75825edee16a325f556`**。后续文档提交另列，不替代出图与 EXE 执行锚点。
+
+**Windows 私有主图桌面 GUI 和工程师工时仍 NOT_RUN；CAD 保存格式、XDATA、INSERT `zscale=0`、字体别名和 REVIEW 往返仍 LIMITED；产品仍 `0.3.0-dev / LOCAL_NO_GO`。** 第三处仍需后续明确任务先补足独立图线来源责任，再评估完整字符组；本批没有扩展相邻细竖线、其他邻接网络、困难 EBB-3 或三行注释，也不把局部完成写成整片恢复。 当前操作入口见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)，实际范围见[本批记录](docs/native/SHORT_CONTACT_TEXT_20261126.md)。
+
+## 历史：LAUNDRY 交叉短划与承接线重复表达（2026-11-26）
+
+> 本节的“本批／下一步”属于 6a27c0f 阶段；保留历史事实，当前结果以上文为准。
 
 普通整区流程已生成 **`QUARTER_laundry_short_strokes_6a27c0f.dxf`**：**196315 B**，SHA-256 **`eae5a316ff7ebcf7840a5a70ac0e395b7f91ccdaa6c7d76e8a62508ea4ee343c`**，最终 **432 正式对象／48 REVIEW**。本批从 `QUARTER_structure_contacts_26b1b6e.dxf` 的 430 个正式对象接续：**427 旧对象严格保持，2 条旧承接 LINE 替换为 1 条完整 LINE，1 条完整 LAUNDRY 路径更新有证末端与接收对象绑定，新增 3 条完整独立短划 LINE**。所有旧对象均有明确去向。
 
