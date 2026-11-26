@@ -1,0 +1,62 @@
+{
+  "schema": "raw-ink-publication-source-binding-v1",
+  "bound_at_utc": "2026-11-26T17:04:35.377102+00:00",
+  "historical_v3_code_commit": "e97803176d2cb95c2d63a7bf0d4943353dfd55a6",
+  "historical_initial_model_commit": "23e5e07fb830a844f3855ac04c5b865783b4a843",
+  "source_files": [
+    {
+      "path": "candidates.py",
+      "historical_v3_sha256": "32dad7a9b3dcf9c0502616eca3506f1560294962faad323894f79f3ce57f8740",
+      "publication_sha256": "1ca328829fc5dd5d6b87e6ef57552068fccc9359b9d00b46fd71f8796ce6063d"
+    },
+    {
+      "path": "candidates_v2.py",
+      "historical_v3_sha256": "22ab1ae3ed86520a2dbb036ae8a3d70e83012c47b2eb8a5508d051cb1e032381",
+      "publication_sha256": "810f9466de0e8a2c449803fa61e70aea7b3b3b99790bbec1026b9232584df6bf"
+    },
+    {
+      "path": "independent_audit.py",
+      "historical_v3_sha256": "7b0c8be666ef4a2b49325e328a94cacb3b63e9e43e10787abc6bdda8ac0f46b4",
+      "publication_sha256": "b89103996a550e7ff077c0e92da39c43ca97afaac42b3c3855d46930c3081e83"
+    },
+    {
+      "path": "run_v2_budget.py",
+      "historical_v3_sha256": "756b5eb2d176356c774998df04758945d18772a38e22d7bb936570c7df114806",
+      "publication_sha256": "51029a9e233c8ce7f4fd3556845ef88149c85dabc2ae300dde86ac4dd70747d2"
+    },
+    {
+      "path": "test_candidates.py",
+      "historical_v3_sha256": "b5d6c26cdb00c0bc269dbbef0a02653176f278d0b24b34070942f448362c8241",
+      "publication_sha256": "4d8b6300d20df1b2b026a9bd0f3669af819ce93b5e10db86947dab10539242cf"
+    },
+    {
+      "path": "test_candidates_v2.py",
+      "historical_v3_sha256": "9274bd607d65255696aa0b69b749635ffb51c64b4a3d5f8803e091878a816361",
+      "publication_sha256": "106178dfd53bc82c39eba4e0c587192f6c55bda5bb9e56d505501b54ec0a6c1b"
+    },
+    {
+      "path": "test_independent_audit.py",
+      "historical_v3_sha256": "6c9fcdfa89222d0bb4cf58d2572e1e5deb8cafbd7365dd5afe9e68295130e70e",
+      "publication_sha256": "4e315a8099a00e0ba169c04d0931e49daa5b962acf0828d7d1d6bfc5c1a2729c"
+    }
+  ],
+  "only_source_changes": [
+    "Import ordering and blank-line formatting",
+    "Four read-only adjacent-pair loops use itertools.pairwise instead of zip(seq, seq[1:])",
+    "Remove redundant int() around math.ceil(), which already returns int"
+  ],
+  "recognition_thresholds_changed": false,
+  "model_policy_changed": false,
+  "geometry_algorithm_changed": false,
+  "publication_real_replay_status": "PASS_EXACT_EXCEPT_RUNTIME_AND_PRODUCER_HASHES",
+  "private_replay_receipt": "PUBLICATION_REPLAY_COMPARISON.json",
+  "historical_freeze_files_continue_to_bind_their_historical_commits": true,
+  "publication_replay_excluded_fields": [
+    "wall_seconds",
+    "producer_sha256",
+    "candidate_engine_sha256",
+    "resource_runner_sha256"
+  ],
+  "publication_candidate_count": 916,
+  "publication_axis_evidence_variant_count": 1225
+}

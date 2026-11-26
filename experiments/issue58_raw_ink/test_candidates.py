@@ -1,8 +1,8 @@
 """Adversarial discovery tests. No synthetic case is counted as real recovery."""
-from copy import deepcopy
 import importlib.util
-from pathlib import Path
 import unittest
+from copy import deepcopy
+from pathlib import Path
 
 import cv2
 import numpy as np

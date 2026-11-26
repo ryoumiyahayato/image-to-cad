@@ -9,13 +9,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import itertools
 import json
 from pathlib import Path
 
 import numpy as np
 from PIL import Image
 from scipy import ndimage
-
 
 SCHEMA = "raw-ink-independent-diagnostic-audit-v1"
 
@@ -67,14 +67,14 @@ def point_path_distances(points, path):
 
 
 def _edge_set(points):
-    return {tuple(sorted((tuple(a), tuple(b)))) for a, b in zip(points, points[1:])}
+    return {tuple(sorted((tuple(a), tuple(b)))) for a, b in itertools.pairwise(points)}
 
 
 def positive_collinear_overlap_length(first, second):
     """Union collinear finite overlaps per first segment, excluding point contacts."""
     first, second = np.asarray(first, float), np.asarray(second, float)
     total = 0.0
-    for a, b in zip(first, first[1:]):
+    for a, b in itertools.pairwise(first):
         v = b - a
         length = float(np.linalg.norm(v))
         if length <= 1e-10:
@@ -82,7 +82,7 @@ def positive_collinear_overlap_length(first, second):
         unit = v / length
         normal = np.array([-unit[1], unit[0]])
         intervals = []
-        for c, d in zip(second, second[1:]):
+        for c, d in itertools.pairwise(second):
             if max(abs(float((c - a) @ normal)), abs(float((d - a) @ normal))) > 1e-8:
                 continue
             low, high = sorted((float((c - a) @ unit), float((d - a) @ unit)))
@@ -196,7 +196,7 @@ def audit_candidate(gray, candidate, roi, width):
         np.array_equal(vertices, path) and representation.get("closed") is False
         and representation.get("bulges") == [0.0] * len(path))
     cells = set()
-    for a, b in zip(path, path[1:]):
+    for a, b in itertools.pairwise(path):
         cells.update(closed_segment_cells(a, b))
     outside = sorted((x, y) for x, y in cells
                      if not (0 <= x < gray.shape[1] and 0 <= y < gray.shape[0]))

@@ -5,12 +5,14 @@ candidate rules, their numerical thresholds, source pixels or selection order.
 The full originally stopped receipt must be retained separately.
 """
 from __future__ import annotations
+
 import argparse
-from copy import deepcopy
 import hashlib
 import importlib.util
 import json
+from copy import deepcopy
 from pathlib import Path
+
 import numpy as np
 from PIL import Image
 

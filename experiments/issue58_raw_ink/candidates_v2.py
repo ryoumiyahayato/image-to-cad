@@ -7,15 +7,15 @@ and expected shape counts are never used by this module.
 from __future__ import annotations
 
 import argparse
-from collections import defaultdict
-from copy import deepcopy
 import hashlib
 import importlib.util
 import json
 import math
-from pathlib import Path
 import platform
 import time
+from collections import defaultdict
+from copy import deepcopy
+from pathlib import Path
 
 import cv2
 import numpy as np
@@ -43,7 +43,7 @@ def non_consuming_seeds(ink, points, width):
     """No greedy pixel consumption; all quantized directional peaks compete."""
     if not len(points):
         return [], False
-    rho_max = int(math.ceil(math.hypot(ink.shape[1], ink.shape[0]))) + 1
+    rho_max = math.ceil(math.hypot(ink.shape[1], ink.shape[0])) + 1
     theta = np.arange(0.0, 180.0, POLICY["hough_theta_degrees"])
     accumulator = np.zeros((len(theta), 2 * rho_max + 1), np.int32)
     for index, angle in enumerate(theta):

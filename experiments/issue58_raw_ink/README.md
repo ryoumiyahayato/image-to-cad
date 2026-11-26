@@ -6,6 +6,10 @@ source graph as its discovery entrance. It does not modify production code,
 call OCR, modify source pixels, or grant source-ownership/adoption approval.
 The model is frozen in `FREEZE.json` before the first real-source run.
 
+The executed real-source findings and four-target comparison are recorded in
+[RESULTS_20261127.md](RESULTS_20261127.md). The outcome is **zero complete
+formally recovered objects**; this directory remains an experiment.
+
 ## Model
 
 1. Threshold the supplied unmodified grayscale image at the existing 128 ink
@@ -75,10 +79,12 @@ The rectangle is an explicit experiment selection; its edges are never treated
 as actual object boundaries. Do not publish the private JSON receipt, source
 pixels, source paths, or private drawing links in the public repository.
 
-The eight synthetic checks cover a real white stripe, censored boundary, wrong
+The initial eight synthetic checks cover a real white stripe, censored boundary, wrong
 attachment, competing branches, preserved white holes, curved candidate paths,
 explicit resource refusal, and exact deterministic replay. They test candidate
 behavior and refusals, not successful reconstruction of the real four strokes.
+The later ninth check protects all axis explanations when identical paths are
+deduplicated.
 
 ## One controlled seed-model alternative
 
@@ -134,3 +140,35 @@ section-sequence alternative around a hole remains a candidate interpretation;
 its shortest raw-pixel representative cannot claim full responsibility for both
 sides of a loop. A small cycle in a derived skeleton is not taken as a raw white
 hole and does not enter this model as ground truth.
+
+## Independent diagnostics and focused regression
+
+The audit reads the source pixels again and does not trust producer pass flags.
+An optional evaluation-only reference describes target sample sets; it is never
+passed to the candidate generator. An optional saved baseline DXF and its object
+sidecar allow actual persisted finite geometry to be checked for positive-length
+overlap. These diagnostics do not issue a joint ownership/adoption certificate.
+
+```sh
+python -m experiments.issue58_raw_ink.independent_audit \
+  --input /private/source.tiff \
+  --candidates /private/run/raw_candidates_v2_budget.json \
+  --reference /private/evaluation/target_reference.json \
+  --baseline-dxf /private/baseline.dxf \
+  --baseline-objects /private/result.objects.json \
+  --output /private/run/independent_audit.json
+
+PYTHONPATH=cad_photo_to_dxf:. PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q \
+  experiments/issue58_raw_ink/test_candidates.py \
+  experiments/issue58_raw_ink/test_candidates_v2.py \
+  experiments/issue58_raw_ink/test_independent_audit.py \
+  cad_photo_to_dxf/tests/test_native_transverse_stroke_geometry.py \
+  cad_photo_to_dxf/tests/test_native_transverse_stroke_adoption.py
+```
+
+The executed focused suite contains 41 distinct cases. The new diagnostics cover
+actual white pixels, crop censoring, competing geometry, invalid coordinates,
+resource withholding, and finite overlap versus a single crossing/contact. The
+existing transverse suites protect the unchanged production path. They do not
+replace a new full-region DXF, edit-isolation, or GUI acceptance test; none was
+claimed because no candidate passed complete source-ownership proof.

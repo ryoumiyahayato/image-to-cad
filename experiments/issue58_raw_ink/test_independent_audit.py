@@ -4,7 +4,9 @@ import hashlib
 import numpy as np
 
 from experiments.issue58_raw_ink.independent_audit import (
-    audit_candidate, audit_plan, positive_collinear_overlap_length,
+    audit_candidate,
+    audit_plan,
+    positive_collinear_overlap_length,
 )
 
 

@@ -1,7 +1,8 @@
 """Seed-mechanism comparison on source-independent slanted/crossing fixtures."""
 import importlib.util
-from pathlib import Path
 import unittest
+from pathlib import Path
+
 import cv2
 import numpy as np
 

@@ -8,15 +8,15 @@ use adjacent original black pixel centres. Raw branch alternatives are retained.
 from __future__ import annotations
 
 import argparse
-from collections import defaultdict
-from copy import deepcopy
 import hashlib
 import heapq
 import json
 import math
-from pathlib import Path
 import platform
 import time
+from collections import defaultdict
+from copy import deepcopy
+from pathlib import Path
 
 import cv2
 import numpy as np
