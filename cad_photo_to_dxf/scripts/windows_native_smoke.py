@@ -2013,7 +2013,7 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
         from PIL import Image
 
         policy = {
-            "version": "native-direct-circle-end-contact-v3-independent-source-branches", "source_threshold": 128,
+            "version": "native-direct-circle-end-contact-v4-shared-source-arrival-anchor", "source_threshold": 128,
             "maximum_extension_stroke_widths": 1.0, "existing_native_fit_allowance_px": 0.85,
             "absolute_extension_limit_px": 6.0, "candidate_search_stroke_widths": 2.0,
             "existing_terminal_witness_length_px": 3.0, "endpoint_precision_px": 1e-6,
@@ -2025,6 +2025,7 @@ def inspect_contact_path_vertices(document, objects, cold, entity, path_row, pla
             "external_connection_owned_by_marker": False,
             "shared_observed_port": "STRICT_STRUCTURE_PATH_AND_DISTINCT_RAW_GRAPH_BRANCHES_WITH_NONCROSSING_NATIVE_TAILS",
             "shared_port_minimum_external_prefix_px": 8.0,
+            "shared_port_anchor": "UNIQUE_PRIOR_SOURCE_PROVED_ARRIVAL_SAME_CORE_AND_OPPOSITE_RING_BRANCHES",
         }
         original_evidence = {key: value for key, value in evidence.items() if key != "circle_endpoint_contacts"}
         if (not isinstance(certificate, dict) or certificate.get("schema") != policy["version"]
