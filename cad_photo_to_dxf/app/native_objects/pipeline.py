@@ -1289,6 +1289,12 @@ def run_native_objects(
                 from .short_contact_text import restore_short_contact_evidence
 
                 restore_short_contact_evidence(cache_dir, out, short_contact_completion)
+            # A same-algorithm assembly always records this stage, including
+            # a zero-adoption result.  Its absence cannot mean legacy success.
+            attached_stroke_completion = restored_assembly["attached_stroke_completion"]
+            from .attached_stroke_audit import restore_attached_stroke_evidence
+
+            restore_attached_stroke_evidence(out, attached_stroke_completion)
             _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
@@ -1962,6 +1968,25 @@ def run_native_objects(
             )
             objects += short_contact_completion["objects"]
             text_objects += short_contact_completion["objects"]
+            # Side strokes are a separate editing responsibility.  Their
+            # source-graph stage sees only the finalized preceding objects;
+            # it cannot retire them, license text, or grow the REVIEW layer.
+            from .attached_stroke_graph import complete_attached_strokes
+            from .attached_stroke_audit import restore_attached_stroke_evidence
+
+            progress("COMPLETE_ATTACHED_SOURCE_GRAPH_STROKES", 0.748)
+            attached_stroke_completion = complete_attached_strokes(
+                gray, roi, source_sha, objects, out / "attached_strokes",
+                source_graph=contact_source_graph,
+            )
+            if attached_stroke_completion.get("retired_ids") != []:
+                raise ValueError("ATTACHED_STROKE_MUST_PRESERVE_EXISTING_OBJECTS")
+            restore_attached_stroke_evidence(out, attached_stroke_completion)
+            existing_ids = {obj["id"] for obj in objects}
+            added_ids = [obj["id"] for obj in attached_stroke_completion["objects"]]
+            if len(added_ids) != len(set(added_ids)) or existing_ids.intersection(added_ids):
+                raise ValueError("ATTACHED_STROKE_DUPLICATE_OR_EXISTING_NATIVE_ID")
+            objects += attached_stroke_completion["objects"]
             issues = (
                 geometry["uncertainties"]
                 + annotations["uncertainties"]
@@ -1993,6 +2018,7 @@ def run_native_objects(
                         "doors": len(door_objects),
                         "whole_connection_paths": len(connections["objects"]),
                         "independent_text_contact_paths": len(text_contact_completion.get("objects", [])),
+                        "independent_attached_source_strokes": len(attached_stroke_completion["objects"]),
                         "complete_circular_markers": circular_markers["summary"]["new_complete_markers"],
                         "circle_text_compositions": circular_markers["summary"]["circle_text_compositions"],
                         "partial_circular_boundaries": circular_markers["summary"]["new_partial_boundaries"],
@@ -2016,6 +2042,7 @@ def run_native_objects(
                 "text_contact_completion": text_contact_completion,
                 "carrier_reconciliation": carrier_reconciliation,
                 "short_contact_completion": short_contact_completion,
+                "attached_stroke_completion": attached_stroke_completion,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -2119,6 +2146,16 @@ def run_native_objects(
                 "actual_saved_source_checks": audit.get("short_contact_text_source_checks"),
                 "pending": short_contact_completion.get("pending", []),
                 "text_and_independent_graphics_counted_separately": True,
+            },
+            "attached_stroke_completion": {
+                "new_complete_graphics": len(attached_stroke_completion.get("objects", [])),
+                "complete_object_ids": [obj["id"] for obj in attached_stroke_completion.get("objects", [])],
+                "retired_old_graphic_ids": attached_stroke_completion.get("retired_ids", []),
+                "decisions": attached_stroke_completion.get("decisions", []),
+                "pending": attached_stroke_completion.get("pending", []),
+                "actual_saved_source_checks": audit.get("attached_stroke_source_checks"),
+                "pending_evidence": "attached_strokes/plan.json",
+                "pending_added_to_REVIEW": False,
             },
             "text_contact_completion": {
                 "new_complete_graphics": len(text_contact_completion.get("objects", [])),

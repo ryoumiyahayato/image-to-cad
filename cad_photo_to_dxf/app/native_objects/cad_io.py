@@ -60,6 +60,8 @@ def mark(e, o):
         data["carrier_reconciliation"] = True
     if "short_contact_text" in o.get("source_evidence", {}):
         data["short_contact_text"] = True
+    if "attached_stroke_graph" in o.get("source_evidence", {}):
+        data["attached_stroke_graph"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -1040,6 +1042,12 @@ def cold_audit(path, gray, roi, dpi, out):
         path, doc, gray, roi, dpi, evidence_root
     )
     checks.extend(short_contact_proof["checks"])
+    from .attached_stroke_audit import cold_attached_stroke_bindings
+
+    attached_stroke_proof = cold_attached_stroke_bindings(
+        path, doc, gray, roi, dpi, evidence_root
+    )
+    checks.extend(attached_stroke_proof["checks"])
     identity_failures = []
     for entity in doc.modelspace():
         try:
@@ -1070,6 +1078,7 @@ def cold_audit(path, gray, roi, dpi, out):
             "source_geometry_gate_pass": False,
             "native_text_candidate_checks": text_candidate_checks,
             "single_line_text_source_checks": single_line_source_checks,
+            "attached_stroke_source_checks": attached_stroke_proof,
             "identity_failures": identity_failures,
             "geometry_audit": "NOT_RUN_INVALID_NATIVE_IDENTITIES",
             "CAD_GUI": "NOT_RUN_BY_THIS_AUDIT",
@@ -1318,6 +1327,7 @@ def cold_audit(path, gray, roi, dpi, out):
         "text_contact_source_checks": text_contact_proof,
         "carrier_reconciliation_source_checks": carrier_proof,
         "short_contact_text_source_checks": short_contact_proof,
+        "attached_stroke_source_checks": attached_stroke_proof,
     }
     if circular_checks:
         report["circular_marker_source_checks"] = circular_checks
