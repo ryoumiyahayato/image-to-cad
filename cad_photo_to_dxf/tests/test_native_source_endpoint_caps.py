@@ -6,6 +6,7 @@ import cv2
 import numpy as np
 
 from app.native_objects.source_endpoint_caps import restore_source_endpoint_caps
+from app.native_objects import source_endpoint_caps as caps
 
 
 def fixture():
@@ -82,3 +83,21 @@ def test_candidate_boundary_cannot_be_extended_by_ink_outside_it():
     result, proof = restore(skel, ink, [[10, 24, 75, 75]])
     assert np.array_equal(result, skel)
     assert any(row['decision'] == 'ORIGINAL_CAP_EXTENDS_OUTSIDE_BOUND_CANDIDATE' for row in proof['rejected'])
+
+
+def test_short_cap_can_be_observed_without_changing_default_graph_restoration():
+    ink = np.zeros((90, 90), bool)
+    skeleton = np.zeros_like(ink)
+    ink[44:47, 20:61] = True
+    skeleton[45, 21:59] = True
+    before_ink, before_skeleton = ink.copy(), skeleton.copy()
+    distance = cv2.distanceTransform(ink.astype(np.uint8), cv2.DIST_L2, cv2.DIST_MASK_PRECISE)
+    ordinary, reason, _ = caps._extension(skeleton, ink, distance, (45, 58))
+    assert ordinary is None and reason == 'ORIGINAL_CAP_ALREADY_WITHIN_UNCHANGED_TOLERANCE'
+    observed, _, proof = caps._extension(skeleton, ink, distance, (45, 58), observe_short_cap=True)
+    assert observed == [(45, 58), (45, 59), (45, 60)]
+    assert proof['complete_short_cap_observation_requested']
+    assert proof['no_gap_filled'] and proof['no_branch_pruned']
+    restored, receipt = restore(skeleton, ink, [[10, 30, 75, 65]])
+    assert np.array_equal(restored, before_skeleton) and not receipt['restored']
+    assert np.array_equal(ink, before_ink) and np.array_equal(skeleton, before_skeleton)

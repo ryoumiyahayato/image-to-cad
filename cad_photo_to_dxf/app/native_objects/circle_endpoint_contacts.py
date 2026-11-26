@@ -20,7 +20,7 @@ from .contracts import plain
 
 FIELD = "circle_endpoint_contacts"
 POLICY = {
-    "version": "native-direct-circle-end-contact-v3-independent-source-branches",
+    "version": "native-direct-circle-end-contact-v4-shared-source-arrival-anchor",
     "source_threshold": 128,
     "maximum_extension_stroke_widths": 1.0,
     "existing_native_fit_allowance_px": 0.85,
@@ -37,6 +37,7 @@ POLICY = {
     "external_connection_owned_by_marker": False,
     "shared_observed_port": "STRICT_STRUCTURE_PATH_AND_DISTINCT_RAW_GRAPH_BRANCHES_WITH_NONCROSSING_NATIVE_TAILS",
     "shared_port_minimum_external_prefix_px": 8.0,
+    "shared_port_anchor": "UNIQUE_PRIOR_SOURCE_PROVED_ARRIVAL_SAME_CORE_AND_OPPOSITE_RING_BRANCHES",
 }
 
 
@@ -356,6 +357,74 @@ def _shared_port_decomposition(gray, rows, by_id, marker, replay):
                            "restored_endpoint_px": row["restored_endpoint_px"]})
     if len({r["source_graph_node_id"] for r in identities}) != 1 or len({r["source_round_id"] for r in identities}) != 1:
         return None
+    updates = {}
+    conflicting = any(
+        _segments_conflict(a["original_endpoint_px"], a["restored_endpoint_px"],
+                           b["original_endpoint_px"], b["restored_endpoint_px"],
+                           allow_common_circle_end=True)
+        for i, a in enumerate(identities) for b in identities[i + 1:]
+    )
+    if conflicting:
+        # An earlier complete arrival already has its own source-proved ring
+        # endpoint. A later structural arrival may share that exact endpoint
+        # only through the same original core and two opposite ring branches.
+        # Never move the earlier path or choose a nearest circle endpoint.
+        anchors = [row for row in rows if row["object_id"] not in licensed]
+        if len(anchors) != 1:
+            return None
+        anchor = anchors[0]
+        ring_ports = anchor.get("ring_source_graph_ports")
+        if not ring_ports or not anchor.get("original_core_routes_to_ring_branches_px"):
+            return None
+        target = np.asarray(anchor["restored_endpoint_px"], float)
+        if abs(float(np.linalg.norm(target - center)) - radius) > POLICY["endpoint_precision_px"]:
+            return None
+        for row in rows:
+            if row is anchor:
+                continue
+            if (row["object_id"] not in licensed
+                    or row.get("ring_source_graph_ports") != ring_ports
+                    or row.get("ring_branch_core_anchors_px") != anchor.get("ring_branch_core_anchors_px")
+                    or row.get("terminal_core_source_evidence", {}).get("source_core_points_px")
+                    != anchor.get("terminal_core_source_evidence", {}).get("source_core_points_px")):
+                return None
+            original = np.asarray(row["original_endpoint_px"], float)
+            length = float(np.linalg.norm(target - original))
+            if not 0 < length <= row["maximum_extension_px"]:
+                return None
+            cells = _segment_cells(original, target)
+            all_cells = sorted(set(map(tuple, cells + row["existing_terminal_witness_cells_xy"])),
+                               key=lambda p: (p[1], p[0]))
+            if not all_cells or not all(
+                0 <= x < gray.shape[1] and 0 <= y < gray.shape[0]
+                and gray[y, x] < POLICY["source_threshold"] for x, y in all_cells
+            ):
+                return None
+            pixels = np.asarray(all_cells, int)
+            x0, y0 = pixels.min(axis=0)
+            x1, y1 = pixels.max(axis=0) + 1
+            update = {
+                "restored_endpoint_px": target.tolist(),
+                "extension_length_px": length,
+                "direct_segment_cells_xy": cells,
+                "source_crop_xyxy_px": [int(x0), int(y0), int(x1), int(y1)],
+                "source_crop_sha256": hashlib.sha256(
+                    np.ascontiguousarray(gray[y0:y1, x0:x1]).tobytes()).hexdigest(),
+                "shared_source_arrival_anchor": {
+                    "anchor_object_id": anchor["object_id"],
+                    "anchor_endpoint_number": anchor["endpoint_number"],
+                    "anchor_original_geometry_sha256": _digest(by_id[anchor["object_id"]]["geometry"]),
+                    "anchor_source_proof_sha256": _digest(anchor),
+                    "independent_single_arrival_endpoint_px": row["restored_endpoint_px"],
+                    "same_original_core_and_opposite_ring_branches": True,
+                    "every_new_tail_pixel_cell_is_original_ink": True,
+                    "earlier_complete_arrival_geometry_changed": False,
+                    "nearest_distance_selection_used": False,
+                },
+            }
+            updates[(row["object_id"], row["endpoint_number"])] = update
+            next(item for item in identities if item["object_id"] == row["object_id"]
+                 and item["endpoint_number"] == row["endpoint_number"])["restored_endpoint_px"] = target.tolist()
     for i, a in enumerate(identities):
         for b in identities[i + 1:]:
             if set(map(tuple, a["outside_core_source_prefix_px"])) & set(map(tuple, b["outside_core_source_prefix_px"])):
@@ -372,12 +441,19 @@ def _shared_port_decomposition(gray, rows, by_id, marker, replay):
                 if any(_segments_conflict(tail["original_endpoint_px"], tail["restored_endpoint_px"], c, d)
                        for c, d in zip(dense, dense[1:])):
                     return None
-    return {"schema": "coarse-circle-port-independent-source-arrivals-v1", "circle_id": marker["id"],
+    for row in rows:
+        row.update(updates.get((row["object_id"], row["endpoint_number"]), {}))
+    result = {"schema": "coarse-circle-port-independent-source-arrivals-v1", "circle_id": marker["id"],
             "observed_port_index": rows[0]["observed_port_index"], "licensed_structure_path_ids": sorted(licensed),
             "independent_arrivals": identities, "all_competing_eligible_arrivals_checked": True,
             "original_graph_rebuilt": True, "distinct_external_source_prefixes": True,
             "native_extensions_have_no_positive_overlap_or_interior_crossing": True,
             "external_paths_remain_separate_native_objects": True}
+    if updates:
+        result["shared_existing_source_arrival_anchors"] = [
+            update["shared_source_arrival_anchor"] for _, update in sorted(updates.items())
+        ]
+    return result
 
 
 def _observed_core_target(gray, roi, obj, end, endpoint, marker, replay):
@@ -734,7 +810,7 @@ def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None, *,
         end = next((item for item in _ends(original) if item[0] == claimed["endpoint_number"]), None)
         replay = _offer(gray, roi, original, *end, marker, core_replay) if end else None
         original_claim = {k: v for k, v in claimed.items() if k != "shared_source_port_decomposition"}
-        if not replay or not replay["accepted"] or _digest(replay) != _digest(original_claim):
+        if not replay or not replay["accepted"]:
             raise ValueError("CIRCLE_CONTACT_RAW_ENDPOINT_PROOF_DOES_NOT_REPLAY")
         competing = [replay]
         for other in by_id.values():
@@ -750,6 +826,8 @@ def verified_original_geometry(gray, roi, obj, objects, actual_geometry=None, *,
                 raise ValueError("CIRCLE_CONTACT_PORT_HAS_ANOTHER_ELIGIBLE_END")
         elif claimed.get("shared_source_port_decomposition"):
             raise ValueError("CIRCLE_CONTACT_SHARED_PORT_OWNERSHIP_CHANGED")
+        if _digest(replay) != _digest(original_claim):
+            raise ValueError("CIRCLE_CONTACT_RAW_ENDPOINT_PROOF_DOES_NOT_REPLAY")
         for other in by_id.values():
             if other["id"] == marker["id"] or other["kind"] not in ("CIRCLE", "CIRCULAR_MARKER"):
                 continue

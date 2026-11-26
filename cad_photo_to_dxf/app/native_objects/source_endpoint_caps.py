@@ -106,7 +106,7 @@ def _topology_unchanged(current, path):
     return refined
 
 
-def _extension(skeleton, ink, distance, endpoint):
+def _extension(skeleton, ink, distance, endpoint, *, observe_short_cap=False):
     tail = _tail(skeleton, endpoint)
     if tail is None:
         return None, "NO_UNIQUE_EXISTING_TERMINAL_TANGENT", {}
@@ -133,7 +133,11 @@ def _extension(skeleton, ink, distance, endpoint):
     proof = {"original_endpoint_xy_px": [x, y], "outward_source_tangent": outward.tolist(),
              "original_tail_xy_px": [[px, py] for py, px in points],
              "reference_source_stroke_radius_px": radius, "source_forward_extent_px": maximum}
-    if maximum <= POLICY["already_adequate_cap_px"]:
+    # The ordinary graph does not need to add a cap already within its pixel
+    # tolerance. A finite owner may still need the complete observed cap as
+    # evidence, without installing any new skeleton vertex. That explicit
+    # observation runs every tube, white-cap and adjacency check below.
+    if maximum <= 0 or (maximum <= POLICY["already_adequate_cap_px"] and not observe_short_cap):
         return None, "ORIGINAL_CAP_ALREADY_WITHIN_UNCHANGED_TOLERANCE", proof
     if maximum > POLICY["maximum_extension_px"] or any((component[0].any(), component[-1].any(), component[:, 0].any(), component[:, -1].any())):
         return None, "SOURCE_EXTENSION_NOT_BOUNDED_BY_LOCAL_CAP", proof
@@ -204,6 +208,8 @@ def _extension(skeleton, ink, distance, endpoint):
                  source_ridge_xy_px=[[px, py] for py, px in path], extension_length_px=length,
                  all_added_points_on_original_ink=True, old_skeleton_vertices_and_adjacencies_preserved=True,
                  no_gap_filled=True, no_branch_pruned=True)
+    if observe_short_cap:
+        proof["complete_short_cap_observation_requested"] = True
     return path, "BOUNDED_ORIGINAL_SOURCE_ENDPOINT_RESTORED", proof
 
 

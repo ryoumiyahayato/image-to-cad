@@ -98,6 +98,25 @@ def cold_short_contact_text_bindings(path,doc,gray,roi,dpi,evidence_root):
                 raise ValueError("SHORT_CONTACT_ACTUAL_INDEPENDENT_PATH_MISSING_OR_DUPLICATE")
             if not _saved_owner_check(saved_owners[0],objects[oid],written.get(oid,{}),roi,dpi)["pass"]:
                 raise ValueError("SHORT_CONTACT_ACTUAL_SAVED_PATH_GEOMETRY_CHANGED")
+        carrier_bindings = {}
+        for item in receipt["source_plan"]["plans"]:
+            partition = item["source_partition"]
+            for proof in (partition.get("carrier_contact_evidence",[])
+                          + partition.get("raw_context_finite_receiver_contacts",[])):
+                binding = proof["carrier_binding"]
+                oid = binding["id"]
+                if oid in carrier_bindings and carrier_bindings[oid] != binding:
+                    raise ValueError("SHORT_CONTACT_CONFLICTING_RECEIVER_BINDINGS")
+                carrier_bindings[oid] = binding
+        for oid,binding in carrier_bindings.items():
+            if (oid not in objects or oid not in prior_by_id
+                    or object_binding(objects[oid]) != binding
+                    or object_binding(prior_by_id[oid]) != binding):
+                raise ValueError("SHORT_CONTACT_INDEPENDENT_RECEIVING_LINE_CHANGED")
+            saved = actual.get(oid,[])
+            if (len(saved)!=1 or saved[0].dxftype()!="LINE"
+                    or not _saved_owner_check(saved[0],objects[oid],written.get(oid,{}),roi,dpi)["pass"]):
+                raise ValueError("SHORT_CONTACT_ACTUAL_RECEIVING_LINE_MISSING_OR_CHANGED")
         replay = plan_short_contact_text(gray,roi,prior,{"geometry_plans":receipt["contact_geometry_plans"]})
         if replay["plans"]!=receipt["source_plan"]["plans"]:
             raise ValueError("SHORT_CONTACT_COMPLETE_SOURCE_DISCOVERY_CHANGED")

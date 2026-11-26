@@ -5,7 +5,9 @@ import hashlib
 import json
 import math
 import os
+import sys
 import tempfile
+import time
 import numpy as np
 
 COORDINATES = "source_pixels_top_left"
@@ -27,6 +29,67 @@ def plain(o):
     raise TypeError(type(o).__name__)
 
 
+def _replace_checkpoint(source, destination):
+    """Retain atomic checkpoint writes across a bounded Windows sharing delay.
+
+    The writer has closed and synced its own temporary handle. A different
+    reader can still deny replacement on Windows; its identity is not assumed.
+    Persistent permissions and all other failures remain failures, with the
+    previous checkpoint intact. Never delete the destination before replacing.
+    """
+    started = time.monotonic()
+    deadline = started + 2.0
+    attempts = 0
+    prior_error = None
+    while True:
+        if prior_error is not None:
+            from .execution import check_cancel, current_context
+
+            check_cancel("CHECKPOINT_ATOMIC_REPLACE")
+            context = current_context()
+            now = time.monotonic()
+            if now >= deadline:
+                if context is not None:
+                    context.event(
+                        "checkpoint_replace_retry_exhausted",
+                        path=str(destination), replace_attempts=attempts,
+                        winerror=prior_error.winerror, elapsed_seconds=now - started,
+                        previous_checkpoint_preserved=True,
+                    )
+                raise prior_error
+        attempts += 1
+        try:
+            os.replace(source, destination)
+        except OSError as exc:
+            if sys.platform != "win32" or getattr(exc, "winerror", None) not in {5, 32, 33}:
+                raise
+            from .execution import check_cancel, current_context
+
+            prior_error = exc
+            now = time.monotonic()
+            delay = min(0.05, max(0.0, deadline - now))
+            context = current_context()
+            if context is not None:
+                context.event(
+                    "checkpoint_replace_retry", path=str(destination),
+                    replace_attempts=attempts, winerror=exc.winerror,
+                    elapsed_seconds=now - started, delay_seconds=delay,
+                    previous_checkpoint_preserved=True,
+                )
+            check_cancel("CHECKPOINT_ATOMIC_REPLACE")
+            if delay:
+                time.sleep(delay)
+        else:
+            if prior_error is not None and context is not None:
+                context.event(
+                    "checkpoint_replace_recovered", path=str(destination),
+                    replace_attempts=attempts,
+                    elapsed_seconds=time.monotonic() - started,
+                    atomic_replacement=True,
+                )
+            return
+
+
 def save_json(path, value):
     p = Path(path)
     p.parent.mkdir(parents=True, exist_ok=True)
@@ -37,6 +100,7 @@ def save_json(path, value):
         + "\n"
     )
     name = None
+    failure = None
     try:
         with tempfile.NamedTemporaryFile(
             mode="w",
@@ -49,10 +113,22 @@ def save_json(path, value):
             f.write(payload)
             f.flush()
             os.fsync(f.fileno())
-        os.replace(name, p)
+        _replace_checkpoint(name, p)
+    except BaseException as exc:
+        failure = exc
+        raise
     finally:
         if name is not None and os.path.exists(name):
-            os.unlink(name)
+            try:
+                os.unlink(name)
+            except OSError as cleanup_error:
+                if failure is None:
+                    raise
+                # A locked temporary file must not hide the failed commit or
+                # cancellation. Leave that owned file for recovery inspection.
+                failure.add_note(
+                    f"Owned checkpoint temporary retained: {name}; cleanup failed: {cleanup_error}"
+                )
 
 
 def stable_id(prefix, geometry):

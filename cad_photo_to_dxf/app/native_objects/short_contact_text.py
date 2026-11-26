@@ -1,8 +1,9 @@
 """One bounded ordinary completion pass for source-supported short contact text.
 
 Recognition sees both the untouched source and a separately recorded ownership
-view.  A complete component PSM 10 reading corroborates each literal character
-of a strict whole-group model observation.  Original competing readings never
+view. A complete component PSM 10 reading corroborates each literal character
+of a strict whole-group model observation. A bounded carrier-contact conflict
+may obtain one fixed PSM 13 view, with all earlier readings retained. Original competing readings never
 disappear: continuing graphic ink cannot acquire invented character endpoints
 at a crop edge.  Geometry, raw observations, decisions and layout are replayed
 independently by the saved-file audit.
@@ -34,17 +35,23 @@ FIELD = "short_contact_text"
 SCHEMA = "native-short-contact-text-evidence-v1"
 ADOPTION_SCHEMA = "native-short-contact-text-adoption-v1"
 POLICY = {
-    "version": "complete-short-contact-components-raw-literal-v1",
+    "version": "complete-short-contact-components-raw-literal-v3-bounded-component-observation",
     "whole_group_model_mean_confidence": 0.98,
     "whole_group_model_minimum_character_confidence": 0.95,
     "whole_group_model_rule_unchanged_from_complete_single_line": True,
     "Tesseract_component_PSM": 10,
+    "Tesseract_component_conflict_PSM": 13,
+    "Tesseract_component_conflict_observation_limit": 1,
+    "Tesseract_component_conflict_strong_score": 85.0,
+    "component_conflict_observation": "fixed_same_pixels_view_only_after_complete_carrier_word_and_model_agreement",
     "Tesseract_context_PSMs": [7, 13],
     "Tesseract_scale": 2,
     "Tesseract_external_white_padding_px": 12,
     "PP_external_white_padding_px": 4,
     "Tesseract_component_bbox_tolerance_px": 1.0,
-    "Tesseract_word_score": "recorded_advisory_aggregate_not_character_veto",
+    "unchanged_whole_word_literal_minimum_confidence": 85.0,
+    "empty_carrier_component_alternative": "same_unchanged_literal_in_complete_original_and_ownership_words_plus_strict_component_model",
+    "Tesseract_word_score": "matching_primary_literal_has_no_score_floor; conflict_reobservation_requires_existing_85_strong_score_and_full_source_agreement",
     "adoption_basis": "complete_source_components_and_strict_whole_group_model_with_literal_component_corroboration",
     "all_raw_competing_readings_retained": True,
     "unbounded_graphic_cannot_become_a_finite_glyph_at_crop_edges": True,
@@ -92,19 +99,8 @@ def _view_observations(image, out, root, dpi, recognizer, psms):
     out = Path(out)
     out.mkdir(parents=True,exist_ok=True)
     result = {"input_array_sha256":base.source_array_sha256(image),"tesseract":[],"model":None}
-    scale,pad = POLICY["Tesseract_scale"],POLICY["Tesseract_external_white_padding_px"]
-    repeated = np.repeat(np.repeat(image,scale,axis=0),scale,axis=1)
     for psm in psms:
-        name = "x2-p"+str(psm)
-        _, metadata = base._ocr(repeated,[0,0,repeated.shape[1],repeated.shape[0]],psm,
-                                out,name,None,padding_px=pad,dpi=int(dpi)*scale)
-        raw = (out/(name+".tsv")).read_bytes()
-        result["tesseract"].append({"psm":psm,"scale":scale,"padding_px":pad,
-            "raw_tsv":_record(out/(name+".tsv"),root),
-            "recognition_image":_record(out/(name+".png"),root),
-            "metadata":_record(out/(name+".json"),root),
-            "words":_words(raw,repeated.shape[1],repeated.shape[0],psm),
-            "new_call":bool(metadata.get("command_executed_for_this_request"))})
+        result["tesseract"].append(_tesseract_view_observation(image,out,root,dpi,psm))
     model_image = np.pad(image,POLICY["PP_external_white_padding_px"],constant_values=255)
     model_files = [out/name for name in ("model.png","model.json","model_identity.json")]
     reused = False
@@ -130,6 +126,22 @@ def _view_observations(image, out, root, dpi, recognizer, psms):
                        "observation_receipt":({"same_raw_observation_reused":True,"model_inference_executed_for_this_request":False}
                            if reused else deepcopy(getattr(recognizer,"last_observation",{})))}
     return result
+
+
+def _tesseract_view_observation(image,out,root,dpi,psm):
+    """Append one fixed raw view without rerunning or rewriting earlier receipts."""
+    scale,pad = POLICY["Tesseract_scale"],POLICY["Tesseract_external_white_padding_px"]
+    repeated = np.repeat(np.repeat(image,scale,axis=0),scale,axis=1)
+    name = "x2-p"+str(psm)
+    _,metadata = base._ocr(repeated,[0,0,repeated.shape[1],repeated.shape[0]],psm,
+                           out,name,None,padding_px=pad,dpi=int(dpi)*scale,record_engine_identity=True)
+    raw = (out/(name+".tsv")).read_bytes()
+    return {"psm":psm,"scale":scale,"padding_px":pad,
+            "raw_tsv":_record(out/(name+".tsv"),root),
+            "recognition_image":_record(out/(name+".png"),root),
+            "metadata":_record(out/(name+".json"),root),
+            "words":_words(raw,repeated.shape[1],repeated.shape[0],psm),
+            "new_call":bool(metadata.get("command_executed_for_this_request"))}
 
 
 def _strong_model(observation):
@@ -193,14 +205,198 @@ def _original_word_graphic_bindings(partition, observation, value, differing):
             if found:
                 break
         if found is None:
+            # A real finite structural contact is a separate source route,
+            # never a fictitious continuation beyond the raw crop bottom.
+            for view in observation["tesseract"]:
+                words = view["words"]
+                if "".join(w["text"] for w in words) != value:
+                    continue
+                offset = 0
+                for word_index,word in enumerate(words):
+                    start,stop = offset,offset+len(word["text"])
+                    offset = stop
+                    if not start <= component_index < stop:
+                        continue
+                    word_box = word["bbox_xyxy_px"]
+                    for contact in partition.get("raw_context_finite_receiver_contacts",[]):
+                        crossing = contact["complete_glyph_crossing"]
+                        end = contact["source_contact_point_px"]
+                        if (contact["owner_id"] not in owner_ids
+                                or not contact["single_contiguous_source_visit"]
+                                or not contact["path_ends_outside_complete_glyph_on_independent_receiver"]
+                                or not contact["receiver_source_continues_past_both_horizontal_crop_edges"]
+                                or not shared.intersection(map(tuple,crossing["shared_core_points_used"]))
+                                or word_box[1]>scale
+                                or word_box[3]<scale*(end[1]-box[1])-scale):
+                            continue
+                        sample_points = [contact["first_original_point_inside"],end]
+                        if not all(word_box[0]-scale <= scale*(p[0]-box[0]) <= word_box[2]+scale
+                                   for p in sample_points):
+                            continue
+                        found = {
+                            "component_index":component_index,"word_index":word_index,
+                            "word_literal":word["text"],"literal_index_in_word":component_index-start,
+                            "word_bbox_xyxy_in_scaled_original_crop":word_box,
+                            "Tesseract_PSM":view["psm"],"owner_id":contact["owner_id"],
+                            "source_responsibility_basis":"COMPLETE_GLYPH_CROSSING_TO_ACTUAL_FINITE_RECEIVER",
+                            "original_point_before_crop":contact["original_point_before_crop"],
+                            "source_contact_point_px":end,"carrier_binding":contact["carrier_binding"],
+                            "recorded_shared_core_points":crossing["shared_core_points_used"],
+                            "same_word_same_component_same_source_owner":True,
+                            "source_path_continues_beyond_original_context":False,
+                        }
+                        break
+                    if found:
+                        break
+                if found:
+                    break
+        if found is None:
             return []
         bindings.append(found)
     return bindings
 
 
+def _complete_carrier_word_literals(partition,raw,index,expected):
+    """Require a fixed literal position in every complete original/ownership word."""
+    component=partition["components"][index]
+    observation=raw["components"][index]
+    if (not component.get("carrier_contact_evidence",{}).get("all_attachment_core_and_intervening_source_samples_retained")
+            or not _strong_model(observation["model"]["prediction"])
+            or observation["model"]["prediction"].get("raw_text")!=expected):
+        return None
+    original_model=raw["original_group"]["model"]["prediction"]
+    ownership_model=raw["ownership_group"]["model"]["prediction"]
+    count=len(partition["components"])
+    if (expected is None or not _strong_model(ownership_model)
+            or len(ownership_model.get("raw_text",""))!=count
+            or ownership_model["raw_text"][index]!=expected):
+        return None
+    if (not _strong_model(original_model) or len(original_model.get("raw_text",""))!=count
+            or original_model["raw_text"][index]!=expected):
+        return None
+    records=[]
+    scale=POLICY["Tesseract_scale"]
+    group_box=partition["bbox_xyxy_px"]
+    for domain in ("original_group","ownership_group"):
+        origin_box=partition["raw_original_bbox_xyxy_px"] if domain=="original_group" else group_box
+        views=raw[domain]["tesseract"]
+        if [v["psm"] for v in views]!=POLICY["Tesseract_context_PSMs"]:
+            return None
+        expected_box=[scale*(group_box[0]-origin_box[0]),scale*(group_box[1]-origin_box[1]),
+                      scale*(group_box[2]-origin_box[0]),scale*(group_box[3]-origin_box[1])]
+        for view in views:
+            words=view["words"]
+            if len(words)!=1 or len(words[0]["text"])!=count or words[0]["text"][index]!=expected:
+                return None
+            word=words[0]
+            box=word["bbox_xyxy_px"]
+            tolerance=scale*POLICY["Tesseract_component_bbox_tolerance_px"]
+            if (box[0]>expected_box[0]+tolerance or box[1]>expected_box[1]+tolerance
+                    or box[2]<expected_box[2]-tolerance or box[3]<expected_box[3]-tolerance
+                    or domain=="original_group" and word["confidence"]<POLICY["unchanged_whole_word_literal_minimum_confidence"]):
+                return None
+            records.append({"domain":domain,"PSM":view["psm"],"complete_word":word["text"],
+                            "word_bbox_in_scaled_crop":box,"literal_index":index,
+                            "unchanged_literal":expected,"word_confidence":word["confidence"],
+                            "all_complete_source_component_boxes_covered":True})
+    return {"basis":"UNCHANGED_LITERAL_IN_COMPLETE_WORDS_WITH_STRICT_COMPONENT_MODEL",
+            "source_component_count":count,"source_component_index":index,
+            "independent_carrier_binding":component["carrier_contact_evidence"]["carrier_binding"],
+            "original_group_model_literal":original_model["raw_text"][index],
+            "strict_component_model_literal":expected,"word_observations":records,
+            "new_target_or_other_instance_transcription_used":False}
+
+
+def _unchanged_carrier_component_literal(partition,raw,index,expected):
+    """An empty primary observation retains the original, separate fallback."""
+    views=raw["components"][index]["tesseract"]
+    if ([view["psm"] for view in views] != [POLICY["Tesseract_component_PSM"]]
+            or any(view["words"] for view in views)):
+        return None
+    proof=_complete_carrier_word_literals(partition,raw,index,expected)
+    return ({**proof,"isolated_PSM10_was_empty":True,
+             "nonempty_isolated_reading_overridden":False} if proof is not None else None)
+
+
+def _complete_component_word(component,view):
+    words=view["words"]
+    box=component["bbox_xyxy_px"]
+    scale=POLICY["Tesseract_scale"]
+    full=[0,0,scale*(box[2]-box[0]),scale*(box[3]-box[1])]
+    return (len(words)==1 and len(words[0]["text"])==1
+            and max(abs(a-b) for a,b in zip(words[0]["bbox_xyxy_px"],full))
+                <=scale*POLICY["Tesseract_component_bbox_tolerance_px"])
+
+
+def _component_reobservation_context(partition,raw,index,expected):
+    """Derive one extra view from pre-existing evidence, never its new answer."""
+    observation=raw["components"][index]
+    component=partition["components"][index]
+    views=observation.get("tesseract",[])
+    if not views:
+        return None
+    primary=views[0]
+    if (primary["psm"]!=POLICY["Tesseract_component_PSM"]
+            or not _complete_component_word(component,primary)):
+        return None
+    word=primary["words"][0]
+    if (word["text"]==expected
+            or not 0<=word["confidence"]<POLICY["Tesseract_component_conflict_strong_score"]):
+        return None
+    proof=_complete_carrier_word_literals(partition,raw,index,expected)
+    if proof is None:
+        return None
+    carrier=component.get("carrier_contact_evidence",{})
+    owner=carrier.get("owner_path_id")
+    crossings=[row for row in partition.get("graphic_crossings",[]) if row.get("owner_id")==owner]
+    contacts=[row for row in partition.get("raw_context_finite_receiver_contacts",[])
+              if row.get("owner_id")==owner and row.get("carrier_binding")==carrier.get("carrier_binding")
+              and row.get("carrier_source_path_sha256")==carrier.get("carrier_source_path_sha256")]
+    if (not crossings or len(contacts)!=1
+            or not all(row.get("source_continuity_both_sides") is True
+                       and row.get("glyph_box_is_not_path_terminal") is True for row in crossings)
+            or carrier.get("all_attachment_core_and_intervening_source_samples_retained") is not True
+            or carrier.get("both_branches_on_same_carrier_side") is not True
+            or carrier.get("competing_complete_return_count")!=0
+            or carrier.get("unassigned_intervening_source_branches")!=[]
+            or len(carrier.get("original_free_endpoints_px",[]))!=2
+            or partition.get("all_side_glyph_skeleton_and_shared_core_samples_retained") is not True
+            or contacts[0].get("single_contiguous_source_visit") is not True
+            or contacts[0].get("path_ends_outside_complete_glyph_on_independent_receiver") is not True
+            or contacts[0].get("receiver_source_continues_past_both_horizontal_crop_edges") is not True):
+        return None
+    return {"whole_word_literal_proof":proof,"owner_path_id":owner,
+            "carrier_binding":carrier["carrier_binding"],
+            "carrier_source_path_sha256":carrier["carrier_source_path_sha256"],
+            "primary_PSM":primary["psm"],"primary_nonempty_literal":word["text"],
+            "primary_word_confidence":word["confidence"],
+            "fixed_additional_PSM":POLICY["Tesseract_component_conflict_PSM"],
+            "trigger_derived_before_additional_observation":True,
+            "original_nonempty_observation_preserved":True,
+            "source_pixels_scale_padding_unchanged":True}
+
+
+def _bounded_component_reobservation(partition,raw,index,expected):
+    context=_component_reobservation_context(partition,raw,index,expected)
+    views=raw["components"][index]["tesseract"]
+    if (context is None or [view["psm"] for view in views] !=
+            [POLICY["Tesseract_component_PSM"],POLICY["Tesseract_component_conflict_PSM"]]):
+        return None
+    additional=views[1]
+    if (not _complete_component_word(partition["components"][index],additional)
+            or additional["words"][0]["text"]!=expected
+            or not additional["words"][0]["confidence"]>=POLICY["Tesseract_component_conflict_strong_score"]):
+        return None
+    return {**context,"basis":"FIXED_COMPLETE_COMPONENT_VIEW_WITH_UNCHANGED_WHOLE_WORD_AND_STRICT_MODELS",
+            "additional_literal":expected,"additional_word_confidence":additional["words"][0]["confidence"],
+            "additional_component_bbox":additional["words"][0]["bbox_xyxy_px"],
+            "additional_observation_count":1,"independent_OCR_engine_claimed":False,
+            "prior_nonempty_reading_reclassified_as_empty":False}
+
+
 def decide_short_contact_text(partition, raw):
     """Decide literal content from complete components; never a supplied name."""
-    reasons, component_records, competitors = [],[],[]
+    reasons, component_records, competitors, component_competitors = [],[],[],[]
     components = partition["components"]
     model = raw["ownership_group"]["model"]["prediction"]
     text = model.get("raw_text","")
@@ -212,6 +408,14 @@ def decide_short_contact_text(partition, raw):
         reasons.append("COMPLETE_COMPONENT_RECOGNITION_RECORD_MISSING")
     for i,(component,observation) in enumerate(zip(components,raw["components"])):
         expected = text[i] if i<len(text) else None
+        if not observation.get("tesseract"):
+            reasons.append("COMPLETE_COMPONENT_PRIMARY_OBSERVATION_MISSING:"+str(i))
+            continue
+        expected_views=[POLICY["Tesseract_component_PSM"]]
+        if _component_reobservation_context(partition,raw,i,expected) is not None:
+            expected_views.append(POLICY["Tesseract_component_conflict_PSM"])
+        if [view["psm"] for view in observation["tesseract"]]!=expected_views:
+            reasons.append("FINITE_COMPONENT_OCR_VIEW_PLAN_CHANGED:"+str(i))
         box = component["bbox_xyxy_px"]
         size = [0,0,2*(box[2]-box[0]),2*(box[3]-box[1])]
         words = observation["tesseract"][0]["words"]
@@ -221,15 +425,35 @@ def decide_short_contact_text(partition, raw):
         corroborated = complete and words[0]["text"]==expected
         pm = observation["model"]["prediction"]
         model_conflict = (_strong_model(pm) and pm.get("raw_text")!=expected)
+        alternative=(_unchanged_carrier_component_literal(partition,raw,i,expected)
+                     if not corroborated and expected is not None else None)
+        reobserved=(_bounded_component_reobservation(partition,raw,i,expected)
+                    if not corroborated and alternative is None and expected is not None else None)
+        corroborated=corroborated or alternative is not None or reobserved is not None
         if not corroborated:
             reasons.append("COMPONENT_LITERAL_HAS_NO_COMPLETE_TESSERACT_CORROBORATION:"+str(i))
         if model_conflict:
             reasons.append("CONFLICTING_STRICT_COMPONENT_MODEL:"+str(i))
+        for view in observation["tesseract"]:
+            for word in view["words"]:
+                if word["text"]==expected:
+                    continue
+                strong=word["confidence"]>=POLICY["Tesseract_component_conflict_strong_score"]
+                component_competitors.append({"component_index":i,"engine":"Tesseract",
+                    "view":view["psm"],"raw_text":word["text"],"word_confidence":word["confidence"],
+                    "strong_raw_reading":strong,"original_nonempty_observation_preserved":True,
+                    "resolved_by_fixed_additional_view":reobserved is not None,
+                    "prior_nonempty_reading_reclassified_as_empty":False})
+                if strong:
+                    reasons.append("UNRESOLVED_STRONG_COMPONENT_TESSERACT:"+str(i))
         component_records.append({"component_index":i,"literal":expected,
             "Tesseract_raw_texts":[w["text"] for w in words],
             "Tesseract_aggregate_word_scores":[w["confidence"] for w in words],
             "component_model_raw_text":pm.get("raw_text"),
-            "whole_source_component_bbox_covered":bool(complete),
+            "whole_source_component_bbox_covered":bool(complete or alternative),
+            "isolated_component_TSV_bbox_covered":bool(complete),
+            "complete_word_literal_corroboration":alternative,
+            "bounded_component_reobservation":reobserved,
             "literal_corroborated":bool(corroborated),
             "strict_component_model_conflict":bool(model_conflict)})
     contact_components = {i for i,c in enumerate(components) if c["shared_core_points_px"]}
@@ -262,15 +486,20 @@ def decide_short_contact_text(partition, raw):
             # strong reading there remains a real competing transcription.
             bindings = (_original_word_graphic_bindings(partition,raw["original_group"],value,differing)
                         if domain=="original_group" and contact_only else [])
-            original_line_cut = bool(bindings) and len(bindings)==len(differing)
-            resolved = bool(source_responsibility and contact_only and original_line_cut)
-            explanation = ("INDEPENDENT_CONTINUING_GRAPHIC_HAS_NO_FINITE_CHARACTER_ENDPOINTS"
+            bound_graphic = bool(bindings) and len(bindings)==len(differing)
+            finite_receiver = bound_graphic and any(
+                b.get("source_responsibility_basis")=="COMPLETE_GLYPH_CROSSING_TO_ACTUAL_FINITE_RECEIVER" for b in bindings)
+            original_line_cut = bound_graphic and not finite_receiver
+            resolved = bool(source_responsibility and contact_only and bound_graphic)
+            explanation = ("INDEPENDENT_COMPLETE_GRAPHIC_TERMINATES_ON_PROVEN_FINITE_RECEIVER"
+                           if resolved and finite_receiver else "INDEPENDENT_CONTINUING_GRAPHIC_HAS_NO_FINITE_CHARACTER_ENDPOINTS"
                            if resolved else "LOW_CONFIDENCE_CONTEXT_READING_RETAINED"
                            if not strong else "UNRESOLVED_STRONG_RAW_READING")
             competitors.append({"domain":domain,"engine":engine,"view":view,"raw_text":value,
                 "strong_raw_reading":bool(strong),"competing_component_indices":differing,
                 "source_responsibility_resolved":resolved,"disposition":explanation,
                 "original_TSV_reading_reaches_both_graphic_crop_edges":original_line_cut,
+                "original_TSV_word_bound_to_actual_finite_receiver":finite_receiver,
                 "original_word_graphic_edge_bindings":bindings,
                 "source_path_continues_beyond_original_context":original_line_cut,
                 "semantic_identity_claimed":False})
@@ -279,6 +508,7 @@ def decide_short_contact_text(partition, raw):
     return {"accepted":not reasons,"text":text if not reasons else None,"proposed_raw_text":text,
             "reasons":sorted(set(reasons)),"components":component_records,
             "raw_competing_readings":competitors,
+            "component_raw_competing_readings":component_competitors,
             "all_original_and_derived_readings_retained":True,
             "adoption_basis":POLICY["adoption_basis"],
             "independent_path_and_complete_glyph_responsibility":bool(source_responsibility),
@@ -287,7 +517,7 @@ def decide_short_contact_text(partition, raw):
             "engineering_or_symbol_semantics_inferred":False}
 
 
-def _raw_replay(gray, partition, raw, evidence_root):
+def _raw_replay(gray, partition, raw, evidence_root, dpi):
     for domain,index in [("original_group",None),("ownership_group",None)]+[("components",i) for i in range(len(partition["components"]))]:
         observation = raw[domain] if index is None else raw[domain][index]
         image,_ = recognition_view(gray,partition,index,original=domain=="original_group")
@@ -295,8 +525,14 @@ def _raw_replay(gray, partition, raw, evidence_root):
             raise ValueError("SHORT_CONTACT_RAW_INPUT_DOES_NOT_REPLAY_SOURCE_PARTITION")
         repeated = np.repeat(np.repeat(image,2,axis=0),2,axis=1)
         expected_psms = [POLICY["Tesseract_component_PSM"]] if domain=="components" else POLICY["Tesseract_context_PSMs"]
+        if domain=="components":
+            text=raw["ownership_group"]["model"]["prediction"].get("raw_text","")
+            expected=text[index] if index<len(text) else None
+            if _component_reobservation_context(partition,raw,index,expected) is not None:
+                expected_psms=expected_psms+[POLICY["Tesseract_component_conflict_PSM"]]
         if [v["psm"] for v in observation["tesseract"]]!=expected_psms:
             raise ValueError("SHORT_CONTACT_FINITE_OCR_VIEW_PLAN_CHANGED")
+        primary_engine=None
         for view in observation["tesseract"]:
             payload = _read(evidence_root,view["raw_tsv"])
             words = _words(payload,repeated.shape[1],repeated.shape[0],view["psm"])
@@ -309,6 +545,24 @@ def _raw_replay(gray, partition, raw, evidence_root):
             metadata = json.loads(_read(evidence_root,view["metadata"]))
             if metadata.get("return_code")!=0 or metadata.get("status")!="COMPLETED" or metadata.get("tsv_sha256")!=hashlib.sha256(payload).hexdigest():
                 raise ValueError("SHORT_CONTACT_TESSERACT_RAW_METADATA_CHANGED")
+            specification=metadata.get("specification",{})
+            if (view.get("scale")!=POLICY["Tesseract_scale"]
+                    or view.get("padding_px")!=POLICY["Tesseract_external_white_padding_px"]
+                    or specification.get("psm")!=view["psm"]
+                    or specification.get("recognition_dpi")!=int(dpi)*POLICY["Tesseract_scale"]
+                    or specification.get("crop_xyxy_px")!=[0,0,repeated.shape[1],repeated.shape[0]]
+                    or specification.get("crop_array_sha256")!=base.source_array_sha256(repeated)
+                    or specification.get("external_white_padding_px")!=POLICY["Tesseract_external_white_padding_px"]
+                    or specification.get("source_pixels_modified") is not False):
+                raise ValueError("SHORT_CONTACT_FIXED_OCR_SPECIFICATION_CHANGED")
+            if domain=="components" and len(expected_psms)>1:
+                engine=metadata.get("engine_identity")
+                if not isinstance(engine,dict) or not engine.get("executable_sha256") or not engine.get("traineddata_sha256"):
+                    raise ValueError("SHORT_CONTACT_COMPONENT_ENGINE_IDENTITY_MISSING")
+                if primary_engine is None:
+                    primary_engine=engine
+                elif engine!=primary_engine:
+                    raise ValueError("SHORT_CONTACT_COMPONENT_REOBSERVATION_ENGINE_CHANGED")
         model = observation["model"]
         prediction = json.loads(_read(evidence_root,model["prediction_file"]))
         expected = np.pad(image,POLICY["PP_external_white_padding_px"],constant_values=255)
@@ -321,6 +575,18 @@ def _raw_replay(gray, partition, raw, evidence_root):
                 or prediction.get("model_tensor_sha256")!=hashlib.sha256(tensor.tobytes()).hexdigest()
                 or identity.get("model_sha256")!=independent.MODEL_SHA256):
             raise ValueError("SHORT_CONTACT_MODEL_SOURCE_OR_RAW_CTC_CHANGED")
+
+
+def _append_fixed_component_observations(gray,partition,raw,directory,root,dpi):
+    text=raw["ownership_group"]["model"]["prediction"].get("raw_text","")
+    for i in range(len(partition["components"])):
+        expected=text[i] if i<len(text) else None
+        if _component_reobservation_context(partition,raw,i,expected) is not None:
+            if [view["psm"] for view in raw["components"][i]["tesseract"]]!=[POLICY["Tesseract_component_PSM"]]:
+                raise ValueError("SHORT_CONTACT_COMPONENT_ADDITIONAL_VIEW_ALREADY_PRESENT")
+            image,_=recognition_view(gray,partition,i)
+            raw["components"][i]["tesseract"].append(_tesseract_view_observation(
+                image,directory/("component-"+str(i)),root,dpi,POLICY["Tesseract_component_conflict_PSM"]))
 
 
 def complete_short_contact_text(gray, roi, source_sha, objects, text_regions, out, *, dpi=200,
@@ -362,6 +628,7 @@ def complete_short_contact_text(gray, roi, source_sha, objects, text_regions, ou
         for i in range(len(partition["components"])):
             image,_ = recognition_view(gray,partition,i)
             raw["components"].append(_view_observations(image,directory/("component-"+str(i)),root,dpi,recognizer,[POLICY["Tesseract_component_PSM"]]))
+        _append_fixed_component_observations(gray,partition,raw,directory,root,dpi)
         all_observations = [raw["original_group"],raw["ownership_group"],*raw["components"]]
         actual_tesseract_calls += sum(int(view["new_call"]) for observation in all_observations for view in observation["tesseract"])
         actual_model_calls += sum(int(observation["model"].get("observation_receipt",{}).get(
@@ -409,7 +676,7 @@ def replay_short_contact_evidence(gray,roi,evidence,evidence_root,*,partition=No
             raise ValueError("SHORT_CONTACT_LITERAL_SOURCE_CONTRACT_CHANGED")
         if partition is None or partition!=evidence["source_partition"]:
             raise ValueError("SHORT_CONTACT_INDEPENDENT_SOURCE_PARTITION_DID_NOT_REPLAY")
-        _raw_replay(gray,partition,evidence["raw_observations"],evidence_root)
+        _raw_replay(gray,partition,evidence["raw_observations"],evidence_root,evidence["recognition_dpi"])
         decision = decide_short_contact_text(partition,evidence["raw_observations"])
         if not decision["accepted"] or decision!=evidence["decision"]:
             raise ValueError("SHORT_CONTACT_SAVED_TRANSCRIPTION_DECISION_DOES_NOT_REPLAY")

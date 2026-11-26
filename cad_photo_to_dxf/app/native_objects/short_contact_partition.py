@@ -24,7 +24,7 @@ from .text_contact_adoption import object_binding
 
 
 POLICY = {
-    "version": "adopted-path-complete-short-source-components-v1",
+    "version": "adopted-path-complete-short-source-components-v2",
     "source_threshold": 128,
     "glyph_height_px": [8, 70],
     "glyph_width_height_ratio": [0.20, 2.0],
@@ -43,6 +43,12 @@ POLICY = {
     "maximum_graphic_horizontal_to_vertical_ratio": 0.25,
     "case_coordinates_or_transcripts": False,
     "original_pixels_added_or_rewritten": False,
+    "carrier_shared_return_maximum_height_ratio": 0.60,
+    "carrier_shared_span_within_side_glyph_horizontal_extent": True,
+    "carrier_source_outside_glyph_minimum_px": 24.0,
+    "carrier_attached_glyph_requires_unique_complete_return": True,
+    "adjacent_primary_group_gap_uncertainty_px": 1.0,
+    "complete_neighbor_component_assigned_to_one_source_group": True,
 }
 
 
@@ -155,6 +161,179 @@ def _owned_ink(gray, graph, labels, label, box):
     return retained, local_box, base._rle(excluded, local_box[:2])
 
 
+def _carrier_glyph_neighbors(gray, graph, objects, owners, primary):
+    """Recover a complete side glyph sharing a bounded span of its receiver.
+
+    A long side body and its short return have original free endpoints. Both
+    attach to the same source-proved, independently adopted receiving LINE.
+    Their intervening source span and *all* attachment cores remain glyph ink.
+    Cutting the whole receiver out of the recognition image is not evidence.
+    Multiple possible returns remain unresolved; no transcription is an input.
+    """
+    by_id = {o["id"]: o for o in objects}
+    primary_box = primary["bbox_xyxy_px"]
+    primary_height = primary_box[3] - primary_box[1]
+    origin = graph.origin.astype(int)
+    original_degree = connections._degree(graph.skel)
+    recovered, pending, seen = [], [], set()
+    for owner in owners:
+        if owner["id"] not in primary["independent_path_owner_ids"]:
+            continue
+        path = owner["source_evidence"]["text_contact_path"]["path"]
+        terminal = path["structural_terminal_evidence"]
+        carrier = by_id.get(path["required_carrier_id"])
+        if (not carrier or carrier["kind"] != "LINE"
+                or terminal["carrier_id"] != carrier["id"]
+                or terminal["carrier_geometry"] != carrier["geometry"]
+                or not terminal["closed_pixel_cells_all_original_ink"]):
+            pending.append({"bbox_xyxy_px": primary_box,
+                            "reason": "ACTUAL_FINITE_RECEIVER_BINDING_NOT_PROVEN"})
+            continue
+        points = np.asarray(terminal["carrier_source_path_px"], float)
+        key = digest({"id": carrier["id"], "source": points.tolist()})
+        if key in seen:
+            continue
+        seen.add(key)
+        if (len(points) < 3 or not np.array_equal(points, np.rint(points))
+                or np.max(np.linalg.norm(np.diff(points, axis=0), axis=1)) > math.sqrt(2)+1e-9):
+            raise ValueError("SHORT_CONTACT_RECEIVER_SOURCE_IS_NOT_A_CONTINUOUS_ORIGINAL_WALK")
+        a = np.asarray(carrier["geometry"]["start"], float)
+        delta = np.asarray(carrier["geometry"]["end"], float) - a
+        unit = delta / np.linalg.norm(delta)
+        # This completion keeps the existing horizontal-group layout scope.
+        if abs(unit[1]) > POLICY["maximum_graphic_horizontal_to_vertical_ratio"]*abs(unit[0]):
+            continue
+        normal = np.array([-unit[1], unit[0]])
+        carrier_mask = np.zeros_like(graph.skel, np.uint8)
+        local = points.astype(int)-origin
+        carrier_mask[local[:, 1], local[:, 0]] = 1
+        residual = graph.skel.astype(np.uint8) & ~carrier_mask
+        _, labels, stats, _ = cv2.connectedComponentsWithStats(residual, connectivity=8)
+        near = cv2.dilate(carrier_mask, np.ones((3, 3), np.uint8)) != 0
+        branches = []
+        for label, (x, y, w, h, area) in enumerate(stats[1:], 1):
+            if h > POLICY["glyph_height_px"][1] or w > 2*POLICY["glyph_height_px"][1]:
+                continue
+            own = labels[y:y+h, x:x+w] == label
+            if not np.any(own & near[y:y+h, x:x+w]):
+                continue
+            yy, xx = np.nonzero(own)
+            skeleton = np.column_stack((xx+x+origin[0], yy+y+origin[1]))
+            box = _bbox(skeleton)
+            gap = max(primary_box[0]-box[2], box[0]-primary_box[2], 0)
+            if gap > POLICY["adjacent_component_gap_heights"]*primary_height:
+                continue
+            free = own & (original_degree[y:y+h, x:x+w] <= 1)
+            fy, fx = np.nonzero(free)
+            ends = np.column_stack((fx+x+origin[0], fy+y+origin[1])).tolist()
+            if not 1 <= len(ends) <= 8:
+                continue
+            displacement = (skeleton-a)@normal
+            substantial = displacement[np.abs(displacement) > 1.5]
+            if not len(substantial) or np.any(substantial > 0) and np.any(substantial < 0):
+                continue
+            touch = np.flatnonzero(cv2.dilate((labels == label).astype(np.uint8),
+                                              np.ones((3, 3), np.uint8))[local[:,1],local[:,0]])
+            if not len(touch):
+                continue
+            branches.append({"label":label,"box":box,"height":h,
+                             "points":skeleton,"ends":ends,"touch":touch,
+                             "side":int(np.sign(substantial[0]))})
+        for body in branches:
+            h = body["height"]
+            if not (POLICY["adjacent_height_ratio"][0] <= h/primary_height <= POLICY["adjacent_height_ratio"][1]
+                    and h >= POLICY["glyph_height_px"][0]):
+                continue
+            if _overlap(body["box"], primary_box):
+                continue
+            possible = []
+            for tail in branches:
+                if (tail is body or tail["side"] != body["side"]
+                        or tail["height"] > POLICY["carrier_shared_return_maximum_height_ratio"]*h):
+                    continue
+                lo = int(min(body["touch"].min(), tail["touch"].min()))
+                hi = int(max(body["touch"].max(), tail["touch"].max()))
+                span = points[lo:hi+1]
+                length = float(np.linalg.norm(np.diff(span,axis=0),axis=1).sum())
+                branch_points = np.vstack((body["points"],tail["points"]))
+                glyph_projection = (branch_points-a)@unit
+                span_projection = (span-a)@unit
+                # Attachments above use an eight-neighbor 3x3 footprint. Its
+                # exact projection on a tilted carrier is |ux|+|uy|, not one
+                # axial pixel. This follows the observed neighborhood itself.
+                attachment_projection = float(np.abs(unit).sum())
+                if (span_projection.min()<glyph_projection.min()-attachment_projection-1e-9
+                        or span_projection.max()>glyph_projection.max()+attachment_projection+1e-9):
+                    continue
+                intervening = [other["box"] for other in branches if other is not body and other is not tail
+                               and np.any((other["touch"] >= lo) & (other["touch"] <= hi))]
+                outside = [np.linalg.norm(np.diff(points[:lo+1],axis=0),axis=1).sum(),
+                           np.linalg.norm(np.diff(points[hi:],axis=0),axis=1).sum()]
+                if min(outside) < POLICY["carrier_source_outside_glyph_minimum_px"]:
+                    continue
+                branch_labels = {body["label"], tail["label"]}
+                existing_branch_owner = False
+                for branch in (body,tail):
+                    branch_probe = {"bbox_xyxy_px":branch["box"],
+                                    "source_skeleton_points_px":branch["points"].tolist()}
+                    if _covered_by_formal(branch_probe,objects,{owner["id"],carrier["id"]}):
+                        existing_branch_owner = True
+                        break
+                if existing_branch_owner:
+                    continue
+                cores = []
+                for node in graph.nodes.values():
+                    xy = np.rint(graph.xy(node["pixels"])-origin).astype(int)
+                    if (np.any(carrier_mask[xy[:,1],xy[:,0]]) and
+                            branch_labels.intersection(map(int,labels[xy[:,1],xy[:,0]]))):
+                        cores.extend(graph.xy(node["pixels"]).tolist())
+                if not cores:
+                    continue
+                skeleton = np.unique(np.vstack((body["points"],tail["points"],span,cores)).astype(int),axis=0)
+                box = _bbox(skeleton)
+                width, height = box[2]-box[0], box[3]-box[1]
+                if not _inside(box,[int(origin[0]),int(origin[1]),
+                                   int(origin[0])+graph.w,int(origin[1])+graph.h]):
+                    continue
+                if (not POLICY["glyph_width_height_ratio"][0] <= width/height <= POLICY["glyph_width_height_ratio"][1]
+                        or abs(box[3]-primary_box[3]) > POLICY["adjacent_baseline_difference_heights"]*primary_height):
+                    continue
+                glyph_label = len(stats)
+                glyph_labels = labels.copy()
+                xy = skeleton-origin
+                glyph_labels[xy[:,1],xy[:,0]] = glyph_label
+                mask, local_box, excluded = _owned_ink(gray,graph,glyph_labels,glyph_label,box)
+                c = _component(mask,local_box[:2],basis="complete_carrier_side_body_return_and_shared_source_span",
+                               skeleton=skeleton.tolist(),shared=[list(p) for p in sorted(set(map(tuple,cores)))],
+                               endpoints=body["ends"]+tail["ends"])
+                if _covered_by_formal(c,objects,{owner["id"],carrier["id"]}):
+                    continue
+                c["nearby_ink_of_other_components_not_claimed"] = excluded
+                c["carrier_shared_span_points_px"] = span.tolist()
+                c["carrier_contact_evidence"] = {
+                    "owner_path_id":owner["id"],"carrier_binding":object_binding(carrier),
+                    "carrier_source_path_sha256":digest(points.tolist()),
+                    "shared_span_index_range":[lo,hi],"shared_span_length_px":length,
+                    "eight_neighbor_attachment_projection_px":attachment_projection,
+                    "source_continuation_outside_glyph_px":list(map(float,outside)),
+                    "complete_side_body_skeleton_px":body["points"].tolist(),
+                    "complete_short_return_skeleton_px":tail["points"].tolist(),
+                    "original_free_endpoints_px":body["ends"]+tail["ends"],
+                    "all_attachment_core_and_intervening_source_samples_retained":True,
+                    "both_branches_on_same_carrier_side":True,
+                    "competing_complete_return_count":0,
+                    "unassigned_intervening_source_branches":intervening,
+                }
+                possible.append(c)
+            if len(possible) == 1 and not possible[0]["carrier_contact_evidence"]["unassigned_intervening_source_branches"]:
+                recovered.append(possible[0])
+            else:
+                pending.append({"bbox_xyxy_px":body["box"],
+                                "reason":"CARRIER_ATTACHED_NEIGHBOR_HAS_NO_UNIQUE_COMPLETE_SOURCE_RETURN",
+                                "complete_return_candidates":len(possible)})
+    return recovered, pending
+
+
 def _graphic_crossings(component, owners):
     box = component["bbox_xyxy_px"]
     required = component.get("required_owner_ids")
@@ -211,6 +390,87 @@ def _graphic_crossings(component, owners):
             "path_and_glyph_share_only_recorded_source_core": True,
         })
     return result
+
+
+def _finite_receiver_contacts(raw_box, primary, owners, objects):
+    """A continuing glyph-crossing stroke may finish on a proved receiver.
+
+    This is distinct from continuing beyond both raw crop edges. The complete
+    glyph is crossed first; the finite receiver lies outside it, has independent
+    source on both sides of this raw crop, and is an actual adopted LINE.
+    """
+    by_id = {o["id"]:o for o in objects}
+    result = []
+    for crossing in _graphic_crossings(primary,owners):
+        owner = by_id[crossing["owner_id"]]
+        path = owner["source_evidence"]["text_contact_path"]["path"]
+        terminal = path["structural_terminal_evidence"]
+        carrier = by_id.get(path["required_carrier_id"])
+        if (not carrier or carrier["kind"]!="LINE"
+                or carrier["geometry"]!=terminal["carrier_geometry"]
+                or carrier["id"]!=terminal["carrier_id"]
+                or not terminal["closed_pixel_cells_all_original_ink"]
+                or not terminal["all_source_ports_accounted"]
+                or terminal["equally_aligned_forward_port_count"]!=0):
+            continue
+        points = np.asarray(path["source_path_px"],float)
+        inside = ((points[:,0]>=raw_box[0]) & (points[:,0]<raw_box[2]) &
+                  (points[:,1]>=raw_box[1]) & (points[:,1]<raw_box[3]))
+        indexes = np.flatnonzero(inside)
+        if (not len(indexes) or indexes[0]==0 or indexes[-1]!=len(points)-1
+                or not np.array_equal(indexes,np.arange(indexes[0],len(points)))
+                or points[indexes[0]-1,1]>=raw_box[1]):
+            continue
+        end = np.asarray(terminal["source_contact_point_px"],float)
+        glyph_box = primary["bbox_xyxy_px"]
+        carrier_points = np.asarray(terminal["carrier_source_path_px"],float)
+        if (end[1]<glyph_box[3] or np.linalg.norm(points[-1]-end)>2.0
+                or carrier_points[:,0].min()>=raw_box[0]
+                or carrier_points[:,0].max()<raw_box[2]
+                or min(terminal["carrier_source_arm_lengths_px"])<POLICY["carrier_source_outside_glyph_minimum_px"]):
+            continue
+        result.append({
+            "owner_id":owner["id"],"owner_geometry_sha256":digest(owner["geometry"]),
+            "carrier_binding":object_binding(carrier),
+            "carrier_source_path_sha256":digest(carrier_points.tolist()),
+            "carrier_source_extents_px":_bbox(carrier_points),
+            "source_contact_point_px":end.tolist(),
+            "first_original_point_inside":points[indexes[0]].tolist(),
+            "last_original_point_inside":points[-1].tolist(),
+            "original_point_before_crop":points[indexes[0]-1].tolist(),
+            "complete_glyph_crossing":crossing,
+            "same_word_requires_top_edge_and_actual_receiver_coverage":True,
+            "single_contiguous_source_visit":True,
+            "path_ends_outside_complete_glyph_on_independent_receiver":True,
+            "receiver_source_continues_past_both_horizontal_crop_edges":True,
+        })
+    return result
+
+
+def _adjacent_source_group_claims(box, candidates):
+    """A complete intervening glyph cannot be copied into two nearby groups.
+
+    Compare original ink gaps to every source-proved crossing glyph on the same
+    baseline. This partitions geometry before recognition; no candidate text
+    supplies another candidate's answer. Indistinguishable gaps remain pending.
+    """
+    width,height = box[2]-box[0],box[3]-box[1]
+    claims=[]
+    for index,candidate in enumerate(candidates):
+        other=candidate["component"]["bbox_xyxy_px"]
+        other_height=other[3]-other[1]
+        if (_overlap(box,other)
+                or abs(box[3]-other[3])>POLICY["adjacent_baseline_difference_heights"]*other_height
+                or not POLICY["adjacent_height_ratio"][0]<=height/other_height<=POLICY["adjacent_height_ratio"][1]
+                or width/height>POLICY["glyph_width_height_ratio"][1]):
+            continue
+        gap=max(other[0]-box[2],box[0]-other[2],0)
+        claims.append((gap,index))
+    if not claims:
+        return []
+    nearest=min(gap for gap,_ in claims)
+    return [index for gap,index in claims
+            if gap<=nearest+POLICY["adjacent_primary_group_gap_uncertainty_px"]]
 
 
 def plan_short_contact_text(gray, roi, objects, contact_completion, *, source_graph=None,
@@ -309,11 +569,18 @@ def plan_short_contact_text(gray, roi, objects, contact_completion, *, source_gr
     x0, y0, x1, y1 = map(int, roi)
     _, original_labels, original_stats, _ = cv2.connectedComponentsWithStats(
         (source[y0:y1, x0:x1] < POLICY["source_threshold"]).astype(np.uint8), connectivity=8)
-    for candidate in candidates[:POLICY["maximum_groups"]]:
+    for candidate_index,candidate in enumerate(candidates[:POLICY["maximum_groups"]]):
         primary = candidate["component"]
         members = [primary]
         box = primary["bbox_xyxy_px"]
         height = box[3] - box[1]
+        carrier_neighbors, carrier_pending = _carrier_glyph_neighbors(source,graph,objects,owners,primary)
+        if carrier_pending:
+            pending.extend(carrier_pending)
+            pending.append({"bbox_xyxy_px":box,
+                            "reason":"COMPLETE_ADJACENT_CARRIER_GLYPH_UNRESOLVED_NO_PREFIX_ADOPTED"})
+            continue
+        ambiguous_neighbor = False
         for _ in range(POLICY["maximum_characters"]):
             group = base._box_union([c["bbox_xyxy_px"] for c in members])
             neighbors = []
@@ -327,14 +594,37 @@ def plan_short_contact_text(gray, roi, objects, contact_completion, *, source_gr
                         or not POLICY["adjacent_height_ratio"][0] <= h/height <= POLICY["adjacent_height_ratio"][1]
                         or w/h > POLICY["glyph_width_height_ratio"][1]):
                     continue
+                claims=_adjacent_source_group_claims(b,candidates)
+                if candidate_index not in claims:
+                    continue
+                if len(claims)!=1:
+                    ambiguous_neighbor=True
+                    continue
                 own = original_labels[y:y+h, x:x+w] == label
                 c = _component(own, b[:2], basis="complete_disconnected_original_source_component")
                 if _covered_by_formal(c, objects, set()):
                     continue
                 neighbors.append((gap, b[0], c))
+            for c in carrier_neighbors:
+                b = c["bbox_xyxy_px"]
+                if any(_overlap(b, member["bbox_xyxy_px"]) for member in members):
+                    continue
+                gap = max(group[0]-b[2],b[0]-group[2],0)
+                if gap <= POLICY["adjacent_component_gap_heights"]*height:
+                    claims=_adjacent_source_group_claims(b,candidates)
+                    if candidate_index not in claims:
+                        continue
+                    if len(claims)!=1:
+                        ambiguous_neighbor=True
+                        continue
+                    neighbors.append((gap,b[0],c))
             if not neighbors:
                 break
             members.append(min(neighbors, key=lambda r:(r[0],r[1]))[2])
+        if ambiguous_neighbor:
+            pending.append({"bbox_xyxy_px":base._box_union([c["bbox_xyxy_px"] for c in members]),
+                            "reason":"COMPLETE_NEIGHBOR_HAS_COMPETING_SOURCE_GROUPS_NO_PREFIX_ADOPTED"})
+            continue
         if len(members) > POLICY["maximum_characters"]:
             pending.append({"bbox_xyxy_px":base._box_union([c["bbox_xyxy_px"] for c in members]),
                             "reason":"COMPLETE_SHORT_GROUP_EXCEEDS_CHARACTER_BUDGET_NO_PREFIX_ADOPTED"})
@@ -347,14 +637,21 @@ def plan_short_contact_text(gray, roi, objects, contact_completion, *, source_gr
         excluded = (original < POLICY["source_threshold"]) & ~support
         core_mask = np.zeros_like(support,np.uint8)
         for member in members:
-            for x,y in member["shared_core_points_px"]:
+            for x,y in member["shared_core_points_px"] + member.get("carrier_shared_span_points_px",[]):
                 if box[0]<=x<box[2] and box[1]<=y<box[3]:
-                    core_mask[y-box[1],x-box[0]]=1
+                    core_mask[int(y)-box[1],int(x)-box[0]]=1
         shared_ink = support & (cv2.dilate(core_mask,np.ones((3,3),np.uint8)) != 0)
         path_mask = np.zeros_like(support, np.uint8)
         for owner in owners:
             p = np.asarray(owner["source_evidence"]["text_contact_path"]["path"]["source_path_px"])
             cv2.polylines(path_mask, [np.rint(p-box[:2]).astype(np.int32)], False, 1,
+                          thickness=int(2*POLICY["maximum_graphic_normal_px"]+1))
+        carrier_contacts = [c["carrier_contact_evidence"] for c in members if "carrier_contact_evidence" in c]
+        for proof in carrier_contacts:
+            owner = next(o for o in owners if o["id"]==proof["owner_path_id"])
+            p = np.asarray(owner["source_evidence"]["text_contact_path"]["path"][
+                "structural_terminal_evidence"]["carrier_source_path_px"])
+            cv2.polylines(path_mask,[np.rint(p-box[:2]).astype(np.int32)],False,1,
                           thickness=int(2*POLICY["maximum_graphic_normal_px"]+1))
         if np.any(excluded & (path_mask == 0)):
             pending.append({"bbox_xyxy_px": box, "reason": "UNASSIGNED_ORIGINAL_INK_INSIDE_SHORT_GROUP"})
@@ -384,6 +681,12 @@ def plan_short_contact_text(gray, roi, objects, contact_completion, *, source_gr
                      "original_source_pixels_modified": False,
                      "derived_view_alone_proves_transcription": False,
                      "independent_graphics_require_separate_adoption": True}
+        if carrier_contacts:
+            partition["carrier_contact_evidence"] = carrier_contacts
+            partition["shared_ink_basis"] = "original_glyph_ink_at_recorded_cores_and_complete_bounded_shared_carrier_spans"
+        finite_contacts = _finite_receiver_contacts(raw_box,primary,owners,objects)
+        if finite_contacts:
+            partition["raw_context_finite_receiver_contacts"] = finite_contacts
         result["plans"].append({"id":"SCT-"+digest({"source":result["source_array_sha256"],"bbox":box})[:12],
                                 "source_partition":partition})
     result["plans"].sort(key=lambda p:(p["source_partition"]["bbox_xyxy_px"][1],p["source_partition"]["bbox_xyxy_px"][0]))
