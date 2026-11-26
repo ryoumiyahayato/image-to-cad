@@ -6,6 +6,42 @@
 
 ## Windows：取得程序后打开已有 DXF
 
+**[程序构建与下载入口：Windows #696](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45755563007)**。Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-f988424b9dcf697d42fac8244acb96abce2b4fc7`。主图与匹配字体由同次配套结果包提供，私人图纸不在公开仓库发布。
+
+1. 下载完整恢复包 **`CADPhotoToDXF-0.3.0-dev-f988424-Windows-Complete.zip`**，解压到新目录，双击 **`Restore-Windows-portable.cmd`**。它使用包内完整程序 ZIP，自动校验、解压并启动 `CADPhotoToDXF.exe`，无需分卷或手工命令。另完整解压结果包，保留 DXF、匹配字体、许可和子目录。
+2. 在软件启动页或文件菜单点 **“打开已有 DXF / 准备 CAD 字体…”**，选择 **`QUARTER_laundry_short_strokes_6a27c0f.dxf`**。已有图纸无需重新识别；找不到 LibreCAD 时，只需选择安装好的 `LibreCAD.exe`。
+3. 点 **“准备 CAD 字体”**，软件完成目录和资源准备。若显示“需要重新打开 CAD”，先保存并完全退出 LibreCAD，再点“重新检查”。显示“已准备，可打开 CAD”后打开图纸；该状态表示资源准备完成，当前窗口显示需在打开后检查。
+4. 在 LibreCAD 用 **File → Save as** 另存编辑副本。短划、长曲线和承接线可分别整删、整移；普通保存、完全退出后重开检查。具体操作与改字见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
+
+## 当前成果：三条完整短划与干净的承接横线
+
+普通整区流程已生成 **`QUARTER_laundry_short_strokes_6a27c0f.dxf`**：**196315 B**，SHA-256 **`eae5a316ff7ebcf7840a5a70ac0e395b7f91ccdaa6c7d76e8a62508ea4ee343c`**，最终 **432 正式对象／48 REVIEW**。本批从 `QUARTER_structure_contacts_26b1b6e.dxf` 的 430 个正式对象接续：**427 旧对象严格保持，2 条旧承接 LINE 替换为 1 条完整 LINE，1 条完整 LAUNDRY 路径更新有证末端与接收对象绑定，新增 3 条完整独立短划 LINE**。所有旧对象均有明确去向。
+
+| 范围 | 最终保存主图实际恢复或纠正 | 仍待修什么 |
+| --- | --- | --- |
+| LAUNDRY 三条交叉短划 | 各为一条完整独立 LINE；上下端点均来自原笔画，交叉位置与长曲线分别承担编辑责任 | 相邻细竖线、S／S3 字符及其他尚未采用的笔迹 |
+| 两条旧承接横线 | 全长与两端核实为同源重复，撤回旧近似，由一条有完整来源的有限 LINE 承担；长曲线实际末端和绑定一起更新 | 其他邻接网络；本批未声称整片恢复 |
+
+C07 新路径、LAUNDRY 上方长曲线、圆字、文字、真实白缝和真实平行双线保持。原曲线前 51 个顶点及原有表示保持，只有末端按来源重新绑定有限承接线；没有为了保持旧数量留下重复横线。
+
+Linux LibreCAD 2.2.1.6 已实际完成三项操作：**删除整条 LAUNDRY 路径、删除左侧一条短划、整体移动最终承接线**。每份均普通保存、完全退出并由新进程重新打开；独立冷审计为 **`PASS_2D_EDIT_ISOLATION_WITH_FORMAT_LIMITATIONS`**。各副本其余 **431 正式对象、48 REVIEW 和全部 53 图块**保持：删曲线后三短划与圆字仍在，删短划后另两条与曲线仍在，移动承接线后原位没有同源旧横线残留。真实独立交叉线保留，不能把窗口中仍有邻居误判为删除不净。
+
+正式主图保留普通流程生成字节，GUI 编辑副本另存。**Windows 私有主图桌面 GUI 与工程师工时验收仍 NOT_RUN**；XDATA、INSERT `zscale=0`、字体别名、REVIEW 和格式往返继续 **LIMITED**，产品仍 **`0.3.0-dev / LOCAL_NO_GO`**。
+
+[Windows #696](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45755563007) 的十组 source／实际隔离 EXE 普通入口、恢复、字体和安装／启动／卸载通过。第十组实际触发三条完整短划、两旧承接线到一条完整接收线的替换、有限末端绑定，并保护真实双线和白缝；五对象各移动／删除一次，source 与 EXE 共 **20 份实际 Windows 保存副本**已下载后冷读通过。完整交付包 **`CADPhotoToDXF-0.3.0-dev-f988424-Windows-Complete.zip`** 已实际下载：**418173918 B**，SHA-256 **`e2dece2dee14ac32e7381f41aa8ac4d98da75def600d0a633347511a9ef484b4`**；1478 个程序文件和 98 份随包 Python 源码逐字节核验，其中 80 份属于 native-build 声明资源。
+
+主图执行提交 **`6a27c0f031f2e2d26ebdf4b485d85d7a42262ee0`**，Windows 执行提交 **`f988424b9dcf697d42fac8244acb96abce2b4fc7`**；两者完整 Git tree 均为 **`761e9a41b76120161c0ce01d61927946959467ff`**。这是相同源码树的两个提交。[PR #54](https://github.com/ryoumiyahayato/image-to-cad/pull/54) 已正常合入 main **`bb165884e16ac61a08ad46c337cb317d63445e8c`**，合并树也与该执行树相同。后续文档提交不替代出图／构建锚点。
+
+详细规则、旧对象替代关系和证据边界见[本批记录](docs/native/LAUNDRY_CROSS_STROKES_20261126.md)。
+
+<details>
+<summary>历史：完整接触路径与 Windows #694（26b1b6e 阶段）</summary>
+
+> 以下“当前／最新／本批”仅指 26b1b6e 历史阶段。当时三短划与旧近似重叠尚未完成；当前结果以上文为准。
+
+## 历史 Windows 入口：#694
+
+
 **[程序构建与下载入口：Windows #694](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45673521187)**。在 Artifacts 中选择 `CADPhotoToDXF-Windows-Verified-Delivery-26b1b6e14106726fd9b1f66a747e8be16320b815`。主图与匹配字体在同次配套结果包中取得，私人图纸不在公开仓库发布。
 
 1. **下载本次完整恢复交付包 `CADPhotoToDXF-0.3.0-dev-26b1b6e-Windows-Complete.zip`，解压到一个新目录。** 双击解压后的 **`Restore-Windows-portable.cmd`**；包内已有完整程序 ZIP，它自动校验、解压并启动 `CADPhotoToDXF.exe`，不需要分卷或手工命令。另解压同次结果包，保留主 DXF、匹配字体、许可及原有子目录。若使用其他普通便携 ZIP 或历史分卷，步骤见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
@@ -13,7 +49,7 @@
 3. **点击“准备 CAD 字体”。** 软件使用随包固定资源完成准备；不需要选择字体目录或手工修改 CAD 配置。若显示“需要重新打开 CAD”，请先保存图纸、完全退出 LibreCAD，再点“重新检查”。只有显示“已准备，可打开 CAD”后才点击“在 LibreCAD 中打开”。“已准备”表示资源准备完成，不是已验证当前 CAD 窗口显示。
 4. **在 LibreCAD 中先用“File → Save as”另存编辑副本。** 点击曲线主体选中整条路径，用 **Tools → Modify → Move / Copy** 移动并选择 **Delete Original**，或用 **Tools → Modify → Delete selected** 整条删除。圆字仍可通过块列表 **Edit Block** 修改内部 TEXT；从 **Drawings** 返回主图。普通保存后完全退出并重开副本。`Ctrl+Shift+S` 是 Save All，不是另存为，详见[一页说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。
 
-## 当前成果：两条穿过接触笔迹的完整独立路径进入主图
+## 历史成果：两条穿过接触笔迹的完整独立路径进入主图
 
 最新主图 **`QUARTER_structure_contacts_26b1b6e.dxf`**，**195818 B**，SHA-256 **`b7bbaa765575d1d7e89ef9c7ee0185aaeac22768b84cb09ea8026e956e01b144`**。普通 `native-objects` 整区流程复用已核验原始观察并重算受影响阶段。基线 426 个正式对象全部严格保持，新增两条目标路径、一条自然适用的 E 圆相关路径及一条独立承接 LINE，最终 **430 正式对象／48 REVIEW**。
 
@@ -27,6 +63,9 @@
 Linux LibreCAD 2.2.1.6 已实际整体移动 C07 目标路径、整体删除 LAUNDRY 目标路径，并分别普通保存、完全退出、新进程重开；独立冷审计状态：**`PASS_2D_EDIT_ISOLATION_WITH_FORMAT_LIMITATIONS`**，每份其余 429 正式对象、48 REVIEW 和全部 53 图块保持。Windows 私有主图 GUI 仍 **NOT_RUN**。XDATA、INSERT `zscale=0`、字体别名、REVIEW 和格式往返限制仍 **LIMITED**；正式主图保留原始生成字节，GUI 副本另存。
 
 同版 [Windows #694](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45673521187) 九组 source／实际 EXE、恢复、字体及安装／启动／卸载均通过；新小输入实际触发接触区划分和结构线终接，保存后的整体删移与白缝另行冷读。完整包实际下载 **418085481 B**，SHA-256 **`5044c5d885183245ecdf09358950690b60d7b90f2e49011939d2913e630da0fa`**；1475 个程序文件与 77 份随包源码已核验。主图与 EXE 同绑 **`26b1b6e14106726fd9b1f66a747e8be16320b815`**，[PR #53](https://github.com/ryoumiyahayato/image-to-cad/pull/53)；main 合并回执：**`5ed7490e7c0c5ddfdaf002496256f2e5477c816a`**。后续文档提交不替代出图／构建锚点。
+
+
+</details>
 
 ### 历史：圆字对象与 LAUNDRY 指定接头（3f51048）
 

@@ -1,8 +1,19 @@
 # Image to CAD（开发预览）
 
+**Windows 用户入口：[一页使用说明](../docs/native/WINDOWS_CAD_QUICKSTART_ZH.md) · [Windows #696 构建下载](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45755563007)。** 下载 `CADPhotoToDXF-0.3.0-dev-f988424-Windows-Complete.zip`，解压到新目录，双击 `Restore-Windows-portable.cmd`，自动校验、解压并启动 `CADPhotoToDXF.exe`。启动页点 **“打开已有 DXF / 准备 CAD 字体…”**，选择结果包中的 `QUARTER_laundry_short_strokes_6a27c0f.dxf`，准备字体后在 LibreCAD 中打开。找不到 CAD 时只需选择 `LibreCAD.exe`；需要重新打开时，保存、完全退出 CAD，再重新检查。
+
+本版从 430 个正式对象接续，恢复三条独立完整短划，将两条同源旧承接横线替换为一条完整 LINE，并更新长曲线的实际末端绑定；最终 432 正式对象／48 REVIEW。Linux 实际整路径删除、短划删除、承接线整移均普通保存／退出／新进程重开通过；Windows 十组实际 EXE、恢复与字体交付通过。Windows 私有主图 GUI 仍 NOT_RUN，CAD 保存格式 LIMITED，产品仍 `0.3.0-dev / LOCAL_NO_GO`。版本、证据和待修范围见[本批记录](../docs/native/LAUNDRY_CROSS_STROKES_20261126.md)及[当前任务](../docs/project/CURRENT_TASK.md)。
+
+<details>
+<summary>历史：2026-11-25 字体准备与恢复入口阶段</summary>
+
+> 以下是当时 423 对象主图的交付阶段记录，不代表当前识别成果或当前程序包版本。
+
 **Windows 用户入口：[一页使用说明](../docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)。** 解压完整便携 ZIP 后运行 `CADPhotoToDXF.exe`；使用分卷时双击同目录的 `Restore-Windows-portable.cmd`，自动校验、恢复、解压并启动。启动页点击 **“打开已有 DXF / 准备 CAD 字体…”**，选择图纸，再准备字体并在 LibreCAD 中打开。找不到 LibreCAD 时只需选择 `LibreCAD.exe`，无需寻找字体目录或编辑配置。提示需要重新打开 CAD 时，先保存、完全退出 LibreCAD，再点击“重新检查”。
 
 本轮接续 `QUARTER_shortcodes_2fd4373.dxf` 的 423 个正式对象，改进交付和使用流程；不新增识别成果。最新源码／构建对应关系和实际验证范围见[当前任务](../docs/project/CURRENT_TASK.md)，产品仍为 `0.3.0-dev / LOCAL_NO_GO`。下面的历史记录不代替本轮 Windows GUI 验证。
+
+</details>
 
 <details>
 <summary>2026-11-22 入口历史快照</summary>

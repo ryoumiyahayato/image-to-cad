@@ -2,7 +2,27 @@
 
 本检查只验证同版本打包程序能运行当前原生流程；生成的小测试图不代表真实工程图精度通过。产品保持 `0.3.0-dev / LOCAL_NO_GO`。
 
-## 最新实际结果（2026-11-22，4bf6554）
+## 当前实际结果：Windows #696（2026-11-26）
+
+[Windows #696](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45755563007) 的十组 source／实际隔离 EXE 普通入口、恢复、字体和安装／启动／卸载通过。第十组实际触发三条完整短划、两旧承接线到一条完整接收线的替换、有限末端绑定，并保护真实双线和白缝；五对象各移动／删除一次，source 与 EXE 共 **20 份实际 Windows 保存副本**已下载后冷读通过。完整交付包 **`CADPhotoToDXF-0.3.0-dev-f988424-Windows-Complete.zip`** 已实际下载：**418173918 B**，SHA-256 **`e2dece2dee14ac32e7381f41aa8ac4d98da75def600d0a633347511a9ef484b4`**；1478 个程序文件和 98 份随包 Python 源码逐字节核验，其中 80 份属于 native-build 声明资源。
+
+主图执行提交 **`6a27c0f031f2e2d26ebdf4b485d85d7a42262ee0`**，Windows 执行提交 **`f988424b9dcf697d42fac8244acb96abce2b4fc7`**；两者完整 Git tree 均为 **`761e9a41b76120161c0ce01d61927946959467ff`**。这是相同源码树的两个提交。[PR #54](https://github.com/ryoumiyahayato/image-to-cad/pull/54) 已正常合入 main **`bb165884e16ac61a08ad46c337cb317d63445e8c`**，合并树也与该执行树相同。后续文档提交不替代出图／构建锚点。
+
+当前 `scripts/windows_native_smoke.py` 保留前九组输入，并新增第十组短划／承接线输入。各组分别通过源码和实际 EXE 的普通 `native-objects` 入口建立新任务；初始原始观察缓存为零，不传采用候选、答案或白名单。EXE 阶段移开应用源码目录，使用干净用户资料目录、仅包含 Windows 系统目录的 PATH，实际 worker 也是随包 EXE。
+
+第十组保存后逐对象核对三个完整 LINE 的端点、与完整独立曲线的交叉责任、两条旧接收线的撤回、一条完整有限承接 LINE 及实际曲线绑定，同时保护真实双线和圆／线白缝。五对象各做整移和整删；source 与 EXE 合计 20 份实际 Windows 保存副本已下载后重开核对，邻居、REVIEW 和图块保持。
+
+本次还实际验证了新目录恢复、缺卷和损坏分卷、已有不同文件保护、重复执行、EXE 启动、CAD 字体准备与重启状态，以及安装／启动／卸载。所选完整便携交付、native evidence 与 CAD delivery evidence 已实际下载并按 GitHub 大小／SHA-256 核对；另两份普通 portable／installer artifact 未重复下载，安装器执行由实际 job 日志证明。
+
+完整主图与 Windows 程序的对应、产物指纹和限制见[本批记录](LAUNDRY_CROSS_STROKES_20261126.md)；用户无需运行这些检查脚本，直接按[一页说明](WINDOWS_CAD_QUICKSTART_ZH.md)准备字体并打开结果。Windows 私有真实主图桌面 GUI 仍 NOT_RUN，既有格式和旧跨平台来源限制继续保留。
+
+<details>
+<summary>历史：2026-11-22 普通入口、资源与原子发布失败记录</summary>
+
+> 以下“最新／本轮／实际执行范围”属于当时的单输入检查；当前十组覆盖与下载结果以上文为准。原成功与失败证据保持其执行版本。
+
+## 历史实际结果（2026-11-22，4bf6554）
+
 
 实际构建／执行提交 **`4bf6554526e9f247060a1a3a493bb4717c4c9ad5`** 的 7 项适用 CI 全部成功；[Windows run 45004687721](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45004687721) 为 **2235 passed、8 skipped**，实际 portable EXE 普通原生转换、安装器生成、安装／启动／卸载均通过。源码和实际 EXE 各保存 5 LINE＋1 TEXT `ROOM 17`，各有 2 次真实独立模型调用；下载后再次冷读，两份 DXF 均为 0 错误／0 修补，正式几何与内容相同。
 
@@ -61,3 +81,5 @@ PyInstaller 保留现有 GUI、任务管理和安装器结构，并在 `_interna
 `4bf6554` 仅将这一测试的访问权限改为 `GENERIC_READ`（`0x80000000`）并更新注释，仍不共享 DELETE；没有修改生产代码、删除测试或放宽实际错误／重试断言。该测试只在非 win32 跳过；在本次 Windows 全套 2235 项通过中，真实 `CreateFileW` 句柄造成 `os.rename` 拒绝、释放后原子成功、`rename_attempts > 1`、原载荷完整与重试事件均通过。每个成功测试的具体错误码没有单独输出，不能补写一个未记录的 WinError 数值。
 
 实际源码和 EXE 两次 smoke 的 `atomic_publication.rename_attempts` 均为 **1**，没有重试或耗尽事件。真实拒绝／释放／重试由专门 Windows 回归证明，不能把 EXE 本次正常发布说成再次复现并查明了历史锁。**b082905 的具体持锁者继续为 UNKNOWN。** `2adc3ee` 的原成功、`b082905` 的真实发布失败和 `6225980` 的夹具失败均保留其原日志、文件和提交绑定。
+
+</details>
