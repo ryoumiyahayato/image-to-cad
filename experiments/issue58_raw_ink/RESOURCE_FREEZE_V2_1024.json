@@ -1,0 +1,12 @@
+{
+  "schema": "raw-ink-resource-budget-freeze-v1",
+  "frozen_at_utc": "2026-11-26T16:55:23.012704+00:00",
+  "original_model_policy_sha256": "ce6caf67fd75a20a596fbe737c8cc9aaf58e52cf190ed1298d7433add6efb70f",
+  "effective_policy_sha256": "80e9a50bf2a67d1c20c8cac2fd91cdcd460d29dd2a2488034301cd0d642c0b0f",
+  "only_changed_field": "maximum_seed_axes",
+  "original": 512,
+  "effective": 1024,
+  "reason": "Execute all nominated axes after an explicitly retained seed-axis resource stop; no geometric threshold changes, ranking, sampling or subset.",
+  "frozen_before_budget_replay": true,
+  "runner_sha256": "756b5eb2d176356c774998df04758945d18772a38e22d7bb936570c7df114806"
+}
