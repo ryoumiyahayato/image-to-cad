@@ -25,9 +25,11 @@ from .text_contact_adoption import (
     _as_path,
     _native_object,
     _path_source_checks,
+    contact_completion_stages,
     digest,
     object_binding,
     shared_existing_line_contact,
+    transverse_shared_source_views,
     whole_old_line_responsibility,
 )
 
@@ -243,6 +245,12 @@ def compare_contact_source_replay(saved, replayed, *, scope):
 
 def verify_contact_plan_source_replay(gray, roi, plan, *, source_graph=None):
     """Keep the former exact result and attach only bounded statistic evidence."""
+    if plan.get("schema") == "source-transverse-stroke-plan-v1":
+        from .transverse_stroke_geometry import verify_transverse_stroke_geometry_plan
+
+        return verify_transverse_stroke_geometry_plan(
+            gray, roi, plan, source_graph=source_graph
+        )
     if plan.get("schema") == "source-structure-contact-path-plan-v1":
         from .structure_contact_geometry import verify_structure_contact_geometry_plan
 
@@ -816,6 +824,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
     }
     if not targets and not manifest:
         return result
+    stage_chain = contact_completion_stages(manifest)
     global_checks = {
         "metadata_loaded": not load_errors,
         "manifest_schema": manifest.get("schema") == SCHEMA,
@@ -835,6 +844,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             "partial_old_entity_retirement_permitted"
         )
         is False,
+        "sequential_source_contexts_replayed": stage_chain["pass"],
     }
     result["checks"].append(
         {
@@ -843,6 +853,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             "pass": all(global_checks.values()),
             "checks": global_checks,
             "failures": load_errors,
+            "stage_context_checks": stage_chain["checks"],
         }
     )
     plan_checks, context = {}, None
@@ -928,7 +939,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                 )
                 checks["structural_context_matches_actual_prior_manifest"] = (
                     sorted(plan.get("prior_object_bindings", []), key=lambda old: old["id"])
-                    == sorted(manifest.get("prior_object_bindings", []), key=lambda old: old["id"])
+                    == sorted(stage_chain["plan_prior_bindings"].get(key, []), key=lambda old: old["id"])
                 )
                 checks["starting_circle_sources_match_saved_object_sources"] = (
                     plan.get("prior_circle_source_bindings")
@@ -981,6 +992,71 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
                         for name in ("actual_start_contacts_required_circle",
                                      "actual_end_contacts_required_finite_carrier"):
                             checks[name] = contacts[name]
+            if plan.get("schema") == "source-transverse-stroke-plan-v1":
+                from .transverse_stroke_geometry import _binding
+
+                checks["transverse_producer_kind_bound_to_actual_plan"] = (
+                    proof.get("geometry_plan_schema") == plan["schema"]
+                )
+                stage_prior = stage_chain["plan_prior_bindings"].get(key, [])
+                checks["transverse_context_matches_preceding_adoptions"] = sorted(
+                    (object_binding(old) for old in plan.get("prior_object_bindings", [])),
+                    key=lambda old: old["id"],
+                ) == sorted(stage_prior, key=lambda old: old["id"])
+                source_context_checks = []
+                for binding in plan.get("prior_object_bindings", []):
+                    current = objects.get(binding["id"])
+                    if current is not None and _binding(current) != binding:
+                        current = _before_circle_relation_edits(
+                            gray, roi, current, list(objects.values()), source_graph=context
+                        )
+                    source_context_checks.append(
+                        current is not None and _binding(current) == binding
+                    )
+                checks["transverse_context_source_matches_saved_objects"] = all(source_context_checks)
+                crossing_id = selected.get("required_crossing_path_id")
+                crossing = objects.get(crossing_id)
+                checks["one_separate_saved_complete_crossing_path"] = (
+                    crossing_id != oid and crossing is not None
+                    and len(actual.get(crossing_id, [])) == 1
+                    and actual[crossing_id][0].dxf.handle != entity.dxf.handle
+                )
+                checks["actual_crossing_path_geometry_preserved"] = (
+                    checks["one_separate_saved_complete_crossing_path"]
+                    and _neighbor_matches(
+                        actual[crossing_id][0], crossing, roi, dpi,
+                        path.parent / "DejaVuSans.ttf",
+                    )
+                )
+                if crossing is not None and _binding(crossing) != selected.get("required_crossing_path_binding"):
+                    crossing = _before_circle_relation_edits(
+                        gray, roi, crossing, list(objects.values()), source_graph=context
+                    )
+                checks["crossing_path_has_same_original_source_responsibility"] = (
+                    crossing is not None
+                    and _binding(crossing) == selected.get("required_crossing_path_binding")
+                    and digest(_binding(crossing))
+                    == selected.get("required_crossing_path_binding_sha256")
+                )
+                checks["shared_source_cores_replayed_with_two_independent_pairs"] = False
+                if checks["crossing_path_has_same_original_source_responsibility"]:
+                    from .completion_stages import _connection_path_responsibility
+
+                    candidate_view, other_views = transverse_shared_source_views(
+                        _as_path(source_obj), [crossing]
+                    )
+                    responsibility = _connection_path_responsibility(gray, candidate_view, other_views)
+                    row["actual_transverse_shared_source_responsibility"] = responsibility
+                    checks["shared_source_cores_replayed_with_two_independent_pairs"] = (
+                        not responsibility["reasons"]
+                        and responsibility["shared_source_core_checks"]
+                        == _source_evidence(claimed).get("text_contact_responsibility", {}).get(
+                            "shared_source_core_checks"
+                        )
+                    )
+                checks["transverse_stroke_is_one_complete_native_LINE"] = (
+                    entity.dxftype() == "LINE" and selected.get("path_role") == "TRANSVERSE_STROKE"
+                )
             expected_kind, expected_geometry = _native_object(
                 selected["representation"]
             )
@@ -1007,7 +1083,7 @@ def cold_text_contact_bindings(path, doc, gray, roi, dpi, evidence_root):
             ]["pass"]
             shared_checks = []
             prior_bindings = {
-                old["id"]: old for old in manifest.get("prior_object_bindings", [])
+                old["id"]: old for old in stage_chain["plan_prior_bindings"].get(key, [])
             }
             for declaration in (
                 _source_evidence(claimed)

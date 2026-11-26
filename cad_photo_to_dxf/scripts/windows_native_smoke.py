@@ -194,6 +194,48 @@ def create_structure_contact_fixture(path: Path, font_path: Path) -> None:
     image.save(path, dpi=(200, 200))
 
 
+def _transverse_fixture_strokes():
+    """External test drawing only; never supplied to a production candidate."""
+    curve = _structure_contact_curve_points()
+    return [((cx + 4, cy - 23), (cx - 4, cy + 23))
+            for cx, cy in (min(curve, key=lambda p: abs(p[0] - x)) for x in (195, 213, 231))]
+
+
+def create_transverse_receiver_fixture(path: Path, font_path: Path) -> None:
+    """Three independent strokes and a whole receiver with a scan step.
+
+    The two-pixel step belongs to one thick sampled pen stroke. Existing line
+    extraction naturally produces two near-overlapping whole approximations;
+    no prior objects, plan, IDs or expected geometry enter the ordinary CLI.
+    Independent endpoint returns, a crossing diagonal, true parallel edges
+    and the unchanged circle/line white gap provide competing source evidence.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    create_structure_contact_fixture(path, font_path)
+    with Image.open(path) as original:
+        image = original.convert("L")
+    draw = ImageDraw.Draw(image)
+    draw.rectangle((0, 325, 639, 479), fill=255)
+    for start, end in _transverse_fixture_strokes():
+        draw.line((start, end), fill=0, width=3)
+    # A separate thin neighbour remains outside this batch's crossing target.
+    draw.line((430, 105, 430, 195), fill=0, width=1)
+    receiver = [(x, 330 + (2 if x >= 310 else 0)) for x in range(20, 606)]
+    draw.line(receiver, fill=0, width=4)
+    draw.line((20, 330, 20, 385), fill=0, width=2)
+    draw.line((605, 332, 605, 385), fill=0, width=2)
+    draw.line((535, 293, 630, 346), fill=0, width=7)
+    draw.line((380, 320, 380, 332), fill=0, width=3)
+    for y in (400, 408):
+        draw.line((70, y, 210, y), fill=0, width=2)
+    draw.line((70, 390, 70, 430), fill=0, width=2)
+    draw.line((210, 390, 210, 430), fill=0, width=2)
+    font = ImageFont.truetype(str(font_path), 26, layout_engine=ImageFont.Layout.BASIC)
+    draw.text((500, 415), "STORE", font=font, fill=0)
+    image.save(path, dpi=(200, 200))
+
+
 
 SINGLE_LINE_LABEL_FIXTURE = (
     ("AHU-27B, Z4", (80, 64)),
@@ -2622,6 +2664,207 @@ def inspect_structure_path_edit_isolation(saved_path: Path, output: Path, path_i
     return result
 
 
+def inspect_transverse_fixture_protection_pixels(source_path: Path) -> dict:
+    """Observe two different kinds of white gap in the exact generated input."""
+    from PIL import Image
+
+    gap = inspect_structure_fixture_source_gap(source_path)
+    with Image.open(source_path) as image:
+        source = image.convert("L")
+        if (any(source.getpixel((x, y)) >= 128 for x in range(80, 201) for y in (400, 408))
+                or any(source.getpixel((x, y)) != 255 for x in range(80, 201) for y in range(402, 408))):
+            raise AssertionError("Transverse fixture lost its separate parallel edges or original white strip")
+    return {"pass": True, "round_line_gap": gap, "parallel_white_rows": list(range(402, 408)),
+            "original_pixels_changed": False}
+
+
+def inspect_transverse_complete_line(entity, expected) -> dict:
+    """Independent public-fixture full endpoints; crop boundaries are not tips."""
+    if entity.dxftype() != "LINE":
+        raise AssertionError("Transverse stroke is not one independent native LINE")
+    points = _line_points(entity)
+    error = min(max(math.dist(a, b) for a, b in zip(points, expected)),
+                max(math.dist(a, b) for a, b in zip(points[::-1], expected)))
+    if error > 3.0 or abs(math.dist(*points)-math.dist(*expected)) > 4.0:
+        raise AssertionError("Transverse LINE is truncated or exceeds its complete source tips")
+    return {"actual_points_px": points, "complete_tip_error_px": error,
+            "actual_length_px": math.dist(*points), "single_complete_LINE": True}
+
+
+def _unique_fixture_line(actual, expected, tolerance=2.5):
+    candidates = []
+    for oid, entity in actual.items():
+        if entity.dxftype() != "LINE":
+            continue
+        points = _line_points(entity)
+        distance = min(max(math.dist(a, b) for a, b in zip(points, expected)),
+                       max(math.dist(a, b) for a, b in zip(points[::-1], expected)))
+        if distance <= tolerance:
+            candidates.append((oid, points))
+    if len(candidates) != 1:
+        raise AssertionError("Generated fixture has an absent, duplicate, or incomplete independent LINE")
+    return candidates[0]
+
+
+def _unique_fixture_line_member(actual, expected, tolerance=2.5):
+    """A previously supported wall block can retain two distinct LINE members."""
+    candidates = []
+    for oid, entity in actual.items():
+        members = list(entity.virtual_entities()) if entity.dxftype() == "INSERT" else [entity]
+        for index, member in enumerate(members):
+            if member.dxftype() != "LINE":
+                continue
+            points = _line_points(member)
+            distance = min(max(math.dist(a, b) for a, b in zip(points, expected)),
+                           max(math.dist(a, b) for a, b in zip(points[::-1], expected)))
+            if distance <= tolerance:
+                candidates.append({"owner_id": oid, "member_index": index if entity.dxftype() == "INSERT" else None,
+                                   "actual_points_px": points})
+    if len(candidates) != 1:
+        raise AssertionError("Generated fixture has an absent, duplicated, or truncated parallel LINE member")
+    return candidates[0]
+
+
+def inspect_transverse_receiver_members(document, objects, cold, source_path, evidence_root) -> dict:
+    """Cold actual new strokes, complete carrier replacement, and source gaps.
+
+    This external checker does not run recognition, supply a candidate, or
+    trust a successful producer counter in place of saved native geometry.
+    """
+    import numpy as np
+    from PIL import Image
+
+    protection = inspect_transverse_fixture_protection_pixels(source_path)
+    with Image.open(source_path) as image:
+        gray = np.asarray(image.convert("L"))
+    entities = [e for e in document.modelspace() if e.dxf.layer != "REVIEW"]
+    actual = {native_identity(e)["id"]: e for e in entities}
+    ledger = {row["id"]: row for row in objects["objects"]}
+    if len(actual) != len(entities) or set(actual) != set(ledger):
+        raise AssertionError("Transverse result has missing or duplicate native identities")
+    strokes = [row for row in ledger.values() if row.get("source_evidence", {}).get(
+        "text_contact_path", {}).get("path", {}).get("path_role") == "TRANSVERSE_STROKE"]
+    carriers = [row for row in ledger.values() if "carrier_reconciliation" in row.get("source_evidence", {})]
+    if len(strokes) != 3 or len(carriers) != 1:
+        raise AssertionError("Ordinary input did not actually adopt three new strokes and one reconciled carrier")
+    manifest = json.loads((evidence_root / "text_contact/adoption.json").read_text(encoding="utf-8"))
+    contact_cold = cold.get("text_contact_source_checks", {})
+    checks = {row.get("id"): row for row in contact_cold.get("checks", [])}
+    if contact_cold.get("pass") is not True or not checks or cold.get("source_gate_pass") is not True:
+        raise AssertionError("Transverse input has no successful actual saved-source checks")
+    results, owners, expected_used = [], set(), set()
+    for row in strokes:
+        oid = row["id"]
+        proof = row["source_evidence"]["text_contact_path"]
+        path = proof["path"]
+        plan = manifest.get("geometry_plans", {}).get(proof.get("plan_sha256"), {})
+        if (proof.get("schema") != "source-text-contact-native-path-v1"
+                or plan.get("schema") != "source-transverse-stroke-plan-v1"
+                or _json_digest(plan) != proof.get("plan_sha256")
+                or path != plan.get("paths", [])[proof["path_index"]]
+                or _json_digest(path) != proof.get("path_sha256")
+                or proof.get("source_sha256") != digest(source_path)
+                or path.get("existing_objects_may_be_retired") is not False
+                or path.get("original_branches_retained") is not True):
+            raise AssertionError("New transverse LINE lacks its bound original-source plan")
+        points = _line_points(actual[oid])
+        choices = []
+        for index, expected in enumerate(_transverse_fixture_strokes()):
+            try:
+                choices.append((index, inspect_transverse_complete_line(actual[oid], expected)))
+            except AssertionError:
+                continue
+        if len(choices) != 1 or choices[0][0] in expected_used:
+            raise AssertionError("Three transverse outputs do not cover three distinct complete source strokes")
+        index, geometry = choices[0]
+        expected_used.add(index)
+        if (path.get("native_endpoint_points_px") != path.get("representation", {}).get("points")
+                or not all(_near_point(a, b, 1e-6) for a, b in zip(points, path["native_endpoint_points_px"]))
+                or len(path.get("endpoint_cap_checks", [])) != 2
+                or not all(cap.get("pass") is True for cap in path["endpoint_cap_checks"])
+                or not path.get("parallel_stroke_group_evidence", {}).get("complete_companions")
+                or not path.get("reverse_source_path_agreement", {}).get("all_source_pixels_reversed")):
+            raise AssertionError("Transverse source endpoints, repetition, or reverse route is unproved")
+        cells = _closed_source_segment_cells(*points)
+        if not cells or any(gray[y, x] >= 128 for x, y in cells):
+            raise AssertionError("Actual transverse LINE crosses original white source pixels")
+        owner = path.get("required_crossing_path_id")
+        if owner not in actual or owner == oid or actual[owner].dxftype() != "LWPOLYLINE":
+            raise AssertionError("Transverse LINE lost its separate complete crossing path")
+        owners.add(owner)
+        cold_row = checks.get(oid, {})
+        required = ("original_source_plan_replayed", "whole_native_representation_from_source_plan",
+                    "transverse_stroke_is_one_complete_native_LINE", "one_separate_saved_complete_crossing_path",
+                    "actual_crossing_path_geometry_preserved", "crossing_path_has_same_original_source_responsibility")
+        if cold_row.get("pass") is not True or any(cold_row.get("checks", {}).get(key) is not True for key in required):
+            raise AssertionError("Actual transverse LINE has an empty or failing source/neighbor audit")
+        results.append({"id": oid, "geometry": geometry, "crossing_path_id": owner,
+                        "original_closed_source_cells": len(cells), "cold_source_checks": cold_row["checks"]})
+    if len(owners) != 1:
+        raise AssertionError("Controlled transverse strokes do not share the one complete target path")
+    path_id = owners.pop()
+    selected = ledger[path_id]["source_evidence"]["text_contact_path"]["path"]
+    carrier = carriers[0]
+    carrier_id = carrier["id"]
+    if (selected.get("path_role") != "ROUND_TO_CARRIER"
+            or selected.get("required_carrier_id") != carrier_id
+            or actual[carrier_id].dxftype() != "LINE"):
+        raise AssertionError("Rebuilt path is not bound to the actual reconciled finite receiver")
+    shape = inspect_structure_path_shape(actual[path_id])
+    carrier_points = _line_points(actual[carrier_id])
+    if (_distance_to_path(_line_points(actual[path_id])[-1], carrier_points) > 1e-6
+            or min(max(math.dist(a, b) for a, b in zip(carrier_points, ((20, 330), (605, 332)))),
+                   max(math.dist(a, b) for a, b in zip(carrier_points[::-1], ((20, 330), (605, 332))))) > 2.5):
+        raise AssertionError("Saved path is detached or receiver does not end at its full source corners")
+    reconciliation = json.loads((evidence_root / "carrier_reconciliation/adoption.json").read_text(encoding="utf-8"))
+    receipt = carrier["source_evidence"]["carrier_reconciliation"]
+    retired = reconciliation.get("retired_ids", [])
+    carrier_cold = cold.get("carrier_reconciliation_source_checks", {})
+    prior = {row["id"]: row for row in reconciliation.get("prior_object_bindings", [])}
+    if (len(retired) != 2 or len(set(retired)) != 2 or any(oid in actual or oid in ledger for oid in retired)
+            or not all(oid in prior and prior[oid]["kind"] == "LINE" for oid in retired)
+            or set(receipt.get("retired_object_ids", [])) != set(retired)
+            or reconciliation.get("source_array_sha256") != hashlib.sha256(gray.tobytes()).hexdigest()
+            or carrier_cold.get("pass") is not True or not carrier_cold.get("checks")
+            or set(carrier_cold.get("retired_ids", [])) != set(retired)
+            or carrier_cold.get("target_ids") != [carrier_id]
+            or any(row.get("pass") is not True for row in carrier_cold["checks"])
+            or not native_identity(actual[carrier_id]).get("carrier_reconciliation")):
+        raise AssertionError("Two original receiver expressions were not actually replaced and cold-audited")
+    for oid, entity in actual.items():
+        if oid == carrier_id or entity.dxftype() != "LINE":
+            continue
+        p = _line_points(entity)
+        if abs(p[1][0]-p[0][0]) > 500 and max(_distance_to_path(q, carrier_points) for q in p) < 5:
+            raise AssertionError("A second old near-overlapping full receiver remains in the saved DXF")
+    parallels = [_unique_fixture_line_member(actual, ((70, y), (210, y))) for y in (400, 408)]
+    if ((parallels[0]["owner_id"], parallels[0]["member_index"]) == (parallels[1]["owner_id"], parallels[1]["member_index"])
+            or min(abs(a[1]-b[1]) for a, b in zip(parallels[0]["actual_points_px"], parallels[1]["actual_points_px"])) < 5):
+        raise AssertionError("True parallel independent source lines were merged or their gap was bridged")
+    gap_id, gap_line = _unique_fixture_line(actual, ((390, 80), (471, 80)))
+    circles = []
+    for oid, entity in actual.items():
+        members = list(entity.virtual_entities()) if entity.dxftype() == "INSERT" else [entity]
+        for e in members:
+            if e.dxftype() == "CIRCLE" and _near_point(_pixel_point(e.dxf.center), (500, 80), 2):
+                circles.append((oid, _pixel_point(e.dxf.center), float(e.dxf.radius)/(25.4/200)))
+    if len(circles) != 1:
+        raise AssertionError("Independent white-gap circle is absent or duplicated")
+    _, center, radius = circles[0]
+    if _distance_to_path(center, gap_line)-radius < 2 or _finite_circle_intersections(gap_line, center, radius):
+        raise AssertionError("New rules bridged the independent round/line white gap")
+    for oid, entity in actual.items():
+        p = _line_points(entity)
+        if p and any(_distance_to_path((x, 80), p) < .5 for x in (472, 473)):
+            raise AssertionError("An additional fragment crosses the original white strip: "+oid)
+    return {"pass": True, "new_complete_strokes": results, "independent_path_id": path_id,
+            "complete_path_shape": shape, "reconciled_carrier_id": carrier_id,
+            "actual_receiver_points_px": carrier_points, "retired_old_receiver_ids": retired,
+            "parallel_control_LINE_members": parallels, "gap_line_id": gap_id,
+            "original_protection_pixels": protection, "source_replacement_cold_checks": carrier_cold,
+            "fixture_expectations_sent_to_recognizer": False, "inspection_executed_recognition": False}
+
+
 def inspect_contact_edit_isolation(saved_path: Path, output: Path, text_id: str, path_id: str) -> dict:
     """Actual scripted save/reopen edits; this deliberately makes no GUI claim."""
     import ezdxf
@@ -3205,7 +3448,7 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         raise AssertionError("Actual saved DXF failed cold audit/paper-mm units")
     entities = [entity for entity in document.modelspace() if entity.dxf.layer != "REVIEW"]
     types = Counter(entity.dxftype() for entity in entities)
-    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths"):
+    if fixture_kind not in ("room17", "circular-markers", "single-line-labels", "text-line-contact", "short-codes", "curve-end-boundaries", "circle-character-completion", "observed-terminal-core", "structure-contact-paths", "transverse-strokes-receiver"):
         raise ValueError("Unknown permitted native smoke fixture")
     if any(types[kind] for kind in ("HATCH", "IMAGE")) or (fixture_kind == "room17" and types["LINE"] != 5):
         raise AssertionError("Controlled input lost expected real native line geometry")
@@ -3258,6 +3501,18 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         structure_result["scripted_edit_isolation"] = inspect_structure_path_edit_isolation(
             target, work / "edit-isolation", structure_result["independent_path_id"],
         )
+    transverse_result = None
+    if fixture_kind == "transverse-strokes-receiver":
+        transverse_result = inspect_transverse_receiver_members(
+            document, objects, cold, work.parent / "controlled-source.png", companion / "evidence",
+        )
+        edit_root = work / "edit-isolation"
+        edit_root.mkdir(exist_ok=True)
+        edit_ids = [transverse_result["independent_path_id"], transverse_result["reconciled_carrier_id"]]
+        edit_ids += [row["id"] for row in transverse_result["new_complete_strokes"]]
+        transverse_result["scripted_edit_isolation"] = {
+            oid: inspect_structure_path_edit_isolation(target, edit_root / oid, oid) for oid in edit_ids
+        }
     if single_line_contract not in ("strict-three", "bounded-capability"):
         raise ValueError("Unknown single-line saved-output contract")
     single_line_result = None
@@ -3380,6 +3635,8 @@ def inspect_result(work: Path, source_sha: str, *, frozen: bool, fixture_kind: s
         result["observed_terminal_core"] = terminal_core_result
     if structure_result is not None:
         result["structure_contact_paths"] = structure_result
+    if transverse_result is not None:
+        result["transverse_strokes_receiver"] = transverse_result
     return result
 
 
@@ -3472,6 +3729,8 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
     terminal_core_work.mkdir()
     structure_work = work / "structure-contact-paths"
     structure_work.mkdir()
+    transverse_work = work / "transverse-strokes-receiver"
+    transverse_work.mkdir()
     cases = [
         {"name": "room17", "directory": work, "create": create_fixture},
         {"name": "circular-markers", "directory": circular_work, "create": create_circular_fixture},
@@ -3482,6 +3741,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         {"name": "circle-character-completion", "directory": completion_work, "create": create_circle_character_completion_fixture},
         {"name": "observed-terminal-core", "directory": terminal_core_work, "create": create_terminal_core_fixture},
         {"name": "structure-contact-paths", "directory": structure_work, "create": create_structure_contact_fixture},
+        {"name": "transverse-strokes-receiver", "directory": transverse_work, "create": create_transverse_receiver_fixture},
     ]
     environment = clean_environment()
     for case in cases:
@@ -3534,7 +3794,7 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         for result in (case["source_result"], case["exe_result"]):
             result.pop("geometry")
         stage(case["name"], "source-exe-comparison", complete=True)
-    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure = cases
+    room, circles, single_lines, contact, short_codes, curve_ends, circle_completion, terminal_core, structure, transverse = cases
     circle_report = {
         "status": "PASS", "schema": "windows-native-circular-markers-smoke-v2",
         "source_commit": manifest["source_commit"], "source_sha256": circles["source_sha256"],
@@ -3667,16 +3927,32 @@ def run(executable: Path, source_main: Path, work: Path, expected_version: str) 
         "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
     }
     write_json(structure_work / "native-smoke.json", structure_report)
+    transverse_report = {
+        "status": "PASS", "schema": "windows-native-transverse-strokes-receiver-smoke-v1",
+        "source_commit": manifest["source_commit"], "source_sha256": transverse["source_sha256"],
+        "source_result": transverse["source_result"], "exe_result": transverse["exe_result"],
+        "same_source_saved_geometry_and_text_equal": True,
+        "three_whole_independent_native_strokes_required": True,
+        "two_naturally_discovered_old_carriers_replaced_by_one": True,
+        "whole_source_ranges_and_both_returns_cold_replayed": True,
+        "actual_rebuilt_path_on_the_finite_replacement_receiver": True,
+        "all_five_native_targets_move_delete_saved_and_reopened": True,
+        "real_parallel_edges_and_circle_line_white_gap_preserved": True,
+        "previous_nine_inputs_preserved": True,
+        "GUI_operations_claimed": False, "expected_text_sent_to_recognizer": False,
+        "generated_fixture_not_real_drawing_quality_acceptance": True, "product_GO": False,
+    }
+    write_json(transverse_work / "native-smoke.json", transverse_report)
     report = {
         "status": "PASS", "schema": "windows-native-exe-smoke-v1",
-        "coverage_revision": 10,
+        "coverage_revision": 11,
         "status_scope": "REQUIRED_NATIVE_CAPABILITY_GATES; STRICT_THREE_LABEL_GOAL_REPORTED_SEPARATELY",
         "application_version": expected_version, "source_commit": manifest["source_commit"],
         "packaged_metadata_sha256": {Path(name).name: digest(work / Path(name).name) for name in metadata_files},
         "source_sha256": room["source_sha256"], "executable_sha256": digest(executable),
         "same_source_saved_geometry_and_text_equal": True,
         "source_result": room["source_result"], "exe_result": room["exe_result"],
-        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report},
+        "additional_fixtures": {"circular_markers": circle_report, "single_line_labels": single_line_report, "text_line_contact": contact_report, "short_codes": short_code_report, "curve_end_boundaries": curve_end_report, "circle_character_completion": completion_report, "observed_terminal_core": terminal_core_report, "structure_contact_paths": structure_report, "transverse_strokes_receiver": transverse_report},
         "original_application_source_hidden_during_EXE_execution": True,
         "source_directory_restored": app_root.is_dir(),
         "EXE_PATH_contains_only_windows_system_directories": True,

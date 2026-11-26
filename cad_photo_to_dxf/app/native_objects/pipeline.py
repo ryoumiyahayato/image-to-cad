@@ -1281,6 +1281,9 @@ def run_native_objects(
             circular_markers = restored_assembly["circular_markers"]
             text_contact_completion = restored_assembly.get("text_contact_completion", {})
             _restore_text_contact_evidence(out, text_contact_completion)
+            carrier_reconciliation = restored_assembly.get("carrier_reconciliation", {})
+            if carrier_reconciliation:
+                save_json(out / "carrier_reconciliation/adoption.json", carrier_reconciliation)
             _restore_circular_marker_evidence(cache_dir, out, circular_markers)
             walls = restored_assembly["walls"]
             objects = restored_assembly["objects"]
@@ -1874,9 +1877,41 @@ def run_native_objects(
             from .text_contact_partition import _source_graph
 
             progress("SOURCE_CONTACT_PATHS_TO_INDEPENDENT_RECEIVING_LINES", 0.738)
+            contact_source_graph = _source_graph(gray, roi)
             structure_contact_plan = plan_structure_contact_geometry(
-                gray, roi, objects, source_graph=_source_graph(gray, roi),
+                gray, roi, objects, source_graph=contact_source_graph,
             )
+            # A terminal proposal only locates an existing receiver.  Prove
+            # complete old spans separately, then rediscover paths against
+            # the actual finite replacement and its current identity.
+            from .carrier_reconciliation import plan_existing_carrier_reconciliation
+
+            existing_ids = {obj["id"] for obj in objects}
+            receiving_ids = {
+                row["required_carrier_id"] for row in structure_contact_plan["paths"]
+                if row.get("path_role") == "ROUND_TO_CARRIER"
+                and row["required_carrier_id"] in existing_ids
+            }
+            # Competing old receiver expressions can themselves be the
+            # reason discovery stayed pending.  Only their source-qualified
+            # owner candidates enter the full-range reconciliation gate;
+            # a pending contact never authorizes retirement on its own.
+            receiving_ids.update(
+                owner["id"] for row in structure_contact_plan.get("pending", [])
+                if row.get("reason") == "COMPETING_EXISTING_CARRIER_OWNERS"
+                for owner in row.get("owners", []) if owner.get("id") in existing_ids
+            )
+            carrier_reconciliation = plan_existing_carrier_reconciliation(
+                gray, roi, objects, receiving_object_ids=sorted(receiving_ids),
+            )
+            save_json(out / "carrier_reconciliation/adoption.json", carrier_reconciliation)
+            retired_carriers = set(carrier_reconciliation["retired_ids"])
+            if retired_carriers or carrier_reconciliation["objects"]:
+                objects = [obj for obj in objects if obj["id"] not in retired_carriers]
+                objects += carrier_reconciliation["objects"]
+                structure_contact_plan = plan_structure_contact_geometry(
+                    gray, roi, objects, source_graph=contact_source_graph,
+                )
             contact_plans = list(texts.get("text_contact_geometry_plans", []))
             contact_plans.append(structure_contact_plan)
             if contact_plans:
@@ -1890,6 +1925,22 @@ def run_native_objects(
                 retired_contact_parts = set(text_contact_completion["retired_ids"])
                 objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]
                 objects += text_contact_completion["objects"]
+                from .transverse_stroke_geometry import plan_transverse_stroke_geometry
+                from .text_contact_adoption import merge_contact_completions
+
+                transverse_plan = plan_transverse_stroke_geometry(
+                    gray, roi, objects, source_graph=contact_source_graph,
+                )
+                transverse_completion = complete_text_contact_paths(
+                    gray, roi, source_sha, objects, [transverse_plan],
+                    out / "transverse_strokes",
+                )
+                if transverse_completion["retired_ids"]:
+                    raise ValueError("TRANSVERSE_STROKE_MUST_PRESERVE_EXISTING_OBJECTS")
+                objects += transverse_completion["objects"]
+                text_contact_completion = merge_contact_completions(
+                    text_contact_completion, transverse_completion, out / "text_contact",
+                )
             objects, circular_markers = _finalize_circle_relations(
                 gray, roi, objects, circular_markers, out / "circular_markers",
             )
@@ -1903,6 +1954,7 @@ def run_native_objects(
             issues += connections["uncertainties"]
             issues += circular_markers["uncertainties"]
             issues += text_contact_completion.get("uncertainties", [])
+            issues += carrier_reconciliation.get("uncertainties", [])
             issues += walls.get("uncertainties", [])
             issues += [
                 {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
@@ -1942,6 +1994,7 @@ def run_native_objects(
                 "connections": connections,
                 "circular_markers": circular_markers,
                 "text_contact_completion": text_contact_completion,
+                "carrier_reconciliation": carrier_reconciliation,
                 "walls": walls,
                 "objects": objects,
                 "issues": issues,
@@ -2047,6 +2100,11 @@ def run_native_objects(
                 "text_and_graphic_objects_counted_separately": True,
             },
             "wall_partition_source_gate": walls.get("partition_source_gate"),
+            "carrier_reconciliation": {
+                "new_complete_receiving_lines": len(carrier_reconciliation.get("objects", [])),
+                "retired_old_line_ids": carrier_reconciliation.get("retired_ids", []),
+                "actual_saved_source_checks": audit.get("carrier_reconciliation_source_checks"),
+            },
         }
         report.update(
             job_id=job.job_id,

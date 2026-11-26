@@ -56,6 +56,8 @@ def mark(e, o):
         data["single_line_recovery"] = True
     if "text_contact_path" in o.get("source_evidence", {}):
         data["text_contact_path"] = True
+    if "carrier_reconciliation" in o.get("source_evidence", {}):
+        data["carrier_reconciliation"] = True
     e.set_xdata(
         APPID,
         [(1000, json.dumps(data, ensure_ascii=True))],
@@ -1012,6 +1014,12 @@ def cold_audit(path, gray, roi, dpi, out):
         path, doc, gray, roi, dpi, evidence_root
     )
     checks.extend(text_contact_proof["checks"])
+    from .carrier_reconciliation_audit import cold_carrier_reconciliation
+
+    carrier_proof = cold_carrier_reconciliation(
+        path, doc, gray, roi, dpi, evidence_root
+    )
+    checks.extend(carrier_proof["checks"])
     identity_failures = []
     for entity in doc.modelspace():
         try:
@@ -1288,6 +1296,7 @@ def cold_audit(path, gray, roi, dpi, out):
         "native_text_candidate_checks": text_candidate_checks,
         "single_line_text_source_checks": single_line_source_checks,
         "text_contact_source_checks": text_contact_proof,
+        "carrier_reconciliation_source_checks": carrier_proof,
     }
     if circular_checks:
         report["circular_marker_source_checks"] = circular_checks
