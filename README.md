@@ -1,100 +1,93 @@
-# 图像转 CAD
+# Image to CAD — 纯图像／PDF 转可编辑二维 CAD
 
-将 PDF 或扫描图转换成可编辑 DXF。当前开发版本 **0.4.0-dev**。
+**当前版本 `0.4.0-dev`（开发基座阶段）。** 主攻**无矢量信息的纯图像、扫描件和照片**到可编辑二维 CAD（DXF）的完整重建；原生矢量 PDF 解析作为附带快车道工具提供。
 
-## 产品目标与本版范围
+完整产品构想与三层架构定义见 [产品意图与知识包指南](docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md) · [三层架构蓝图与防跑偏路线图](docs/project/ARCHITECTURE_AND_ROADMAP_ZH.md) · [Agent 工作入口](AGENTS.md) · [执行协议](docs/project/AGENT_OPERATING_PROTOCOL.md) · [验收标准](docs/project/ACCEPTANCE_GATES.md)。
 
-最终目标是正确、完整、合理地恢复可编辑、可修复、可保存的二维 CAD，减少完整任务中的人工核查、补绘和修正。**质量与实际人工劳动节省优先于速度；工程语义理解不是成功的先决条件。** 普通文字应为真正 TEXT/MTEXT，Logo/签名独立保护；圈内 R 等复合符号还应保留外框、文字及相对/连接关系。
+---
 
-长期路线保留高召回机械提取、统一骨架、机器可执行制图知识包、可替换模型协作和独立全页残差分析。知识包是规则、对象约束、验证器和反例，不是提示词合集；这些整体能力尚未完成。允许带来源和不确定性标记、可关闭/接受/撤销的补绘建议，未经确认不得冒充已观察事实或改写工程数值。
+## 不可退回的产品要求（既有标准）
 
-**0.4.0-dev 完成的是本次授权的基础产品重整和普通入口接通，完整图纸质量与省人工目标仍需继续验证。** 当前能力边界不取代最终目标。规范见 [产品意图](docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md)、[执行协议](docs/project/AGENT_OPERATING_PROTOCOL.md) 和 [验收原则](docs/project/ACCEPTANCE_GATES.md)。旧裁片、阶段账本和实验结果保留在 Git 历史中。
+质量与实际人工劳动节省优先于转换速度；不以“系统理解工程语义”为先决条件。新算法、工具或模型接入均不得降低以下任何一条红线：
 
-## 普通使用流程
-
-桌面启动后选择文件，设置输出位置，点击“转换并保存 DXF”。支持 PDF、PNG、JPG、TIFF、BMP；多页 PDF/TIFF 默认逐页输出。窗口可切换原图与从已保存 DXF 重新读取的预览，并选择结果页。
-
-| 输入/内容 | 处理方式 | DXF 输出 |
+| 内容用途 | 必需能力 | 严禁作为替代的结果 |
 | --- | --- | --- |
-| 矢量 PDF | 直接读取原生路径与可见文字，不降为整页图片 | LINE、LWPOLYLINE、ARC、CIRCLE、SPLINE、HATCH、TEXT |
-| 扫描图/扫描 PDF | 去阴影和局部污渍、可选透视校正、中心线和基础几何拟合 | 直线、多段线、圆、圆弧 |
-| 中英文印刷文字 | RapidOCR 按整行识别，保留文字内容和位置 | 可编辑 TEXT |
-| 签章、Logo、未拟合墨迹 | 独立透明图片保留 | IMAGE 及同名资源目录 |
+| **表格、图签、编号、数值、中英文正文与说明** | 内容正确的原生 `TEXT`/`MTEXT`；可改单字、改整串并整体移动；合理可读替代字体、字号、字间距、对齐与单元格布局 | 仅保留字形轮廓、拆成单字 `TEXT`、把笔画编为 `GROUP`、或只提供默认关闭的候选文字 |
+| **Logo、设计集团标志、签名、印章等非编辑背景** | 单独划定归属并与正文隔离，以可靠原生几何或独立透明 `IMAGE` 保真且默认受保护，随 DXF 交付资源 | 将 Logo/签名当正文 OCR 成字母、拆坏标志、改字时误删背景；**禁止用整页底图或残余墨迹图片掩盖内容缺失** |
+| **圈内 R、方框设备符号等复合工程图案** | 保留外框、内部字符、相对位置及必要连接关系，按实际操作需要成组／成块 | 只输出字母丢掉外框，或拆成大量碎片难以选中编辑 |
+| **普通线、圆弧、轮廓、填充、表格边框** | 使用单根中心线原生实体（`LINE`、`ARC`、`CIRCLE`、`LWPOLYLINE`、`HATCH`），保持真实开口、线宽档位与交点 | 双侧空心像素轮廓圈、`HATCH` 涂色像素拼贴、重复重叠线段、跨越真实白缝的误桥接 |
+| **残缺、模糊、难以判读区域** | 保留实际可见证据，在可一键关闭的 `SUGGEST_REPAIR` 层输出带来源与不确定标记的可编辑／可撤销补绘建议 | 直接留白丢弃或全页无约束桥接，以及用自然外观冒充已观察事实或猜改工程数值 |
 
-黑白手写或 Logo 未自动识别为保护图形时，可在“原图”页点击“框选保护签章/Logo”，拖出矩形后转换当前页。选区以独立透明 IMAGE 保留，不进行 OCR 替换；切换输入、页码或 DPI 会清空选区。
+- **“可编辑”验证**：必须通过真实 CAD 软件（AutoCAD / 中望 / 浩辰 / LibreCAD）中**改单字、移动、删除、保存、完全退出并重新打开**核实。改字后不得残留旧字笔画，不得切断或误改邻近表框、文字与受保护背景。
+- **字形原则**：允许使用合理替代字体（如 Noto Sans CJK / `wqy-unicode`），不以像素级复刻原图特殊字体作为核心门槛。
 
-输出使用黑白图层。黑色线条采用 CAD 的 ACI 7 以适应黑/白画布；扫描签章保留为黑色透明图像。PDF 图片保留原图及透明度。
+---
 
-默认尺寸为纸面毫米。扫描 DPI 应与来源一致；图纸注明 1:100 时，在“图纸比例 1:”中输入 `100`。照片透视校正改善形状，不能自动得出真实工程尺寸。未知比例应根据已知长度另行校准。
+## 核心三层架构（开发方向）
 
-**保存、传送 DXF 时保留旁边的 `fonts/` 和图片目录：扫描输出使用 `<文件名>_assets/`，原生 PDF 使用 `<文件名>_images/`。**打开其他 CAD 前，可点击“准备 CAD 中文字体”：为当前用户安装 Noto CJK，并准备 LibreCAD 的文泉驿 LFF。安装后完全重启 CAD。
+工程制图在逻辑层存在确定解，但扫描件在交叉口与粘连处存在像素级多解。项目唯一认可的架构为**三层协同流水线**（详情见 [ARCHITECTURE_AND_ROADMAP_ZH.md](docs/project/ARCHITECTURE_AND_ROADMAP_ZH.md)）：
 
-## 从源码运行
+1. **第 1 层 · 高召回非学习机械提取层**：扫描去污与透视校正 → 签章/Logo 分离 → 中英文整行 OCR 与紧凑字形擦除（保护长格线）→ 单像素骨架「节点—边链」拓扑与竞争多解候选。
+2. **第 2 层 · 机器可执行制图知识包 + 学习/模型中央总控决策层**：将人类绘图语法写成可执行算子（跨交点贯通、正交与交点吸附、表框闭合、字线分离、复合符号成组、线宽归一化），由总控结合局部切片消解第 1 层多解并产出正式实体与 `SUGGEST_REPAIR` 建议。
+3. **第 3 层 · 独立全页双向残差分析质检层**：关闭一切参考底图与残余图像，重渲染输出 DXF 与原图做全页正向漏画／反向误画比对，联合可编辑性往返测试守门。
 
-需要 Python 3.11+。在仓库根目录执行：
+---
 
-```bash
+## 当前代码状态与已知缺口（`0.4.0-dev`）
+
+当前主线仅完成了**代码清场与桌面／命令行基础入口贯通**（共享入口 `cad_photo_to_dxf/app/core/conversion.py`），**距离完整三层架构与“人工修图耗时 ≤ 从零手画 50%”仍有重大差距**：
+
+- **已接通基础部件**：
+  - 扫描清理（`app/geometry/scan_cleanup.py`）、透视校正（`app/core/perspective.py`）、单像素骨架基础几何提取（`app/geometry/scan_geometry.py`）、离线 RapidOCR 中英文整行识别（`app/ocr/line_recognition.py`）、签名形态初筛与人工框选保护（`app/ocr/signature_overlay.py`）、中文字体准备（`app/export/product_fonts.py`）、PySide6 桌面端与 PyInstaller Windows 打包脚本，以及附带的矢量 PDF 原生路径提取（`app/core/pdf_conversion.py`）。
+- **必须优先修复的 2 处代码缺陷**：
+  1. **残余图像遮羞问题**：`app/core/scan_conversion.py` 当前将未拟合墨迹与低置信文字写入默认开启显示的 `REVIEW_SOURCE`（`unresolved-ink.png`），导致渲染预览图掩盖了实际未转换的线条缺口。
+  2. **OCR 框涂白切断表线**：`app/core/scan_conversion.py` 当前将整个 `line.quad` 矩形膨胀涂白，会把穿行或紧邻文字的表格线直接啃断。
+- **尚未建成的 3 块核心主干**：第 2 层机器可执行知识包算子库、学习/模型中央总控消歧层、第 3 层全页双向残差分析器目前均为 **未实现**。
+
+---
+
+## 运行与开发验证
+
+环境要求：Python 3.11+。
+
+### 1. 准备资源与启动应用（在 `cad_photo_to_dxf/` 目录）
+
+```powershell
 cd cad_photo_to_dxf
 python -m venv .venv
-# 激活 .venv 后：
+.\.venv\Scripts\Activate.ps1
 python -m pip install -r requirements.txt
 python scripts/prepare_cad_fonts.py
 python scripts/prepare_ocr_models.py
 python main.py
 ```
 
-字体与 OCR 模型仅在准备阶段下载；完整打包程序可离线转换，不调用外部识别 API。
+### 2. 命令行调用（与桌面共用 `app/core/conversion.py`）
 
-命令行与桌面共用相同入口：
+```powershell
+# 扫描图／照片转换（可选 --perspective 开启纸张透视校正）
+python main.py --input scan.png --dpi 300 --perspective --output output/scan.dxf
 
-```bash
-# 矢量/扫描 PDF 自动分流；默认转换全部页
-python main.py --input drawing.pdf --output output/drawing.dxf
-
-# 只处理第 2 页，纸面比例 1:100
-python main.py --input drawing.pdf --page 2 --scale 100 --output output/page2.dxf
-
-# 照片透视校正与中英文 OCR
-python main.py --input photo.jpg --perspective --dpi 300 --output output/photo.dxf
-
-# 手动保留扫描中的 Logo 区域，坐标为源图像素 x0 y0 x1 y1
+# 手动框选保护黑白 Logo／签章区域（像素坐标 x0 y0 x1 y1）
 python main.py --input scan.png --preserve-region 100 200 450 350 --output output/scan.dxf
 
-# 当前用户中文字体准备，与桌面按钮执行同一功能
+# 按已知比例导出（例如 1:100 输入 100；未知比例默认纸面毫米）
+python main.py --input drawing.pdf --page 1 --scale 100 --output output/page1.dxf
+
+# 为当前用户安装 Noto CJK 系统字体及 LibreCAD 文泉驿字体
 python main.py --install-cad-fonts
 ```
 
-多页输出命名为 `drawing-p001.dxf`、`drawing-p002.dxf` 等。转换同时保存每页实际 DXF 预览和一份结果 JSON。已有输出默认拒绝覆盖；确认需要替换时增加 `--overwrite`。`--no-ocr` 可关闭扫描文字识别。`--verbose` 显示进度。
+分发送达 DXF 时需保留同目录下的 `fonts/` 与 `<文件名>_assets/`（或原生 PDF 产生的 `<文件名>_images/`）依赖目录。附带矢量 PDF 单页命令行见 [tools/native_first/README_ZH.md](tools/native_first/README_ZH.md)。
 
-仅使用原生 PDF 单页工具时，也可在仓库根目录运行：
+### 3. 本地检查与构建
 
-```bash
-python tools/native_first/import_pdf.py --help
-```
-
-## Windows 交付与验证
-
-`Windows product build` 工作流构建完整便携 ZIP 和 Inno Setup 安装包。ZIP 应整体解压后运行 `CADPhotoToDXF.exe`。流程使用解压后的实际 EXE 做中英文扫描、两页原生 PDF、保存编辑重读、字体准备及桌面启动检查，再执行安装、转换和卸载。成功包在该次 Actions 运行的 artifacts 中；是否已通过以实际运行结果为准。
-
-本地构建：安装 `requirements-dev.txt`，准备字体/模型，然后执行 `python -m PyInstaller --noconfirm cad_photo_to_dxf.spec`。Windows 安装包脚本位于 `installer/`。
-
-常规验证：
-
-```bash
+```powershell
 cd cad_photo_to_dxf
 python -m pip install -r requirements-test.txt
+python -m ruff check app tests scripts main.py ../tools/native_first
 python -m pytest tests ../tools/native_first/tests -q
-python -m ruff check app tests scripts main.py
-python scripts/product_smoke.py --source-main main.py --work /path/to/new-smoke-output
+python scripts/product_smoke.py --source-main main.py --work ./smoke-output
 ```
 
-## 已知边界
-
-- 原生 PDF 只有文字轮廓而没有 Unicode 时，会保留路径并提示 `NO_NATIVE_TEXT`，不会把轮廓虚报为可编辑文字。
-- 复杂裁剪、特殊混合组和 PDF 注释的完整等价转换尚未验证；报告会提示相关限制。
-- 扫描 OCR 可能错字，细线可能断段、锯齿或拟合不准。低置信文字和未拟合墨迹尽量保留在图片图层，仍需人工复核。置信分数不等于正确率。
-- 当前实现覆盖基础图线、文字和独立图片；复合符号的完整组装、复杂连接及完整性校验尚未完成。工程语义分类不是先决条件，正确完整、可编辑及减少人工劳动仍是目标。工程师节时量化验收尚未执行。
-
-## 代码结构
-
-`app/core/conversion.py` 负责统一输入和页面分流；`pdf_conversion.py` 与 `scan_conversion.py` 负责两条转换路径。`geometry/` 保存实际使用的通用算法，`ocr/line_recognition.py` 负责整行 OCR，`export/product_fonts.py` 负责完整字体资源，`gui/window.py` 提供桌面入口。历史实验与审计账本已从产品工作树移除，旧提交仍可通过 Git 历史及归档恢复。
+Windows 打包需安装 `requirements-dev.txt` 后执行 `python -m PyInstaller --noconfirm cad_photo_to_dxf.spec`，安装包配置位于 `cad_photo_to_dxf/installer/cad_photo_to_dxf.iss`。

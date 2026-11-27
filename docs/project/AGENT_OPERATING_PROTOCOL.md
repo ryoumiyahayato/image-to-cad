@@ -1,109 +1,36 @@
-# Agent operating protocol
+# Agent 执行与审校协议
 
-## Evidence taxonomy
+本协议适用于对本仓库发起研发、修复、重构或审查的所有 Agent。
 
-Every report must label statements as one of:
+## 一、证据四分类（严禁混为一谈）
 
-- **Code fact:** directly observed function, parameter, entity type, file, commit, or branch state.
-- **Automated-test fact:** test, audit, count, CI, or validation artifact result.
-- **User UAT fact:** direct LibreCAD observation or operation reported by the user.
-- **Hypothesis:** a possible explanation requiring verification.
+所有报告与结论必须严格标注事实类别，不得用低等级证据冒充高等级结果：
+1. **代码事实**：直接观测到的函数、参数、实体写出逻辑、文件状态或提交内容。
+2. **自动化实测**：针对明确代码的单测、静态检查、无缓存全页冷跑及残差分析脚本输出（附命令、真实输入范围与异常）。
+3. **用户目标 CAD 实测**：在 AutoCAD / 中望 / 浩辰 / LibreCAD 中实际打开保存后 DXF，执行改字、移动、删除、保存、退出重开后的观察结论；任何库函数或脚本操作均不得冒充目标 CAD 实操。
+4. **待验假说**：尚未用实际输入验证的推测，严禁写成已确认根因或已修复结论。
 
-A hypothesis must never be written as a confirmed root cause.
+---
 
-## Audit mode
+## 二、核心工作准则（反挤牙膏 · 反文牍 · 整页闭环）
 
-Default behavior is read-only.
+1. **三层架构归位优先**：所有图像转换改进必须服务于「① 高召回机械提取层（保留竞争候选，不切碎结构线）→ ② 机器可执行制图知识包 + 学习/模型中央总控层 → ③ 独立全页双向残差分析层」，禁止在底层堆砌局部特判。
+2. **整页推进与无缓存陌生图检验**：一轮改动必须面向通用机制或整类缺陷。功能进展必须用**未参与规则调参的陌生整页纯图像**、在**无任何历史缓存**的条件下从头冷跑证明；只在一张开发图局部多恢复几个图元的改动，判为无效空转。
+3. **真实暴露缺陷，严禁视觉遮羞**：默认 DXF 渲染及预览只准包含真实转换出的原生 CAD 实体（`LINE`/`ARC`/`CIRCLE`/`LWPOLYLINE`/`HATCH`/`TEXT`/`MTEXT`/`BLOCK`）及独立保护的背景/签章 `IMAGE`，严禁默认开启 `REVIEW_SOURCE` 或任何残余墨迹图片层掩盖漏画。
+4. **严禁制造过程垃圾**：
+   - 不准新建阶段检查点（checkpoint）续算包、多版本证据合同或大型中间产物目录；
+   - 不准建立与主入口隔离、不被生产流程调用的“影子架构”；
+   - 不准绑定文件名、像素坐标、特定字符串或特定测试图实体 ID 写死规则；
+   - 不准为美化报告而重写基线、降级测试断言或删除失败样本。
+5. **变更边界与范围扩展**：发现影响核心效果的上游缺陷或暗雷时，如实记录并按产品价值排序处理；严禁以“不准扩大范围”为由放任已知结构错误（如整块涂白 OCR 框切断表线）继续破坏整页结果。
 
-An audit must:
+---
 
-1. identify repository, branch, HEAD, PR, and exact scope;
-2. preserve existing user changes and baselines;
-3. separate all four evidence classes;
-4. record evidence paths and commands;
-5. compare automated evidence with user UAT;
-6. list conflicts rather than resolving them by assertion;
-7. avoid threshold, baseline, and production changes;
-8. avoid claiming an untested issue is solved;
-9. produce one prioritized next-task recommendation;
-10. stop without executing that recommendation.
+## 三、红队审校五条一票否决红线
 
-Fixed audit output:
-
-1. confirmed facts;
-2. unconfirmed issues;
-3. user UAT evidence;
-4. automated evidence;
-5. evidence conflicts;
-6. root-cause candidates;
-7. contracts that may not change;
-8. one recommended next task;
-9. risks;
-10. stop condition.
-
-## Suggestion mode
-
-A suggestion ranks work by user value, risk, prerequisites, and cost.
-
-A suggestion must:
-
-- recommend only one next task;
-- state why it is the correct task now;
-- state why other work is deferred;
-- define exact modification boundaries;
-- define acceptance evidence and user-validation needs;
-- define regression risks;
-- define an explicit stop condition;
-- not execute the recommendation automatically.
-
-Fixed suggestion output:
-
-1. highest-value problem;
-2. priority rationale;
-3. prerequisites;
-4. modification boundary;
-5. acceptance method;
-6. regression risk;
-7. user validation requirement;
-8. do/defer recommendation;
-9. tasks that must not run concurrently.
-
-## Execution mode
-
-Execution requires an explicit user instruction. Existing task authorization remains valid; do not ask again for the same permission. The current user-directed archive, cleanup and product integration is execution work, not a read-only audit.
-
-Rules:
-
-- one major issue per task;
-- conventional commits for coherent changes, with necessary fixes and concurrent merges preserved;
-- use a recoverable checkpoint, normally within 20–45 minutes;
-- before modification, re-read remote branch/HEAD and verify scope;
-- do not use a worktree containing unknown user changes;
-- do not add large generated DXF/PDF/PNG/log/package artifacts unless the task explicitly requires a reviewed retention set;
-- do not broaden scope when another issue is discovered; record it in the issue register;
-- run only tests relevant to the authorized phase plus required regression gates;
-- update the current implementation and limitations in [README](../../README.md) and the relevant issue/PR; retain recovery references without recreating historical checkpoint journals;
-- stop at the declared stop condition.
-
-## Conflict handling
-
-When code or automated evidence conflicts with user UAT:
-
-1. preserve both statements;
-2. mark the automated contract and human contract separately;
-3. identify what the current metric does and does not measure;
-4. add or update an issue;
-5. propose a focused reproducer or metric;
-6. do not lower thresholds, change baselines, or declare success during audit;
-7. use the user as final product acceptor.
-
-## Prohibited shortcuts
-
-- full-page line repair;
-- page/filename/coordinate/text-content hard-coding;
-- lowering OCR confidence to inflate text count;
-- replacing editable text with outlines;
-- using diagnostic color to alter semantics;
-- treating average results as per-page acceptance;
-- claiming another agent or automated report substitutes for user approval;
-- beginning the next roadmap phase without explicit authorization.
+当对任意提交、PR 或修复汇报进行审校时，触犯以下任一条直接**打回**：
+1. **单图挤牙膏**：改动只围绕单一开发样图局部微调，整页陌生图有效覆盖率与可编辑性无实质提升。
+2. **文牍与缓存作弊**：引入阶段检查点包、死账本 JSON、多套合同文档或靠读取历史中间缓存维持旧指标。
+3. **偷换交付物**：以整页或残余扫描底图、双边空心闭合像素轮廓、`HATCH` 涂色像素块、拆碎单字 `TEXT` 或默认隐藏文本冒充可编辑 CAD。
+4. **未过无缓存陌生图残差核验**：提交效果声称时未附带关闭底图后的「输出 DXF 栅格化 vs 原图」全页双向残差与中英文整串改字保存实测，只谈单测数量、置信分或实体总数。
+5. **篡改或绕过宪章**：PR 擅自修改 `README.md`、`AGENTS.md`、`docs/project/*`、`.github/CODEOWNERS` 或 `.github/workflows/ci.yml`（均已由 CI 锁定只读）。

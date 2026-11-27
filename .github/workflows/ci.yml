@@ -23,6 +23,23 @@ jobs:
       PYTHONUTF8: '1'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Enforce read-only lock on core governance docs
+        if: github.event_name == 'pull_request' && !contains(github.event.pull_request.labels.*.name, 'allow-governance-edit')
+        working-directory: ${{ github.workspace }}
+        run: |
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          HEAD_SHA="${{ github.sha }}"
+          CHANGED=$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}")
+          LOCKED_PATTERN='^(AGENTS\.md|README\.md|cad_photo_to_dxf/README\.md|docs/project/(PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH|ARCHITECTURE_AND_ROADMAP_ZH|AGENT_OPERATING_PROTOCOL|ACCEPTANCE_GATES)\.md|\.github/CODEOWNERS|\.github/workflows/ci\.yml)$'
+          VIOLATIONS=$(printf '%s\n' "$CHANGED" | grep -E "$LOCKED_PATTERN" || true)
+          if [ -n "$VIOLATIONS" ]; then
+            echo "拒绝合并：以下核心产品宪章、三层架构规范或 CI 守卫文件已锁定只读，禁止 PR 未经授权修改："
+            printf '%s\n' "$VIOLATIONS"
+            echo "如需修改，必须取得仓库所有者当轮明确授权并由所有者为 PR 添加 allow-governance-edit 标签。"
+            exit 1
+          fi
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
