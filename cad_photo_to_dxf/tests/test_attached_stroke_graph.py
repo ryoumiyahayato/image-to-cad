@@ -132,7 +132,7 @@ def _graph_geometry(context):
 
 def test_complete_attached_network_preserves_real_free_and_attached_boundaries(tmp_path):
     gray, context, prior, _, plan = _plan(tmp_path)
-    assert plan["schema"] == "source-attached-stroke-graph-plan-v2"
+    assert plan["schema"] == "source-attached-stroke-graph-plan-v3-component-exact"
     assert len(plan["paths"]) == 4, (plan["components"], plan["pending"])
     proofs = [terminal["attached_raw_ink_responsibility"] for row in plan["paths"]
               for terminal in row["endpoint_evidence"] if "attached_raw_ink_responsibility" in terminal]
@@ -340,15 +340,17 @@ def test_new_responsibility_receipts_are_part_of_exact_source_replay(tmp_path, c
     component = next(c for c in plan["components"] if c.get("candidate_paths"))
     terminal = next(t for p in component["candidate_paths"] for t in p["endpoint_evidence"]
                     if "attached_raw_ink_responsibility" in t)
-    proof = terminal["attached_raw_ink_responsibility"]
+    proof = component["finite_component_responsibility"]
     if change == "raw_pixel":
         proof["pixel_ledger"][0]["original_gray_value"] = 255
     elif change == "width":
-        proof["independent_width_evidence"]["guest"]["half_width_interval_px"][1] += 1
+        bound = proof["bodies"][0]["width"]["half_width_squared_interval"]["upper"]
+        bound["numerator"] = str(int(bound["numerator"]) + 1)
     elif change == "model":
-        proof["coherent_terminal_models"]["feasible_models"][0]["guest_half_width_px"] += 1
+        radius = proof["coherent_component_model"]["half_width_squared_vector"][0]
+        radius["numerator"] = str(int(radius["numerator"]) + 1)
     elif change == "producer":
-        plan["additional_producer_sha256"]["attached_stroke_ink.py"] = "0" * 64
+        plan["additional_producer_sha256"]["attached_stroke_component.py"] = "0" * 64
     elif change == "prior_contact":
         component["prior_native_contact_check"]["allowed_source_point_contacts"] = []
     else:

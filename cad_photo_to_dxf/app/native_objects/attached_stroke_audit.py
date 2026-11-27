@@ -26,9 +26,9 @@ from .text_contact_audit import _neighbor_matches, _primitive_matches
 
 
 FIELD = "attached_stroke_graph"
-ADOPTION_SCHEMA = "source-attached-stroke-adoption-v2"
-PLAN_SCHEMA = "source-attached-stroke-graph-plan-v2"
-EVIDENCE_SCHEMA = "source-attached-stroke-native-v2"
+ADOPTION_SCHEMA = "source-attached-stroke-adoption-v3-component-exact"
+PLAN_SCHEMA = "source-attached-stroke-graph-plan-v3-component-exact"
+EVIDENCE_SCHEMA = "source-attached-stroke-native-v3-component-exact"
 
 
 def _sha(path):
