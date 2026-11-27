@@ -1,4 +1,18 @@
-# 当前接续：Issue #61 审核补强已保存，执行环境中断（2026-11-27）
+# 当前接续：Issue #61 新检查点、普通续算与共同验收完成（2026-11-27）
+
+最终共同状态 **`PASS_ZERO_ADOPTED_PRESERVED_BASELINE`**。执行提交 `15dccde58ede8eb77e875f05750b47dd59328096`，完整tree `9b350bf805f88bd75292c51e92c384708ab1601b`；A正式创建和独立完整校验、B普通出图、C实际计划冷重放与共同验收均完成并逐阶段保存。
+
+新普通 `ISSUE61_15dccde_ORDINARY.dxf` 为199885 B，SHA-256 `b842c72bab8ed8e579a1cc7f8f04b315c231d98c2d78ea90aed9fbc368bf87db`。**436完整旧对象／48 REVIEW／55命名块及资源精确保持；实际4候选、0采用**。实际v3计划原图独立重放全部差异0；当前来源续算独立核对1483历史证明和1367当前采样。
+
+原fresh仍26条失败、66条重复记录中49条未认证，原件未改。有效续算另行认证66条同owner重复、未证明重复0；不授权4候选、不宣称无缓存上游漂移修复。候选原墨仍SOURCE_UNRESOLVED，#63继续负责，未集成其未冻结接口。
+
+本次内存生命周期优化仅消除重复深复制并释放已用引用，新增保存字节等价及双向隔离测试，相关30项通过。历史失败、旧203项测试和协调者补完的首稿局部诊断保留各自身份。
+
+[完整结果、材料SHA与边界](../native/ISSUE61_CONTINUATION_COMPLETED_RESULTS_20261127.md)。本分支不自行合main；本轮GUI、Windows与工程师工时NOT_RUN，产品LOCAL_NO_GO。后续由协调者与#63同树整合。
+
+---
+
+# 历史接续：Issue #61 审核补强已保存，执行环境中断（2026-11-27）
 
 **PARTIAL_IMPLEMENTED_AND_VALIDATED / EXECUTION_ENVIRONMENT_BLOCKED。**
 
