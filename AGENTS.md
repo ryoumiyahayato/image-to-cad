@@ -2,6 +2,8 @@
 
 **当前开发主线：`main`，版本 `0.3.0-dev`，产品总体 `LOCAL_NO_GO`。**
 
+**本分支最新独立结果：Issue #62（2026-11-27）。** 完整有限来源模型、严格数值核与独立保存审核已冻结；真实 4 候选／0 新采用，局部审核副本保护全部旧 436 对象通过，完整原墨责任仍未决。[完整结果与执行身份](docs/native/ISSUE62_FINITE_COMPONENT_RESULTS_20261127.md)。按 #61／#62 本轮约定保留独立实验分支，协调者后续合树验收；本分支不自行合 main，未做联合普通整区／GUI／Windows，历史结果保持原身份。
+
 本仓库的产品是 **扫描图片／PDF → 按证据和固定规则识别 → 重新构造完整、独立可编辑的二维 CAD 对象 → 实际保存 DXF**。**不以“理解工程语义”为必要条件**：可使用传统算法、规则、OCR、机器学习和可替换视觉模型；只要能正确重建和编辑，就不必证明模型理解了“墙”“门”或其他对象的工程意义。对象标签与模型置信度不是最终成果。
 
 先阅读 [当前产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md)、[当前任务](docs/project/CURRENT_TASK.md)、[状态](docs/project/PROJECT_STATUS.md) 和 [既有执行协议](docs/project/AGENT_OPERATING_PROTOCOL.md)。这些旧文档若将默认执行限制为“只审计并停止”或将 `main` 说成仅有 legacy，应以本入口和用户当前授权为准。

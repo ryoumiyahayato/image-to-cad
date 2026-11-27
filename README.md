@@ -2,6 +2,8 @@
 
 **研发版：`0.3.0-dev` · 整体产品 `LOCAL_NO_GO`；`main` 持续保存最新经过验证的有效开发源码，不是正式发行版。**
 
+**本实验分支最新结果：[Issue #62 完整组件与数值边界](docs/native/ISSUE62_FINITE_COMPONENT_RESULTS_20261127.md)（2026-11-27）。** 真实原图 4 完整候选／0 新采用；独立保存审核和实际反例已交，原有效 436 主图保持。局部审核副本与开发探针结果不替代后续 #61／#62 联合普通整区验收。以下程序及主图说明属于既有交付，本实验没有生成新有效主图或 Windows 程序。
+
 **[Windows 一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)** · [产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md)
 
 ## Windows 程序与当前主图

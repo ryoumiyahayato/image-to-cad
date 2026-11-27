@@ -124,7 +124,16 @@ must never be copied to the actual saved geometry without recalculation.
 
 ## Validation record
 
-The execution commit and frozen results are recorded in the later result report.
+The [frozen result report](../../docs/native/ISSUE62_FINITE_COMPONENT_RESULTS_20261127.md)
+records actual local execution `45275e8d09cc6aa75ff76ae2372617dc52f7082a`
+and public method commit `332b1acb82693a8256009b19f2b25de58cf35c55`, with
+the same complete tree `22366f60429815caca8cbd58328bd020b4c39d79`.
+The real source stage produced four complete candidates and zero adopted objects.
+All eight declared probe replays passed; three actual saved positive controls
+received independent `COMPLETE_SOURCE_PASS` certificates. The real diagnostic
+saved file remains pending. Source candidate exact-empty width and actual saved
+coordinate width are recorded separately and are not interchangeable.
+
 Development results and failed runs are retained privately, including changes
 detected while independent modules were still being developed. A code freeze
 and stable-source rerun, not an edited earlier receipt, supply the final results.
