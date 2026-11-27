@@ -22,14 +22,15 @@ from scipy.ndimage import label
 from . import connections as paths
 from . import text_contact_geometry as contact
 from . import transverse_stroke_geometry as transverse
+from . import attached_stroke_numeric as numerical
 from .circle_endpoint_contacts import _segment_cells
 from .contracts import save_json, stable_id
 
 
-SCHEMA = "source-attached-stroke-graph-plan-v1"
+SCHEMA = numerical.PLAN_SCHEMA
 FIELD = "attached_stroke_graph"
 POLICY = {
-    "version": "finite-attached-source-tree-decompositions-v1",
+    "version": "finite-attached-source-tree-decompositions-v2-numerical-contract",
     "finite_direction_spans_px": [6.0, 8.0, 12.0],
     "minimum_observed_direction_chord_px": 4.0,
     "maximum_pair_deviation_deg": 20.0,
@@ -687,6 +688,7 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
         raise ValueError("DUPLICATE_PRIOR_OBJECT_ID")
     result = {"schema": SCHEMA, "policy": deepcopy(POLICY),
               "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+              "numerical_contract": numerical.contract_identity(),
               "roi_xyxy_px": list(map(int, roi)), "original_source_crop_xyxy_px": context.crop_bbox,
               "original_source_crop_array_sha256": context.source_crop_hash,
               "prior_object_bindings": bindings, "prior_object_bindings_sha256": _digest(bindings),
@@ -816,6 +818,10 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                     if len(companions) < POLICY["minimum_parallel_crossing_companions"]:
                         raise ValueError("NO_INDEPENDENT_COMPLETE_PARALLEL_CROSSING_COMPANION")
                     row["parallel_crossing_companion_ids"] = [r["stroke_id"] for r in companions]
+                # Check every rejected alternative as well as the selected
+                # decomposition. An uncertain competitor must not manufacture
+                # uniqueness by silently disappearing from the eligible set.
+                numerical.guard_candidate_component(_plain(record), _plain(rows), POLICY)
                 selected["native_geometry_stage"] = "PASS_ALL_ORIGINAL_INK_COMPLETE_AND_INDEPENDENT"
                 record.update(status="UNIQUE_COMPLETE_GRAPH_DECOMPOSITION", selected_decomposition_index=selected["index"],
                               new_complete_path_ids=[row["stroke_id"] for row in rows],
@@ -829,19 +835,39 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                     result["paths"].append(row)
             except (ValueError, KeyError, IndexError, np.linalg.LinAlgError) as exc:
                 record["reason"] = str(exc)
+                if isinstance(exc, numerical.NumericalUnresolved):
+                    record["numerical_status"] = "PENDING"
+                    record["numerical_failure_evidence"] = exc.evidence
+                    # Retain complete diagnostic candidates without inserting
+                    # any of them into the adopted plan path set.
+                    record["numerical_pending_candidate_paths"] = _plain(rows)
                 result["pending"].append({"component_id": record["component_id"], "reason": str(exc),
                                           "source_graph_edge_ids": component["edges"]})
-    return _plain(result)
+    result = _plain(result)
+    result["numerical_diagnostics"] = numerical.build_certificate(result)
+    return result
 
 
 def verify_attached_stroke_graph_plan(gray, roi, plan, *, source_graph=None):
+    if plan.get("schema") == numerical.LEGACY_SCHEMA:
+        return {"pass": False, "reason": "LEGACY_EXACT_CONTRACT_REQUIRES_FROZEN_PRODUCER",
+                "checks": {"new_contract_version": False},
+                "legacy_compatibility_entry": "attached_stroke_numeric.compare_legacy_plans"}
     if plan.get("schema") != SCHEMA or plan.get("prior_object_bindings_sha256") != _digest(plan.get("prior_object_bindings")):
         return {"pass": False, "reason": "ATTACHED_GRAPH_PRIOR_BINDING_INTEGRITY_FAILED", "checks": {"prior_bindings": False}}
     try:
         replay = plan_attached_stroke_graph(gray, roi, plan["prior_object_bindings"], source_graph=source_graph)
-        checks = {key: plan.get(key) == value for key, value in replay.items()}
+        comparison = numerical.compare_plans(
+            plan, replay, expected_schema=SCHEMA,
+            expected_producer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        )
+        checks = {"current_numerical_contract": plan.get("numerical_contract") == numerical.contract_identity(),
+                  "source_derived_diagnostic_certificate": plan.get("numerical_diagnostics") == comparison.get("certificate"),
+                  "strict_values_and_bounded_diagnostics": comparison["pass"]}
         return {"pass": all(checks.values()), "checks": checks,
-                "reason": "EXACT_ATTACHED_GRAPH_SOURCE_REPLAY" if all(checks.values()) else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH",
+                "reason": "ATTACHED_GRAPH_V2_NUMERICAL_SOURCE_REPLAY" if all(checks.values()) else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH",
+                "saved_plan_sha256": _digest(plan), "numerical_comparison": comparison,
+                "numeric_adoption_status": comparison.get("numeric_adoption_status"),
                 "replayed_paths": replay["paths"], "new_OCR_calls": 0}
     except (ValueError, KeyError, TypeError) as exc:
         return {"pass": False, "checks": {}, "reason": "ATTACHED_GRAPH_SOURCE_REPLAY_ERROR", "detail": str(exc)}
@@ -860,14 +886,14 @@ def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_gra
                                    "original_source_crop_xyxy_px": plan["original_source_crop_xyxy_px"],
                                    "original_source_crop_array_sha256": plan["original_source_crop_array_sha256"],
                                    "source_pixels_modified": False,
-                                   FIELD: {"schema": "source-attached-stroke-native-v1", "source_sha256": source_sha,
+                                   FIELD: {"schema": numerical.EVIDENCE_SCHEMA, "source_sha256": source_sha,
                                            "plan_sha256": key, "path_index": index, "path_sha256": _digest(row), "path": deepcopy(row)}},
                "editing_scope": "one complete independent source stroke; attached and crossing strokes remain separate",
                "status": "SOURCE_SUPPORTED_COMPLETE_ATTACHED_GRAPH_STROKE"}
         adopted.append(obj)
         decisions.append({"id": obj["id"], "adopted": True, "decision": "ADD_COMPLETE_INDEPENDENT_GRAPH_STROKE",
                           "component_id": row["component_id"], "native_kind": kind, "retired_ids": []})
-    result = {"schema": "source-attached-stroke-adoption-v1", "source_sha256": source_sha,
+    result = {"schema": numerical.ADOPTION_SCHEMA, "source_sha256": source_sha,
               "roi_xyxy_px": list(roi), "plan": plan, "objects": adopted,
               "prior_object_bindings": plan["prior_object_bindings"], "decisions": decisions,
               "retired_ids": [], "pending": deepcopy(plan["pending"]), "new_OCR_calls": 0}

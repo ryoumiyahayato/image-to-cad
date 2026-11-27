@@ -132,7 +132,7 @@ def _graph_geometry(context):
 
 def test_complete_attached_network_preserves_real_free_and_attached_boundaries(tmp_path):
     gray, context, prior, _, plan = _plan(tmp_path)
-    assert plan["schema"] == "source-attached-stroke-graph-plan-v1"
+    assert plan["schema"] == "source-attached-stroke-graph-plan-v2"
     assert len(plan["paths"]) == 4, (plan["components"], plan["pending"])
     expected = [
         ((114, 50), (104, 145), "OBSERVED_FREE_SOURCE_ENDPOINT"),
@@ -403,6 +403,40 @@ def _complete_saved(tmp_path):
 
 def test_actual_saved_plan_replays_complete_paths_and_all_preceding_objects(tmp_path):
     _complete_saved(tmp_path)
+
+
+def test_numeric_uncertainty_preserves_unadopted_candidates_and_cold_replays_pending(tmp_path, monkeypatch):
+    gray, context, prior, sha = _prior(tmp_path)
+
+    def unresolved_competitor(*_args):
+        raise attached.numerical.NumericalUnresolved(
+            "NUMERIC_SYNTHETIC_COMPETITOR_INTERVAL_STRADDLES_GATE",
+            {"gate": "minimum_attachment_axis_separation", "status": "AMBIGUOUS"},
+        )
+
+    monkeypatch.setattr(attached.numerical, "guard_candidate_component", unresolved_competitor)
+    evidence = tmp_path / "evidence"
+    manifest = attached.complete_attached_strokes(
+        gray, ROI, sha, prior, evidence / "attached_strokes", source_graph=context,
+    )
+    assert manifest["objects"] == []
+    assert manifest["plan"]["paths"] == []
+    pending = [c for c in manifest["plan"]["components"] if c.get("numerical_status") == "PENDING"]
+    assert len(pending) == 1
+    assert len(pending[0]["numerical_pending_candidate_paths"]) == 4
+    assert pending[0]["status"] == "PENDING"
+    assert manifest["plan"]["numerical_diagnostics"]["unresolved_components_strict_only"]
+    saved = tmp_path / "pending.dxf"
+    export_objects(prior, saved, ROI, 200, sha)
+    report = cold_attached_stroke_bindings(saved, ezdxf.readfile(saved), gray, ROI, 200, evidence)
+    assert report["pass"], report
+    assert report["targets"] == []
+    assert report["plan_replay"]["numeric_adoption_status"] == "PENDING"
+    assert report["plan_replay"]["numerical_comparison"]["reason"] == "MATCHED_STRICT_REPLAY_OF_NUMERICALLY_PENDING_PLAN"
+    changed = deepcopy(manifest["plan"])
+    raw = next(c for c in changed["components"] if c.get("numerical_status") == "PENDING")
+    raw["numerical_pending_candidate_paths"][0]["representation"]["points"][0][0] += 0.001
+    assert not attached.verify_attached_stroke_graph_plan(gray, ROI, changed, source_graph=context)["pass"]
 
 
 @pytest.mark.parametrize("change", [

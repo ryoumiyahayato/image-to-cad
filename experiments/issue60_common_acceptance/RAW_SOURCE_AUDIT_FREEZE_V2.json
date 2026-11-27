@@ -1,0 +1,50 @@
+{
+  "schema": "issue60-independent-raw-audit-freeze-v2",
+  "time_utc": "2026-11-27T05:19:06.633986+00:00",
+  "frozen_before_actual_eight_probe_execution": true,
+  "previous_v1_freeze": "RAW_SOURCE_AUDIT_FREEZE.json",
+  "change": "Only unsupported-context bbox certification fail-closed input contract; no source, width, geometry or classification threshold changes",
+  "policy": {
+    "version": "finite-geometry-raw-sections-v2-context-bounds",
+    "unsupported_context_requires_certified_bbox": true,
+    "source_black_threshold": 128,
+    "inward_section_distances_px": [
+      4,
+      6,
+      8,
+      12,
+      16
+    ],
+    "normal_section_half_span_px": 16,
+    "minimum_isolated_sections": 2,
+    "pixel_cell_half_diagonal_px": 0.7071067811865476,
+    "endpoint_window_minimum_radius_px": 8,
+    "endpoint_window_radius_width_multiplier": 3,
+    "endpoint_window_radius_margin_px": 4,
+    "observable_unassigned_excess_px": 2,
+    "minimum_observable_projection_bins": 3,
+    "source_ink_connectivity": 4,
+    "diagnostic_ink_connectivity": 8,
+    "white_hole_connectivity": 4,
+    "supported_geometry_kinds": [
+      "LINE",
+      "LWPOLYLINE",
+      "CONNECTION_PATH"
+    ],
+    "maximum_target_objects": 64,
+    "maximum_context_objects": 1024,
+    "maximum_vertices_per_geometry": 1024,
+    "maximum_roi_pixels": 1000000
+  },
+  "policy_sha256": "eb54f1b6b1eec0f0103fb911e9a852f77430d008e7fae546183dd76d3528fccc",
+  "source_hashes": {
+    "cad_photo_to_dxf/app/native_objects/raw_source_responsibility_audit.py": "92c68dc186465769d7a6228392d7c17513f355c7210e5c1e4b04072a0ce93308",
+    "cad_photo_to_dxf/tests/test_raw_source_responsibility_audit.py": "8388f67524ff2d4af505826f47391e3c74de236585265fbce5cf6caadfcb33be",
+    "experiments/issue60_common_acceptance/run_raw_source_audit.py": "c242b922809abd4a60a22373552426846afee2c03b93ffa89f3d848e315bb2f3",
+    "experiments/issue60_common_acceptance/RAW_SOURCE_AUDIT_CONTRACT.md": "058173e265e2232bd547b377358b2d46e101478db8e8d6418a0f6acdbb1c8240",
+    "experiments/issue60_common_acceptance/run_eight_raw_probes.py": "66c4a2f36fa09af7c458cd064c780fc3ebf8ffef2d5ab5a1a2e895a82b97c6c9"
+  },
+  "tests_passed": 18,
+  "new_ocr_calls": 0,
+  "new_model_calls": 0
+}

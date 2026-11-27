@@ -16,6 +16,7 @@ import ezdxf
 from ezdxf.tools.text_size import text_size
 
 from .contracts import save_json
+from . import attached_stroke_numeric as numerical
 from .single_line_text_audit import (
     _expected_attributes,
     _same,
@@ -26,9 +27,9 @@ from .text_contact_audit import _neighbor_matches, _primitive_matches
 
 
 FIELD = "attached_stroke_graph"
-ADOPTION_SCHEMA = "source-attached-stroke-adoption-v1"
-PLAN_SCHEMA = "source-attached-stroke-graph-plan-v1"
-EVIDENCE_SCHEMA = "source-attached-stroke-native-v1"
+ADOPTION_SCHEMA = numerical.ADOPTION_SCHEMA
+PLAN_SCHEMA = numerical.PLAN_SCHEMA
+EVIDENCE_SCHEMA = numerical.EVIDENCE_SCHEMA
 
 
 def _sha(path):
@@ -353,7 +354,12 @@ def cold_attached_stroke_bindings(path, doc, gray, roi, dpi, evidence_root):
         report["plan_replay"] = replay
         if not isinstance(replay, dict) or replay.get("pass") is not True:
             raise ValueError("ATTACHED_STROKE_COMPLETE_SOURCE_PLAN_REPLAY_FAILED")
-        if replay.get("replayed_paths") != plan.get("paths"):
+        path_comparison = numerical.compare_path_records(
+            plan["paths"], replay.get("replayed_paths"), plan["numerical_diagnostics"],
+        )
+        report["complete_path_replay"] = path_comparison
+        if (replay.get("saved_plan_sha256") != _digest(plan)
+                or not path_comparison["pass"]):
             raise ValueError("ATTACHED_STROKE_COMPLETE_PATH_SET_REPLAY_DIFFERS")
         report["published_export"] = _published_export_binding(path, metadata_path, metadata, root)
         global_check["pass"] = True
