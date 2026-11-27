@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   workflow_call:
   push:
-    branches: [main, development/product-core-reset]
+    branches: [main]
     paths: ['cad_photo_to_dxf/**', '.github/workflows/windows-build.yml']
   pull_request:
     paths: ['cad_photo_to_dxf/**', '.github/workflows/windows-build.yml']
