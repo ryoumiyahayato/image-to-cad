@@ -1,19 +1,13 @@
-name: Windows build and smoke test
+name: Windows product build
 
 on:
   workflow_dispatch:
+  workflow_call:
   push:
-    branches:
-      - main
-    tags:
-      - "v*"
-    paths:
-      - "cad_photo_to_dxf/**"
-      - ".github/workflows/windows-build.yml"
+    branches: [main, development/product-core-reset]
+    paths: ['cad_photo_to_dxf/**', '.github/workflows/windows-build.yml']
   pull_request:
-    paths:
-      - "cad_photo_to_dxf/**"
-      - ".github/workflows/windows-build.yml"
+    paths: ['cad_photo_to_dxf/**', '.github/workflows/windows-build.yml']
 
 permissions:
   contents: read
@@ -21,187 +15,108 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 50
     defaults:
       run:
         working-directory: cad_photo_to_dxf
-
+        shell: pwsh
+    env:
+      PYTHONUTF8: '1'
     steps:
       - name: Check out exact commit
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: '3.11'
           cache: pip
           cache-dependency-path: cad_photo_to_dxf/requirements*.txt
-
-      - name: Install dependencies
-        shell: pwsh
+      - name: Install product and build dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt -r requirements-dev.txt
-
-      - name: Read canonical application version
+          python -m pip install -r requirements-dev.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Read application version
         id: version
-        shell: pwsh
         run: |
           $version = (python -c "from app import __version__; print(__version__)").Trim()
-          if (-not $version) { throw "Application version is empty" }
+          if ($LASTEXITCODE -ne 0 -or -not $version) { throw "Cannot read application version" }
           "value=$version" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "VERSION=$version" | Out-File $env:GITHUB_ENV -Append -Encoding utf8
-
-      - name: Prepare verified native font and license
-        shell: pwsh
+      - name: Prepare redistributable font and offline bilingual OCR
         run: |
-          python scripts/prepare_native_font.py
+          python scripts/prepare_cad_fonts.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Prepare verified source-row font and license
-        shell: pwsh
+          python scripts/prepare_ocr_models.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Check product code and PowerShell entry points
+        env:
+          QT_QPA_PLATFORM: offscreen
         run: |
-          python -m pip install --no-deps fonttools==4.68.0 ezdxf==1.4.5
+          python -m ruff check app tests scripts main.py ../tools/native_first
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python scripts/prepare_source_row_font.py
+          python -m pytest tests ../tools/native_first/tests -q
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Prepare verified LibreCAD companion for native text
-        shell: pwsh
+          python -m compileall -q app scripts main.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          foreach ($script in @("windows_smoke.ps1", "installer_smoke.ps1")) {
+            $tokens = $null
+            $errors = $null
+            [System.Management.Automation.Language.Parser]::ParseFile(
+              (Join-Path $PWD "scripts/$script"), [ref] $tokens, [ref] $errors) | Out-Null
+            if ($errors.Count) { throw ($errors | Out-String) }
+          }
+      - name: Build complete portable application
+        env:
+          CADPHOTO_SKIP_FONT_DOWNLOAD: '1'
+          CADPHOTO_SKIP_MODEL_DOWNLOAD: '1'
         run: |
-          python scripts/prepare_native_librecad_font.py
+          python -m PyInstaller --noconfirm --clean cad_photo_to_dxf.spec
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Run regression and static checks
-        shell: pwsh
+          python scripts/portable_delivery.py --source-dir dist/CADPhotoToDXF --output-dir delivery --version $env:VERSION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Unzip and run the actual portable EXE
         run: |
-          python -m pytest -q
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m ruff check app tests validation main.py
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m mypy app/core/resolution.py app/core/scale_calibrator.py app/core/reporting.py app/ocr/auxiliary_recognition.py
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          python -m compileall -q app tests validation main.py
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          $parseTokens = $null
-          $parseErrors = $null
-          [System.Management.Automation.Language.Parser]::ParseFile(
-            "$PWD/scripts/restore_windows_portable.ps1", [ref] $parseTokens, [ref] $parseErrors) | Out-Null
-          if ($parseErrors.Count) { throw ($parseErrors | Out-String) }
-
-      - name: Build portable application
-        id: portable
-        shell: pwsh
-        run: |
-          python scripts/prepare_windows_native_runtime.py --seven-zip "C:/Program Files/7-Zip/7z.exe"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          pyinstaller --noconfirm --clean cad_photo_to_dxf.spec
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Smoke test portable application
-        shell: pwsh
-        working-directory: ${{ runner.temp }}
-        run: |
-          Set-ExecutionPolicy -Scope Process Bypass -Force
-          & "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/scripts/windows_smoke.ps1" `
-            -Executable "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/dist/CADPhotoToDXF/CADPhotoToDXF.exe" `
-            -Sample "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/samples/test.jpg" `
-            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-portable-smoke" `
-            -ExpectedVersion $env:VERSION `
-            -NativeSourceMain "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/main.py"
-
-      - name: Verify actual Windows recovery and CAD font preparation
-        id: delivery
-        shell: pwsh
-        run: |
-          $sourceCommit = (git rev-parse HEAD).Trim()
-          python scripts/windows_cad_delivery_smoke.py `
-            --executable "$env:GITHUB_WORKSPACE/cad_photo_to_dxf/dist/CADPhotoToDXF/CADPhotoToDXF.exe" `
-            --native-result "$env:RUNNER_TEMP/cad-photo-portable-smoke/native/short-codes/exe-run/native.dxf" `
-            --work "$env:RUNNER_TEMP/cad-photo-delivery-smoke" `
-            --delivery "$env:RUNNER_TEMP/cad-photo-verified-delivery" `
-            --source-commit $sourceCommit `
-            --version $env:VERSION
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
+          $restored = Join-Path $env:RUNNER_TEMP "cad-product-restored"
+          Expand-Archive -LiteralPath "delivery/CADPhotoToDXF-$env:VERSION-Windows-Portable.zip" -DestinationPath $restored -Force
+          ./scripts/windows_smoke.ps1 `
+            -Executable "$restored/CADPhotoToDXF/CADPhotoToDXF.exe" `
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-product-portable-smoke" `
+            -ExpectedVersion $env:VERSION
       - name: Install Inno Setup
-        shell: pwsh
-        run: choco install innosetup --no-progress -y
-
-      - name: Build installer from canonical version
-        id: installer
-        shell: pwsh
+        run: |
+          choco install innosetup --no-progress -y
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Build installer
         run: |
           $fileVersion = (python -c "from app import __version__; from scripts.versioning import parse_version; print('.'.join(map(str, parse_version(__version__))))").Trim()
-          & "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" `
-            "/DMyAppVersion=$env:VERSION" `
-            "/DMyAppFileVersion=$fileVersion" `
-            ./installer/cad_photo_to_dxf.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & "C:/Program Files (x86)/Inno Setup 6/ISCC.exe" "/DMyAppVersion=$env:VERSION" "/DMyAppFileVersion=$fileVersion" installer/cad_photo_to_dxf.iss
           if ($LASTEXITCODE -ne 0) { throw "Inno Setup build failed" }
-
-      - name: Install, launch, and uninstall smoke test
-        shell: pwsh
+      - name: Install, convert, launch desktop and uninstall
         run: |
-          Set-ExecutionPolicy -Scope Process Bypass -Force
           ./scripts/installer_smoke.ps1 `
-            -Installer "./installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" `
-            -Sample ./samples/test.jpg `
-            -WorkingDirectory "$env:RUNNER_TEMP/cad-photo-installer-smoke" `
+            -Installer "installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" `
+            -WorkingDirectory "$env:RUNNER_TEMP/cad-product-installer-smoke" `
             -ExpectedVersion $env:VERSION
-
-      - name: Upload portable build artifact
-        if: always() && steps.portable.outcome == 'success'
+          Copy-Item "installer/output/CADPhotoToDXF-$env:VERSION-Setup.exe" delivery/
+          $setup = Get-Item "delivery/CADPhotoToDXF-$env:VERSION-Setup.exe"
+          $digest = (Get-FileHash -Algorithm SHA256 -LiteralPath $setup.FullName).Hash.ToLowerInvariant()
+          "$digest  $($setup.Name)" | Set-Content -LiteralPath "$($setup.FullName).sha256" -Encoding ascii
+      - name: Upload tested Windows packages
         uses: actions/upload-artifact@v4
         with:
-          name: CADPhotoToDXF-Windows-Portable-${{ steps.version.outputs.value }}
-          if-no-files-found: error
-          path: cad_photo_to_dxf/dist/CADPhotoToDXF/**
-
-      - name: Upload installer artifact
-        if: always() && steps.installer.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: CADPhotoToDXF-Windows-Installer-${{ steps.version.outputs.value }}
-          if-no-files-found: error
-          path: cad_photo_to_dxf/installer/output/CADPhotoToDXF-${{ steps.version.outputs.value }}-Setup.exe
-
-      - name: Upload native source versus EXE evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Windows-native-smoke-evidence-${{ github.event.pull_request.head.sha || github.sha }}
-          if-no-files-found: ignore
-          path: |
-            ${{ runner.temp }}/cad-photo-portable-smoke/native/**
-            !${{ runner.temp }}/cad-photo-portable-smoke/native/detached-package/**
-
-      - name: Upload exact verified user delivery
-        if: always() && steps.delivery.outcome == 'success'
-        uses: actions/upload-artifact@v4
-        with:
-          name: CADPhotoToDXF-Windows-Verified-Delivery-${{ github.event.pull_request.head.sha || github.sha }}
+          name: CADPhotoToDXF-Windows-${{ steps.version.outputs.value }}
           if-no-files-found: error
           compression-level: 0
-          path: |
-            ${{ runner.temp }}/cad-photo-verified-delivery/*.zip
-            ${{ runner.temp }}/cad-photo-verified-delivery/PORTABLE_RESTORE_MANIFEST.json
-            ${{ runner.temp }}/cad-photo-verified-delivery/Restore-Windows-portable.cmd
-            ${{ runner.temp }}/cad-photo-verified-delivery/Restore-Windows-portable.ps1
-            ${{ runner.temp }}/cad-photo-verified-delivery/README_RESTORE.txt
-
-      - name: Upload Windows recovery and CAD delivery evidence
+          path: cad_photo_to_dxf/delivery/*
+      - name: Save actual EXE conversion and install results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: Windows-CAD-delivery-evidence-${{ github.event.pull_request.head.sha || github.sha }}
+          name: Windows-product-smoke-${{ github.event.pull_request.head.sha || github.sha }}
           if-no-files-found: ignore
           path: |
-            ${{ runner.temp }}/cad-photo-delivery-smoke/delivery-smoke.json
-            ${{ runner.temp }}/cad-photo-delivery-smoke/restoration/restoration-checks.json
-            ${{ runner.temp }}/cad-photo-delivery-smoke/restoration/*/*report.json
-            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.json
-            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.pdf
-            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.png
-            ${{ runner.temp }}/cad-photo-delivery-smoke/fonts/*.dxf
+            ${{ runner.temp }}/cad-product-portable-smoke/**
+            ${{ runner.temp }}/cad-product-installer-smoke/run/**
+            ${{ runner.temp }}/cad-product-installer-smoke/installer-smoke.json

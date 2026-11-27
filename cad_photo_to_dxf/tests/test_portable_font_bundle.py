@@ -14,15 +14,13 @@ def test_portable_font_manifest_uses_pinned_official_noto_sources() -> None:
 
     assert payload["license"] == "SIL Open Font License 1.1"
     assert payload["source_repository"] == "notofonts/noto-cjk"
-    assert len(fonts) >= 4
+    assert len(fonts) == 1
     filenames = [item["filename"] for item in fonts]
     assert len(filenames) == len(set(filenames))
     assert "NotoSansCJKsc-Regular.otf" in filenames
-    assert "NotoSansMonoCJKsc-Regular.otf" in filenames
-    assert "NotoSerifCJKsc-Regular.otf" in filenames
     assert all(item["url"].startswith("https://raw.githubusercontent.com/notofonts/noto-cjk/") for item in fonts)
     assert all("/main/" not in item["url"] for item in fonts)
-    assert {item["category"] for item in fonts} >= {"sans", "mono", "serif"}
+    assert {item["category"] for item in fonts} == {"sans"}
 
 
 def test_build_prepares_and_packages_font_bundle() -> None:

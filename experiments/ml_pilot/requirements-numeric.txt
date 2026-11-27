@@ -1,2 +1,0 @@
-# Used by the existing 18-feature baseline; no CAD/GUI dependencies.
-numpy==2.2.6

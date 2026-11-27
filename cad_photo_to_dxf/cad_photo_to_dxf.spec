@@ -1,6 +1,5 @@
 # -*- mode: python ; coding: utf-8 -*-
-
-import json
+"""One-folder desktop application with offline OCR and a redistributable CJK font."""
 import os
 from pathlib import Path
 import sys
@@ -9,118 +8,55 @@ from PyInstaller.utils.hooks import collect_all, collect_data_files, collect_sub
 
 
 ROOT = Path(SPECPATH)
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ROOT))
 
-from app.version import __version__, product_status_payload
+from app.version import __version__
 from scripts.prepare_cad_fonts import prepare_font_bundle
-from scripts.prepare_librecad_font import prepare_librecad_font
-from scripts.native_packaging import write_build_manifest
-from app.core.packaged_runtime import verify_ocr_bundle
+from scripts.prepare_ocr_models import prepare_ocr_models
 from scripts.versioning import write_windows_version_info
 
 
-version_info = write_windows_version_info(
-    ROOT / "build" / "version_info.generated.txt",
-    __version__,
-)
-product_status_file = ROOT / "build" / "product_status.generated.json"
-product_status_file.write_text(
-    json.dumps(product_status_payload(), ensure_ascii=False, indent=2) + "\n",
-    encoding="utf-8",
-)
-product_baseline = ROOT.parent / "docs" / "project" / "NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md"
-font_resource_directory = ROOT / "resources" / "fonts"
-font_resource_directory.mkdir(parents=True, exist_ok=True)
-font_license_path = font_resource_directory / "OFL-1.1.txt"
-if not font_license_path.exists():
-    font_license_path.write_text(
-        "SIL Open Font License 1.1\n"
-        "The packaged Noto CJK fonts are distributed under the OFL 1.1.\n"
-        "Full license: https://openfontlicense.org/open-font-license-official-text/\n",
-        encoding="utf-8",
-    )
-allow_font_download = os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD", "0") != "1"
+version_info = write_windows_version_info(ROOT / "build/version_info.generated.txt", __version__)
 font_directory = prepare_font_bundle(
-    font_resource_directory,
-    allow_download=allow_font_download,
-    strict=True,
+    ROOT / "resources/fonts",
+    allow_download=os.environ.get("CADPHOTO_SKIP_FONT_DOWNLOAD") != "1", strict=True,
 )
-prepare_librecad_font(
-    font_resource_directory,
-    allow_download=allow_font_download,
-    strict=True,
+ocr_directory = prepare_ocr_models(
+    ROOT / "resources/ocr/rapidocr",
+    allow_download=os.environ.get("CADPHOTO_SKIP_MODEL_DOWNLOAD") != "1",
 )
-native_ocr_directory = ROOT / "resources/ocr/tesseract"
-verify_ocr_bundle(native_ocr_directory)
-native_build_manifest, native_source_data = write_build_manifest(ROOT, __version__)
-hiddenimports = collect_submodules("ezdxf")
-hiddenimports += collect_submodules("app.native_objects")
-hiddenimports += ["app.core.native_worker", "app.core.native_job_manager",
-                  "app.core.native_objects_entry", "app.gui.native_task_panel"]
-hiddenimports += collect_submodules("pytesseract")
 datas = collect_data_files("ezdxf")
-for package in ("numpy", "scipy", "ezdxf", "PyMuPDF", "Pillow"):
-    datas += copy_metadata(package)
+datas += collect_data_files("rapidocr", excludes=["models/*", "models/**/*"])
+hiddenimports = collect_submodules("ezdxf")
+hiddenimports += ["rapidocr.inference_engine.onnxruntime"]
 binaries = []
-for package in ("pypdfium2", "pypdfium2_raw", "rapidocr", "onnxruntime", "pymupdf", "psutil"):
-    package_datas, package_binaries, package_hiddenimports = collect_all(package)
+for package in ("numpy", "scipy", "ezdxf", "PyMuPDF", "Pillow", "rapidocr", "onnxruntime"):
+    datas += copy_metadata(package)
+for package in ("pymupdf", "onnxruntime"):
+    package_datas, package_binaries, package_imports = collect_all(package)
     datas += package_datas
     binaries += package_binaries
-    hiddenimports += package_hiddenimports
-
-datas += [
-    ("README.md", "."),
-    (str(product_baseline), "docs/product"),
-    (str(product_status_file), "docs/product"),
-    ("samples/test.jpg", "samples"),
-    ("app/geometry_rules", "app/geometry_rules"),
-    (str(font_directory), "resources/fonts"),
-    (str(native_ocr_directory), "resources/ocr/tesseract"),
-    (str(native_build_manifest), "resources"),
-]
-# Native producer/reviewer gates read exact source bytes via __file__. Ship
-# those immutable inputs beside the compiled modules instead of depending on
-# a developer checkout or weakening the source-binding gates for the EXE.
-datas += native_source_data
-
+    hiddenimports += package_imports
+for filename in ("NotoSansCJKsc-Regular.otf", "OFL-1.1.txt",
+                 "wqy-unicode.lff", "WQY-LICENSE-Apache-2.0.txt"):
+    resource = font_directory / filename
+    if not resource.is_file():
+        raise FileNotFoundError(f"Required CAD font resource is missing: {resource}")
+    datas.append((str(resource), "resources/fonts"))
+datas += [(str(ocr_directory), "resources/ocr/rapidocr"),
+          (str(ROOT / "README.md"), ".")]
 
 a = Analysis(
-    ["main.py"],
-    pathex=["."],
-    binaries=binaries,
-    datas=datas,
-    hiddenimports=hiddenimports,
-    hookspath=[],
-    hooksconfig={},
-    runtime_hooks=[],
-    excludes=[],
+    [str(ROOT / "main.py")], pathex=[str(ROOT)], binaries=binaries, datas=datas,
+    hiddenimports=hiddenimports, hookspath=[], hooksconfig={},
+    runtime_hooks=[str(ROOT / "scripts/frozen_runtime.py")],
+    excludes=["pytesseract", "torch", "paddle", "tensorflow", "openvino"],
     noarchive=False,
-    module_collection_mode={"app.native_objects": "pyz+py", "app.core": "pyz+py"},
 )
 pyz = PYZ(a.pure)
-
 exe = EXE(
-    pyz,
-    a.scripts,
-    [],
-    exclude_binaries=True,
-    name="CADPhotoToDXF",
-    debug=False,
-    bootloader_ignore_signals=False,
-    strip=False,
-    upx=True,
-    console=False,
-    version=str(version_info),
-    icon=None,
+    pyz, a.scripts, [], exclude_binaries=True, name="CADPhotoToDXF", debug=False,
+    bootloader_ignore_signals=False, strip=False, upx=False, console=False,
+    version=str(version_info) if sys.platform == "win32" else None, icon=None,
 )
-
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name="CADPhotoToDXF",
-)
+coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=False, name="CADPhotoToDXF")

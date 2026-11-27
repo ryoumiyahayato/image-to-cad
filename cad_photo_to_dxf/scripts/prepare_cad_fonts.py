@@ -114,6 +114,8 @@ def prepare_font_bundle(
     license_path = target / "OFL-1.1.txt"
     if not license_path.exists() and allow_download:
         _download(_LICENSE_URL, license_path)
+    if strict and not license_path.is_file():
+        raise RuntimeError(f"Portable CJK font license is missing: {license_path}")
 
     lock = {
         "schema_version": 1,
