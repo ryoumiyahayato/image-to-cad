@@ -10,6 +10,7 @@ import sys
 from types import SimpleNamespace
 
 import ezdxf
+from ezdxf.xclip import XClip
 from PIL import Image
 import pytest
 
@@ -176,6 +177,28 @@ def test_recursive_block_dependency_uses_case_insensitive_symbol_resolution(tmp_
     result = compare_saved_dxf(x["baseline"], x["dxf"])
     assert result["status"] == "PASS"
     assert result["unchanged_old_object_count"] == 2
+
+
+def test_zero_adoption_cannot_hide_unverified_nested_xclip_dependency(tmp_path):
+    x = _fixture(tmp_path)
+    doc = ezdxf.readfile(x["dxf"])
+    nested = doc.blocks["parent"][0]
+    XClip(nested).set_block_clipping_path([(-1, -1), (4, 1)])
+    doc.saveas(x["baseline"])
+    XClip(nested).set_block_clipping_path([(-1, -1), (1, 1)])
+    doc.saveas(x["dxf"])
+    _publish(x)
+    result = _saved(x, tmp_path / "out")
+    assert result["target_object_ids"] == []
+    assert result["stage_binding_status"] == "PASS"
+    assert result["baseline_protection_status"] == "FAIL"
+    assert result["status"] == "FAIL"
+    assert result["unchanged_complete_old_objects"] == 1
+    proof = json.loads((tmp_path / "out/BASELINE_PROTECTION.json").read_text())
+    assert proof["unverified_complete_old_ids"] == ["old-block"]
+    assert any(row.get("object_id") == "old-block" and row.get("block_path") == ["parent"]
+               and row["reason"] == "UNVERIFIED_EXTENSION_DICTIONARY"
+               for row in proof["candidate_dependency_errors"])
 
 
 def test_unsupported_insert_target_is_structured_rejection_not_attribute_error(tmp_path):

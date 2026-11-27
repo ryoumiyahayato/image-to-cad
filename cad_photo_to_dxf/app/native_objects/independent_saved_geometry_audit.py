@@ -98,12 +98,26 @@ def _snapshot_doc(doc):
               and not block.name.startswith("*Paper_Space")}
     block_names = {name.upper(): name for name in blocks}
     complete, dependency_errors = {}, []
+
+    def check_extension(member, **scope):
+        # An unchanged extension-dictionary handle does not establish unchanged
+        # content. In particular, XCLIP can alter visible block geometry solely
+        # through its spatial filter in OBJECTS. Until those dependencies have
+        # their own exact verifier, refuse complete-content approval.
+        if member.has_extension_dict:
+            dependency_errors.append({**scope, "native_type": member.dxftype(),
+                                      "reason": "UNVERIFIED_EXTENSION_DICTIONARY"})
+
     for oid, entity in sorted(formal.items()):
         dependencies = {}
 
-        def visit(member, stack=()):
+        def visit(member, stack=(), member_path=()):
+            check_extension(member, object_id=oid, block_path=list(stack), member_path=list(member_path))
             if member.dxftype() != "INSERT":
                 return
+            for index, attribute in enumerate(member.attribs):
+                check_extension(attribute, object_id=oid, block_path=list(stack),
+                                member_path=[*member_path, f"attribute:{index}"])
             # DXF symbol names are case-insensitive; preserve the actual block
             # definition spelling in the snapshot and exact INSERT tag values.
             name = block_names.get(member.dxf.name.upper(), member.dxf.name)
@@ -116,12 +130,29 @@ def _snapshot_doc(doc):
                                           "reason": "MISSING_NAMED_BLOCK"})
                 return
             dependencies[name] = blocks[name]
-            for child in doc.blocks[name]:
-                visit(child, (*stack, name))
+            definition = doc.blocks[name]
+            for label, resource in (("record", definition.block_record), ("begin", definition.block),
+                                    ("end", definition.endblk)):
+                check_extension(resource, object_id=oid, block_path=[*stack, name], resource=label)
+            for index, child in enumerate(definition):
+                visit(child, (*stack, name), (*member_path, index))
 
         visit(entity)
         complete[oid] = {"entity": entity_record(entity),
                          "recursive_named_block_definitions": dependencies}
+    for index, entity in enumerate(review):
+        check_extension(entity, scope="REVIEW", review_index=index)
+    for table_name, table in (("styles", doc.styles), ("layers", doc.layers), ("linetypes", doc.linetypes)):
+        for resource in table:
+            check_extension(resource, scope=table_name, resource=resource.dxf.name)
+    # Unreferenced named definitions are protected resources too.
+    for name in blocks:
+        definition = doc.blocks[name]
+        for label, resource in (("record", definition.block_record), ("begin", definition.block),
+                                ("end", definition.endblk)):
+            check_extension(resource, scope="blocks", block=name, resource=label)
+        for index, member in enumerate(definition):
+            check_extension(member, scope="blocks", block=name, member_index=index)
     return {
         "schema": SCHEMA, "dxf_version": doc.dxfversion,
         "formal": {oid: entity_record(e) for oid, e in sorted(formal.items())},
@@ -154,6 +185,8 @@ def compare_saved_dxf(baseline_path, candidate_path):
                          if before["formal"][oid] != after["formal"][oid])
     changed = sorted(oid for oid in old_ids & actual_ids
                      if before["complete_formal"][oid] != after["complete_formal"][oid])
+    unverified = sorted(old_ids & {row.get("object_id") for row in
+        before["complete_object_dependency_errors"] + after["complete_object_dependency_errors"]})
     context = {name: before[name] == after[name] for name in (
         "review", "blocks", "styles", "layers", "linetypes", "units_and_coordinate_header")}
     passed = not missing and not changed and all(context.values())
@@ -163,11 +196,14 @@ def compare_saved_dxf(baseline_path, candidate_path):
             "baseline_sha256": before["file_sha256"], "candidate_sha256": after["file_sha256"],
             "baseline_counts": before["counts"], "candidate_counts": after["counts"],
             "new_object_ids": sorted(actual_ids - old_ids), "missing_old_ids": missing,
-            "changed_old_ids": changed, "unchanged_old_object_count": len(old_ids) - len(missing) - len(changed),
+            "changed_old_ids": changed,
+            "unchanged_old_object_count": len(old_ids - set(missing) - set(changed) - set(unverified)),
+            "unverified_complete_old_ids": unverified,
             "changed_complete_old_ids": changed,
             "changed_top_level_old_ids": top_changed,
             "unchanged_top_level_object_count": len(old_ids) - len(missing) - len(top_changed),
-            "complete_object_status": {oid: ("MISSING" if oid in missing else "CHANGED" if oid in changed else "EXACT")
+            "complete_object_status": {oid: ("MISSING" if oid in missing else "CHANGED" if oid in changed else
+                                             "UNVERIFIED_DEPENDENCY" if oid in unverified else "EXACT")
                                        for oid in sorted(old_ids)},
             "changed_block_dependency_parent_ids": sorted(set(changed) - set(top_changed)),
             "named_resource_differences": {name: {
@@ -447,11 +483,15 @@ def audit_edit_copy(original, edited, target_id, operation, delta_mm=(11., -7., 
         "review", "blocks", "styles", "layers", "linetypes", "units_and_coordinate_header")}
     checks = {"complete_target_operation": target_ok, "exact_non_target_content": not changed,
               "exact_actual_id_set": set(after["formal"]) == expected_ids,
-              "actual_identities_valid": not after["identity_errors"], **context}
+              "actual_identities_valid": not after["identity_errors"],
+              "original_complete_dependencies_verified": not before["complete_object_dependency_errors"],
+              "edited_complete_dependencies_verified": not after["complete_object_dependency_errors"], **context}
     return {"schema": SCHEMA, "status": "PASS" if all(checks.values()) else "FAIL",
             "original_sha256": sha256(original), "edited_sha256": sha256(edited),
             "target_id": target_id, "operation": operation, "delta_mm": list(delta_mm),
             "checks": checks, "changed_non_target_ids": changed,
+            "original_dependency_errors": before["complete_object_dependency_errors"],
+            "edited_dependency_errors": after["complete_object_dependency_errors"],
             "non_target_object_count": len(others), "actual_counts_after_edit": after["counts"],
             "verification_mode": "ACTUAL_FILES_REOPENED_BY_CALLING_PROCESS",
             "source_responsibility_verdict": "NOT_ESTABLISHED_BY_EDIT_ISOLATION"}

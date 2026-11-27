@@ -50,6 +50,13 @@ Source bytes and decoded pixels, ROI/DPI/page/frame/orientation/units, finite so
 
 The original uncached entry remains available. Its known old-baseline geometry/ID drift is not fixed by this explicit continuation mechanism and must not be relabelled as an exact uncached reconstruction.
 
+Before completing the ordinary run, accepted nested source-proof branches and
+unverified DXF extension dictionaries receive explicit fail-closed checks in
+both the applicable saved-content and source-proof reviewers. A rejected layout
+alternative is retained; a failed branch actually used by the object is refused.
+Changed spatial-filter data cannot borrow a complete-object PASS from unchanged
+INSERT tags. These targeted regressions preserve the original evidence scope.
+
 ## Independent cold replay and common saved acceptance
 
 Use the actual plan saved by the new ordinary execution, never an independently generated replacement plan:

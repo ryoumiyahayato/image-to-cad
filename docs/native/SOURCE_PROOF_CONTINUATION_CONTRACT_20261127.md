@@ -117,3 +117,28 @@ gate; and use of v1 or a gate without explicit captured v2 authorization.
 
 Validate the actual first-run saved draft through the new local reviewer before
 starting a new ordinary job. Its original fresh FAIL remains part of the record.
+
+## Receipt and dependency hardening before the completed ordinary run
+
+Both the continuation reviewer and the separately implemented common reviewer
+validate the accepted child proofs, including raw-reading/transcription flags,
+partition comparison, selected source layout and its neighbor checks, complete
+short-text members, actual path support, and finite shared-neighbor/end-point
+responsibility. An outer `pass: true` with a missing or failed accepted child
+cannot authorize reuse. Rejected default layouts and rejected one-TEXT attempts
+remain valid diagnostic evidence when a complete alternative was actually
+accepted. The new adversarial receipt tests keep both cases distinct.
+
+The complete saved-content reviewer also refuses approval when an entity,
+recursive block dependency, REVIEW entity, or protected named resource has an
+extension dictionary that has not been independently verified. A stable handle
+does not prove stable dictionary content: a spatial filter can change visible
+geometry without changing the INSERT or its block members. Such objects are
+reported as `UNVERIFIED_DEPENDENCY` and are not included in the count of exactly
+preserved complete objects. This is a fail-closed implementation of the existing
+strict-content contract, not a claim to support arbitrary DXF dictionaries.
+
+These repairs retain the frozen schema meanings and require a newly built
+checkpoint because the source-proof reviewer bytes have changed. Historical
+packets, the first ordinary failure and their exact producer identities remain
+unchanged; the new run must not rewrite them.

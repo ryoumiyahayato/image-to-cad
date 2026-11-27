@@ -90,6 +90,98 @@ def _unique(rows):
     return result
 
 
+def _accepted_proof_branch(value, fields=(), *, checks=False):
+    """Validate an accepted proof branch, never a rejected diagnostic attempt."""
+    if not isinstance(value, dict) or value.get("pass") is not True or not set(fields) <= set(value):
+        return False
+    if checks:
+        detail = value.get("checks")
+        return isinstance(detail, dict) and bool(detail) and all(flag is True for flag in detail.values())
+    return True
+
+
+def _validate_historical_nested_proofs(row):
+    """Check selected child proofs whose outer PASS alone is not sufficient.
+
+    A rejected default layout or one-TEXT attempt is retained as a diagnostic;
+    only the branch actually used by the accepted object grants permission.
+    """
+    def require_branch(value, fields=(), *, checks=False):
+        _require(_accepted_proof_branch(value, fields, checks=checks),
+                 "HISTORICAL_ACCEPTED_CHILD_PROOF_MISSING_OR_FAILED")
+
+    def source_layout(value):
+        require_branch(value, ("source_fit", "source_neighbor_clearance"))
+        require_branch(value["source_fit"], checks=True)
+        neighbor = value["source_neighbor_clearance"]
+        require_branch(neighbor, ("checks", "all_original_neighbors_preserved", "source_pixels_modified"))
+        _require(neighbor["all_original_neighbors_preserved"] is True and neighbor["source_pixels_modified"] is False
+                 and isinstance(neighbor["checks"], list)
+                 and all(_accepted_proof_branch(item) for item in neighbor["checks"]),
+                 "HISTORICAL_SOURCE_LAYOUT_NEIGHBOR_PROOF_FAILED")
+
+    def clearance(value):
+        require_branch(value, _PROOF_FIELDS["actual_saved_text_round_clearance"])
+        _require(value["source_pixels_modified"] is False and value["font_or_text_geometry_modified"] is False
+                 and isinstance(value["relations"], list)
+                 and all(_accepted_proof_branch(item) for item in value["relations"]),
+                 "HISTORICAL_SOURCE_WHITE_GAP_PROOF_FAILED")
+        if any(key in value for key in ("selected_layout", "source_fit", "source_neighbor_clearance")):
+            source_layout(value)
+
+    kind = row["type"]
+    if kind == "SINGLE_LINE_TEXT_SOURCE_BINDING":
+        replay = row["source_replay"]
+        _require(all(replay.get(key) is True for key in ("transcription_source_pass", "all_raw_artifacts_read_and_hashed")),
+                 "HISTORICAL_SINGLE_LINE_RAW_PROOF_FAILED")
+        comparison = replay["source_partition_replay_comparison"]
+        require_branch(comparison, ("all_non_whitelisted_fields_exact", "errors", "original_records_modified"))
+        _require(comparison["all_non_whitelisted_fields_exact"] is True and comparison["errors"] == []
+                 and comparison["original_records_modified"] is False, "HISTORICAL_PARTITION_REPLAY_PROOF_FAILED")
+        clearance(replay["layout_adoption"])
+        clearance(row["actual_saved_text_round_clearance"])
+        layout = row["actual_saved_source_component_layout"]
+        if layout != {"pass": True, "required": False}:
+            source_layout(layout)
+            _require(layout.get("actual_attributes_used") is True, "HISTORICAL_ACTUAL_LAYOUT_ATTRIBUTES_NOT_USED")
+            require_branch(layout.get("actual_saved_LFF_literal_equivalence"), ("scope",))
+    elif kind == "SHORT_CONTACT_SAVED_SOURCE_AND_EDITING_RESPONSIBILITY":
+        replay = row["source_replay"]
+        _require(all(replay.get(key) is True for key in ("complete_original_components_replayed",
+                 "original_and_derived_raw_replayed", "all_competing_readings_retained_and_rechecked")),
+                 "HISTORICAL_SHORT_TEXT_RAW_PROOF_FAILED")
+        layout = replay["layout"]
+        require_branch(layout, ("kind", "members", "one_TEXT_attempt", "minimum_native_member_count"))
+        members = layout["members"]
+        _require(isinstance(members, list) and bool(members)
+                 and all(_accepted_proof_branch(member, ("geometry",), checks=True) for member in members)
+                 and type(layout["minimum_native_member_count"]) is int
+                 and layout["minimum_native_member_count"] == len(members), "HISTORICAL_SHORT_TEXT_MEMBERS_FAILED")
+        whole = layout["one_TEXT_attempt"]
+        _require((layout["kind"] == "TEXT" and len(members) == 1
+                  and _accepted_proof_branch(whole, checks=True) and members == [whole])
+                 or (layout["kind"] == "TEXT_GROUP" and isinstance(whole, dict)
+                     and whole.get("pass") is False and isinstance(whole.get("checks"), dict)
+                     and bool(whole["checks"]) and any(flag is False for flag in whole["checks"].values())),
+                 "HISTORICAL_SHORT_TEXT_ACCEPTED_LAYOUT_BRANCH_CHANGED")
+    elif kind == "SAVED_TEXT_CONTACT_PATH_SOURCE":
+        require_branch(row["actual_source_geometry"]["actual_source_support"],
+                       ("samples", "max_distance_px", "source_fraction", "maximum_white_gap_px"))
+        neighbors = row["shared_neighbor_source_checks"]
+        _require(isinstance(neighbors, list) and all(_accepted_proof_branch(item, ("prior_object_id",)) for item in neighbors),
+                 "HISTORICAL_SHARED_NEIGHBOR_PROOF_FAILED")
+        if "actual_start_contacts_required_circle" in row["checks"]:
+            endpoints = row.get("actual_structural_endpoint_contacts", {})
+            _require(all(endpoints.get(key) is True for key in (
+                "actual_start_contacts_required_circle", "actual_end_contacts_required_finite_carrier")),
+                "HISTORICAL_STRUCTURAL_ENDPOINT_CHILD_PROOF_FAILED")
+        if "transverse_producer_kind_bound_to_actual_plan" in row["checks"]:
+            shared = row.get("actual_transverse_shared_source_responsibility", {})
+            _require(shared.get("reasons") == [] and isinstance(shared.get("shared_source_core_checks"), list)
+                     and all(_accepted_proof_branch(item) for item in shared["shared_source_core_checks"]),
+                     "HISTORICAL_TRANSVERSE_SHARED_CORE_CHILD_PROOF_FAILED")
+
+
 def _validate_historical_check(row):
     required = _OLD_CHECK_FIELDS.get(row.get("type"))
     _require(required is not None and {"id", "type", "pass"} | required <= set(row),
@@ -156,6 +248,7 @@ def _validate_historical_check(row):
     elif row["type"] in {"ARC", "CIRCLE"}:
         _require(row["tolerance_px"] == 2.5 and row["max_distance_px"] <= 2.5 and row["samples"] >= 3,
                  "HISTORICAL_CURVE_SOURCE_SAMPLE_FAILED")
+    _validate_historical_nested_proofs(row)
 
 
 def project_historical_checks(cold, removed_ids):

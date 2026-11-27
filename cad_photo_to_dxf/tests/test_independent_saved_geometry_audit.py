@@ -2,6 +2,7 @@
 import json
 
 import ezdxf
+from ezdxf.xclip import XClip
 
 from app.native_objects.independent_saved_geometry_audit import (
     APPID,
@@ -69,6 +70,33 @@ def test_review_block_style_and_layer_changes_are_not_count_only_checks(tmp_path
     report = compare_saved_dxf(before, after)
     assert report["status"] == "FAIL"
     assert not any(report["context_exact"][k] for k in ("review", "blocks", "styles", "layers"))
+
+
+def test_xclip_dictionary_content_cannot_inherit_complete_protection_or_edit_pass(tmp_path):
+    before, after = _fixture(tmp_path)
+    doc = ezdxf.readfile(before)
+    XClip(_entity(doc, "old-block")).set_block_clipping_path([(-1, -1), (4, 1)])
+    doc.saveas(before)
+    _identity(doc.modelspace().add_line((2, 3), (9, 9), dxfattribs={"layer": "NATIVE"}), "new")
+    XClip(_entity(doc, "old-block")).set_block_clipping_path([(-1, -1), (1, 1)])
+    doc.saveas(after)
+    report = compare_saved_dxf(before, after)
+    # The spatial filter lives behind the unchanged INSERT dictionary handle.
+    # Matching top-level and block tags cannot certify it.
+    assert report["changed_top_level_old_ids"] == []
+    assert report["context_exact"]["blocks"]
+    assert report["status"] == "FAIL"
+    assert report["unverified_complete_old_ids"] == ["old-block"]
+    assert report["complete_object_status"]["old-block"] == "UNVERIFIED_DEPENDENCY"
+    assert report["unchanged_old_object_count"] == 1
+    assert any(row.get("object_id") == "old-block" and row["reason"] == "UNVERIFIED_EXTENSION_DICTIONARY"
+               for row in report["candidate_dependency_errors"])
+    edited = tmp_path / "delete.dxf"
+    make_edit_copy(after, edited, "new", "delete")
+    result = audit_edit_copy(after, edited, "new", "delete")
+    assert result["status"] == "FAIL"
+    assert result["checks"]["complete_target_operation"]
+    assert not result["checks"]["edited_complete_dependencies_verified"]
 
 
 def test_duplicate_or_missing_actual_stable_id_rejected(tmp_path):

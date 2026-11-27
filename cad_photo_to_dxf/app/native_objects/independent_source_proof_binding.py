@@ -134,6 +134,89 @@ def _inventory_digests(rows):
     return dict(Counter(_digest({key: row.get(key) for key in ("id", "type", "member")}) for row in rows))
 
 
+def _accepted_child(value, required=(), *, checks=False):
+    if not isinstance(value, dict) or value.get("pass") is not True or not set(required) <= set(value):
+        return False
+    detail = value.get("checks")
+    return not checks or (isinstance(detail, dict) and bool(detail) and all(flag is True for flag in detail.values()))
+
+
+def _historical_children_valid(row):
+    """Independently validate the accepted branch and retain failed alternatives."""
+    def source_layout(value):
+        if not _accepted_child(value, ("source_fit", "source_neighbor_clearance")):
+            return False
+        neighbor = value["source_neighbor_clearance"]
+        return (_accepted_child(value["source_fit"], checks=True)
+                and _accepted_child(neighbor, ("checks", "all_original_neighbors_preserved", "source_pixels_modified"))
+                and neighbor["all_original_neighbors_preserved"] is True and neighbor["source_pixels_modified"] is False
+                and isinstance(neighbor["checks"], list)
+                and all(_accepted_child(item) for item in neighbor["checks"]))
+
+    def clearance(value):
+        if (not _accepted_child(value, HISTORICAL_PROOF_FIELDS["actual_saved_text_round_clearance"])
+                or value["source_pixels_modified"] is not False or value["font_or_text_geometry_modified"] is not False
+                or not isinstance(value["relations"], list)
+                or not all(_accepted_child(item) for item in value["relations"])):
+            return False
+        return not any(key in value for key in ("selected_layout", "source_fit", "source_neighbor_clearance")) or source_layout(value)
+
+    try:
+        if row["type"] == "SINGLE_LINE_TEXT_SOURCE_BINDING":
+            replay = row["source_replay"]
+            if not all(replay.get(key) is True for key in ("transcription_source_pass", "all_raw_artifacts_read_and_hashed")):
+                return False
+            comparison = replay["source_partition_replay_comparison"]
+            if (not _accepted_child(comparison, ("all_non_whitelisted_fields_exact", "errors", "original_records_modified"))
+                    or comparison["all_non_whitelisted_fields_exact"] is not True or comparison["errors"] != []
+                    or comparison["original_records_modified"] is not False
+                    or not clearance(replay["layout_adoption"]) or not clearance(row["actual_saved_text_round_clearance"])):
+                return False
+            layout = row["actual_saved_source_component_layout"]
+            return layout == {"pass": True, "required": False} or (
+                source_layout(layout) and layout.get("actual_attributes_used") is True
+                and _accepted_child(layout.get("actual_saved_LFF_literal_equivalence"), ("scope",)))
+        if row["type"] == "SHORT_CONTACT_SAVED_SOURCE_AND_EDITING_RESPONSIBILITY":
+            replay = row["source_replay"]
+            if not all(replay.get(key) is True for key in ("complete_original_components_replayed",
+                    "original_and_derived_raw_replayed", "all_competing_readings_retained_and_rechecked")):
+                return False
+            layout = replay["layout"]
+            if not _accepted_child(layout, ("kind", "members", "one_TEXT_attempt", "minimum_native_member_count")):
+                return False
+            members = layout["members"]
+            if (not isinstance(members, list) or not members
+                    or not all(_accepted_child(member, ("geometry",), checks=True) for member in members)
+                    or type(layout["minimum_native_member_count"]) is not int
+                    or layout["minimum_native_member_count"] != len(members)):
+                return False
+            whole = layout["one_TEXT_attempt"]
+            return (layout["kind"] == "TEXT" and len(members) == 1 and _accepted_child(whole, checks=True) and members == [whole]) or (
+                layout["kind"] == "TEXT_GROUP" and isinstance(whole, dict) and whole.get("pass") is False
+                and isinstance(whole.get("checks"), dict) and bool(whole["checks"])
+                and any(flag is False for flag in whole["checks"].values()))
+        if row["type"] == "SAVED_TEXT_CONTACT_PATH_SOURCE":
+            if not _accepted_child(row["actual_source_geometry"]["actual_source_support"],
+                                   ("samples", "max_distance_px", "source_fraction", "maximum_white_gap_px")):
+                return False
+            neighbors = row["shared_neighbor_source_checks"]
+            if not isinstance(neighbors, list) or not all(_accepted_child(item, ("prior_object_id",)) for item in neighbors):
+                return False
+            if "actual_start_contacts_required_circle" in row["checks"]:
+                endpoints = row.get("actual_structural_endpoint_contacts", {})
+                if not all(endpoints.get(key) is True for key in (
+                        "actual_start_contacts_required_circle", "actual_end_contacts_required_finite_carrier")):
+                    return False
+            if "transverse_producer_kind_bound_to_actual_plan" in row["checks"]:
+                shared = row.get("actual_transverse_shared_source_responsibility", {})
+                if (shared.get("reasons") != [] or not isinstance(shared.get("shared_source_core_checks"), list)
+                        or not all(_accepted_child(item) for item in shared["shared_source_core_checks"])):
+                    return False
+        return True
+    except (KeyError, TypeError, AttributeError):
+        return False
+
+
 def _historical_detail_valid(row, objects):
     required = HISTORICAL_CHECK_FIELDS.get(row.get("type"))
     if required is None or not {"id", "type", "pass"} | required <= set(row) or row.get("pass") is not True:
@@ -193,7 +276,7 @@ def _historical_detail_valid(row, objects):
             return False
     if any(row[key] != [] for key in ("failures", "errors", "conflicts", "actual_same_source_residues") if key in row):
         return False
-    return row.get("type") not in PRIMITIVES or _direct_measurement_pass(row)
+    return _historical_children_valid(row) and (row.get("type") not in PRIMITIVES or _direct_measurement_pass(row))
 
 
 def _prior_binding(obj):
