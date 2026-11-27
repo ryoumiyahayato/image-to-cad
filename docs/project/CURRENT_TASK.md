@@ -1,4 +1,8 @@
-# 当前接续：Issue #61 新检查点、普通续算与共同验收完成（2026-11-27）
+# 当前接续：Issue #61 本批独立复核通过，接续 #63 同树整合（2026-11-27）
+
+已接收[协调者独立复核](https://github.com/ryoumiyahayato/image-to-cad/issues/61#issuecomment-7221928443)，并实际核验新增复核包的72成员、CRC、大小、SHA及完整集合。协调者的新进程完整检查点、原图重放、共同验收均通过；其新共同回执 `f7bdfbca…` 与作者 `ca26740e…` 保留各自身份。本次是材料接收与交接核验，普通出图执行提交仍为下述 `15dccde`。
+
+#63 当前已推进至 `a0f8dc73f2a457abe9edd58d741da10bc81adc90`，planner v4、reader v2 和 independent-knot v3 家族已实现接线；最新实验说明仍将真实 source-stage、原八探针和对应最终实证交付列为后续执行门。本批可按零采用旧对象完整保持收口，Issue保持开放，待其最终冻结后同树验收。具体材料、接口和检查点失效边界见[本次接收交接记录](../native/ISSUE61_COORDINATOR_REVIEW_ACCEPTED_20261127.md)。
 
 最终共同状态 **`PASS_ZERO_ADOPTED_PRESERVED_BASELINE`**。执行提交 `15dccde58ede8eb77e875f05750b47dd59328096`，完整tree `9b350bf805f88bd75292c51e92c384708ab1601b`；A正式创建和独立完整校验、B普通出图、C实际计划冷重放与共同验收均完成并逐阶段保存。
 
