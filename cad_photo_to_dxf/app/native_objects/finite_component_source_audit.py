@@ -227,6 +227,66 @@ def _direction_table(graph, nid):
             "observations": [{"port": list(p), "observations": observations[p]} for p in ports]}
 
 
+def _direction_table_v2(graph, nid):
+    """Fresh, bounded reciprocal proofs; no producer pairing receipt is read.
+
+    Keep the historical short observations even when a longer acyclic proof is
+    necessary.  Robust (worst selected versus best competing) margins apply to
+    direct proofs too, not just to pairs used by a later dependency round.
+    """
+    from . import structure_contact_geometry as direction
+
+    original = _direction_table(graph, nid)
+    ports = sorted(graph.nodes[nid]["edges"])
+    accepted, attempts, dependency_nodes, read_edges = {}, [], {nid}, set()
+    complete = True
+    for port in ports:
+        looks, exhaustive = direction._port_directions(graph, port, {})
+        read_edges.update(eid for look in looks for eid in look["edge_ids"])
+        following, proof = direction._reciprocal_pair(graph, nid, port, {}, {})
+        if following is not None:
+            margins = direction._robust_direction_pair_margins(proof, port, following)
+            if min(margins) < POLICY["minimum_pair_margin_deg"]:
+                following = None
+        if following is None:
+            following, proof = direction._dependency_verified_pair(graph, nid, port, {}, proof)
+        deps = proof.get("direction_dependency_proofs", {})
+        dependency_nodes.update(deps.get("source_node_ids", []))
+        # A rejected guest at a T is permitted, but incomplete exploration is
+        # never converted to completeness by a different arm's passing pair.
+        complete &= exhaustive and bool(looks) or bool(proof.get("all_port_candidates"))
+        if following is not None:
+            margins = direction._robust_direction_pair_margins(proof, port, following)
+            if min(margins) >= POLICY["minimum_pair_margin_deg"]:
+                accepted[port] = following
+                proof["final_worst_case_competition_margins_deg"] = margins
+        attempts.append({"incoming_port": list(port), "selected_outgoing_port":
+                         None if following is None else list(following), "proof": proof})
+    # Dependency exploration may read rejected alternatives as well. Enumerate
+    # its entire finite closure and retain all used original edges explicitly.
+    for node in sorted(dependency_nodes):
+        for port in graph.nodes[node]["edges"]:
+            alternatives, _ = direction._port_directions(graph, port, {})
+            read_edges.update(eid for look in alternatives for eid in look["edge_ids"])
+    pairs = []
+    for a, b in itertools.combinations(ports, 2):
+        passed = accepted.get(a) == b and accepted.get(b) == a
+        proofs = [p["proof"] for p in attempts if tuple(p["incoming_port"]) in (a, b)
+                  and p["selected_outgoing_port"] is not None]
+        pairs.append({"ports": [list(a), list(b)], "pass": bool(passed),
+                      "deviations_deg": [p["maximum_pair_deviation_deg"] for p in proofs],
+                      "competition_margins_deg": [m for p in proofs for m in
+                           p.get("final_worst_case_competition_margins_deg", [])]})
+    return _plain({"schema": "independent-bounded-acyclic-source-direction-v2", "node_id": nid,
+        "all_directions_complete": bool(complete), "pairs": pairs,
+        "observations": original["observations"], "historical_local_table": original,
+        "fresh_source_pair_attempts": attempts, "dependency_source_node_ids": sorted(dependency_nodes),
+        "dependency_source_edge_ids": sorted(read_edges),
+        "source_branches_deleted": False, "graph_pairings_modified": False,
+        "producer_approval_consumed": False,
+        "maximum_pair_deviation_deg": 20., "minimum_pair_margin_deg": 18.})
+
+
 def _core_walks(graph, nid, start, end):
     allowed, stack, paths, states = set(graph.nodes[nid]["pixels"]), [(start, [start])], [], 0
     while stack:
@@ -271,6 +331,38 @@ def _core_evidence(source, graph, nid, directions):
             "all_original_adjacencies": [np.asarray(graph.xy(e), int).tolist() for e in sorted(adjacencies)],
             "raw_box_xyxy_px": [int(x0), int(y0), int(x1), int(y1)], "white_hole_count": len(holes),
             "direction_evidence": directions}
+
+
+def _core_evidence_v2(source, graph, nid, directions=None):
+    """Admit a bounded solid microcycle without deleting any source adjacency."""
+    directions = directions or _direction_table_v2(graph, nid)
+    result = _core_evidence(source, graph, nid, directions)
+    cyclic = "PENDING_CYCLIC_CORE_OUTSIDE_INDEPENDENT_SUBSET"
+    points = np.asarray(graph.xy(graph.nodes[nid]["pixels"]), int)
+    low, high = points.min(axis=0), points.max(axis=0) + 1
+    patch = np.asarray(source[low[1]:high[1], low[0]:high[0]])
+    ports = {tuple(p) for p in graph.nodes[nid]["edges"]}
+    pairs = [set(map(tuple, row["ports"])) for row in directions["pairs"] if row["pass"]]
+    covered = set().union(*pairs) if pairs else set()
+    unique = all(sum(p in pair for pair in pairs) == 1 for p in ports)
+    if cyclic in result["reasons"]:
+        result["reasons"].remove(cyclic)
+        if not bool(np.all(patch < POLICY["source_threshold"])):
+            result["reasons"].append("PENDING_CYCLIC_CORE_MINIMAL_RECTANGLE_IS_NOT_SOLID_ORIGINAL_INK")
+        if not ports or covered != ports or not unique:
+            result["reasons"].append("PENDING_CYCLIC_CORE_EXTERNAL_ARMS_LACK_COMPLETE_UNIQUE_PAIRING")
+        result["accepted_core_subset"] = "SOLID_RAW_RECTANGLE_MICROCYCLE_WITH_UNIQUE_EXTERNAL_PAIRS"
+    else:
+        result["accepted_core_subset"] = "TREE_WITHOUT_INTERNAL_FREE_ENDPOINT_OR_WHITE_HOLE"
+    result.update(pass_=not result["reasons"], schema="independent-raw-source-core-v2",
+        minimal_raw_box_xyxy_px=[int(low[0]), int(low[1]), int(high[0]), int(high[1])],
+        minimal_raw_box_all_black=bool(np.all(patch < POLICY["source_threshold"])),
+        minimal_raw_box_sha256=hashlib.sha256(patch.tobytes()).hexdigest(),
+        source_array_sha256=hashlib.sha256(source.tobytes()).hexdigest(),
+        original_adjacencies_removed=[], source_pixels_modified=False,
+        complete_external_unique_pairing=bool(ports and covered == ports and unique))
+    result["pass"] = result.pop("pass_")
+    return result
 
 
 def _free_cap(source, graph, terminal, native_endpoint):
