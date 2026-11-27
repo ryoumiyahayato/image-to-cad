@@ -25,6 +25,8 @@ from .contracts import stable_id
 DOMAIN_SCHEMA = "source-finite-junction-domain-v1"
 CONSTRUCTION_SCHEMA = "source-supported-new-candidate-shared-vertex-construction-v2"
 HALF = Fraction(1, 2)
+NEW_CANDIDATE_ROLES = {None, "COMPLETE_TARGET_STROKE", "COMPLETE_ATTACHED_GRAPH_STROKE"}
+PRIOR_IDENTITY_FIELDS = {"prior_source_binding", "prior_binding", "full_saved_geometry", "parent_object_id"}
 
 
 def producer_sha256():
@@ -62,7 +64,8 @@ def _finite_host_location(point, host_points):
     # Before construction this projection can have a representation-sized error;
     # the separate exact-intersection rounding proof must justify any insertion.
     # An independent saved auditor also checks exact incidence on the saved host.
-    interior = bool(internal_vertices or 0 < fraction < 1)
+    interior = bool(point not in (host_points[0], host_points[-1])
+                    and (internal_vertices or 0 < fraction < 1))
     return {"pass": interior, "host_segment_index": segment,
             "projection_parameter_exact": exact.encode_rational(fraction),
             "squared_distance_exact": exact.encode_rational(distance),
@@ -190,10 +193,10 @@ def prove_finite_junction_domain(source, graph, node_id, guest, host, end_index)
         if not all(item["pass"] for item in support.values()):
             raise ValueError("FINITE_JUNCTION_PARTICIPANT_TOUCHES_ORIGINAL_WHITE_OR_UNOBSERVED_CELL")
         report["pass"] = True
-        return report
+        return planner._plain(report)
     except (ValueError, KeyError, IndexError, TypeError) as error:
         report["failure_reasons"] = [str(error)]
-        return report
+        return planner._plain(report)
 
 
 def nearest_binary64_certificate(value, exact_value):
@@ -269,14 +272,48 @@ def _intersection_certificate(source, point, host_points, domain):
             "reason": None if passed else "NO_UNIQUE_CORRECTLY_ROUNDED_ORIGINAL_SOURCE_INTERSECTION"}
 
 
-def _host_index(terminal, rows, by_id):
-    index = terminal.get("host_path_index")
-    named = by_id.get(terminal.get("host_path_id"))
-    if index is None:
-        index = named
-    if (isinstance(index, bool) or not isinstance(index, int) or not 0 <= index < len(rows)
-            or named is not None and named != index):
-        raise ValueError("ATTACHMENT_HAS_NO_UNIQUE_CURRENT_NEW_HOST_REFERENCE")
+def _host_index(terminal, rows, by_id, *, guest_index=None):
+    """Resolve every supplied reference against this exact candidate sequence.
+
+    Missing fields may be inferred from the other reference; explicitly invalid
+    fields may not. The caller's map is checked against the actual rows rather
+    than treated as an authority. The terminal must belong to the guest row.
+    """
+    identities = [row.get("stroke_id") for row in rows]
+    if any(not isinstance(identity, str) or not identity for identity in identities):
+        raise ValueError("CANDIDATE_IDENTITY_MUST_BE_A_NONEMPTY_STRING")
+    actual = {identity: index for index, identity in enumerate(identities)}
+    if (len(actual) != len(rows) or by_id != actual
+            or any(type(value) is not int for value in by_id.values())):
+        raise ValueError("HOST_LOOKUP_DOES_NOT_MATCH_UNIQUE_ACTUAL_CANDIDATE_IDENTITIES")
+    has_name, has_index = "host_path_id" in terminal, "host_path_index" in terminal
+    if not has_name and not has_index:
+        raise ValueError("ATTACHMENT_HAS_NO_HOST_REFERENCE")
+    named = None
+    if has_name:
+        name = terminal["host_path_id"]
+        if not isinstance(name, str) or not name or name not in actual:
+            raise ValueError("EXPLICIT_HOST_ID_IS_UNKNOWN_OR_INVALID")
+        named = actual[name]
+    index = terminal.get("host_path_index") if has_index else named
+    if type(index) is not int or not 0 <= index < len(rows):
+        raise ValueError("EXPLICIT_HOST_INDEX_IS_INVALID")
+    if has_name and (named != index or rows[index]["stroke_id"] != terminal["host_path_id"]):
+        raise ValueError("EXPLICIT_HOST_NAME_INDEX_AND_OBJECT_IDENTITY_DISAGREE")
+    owners = [i for i, row in enumerate(rows)
+              if any(terminal is item for item in row.get("endpoint_evidence", []))]
+    if len(owners) != 1:
+        raise ValueError("HOST_REFERENCE_REQUIRES_ONE_ACTUAL_GUEST_IDENTITY")
+    if guest_index is None:
+        guest_index = owners[0]
+    if (type(guest_index) is not int or not 0 <= guest_index < len(rows)
+            or owners[0] != guest_index):
+        raise ValueError("TERMINAL_DOES_NOT_BELONG_TO_THE_REFERENCED_GUEST_OBJECT")
+    if guest_index == index or rows[guest_index] is rows[index]:
+        raise ValueError("ATTACHMENT_CANNOT_USE_ITSELF_AS_HOST")
+    if ("host_source_graph_edge_ids" in terminal
+            and terminal["host_source_graph_edge_ids"] != rows[index].get("source_graph_edge_ids")):
+        raise ValueError("HOST_SOURCE_BINDING_DOES_NOT_MATCH_REFERENCED_OBJECT")
     return index
 
 
@@ -310,18 +347,21 @@ def materialize_shared_vertices_v2(source, graph, rows, cores=None):
         by_id = {row["stroke_id"]: index for index, row in enumerate(original)}
         if len(by_id) != len(original):
             raise ValueError("DUPLICATE_INPUT_CANDIDATE_ID")
-        for index, row in enumerate(original):
-            if row.get("body_role") == "NECESSARY_PRIOR_FINITE_NEIGHBOR" or "prior_source_binding" in row:
+        # Preflight the complete input before observing or queuing any contact.
+        # All saved/prior identity markers forbid construction, even when a
+        # caller supplies a target-looking role beside an old-object binding.
+        for row in original:
+            if (any(row.get(key) not in NEW_CANDIDATE_ROLES for key in ("body_role", "role", "path_role"))
+                    or PRIOR_IDENTITY_FIELDS.intersection(row)):
                 raise ValueError("SHARED_VERTEX_CONSTRUCTOR_ACCEPTS_NEW_CANDIDATES_ONLY")
+        for index, row in enumerate(original):
             points = component._points(row)
             if any(Fraction.from_float(float(value)) != value for point in points for value in point):
                 raise ValueError("CONSTRUCTION_REQUIRES_BINARY64_SOURCE_GEOMETRY_NOT_SAVED_INVERSE_GEOMETRY")
             for end_index, terminal in enumerate(row.get("endpoint_evidence", [])):
                 if "host_path_index" not in terminal and "host_path_id" not in terminal:
                     continue
-                host_index = _host_index(terminal, original, by_id)
-                if index == host_index:
-                    raise ValueError("ATTACHMENT_CANNOT_USE_ITSELF_AS_HOST")
+                host_index = _host_index(terminal, original, by_id, guest_index=index)
                 host, point = original[host_index], points[0 if end_index == 0 else -1]
                 host_points = component._points(host)
                 domain = prove_finite_junction_domain(source, graph, terminal["node_id"], row, host, end_index)
@@ -413,6 +453,7 @@ def materialize_shared_vertices_v2(source, graph, rows, cores=None):
                                              "old_host_id": original[host_index]["stroke_id"],
                                              "new_host_id": result[host_index]["stroke_id"]}
                                             for index, end_index, host_index in references]
+        receipt["reference_validation"] = "ALL_SUPPLIED_NAMES_INDICES_OBJECT_IDENTITIES_AND_GUEST_OWNERSHIP"
         receipt.update({"pass": True, "original_host_vertices_retained": True,
                         "downstream_complete_component_checks_required": True,
                         "actual_saved_exact_contact_check_required": True,
@@ -439,6 +480,8 @@ class SharedCoordinateTransform:
         if len(roi) != 4 or any(not math.isfinite(float(value)) for value in roi):
             raise ValueError("INVALID_FINITE_EXPORT_ROI")
         self.roi = tuple(float(value) for value in roi)
+        if self.roi[0] >= self.roi[2] or self.roi[1] >= self.roi[3]:
+            raise ValueError("INVALID_FINITE_EXPORT_ROI")
         self.dpi = float(dpi)
         if not math.isfinite(self.dpi) or self.dpi <= 0:
             raise ValueError("INVALID_FINITE_EXPORT_DPI")
