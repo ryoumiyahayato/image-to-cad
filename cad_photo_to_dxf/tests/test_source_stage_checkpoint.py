@@ -111,6 +111,40 @@ def test_projection_retains_complete_finite_door_and_source_intervals():
     assert "attached_stroke_completion" not in projected
 
 
+def test_projection_serialization_and_mutation_isolation_match_former_complete_projection(tmp_path):
+    _, assembly, plan, adoption = source_state()
+    # Keep objects between other stages so moving this key to the end would
+    # change the real saved JSON bytes even though dictionary equality passes.
+    order = ["texts", "objects", *sorted(checkpoint._REQUIRED_STATE - {"texts", "objects"}),
+             "attached_stroke_completion"]
+    assembly = {key: assembly[key] for key in order}
+    assembly["annotations"] = {"observations": [{"text": "原图 Ω", "offset": -0.0}], "accepted": False}
+    assembly["doors"] = {"finite_members": deepcopy(assembly["objects"][1]["geometry"]["native_members"])}
+    originals = deepcopy((assembly, plan, adoption))
+    removed_ids = {obj["id"] for obj in adoption["objects"]}
+    former = {key: deepcopy(value) for key, value in assembly.items() if key != "attached_stroke_completion"}
+    former["objects"] = [deepcopy(obj) for obj in assembly["objects"] if obj["id"] not in removed_ids]
+
+    projected, removed = checkpoint.project_upstream(assembly, plan, adoption)
+    former_path, projected_path = tmp_path / "former.json", tmp_path / "projected.json"
+    checkpoint.save_json(former_path, former)
+    checkpoint.save_json(projected_path, projected)
+    assert projected_path.read_bytes() == former_path.read_bytes()
+    assert removed == sorted(removed_ids)
+    assert (assembly, plan, adoption) == originals
+
+    # Mutating complete projected members or other restored stages cannot
+    # change the historical assembly, its declaration or its source plan.
+    projected["objects"][1]["geometry"]["native_members"][0]["source_interval"][0] = 0.25
+    projected["texts"]["raw_evidence_files"][0]["sha256"] = "new-observation"
+    projected["annotations"]["observations"][0]["text"] = "new annotation"
+    assert (assembly, plan, adoption) == originals
+    projected_before_source_change = deepcopy(projected)
+    assembly["objects"][0]["geometry"]["start"][0] = 99.0
+    assembly["doors"]["finite_members"][0]["source_interval"][1] = 0.75
+    assert projected == projected_before_source_change
+
+
 @pytest.mark.parametrize("change", ["endpoint", "interval", "retirement", "prior_missing", "added_object_changed"])
 def test_projection_refuses_changed_finite_member_or_incomplete_stage_boundary(change):
     _, assembly, plan, adoption = source_state()

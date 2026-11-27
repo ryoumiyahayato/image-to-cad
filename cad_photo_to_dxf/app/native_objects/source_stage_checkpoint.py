@@ -309,8 +309,13 @@ def project_upstream(assembly, plan, adoption):
         evidence = obj["source_evidence"].get("attached_stroke_graph", {})
         _require(evidence.get("path") in plan["paths"] and evidence.get("plan_sha256") == digest_legacy(plan),
                  "SOURCE_STAGE_OLD_ATTACHED_PATH_BINDING_FAILED")
-    state = {key: deepcopy(value) for key, value in assembly.items() if key != "attached_stroke_completion"}
-    state["objects"] = [deepcopy(obj) for obj in assembly["objects"] if obj["id"] not in added]
+    # Preserve key order without allocating an unfiltered objects copy that
+    # would immediately be replaced by the complete filtered deep copies.
+    state = {
+        key: ([deepcopy(obj) for obj in value if obj["id"] not in added]
+              if key == "objects" else deepcopy(value))
+        for key, value in assembly.items() if key != "attached_stroke_completion"
+    }
     _require(set(state) == _REQUIRED_STATE, "SOURCE_STAGE_UPSTREAM_STATE_FIELDS_CHANGED_OR_MISSING")
     bindings = [_object_binding(obj) for obj in sorted(state["objects"], key=lambda obj: obj["id"])]
     _require(bindings == plan.get("prior_object_bindings") == adoption.get("prior_object_bindings"),
@@ -391,6 +396,7 @@ def build_checkpoint(*, evidence, request, previous_source, environment, resourc
     plan = read_json(evidence / "attached_strokes/plan.json")
     adoption = read_json(evidence / "attached_strokes/adoption.json")
     state, removed = project_upstream(read_json(original), plan, adoption)
+    del plan, adoption
     raw_references = verify_declared_raw_files(state, evidence)
     _require(not output.exists(), "SOURCE_STAGE_OUTPUT_ALREADY_EXISTS")
     output.mkdir(parents=True)
