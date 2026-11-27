@@ -4,6 +4,11 @@ This is the independent #59 experiment from A result commit
 `2010e6da30b4aa9812ec4730d338edf76fca6b2d`. Main remains the 436-object
 baseline. No merge, Windows build or CAD GUI exercise is performed here.
 
+**Final experiment status: `FAIL_PROTECTED_BASELINE`.** The ordinary run saved a
+436-object DXF with zero new attached objects. Its own exact fresh-process source
+replay passes, but comparison with the fixed original baseline fails. There is
+no newly accepted main drawing from this experiment.
+
 The [implementation contract](../../docs/native/ATTACHED_INK_CONTRACT_20261127.md)
 was frozen before the first ink gate executed (SHA-256
 `f0f44df88b9403d6f186cfe0a55afa1c827b40fc2c715ed64e0c4818b1c5c53f`).
@@ -89,10 +94,56 @@ The repair preserves pending and raw evidence, marks that search NOT_RUN, and
 propagates nested resource limits. It does not change the width/cap thresholds.
 The stable fresh run then completed in about 30 seconds with zero OCR calls.
 
-Ordinary saved-DXF generation, strict cold read and exact old-content protection
-are recorded in the subsequent execution receipt; this stage result alone does
-not claim their completion. Source scans, coordinates, OCR, fonts, models, DXFs
-and private report links are deliberately absent from this public directory.
+The stage result above was followed by the actual ordinary run described below.
+Source scans, coordinates, OCR, fonts, models, DXFs and private report links are
+absent from this public directory.
+
+## Actual ordinary output and independent acceptance
+
+The ordinary entry ran from the frozen execution commit
+`0824ba6b8fa4eb47e3929f05defe6580aa349eb1`. The public method commit
+`724f7ab63b2dc59dd94d211344c60ce7e09a4511` has the exact same complete Git tree,
+`f069ef96c109c68eaccda7ada479ea4b3e69f6e2`; it was fetched and compared. The
+different commit identities are retained. This later documentation does not
+replace the actual producer identity.
+
+The saved experimental DXF is 199,885 bytes, SHA-256
+`cef3ce3b8f0f456c4f1cdbbbba8aeec38f80d7b82db5944192d2bf8c9812a318`.
+It has 436 formal objects, 48 REVIEW entities and 55 named blocks. All four
+complete candidates remain pending and **zero are adopted**. The three endpoint
+results and all-prior contact gate agree with the fresh stage diagnostic.
+
+| Independent check | Actual result and scope |
+| --- | --- |
+| Current production source cold read | PASS: a new process rebuilt the graph from the unchanged original with `source_graph=None`; all 16 top-level v2 comparisons are exact. |
+| Current-run prior bindings | PASS: 436/436 bind to this run's actual saved entities and complete members. This does not prove equality to the old baseline. |
+| Fixed original baseline protection | **FAIL**: 5 old formal IDs are replaced by 5 new IDs, and one same-ID door object's block member changes numerically. |
+| Complete-object accounting | 430 old objects, including their recursive named-block content, are exactly retained; 5 have replaced IDs; 1 has changed block content. The larger count of 431 applies only to top-level entity snapshots. |
+| REVIEW, styles and layers | Exact preservation. Named-block counts match, but 2 wall block names and the door member differ. |
+| Saved-file native rendering | Baseline and new output have zero differing full-region RGB pixels. This does not override the strict file-level FAIL. Historical A differs at its four additions. |
+| New real-object delete/move tests | Not applicable: no new real object was adopted. Eight actual synthetic edit files remain separate evidence. |
+| CAD GUI / Windows / merge | Not run, as required by the independent-task boundary. |
+
+The 5 ID replacements are 3 REMAIN and 2 WALL objects. Small source-pixel
+coordinate changes and a changed parent-line ID are already present in the
+preceding-stage bindings, before this attached stage runs. A door block member
+also differs. The original upstream geometry, wall, door and DXF-writer source
+hashes are unchanged; recorded runtime package versions match. The old run does
+not provide enough CPU/BLAS binary-dispatch identity to establish a numerical
+root cause. This is a separate native geometry/identity preservation failure,
+not merely the coordinator's historical derived-value replay differences.
+Neither numerical comparison nor object IDs were patched to hide it.
+
+The ordinary driver took 1,661.94 seconds. Verified cached observations were
+reused: **0 new image OCR calls and 0 model inferences**. Eight cache misses were
+availability queries only; the four Tesseract subprocesses only checked version
+or languages. Exact source cold replay took 25.97 seconds inside the production
+verifier. All original PASS/FAIL receipts, early failures, raw ledgers and six
+source/baseline/A/new comparisons are retained in the private evidence delivery.
+
+The original 436-object drawing remains the valid protection baseline. The
+experimental drawing is explicitly labelled **not accepted**. The independent
+branch stays unmerged for the coordinator; no PR or Windows build was opened.
 
 ## Reproduction and handoff to #60
 
