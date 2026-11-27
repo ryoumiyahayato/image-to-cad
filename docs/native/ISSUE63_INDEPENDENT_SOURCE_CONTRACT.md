@@ -74,3 +74,48 @@ prior ports 和独立圆入口，再调用 `bounded_source_component.audit_bound
 旧几何、域内微小白穿、出口源臂不足、伪造缩窗／证书、圆半径／源像素
 修改、白格弧穿越反例。首个真实回执无论成功失败均独立保存；不回填
 #62 历史 v1 身份。
+
+## 5. 恢复实现的接口澄清（#63 评论 7218448576 后）
+
+方向 v2 是独立枚举实现；没有修改既有 direction helper 的 OR 条件。每条
+已使用或已排队的原方向臂记录有限 14 px 前缀，短臂全保留；经内部核心时
+枚举全部原简单路径。失败、太短、重复 edge、深度／状态截断仍记录原臂和
+实际读像素。完整方向候选至多 64，展开状态另有 8192 上限，依赖至多 64
+节点、8 轮；各轮只可引用更早轮证明。所有已参与的核心原邻接不变。
+
+有限 prior 的 source-stage helper 为 `prior_source_geometry_row(obj)`；它
+明确不声称保存冷读。`prior_source_points(obj)` 仅规范读取 `points` 或
+已知 LINE／无 members 的 WALL_SEGMENT `start/end`；完整原对象和哈希不改。
+actual reader 行则必须核对原 native 类型、全部 mm 顶点及其精确逆变换。
+验证器可额外接收 `expected_influence_domain`，组件必须用它绑定共同目标域。
+各次出入为不同 row，保存几何仍是原对象；新 type 不冒充 whole chain。
+
+`independent_sections` 是端口初步观察。组件必须用完整实际 context 再调用
+`measure_finite_port_sections`，并把最终截面全部读格并入实际证据域，再检查
+此前排除的 remote finding。有限 prior 缺少完整原身份时 pending，不能把
+完整对象改成几何相近的替代物。原文件保存前、保存后必须各自重算。
+
+圆入口为 `certify_finite_circle_source(source, actual_row, full_source_object,
+scope, *, roi, dpi, other_rows=(), forbidden_core_cells=())`。固定有理半角方向
+产生真圆上的径向截面；它们不是圆弧弦。二次根用固定 128 位 dyadic 外包：
+黑格最小圆距的下界、首白格最大圆距的上界构成保守平方半宽区间。该区间
+包含所有满足相应精确径向条件的半宽，**不能单独证明某个半宽可用**。
+最终同一参数向量必须用 `circle_cell_intersects` 和
+`circle_point_strictly_outside` 对自有截面黑格与全部共同白格精确重验；纯代数
+消去根号，不用近似距离决定 PASS。外包有额外候选只会导致精确拒绝或有限
+搜索 pending，不能将数值搜索未找到解写成物理无解。
+
+圆 row 的 `authorized_original_ring_cells_y_x0_x1` 限定可承担的原黑格；
+`finite_arc_domain.authorized_query_cells_y_x0_x1` 限定可查询源格。context
+相关性可以用预定 12 px 上界保守发现，但不是圆墨覆盖许可。共同 circle
+scope 必须包含目标窗与所有实际直线、端口和径向截面读格；未授权查询不能
+静默跳过圆。历史采样 replay、实际有限弧支持、独立径向界和共同模型结果
+分别保存。
+
+公开独立分派接受 `source_model="v2"`、完整 `prior_source_bindings` 和
+`circle_source_objects`（list 或 ID map），标准 `font_bindings` 与两文件 hash
+参数沿用。它只重建实际 targets，把原始 `actual_saved_prior_rows` 传给
+`bounded_source_component.audit_bounded_bodies`，不以完整旧路径先行重证阻断
+有限认证。旧 host 的局部来源／精确接触 locator 必须由共同组件补上对应
+finite-port 证书及接点域，不能被当作旧完整路径的 PASS。缺组件时显式
+`PENDING_BOUNDED_SOURCE_COMPONENT_NOT_READY`；v1 逻辑和默认入口保持。

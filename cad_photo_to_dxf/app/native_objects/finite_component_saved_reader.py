@@ -203,7 +203,8 @@ def _text_enclosure(entity, directory, bindings, roi, scale, font_cache):
     return proof
 
 
-def _member_geometry(entity, identity, parent, member_path, roi, scale, directory, bindings, font_cache):
+def _member_geometry(entity, identity, parent, member_path, roi, scale, directory, bindings, font_cache,
+                     *, source_model="v1", transform_chain=()):
     kind = entity.dxftype()
     row = {"object_id": identity, "parent_object_id": parent, "member_index": list(member_path),
            "kind": kind, "handle": entity.dxf.get("handle"), "closed": False,
@@ -214,6 +215,9 @@ def _member_geometry(entity, identity, parent, member_path, roi, scale, director
     points = []
     if kind == "LINE":
         points = [_source_point(p, roi, scale) for p in (entity.dxf.start, entity.dxf.end)]
+        if source_model == "v2":
+            row["native_mm_points_exact"] = [[_pack(p[0]), _pack(p[1])]
+                                             for p in (entity.dxf.start, entity.dxf.end)]
         row["bulges"] = [0., 0.]
         if not _planar(entity) or entity.dxf.start.z != 0. or entity.dxf.end.z != 0.:
             row["unsupported_reason"] = "NONPLANAR_NATIVE_LINE"
@@ -222,6 +226,8 @@ def _member_geometry(entity, identity, parent, member_path, roi, scale, director
     elif kind == "LWPOLYLINE":
         vertices = list(entity.get_points("xyseb"))
         points = [_source_point(v, roi, scale) for v in vertices]
+        if source_model == "v2":
+            row["native_mm_points_exact"] = [[_pack(v[0]), _pack(v[1])] for v in vertices]
         row.update(bulges=[-float(v[4]) for v in vertices], closed=bool(entity.closed),
                    widths=[[float(v[2]), float(v[3])] for v in vertices],
                    constant_width=float(entity.dxf.get("const_width", 0.)))
@@ -253,6 +259,15 @@ def _member_geometry(entity, identity, parent, member_path, roi, scale, director
         a, b = _source_point((cx - radius, cy + radius), roi, scale), _source_point((cx + radius, cy - radius), roi, scale)
         _set_bound(row, (*a, *b), "CONSERVATIVE_FULL_CIRCLE_AREA_BOUND")
         row["unsupported_reason"] = "CURVE_REQUIRES_EXACT_CURVE_AUDIT"
+        if source_model == "v2":
+            center = _source_point((cx, cy), roi, scale)
+            row.update(curve_geometry_supported=kind == "CIRCLE", curve_type=kind,
+                circle_center_exact=[_pack(v) for v in center], circle_radius_exact=_pack(radius / scale),
+                native_mm_circle_center_exact=[_pack(cx), _pack(cy)], native_mm_circle_radius_exact=_pack(radius),
+                actual_insert_transform_chain=list(transform_chain),
+                curve_parameter_domain={"kind": "FULL_CIRCLE"} if kind == "CIRCLE" else
+                    {"kind": "ACTUAL_SAVED_ARC_DEGREES", "start": _pack(entity.dxf.start_angle),
+                     "end": _pack(entity.dxf.end_angle)}, curve_replaced_by_chords=False)
     else:
         row["unsupported_reason"] = "UNSUPPORTED_NATIVE_MEMBER"
     if points:
@@ -301,7 +316,7 @@ def context_for_scope(reader, bbox_xyxy, *, exclude_object_ids=()):
 
 
 def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_sha256=None,
-                            source_path=None, expected_source_sha256=None):
+                            source_path=None, expected_source_sha256=None, source_model="v1"):
     """Cold-read persisted finite geometry with an external source frame.
 
     ``font_bindings`` maps a saved font name either to its adjacent file's
@@ -309,6 +324,8 @@ def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_
     It is a byte identity pin, never a producer glyph or source approval.
     """
     path = Path(path)
+    if source_model not in ("v1", "v2"):
+        raise ValueError("UNKNOWN_INDEPENDENT_SAVED_SOURCE_MODEL")
     if len(roi) != 4:
         raise ValueError("INVALID_SOURCE_FRAME")
     roi_q = tuple(_q(v) for v in roi)
@@ -339,7 +356,7 @@ def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_
                            "coverage_valid": False, "bbox_scope": "UNAVAILABLE",
                            "unsupported_reason": reason, "detail": detail})
 
-    def visit(entity, parent, member_path=(), block_stack=()):
+    def visit(entity, parent, member_path=(), block_stack=(), transform_chain=()):
         nonlocal exhausted
         identity = parent if not member_path else parent + "/member:" + ".".join(map(str, member_path))
         if exhausted:
@@ -351,7 +368,8 @@ def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_
         if entity.dxftype() != "INSERT":
             try:
                 geometries.append(_member_geometry(entity, identity, parent, member_path, roi_q,
-                                  scale, path.parent, font_bindings or {}, font_cache))
+                                  scale, path.parent, font_bindings or {}, font_cache,
+                                  source_model=source_model, transform_chain=transform_chain))
             except (ValueError, TypeError, ArithmeticError) as exc:
                 unknown(identity, parent, "INVALID_NATIVE_GEOMETRY", str(exc))
             return
@@ -368,12 +386,19 @@ def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_
             unknown(identity, parent, "BLOCK_EXTENSION_REQUIRES_CLIPPING_AUDIT")
         skipped = []
         try:
+            transform = {"block_name": entity.dxf.name,
+                "insert_exact": [_pack(v) for v in entity.dxf.insert],
+                "scales_exact": [_pack(entity.dxf.get(k, 1.)) for k in ("xscale", "yscale", "zscale")],
+                "rotation_degrees_exact": _pack(entity.dxf.get("rotation", 0.)),
+                "extrusion_exact": [_pack(v) for v in entity.dxf.get("extrusion", (0., 0., 1.))]}
             virtual = list(entity.virtual_entities(skipped_entity_callback=lambda member, reason:
                            skipped.append({"native_type": member.dxftype(), "reason": reason})))
             for index, member in enumerate(virtual):
-                visit(member, parent, (*member_path, index), (*block_stack, entity.dxf.name))
+                visit(member, parent, (*member_path, index), (*block_stack, entity.dxf.name),
+                      (*transform_chain, transform))
             for index, attribute in enumerate(entity.attribs, start=len(virtual)):
-                visit(attribute, parent, (*member_path, index), (*block_stack, entity.dxf.name))
+                visit(attribute, parent, (*member_path, index), (*block_stack, entity.dxf.name),
+                      (*transform_chain, transform))
             if skipped:
                 unknown(identity, parent, "UNTRANSFORMED_BLOCK_MEMBERS", skipped)
         except (ValueError, TypeError, ZeroDivisionError, ezdxf.DXFError) as exc:
@@ -406,7 +431,8 @@ def saved_source_geometries(path, roi, dpi, *, font_bindings=None, expected_dxf_
                                           "CERTIFIED_CONSERVATIVE_OUTLINE_BOUND" for r in geometries)
     counts["unresolved_members"] = sum(r["kind"] == "UNRESOLVED" for r in geometries)
     return {
-        "schema": SCHEMA, "policy": dict(POLICY), "reader_sha256": sha256(__file__),
+        "schema": SCHEMA if source_model == "v1" else "independent-finite-component-saved-reader-v2",
+        "policy": dict(POLICY), "reader_sha256": sha256(__file__),
         "dxf_sha256": before, "source_sha256": actual_source,
         "externally_bound_source_bytes": expected_source_sha256 is not None and actual_source is not None,
         "roi_xyxy": list(roi), "dpi": dpi, "mm_per_source_pixel_exact": _pack(scale),

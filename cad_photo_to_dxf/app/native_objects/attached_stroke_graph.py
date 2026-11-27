@@ -9,6 +9,7 @@ and its free-ended, four-port policy unchanged.
 from __future__ import annotations
 
 from copy import deepcopy
+from fractions import Fraction
 import hashlib
 import itertools
 import json
@@ -22,18 +23,22 @@ from scipy.ndimage import label
 from . import connections as paths
 from . import attached_stroke_contacts as prior_contacts
 from . import attached_stroke_ink as attached_ink
-from . import attached_stroke_component as attached_component
+from . import bounded_source_component as attached_component
 from . import attached_stroke_width_exact as attached_width
+from . import bounded_stroke_field_v2 as bounded_field
+from . import finite_source_junction as finite_junction
+from . import finite_source_ports as finite_ports
+from . import finite_circle_source as finite_circle
 from . import text_contact_geometry as contact
 from . import transverse_stroke_geometry as transverse
 from .circle_endpoint_contacts import _segment_cells
 from .contracts import save_json, stable_id
 
 
-SCHEMA = "source-attached-stroke-graph-plan-v3-component-exact"
+SCHEMA = "source-attached-stroke-graph-plan-v4-bounded-source"
 FIELD = "attached_stroke_graph"
 POLICY = {
-    "version": "finite-attached-source-tree-decompositions-v3-component-exact",
+    "version": "finite-attached-source-decompositions-v4-bounded-source",
     "finite_direction_spans_px": [6.0, 8.0, 12.0],
     "minimum_observed_direction_chord_px": 4.0,
     "maximum_pair_deviation_deg": 20.0,
@@ -405,27 +410,52 @@ def _fit_native(source, raw, endpoints):
 
 def _attachment_endpoint(source, graph, terminal, host_geometry):
     nid, port = terminal["node_id"], tuple(terminal["port"])
-    samples = np.asarray(_directions(graph, port)[-1]["source_points_px"])
-    # Use the observed finite incoming arm; its outward ray may reach the
-    # separately fitted host only inside this actual original junction core.
-    a, u = samples[0], _unit(samples[-1] - samples[0])
+    samples = _directions(graph, port)[-1]["source_points_px"]
+    a = tuple(attached_width.rational(v) for v in samples[0])
+    u = tuple(attached_width.rational(samples[-1][k]) - a[k] for k in (0, 1))
+    if not any(u):
+        raise ValueError("ATTACHED_SOURCE_ARM_HAS_ZERO_EXACT_DIRECTION")
+    # This is new candidate generation. Intersect the original integer source
+    # chord and the actual finite host with rational arithmetic, then round
+    # once to the declared native binary64 representation. No determinant or
+    # endpoint epsilon can authorize an otherwise invalid finite contact.
     core = graph.xy(graph.nodes[nid]["pixels"])
-    low, high = core.min(axis=0) - 0.5, core.max(axis=0) + 0.5
+    low = tuple(Fraction(int(core[:, k].min())) - Fraction(1, 2) for k in (0, 1))
+    high = tuple(Fraction(int(core[:, k].max())) + Fraction(1, 2) for k in (0, 1))
     candidates = []
+    def cross(left, right):
+        return left[0] * right[1] - left[1] * right[0]
     for index, (c, d) in enumerate(zip(host_geometry["points"], host_geometry["points"][1:])):
-        c, d = np.asarray(c), np.asarray(d)
-        matrix = np.column_stack((u, -(d - c)))
-        if abs(float(np.linalg.det(matrix))) < 1e-9:
+        c, d = tuple(attached_width.rational(v) for v in c), tuple(attached_width.rational(v) for v in d)
+        v = tuple(d[k] - c[k] for k in (0, 1))
+        determinant = cross(u, v)
+        if determinant == 0:
             continue
-        t, fraction = np.linalg.solve(matrix, c - a)
-        point = a + t * u
-        if (-1e-9 <= fraction <= 1 + 1e-9 and t <= 0.5
-                and np.all(point >= low) and np.all(point <= high)
-                and _black_segment(source, a, point)):
-            if not any(np.linalg.norm(point - np.asarray(p["native_endpoint_px"])) < 1e-7 for p in candidates):
-                candidates.append({"native_endpoint_px": point.tolist(), "host_segment_index": index,
-                                   "finite_host_fraction": float(fraction), "incoming_ray_parameter_px": float(t),
-                                   "closed_source_pixel_cells": _segment_cells(a, point), "all_original_ink": True})
+        offset = tuple(c[k] - a[k] for k in (0, 1))
+        t, fraction = cross(offset, v) / determinant, cross(offset, u) / determinant
+        point = tuple(a[k] + t * u[k] for k in (0, 1))
+        host_points = [tuple(attached_width.rational(v) for v in p) for p in host_geometry["points"]]
+        internal_vertex = point in host_points[1:-1] and point not in (host_points[0], host_points[-1])
+        if not ((0 < fraction < 1 or (fraction in (0, 1) and internal_vertex)) and t <= 0
+                and all(low[k] <= point[k] <= high[k] for k in (0, 1))):
+            continue
+        # Reject out-of-domain intersections before binary64 conversion or
+        # raster enumeration. A nearly parallel line can intersect arbitrarily
+        # far away even though the admissible source core is finite.
+        actual = tuple(Fraction(float(p)) for p in point)
+        cells = set(attached_width.segment_cells(a, point) if a != point else finite_junction._point_cells(a))
+        cells |= set(attached_width.segment_cells(a, actual) if a != actual else finite_junction._point_cells(a))
+        if all(0 <= x < source.shape[1] and 0 <= y < source.shape[0] and source[y, x] < 128 for x, y in cells):
+            encoded = [attached_width.encode_rational(p) for p in point]
+            if not any(p["original_source_intersection_exact"] == encoded for p in candidates):
+                candidates.append({"native_endpoint_px": [float(p) for p in point], "host_segment_index": index,
+                    "finite_host_fraction": float(fraction), "incoming_ray_parameter_px": float(t) * math.sqrt(float(sum(v*v for v in u))),
+                    "finite_host_fraction_exact": attached_width.encode_rational(fraction),
+                    "source_chord_ray_parameter_exact": attached_width.encode_rational(t),
+                    "original_source_intersection_exact": encoded,
+                    "native_rounding_certificate": [finite_junction.nearest_binary64_certificate(float(p), p) for p in point],
+                    "construction_arithmetic": "EXACT_SOURCE_CHORD_FINITE_HOST_INTERSECTION_THEN_ONE_BINARY64_ROUNDING",
+                    "closed_source_pixel_cells": [list(p) for p in sorted(cells)], "all_original_ink": True})
     if len(candidates) != 1:
         raise ValueError("ATTACHED_END_HAS_NO_UNIQUE_SOURCE_SUPPORTED_FINITE_HOST_INTERSECTION")
     return candidates[0]
@@ -682,7 +712,7 @@ def _text_intersections(rows, prior_objects):
             if contact._inside(np.asarray(row["source_path_px"]), box).sum() >= 3]
 
 
-def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
+def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None, circle_source_objects=None, dpi=200):
     source = np.asarray(gray)
     context = source_graph or contact.build_text_contact_source_graph(source, roi)
     graph = context.graph
@@ -690,17 +720,32 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
     if list(map(int, roi)) != list(graph.roi) or hashlib.sha256(source[y0:y1, x0:x1].tobytes()).hexdigest() != context.source_crop_hash:
         raise ValueError("ATTACHED_STROKE_SOURCE_GRAPH_IDENTITY_CHANGED")
     bindings = [object_binding(o) for o in sorted(prior_objects, key=lambda o: o["id"])]
+    circles = deepcopy(sorted(circle_source_objects or [], key=lambda o: o["id"]))
+    if len({o["id"] for o in circles}) != len(circles):
+        raise ValueError("DUPLICATE_COMPLETE_CIRCLE_SOURCE_ID")
     if len({o["id"] for o in bindings}) != len(bindings):
         raise ValueError("DUPLICATE_PRIOR_OBJECT_ID")
+    dependency_files = ("attached_stroke_component.py", "finite_component_source_audit.py",
+                        "finite_component_saved_reader.py", "circular_markers.py",
+                        "connections.py", "text_contact_geometry.py", "transverse_stroke_geometry.py")
     result = {"schema": SCHEMA, "policy": deepcopy(POLICY),
               "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "additional_producer_sha256": {"attached_stroke_ink.py": attached_ink.producer_sha256(),
-                                              "attached_stroke_component.py": attached_component.producer_sha256(),
+                                              **{name: hashlib.sha256(Path(__file__).with_name(name).read_bytes()).hexdigest()
+                                                 for name in dependency_files},
+                                              "bounded_source_component.py": attached_component.producer_sha256(),
+                                              "bounded_stroke_field_v2.py": bounded_field.producer_sha256(),
+                                              "bounded_stroke_field.py": bounded_field.kernel.producer_sha256(),
+                                              "finite_source_junction.py": finite_junction.producer_sha256(),
+                                              "finite_source_ports.py": hashlib.sha256(Path(finite_ports.__file__).read_bytes()).hexdigest(),
+                                              "finite_circle_source.py": hashlib.sha256(Path(finite_circle.__file__).read_bytes()).hexdigest(),
                                               "attached_stroke_width_exact.py": hashlib.sha256(Path(attached_width.__file__).read_bytes()).hexdigest(),
                                               "attached_stroke_contacts.py": prior_contacts.producer_sha256()},
               "roi_xyxy_px": list(map(int, roi)), "original_source_crop_xyxy_px": context.crop_bbox,
               "original_source_crop_array_sha256": context.source_crop_hash,
               "prior_object_bindings": bindings, "prior_object_bindings_sha256": _digest(bindings),
+              "circle_source_objects": circles, "circle_source_objects_sha256": _digest(circles),
+              "model_coordinate_frame": {"dpi": dpi, "source_coordinates": "UNCHANGED_ORIGINAL_IMAGE_PIXELS"},
               "paths": [], "components": [], "pending": [], "source_pixels_modified": False,
               "original_source_pixels_modified": False, "transcription_supplied": False}
     owners, refusals = transverse._owners(source, context, bindings)
@@ -807,12 +852,13 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                 record["selected_decomposition_index"] = selected["index"]
                 record["candidate_paths"] = rows
                 record["candidate_status"] = "GEOMETRY_CANDIDATES_NOT_FORMAL_OBJECTS"
-                rows, shared_vertex_construction = attached_component.materialize_shared_vertices(
+                rows, shared_vertex_construction = finite_junction.materialize_shared_vertices_v2(
                     source, graph, rows, cores)
                 record["shared_finite_vertex_construction"] = shared_vertex_construction
                 record["candidate_paths"] = rows
                 component_proof = attached_component.prove_finite_component(
-                    source, graph, rows, owner=owner, cores=cores)
+                    source, graph, rows, owner=owner, cores=cores, prior_objects=bindings,
+                    circle_source_objects=circles, roi=roi, dpi=dpi)
                 component_proof["original_source_crop_xyxy_px"] = context.crop_bbox
                 component_proof["original_source_crop_array_sha256"] = context.source_crop_hash
                 record["finite_component_responsibility"] = component_proof
@@ -842,6 +888,8 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                                            "status": proof["status"], "failure_reasons": proof["failure_reasons"]})
                 record["attachment_responsibility_checks"] = raw_checks
                 failed_gates = []
+                if not component_proof["pass"]:
+                    failed_gates.append("COMPLETE_BOUNDED_COMPONENT_RESPONSIBILITY_NOT_PROVED")
                 if not shared_vertex_construction["pass"]:
                     failed_gates.append("EXACT_SHARED_FINITE_VERTEX_CONSTRUCTION_NOT_ESTABLISHED")
                 if not all(check["pass"] for check in raw_checks):
@@ -901,11 +949,13 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
 
 
 def verify_attached_stroke_graph_plan(gray, roi, plan, *, source_graph=None):
-    if plan.get("schema") != SCHEMA or plan.get("prior_object_bindings_sha256") != _digest(plan.get("prior_object_bindings")):
+    if (plan.get("schema") != SCHEMA or plan.get("prior_object_bindings_sha256") != _digest(plan.get("prior_object_bindings"))
+            or plan.get("circle_source_objects_sha256") != _digest(plan.get("circle_source_objects"))):
         return {"pass": False, "reason": "ATTACHED_GRAPH_PRIOR_BINDING_INTEGRITY_FAILED", "checks": {"prior_bindings": False}}
     try:
-        replay = plan_attached_stroke_graph(gray, roi, plan["prior_object_bindings"], source_graph=source_graph)
-        checks = {key: plan.get(key) == value for key, value in replay.items()}
+        replay = plan_attached_stroke_graph(gray, roi, plan["prior_object_bindings"], source_graph=source_graph,
+            circle_source_objects=plan["circle_source_objects"], dpi=plan["model_coordinate_frame"]["dpi"])
+        checks = {key: key in plan and plan[key] == replay.get(key) for key in set(plan) | set(replay)}
         return {"pass": all(checks.values()), "checks": checks,
                 "reason": "EXACT_ATTACHED_GRAPH_SOURCE_REPLAY" if all(checks.values()) else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH",
                 "replayed_paths": replay["paths"], "new_OCR_calls": 0}
@@ -913,10 +963,11 @@ def verify_attached_stroke_graph_plan(gray, roi, plan, *, source_graph=None):
         return {"pass": False, "checks": {}, "reason": "ATTACHED_GRAPH_SOURCE_REPLAY_ERROR", "detail": str(exc)}
 
 
-def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_graph=None):
+def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_graph=None, circle_source_objects=None, dpi=200):
     from .text_contact_adoption import _native_object
 
-    plan = plan_attached_stroke_graph(gray, roi, objects, source_graph=source_graph)
+    plan = plan_attached_stroke_graph(gray, roi, objects, source_graph=source_graph,
+        circle_source_objects=circle_source_objects, dpi=dpi)
     key = _digest(plan)
     adopted, decisions = [], []
     for index, row in enumerate(plan["paths"]):
@@ -926,14 +977,14 @@ def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_gra
                                    "original_source_crop_xyxy_px": plan["original_source_crop_xyxy_px"],
                                    "original_source_crop_array_sha256": plan["original_source_crop_array_sha256"],
                                    "source_pixels_modified": False,
-                                   FIELD: {"schema": "source-attached-stroke-native-v3-component-exact", "source_sha256": source_sha,
+                                   FIELD: {"schema": "source-attached-stroke-native-v4-bounded-source", "source_sha256": source_sha,
                                            "plan_sha256": key, "path_index": index, "path_sha256": _digest(row), "path": deepcopy(row)}},
                "editing_scope": "one complete independent source stroke; attached and crossing strokes remain separate",
                "status": "SOURCE_SUPPORTED_COMPLETE_ATTACHED_GRAPH_STROKE"}
         adopted.append(obj)
         decisions.append({"id": obj["id"], "adopted": True, "decision": "ADD_COMPLETE_INDEPENDENT_GRAPH_STROKE",
                           "component_id": row["component_id"], "native_kind": kind, "retired_ids": []})
-    result = {"schema": "source-attached-stroke-adoption-v3-component-exact", "source_sha256": source_sha,
+    result = {"schema": "source-attached-stroke-adoption-v4-bounded-source", "source_sha256": source_sha,
               "roi_xyxy_px": list(roi), "plan": plan, "objects": adopted,
               "prior_object_bindings": plan["prior_object_bindings"], "decisions": decisions,
               "retired_ids": [], "pending": deepcopy(plan["pending"]), "new_OCR_calls": 0}

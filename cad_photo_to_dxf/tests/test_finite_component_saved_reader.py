@@ -341,3 +341,28 @@ def test_certified_distant_text_does_not_block_complete_local_source(tmp_path):
     assert result["status"] == "COMPLETE_SOURCE_PASS", result["failure_reasons"]
     text = next(r for r in result["context_relevance"]["members"] if r["object_id"] == "distant-text")
     assert text["relation"] == "PROVED_DISJOINT" and text["actual_conflict_asserted"] is False
+
+
+def test_v2_dispatch_reconstructs_actual_targets_and_preserves_exact_junction_gate(tmp_path):
+    dxf, source = _saved_source_t(tmp_path)
+    result = audit_saved_source_component(dxf, source, [0, 0, 128, 128], 25.4, ["guest", "host"],
+        source_model="v2", prior_source_bindings=[], circle_source_objects=[],
+        expected_dxf_sha256=sha256(dxf), expected_source_sha256=sha256(source))
+    assert result["schema"] == "independent-saved-finite-component-source-acceptance-v2"
+    assert result["independent_routes"]["pass"], result["independent_routes"]
+    assert len(result["reconstructed_source_bindings"]) == 2
+    guest = next(r for r in result["reconstructed_source_bindings"] if r["stroke_id"] == "guest")
+    terminal = guest["endpoint_evidence"][1]
+    assert terminal["independent_exact_finite_contact_squared_distance"]["numerator"] == "0"
+    assert terminal["independent_raw_ink_junction_domain"]["pass"]
+    assert not result["prior_whole_routes_reconstructed_as_targets"]
+    assert "finite_component_model" in result
+
+
+def test_v2_dispatch_does_not_let_new_source_model_hide_saved_white_geometry(tmp_path):
+    dxf, source = _saved_source_t(tmp_path, variant="wrong_geometry")
+    result = audit_saved_source_component(dxf, source, [0, 0, 128, 128], 25.4, ["guest", "host"],
+        source_model="v2", prior_source_bindings={}, circle_source_objects=[],
+        expected_dxf_sha256=sha256(dxf), expected_source_sha256=sha256(source))
+    assert not result["pass"] and result["status"] == "HARD_REJECT_SAVED_FINITE_GEOMETRY"
+    assert result["finite_component_model"]["status"] == "NOT_RUN_INDEPENDENT_SOURCE_PREREQUISITE_PENDING"

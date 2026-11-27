@@ -149,6 +149,67 @@ def test_finite_host_global_end_is_not_authorized_by_a_repeated_internal_vertex(
     assert not location["pass"]
 
 
+def test_read_only_domain_recomputes_finite_prior_subrange_without_reauthorizing_or_modifying_old_host():
+    import hashlib
+
+    import cv2
+    import numpy as np
+
+    from app.native_objects import finite_source_ports as ports
+    from app.native_objects.text_contact_geometry import build_text_contact_source_graph
+
+    source = np.full((180, 540), 255, np.uint8)
+    cv2.line(source, (20, 100), (500, 100), 0, 3)
+    cv2.line(source, (100, 50), (100, 100), 0, 3)
+    graph = build_text_contact_source_graph(source, [0, 0, 540, 180]).graph
+    node_id = next(nid for nid, node in graph.nodes.items() if len(node["edges"]) == 3)
+    pair = next(item["pair"] for item in planner._node_directions(graph, node_id)["all_pair_candidates"] if item["pass"])
+    first, second = map(tuple, pair)
+    pairs = {(node_id, first): second, (node_id, second): first}
+    arrivals = {(node_id, port) for port in graph.nodes[node_id]["edges"] if port not in (first, second)}
+    routes = planner._walk_decomposition(graph, {"nodes": sorted(graph.nodes), "edges": list(range(len(graph.edges)))},
+                                        pairs, arrivals)
+    route = next(row for row in routes if any(
+        terminal["kind"] == "OBSERVED_COMPLETE_STROKE_ATTACHMENT" for terminal in row["terminals"]))
+    end_index = next(index for index, terminal in enumerate(route["terminals"])
+                     if terminal["kind"] == "OBSERVED_COMPLETE_STROKE_ATTACHMENT")
+    points = [[100., 100.], [100., 50.]] if end_index == 0 else [[100., 50.], [100., 100.]]
+    guest = {"stroke_id": "NEW_GUEST", "representation": {"points": points, "bulges": [0., 0.], "closed": False},
+             "source_graph_edge_ids": route["source_graph_edge_ids"], "source_node_ids": route["source_node_ids"],
+             "source_path_px": graph.xy(route["source_pixels"]).tolist(), "endpoint_evidence": route["terminals"]}
+    prior = {"id": "UNCHANGED_OLD_HOST", "kind": "LINE", "layer": "STRUCTURE",
+             "geometry": {"start": [20., 100.], "end": [500., 100.]},
+             "source_evidence": {"source_path_points": [[x, 100] for x in range(18, 503)],
+                 "source_pixels_modified": False, "original_source_crop_xyxy_px": [0, 0, 540, 180],
+                 "original_source_crop_array_sha256": hashlib.sha256(source.tobytes()).hexdigest()}}
+    influence = ports.build_influence_domain(source, graph, [guest], [87, 37, 114, 114])
+    certified = ports.certify_finite_prior_port(source, graph, ports.prior_source_geometry_row(prior), prior,
+                                               influence, roi=[0, 0, 540, 180], dpi=25.4)
+    assert certified["pass"], certified["failures"]
+    host = certified["rows"][0]
+    # The positive is deliberately a partial source edge, not an old whole
+    # target chain that would happen to pass both validators.
+    assert not junction.component._chain_binding(source, graph, host)["pass"]
+    before = deepcopy(host), deepcopy(prior), source.tobytes(), planner._plain(graph.nodes)
+    proof = junction.prove_finite_junction_domain(source, graph, node_id, guest, host, end_index)
+    assert proof["pass"], proof["failure_reasons"]
+    assert proof["host_chain_binding_scope"] == "RECOMPUTED_READ_ONLY_FINITE_PRIOR_PORT"
+    assert proof["whole_prior_object_reauthorized"] is False
+    assert proof["complete_chain_bindings"]["host"]["producer_approval_consumed"] is False
+    changed = deepcopy(host)
+    changed["source_edge_subranges"][0]["start_index"] += 1
+    rejected = junction.prove_finite_junction_domain(source, graph, node_id, guest, changed, end_index)
+    assert not rejected["pass"]
+    assert not rejected["complete_chain_bindings"]["host"]["pass"]
+    assert "source_edge_subranges" in rejected["complete_chain_bindings"]["host"]["differences"]
+    assert (host, prior, source.tobytes(), planner._plain(graph.nodes)) == before
+    # Read-only permission never grants the new-candidate constructor authority
+    # to rewrite any portion of the old native object.
+    unchanged, construction = junction.materialize_shared_vertices_v2(source, graph, [guest, host])
+    assert not construction["pass"] and unchanged == [guest, host]
+    assert construction["failure_reasons"] == ["SHARED_VERTEX_CONSTRUCTOR_ACCEPTS_NEW_CANDIDATES_ONLY"]
+
+
 def test_actual_writer_exit_then_cold_reader_preserves_contacts_and_refuses_corruption(tmp_path):
     directory = tmp_path / "checkpoint"
     manifest = checkpoint.run(directory)

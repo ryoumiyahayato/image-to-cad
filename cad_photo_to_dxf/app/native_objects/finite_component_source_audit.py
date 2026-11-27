@@ -228,63 +228,190 @@ def _direction_table(graph, nid):
 
 
 def _direction_table_v2(graph, nid):
-    """Fresh, bounded reciprocal proofs; no producer pairing receipt is read.
+    """Finite acyclic proofs with every original core route and read branch.
 
-    Keep the historical short observations even when a longer acyclic proof is
-    necessary.  Robust (worst selected versus best competing) margins apply to
-    direct proofs too, not just to pairs used by a later dependency round.
+    The older helper is unchanged. This separate reader implementation extends
+    its route enumeration: a representative core BFS is not an equivalence
+    proof, and failed/short/truncated paths are part of the evidence read set.
     """
     from . import structure_contact_geometry as direction
-
     original = _direction_table(graph, nid)
-    ports = sorted(graph.nodes[nid]["edges"])
-    accepted, attempts, dependency_nodes, read_edges = {}, [], {nid}, set()
-    complete = True
-    for port in ports:
-        looks, exhaustive = direction._port_directions(graph, port, {})
-        read_edges.update(eid for look in looks for eid in look["edge_ids"])
-        following, proof = direction._reciprocal_pair(graph, nid, port, {}, {})
-        if following is not None:
-            margins = direction._robust_direction_pair_margins(proof, port, following)
-            if min(margins) < POLICY["minimum_pair_margin_deg"]:
-                following = None
-        if following is None:
-            following, proof = direction._dependency_verified_pair(graph, nid, port, {}, proof)
-        deps = proof.get("direction_dependency_proofs", {})
-        dependency_nodes.update(deps.get("source_node_ids", []))
-        # A rejected guest at a T is permitted, but incomplete exploration is
-        # never converted to completeness by a different arm's passing pair.
-        complete &= exhaustive and bool(looks) or bool(proof.get("all_port_candidates"))
-        if following is not None:
-            margins = direction._robust_direction_pair_margins(proof, port, following)
-            if min(margins) >= POLICY["minimum_pair_margin_deg"]:
-                accepted[port] = following
-                proof["final_worst_case_competition_margins_deg"] = margins
-        attempts.append({"incoming_port": list(port), "selected_outgoing_port":
-                         None if following is None else list(following), "proof": proof})
-    # Dependency exploration may read rejected alternatives as well. Enumerate
-    # its entire finite closure and retain all used original edges explicitly.
-    for node in sorted(dependency_nodes):
-        for port in graph.nodes[node]["edges"]:
-            alternatives, _ = direction._port_directions(graph, port, {})
-            read_edges.update(eid for look in alternatives for eid in look["edge_ids"])
-    pairs = []
-    for a, b in itertools.combinations(ports, 2):
-        passed = accepted.get(a) == b and accepted.get(b) == a
-        proofs = [p["proof"] for p in attempts if tuple(p["incoming_port"]) in (a, b)
-                  and p["selected_outgoing_port"] is not None]
-        pairs.append({"ports": [list(a), list(b)], "pass": bool(passed),
-                      "deviations_deg": [p["maximum_pair_deviation_deg"] for p in proofs],
-                      "competition_margins_deg": [m for p in proofs for m in
-                           p.get("final_worst_case_competition_margins_deg", [])]})
-    return _plain({"schema": "independent-bounded-acyclic-source-direction-v2", "node_id": nid,
-        "all_directions_complete": bool(complete), "pairs": pairs,
+    reads = {"edges": set(), "nodes": set(), "pixels": set(), "failed": [], "core_walks": {}}
+    visited, queue, complete_closure = set(), [nid], True
+    while queue:
+        current = queue.pop()
+        if current in visited:
+            continue
+        if len(visited) >= direction.POLICY["maximum_direction_dependency_nodes"]:
+            complete_closure = False
+            reads["failed"].append({"reason": "DIRECTION_DEPENDENCY_NODE_BOUND", "queued_nodes": sorted(queue + [current])})
+            break
+        visited.add(current)
+        for port in sorted(graph.nodes[current]["edges"]):
+            _, _, dependencies = _all_core_port_directions(graph, port, {}, reads)
+            queue.extend(sorted(dependencies - visited))
+    resolved, proofs = {}, []
+    for round_index in range(direction.POLICY["maximum_direction_depth"]):
+        additions = []
+        for current in sorted(visited):
+            table = _all_core_direction_pairs(graph, current, resolved, reads)
+            for pair in table["pairs"]:
+                if not pair["pass"]:
+                    continue
+                for incoming, outgoing in (pair["ports"], list(reversed(pair["ports"]))):
+                    key = current, tuple(incoming)
+                    if key in resolved or tuple(incoming) in graph.nodes[current]["pairing"]:
+                        continue
+                    proof = {"round": round_index, "node_id": current, "incoming_port": incoming,
+                        "outgoing_port": outgoing, "pair": pair, "all_port_candidates": table["pairs"],
+                        "only_earlier_round_dependencies_used": True,
+                        "earlier_proof_ids": sorted({p for rows in table["all_direction_alternatives"]
+                            for look in rows["looks"] for p in look["verified_direction_dependencies"]})}
+                    additions.append((key, tuple(outgoing), _digest(_plain(proof)), proof))
+        if not additions:
+            break
+        for key, outgoing, proof_id, proof in additions:
+            resolved[key] = {"outgoing": outgoing, "proof_id": proof_id}
+            proofs.append({"proof_id": proof_id, **proof})
+    table = _all_core_direction_pairs(graph, nid, resolved, reads)
+    table["all_directions_complete"] &= complete_closure
+    if not complete_closure:
+        for pair in table["pairs"]:
+            pair["pass"] = False
+    return _plain({**table, "schema": "independent-bounded-acyclic-source-direction-v2", "node_id": nid,
         "observations": original["observations"], "historical_local_table": original,
-        "fresh_source_pair_attempts": attempts, "dependency_source_node_ids": sorted(dependency_nodes),
-        "dependency_source_edge_ids": sorted(read_edges),
+        "direction_dependency_proofs": proofs, "dependency_source_node_ids": sorted(reads["nodes"]),
+        "dependency_source_edge_ids": sorted(reads["edges"]),
+        "evidence_read_pixels_px": np.asarray(graph.xy(sorted(reads["pixels"])), int).tolist(),
+        "failed_short_and_truncated_branches": reads["failed"],
+        "all_internal_core_walks": list(reads["core_walks"].values()),
+        "dependency_closure_complete": complete_closure,
         "source_branches_deleted": False, "graph_pairings_modified": False,
         "producer_approval_consumed": False,
         "maximum_pair_deviation_deg": 20., "minimum_pair_margin_deg": 18.})
+
+
+def _all_core_port_directions(graph, first, resolved, reads):
+    from . import structure_contact_geometry as direction
+    policy = direction.POLICY
+    queue, looks, dependencies, complete, states = [(tuple(first), [], [], 0, [])], [], set(), True, 0
+
+    def finite_edge_prefix(port):
+        pixels = list(graph.oriented(port))
+        points = np.asarray(graph.xy(pixels), int)
+        axial = diagonal = 0
+        for index in range(1, len(points)):
+            step = np.abs(points[index] - points[index - 1])
+            diagonal += int(step.sum() == 2)
+            axial += int(step.sum() != 2)
+            if component._length_reached(axial, diagonal, policy["direction_span_px"]):
+                return pixels[:index + 1]
+        return pixels
+
+    def record_port(port):
+        reads["edges"].add(port[0])
+        prefix = finite_edge_prefix(port)
+        reads["pixels"].update(prefix)
+        node_ids = [graph.edges[port[0]]["nodes"][port[1]]]
+        if len(prefix) == len(graph.edges[port[0]]["pixels"]):
+            node_ids.append(graph.edges[port[0]]["nodes"][1 - port[1]])
+        for node_id in node_ids:
+            reads["nodes"].add(node_id)
+            reads["pixels"].update(graph.nodes[node_id]["pixels"])
+
+    record_port(tuple(first))
+    while queue:
+        if states >= POLICY["maximum_core_walk_states"] or len(looks) >= policy["maximum_direction_states"]:
+            for port, _, used, _, _ in queue:
+                record_port(port)
+                reads["failed"].append({"port": list(first), "reason": "DIRECTION_STATE_BOUND",
+                                        "pending_port": list(port), "edge_ids": used + [port[0]]})
+            complete = False
+            break
+        port, raw, used, depth, proof_ids = queue.pop()
+        states += 1
+        record_port(port)
+        if port[0] in used:
+            complete = False
+            reads["failed"].append({"port": list(first), "reason": "DIRECTION_REUSES_EDGE", "edge_ids": used + [port[0]]})
+            continue
+        part = finite_edge_prefix(port)
+        variants = [part]
+        if raw:
+            node_id = graph.edges[port[0]]["nodes"][port[1]]
+            try:
+                walks = _core_walks(graph, node_id, raw[-1], part[0])
+            except ValueError as exc:
+                complete = False
+                reads["failed"].append({"port": list(first), "reason": str(exc), "node_id": node_id})
+                continue
+            key = node_id, raw[-1], part[0]
+            reads["core_walks"][key] = {"node_id": node_id, "all_walks_px":
+                [np.asarray(graph.xy(walk), int).tolist() for walk in walks]}
+            variants = [raw + walk[1:] + part[1:] for walk in walks]
+        next_used = used + [port[0]]
+        node_id = graph.edges[port[0]]["nodes"][1 - port[1]]
+        incoming, node = (port[0], 1 - port[1]), graph.nodes[node_id]
+        for pixels in variants:
+            reads["pixels"].update(pixels)
+            points = graph.xy(pixels)
+            spans = np.r_[0., np.linalg.norm(np.diff(points, axis=0), axis=1).cumsum()]
+            finished = spans[-1] >= policy["direction_span_px"] or bool(node["terminal"])
+            if finished:
+                k = min(len(points) - 1, int(np.searchsorted(spans, policy["direction_span_px"])))
+                vector = points[k] - points[0]
+                if np.linalg.norm(vector) < policy["minimum_direction_span_px"]:
+                    complete = False
+                    reads["failed"].append({"port": list(first), "reason": "DIRECTION_CHORD_TOO_SHORT",
+                                            "edge_ids": next_used, "source_points_px": points.tolist()})
+                else:
+                    looks.append({"vector": vector.tolist(), "edge_ids": next_used,
+                        "source_start_px": points[0].tolist(), "source_end_px": points[k].tolist(),
+                        "verified_direction_dependencies": proof_ids, "span_px": float(spans[k])})
+                continue
+            if depth >= policy["maximum_direction_depth"]:
+                complete = False
+                reads["failed"].append({"port": list(first), "reason": "DIRECTION_DEPTH_BOUND", "edge_ids": next_used})
+                continue
+            known = resolved.get((node_id, incoming))
+            if incoming in node["pairing"]:
+                choices, next_proofs = [node["pairing"][incoming]], proof_ids
+            elif known:
+                choices, next_proofs = [known["outgoing"]], proof_ids + [known["proof_id"]]
+            else:
+                dependencies.add(node_id)
+                choices, next_proofs = [p for p in node["edges"] if p != incoming], proof_ids
+            for choice in choices:
+                record_port(choice)
+                queue.append((choice, pixels, next_used, depth + 1, next_proofs))
+    if len(looks) > policy["maximum_direction_states"]:
+        complete = False
+        reads["failed"].append({"port": list(first), "reason": "DIRECTION_CORE_VARIANT_STATE_BOUND",
+                                "observed_variant_count": len(looks)})
+    return looks, complete and bool(looks), dependencies
+
+
+def _all_core_direction_pairs(graph, nid, resolved, reads):
+    ports = sorted(graph.nodes[nid]["edges"])
+    observed = {p: _all_core_port_directions(graph, p, resolved, reads) for p in ports}
+    complete = all(value[1] for value in observed.values())
+    intervals = {}
+    for a, b in itertools.combinations(ports, 2):
+        values = [_angle(x["vector"], tuple(-v for v in y["vector"]))
+                  for x in observed[a][0] for y in observed[b][0]]
+        intervals[frozenset((a, b))] = (min(values), max(values)) if values else (180., 180.)
+    pairs = []
+    for a, b in itertools.combinations(ports, 2):
+        low, high = intervals[frozenset((a, b))]
+        margins = [min((intervals[frozenset((p, c))][0] for c in ports if c not in (a, b)),
+                       default=180.) - high for p in (a, b)]
+        pairs.append({"ports": [list(a), list(b)], "deviations_deg": [low, high],
+            "competition_margins_deg": margins,
+            "pass": complete and a[0] != b[0] and high <= POLICY["maximum_pair_deviation_deg"]
+                    and min(margins) >= POLICY["minimum_pair_margin_deg"]})
+    return {"node_id": nid, "all_directions_complete": complete, "pairs": pairs,
+        "all_direction_alternatives": [{"port": list(p), "complete": observed[p][1],
+                                         "looks": observed[p][0]} for p in ports]}
 
 
 def _core_walks(graph, nid, start, end):
@@ -403,8 +530,10 @@ def _free_cap(source, graph, terminal, native_endpoint):
             "observations": observations, "all_original_component_pixels_retained": True}
 
 
-def _reconstruct_routes(source, graph, records, target_ids, scope):
+def _reconstruct_routes(source, graph, records, target_ids, scope, *, source_model="v1", actual_prior_rows=()):
     bodies, issues, ownership = [], [], []
+    direction_table = _direction_table_v2 if source_model == "v2" else _direction_table
+    core_evidence = _core_evidence_v2 if source_model == "v2" else _core_evidence
     prepared = {r["object_id"]: exact.prepare_polyline(exact_points(r)) for r in records}
     owned = {r["object_id"]: [] for r in records}
     for eid, edge in enumerate(graph.edges):
@@ -461,12 +590,12 @@ def _reconstruct_routes(source, graph, records, target_ids, scope):
                     raw += alternatives[0][1:] + part[1:]
                     core_routes.append({"node_id": nid, "all_walks_px": [np.asarray(graph.xy(p), int).tolist() for p in alternatives]})
                     if nid not in direction_cache:
-                        direction_cache[nid] = _direction_table(graph, nid)
+                        direction_cache[nid] = direction_table(graph, nid)
                     table = direction_cache[nid]
                     pair = next(p for p in table["pairs"] if set(map(tuple, p["ports"])) == set(incidence[nid]))
                     if not pair["pass"]:
                         issues.append({"reason": "PENDING_ROUTE_DIRECTION_OR_COMPETITOR", "body_id": oid, "node_id": nid})
-                    core_cache[nid] = _core_evidence(source, graph, nid, table)
+                    core_cache[nid] = core_evidence(source, graph, nid, table)
                 else:
                     raw = part
                 used.append(eid)
@@ -520,8 +649,35 @@ def _reconstruct_routes(source, graph, records, target_ids, scope):
             else:
                 terminal["kind"] = "OBSERVED_COMPLETE_STROKE_ATTACHMENT"
                 hosts = [other for other in bodies if other is not body and nid in other["source_node_ids"][1:-1]]
+                if source_model == "v2":
+                    # A prior host is a locator here, never a renewed complete
+                    # path. The shared component must independently certify its
+                    # finite port and historical whole-object identity later.
+                    for prior in actual_prior_rows:
+                        if not prior.get("geometry_supported"):
+                            continue
+                        prior_points = exact_points(prior)
+                        if exact.point_polyline_distance_squared(endpoint, prior_points):
+                            continue
+                        local_edges = []
+                        for port in node["edges"]:
+                            if port[0] in body["source_graph_edge_ids"]:
+                                continue
+                            observations = component.source_observations(graph, port)
+                            if observations and all(exact.point_polyline_distance_squared(tuple(p), prior_points) <= 4
+                                                    for o in observations for p in o["source_points_px"]):
+                                local_edges.append(port[0])
+                        if len(set(local_edges)) == 2:
+                            hosts.append({"stroke_id": prior["object_id"],
+                                "representation": {"points": prior["points"], "bulges": prior["bulges"], "closed": False},
+                                "representation_exact_points": [_encoded(p) for p in prior_points],
+                                "source_graph_edge_ids": sorted(set(local_edges)), "source_node_ids": [None, nid, None],
+                                "prior_parent_locator": prior["parent_object_id"]})
                 if len(hosts) == 1:
                     terminal["host_path_id"] = hosts[0]["stroke_id"]
+                    if "prior_parent_locator" in hosts[0]:
+                        terminal["finite_prior_host_parent_id"] = hosts[0]["prior_parent_locator"]
+                        terminal["host_requires_necessary_prior_proof"] = True
                     point = native[0 if end == 0 else -1]
                     host = [tuple(exact.decode_rational(v) for v in p) for p in hosts[0]["representation_exact_points"]]
                     distance = exact.point_polyline_distance_squared(point, host)
@@ -530,7 +686,7 @@ def _reconstruct_routes(source, graph, records, target_ids, scope):
                         issues.append({"reason": "LIMITED_ACTUAL_FINITE_ATTACHMENT_HAS_NONZERO_GAP", "body_id": body["stroke_id"],
                                        "end": end, "distance_squared": exact.encode_rational(distance)})
                     if nid not in direction_cache:
-                        direction_cache[nid] = _direction_table(graph, nid)
+                        direction_cache[nid] = direction_table(graph, nid)
                     directions = direction_cache[nid]
                     guest_port = tuple(terminal["port"])
                     host_ports = {tuple(p) for p in node["edges"] if p[0] in hosts[0]["source_graph_edge_ids"]}
@@ -545,7 +701,16 @@ def _reconstruct_routes(source, graph, records, target_ids, scope):
                     terminal["independent_attachment_axis_angles_deg"] = angles
                     if len(host_ports) != 2 or not angles or min(angles) < POLICY["minimum_attachment_axis_separation_deg"]:
                         issues.append({"reason": "PENDING_ATTACHMENT_DIRECTION_SEPARATION", "body_id": body["stroke_id"], "end": end})
-                    core_cache[nid] = _core_evidence(source, graph, nid, directions)
+                    core_cache[nid] = core_evidence(source, graph, nid, directions)
+                    if source_model == "v2" and "prior_parent_locator" not in hosts[0]:
+                        from .finite_source_junction import prove_finite_junction_domain
+                        domain = prove_finite_junction_domain(source, graph, nid, body, hosts[0], end)
+                        terminal["independent_raw_ink_junction_domain"] = domain
+                        if not domain["pass"]:
+                            issues.append({"reason": "PENDING_INDEPENDENT_FINITE_RAW_JUNCTION_DOMAIN",
+                                           "body_id": body["stroke_id"], "end": end, "details": domain.get("failure_reasons", [])})
+                    elif source_model == "v2":
+                        terminal["junction_domain_requires_component_finite_prior_certificate"] = True
                 else:
                     issues.append({"reason": "PENDING_ATTACHMENT_HAS_NO_UNIQUE_COMPLETE_SAVED_HOST", "body_id": body["stroke_id"], "end": end})
     for nid, proof in core_cache.items():
@@ -557,13 +722,21 @@ def _reconstruct_routes(source, graph, records, target_ids, scope):
 
 
 def audit_saved_source_component(dxf_path, source_path, roi, dpi, target_ids, *, font_bindings=None,
-                                expected_dxf_sha256=None, expected_source_sha256=None):
+                                expected_dxf_sha256=None, expected_source_sha256=None, source_model="v1",
+                                prior_source_bindings=None, circle_source_objects=None):
     """Accept only the actual saved finite component under the frozen subset.
 
     Target IDs are locators, not an expected object count or a source truth.
     Necessary finite neighbors are discovered from saved geometry and the raw
     connected source component inside the independently computed local window.
     """
+    if source_model == "v2":
+        return _audit_saved_source_component_v2(dxf_path, source_path, roi, dpi, target_ids,
+            font_bindings=font_bindings, expected_dxf_sha256=expected_dxf_sha256,
+            expected_source_sha256=expected_source_sha256, prior_source_bindings=prior_source_bindings,
+            circle_source_objects=circle_source_objects)
+    if source_model != "v1":
+        raise ValueError("UNKNOWN_INDEPENDENT_FINITE_SOURCE_MODEL")
     reader = saved_source_geometries(dxf_path, roi, dpi, font_bindings=font_bindings,
         expected_dxf_sha256=expected_dxf_sha256, source_path=source_path,
         expected_source_sha256=expected_source_sha256)
@@ -701,4 +874,127 @@ def audit_saved_source_component(dxf_path, source_path, roi, dpi, target_ids, *,
     report["report_binding_sha256"] = _digest({"dxf": report["dxf_sha256"], "source": report["source_sha256"],
         "source_array": report["source_array_sha256"], "reader": report["reader_sha256"],
         "auditor": report["audit_sha256"], "graph": report["fresh_graph"], "target_ids": sorted(actual_targets)})
+    return _plain(report)
+
+
+def _audit_saved_source_component_v2(dxf_path, source_path, roi, dpi, target_ids, *, font_bindings=None,
+                                    expected_dxf_sha256=None, expected_source_sha256=None,
+                                    prior_source_bindings=None, circle_source_objects=None):
+    """Cold-read targets, then ask the common model for finite prior context.
+
+    A full historical prior support failure is retained as a diagnostic. Only
+    the finite-port certificate may prove its exclusion from the complete read
+    domain. Actual saved context is always supplied, without geometry fallback.
+    """
+    reader = saved_source_geometries(dxf_path, roi, dpi, font_bindings=font_bindings,
+        expected_dxf_sha256=expected_dxf_sha256, source_path=source_path,
+        expected_source_sha256=expected_source_sha256, source_model="v2")
+    with Image.open(source_path) as image:
+        source = np.asarray(image.convert("L"))
+    if sha256(source_path) != reader["source_sha256"]:
+        raise ValueError("SOURCE_CHANGED_DURING_INDEPENDENT_COLD_READ")
+    target_ids = set(target_ids)
+    targets = [r for r in reader["geometries"] if r["object_id"] in target_ids or r["parent_object_id"] in target_ids]
+    report = {"schema": "independent-saved-finite-component-source-acceptance-v2",
+        "policy": {**POLICY, "accepted_core_subset": "ALL_ORIGINAL_CORE_ROUTES_AND_SOLID_UNIQUELY_PAIRED_MICROCYCLES",
+            "prior_responsibility": "SOURCE_BOUND_FINITE_PORT_WITH_COMPLETE_ACTUAL_EVIDENCE_DOMAIN",
+            "circle_responsibility": "ACTUAL_CIRCLE_FINITE_ARC_AND_INDEPENDENT_RADIAL_OBSERVATIONS"},
+        "audit_sha256": sha256(__file__), "reader_sha256": reader["reader_sha256"],
+        "dxf_sha256": reader["dxf_sha256"], "source_sha256": reader["source_sha256"],
+        "source_array_sha256": hashlib.sha256(source.tobytes()).hexdigest(),
+        "target_ids": sorted(target_ids), "saved_reader_counts": reader["counts"],
+        "saved_identity_errors": reader["identity_errors"], "producer_approval_consumed": False,
+        "source_decode": "PIL_GRAYSCALE_WITHOUT_RESIZE_ROTATION_OR_PIXEL_REPAIR",
+        "geometry_modified": False, "geometry_wrong_or_scan_ambiguous_asserted": False,
+        "formal_adoption_verdict": "NOT_ESTABLISHED_BY_LOCAL_SOURCE_ACCEPTANCE",
+        "pass": False, "status": "PENDING_INDEPENDENT_SOURCE_EVIDENCE", "failure_reasons": []}
+    represented = {r["object_id"] for r in targets} | {r["parent_object_id"] for r in targets}
+    if not target_ids or not target_ids <= represented or any(not r["geometry_supported"] for r in targets):
+        report["failure_reasons"] = ["PENDING_ACTUAL_SAVED_TARGET_MISSING_OR_UNSUPPORTED"]
+        return report
+    actual_targets = {r["object_id"] for r in targets}
+    from .finite_source_ports import _canonical_window
+    scope = _canonical_window(source, targets)
+    report["model_window"] = scope
+    context = context_for_scope(reader, scope, exclude_object_ids=actual_targets)
+    report["context_relevance"] = context
+    members = {r["object_id"]: r for r in reader["geometries"]}
+    actual_prior_rows = [r for r in reader["geometries"] if r["object_id"] not in actual_targets]
+    linear_related, curve_related, unresolved = [], [], []
+    for entry in context["members"]:
+        if entry["relation"] in ("PROVED_DISJOINT", "PROVED_EMPTY"):
+            continue
+        row = members[entry["object_id"]]
+        if row["geometry_supported"]:
+            linear_related.append(row)
+        elif row.get("curve_geometry_supported") and row.get("curve_type") == "CIRCLE":
+            curve_related.append(row)
+        else:
+            unresolved.append({"object_id": row["object_id"], "relation": entry["relation"],
+                "reason": row.get("extent_unknown_reason", row.get("unsupported_reason", "UNSUPPORTED_RELEVANT_CONTEXT"))})
+    supports = [_finite_support(source, row) for row in targets]
+    report["finite_support"] = supports
+    report["unresolved_relevant_context"] = unresolved
+    report["actual_related_circle_ids"] = [r["object_id"] for r in curve_related]
+    report["historical_prior_whole_support_diagnostics"] = [_finite_support(source, row) for row in linear_related]
+    report["whole_prior_failures_require_finite_read_domain_certificate"] = True
+    pairs = _pair_checks(source, targets + linear_related, actual_targets)
+    report["exact_saved_finite_contacts"] = pairs
+    context_graph = build_text_contact_source_graph(source, roi)
+    graph = context_graph.graph
+    report["fresh_graph"] = {"source_crop_sha256": context_graph.source_crop_hash,
+        "skeleton_sha256": hashlib.sha256(graph.skel.tobytes()).hexdigest(),
+        "source_graph_rebuilt_from_unmodified_image": True,
+        "graph_source_sha256": sha256(build_text_contact_source_graph.__code__.co_filename)}
+    bodies, cores, routes = _reconstruct_routes(source, graph, targets, actual_targets, scope,
+        source_model="v2", actual_prior_rows=linear_related)
+    report["independent_routes"] = routes
+    report["independent_shared_cores"] = [{"node_id": nid, **proof} for nid, proof in sorted(cores.items())]
+    report["reconstructed_source_bindings"] = bodies
+    report["prior_whole_routes_reconstructed_as_targets"] = False
+    priors = list((prior_source_bindings or {}).values()) if isinstance(prior_source_bindings, dict) else list(prior_source_bindings or [])
+    circles = list((circle_source_objects or {}).values()) if isinstance(circle_source_objects, dict) else list(circle_source_objects or [])
+    prerequisites = (routes["pass"] and len(bodies) == len(targets) and all(s["pass"] for s in supports)
+                     and pairs["pass"] and not unresolved and not reader["identity_errors"]
+                     and reader["enumeration_complete"])
+    if prerequisites:
+        try:
+            from . import bounded_source_component as bounded
+        except ImportError as exc:
+            model = {"pass": False, "status": "PENDING_BOUNDED_SOURCE_COMPONENT_NOT_READY",
+                     "failure_reasons": [str(exc)], "stage_executed": False}
+        else:
+            model = bounded.audit_bounded_bodies(source, graph, bodies, cores=cores,
+                prior_objects=priors, circle_source_objects=circles, roi=roi, dpi=dpi,
+                actual_saved_prior_rows=actual_prior_rows)
+    else:
+        model = {"pass": False, "status": "NOT_RUN_INDEPENDENT_SOURCE_PREREQUISITE_PENDING",
+            "failure_reasons": ["STOP_BEFORE_JOINT_MODEL_AND_COMPETITION"],
+            "skipped_joint_model_is_not_an_infeasibility_proof": True, "stage_executed": False}
+    report["finite_component_model"] = model
+    failures = report["failure_reasons"]
+    if reader["identity_errors"] or not reader["enumeration_complete"]:
+        failures.append("SAVED_DXF_MEMBERSHIP_INCOMPLETE")
+    if not expected_source_sha256:
+        failures.append("EXTERNAL_ORIGINAL_SOURCE_HASH_REQUIRED")
+    if not all(s["pass"] for s in supports):
+        failures.append("ACTUAL_TARGET_FINITE_SOURCE_SUPPORT_FAILED")
+    if not pairs["pass"]:
+        failures.append("EXACT_FINITE_CONTACT_OR_DUPLICATE_FAILED")
+    if unresolved:
+        failures.append("RELEVANT_CONTEXT_NOT_INDEPENDENTLY_RESOLVED")
+    if not routes["pass"] or len(bodies) != len(targets):
+        failures.append("INDEPENDENT_COMPLETE_TARGET_SOURCE_ROUTE_NOT_ESTABLISHED")
+    if not model["pass"]:
+        failures.append("COMPLETE_BOUNDED_COMPONENT_MODEL_NOT_ESTABLISHED")
+    report["pass"] = not failures
+    hard = any(s["status"].startswith("HARD_REJECT") for s in supports) or bool(pairs["positive_length_overlaps"])
+    hard |= any(h["status"].startswith("HARD_REJECT") for h in pairs["contacts"])
+    report["status"] = "COMPLETE_SOURCE_PASS" if report["pass"] else "HARD_REJECT_SAVED_FINITE_GEOMETRY" if hard else (
+        "PENDING_BOUNDED_SOURCE_COMPONENT_NOT_READY" if model["status"] == "PENDING_BOUNDED_SOURCE_COMPONENT_NOT_READY"
+        else "PENDING_INDEPENDENT_BOUNDED_SOURCE_EVIDENCE")
+    report["report_binding_sha256"] = _digest({"dxf": report["dxf_sha256"], "source": report["source_sha256"],
+        "source_array": report["source_array_sha256"], "reader": report["reader_sha256"],
+        "auditor": report["audit_sha256"], "graph": report["fresh_graph"], "target_ids": sorted(actual_targets),
+        "full_prior_bindings_sha256": _digest(priors), "full_circle_source_objects_sha256": _digest(circles)})
     return _plain(report)

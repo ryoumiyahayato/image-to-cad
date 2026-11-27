@@ -178,8 +178,18 @@ def prove_finite_junction_domain(source, graph, node_id, guest, host, end_index)
         report["all_original_arm_spokes"] = spokes
         if not all(item["pass"] for item in spokes):
             raise ValueError("CONTACT_HAS_NO_ORIGINAL_BLACK_CONNECTION_TO_EVERY_SOURCE_ARM")
-        bindings = {"guest": component._chain_binding(source, graph, guest),
-                    "host": component._chain_binding(source, graph, host)}
+        if host.get("body_role") == "NECESSARY_PRIOR_FINITE_PORT":
+            from . import finite_source_ports
+
+            host_binding = finite_source_ports.validate_finite_port_certificate(source, graph, host)
+            report["host_chain_binding_scope"] = "RECOMPUTED_READ_ONLY_FINITE_PRIOR_PORT"
+            report["whole_prior_object_reauthorized"] = False
+            report["finite_prior_validator_sha256"] = hashlib.sha256(
+                Path(finite_source_ports.__file__).read_bytes()).hexdigest()
+        else:
+            host_binding = component._chain_binding(source, graph, host)
+            report["host_chain_binding_scope"] = "COMPLETE_NEW_TARGET_SOURCE_CHAIN"
+        bindings = {"guest": component._chain_binding(source, graph, guest), "host": host_binding}
         report["complete_chain_bindings"] = bindings
         if not all(item["pass"] for item in bindings.values()):
             raise ValueError("JUNCTION_PARTICIPANT_HAS_NO_COMPLETE_SAME_SOURCE_CHAIN")
