@@ -2,9 +2,14 @@
 
 **研发版：`0.3.0-dev` · 整体产品 `LOCAL_NO_GO`；`main` 持续保存最新经过验证的有效开发源码，不是正式发行版。**
 
-**[Windows 一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)** · [产品合同](docs/project/NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md) · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md)
+**[Windows 一页使用说明](docs/native/WINDOWS_CAD_QUICKSTART_ZH.md)** · [产品意图与知识包](docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md) · [当前任务](docs/project/CURRENT_TASK.md) · [项目状态](docs/project/PROJECT_STATUS.md) · [Agent 指引](AGENTS.md)
 
-## Windows 程序与当前主图
+**全仓库唯一最高产品与架构准则：[根 AGENTS.md](AGENTS.md) 与 [产品意图与知识包实施指南](docs/project/PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md)。** 以纯图像输入为主攻，高召回机械提取层、机器可执行制图知识包与模型总控层、独立全页残差分析层为目标路线；原四分之一裁片只作历史验证材料，不是产品总纲或下一步路线。
+
+<details>
+<summary>历史验证：Windows 程序与四分之一裁片（非项目总纲）</summary>
+
+## Windows 程序与历史验证图
 
 **[本版程序下载入口：Windows #699 完整交付项](https://github.com/ryoumiyahayato/image-to-cad/actions/runs/45790101851/artifacts/15103796104)**。图纸、匹配字体及许可由配套结果包提供，私人图纸不在公开仓库发布。
 
@@ -108,6 +113,8 @@ Linux LibreCAD 2.2.1.6 已实际整体移动 C07 目标路径、整体删除 LAU
 
 上一批 `QUARTER_circle_characters_3f51048.dxf` 为 426 正式对象：三个固定目标 D/E/D 圆字完成，六处旧裸圆同 ID 升级，LAUNDRY 原长曲线补齐有证末段。其实际改字、圆字整删与路径整删、Windows #692 和保存限制均按原执行版本保留，见[圆字阶段记录](docs/native/CIRCLE_CHARACTER_COMPLETION_20261125.md)。该阶段的 C07 缺线未完成结论属于历史；本批只更新上表两条指定路径，未改写其他旧待修项。
 
+</details>
+
 ## 我们要得到什么
 
 使用者提供扫描图片、TIFF 或 PDF，软件利用**固定规则、图像算法、OCR、机器学习和必要的图形约束**识别并重新绘制，输出具有合理对象边界的二维 DXF：
@@ -121,6 +128,9 @@ Linux LibreCAD 2.2.1.6 已实际整体移动 C07 目标路径、整体删除 LAU
 **不要求算法理解工程语义；识别与“读懂”的概念不同。** 能按有依据的规则恢复完整、可删改的对象，即是有效的技术路径。不能把像素小碎线、HATCH 色块或整个背景图像冒充完整 CAD 对象。
 
 交付以**实际保存 DXF**为准，重新打开之后需要能够删、移、改，且旧对象/邻居保持。像素覆盖率、测试数和实体数量均只是诊断，不代表产品成功。
+
+<details>
+<summary>历史验证：圆形标记阶段（2026-11-22）</summary>
 
 ## 历史：圆形标记阶段的实际实现范围（2026-11-22）
 
@@ -147,6 +157,8 @@ LibreCAD 实际操作绑定 **e2 主图**：移动 CM-01 的圆字整体并将 F
 
 LibreCAD XDATA 丢失、INSERT `zscale=0`、字体／样式变化等保存限制继续 **LIMITED**；旧三行注释失败结论不改写。当前仍为纸面毫米，整体产品 `LOCAL_NO_GO`，工程师完整修图工时验收 `NOT_RUN`。源码已通过 PR #46 正常合入 main `1147420cf278b29f58127ae3c3697209a527115e`；实际主图／Windows 仍绑定 38，版本详见[当前任务](docs/project/CURRENT_TASK.md)。
 
+</details>
+
 ## 从源码运行
 
 本仓库的原生开发环境已在 **Linux x86_64 / Python 3.12** 的指定依赖与字体/模型条件下验证。具体输入命令、资源校验与无缓存运行使用 [docs/native/REPRODUCE.md](docs/native/REPRODUCE.md)，不要根据旧临时路径执行。
@@ -166,6 +178,6 @@ python3.12 -m venv .venv
 
 每轮以一项**中等规模、能增加实际内容**的任务推进：代码＋真实 DXF＋邻居保护/必要反例＋冷读/编辑检查。正确结果进入 `main`；失败研究保留在私有证据和临时非默认代码，不作为产品成果。同步前核对远端 HEAD、CI 和当前实际 DXF；合并之后清理冗余分支，不强推、不重写历史、不公开受限原图或字体模型。
 
-当前目标仍是冻结旧图连续四分之一区域的完整内容恢复。最终人工验收要求包括全部遗漏补绘、核对、纠错：**修图总人工时间不超过同范围、同质量从零重画的一半**。尚无工程师实测，不能声称达到目标。
+冻结旧图连续四分之一区域是历史验证样本，不是项目总目标。历史人工验收门槛包括全部遗漏补绘、核对、纠错：**修图总人工时间不超过同范围、同质量从零重画的一半**。尚无工程师实测，不能声称达到目标。
 
 历史日期状态与旧像素/HATCH研究仅作证据参考，不再决定下一步产品研发优先级。

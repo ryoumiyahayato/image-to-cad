@@ -1,84 +1,109 @@
 # Agent operating protocol
 
-The user's current task determines the working mode. A request to implement,
-fix, validate, merge or clean up authorizes the necessary work within that scope.
-Do not turn an execution request into a read-only audit or stop after a plan.
-Existing authorization persists across steps. Ask only for an unresolved,
-material decision or an action outside the authorized scope.
+## Evidence taxonomy
 
-## Evidence and acceptance
+Every report must label statements as one of:
 
-Keep these evidence classes distinct:
+- **Code fact:** directly observed function, parameter, entity type, file, commit, or branch state.
+- **Automated-test fact:** test, audit, count, CI, or validation artifact result.
+- **User UAT fact:** direct LibreCAD observation or operation reported by the user.
+- **Hypothesis:** a possible explanation requiring verification.
 
-- **Code fact:** observed source, parameter, entity, commit or branch state.
-- **Automated-test fact:** actual test, cold read, render, CI or audit result.
-- **Agent GUI fact:** actions the agent actually performed in the named CAD,
-  with saved files, screenshots and reopen evidence.
-- **Engineer UAT fact:** a real engineer's work, including missing-content
-  repair, final checks and measured time. Agent samples do not replace it.
-- **Hypothesis:** an explanation still requiring source or execution evidence.
+A hypothesis must never be written as a confirmed root cause.
 
-The product contract is [native editable object reconstruction](NATIVE_OBJECT_PRODUCT_BASELINE_20261120.md).
-Publishing code or merging maintenance does not change LOCAL_NO_GO to GO.
-Private experiments, development branches and public main have separate scope.
+## Audit mode
 
-## Execution
+Default behavior is read-only.
 
-1. Read the current remote main, task branch, HEAD, open PRs and relevant source.
-2. Preserve unknown work, original inputs, historical failures and recovery refs.
-3. Work on isolated branches; split maintenance and feature changes into coherent
-   commits. Use the PR explicitly designated by the user as the merge entry.
-4. Continue ordinary path, empty-geometry and export fixes within the current
-   task. Do not ask for permission again for already authorized work.
-5. Bind each candidate, saved DXF and review to its source, configuration and
-   code revision. A changed DXF cannot inherit the original file's approval.
-6. Run affected tests and required repository gates. Preserve real failed runs;
-   avoid unrelated refits, whole-page work and repeated recognition inputs.
-7. Serialize expensive conversion tasks and monitor the worker and OCR children.
-   Set a task-appropriate budget; do not apply an old local experiment limit to
-   every full-region conversion. Save valid checkpoints without overwriting
-   previous correct outputs.
-8. Report actual pushes, remote CI, merge state and remaining blockers. A local
-   commit or patch is not a successful push. Do not rewrite main or protected refs.
-9. Update current status and tasks without rewriting dated historical conclusions.
-   A preserved snapshot records what existed then; recovery checks ask whether
-   that commit remains reachable now. Normal main advancement is not data loss.
+An audit must:
 
-Use the six-field task report when requested: task/status; actual changes;
-actual artifacts; reverse check and observation; remaining issues; next task.
+1. identify repository, branch, HEAD, PR, and exact scope;
+2. preserve existing user changes and baselines;
+3. separate all four evidence classes;
+4. record evidence paths and commands;
+5. compare automated evidence with user UAT;
+6. list conflicts rather than resolving them by assertion;
+7. avoid threshold, baseline, and production changes;
+8. avoid claiming an untested issue is solved;
+9. produce one prioritized next-task recommendation;
+10. stop without executing that recommendation.
 
-## Audit and suggestion requests
+Fixed audit output:
 
-When the user asks only for an audit or proposal, stay within that read-only
-scope. Identify facts, uncertainties, conflicting evidence and a concrete next
-step. Do not apply that restriction to a separate explicit execution request.
+1. confirmed facts;
+2. unconfirmed issues;
+3. user UAT evidence;
+4. automated evidence;
+5. evidence conflicts;
+6. root-cause candidates;
+7. contracts that may not change;
+8. one recommended next task;
+9. risks;
+10. stop condition.
 
-## Source and CAD constraints
+## Suggestion mode
 
-- No page, filename, coordinate, object-ID or expected-string answers in the
-  recognizer. Do not lower confidence or source gates to inflate accepted counts.
-- Preserve real short strokes, gaps, holes, text suffixes and neighboring objects.
-  A connected source component may contain several independent editable paths.
-- Keep editable text as TEXT/MTEXT, not outlines. BLOCK grouping alone does not
-  prove complete or clean members.
-- Check actual saved output both ways: output to source and source to output.
-  Distinguish raster diagnostics from engineering completeness and editability.
-- Inspect CAD compatibility by actual effect on content, units, transforms,
-  rendering and edits. Record changed metadata separately without ignoring it.
-- DPI establishes paper units only. Engineering dimensions need scale evidence.
-- No real engineer: mark engineer testing NOT_RUN and prepare the usable trial.
-  Do not equate a few scripted or GUI edits with repair time at equal final quality.
+A suggestion ranks work by user value, risk, prerequisites, and cost.
 
-## Public repository and recovery
+A suggestion must:
 
-Never add private drawings, secrets, OCR caches, full experimental ZIPs, model
-binaries or unlicensed fonts to the public repository. Publish reviewed code,
-resource acquisition/checksum instructions and lawful minimal validation only.
-External paid/model services or private-source transfer need authorization for
-that data and destination. Existing local OCR can run within the task budget.
+- recommend only one next task;
+- state why it is the correct task now;
+- state why other work is deferred;
+- define exact modification boundaries;
+- define acceptance evidence and user-validation needs;
+- define regression risks;
+- define an explicit stop condition;
+- not execute the recommendation automatically.
 
-Before retiring a unique research branch, create and read back its remote
-recovery reference. If that cannot be demonstrated, retain the branch and state
-why. Use the historical ledger plus current reachability; do not mutate a frozen
-record to disguise loss. No force-pushing main, history rewriting or formal
-Release without the corresponding explicit authorization and acceptance.
+Fixed suggestion output:
+
+1. highest-value problem;
+2. priority rationale;
+3. prerequisites;
+4. modification boundary;
+5. acceptance method;
+6. regression risk;
+7. user validation requirement;
+8. do/defer recommendation;
+9. tasks that must not run concurrently.
+
+## Execution mode
+
+Execution requires an explicit user instruction.
+
+Rules:
+
+- one major issue per task;
+- one isolated conventional commit per task;
+- use a recoverable checkpoint, normally within 20–45 minutes;
+- before modification, re-read remote branch/HEAD and verify scope;
+- do not use a worktree containing unknown user changes;
+- do not add large generated DXF/PDF/PNG/log/package artifacts unless the task explicitly requires a reviewed retention set;
+- do not broaden scope when another issue is discovered; record it in the issue register;
+- run only tests relevant to the authorized phase plus required regression gates;
+- update [CURRENT_TASK.md](CURRENT_TASK.md), [NEXT_TASK.md](NEXT_TASK.md), and [CHECKPOINT.md](CHECKPOINT.md);
+- stop at the declared stop condition.
+
+## Conflict handling
+
+When code or automated evidence conflicts with user UAT:
+
+1. preserve both statements;
+2. mark the automated contract and human contract separately;
+3. identify what the current metric does and does not measure;
+4. add or update an issue;
+5. propose a focused reproducer or metric;
+6. do not lower thresholds, change baselines, or declare success during audit;
+7. use the user as final product acceptor.
+
+## Prohibited shortcuts
+
+- full-page line repair;
+- page/filename/coordinate/text-content hard-coding;
+- lowering OCR confidence to inflate text count;
+- replacing editable text with outlines;
+- using diagnostic color to alter semantics;
+- treating average results as per-page acceptance;
+- claiming another agent or automated report substitutes for user approval;
+- beginning the next roadmap phase without explicit authorization.

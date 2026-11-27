@@ -1,4 +1,6 @@
-# 下一批任务：从整区剩余缺口选择代表性完整对象
+# 历史下一批任务记录（不再作为当前路线）：从整区剩余缺口选择代表性完整对象
+
+> 路线约束：本文件中 2026-11-26 的四分之一裁片任务、结果及后续候选仅作历史验证记录，不再定义产品总纲或当前研发路线。全仓库唯一最高产品与架构准则为 [AGENTS.md](../../AGENTS.md) 与 [PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md](PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md)。
 
 本批右侧完整路径与完整字符组均已进入普通主图，见 [CURRENT_TASK](CURRENT_TASK.md) 和[本批实证](../native/RIGHT_CONTACT_GROUP_20261126.md)。整体继续 `0.3.0-dev / LOCAL_NO_GO`。
 

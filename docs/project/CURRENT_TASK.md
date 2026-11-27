@@ -1,5 +1,7 @@
 # 当前任务结果：右侧完整路径、完整短字符与同版程序交付完成（2026-11-26）
 
+> 路线约束：本文件中 2026-11-26 的四分之一裁片任务、结果及后续候选仅作历史验证记录，不再定义产品总纲或当前研发路线。全仓库唯一最高产品与架构准则为 [AGENTS.md](../../AGENTS.md) 与 [PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md](PRODUCT_INTENT_AND_KNOWLEDGE_PACKS_ZH.md)。
+
 本批从 main `14f9a12f35b2efa9b53d1245331b0f6e23769c87` 和 `QUARTER_short_contact_text_17415ed.dxf` 的 434 个正式对象接续，已在同一次普通整区流程中完成右侧独立路径及完整短字符组。上轮该位置“缺少已采用路径，未进入短字符阶段”的记录保留为历史。
 
 已验证最终主图 **`QUARTER_right_contact_group_1af99e1.dxf`**，**199885 B**，SHA-256 **`e69bfc23af89eb99c68c6ad7bae111c3796b632c80244cb1ce2a6651208c7bca`**。**旧 434 对象全部严格保持＋1 条完整独立 LWPOLYLINE＋1 个完整文字组＝436 正式对象／48 REVIEW／55 图块**。
