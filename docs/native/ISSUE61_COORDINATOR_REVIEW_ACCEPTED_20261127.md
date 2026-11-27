@@ -1,6 +1,8 @@
 # Issue #61：协调复核接收与同树整合交接（2026-11-27）
 
-## 当前结论
+> **后续安排更正：** [协调评论 7222447349](https://github.com/ryoumiyahayato/image-to-cad/issues/61#issuecomment-7222447349)已暂停后续互审、同树集成及新大型检查点运行。本文实测结论和原始身份保留；下文“待 #63 冻结后整合”及具体适配条件仅为此前交接记录，不能作为自动继续执行的安排。当前任务见[暂停与产品优先级更正](../project/CURRENT_TASK.md)。本次状态更正未重新下载、打包或复跑旧材料。
+
+## 当时结论（后续推进安排已更正）
 
 已按[协调者独立复核评论](https://github.com/ryoumiyahayato/image-to-cad/issues/61#issuecomment-7221928443)取回实际复核包，完成全包身份、完整成员及关键回执核对。本批 A → B → C 按 **`PASS_ZERO_ADOPTED_PRESERVED_BASELINE`** 收口：**436 个旧完整正式对象、48 REVIEW、55 命名块及资源保持；4 候选、0 新采用。** Issue #61 保持开放，接续 #63 最终冻结后的同树整合。
 
