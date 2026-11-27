@@ -29,6 +29,14 @@ its local apply operation did not return a success receipt before the executor
 became unavailable and was terminated. Its authored source was preserved as
 a Git blob and read back, without claiming a local import or test.
 
+A subsequent bounded static review found that the draft initially trusted the
+aggregate width receipt when selecting its parameter family. The checkpoint
+draft now recomputes the actual common intersection from every eligible
+individual interval, rejects inconsistent aggregate receipts, validates a
+nonnegative integer native segment index, and labels its actual native L1
+parameter accurately. These are unexecuted draft corrections, not runtime
+validation. The original recovery commit remains available in history.
+
 ## 2. Actual materials obtained and checked
 
 The following already-existing private archives were obtained before the
@@ -163,6 +171,12 @@ evidence that these implementations exist:
 - Review junction host lookup: reject an explicitly supplied but unresolved
   host ID instead of silently using a valid numeric index. Normalize public
   receipts containing NumPy values before JSON serialization.
+- Verify the unexecuted width-kernel corrections with stale/narrowed interval
+  receipts, an incorrect empty-intersection reason and invalid segment indices.
+  The outer measurement wrapper must supply `native_segment_index`; the
+  low-level section function alone does not. The new component caller must
+  include every independent section's black/white cells in the common solver,
+  including owned-black constraints outside the model window.
 - Add the discriminating control suite, particularly oblique multi-guest
   saved contacts, one-ULP false points, actual white gaps, cyclic/white-hole
   cores, finite-port dependence and exact circle corruption.

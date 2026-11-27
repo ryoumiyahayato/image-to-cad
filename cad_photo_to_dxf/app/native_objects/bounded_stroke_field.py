@@ -66,7 +66,10 @@ def build_width_field(points, width):
             lo, hi = _dec(bounds["lower"]), _dec(bounds["upper"])
             if not 0 <= lo < hi:
                 raise ValueError("INDIVIDUAL_INDEPENDENT_SECTION_INTERVAL_EMPTY")
-            segment = int(section["native_segment_index"])
+            segment = section["native_segment_index"]
+            if (isinstance(segment, bool) or not isinstance(segment, int)
+                    or not 0 <= segment < len(points) - 1):
+                raise ValueError("INVALID_INDEPENDENT_SECTION_NATIVE_SEGMENT_INDEX")
             q = tuple(_dec(v) for v in section["center_exact"])
             a, b = points[segment], points[segment + 1]
             axis = next(k for k in (0, 1) if b[k] != a[k])
@@ -78,17 +81,23 @@ def build_width_field(points, width):
         knots.sort()
         if len({k[0] for k in knots}) != len(knots):
             raise ValueError("DUPLICATE_PATH_POSITION_WIDTH_CONSTRAINT")
-        if width.get("pass"):
+        low, high = max(k[1] for k in knots), min(k[2] for k in knots)
+        result["recomputed_constant_intersection"] = {
+            "lower": _enc(low), "upper": _enc(high), "empty": low >= high}
+        # Recompute the family from all section intervals. A supplied PASS or
+        # reason is only checked for consistency; it never selects the family.
+        if low < high:
             bounds = width["half_width_squared_interval"]
-            low, high = _dec(bounds["lower"]), _dec(bounds["upper"])
-            if not 0 <= low < high or any(low < k[1] or high > k[2] for k in knots):
-                raise ValueError("CONSTANT_INTERVAL_DOES_NOT_INCLUDE_ALL_CONSTRAINTS")
+            if (width.get("pass") is not True
+                    or (_dec(bounds["lower"]), _dec(bounds["upper"])) != (low, high)):
+                raise ValueError("STALE_OR_INCONSISTENT_CONSTANT_WIDTH_RECEIPT")
             result["family"] = "CONSTANT_INDEPENDENT_SECTION_INTERSECTION"
             result["constant_interval"] = {"lower": _enc(low), "upper": _enc(high)}
             interpolation = [(F(0), low, high), (positions[-1], low, high)]
         else:
-            if width.get("reason") != "CONSTANT_WIDTH_MODEL_INAPPLICABLE":
-                raise ValueError("NONCONSTANT_FAMILY_REQUIRES_ONLY_COMMON_INTERSECTION_FAILURE")
+            if (width.get("pass") is not False
+                    or width.get("reason") != "CONSTANT_WIDTH_MODEL_INAPPLICABLE"):
+                raise ValueError("STALE_OR_INCONSISTENT_EMPTY_CONSTANT_INTERSECTION_RECEIPT")
             result["family"] = "CONTINUOUS_SECTION_KNOT_SQUARED_WIDTH_COMMON_ALPHA"
             interpolation = [(k[0], k[1], k[2]) for k in knots]
         result["knots"] = [{"path_position_l1_exact": _enc(s), "lower": _enc(lo),
@@ -122,7 +131,7 @@ def build_width_field(points, width):
                        "continuity": "AFFINE_SQUARED_RADIUS_AT_ALL_SECTION_KNOTS",
                        "end_cap": "FINITE_ROUND_CAP_WITH_ENDPOINT_FIELD_RADIUS",
                        "extra_junction_ink_radius": None,
-                       "path_position": "CUMULATIVE_ORIGINAL_RASTER_L1_LENGTH",
+                       "path_position": "CUMULATIVE_ACTUAL_FINITE_NATIVE_L1_LENGTH_IN_SOURCE_COORDINATES",
                        "geometry_changed": False})
     except (ValueError, KeyError, IndexError, TypeError, StopIteration) as exc:
         result.update(status="BOUNDED_FIELD_NOT_ESTABLISHED", reason=str(exc))
