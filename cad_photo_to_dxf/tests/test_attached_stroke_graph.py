@@ -132,8 +132,13 @@ def _graph_geometry(context):
 
 def test_complete_attached_network_preserves_real_free_and_attached_boundaries(tmp_path):
     gray, context, prior, _, plan = _plan(tmp_path)
-    assert plan["schema"] == "source-attached-stroke-graph-plan-v1"
+    assert plan["schema"] == "source-attached-stroke-graph-plan-v2"
     assert len(plan["paths"]) == 4, (plan["components"], plan["pending"])
+    proofs = [terminal["attached_raw_ink_responsibility"] for row in plan["paths"]
+              for terminal in row["endpoint_evidence"] if "attached_raw_ink_responsibility" in terminal]
+    assert len(proofs) == 3
+    assert all(proof["pass"] and proof["complete_pixel_accounting"] for proof in proofs)
+    assert all(proof["junction_normalization"]["canonical_native_endpoint_proved"] for proof in proofs)
     expected = [
         ((114, 50), (104, 145), "OBSERVED_FREE_SOURCE_ENDPOINT"),
         ((134, 50), (126, 125), "OBSERVED_COMPLETE_STROKE_ATTACHMENT"),
@@ -327,6 +332,30 @@ def test_independent_replay_rejects_changed_path_owner_or_original_source(tmp_pa
     assert not attached.verify_attached_stroke_graph_plan(
         gray, ROI, plan, source_graph=context
     )["pass"]
+
+
+@pytest.mark.parametrize("change", ["raw_pixel", "width", "model", "producer", "prior_contact", "missing_receipt"])
+def test_new_responsibility_receipts_are_part_of_exact_source_replay(tmp_path, change):
+    gray, context, _, _, plan = _plan(tmp_path)
+    component = next(c for c in plan["components"] if c.get("candidate_paths"))
+    terminal = next(t for p in component["candidate_paths"] for t in p["endpoint_evidence"]
+                    if "attached_raw_ink_responsibility" in t)
+    proof = terminal["attached_raw_ink_responsibility"]
+    if change == "raw_pixel":
+        proof["pixel_ledger"][0]["original_gray_value"] = 255
+    elif change == "width":
+        proof["independent_width_evidence"]["guest"]["half_width_interval_px"][1] += 1
+    elif change == "model":
+        proof["coherent_terminal_models"]["feasible_models"][0]["guest_half_width_px"] += 1
+    elif change == "producer":
+        plan["additional_producer_sha256"]["attached_stroke_ink.py"] = "0" * 64
+    elif change == "prior_contact":
+        component["prior_native_contact_check"]["allowed_source_point_contacts"] = []
+    else:
+        del terminal["attached_raw_ink_responsibility"]
+    replay = attached.verify_attached_stroke_graph_plan(gray, ROI, plan, source_graph=context)
+    assert not replay["pass"]
+    assert replay["reason"] == "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH"
 
 
 def _native_entities(doc):

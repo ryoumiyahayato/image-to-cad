@@ -20,16 +20,18 @@ import numpy as np
 from scipy.ndimage import label
 
 from . import connections as paths
+from . import attached_stroke_contacts as prior_contacts
+from . import attached_stroke_ink as attached_ink
 from . import text_contact_geometry as contact
 from . import transverse_stroke_geometry as transverse
 from .circle_endpoint_contacts import _segment_cells
 from .contracts import save_json, stable_id
 
 
-SCHEMA = "source-attached-stroke-graph-plan-v1"
+SCHEMA = "source-attached-stroke-graph-plan-v2"
 FIELD = "attached_stroke_graph"
 POLICY = {
-    "version": "finite-attached-source-tree-decompositions-v1",
+    "version": "finite-attached-source-tree-decompositions-v2",
     "finite_direction_spans_px": [6.0, 8.0, 12.0],
     "minimum_observed_direction_chord_px": 4.0,
     "maximum_pair_deviation_deg": 20.0,
@@ -59,6 +61,9 @@ POLICY = {
     "source_pixels_modified": False,
     "source_graph_pairings_modified": False,
     "existing_objects_retired": False,
+    "attached_endpoint_raw_ink_policy": attached_ink.POLICY["version"],
+    "all_prior_native_contact_policy": prior_contacts.POLICY["version"],
+    "failed_complete_candidates_and_receipts_retained": True,
 }
 
 
@@ -687,6 +692,8 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
         raise ValueError("DUPLICATE_PRIOR_OBJECT_ID")
     result = {"schema": SCHEMA, "policy": deepcopy(POLICY),
               "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+              "additional_producer_sha256": {"attached_stroke_ink.py": attached_ink.producer_sha256(),
+                                              "attached_stroke_contacts.py": prior_contacts.producer_sha256()},
               "roi_xyxy_px": list(map(int, roi)), "original_source_crop_xyxy_px": context.crop_bbox,
               "original_source_crop_array_sha256": context.source_crop_hash,
               "prior_object_bindings": bindings, "prior_object_bindings_sha256": _digest(bindings),
@@ -790,22 +797,53 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                     raise ValueError("COMPONENT_HAS_NO_UNIQUE_COMPLETE_DIRECTION_DECOMPOSITION")
                 selected, routes = eligible[0]
                 rows = _geometry_routes(source, graph, routes, owner, cores)
+                # Evidence is retained before every new adoption gate.  A failed
+                # endpoint never turns into a missing explanation or a silently
+                # salvaged subset of the old joint component.
+                record["selected_decomposition_index"] = selected["index"]
+                record["candidate_paths"] = rows
+                record["candidate_status"] = "GEOMETRY_CANDIDATES_NOT_FORMAL_OBJECTS"
+                raw_checks = []
+                for row in rows:
+                    for terminal in row["endpoint_evidence"]:
+                        if "host_path_index" not in terminal:
+                            continue
+                        host = rows[terminal["host_path_index"]]
+                        terminal["host_path_id"] = host["stroke_id"]
+                        proof = attached_ink.prove_attached_endpoint_raw_responsibility(
+                            source, graph, terminal, row, host, rows,
+                            extra_exclusion_paths=[owner["native_geometry"]["points"]])
+                        proof["original_source_crop_xyxy_px"] = context.crop_bbox
+                        proof["original_source_crop_array_sha256"] = context.source_crop_hash
+                        terminal["attached_raw_ink_responsibility"] = proof
+                        raw_checks.append({"guest_id": row["stroke_id"], "host_id": host["stroke_id"],
+                                           "source_node_id": terminal["node_id"], "pass": proof["pass"],
+                                           "status": proof["status"], "failure_reasons": proof["failure_reasons"]})
+                record["attachment_responsibility_checks"] = raw_checks
+                failed_gates = []
+                if not all(check["pass"] for check in raw_checks):
+                    failed_gates.append("ATTACHED_ENDPOINT_ORIGINAL_INK_RESPONSIBILITY_NOT_PROVED")
                 hits = _text_intersections(rows, prior_objects)
                 if hits:
                     record["existing_text_source_conflicts"] = hits
-                    raise ValueError("EXISTING_COMPLETE_TEXT_OWNS_SOURCE_IN_THIS_COMPONENT")
+                    failed_gates.append("EXISTING_COMPLETE_TEXT_OWNS_SOURCE_IN_THIS_COMPONENT")
                 conflicts, adequate = _native_conflicts(rows, prior_objects, source)
                 record["native_duplicate_check"] = conflicts
                 if conflicts["quarantined_ids"] or adequate:
-                    raise ValueError("COMPLETE_GRAPH_COMPONENT_HAS_EXISTING_OR_DUPLICATE_NATIVE_GEOMETRY")
+                    failed_gates.append("COMPLETE_GRAPH_COMPONENT_HAS_EXISTING_OR_DUPLICATE_NATIVE_GEOMETRY")
                 responsibility = _source_responsibility(rows, prior_objects, cores)
                 record["source_responsibility"] = responsibility
                 if not responsibility["pass"]:
-                    raise ValueError("ANOTHER_OBJECT_OWNS_SOURCE_OUTSIDE_PROVED_SHARED_CORES")
+                    failed_gates.append("ANOTHER_OBJECT_OWNS_SOURCE_OUTSIDE_PROVED_SHARED_CORES")
                 contacts = _native_contacts(source, rows, owner, anchors, cores)
                 record["native_contact_check"] = contacts
                 if not contacts["pass"]:
-                    raise ValueError("ACTUAL_FINITE_NATIVE_CONTACTS_DO_NOT_MATCH_SOURCE_GRAPH")
+                    failed_gates.append("ACTUAL_FINITE_NATIVE_CONTACTS_DO_NOT_MATCH_SOURCE_GRAPH")
+                prior_check = prior_contacts.check_prior_native_contacts(
+                    source, rows, prior_objects, graph=graph, cores=cores, owner=owner, anchors=anchors)
+                record["prior_native_contact_check"] = prior_check
+                if not prior_check["pass"]:
+                    failed_gates.append("ACTUAL_FINITE_PRIOR_NATIVE_CONTACTS_NOT_SOURCE_PROVED")
                 crossed = [r for r in rows if set(r["source_node_ids"]) & set(component["anchor_nodes"])]
                 for row in crossed:
                     axis = _unit(np.asarray(row["native_endpoint_points_px"])[1] - row["native_endpoint_points_px"][0])
@@ -814,9 +852,14 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                                           _angle(-axis, _unit(np.asarray(other["native_endpoint_points_px"])[1] - other["native_endpoint_points_px"][0])))
                                   <= POLICY["maximum_companion_axis_angle_deg"]]
                     if len(companions) < POLICY["minimum_parallel_crossing_companions"]:
-                        raise ValueError("NO_INDEPENDENT_COMPLETE_PARALLEL_CROSSING_COMPANION")
+                        failed_gates.append("NO_INDEPENDENT_COMPLETE_PARALLEL_CROSSING_COMPANION")
                     row["parallel_crossing_companion_ids"] = [r["stroke_id"] for r in companions]
+                record["failed_adoption_gates"] = sorted(set(failed_gates))
+                if failed_gates:
+                    selected["native_geometry_stage"] = "PENDING_COMPLETE_CANDIDATE_RESPONSIBILITY"
+                    raise ValueError(failed_gates[0])
                 selected["native_geometry_stage"] = "PASS_ALL_ORIGINAL_INK_COMPLETE_AND_INDEPENDENT"
+                record["candidate_status"] = "COMPLETE_COMPONENT_ADOPTED_AFTER_ALL_GATES"
                 record.update(status="UNIQUE_COMPLETE_GRAPH_DECOMPOSITION", selected_decomposition_index=selected["index"],
                               new_complete_path_ids=[row["stroke_id"] for row in rows],
                               all_shared_core_adjacencies_preserved=True, unexplained_external_source_edges=[])
@@ -860,14 +903,14 @@ def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_gra
                                    "original_source_crop_xyxy_px": plan["original_source_crop_xyxy_px"],
                                    "original_source_crop_array_sha256": plan["original_source_crop_array_sha256"],
                                    "source_pixels_modified": False,
-                                   FIELD: {"schema": "source-attached-stroke-native-v1", "source_sha256": source_sha,
+                                   FIELD: {"schema": "source-attached-stroke-native-v2", "source_sha256": source_sha,
                                            "plan_sha256": key, "path_index": index, "path_sha256": _digest(row), "path": deepcopy(row)}},
                "editing_scope": "one complete independent source stroke; attached and crossing strokes remain separate",
                "status": "SOURCE_SUPPORTED_COMPLETE_ATTACHED_GRAPH_STROKE"}
         adopted.append(obj)
         decisions.append({"id": obj["id"], "adopted": True, "decision": "ADD_COMPLETE_INDEPENDENT_GRAPH_STROKE",
                           "component_id": row["component_id"], "native_kind": kind, "retired_ids": []})
-    result = {"schema": "source-attached-stroke-adoption-v1", "source_sha256": source_sha,
+    result = {"schema": "source-attached-stroke-adoption-v2", "source_sha256": source_sha,
               "roi_xyxy_px": list(roi), "plan": plan, "objects": adopted,
               "prior_object_bindings": plan["prior_object_bindings"], "decisions": decisions,
               "retired_ids": [], "pending": deepcopy(plan["pending"]), "new_OCR_calls": 0}
