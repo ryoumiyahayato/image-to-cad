@@ -1,7 +1,0 @@
-## fix/non-destructive-editable-text
-
-HEAD:
-66a17d7 fix: enforce candidate-level text semantic ownership
-
-Working tree:
-clean

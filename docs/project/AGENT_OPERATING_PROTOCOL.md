@@ -70,19 +70,19 @@ Fixed suggestion output:
 
 ## Execution mode
 
-Execution requires an explicit user instruction.
+Execution requires an explicit user instruction. Existing task authorization remains valid; do not ask again for the same permission. The current user-directed archive, cleanup and product integration is execution work, not a read-only audit.
 
 Rules:
 
 - one major issue per task;
-- one isolated conventional commit per task;
+- conventional commits for coherent changes, with necessary fixes and concurrent merges preserved;
 - use a recoverable checkpoint, normally within 20–45 minutes;
 - before modification, re-read remote branch/HEAD and verify scope;
 - do not use a worktree containing unknown user changes;
 - do not add large generated DXF/PDF/PNG/log/package artifacts unless the task explicitly requires a reviewed retention set;
 - do not broaden scope when another issue is discovered; record it in the issue register;
 - run only tests relevant to the authorized phase plus required regression gates;
-- update [CURRENT_TASK.md](CURRENT_TASK.md), [NEXT_TASK.md](NEXT_TASK.md), and [CHECKPOINT.md](CHECKPOINT.md);
+- update the current implementation and limitations in [README](../../README.md) and the relevant issue/PR; retain recovery references without recreating historical checkpoint journals;
 - stop at the declared stop condition.
 
 ## Conflict handling

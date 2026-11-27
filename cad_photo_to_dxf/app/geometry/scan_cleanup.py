@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 
 import cv2
 import numpy as np
 
 from app.diagnostics.performance_observability import PerformanceCallback, performance_clock, record_performance
 from app.core.resolution import image_resolution_scale
-from app.geometry.pdf_page_content import PdfPageContent
 
 
 _DIGITAL_WHITE_RATIO = 0.90
@@ -29,43 +28,6 @@ class PreparedScanPage:
     threshold: int
     clean_digital: bool
     classification_reason: str
-    unconfirmed_noise_runs: tuple[tuple[int, int, int], ...] = ()
-    removed_noise_runs: tuple[tuple[int, int, int], ...] = ()
-
-    def for_crop(self, box: tuple[int, int, int, int]) -> PreparedScanPage:
-        left, top, right, bottom = box
-        height, width = self.gray.shape
-        if not (0 <= left < right <= width and 0 <= top < bottom <= height):
-            raise ValueError("Crop must be a nonempty rectangle inside the source")
-        region = np.s_[top:bottom, left:right]
-
-        def local_runs(runs):
-            return tuple(
-                (y - top, max(x0, left) - left, min(x1, right) - left)
-                for y, x0, x1 in runs
-                if top <= y < bottom and x0 < right and x1 > left
-            )
-
-        return replace(
-            self,
-            gray=np.ascontiguousarray(self.gray[region]),
-            normalized=np.ascontiguousarray(self.normalized[region]),
-            binary=np.ascontiguousarray(self.binary[region]),
-            unconfirmed_noise_runs=local_runs(self.unconfirmed_noise_runs),
-            removed_noise_runs=local_runs(self.removed_noise_runs),
-        )
-
-
-def _pixel_runs(mask: np.ndarray) -> tuple[tuple[int, int, int], ...]:
-    """Return (y, x0, x1) source runs with an exclusive right edge."""
-    ys, xs = np.nonzero(mask)
-    if not xs.size:
-        return ()
-    boundaries = np.flatnonzero((ys[1:] != ys[:-1]) | (xs[1:] != xs[:-1] + 1)) + 1
-    starts = np.r_[0, boundaries]
-    ends = np.r_[boundaries - 1, xs.size - 1]
-    return tuple(zip(ys[starts].tolist(), xs[starts].tolist(), (xs[ends] + 1).tolist()))
-
 
 def _to_gray(image: np.ndarray) -> np.ndarray:
     if image is None or image.size == 0:
@@ -253,12 +215,18 @@ def _suppress_dense_speckle(binary: np.ndarray) -> np.ndarray:
                 normalize=False,
                 borderType=cv2.BORDER_CONSTANT,
             )
+            # Decimal points and punctuation near larger glyphs must not be
+            # mistaken for scanner dust merely because the area is speckled.
+            substantial = (~tiny[labels]) & (labels > 0)
+            radius = max(2, int(round(3*image_resolution_scale(binary.shape))))
+            near_ink = cv2.dilate(substantial.astype(np.uint8), np.ones(
+                (2*radius+1, 2*radius+1), np.uint8))
             remove_label = np.zeros(count, dtype=bool)
             for label_value in tiny_labels:
                 center_x, center_y = centroids[int(label_value)]
                 cy = max(0, min(density.shape[0] - 1, int(round(center_y))))
                 cx = max(0, min(density.shape[1] - 1, int(round(center_x))))
-                if density[cy, cx] >= _SPECK_DENSITY_THRESHOLD:
+                if density[cy, cx] >= _SPECK_DENSITY_THRESHOLD and not near_ink[cy, cx]:
                     remove_label[int(label_value)] = True
 
             core_labels = labels[
@@ -329,11 +297,7 @@ def _suppress_long_low_contrast_artifacts(
     return np.ascontiguousarray(cleaned)
 
 
-def _classify_scan(gray: np.ndarray, pdf_content: PdfPageContent | None) -> tuple[bool, str]:
-    if pdf_content == "vector":
-        return True, "pdf_vector_content"
-    if pdf_content == "raster":
-        return False, "pdf_page_raster"
+def _classify_scan(gray: np.ndarray) -> tuple[bool, str]:
     if np.count_nonzero(gray == 255) < gray.size * _DIGITAL_WHITE_RATIO:
         return False, "low_pure_white_fraction"
 
@@ -369,101 +333,87 @@ def prepare_scan_page(
     *,
     foreground_threshold: int | None = None,
     performance_callback: PerformanceCallback | None = None,
-    pdf_content: PdfPageContent | None = None,
-    mixed_vector_gray: np.ndarray | None = None,
-    confirmed_noise: np.ndarray | None = None,
+    protected_mask: np.ndarray | None = None,
 ) -> PreparedScanPage:
-    """Prepare a page for tracing. Only independent source evidence authorizes noise removal."""
+    """Normalize a scan and apply conservative dust/fold cleanup by default.
 
+    Clean digital input and an explicit foreground threshold keep their original
+    thresholded ink. Protected pixels keep their value from before dust/fold
+    removal; the mask does not authorize deletion or require an external ledger.
+    """
     gray = _to_gray(image)
-    if confirmed_noise is not None and (
-        confirmed_noise.shape != gray.shape or confirmed_noise.dtype != np.bool_
-    ):
-        raise ValueError("Confirmed noise must be a boolean mask in source coordinates")
-    clean_digital, classification_reason = _classify_scan(gray, pdf_content)
-    cleanup_reason = classification_reason
-    if foreground_threshold is None and classification_reason == "pdf_page_raster":
-        # PDF paint identifies the page as a scan. The existing pixel evidence
-        # still determines whether it needs more than isolated dust removal.
-        _, cleanup_reason = _classify_scan(gray, None)
-    speckle_only = cleanup_reason == "dense_isolated_specks"
+    protected = None
+    if protected_mask is not None:
+        if (protected_mask.shape != gray.shape or
+                protected_mask.dtype not in (np.dtype(bool), np.dtype(np.uint8))):
+            raise ValueError("Protected mask must be a boolean or 8-bit source-sized image")
+        protected = protected_mask > 0
+    clean_digital, classification_reason = _classify_scan(gray)
+    speckle_only = classification_reason == "dense_isolated_specks"
 
     if foreground_threshold is not None:
         normalization_started = performance_clock()
         normalized = gray
-        record_performance(
-            performance_callback,
-            "background_normalization",
-            normalization_started,
-        )
+        record_performance(performance_callback, "background_normalization", normalization_started)
         binarization_started = performance_clock()
         threshold = int(max(1, min(254, foreground_threshold)))
         _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
     elif clean_digital or speckle_only:
-        # Threshold the original canvas so faint pixels that connect source
-        # strokes stay in the same component when isolated dust is removed.
         normalization_started = performance_clock()
         normalized = gray
-        record_performance(
-            performance_callback,
-            "background_normalization",
-            normalization_started,
-        )
+        record_performance(performance_callback, "background_normalization", normalization_started)
         binarization_started = performance_clock()
         threshold = 254
         _unused, binary = cv2.threshold(gray, threshold, 255, cv2.THRESH_BINARY)
     else:
         threshold = 128
-        normalized, binary = _clean_scanned_page(
-            gray,
-            performance_callback=performance_callback,
-        )
+        normalized, binary = _clean_scanned_page(gray, performance_callback=performance_callback)
         binarization_started = performance_clock()
 
     if int(np.count_nonzero(binary == 0)) > binary.size // 2:
         binary = 255 - binary
-    unconfirmed_noise_runs = ()
-    removed_noise_runs = ()
-    # A raster appearance heuristic can propose cleanup, but cannot revoke an
-    # independently confirmed source mask. Explicit thresholds and authoritative
-    # vector-only pages keep their existing no-cleanup contract.
-    if foreground_threshold is None and pdf_content != "vector":
-        suspect = np.zeros(gray.shape, dtype=bool)
-        if not clean_digital:
-            proposed_cleanup = _suppress_dense_speckle(binary)
-            if not speckle_only:
-                proposed_cleanup = _suppress_long_low_contrast_artifacts(gray, proposed_cleanup)
-            suspect = (binary == 0) & (proposed_cleanup != 0)
-        if (
-            pdf_content == "mixed"
-            and mixed_vector_gray is not None
-            and mixed_vector_gray.shape == gray.shape
-        ):
-            # Keep paint still visible in the current canvas. A native-text
-            # re-render can remove it before running preparation again.
-            visible_vector = (mixed_vector_gray < 255) & (mixed_vector_gray == gray)
-            binary[visible_vector] = 0
-            suspect &= ~visible_vector
-            if confirmed_noise is not None:
-                confirmed_noise = confirmed_noise & ~visible_vector
-        if confirmed_noise is not None:
-            removed_noise_runs = _pixel_runs((binary == 0) & confirmed_noise)
-            binary[confirmed_noise] = 255
-            suspect &= ~confirmed_noise
-        unconfirmed_noise_runs = _pixel_runs(suspect)
-    record_performance(
-        performance_callback,
-        "binarization",
-        binarization_started,
+    if foreground_threshold is None and not clean_digital:
+        cleaned = _suppress_dense_speckle(binary)
+        if not speckle_only:
+            cleaned = _suppress_long_low_contrast_artifacts(gray, cleaned)
+        if protected is not None:
+            cleaned[protected] = binary[protected]
+        binary = cleaned
+    record_performance(performance_callback, "binarization", binarization_started)
+    return PreparedScanPage(
+        gray=np.ascontiguousarray(gray), normalized=np.ascontiguousarray(normalized),
+        binary=np.ascontiguousarray(binary), threshold=threshold,
+        clean_digital=clean_digital, classification_reason=classification_reason,
     )
 
-    return PreparedScanPage(
-        gray=np.ascontiguousarray(gray),
-        normalized=np.ascontiguousarray(normalized),
-        binary=np.ascontiguousarray(binary),
-        threshold=threshold,
-        clean_digital=clean_digital,
-        classification_reason=classification_reason,
-        unconfirmed_noise_runs=unconfirmed_noise_runs,
-        removed_noise_runs=removed_noise_runs,
-    )
+
+def paper_ink_alpha(image: np.ndarray, bbox: tuple[int, int, int, int]) -> np.ndarray:
+    """Return soft black-ink opacity with the surrounding paper at zero opacity.
+
+    Closing estimates the paper under a mark without thinning its strokes. An
+    outer paper band estimates texture, so gray paper is removed while faint ink
+    keeps continuous opacity instead of becoming a hard-threshold silhouette.
+    """
+    gray = _to_gray(image)
+    x0, y0, x1, y1 = bbox
+    width, height = x1-x0, y1-y0
+    margin = max(4, min(128, width, height))
+    left, top = max(0, x0-margin), max(0, y0-margin)
+    right, bottom = min(gray.shape[1], x1+margin), min(gray.shape[0], y1+margin)
+    local = gray[top:bottom, left:right]
+    size = max(3, min(width, height)+1) | 1
+    background = cv2.morphologyEx(
+        local, cv2.MORPH_CLOSE, cv2.getStructuringElement(cv2.MORPH_RECT, (size, size)))
+    background = cv2.GaussianBlur(background, (0, 0), sigmaX=1.0).astype(np.float32)
+    delta = background-local.astype(np.float32)
+    rim = np.ones(local.shape, bool)
+    rim[y0-top:y1-top, x0-left:x1-left] = False
+    values = delta[rim]
+    if not len(values):
+        values = delta.ravel()
+    lower = values[values <= np.median(values)]
+    baseline = float(np.median(lower))
+    deviation = float(np.median(np.abs(lower-baseline)))
+    noise = max(0.0, baseline+2.0*deviation)
+    alpha = np.clip((delta-noise)*255/np.maximum(background-noise, 1), 0, 255)
+    return np.rint(alpha[y0-top:y1-top, x0-left:x1-left]).astype(np.uint8)

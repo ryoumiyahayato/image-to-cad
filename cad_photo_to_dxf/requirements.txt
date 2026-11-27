@@ -5,14 +5,10 @@ opencv-python>=4.8,<5.0
 ezdxf>=1.3,<2.0
 # 6.12.0 Linux void wrappers lose a None reference under CPython 3.11.
 PySide6>=6.7,<6.12
-pypdfium2>=5.10,<6.0
-# Verify embedded cmap against the painted glyph IDs for PDF text omissions.
-PyMuPDF==2.0
+# Native PDF paths and text use this tested API version.
+PyMuPDF==1.26.6
 fonttools>=4.67,<5.0
 Pillow>=12.0,<13.0
-# 3.10 changes source-crop reading-direction results; retain the verified runtime.
-rapidocr>=3.9,<3.10
+# Build-time model preparation and the runtime use the same model definitions.
+rapidocr==3.9.2
 onnxruntime>=1.18,<2.0
-
-# Shared default GUI task manager monitors worker and OCR process trees.
-psutil>=5.9,<8.0

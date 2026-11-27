@@ -1,953 +1,551 @@
+"""Desktop entry for the same ordinary conversion used by the command line."""
 from __future__ import annotations
-from collections.abc import Callable
-from copy import deepcopy
-from datetime import datetime
+
+import math
+import sys
 from pathlib import Path
-from tempfile import TemporaryDirectory
-from typing import Any
-import numpy as np
-from PySide6.QtCore import Qt, QThread, QTimer, Slot
-from PySide6.QtGui import QAction
+
+from PySide6.QtCore import QPointF, QRectF, Qt, QThread, QUrl, Signal
+from PySide6.QtGui import (
+    QAction,
+    QBrush,
+    QColor,
+    QDesktopServices,
+    QFont,
+    QFontDatabase,
+    QPen,
+    QPixmap,
+)
 from PySide6.QtWidgets import (
-    QInputDialog,
+    QApplication,
+    QCheckBox,
+    QComboBox,
+    QDoubleSpinBox,
+    QFileDialog,
+    QFormLayout,
+    QGraphicsScene,
+    QGraphicsView,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
     QMainWindow,
-    QScrollArea,
-    QSizePolicy,
     QMessageBox,
+    QProgressBar,
     QPushButton,
+    QSpinBox,
     QSplitter,
-    QStatusBar,
     QTabWidget,
+    QTextEdit,
+    QVBoxLayout,
     QWidget,
 )
-from app import __version__
-from app.version import PRODUCT_NAME, PRODUCT_STATUS
-from app.ocr.auxiliary_recognition import AuxiliaryRecognitionResult
-from app.core.cancellation import CancellationToken
-from app.core.structure import FinalStructure
-from app.gui.image_canvas import ImageCanvas
-from app.geometry.line_detect import LineSegment
-from app.core.perspective import (
-    MIN_AUTOMATIC_PAPER_CONFIDENCE,
-    auto_correct,
-    resolve_paper_aspect_ratio,
-    resolve_paper_dimensions_mm,
-    rotate_image,
-    warp_perspective,
-)
-from app.geometry.preprocess import PreprocessParams
-from app.core.trace_types import TracePath
-from app.core.scale_calibrator import (
-    DrawingScaleDecision, ScaleCalibration, create_calibration, resolve_drawing_scale,
-)
-from app.gui.visual_acceptance_widget import VisualAcceptanceWidget
-from app.gui.worker import ProcessingWorker
 
-ProcessingOperation = Callable[
-    [CancellationToken, Callable[[str, float], None]], object
-]
-UNSCALED_LABEL = "比例：未校准（1 px = 1 个无单位图形单位）"
-SIDEBAR_MINIMUM_WIDTH = 500
-SIDEBAR_WIDTH = 540
+from app import __version__
+from app.core.cancellation import CancellationToken, ProcessingCancelled
+from app.core.conversion import (
+    MAX_RENDER_PIXELS,
+    SUPPORTED_EXTENSIONS,
+    convert_document,
+    inspect_document,
+)
+
+
+def protected_source_rect(rect, image_rect, source_size):
+    """Map a preview selection to an inclusive/exclusive source-pixel rectangle."""
+    rect = rect.normalized().intersected(image_rect)
+    if rect.isEmpty() or image_rect.isEmpty():
+        return None
+    width, height = source_size
+    x0 = max(0, math.floor((rect.left()-image_rect.left()) / image_rect.width() * width))
+    y0 = max(0, math.floor((rect.top()-image_rect.top()) / image_rect.height() * height))
+    x1 = min(width, math.ceil((rect.right()-image_rect.left()) / image_rect.width() * width))
+    y1 = min(height, math.ceil((rect.bottom()-image_rect.top()) / image_rect.height() * height))
+    return (x0, y0, x1, y1) if x1 > x0 and y1 > y0 else None
+
+
+def pdf_raster_size(page_rect, dpi):
+    """Match the actual scanned-PDF renderer, including its pixel cap and rounding."""
+    import pymupdf
+    scale = min(float(dpi) / 72, math.sqrt(MAX_RENDER_PIXELS / max(page_rect.width*page_rect.height, 1)))
+    pixels = (page_rect * pymupdf.Matrix(scale, scale)).irect
+    return pixels.width, pixels.height
+
+
+class PreviewView(QGraphicsView):
+    region_selected = Signal(object)
+
+    def __init__(self):
+        super().__init__()
+        self.setScene(QGraphicsScene(self))
+        self.setDragMode(QGraphicsView.DragMode.ScrollHandDrag)
+        self.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
+        self.setBackgroundBrush(Qt.GlobalColor.white)
+        self._image_rect = QRectF()
+        self._source_size = None
+        self._selection_enabled = False
+        self._selection_start = None
+        self._selection_item = None
+        self._region_items = []
+
+    def set_pixmap(self, pixmap, source_size=None):
+        self.scene().clear()
+        item = self.scene().addPixmap(pixmap)
+        self._image_rect = item.boundingRect()
+        self._source_size = source_size
+        self._selection_start = self._selection_item = None
+        self._region_items = []
+        self.scene().setSceneRect(self._image_rect)
+        self.set_selection_enabled(False)
+        self.fit_image()
+
+    def set_selection_enabled(self, enabled):
+        self._selection_enabled = bool(enabled and self._source_size)
+        self.setDragMode(QGraphicsView.DragMode.NoDrag if self._selection_enabled
+                         else QGraphicsView.DragMode.ScrollHandDrag)
+        self.viewport().setCursor(Qt.CursorShape.CrossCursor if self._selection_enabled
+                                  else Qt.CursorShape.OpenHandCursor)
+
+    def clear_regions(self):
+        for item in self._region_items:
+            self.scene().removeItem(item)
+        self._region_items = []
+        self._selection_start = self._selection_item = None
+
+    def _bounded_point(self, point):
+        return QPointF(max(self._image_rect.left(), min(self._image_rect.right(), point.x())),
+                       max(self._image_rect.top(), min(self._image_rect.bottom(), point.y())))
+
+    def mousePressEvent(self, event):
+        if self._selection_enabled and event.button() == Qt.MouseButton.LeftButton:
+            point = self.mapToScene(event.position().toPoint())
+            if self._image_rect.contains(point):
+                self._selection_start = point
+                pen = QPen(QColor("#d76a00"), 2)
+                pen.setCosmetic(True)
+                self._selection_item = self.scene().addRect(
+                    QRectF(point, point), pen, QBrush(QColor(255, 170, 0, 45)))
+                self._selection_item.setZValue(10)
+            event.accept()
+            return
+        super().mousePressEvent(event)
+
+    def mouseMoveEvent(self, event):
+        if self._selection_start is not None:
+            point = self._bounded_point(self.mapToScene(event.position().toPoint()))
+            self._selection_item.setRect(QRectF(self._selection_start, point).normalized())
+            event.accept()
+            return
+        super().mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self._selection_start is not None and event.button() == Qt.MouseButton.LeftButton:
+            point = self._bounded_point(self.mapToScene(event.position().toPoint()))
+            rect = QRectF(self._selection_start, point).normalized()
+            self._selection_item.setRect(rect)
+            region = protected_source_rect(rect, self._image_rect, self._source_size)
+            if region and rect.width()*self.transform().m11() >= 3 and rect.height()*self.transform().m22() >= 3:
+                self._region_items.append(self._selection_item)
+                self.region_selected.emit(region)
+            else:
+                self.scene().removeItem(self._selection_item)
+            self._selection_start = self._selection_item = None
+            event.accept()
+            return
+        super().mouseReleaseEvent(event)
+
+    def fit_image(self):
+        if self.scene().items():
+            self.fitInView(self.sceneRect(), Qt.AspectRatioMode.KeepAspectRatio)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.fit_image()
+
+    def wheelEvent(self, event):
+        factor = 1.2 if event.angleDelta().y() > 0 else 1 / 1.2
+        self.scale(factor, factor)
+        event.accept()
+
+
+class ConversionWorker(QThread):
+    progress = Signal(str, float)
+    completed = Signal(dict)
+    failed = Signal(str)
+    cancelled = Signal()
+
+    def __init__(self, source, output, options):
+        super().__init__()
+        self.source, self.output, self.options = source, output, options
+        self.token = CancellationToken()
+
+    def run(self):
+        try:
+            result = convert_document(
+                self.source, self.output, **self.options, cancellation_token=self.token,
+                progress_callback=lambda stage, value: self.progress.emit(stage, value),
+            )
+        except ProcessingCancelled:
+            self.cancelled.emit()
+        except Exception as error:
+            self.failed.emit(str(error))
+        else:
+            self.completed.emit(result)
 
 
 class MainWindow(QMainWindow):
-    """Desktop window. Domain processing lives in ProductionProcessingService."""
-
-    from app.gui.controls import build_controls as _build_controls
-    from app.gui.document import (
-        _cache_file_matches,
-        _cache_path_for_key,
-        _current_trace_key,
-        _load_pdf_page,
-        _load_trace_source_for_current_page,
-        _next_pdf_page,
-        _on_pdf_page_changed,
-        _previous_pdf_page,
-        _processing_pdf_dpi,
-        _restore_cached_trace_for_page,
-        _save_current_pdf_state,
-        _set_pdf_controls_enabled,
-        _set_single_image_state,
-        _source_key,
-        _store_current_trace,
-        document_pages_for_export,
-        import_image,
-    )
-    from app.gui.processing import (
-        _apply_trace_result,
-        _processing_config,
-        _stage_text,
-        batch_vectorize_pdf,
-        detect_and_clean,
-    )
-    from app.gui.review_actions import (
-        _preview_shape,
-        _refresh_visual_acceptance,
-        _replace_final_structure_texts,
-        _scaled_for_preview,
-        _visual_acceptance_source,
-        review_layers,
-        review_ocr_texts,
-        verify_current_trace,
-    )
-    from app.gui.review_project_actions import save_review_project, open_review_project
-    from app.gui.manual_text_dialog import recover_manual_text, export_review_document
-
-    from app.gui.page_export import (
-        export_current_page_from_window as export_file,
-        export_processed_pages_from_window as export_processed_pages,
-    )
-
-    def __init__(self, *, processing_mode: str = "native-objects") -> None:
-        if processing_mode not in {"native-objects", "legacy"}:
-            raise ValueError(f"Unknown processing engine: {processing_mode}")
-        self._librecad_font_install_report = None
-        self._review_project = None
-        self._completed_trace_key = None
-        self._dirty_trace_keys: set[object] = set()
-        self._ocr_texts = ()
-        self._signature_regions = ()
-        self._cad_preview_binary = None
-        self._final_structure: FinalStructure | None = None
-        self._preview_structure_id: str | None = None
-        self._trace_cache_tempdir = TemporaryDirectory(prefix="image-to-cad-trace-")
-        self._trace_cache_by_key: dict[object, Path] = {}
-        self._trace_paths: tuple[TracePath, ...] = ()
-        self._trace_threshold: int | None = None
-        self._trace_foreground_pixels = 0
-        self._trace_vertex_count = 0
-        self._reviewed_circles = []
-        QMainWindow.__init__(self)
-        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS}")
-        self.resize(1450, 900)
-        self.original_image: np.ndarray | None = None
-        self.corrected_image: np.ndarray | None = None
-        self.binary_image: np.ndarray | None = None
-        self.raw_lines: list[LineSegment] = []
-        self.lines: list[LineSegment] = []
-        self.preprocess_stages: dict[str, np.ndarray] = {}
-        self.auxiliary_result: AuxiliaryRecognitionResult | None = None
-        self.calibration: ScaleCalibration | None = None
-        self.current_path: Path | None = None
-        self.selection_mode: str | None = None
-        self.selected_points: list[tuple[float, float]] = []
-        self._worker_thread: QThread | None = None
-        self._worker: ProcessingWorker | None = None
-        self._cancellation_token: CancellationToken | None = None
-        self._task_success: Callable[[object], None] | None = None
-        self._state_revision = 0
-        self.tabs = QTabWidget()
-        self.original_canvas = ImageCanvas()
-        self.corrected_canvas = ImageCanvas()
-        self.detected_canvas = ImageCanvas()
-        self.preprocess_tabs = QTabWidget()
-        self.preprocess_canvases: dict[str, ImageCanvas] = {}
-        self.tabs.addTab(self.original_canvas, "SOURCE REFERENCE / 原图")
-        self.tabs.addTab(self.corrected_canvas, "校正 / 黑白图")
-        self.tabs.addTab(self.preprocess_tabs, "预处理阶段")
-        self.tabs.addTab(self.detected_canvas, "识别线条")
-        self.original_canvas.point_clicked.connect(self._on_original_point)
-        self.corrected_canvas.point_clicked.connect(self._on_corrected_point)
-        controls = self._build_controls()
-        splitter = QSplitter()
-        splitter.addWidget(controls)
-        splitter.addWidget(self.tabs)
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 1)
-        splitter.setSizes([310, 1100])
-        self.setCentralWidget(splitter)
-        self.setStatusBar(QStatusBar())
-        self.statusBar().showMessage("请先导入 JPG/PNG 图纸照片")
-        self._build_menu()
-        self._perspective_metadata: dict[str, object] | None = None
-        self._run_started_at: datetime | None = None
-        self._run_duration_seconds: float | None = None
-        self._last_preprocess_scale = 1.0
-        self._last_preprocess_params = PreprocessParams()
-        self._last_warnings: tuple[str, ...] = ()
-        self._dwg_converter_path: Path | None = None
-        self._current_pdf_page: int | None = None
-        self._native_pdf_mode = False
-        self._pdf_page_count = 1
-        self._current_pdf_page_index = 0
-        self._pdf_page_states: dict[int, dict[str, Any]] = {}
-        self._pdf_page_sizes_mm: dict[int, tuple[float, float]] = {}
-        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS}")
-        self.statusBar().showMessage("请先导入 JPG、PNG 或扫描 PDF")
-        if self.calibration is None:
-            self.info_label.setText(UNSCALED_LABEL)
-        self._set_pdf_controls_enabled(False)
-        self._update_scale_label()
-        self._update_scale_label()
-        splitter = self.centralWidget()
-        if isinstance(splitter, QSplitter):
-            splitter.setCollapsible(0, False)
-            controls = splitter.widget(0)
-            if controls is not None:
-                controls.setMinimumWidth(SIDEBAR_MINIMUM_WIDTH)
-            splitter.setSizes([SIDEBAR_WIDTH, max(860, self.width() - SIDEBAR_WIDTH)])
-        self.statusBar().showMessage(
-            "可处理当前页或全部页面；扫描件会自动清理纸张底色和破损纹理"
-        )
-        self.visual_acceptance = VisualAcceptanceWidget(self)
-        self.tabs.addTab(self.visual_acceptance, "视觉验收")
-        self.tabs.currentChanged.connect(
-            lambda _index: self._refresh_visual_acceptance()
-        )
-        from app.gui.review_async import preview_scheduler
-
-        preview_scheduler()  # Optional heartbeat also covers project loading.
-        # The native product entry is the default workspace. The preserved
-        # legacy controls remain accessible only through an explicit tab/mode.
-        from app.gui.native_task_panel import NativeTaskPanel
-
-        legacy_workspace = self.takeCentralWidget()
-        self.workspace_tabs = QTabWidget(self)
-        self.native_task_panel = NativeTaskPanel(self)
-        self.native_workspace_scroll = QScrollArea(self)
-        self.native_workspace_scroll.setWidgetResizable(True)
-        self.native_workspace_scroll.setMinimumSize(0, 0)
-        self.native_workspace_scroll.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
-        self.native_workspace_scroll.setWidget(self.native_task_panel)
-        self.workspace_tabs.addTab(self.native_workspace_scroll, "原生任务 · native-objects")
-        legacy_scroll = QScrollArea(self)
-        legacy_scroll.setWidgetResizable(True)
-        legacy_scroll.setMinimumSize(0, 0)
-        legacy_scroll.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
-        legacy_scroll.setWidget(legacy_workspace)
-        self.workspace_tabs.addTab(legacy_scroll, "兼容工具 · legacy（显式选择）")
-        self.workspace_tabs.setCurrentIndex(0 if processing_mode == "native-objects" else 1)
-        self.setCentralWidget(self.workspace_tabs)
-        self.workspace_tabs.currentChanged.connect(self._workspace_changed)
-        self.native_task_panel.running_changed.connect(
-            lambda running: self.workspace_tabs.setTabEnabled(1, not running)
-        )
-        self.native_task_panel.ready_to_close.connect(self.close)
-        self._workspace_changed()
-        self._fit_initial_desktop_geometry()
-
-    def _fit_initial_desktop_geometry(self) -> None:
-        screen = self.screen()
-        if screen is None:
-            return
-        available = screen.availableGeometry()
-        width = min(1280, max(1, available.width() - 32))
-        height = min(900, max(1, available.height() - 80))
-        self.resize(width, height)
-        self.move(available.x() + max(0, (available.width() - width) // 2),
-                  available.y() + max(0, (available.height() - height) // 2))
-
-    def _native_task_panel_active(self) -> bool:
-        return (hasattr(self, "native_task_panel")
-                and self.workspace_tabs.currentWidget() is self.native_workspace_scroll)
-
-    def _workspace_changed(self, *_args) -> None:
-        native = self._native_task_panel_active()
-        engine = "native-objects" if native else "preserved_main_baseline / legacy"
-        self.setWindowTitle(f"{PRODUCT_NAME} {__version__} — {PRODUCT_STATUS} — {engine}")
-        self.statusBar().showMessage(f"当前引擎：{engine}；输出须核对，工程尺寸仍需标定")
-        for action in self._legacy_only_actions:
-            action.setEnabled(not native)
-        self._export_menu_action.setText("导出原生 DXF…" if native else "导出同一 CAD（DWG / DXF）")
-
-    def _open_active_source(self) -> None:
-        if self._native_task_panel_active():
-            self.native_task_panel.open_source()
-        else:
-            self.import_image()
-
-    def _export_active_result(self) -> None:
-        if self._native_task_panel_active():
-            self.native_task_panel.export_dxf()
-        else:
-            self.export_file()
-
-    def open_existing_dxf_in_cad(self) -> None:
-        from app.gui.cad_font_dialog import CadFontPreparationDialog
-
-        CadFontPreparationDialog(self).exec()
-
-    def _active_canvas(self) -> ImageCanvas | None:
-        if self._native_task_panel_active():
-            return self.native_task_panel.canvas
-        current = self.tabs.currentWidget()
-        if isinstance(current, ImageCanvas):
-            return current
-        if current is self.preprocess_tabs:
-            preprocess_current = self.preprocess_tabs.currentWidget()
-            if isinstance(preprocess_current, ImageCanvas):
-                return preprocess_current
-        return None
-
-    def _actual_size(self) -> None:
-        canvas = self._active_canvas()
-        if canvas is not None:
-            canvas.actual_size()
-
-    def _apply_paper_calibration(self) -> None:
-        if self._native_pdf_mode:
-            return
-        if self.corrected_image is None:
-            self.calibration = None
-            return
-        paper_size, orientation = self.paper_size_combo.currentData()
-        dimensions = resolve_paper_dimensions_mm(
-            paper_size,
-            orientation=orientation,
-            observed_landscape=self.corrected_image.shape[1]
-            >= self.corrected_image.shape[0],
-        )
-        if dimensions is None:
-            self.calibration = None
-            self.info_label.setText("坐标：未校准的无单位像素坐标")
-            return
-        self.calibration = ScaleCalibration.for_paper(
-            self.corrected_image.shape[:2][::-1], dimensions, corners_at_centers=True,
-        )
-        self.info_label.setText(
-            f"坐标：纸面毫米 {self.calibration.mm_per_pixel:.6f} mm/px；不是工程模型尺寸"
-        )
-        if self.calibration is None:
-            self.info_label.setText(UNSCALED_LABEL)
-
-    def _build_menu(self) -> None:
-        file_menu = self.menuBar().addMenu("文件")
-        open_action = QAction("导入图片", self)
-        open_action.triggered.connect(self._open_active_source)
-        export_action = QAction("导出 DXF", self)
-        export_action.triggered.connect(self._export_active_result)
-        file_menu.addAction(open_action)
-        file_menu.addAction(export_action)
-        self._cad_delivery_action = QAction("打开已有 DXF / 准备 CAD 字体…", self)
-        self._cad_delivery_action.triggered.connect(self.open_existing_dxf_in_cad)
-        file_menu.addAction(self._cad_delivery_action)
-        save_review = QAction("保存校对项目…", self)
-        save_review.setShortcut("Ctrl+S")
-        save_review.triggered.connect(self.save_review_project)
-        open_review = QAction("打开校对项目…", self)
-        open_review.triggered.connect(self.open_review_project)
-        file_menu.addAction(save_review)
-        file_menu.addAction(open_review)
-        manual_text = QAction("补录未识别文字", self)
-        manual_text.triggered.connect(self.recover_manual_text)
-        file_menu.addAction(manual_text)
-        review_document = QAction("导出校对项目文档DXF…", self)
-        review_document.triggered.connect(self.export_review_document)
-        file_menu.addAction(review_document)
-        self._legacy_only_actions = (save_review, open_review, manual_text, review_document)
-        self._export_menu_action = export_action
-        file_menu.addSeparator()
-        exit_action = QAction("退出应用", self)
-        exit_action.setShortcut("Ctrl+Q")
-        exit_action.triggered.connect(self.close)
-        file_menu.addAction(exit_action)
-        for menu_action in self.menuBar().actions():
-            menu = menu_action.menu()
-            if menu is None or menu.title() != "文件":
-                continue
-            for action in menu.actions():
-                if action.text() == "导入图片":
-                    action.setText("导入图片 / 扫描 PDF")
-                    action.setShortcut("Ctrl+O")
-                elif action.text() == "导出 DXF":
-                    action.setText("导出同一 CAD（DWG / DXF）")
-                    action.setShortcut("Ctrl+Shift+S")
-        view_menu = self.menuBar().addMenu("视图")
-        zoom_in = QAction("放大", self)
-        zoom_in.setShortcut("Ctrl++")
-        zoom_in.triggered.connect(self._zoom_in)
-        zoom_out = QAction("缩小", self)
-        zoom_out.setShortcut("Ctrl+-")
-        zoom_out.triggered.connect(self._zoom_out)
-        fit_action = QAction("适应窗口", self)
-        fit_action.setShortcut("Ctrl+0")
-        fit_action.triggered.connect(self._fit_view)
-        actual_action = QAction("100%", self)
-        actual_action.setShortcut("Ctrl+1")
-        actual_action.triggered.connect(self._actual_size)
-        view_menu.addActions((zoom_in, zoom_out, fit_action, actual_action))
-
-    def _button(self, text: str, slot: Callable[[], None]) -> QPushButton:
-        button = QPushButton(text)
-        button.clicked.connect(slot)
-        return button
-
-    def _clear_preprocess_tabs(self) -> None:
-        self.preprocess_canvases.clear()
-        while self.preprocess_tabs.count():
-            widget = self.preprocess_tabs.widget(0)
-            self.preprocess_tabs.removeTab(0)
-            widget.deleteLater()
-
-    def _clear_trace_state(self) -> None:
-        from app.gui.review_project_actions import detach_review_project
-
-        detach_review_project(self)
-        self._completed_trace_key = None
-        self._trace_paths = ()
-        self._trace_threshold = None
-        self._trace_foreground_pixels = 0
-        self._trace_vertex_count = 0
-        self._ocr_texts = ()
-        self._signature_regions = ()
-        self._cad_preview_binary = None
-        self._final_structure = None
-        self._preview_structure_id = None
-        widget = getattr(self, "visual_acceptance", None)
-        if widget is not None:
-            widget.clear_result()
-
-    def _drawing_scale(self) -> float:
-        spin = getattr(self, "drawing_scale_spin", None)
-        return float(spin.value()) if spin is not None else 1.0
-
-    def _export_scale_decision(self) -> DrawingScaleDecision:
-        if self._has_explicit_model_calibration():
-            coordinate_space = "model_mm"
-        elif self.calibration is None:
-            coordinate_space = "pixel"
-        else:
-            coordinate_space = "paper_mm"
-        structure = getattr(self, "_final_structure", None)
-        project = getattr(self, "_review_project", None)
-        requested_multiplier = (
-            float(project.manifest["export_settings"]["drawing_multiplier"])
-            if project is not None else self._drawing_scale()
-        )
-        return resolve_drawing_scale(
-            structure.texts if structure is not None else (),
-            requested_multiplier,
-            coordinate_space=coordinate_space,
-        )
-
-    def _export_drawing_multiplier(self) -> float:
-        return self._export_scale_decision().multiplier
-
-    def _fit_view(self) -> None:
-        canvas = self._active_canvas()
-        if canvas is not None:
-            canvas.fit_image()
-
-    def _has_explicit_model_calibration(self) -> bool:
-        if self.calibration is None:
-            return False
-        try:
-            _source, coordinate_space, _warnings = self._calibration_semantics()
-        except Exception:
-            return False
-        return coordinate_space == "model_mm"
-
-    def _invalidate_line_results(self, *_args: object) -> None:
-        self._state_revision += 1
-        self.raw_lines = []
-        self.lines = []
-        self.auxiliary_result = None
-        self.detected_canvas.set_image(None)
-
-    def _invalidate_preprocess_results(self, *_args: object) -> None:
-        self._state_revision += 1
-        self.binary_image = None
-        self.preprocess_stages = {}
-        self._clear_preprocess_tabs()
-        self._invalidate_line_results()
-        if self.corrected_image is not None:
-            self.corrected_canvas.set_image(self.corrected_image)
-
-    def _is_processing(self) -> bool:
-        native = getattr(self, "native_task_panel", None)
-        return (bool(native and (native.running or native.preview_running))
-                or (self._worker_thread is not None and self._worker_thread.isRunning()))
-
-    def _ocr_enabled(self) -> bool:
-        checkbox = getattr(self, "ocr_before_trace_checkbox", None)
-        return bool(checkbox is None or checkbox.isChecked())
-
-    def _on_corrected_point(self, x: float, y: float) -> None:
-        if self.selection_mode != "scale":
-            return
-        point = (x, y)
-        self.selected_points.append(point)
-        self.corrected_canvas.add_point(point, str(len(self.selected_points)), Qt.blue)
-        if len(self.selected_points) != 2:
-            return
-        self.corrected_canvas.add_line(
-            self.selected_points[0], self.selected_points[1], Qt.blue
-        )
-        self.corrected_canvas.set_selection_enabled(False)
-        length, accepted = QInputDialog.getDouble(
-            self,
-            "输入实际长度",
-            "这两个点之间的工程模型长度（mm）：",
-            12000.0,
-            0.001,
-            1000000000.0,
-            3,
-        )
-        self.selection_mode = None
-        if not accepted:
-            self.statusBar().showMessage("已取消模型尺寸校准")
-            return
-        try:
-            calibration = create_calibration(self.selected_points, length)
-        except Exception as exc:
-            QMessageBox.critical(self, "校准失败", str(exc))
-            return
-        self.calibration = calibration
-        self.info_label.setText(
-            f"坐标：工程模型毫米 {calibration.mm_per_pixel:.6f} mm/px；{calibration.pixel_distance:.2f}px = {length:.3f}mm"
-        )
-        self.statusBar().showMessage("工程模型尺寸校准完成")
-        self._update_scale_label()
-
-    def _on_original_point(self, x: float, y: float) -> None:
-        if self.selection_mode != "corners":
-            return
-        point = (x, y)
-        self.selected_points.append(point)
-        self.original_canvas.add_point(point, str(len(self.selected_points)))
-        if len(self.selected_points) != 4:
-            return
-        self.original_canvas.set_selection_enabled(False)
-        self.selection_mode = None
-        source = self.original_image.copy()
-        points = list(self.selected_points)
-        ratio = self._target_aspect_ratio()
-        revision = self._state_revision
-
-        def operation(
-            token: CancellationToken, progress: Callable[[str, float], None]
-        ) -> object:
-            token.checkpoint()
-            progress("四角验证", 0.2)
-            image = warp_perspective(source, points, ratio)
-            token.checkpoint()
-            progress("手动透视校正", 1.0)
-            return image
-
-        def completed(value: object) -> None:
-            if revision != self._state_revision:
-                self.statusBar().showMessage("参数已变化，已丢弃过期的校正结果")
-                return
-            self.corrected_image = value
-            self._invalidate_preprocess_results()
-            self._apply_paper_calibration()
-            self.corrected_canvas.set_image(self.corrected_image)
-            self.tabs.setCurrentWidget(self.corrected_canvas)
-            self._perspective_metadata = {
-                "applied": True,
-                "automatic": False,
-                "confidence": 1.0,
-                "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
-                "corners": points,
-                "target_aspect_ratio": ratio,
-                "warnings": [],
-            }
-            self.statusBar().showMessage("手动四角透视校正完成")
-
-        self._start_processing(operation, completed, "正在执行手动透视校正…")
-
-    @Slot()
-    def _on_processing_cancelled(self) -> None:
-        self._task_success = None
-        self._cancellation_token = None
-        self.cancel_button.setEnabled(False)
-        self.progress_bar.setFormat("已取消")
-        self.statusBar().showMessage("处理已取消；原生 OpenCV 调用会在返回后响应取消")
-
-    @Slot(str)
-    def _on_processing_failed(self, message: str) -> None:
-        self._task_success = None
-        self._cancellation_token = None
-        self.cancel_button.setEnabled(False)
-        self.progress_bar.setFormat("失败")
-        QMessageBox.critical(self, "处理失败", message)
-        self.statusBar().showMessage(f"处理失败：{message}")
-
-    @Slot(str, float)
-    def _on_processing_progress(self, stage: str, fraction: float) -> None:
-        self.progress_bar.setValue(int(round(fraction * 100)))
-        self.progress_bar.setFormat(f"{stage} %p%")
-
-    @Slot(object)
-    def _on_processing_succeeded(self, result: object) -> None:
-        callback = self._task_success
-        self._task_success = None
-        self._cancellation_token = None
-        self.cancel_button.setEnabled(False)
-        self.progress_bar.setValue(100)
-        self.progress_bar.setFormat("完成")
-        if callback is not None:
-            callback(result)
-
-    @Slot()
-    def _on_worker_thread_finished(self) -> None:
-        self._worker_thread = None
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle(f"图像转 CAD · {__version__}")
+        self.resize(1220, 820)
+        self.setAcceptDrops(True)
         self._worker = None
-
-    def _paper_setting_changed(self, *_args: object) -> None:
-        if self.original_image is None:
-            return
-        self.corrected_image = None
-        self.calibration = None
-        self._invalidate_preprocess_results()
-        self.corrected_canvas.set_image(None)
-        self.info_label.setText("纸张规格已变化，请重新执行透视校正")
-        self.statusBar().showMessage("纸张规格已变化，请重新校正、预处理和识别")
-
-    @staticmethod
-    def _remove_from_layout(widget: QWidget | None) -> None:
-        if widget is None:
-            return
-        parent = widget.parentWidget()
-        parent_layout = parent.layout() if parent is not None else None
-        if parent_layout is not None:
-            parent_layout.removeWidget(widget)
-
-    def _require_corrected(self) -> bool:
-        if getattr(self, "_review_project", None) is not None:
-            QMessageBox.information(
-                self,
-                "保存快照",
-                "当前项目只开放文字字符串校对。图像和几何修改请重新导入源文件。",
-            )
-            return False
-        if self.corrected_image is not None:
-            return True
-        if not self._require_original():
-            return False
-        QMessageBox.warning(
-            self,
-            "需要确认纸张透视",
-            "请先执行自动纸张校正，或手工确认四个纸张角点。\n\n当前版本不再把未经校正的原图静默视为已校正图。",
+        self._close_pending = False
+        self._results = []
+        self._preserve_regions = []
+        self._source_can_protect = False
+        self._install_ui_font()
+        self.input_edit = QLineEdit()
+        self.input_edit.setPlaceholderText("选择 PDF 或扫描图，也可直接拖入窗口")
+        self.input_edit.setReadOnly(True)
+        self.import_button = QPushButton("选择文件")
+        self.import_button.clicked.connect(self.choose_input)
+        source_row = QHBoxLayout()
+        source_row.addWidget(self.input_edit)
+        source_row.addWidget(self.import_button)
+        self.output_edit = QLineEdit()
+        self.output_button = QPushButton("保存到")
+        self.output_button.clicked.connect(self.choose_output)
+        destination_row = QHBoxLayout()
+        destination_row.addWidget(self.output_edit)
+        destination_row.addWidget(self.output_button)
+        self.page_spin = QSpinBox()
+        self.page_spin.setMinimum(1)
+        self.page_spin.valueChanged.connect(self.show_source)
+        self.all_pages = QCheckBox("转换全部页面")
+        self.all_pages.setChecked(True)
+        self.page_spin.setEnabled(False)
+        self.dpi_spin = QDoubleSpinBox()
+        self.dpi_spin.setRange(72, 1200)
+        self.dpi_spin.setValue(300)
+        self.dpi_spin.setDecimals(0)
+        self.dpi_spin.valueChanged.connect(self.show_source)
+        self.scale_spin = QDoubleSpinBox()
+        self.scale_spin.setRange(0.001, 10000)
+        self.scale_spin.setDecimals(3)
+        self.scale_spin.setValue(1)
+        self.ocr_check = QCheckBox("中英文识别，保存可编辑文字")
+        self.ocr_check.setChecked(True)
+        self.perspective_check = QCheckBox("校正照片的纸张透视")
+        self.overwrite_check = QCheckBox("覆盖同名输出")
+        self.protect_button = QPushButton("框选保护签章/Logo")
+        self.protect_button.setCheckable(True)
+        self.protect_button.setEnabled(False)
+        self.protect_button.toggled.connect(self._set_protect_mode)
+        self.clear_regions_button = QPushButton("清除")
+        self.clear_regions_button.setEnabled(False)
+        self.clear_regions_button.clicked.connect(self.clear_protected_regions)
+        self.region_count = QLabel("已选 0 处")
+        protection_row = QHBoxLayout()
+        protection_row.addWidget(self.protect_button)
+        protection_row.addWidget(self.clear_regions_button)
+        protection_row.addWidget(self.region_count)
+        self.page_label = QLabel("尚未导入文件")
+        self.page_label.setWordWrap(True)
+        info = QLabel(
+            "矢量 PDF 直接提取图线和文字；扫描页提取基础几何和中英文文字。\n"
+            "签章与 Logo 保留为独立图像。请保留 DXF 旁的字体和图像目录。\n"
+            "DPI 决定扫描纸面尺寸。比例 1:100 输入 100；未知时保留 1，后续按已知尺寸校准。"
         )
-        self.statusBar().showMessage("已阻止处理：尚未确认纸张透视")
-        return False
-
-    def _require_original(self) -> bool:
-        if getattr(self, "_review_project", None) is not None:
-            QMessageBox.information(
-                self,
-                "保存快照",
-                "当前项目只开放文字字符串校对。透视修改请重新导入源文件。",
-            )
-            return False
-        if self.original_image is None:
-            QMessageBox.warning(self, "缺少图片", "请先导入图纸照片。")
-            return False
-        return True
-
-    def _scale_changed(self, _value: int) -> None:
-        self._update_scale_label()
-        if self._native_pdf_mode:
-            self._save_current_pdf_state()
-
-    def _show_preprocess_stages(self, stages: dict[str, np.ndarray]) -> None:
-        self._clear_preprocess_tabs()
-        for stage_name, stage_image in stages.items():
-            canvas = ImageCanvas()
-            canvas.set_image(stage_image)
-            self.preprocess_canvases[stage_name] = canvas
-            self.preprocess_tabs.addTab(canvas, stage_name)
-
-    def _start_processing(
-        self,
-        operation: ProcessingOperation,
-        on_success: Callable[[object], None],
-        message: str,
-    ) -> None:
-        if self._is_processing():
-            QMessageBox.information(
-                self, "正在处理", "请等待当前任务完成，或点击取消。"
-            )
-            return
-        token = CancellationToken()
-        thread = QThread(self)
-        worker = ProcessingWorker(operation, token)
-        worker.moveToThread(thread)
-        thread.started.connect(worker.run)
-        worker.succeeded.connect(self._on_processing_succeeded)
-        worker.failed.connect(self._on_processing_failed)
-        worker.cancelled.connect(self._on_processing_cancelled)
-        worker.progress.connect(self._on_processing_progress)
-        worker.succeeded.connect(thread.quit)
-        worker.failed.connect(thread.quit)
-        worker.cancelled.connect(thread.quit)
-        worker.succeeded.connect(worker.deleteLater)
-        worker.failed.connect(worker.deleteLater)
-        worker.cancelled.connect(worker.deleteLater)
-        thread.finished.connect(self._on_worker_thread_finished)
-        thread.finished.connect(thread.deleteLater)
-        self._worker_thread = thread
-        self._worker = worker
-        self._cancellation_token = token
-        self._task_success = on_success
-        self.cancel_button.setEnabled(True)
-        self.progress_bar.setValue(0)
-        self.progress_bar.setFormat(message)
-        self.statusBar().showMessage(message)
-        thread.start()
-
-    def _target_aspect_ratio(self) -> float | None:
-        paper_size, orientation = self.paper_size_combo.currentData()
-        return resolve_paper_aspect_ratio(
-            paper_size,
-            orientation=orientation,
-            observed_landscape=self.original_image.shape[1]
-            >= self.original_image.shape[0]
-            if self.original_image is not None
-            else None,
-        )
-
-    def _trace_color(self) -> int:
-        return 7
-
-    def _update_scale_label(self) -> None:
-        label = getattr(self, "scale_result_label", None)
-        if label is None:
-            return
-        if self.calibration is None:
-            label.setText("输出比例 1:1；尚未标定纸面或模型尺寸")
-            return
-        if self._has_explicit_model_calibration():
-            label.setText(
-                f"已知尺寸标定：{self.calibration.mm_per_pixel:.6f} 模型 mm/px；不会再叠加图纸比例"
-            )
-            self.info_label.setText(
-                f"工程模型坐标：{self.calibration.mm_per_pixel:.6f} mm/px；{self.calibration.pixel_distance:.2f} px = {self.calibration.actual_length_mm:.3f} mm"
-            )
-            return
-        scale = self._export_scale_decision()
-        ratio = scale.multiplier
-        if scale.coordinate_space == "paper_mm":
-            sx = self.calibration.mm_per_pixel
-            sy = self.calibration.vertical_mm_per_pixel or sx
-            text = f"纸面坐标：{sx:.6f} × {sy:.6f} mm/px"
-            label.setText(f"{text}。{scale.warning}" if scale.warning else text)
-            self.info_label.setText(label.text())
-            return
-        model_mm_per_pixel = self.calibration.mm_per_pixel * ratio
-        label.setText(
-            f"输出比例 1:{int(ratio)}；{model_mm_per_pixel:.6f} 模型 mm/px （纸面 {self.calibration.mm_per_pixel:.6f} mm/px）"
-        )
-        self.info_label.setText(
-            f"输出比例 1:{int(ratio)}；模型坐标 {model_mm_per_pixel:.6f} mm/px"
-        )
-
-    def _zoom_in(self) -> None:
-        canvas = self._active_canvas()
-        if canvas is not None:
-            canvas.zoom_in()
-
-    def _zoom_out(self) -> None:
-        canvas = self._active_canvas()
-        if canvas is not None:
-            canvas.zoom_out()
-
-    def auto_perspective(self) -> None:
-        if not self._require_original():
-            return
-        source = self.original_image.copy()
-        ratio = self._target_aspect_ratio()
-        revision = self._state_revision
-
-        def operation(
-            token: CancellationToken, progress: Callable[[str, float], None]
-        ) -> object:
-            token.checkpoint()
-            progress("自动寻找纸张边界", 0.15)
-            result = auto_correct(source, ratio)
-            token.checkpoint()
-            progress("透视校正", 1.0)
-            return result
-
-        def use_manual(message: str) -> None:
-            answer = QMessageBox.question(
-                self,
-                "改用手动校正",
-                message + "\n\n是否立即点击四个纸张角点进行手动校正？",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.Yes,
-            )
-            if answer == QMessageBox.StandardButton.Yes:
-                QTimer.singleShot(0, self.start_manual_corners)
-
-        def completed(value: object) -> None:
-            if revision != self._state_revision:
-                self.statusBar().showMessage("页面已变化，已丢弃过期校正结果")
-                return
-            result = value
-            if result is None:
-                use_manual("自动校正没有找到可靠的纸张边界。")
-                return
-            if result.confidence < MIN_AUTOMATIC_PAPER_CONFIDENCE:
-                use_manual(
-                    f"自动候选置信度 {result.confidence:.2f}，低于可靠阈值 {MIN_AUTOMATIC_PAPER_CONFIDENCE:.2f}。"
-                )
-                return
-            self.corrected_image = result.image
-            self._invalidate_preprocess_results()
-            self._clear_trace_state()
-            self._apply_paper_calibration()
-            self.corrected_canvas.set_image(self.corrected_image)
-            self.tabs.setCurrentWidget(self.corrected_canvas)
-            self._perspective_metadata = {
-                "applied": True,
-                "automatic": True,
-                "confidence": result.confidence,
-                "minimum_strict_confidence": MIN_AUTOMATIC_PAPER_CONFIDENCE,
-                "corners": result.corners,
-                "target_aspect_ratio": ratio,
-                "warnings": list(result.warnings),
-            }
-            self._update_scale_label()
-            answer = QMessageBox.question(
-                self,
-                "确认校正结果",
-                "自动校正已完成。当前校正结果是否满意？\n\n选择“否”将立即进入手动四角校正。",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.Yes,
-            )
-            if answer == QMessageBox.StandardButton.No:
-                QTimer.singleShot(0, self.start_manual_corners)
-            else:
-                self.statusBar().showMessage(
-                    f"自动校正完成；置信度 {result.confidence:.2f}"
-                )
-
-        self._start_processing(operation, completed, "正在自动校正图片…")
-
-    def cancel_processing(self) -> None:
-        native = getattr(self, "native_task_panel", None)
-        if native is not None and native.running:
-            native.cancel()
-            return
-        if self._cancellation_token is None:
-            return
-        self._cancellation_token.cancel()
+        info.setWordWrap(True)
+        form = QFormLayout()
+        form.addRow("输入", source_row)
+        form.addRow("输出", destination_row)
+        form.addRow("查看/指定页", self.page_spin)
+        form.addRow("", self.all_pages)
+        form.addRow("扫描 DPI", self.dpi_spin)
+        form.addRow("图纸比例 1:", self.scale_spin)
+        form.addRow("", self.ocr_check)
+        form.addRow("", self.perspective_check)
+        form.addRow(protection_row)
+        form.addRow("", self.overwrite_check)
+        form.addRow("", self.page_label)
+        self.convert_button = QPushButton("转换并保存 DXF")
+        self.convert_button.setMinimumHeight(42)
+        self.convert_button.clicked.connect(self.start_conversion)
+        self.cancel_button = QPushButton("停止")
         self.cancel_button.setEnabled(False)
-        self.progress_bar.setFormat("正在取消…")
-        self.statusBar().showMessage("已请求取消，将在当前 OpenCV/OCR 调用返回后停止")
+        self.cancel_button.clicked.connect(self.cancel_conversion)
+        buttons = QHBoxLayout()
+        buttons.addWidget(self.convert_button)
+        buttons.addWidget(self.cancel_button)
+        self.progress_bar = QProgressBar()
+        self.result_log = QTextEdit()
+        self.result_log.setReadOnly(True)
+        self.open_output_button = QPushButton("打开输出文件夹")
+        self.open_output_button.setEnabled(False)
+        self.open_output_button.clicked.connect(self.open_output)
+        self.font_button = QPushButton("准备 CAD 中文字体")
+        self.font_button.clicked.connect(self.prepare_cad_fonts)
+        self.result_pages = QComboBox()
+        self.result_pages.setPlaceholderText("选择已转换页面")
+        self.result_pages.currentIndexChanged.connect(self.show_result)
+        panel = QWidget()
+        panel.setMinimumWidth(360)
+        panel.setMaximumWidth(500)
+        left = QVBoxLayout(panel)
+        left.addLayout(form)
+        left.addWidget(info)
+        left.addLayout(buttons)
+        left.addWidget(self.progress_bar)
+        left.addWidget(self.result_pages)
+        left.addWidget(self.result_log, 1)
+        left.addWidget(self.open_output_button)
+        left.addWidget(self.font_button)
+        self.source_view, self.result_view = PreviewView(), PreviewView()
+        self.source_view.region_selected.connect(self._region_selected)
+        self.tabs = QTabWidget()
+        self.tabs.addTab(self.source_view, "原图")
+        self.tabs.addTab(self.result_view, "已保存 DXF")
+        splitter = QSplitter()
+        splitter.addWidget(panel)
+        splitter.addWidget(self.tabs)
+        splitter.setStretchFactor(1, 1)
+        splitter.setSizes([400, 820])
+        self.setCentralWidget(splitter)
+        self.statusBar().showMessage("选择文件后即可转换")
+        action = QAction("打开文件", self)
+        action.setShortcut("Ctrl+O")
+        action.triggered.connect(self.choose_input)
+        self.menuBar().addMenu("文件").addAction(action)
+        fit = QAction("适合窗口", self)
+        fit.triggered.connect(lambda: self.tabs.currentWidget().fit_image())
+        self.menuBar().addMenu("视图").addAction(fit)
 
-    def closeEvent(self, event) -> None:
-        native = getattr(self, "native_task_panel", None)
-        if native is not None and not native.request_close():
-            event.ignore()
-            return
-        from app.gui.review_async import defer_close_for_review
+    def _install_ui_font(self):
+        root = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[2]))
+        font = root / "resources/fonts/NotoSansCJKsc-Regular.otf"
+        if font.exists():
+            identifier = QFontDatabase.addApplicationFont(str(font))
+            families = QFontDatabase.applicationFontFamilies(identifier)
+            if families:
+                QApplication.instance().setFont(QFont(families[0], 10))
 
-        if defer_close_for_review(self):
-            event.ignore()
+    def choose_input(self):
+        if self._worker is not None:
             return
-        if self._is_processing():
-            self.cancel_processing()
-            event.ignore()
-            QMessageBox.information(
-                self,
-                "正在停止任务",
-                "已请求取消。当前 OpenCV/OCR 调用返回后即可关闭窗口。",
-            )
-            return
-        from app.gui.review_project_actions import (
-            can_leave_review_project,
-            detach_review_project,
+        path, _ = QFileDialog.getOpenFileName(
+            self, "选择图纸", "", "图纸 (*.pdf *.png *.jpg *.jpeg *.tif *.tiff *.bmp)"
         )
+        if path:
+            self.load_input(path)
 
-        if not can_leave_review_project(self):
+    def load_input(self, path):
+        if self._worker is not None:
+            return
+        try:
+            details = inspect_document(path)
+        except Exception as error:
+            QMessageBox.warning(self, "无法读取", str(error))
+            return
+        source = Path(details["input"])
+        self._results = []
+        self.result_pages.clear()
+        self.result_view.scene().clear()
+        self.result_log.clear()
+        self.open_output_button.setEnabled(False)
+        self.input_edit.setText(str(source))
+        self.output_edit.setText(str(source.with_name(source.stem + "_cad.dxf")))
+        self.page_spin.setMaximum(details["pages"])
+        self.page_spin.setValue(1)
+        self.all_pages.setEnabled(details["pages"] > 1)
+        self.page_spin.setEnabled(details["pages"] > 1)
+        self.page_label.setText(f"{details['pages']} 页 · {source.name}")
+        self.perspective_check.setEnabled(details["kind"] != "pdf")
+        self.show_source()
+
+    def choose_output(self):
+        path, _ = QFileDialog.getSaveFileName(
+            self, "保存 DXF", self.output_edit.text(), "DXF (*.dxf)"
+        )
+        if path:
+            self.output_edit.setText(path)
+
+    def show_source(self, *_args):
+        self.clear_protected_regions()
+        self._source_can_protect = False
+        self.protect_button.setEnabled(False)
+        source = Path(self.input_edit.text())
+        if not source.is_file():
+            return
+        try:
+            if source.suffix.lower() == ".pdf":
+                import pymupdf
+                with pymupdf.open(source) as document:
+                    page = document[min(self.page_spin.value() - 1, len(document) - 1)]
+                    source_size = pdf_raster_size(page.rect, self.dpi_spin.value())
+                    zoom = min(2.0, 1800 / max(page.rect.width, page.rect.height))
+                    image = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), alpha=False)
+                    pixmap = QPixmap()
+                    pixmap.loadFromData(image.tobytes("png"))
+                from app.core.pdf_conversion import inspect_pdf_page
+                self._source_can_protect = inspect_pdf_page(source, self.page_spin.value())["route"] == "scan"
+            else:
+                from io import BytesIO
+
+                from PIL import Image, ImageOps
+                with Image.open(source) as image:
+                    image.seek(min(self.page_spin.value() - 1, getattr(image, "n_frames", 1) - 1))
+                    image = ImageOps.exif_transpose(image).convert("RGBA")
+                    source_size = image.size
+                    image = Image.alpha_composite(Image.new("RGBA", image.size, "white"), image).convert("RGB")
+                    image.thumbnail((2000, 2000))
+                    stream = BytesIO()
+                    image.save(stream, format="PNG")
+                    pixmap = QPixmap()
+                    pixmap.loadFromData(stream.getvalue())
+                self._source_can_protect = True
+            self.source_view.set_pixmap(pixmap, source_size)
+            self.protect_button.setEnabled(self._source_can_protect and self._worker is None)
+            self.protect_button.setToolTip("在原图上拖动矩形，保护区域保持图像，不参加文字识别。"
+                                          if self._source_can_protect else "原生矢量 PDF 的嵌入图像直接保留，无需框选。")
+            self.tabs.setCurrentWidget(self.source_view)
+        except Exception as error:
+            self.statusBar().showMessage(f"原图预览失败：{error}")
+
+    def _set_protect_mode(self, enabled):
+        self.source_view.set_selection_enabled(enabled and self._worker is None)
+        if enabled:
+            self.tabs.setCurrentWidget(self.source_view)
+            self.statusBar().showMessage("在原图拖动矩形保护签章或 Logo；可连续框选多处。")
+
+    def _region_selected(self, region):
+        self._preserve_regions.append(tuple(region))
+        self.all_pages.setChecked(False)
+        self.all_pages.setEnabled(False)
+        self.region_count.setText(f"已选 {len(self._preserve_regions)} 处")
+        self.clear_regions_button.setEnabled(True)
+        self.statusBar().showMessage(f"已保护 {len(self._preserve_regions)} 处；将转换当前第 {self.page_spin.value()} 页。")
+
+    def clear_protected_regions(self):
+        self._preserve_regions = []
+        self.protect_button.setChecked(False)
+        self.region_count.setText("已选 0 处")
+        self.clear_regions_button.setEnabled(False)
+        self.source_view.clear_regions()
+        self.all_pages.setEnabled(self._worker is None and self.page_spin.maximum() > 1)
+
+    def start_conversion(self):
+        if self._worker is not None:
+            return
+        if not self.input_edit.text() or not self.output_edit.text():
+            QMessageBox.information(self, "选择文件", "请先选择输入文件和 DXF 输出位置。")
+            return
+        options = {
+            "page_number": None if self.all_pages.isChecked() and not self._preserve_regions else self.page_spin.value(),
+            "all_pages": self.all_pages.isChecked() and not self._preserve_regions, "dpi": self.dpi_spin.value(),
+            "drawing_scale": self.scale_spin.value(),
+            "enable_ocr": self.ocr_check.isChecked(),
+            "perspective": self.perspective_check.isEnabled() and self.perspective_check.isChecked(),
+            "overwrite": self.overwrite_check.isChecked(),
+            "preserve_regions": list(self._preserve_regions),
+        }
+        self._worker = ConversionWorker(self.input_edit.text(), self.output_edit.text(), options)
+        self._worker.progress.connect(self._progress)
+        self._worker.completed.connect(self._completed)
+        self._worker.failed.connect(self._failed)
+        self._worker.cancelled.connect(lambda: self.result_log.append("转换已停止，已完成页面保留。"))
+        self._worker.finished.connect(self._finished)
+        self.result_log.clear()
+        self._results = []
+        self.result_pages.clear()
+        self.result_view.scene().clear()
+        self.open_output_button.setEnabled(False)
+        self.progress_bar.setValue(0)
+        self._set_busy(True)
+        self._worker.start()
+
+    def _set_busy(self, busy):
+        for widget in (self.convert_button, self.import_button, self.output_button,
+                       self.output_edit, self.dpi_spin, self.scale_spin, self.ocr_check, self.overwrite_check):
+            widget.setEnabled(not busy)
+        self.page_spin.setEnabled(not busy and self.page_spin.maximum() > 1)
+        self.all_pages.setEnabled(not busy and self.page_spin.maximum() > 1 and not self._preserve_regions)
+        self.perspective_check.setEnabled(not busy and Path(self.input_edit.text()).suffix.lower() != ".pdf")
+        self.cancel_button.setEnabled(busy)
+        self.protect_button.setEnabled(not busy and self._source_can_protect)
+        self.clear_regions_button.setEnabled(not busy and bool(self._preserve_regions))
+        if busy:
+            self.protect_button.setChecked(False)
+        self.source_view.setEnabled(not busy)
+
+    def _progress(self, stage, value):
+        self.statusBar().showMessage(stage)
+        self.progress_bar.setValue(round(value * 100))
+
+    def _completed(self, result):
+        self._results = result["outputs"]
+        for page in self._results:
+            self.result_log.append(
+                f"第 {page['page_number']} 页\n{page['output']}\n实体：{page.get('counts', {})}\n"
+            )
+        for warning in result["warnings"]:
+            self.result_log.append(warning)
+        self.result_log.append(f"耗时 {result['elapsed_seconds']:.1f} 秒\n报告：{result['report']}")
+        self.result_pages.addItems([f"第 {page['page_number']} 页 · {page['route']}" for page in self._results])
+        if self._results:
+            self.result_pages.setCurrentIndex(0)
+        self.open_output_button.setEnabled(True)
+        self.statusBar().showMessage("转换完成；请检查文字和局部几何")
+
+    def show_result(self, index):
+        if 0 <= index < len(self._results) and self._results[index].get("preview"):
+            self.result_view.set_pixmap(QPixmap(self._results[index]["preview"]))
+            self.tabs.setCurrentWidget(self.result_view)
+
+    def _failed(self, message):
+        self.result_log.append(f"转换失败：{message}")
+        self.statusBar().showMessage("转换失败")
+
+    def _finished(self):
+        worker, self._worker = self._worker, None
+        self._set_busy(False)
+        if worker is not None:
+            worker.deleteLater()
+        if self._close_pending:
+            self.close()
+
+    def cancel_conversion(self):
+        if self._worker is not None:
+            self._worker.token.cancel()
+            self.cancel_button.setEnabled(False)
+            self.statusBar().showMessage("正在停止…")
+
+    def open_output(self):
+        if self._results:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(Path(self._results[0]["output"]).parent)))
+
+    def prepare_cad_fonts(self):
+        from app.core.font_install import install_cad_fonts
+        try:
+            result = install_cad_fonts()
+            QMessageBox.information(self, "中文字体", result)
+        except Exception as error:
+            QMessageBox.warning(self, "字体准备失败", str(error))
+
+    def dragEnterEvent(self, event):
+        if self._worker is None and event.mimeData().hasUrls():
+            paths = [Path(url.toLocalFile()) for url in event.mimeData().urls()]
+            if len(paths) == 1 and paths[0].suffix.lower() in SUPPORTED_EXTENSIONS:
+                event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        self.load_input(event.mimeData().urls()[0].toLocalFile())
+        event.acceptProposedAction()
+
+    def closeEvent(self, event):
+        if self._worker is not None and self._worker.isRunning():
+            self._close_pending = True
+            self.cancel_conversion()
             event.ignore()
-            return
-        QMainWindow.closeEvent(self, event)
-        if event.isAccepted():
-            detach_review_project(self)
-            self._trace_cache_tempdir.cleanup()
-
-    def correct_image(self) -> None:
-        if getattr(self, "_review_project", None) is not None:
-            return
-        if self._native_pdf_mode:
-            self.corrected_image = (
-                self.original_image.copy() if self.original_image is not None else None
-            )
-            self.corrected_canvas.set_image(self.corrected_image)
-            self.tabs.setCurrentWidget(self.corrected_canvas)
-            self.statusBar().showMessage("PDF 页面无需透视校正，可直接完整拓印")
-            return
-        self.auto_perspective()
-
-    def rotate_corrected(self, degrees: int) -> None:
-        revision_before = self._state_revision
-        metadata_before = deepcopy(self._perspective_metadata)
-        if self._is_processing():
-            QMessageBox.information(self, "正在处理", "请先取消或等待当前任务完成。")
-            return
-        if not self._require_corrected():
-            return
-        self.corrected_image = rotate_image(self.corrected_image, degrees)
-        self._invalidate_preprocess_results()
-        self.calibration = None
-        self.corrected_canvas.set_image(self.corrected_image)
-        self.detected_canvas.set_image(None)
-        self.statusBar().showMessage(f"已旋转 {degrees}°，请重新预处理和识别")
-        if self.corrected_image is not None and self._perspective_metadata is not None:
-            rotations = list(self._perspective_metadata.get("rotations", []))
-            rotations.append(int(degrees))
-            self._perspective_metadata["rotations"] = rotations
-        if self._state_revision == revision_before:
-            self._perspective_metadata = metadata_before
-        elif self.calibration is None:
-            self.info_label.setText(UNSCALED_LABEL)
-
-    def start_manual_corners(self) -> None:
-        if self._is_processing():
-            QMessageBox.information(self, "正在处理", "请先取消或等待当前任务完成。")
-            return
-        if not self._require_original():
-            return
-        self.selection_mode = "corners"
-        self.selected_points = []
-        self.original_canvas.clear_overlays()
-        self.original_canvas.set_selection_enabled(True)
-        self.tabs.setCurrentWidget(self.original_canvas)
-        self.statusBar().showMessage("请在原图上点击纸张的四个角，顺序不限")
-
-    def start_scale_calibration(self) -> None:
-        if not self._require_corrected():
-            return
-        self.corrected_canvas.set_image(self.corrected_image)
-        self.corrected_canvas.clear_overlays()
-        self.selection_mode = "scale"
-        self.selected_points = []
-        self.corrected_canvas.set_selection_enabled(True)
-        self.tabs.setCurrentWidget(self.corrected_canvas)
-        self.statusBar().showMessage("请在校正图上点击已知尺寸线段的两个端点")
-
-    def _calibration_semantics(self) -> tuple[str, str, list[str]]:
-        warnings: list[str] = []
-        if self.calibration is None:
-            warnings.append("未校准尺寸；导出坐标仍为像素图形单位。")
-            return ("uncalibrated", "pixel", warnings)
-        if self.calibration.known_length:
-            return ("explicit", "model_mm", warnings)
-        if self.calibration.paper_size_px is not None or self._native_pdf_mode:
-            return ("paper_dimensions", "paper_mm", warnings)
-        paper_size, orientation = self.paper_size_combo.currentData()
-        dimensions = resolve_paper_dimensions_mm(
-            paper_size,
-            orientation=orientation,
-            observed_landscape=self.corrected_image.shape[1]
-            >= self.corrected_image.shape[0],
-        )
-        expected_end = float(max(1, self.corrected_image.shape[1] - 1))
-        paper_derived = (
-            dimensions is not None
-            and abs(self.calibration.point1[0]) < 1e-06
-            and (abs(self.calibration.point1[1]) < 1e-06)
-            and (abs(self.calibration.point2[0] - expected_end) < 0.001)
-            and (abs(self.calibration.point2[1]) < 1e-06)
-        )
-        if paper_derived:
-            warnings.append(
-                "导出坐标为纸面毫米（paper_mm），不是原始设计模型尺寸；恢复 model_mm 必须用图纸比例或已知实际尺寸重新校准。"
-            )
-            return ("paper_dimensions", "paper_mm", warnings)
-        return ("explicit", "model_mm", warnings)
+        else:
+            event.accept()

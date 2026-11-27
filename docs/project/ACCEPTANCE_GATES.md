@@ -1,121 +1,31 @@
-# Acceptance gates
+# 验收原则
 
-A phase may pass only when every gate in its declared scope passes. “Not tested” is not “pass.”
+质量目标以产品意图为准。按每项任务的真实范围报告；未测试不是通过。已验证的开发改动可以进入主线，局部开发验证不能被写成完整产品或用户验收。
 
-## G1 — Automated test gate
+## 程序与回归
 
-Required evidence:
+针对受影响行为运行必要测试、静态检查和实际入口。记录实际提交、命令、结果和输入范围，不改测试基线掩盖退步，不用合成例或总通过数替代真实输入质量。
 
-- focused tests for the changed contract;
-- full relevant unit suite;
-- lint/static checks;
-- exact command, commit, result, warnings, and artifact path;
-- no update to a regression baseline merely to absorb deterioration.
+## 实际 DXF
 
-Automated tests cannot close a human UAT failure by themselves.
+重新打开实际保存文件，检查实体、Unicode 内容、有限坐标、单位、图层/默认显示、字体和图片依赖，以及读写往返。检查重复文字、旧字残留、意外连接、开口和邻近内容。结构审计无错仅说明文件结构，不证明内容正确。
 
-## G2 — DXF entity audit gate
+普通文字应是真实 TEXT/MTEXT；Logo/签名/印章独立保护；复合符号应保留外框、字符和相对/连接关系。OCR 高分不能单独证明识别正确，也不能授权破坏其它正确内容。
 
-Each final DXF is audited independently for:
+## 编辑、显示与目标 CAD
 
-- readability by the audit library;
-- native `TEXT` counts and text contents;
-- invalid geometry and non-finite values;
-- layer existence/default state;
-- `SOURCE_TEXT_OUTLINE` off and frozen;
-- entity-type preservation;
-- duplicate visible text representations;
-- semantic ownership conflicts;
-- unexpected repaired-line or large-span entities;
-- read-save-read persistence.
+在适用输入上实际执行改字、移动、删除、保存、关闭和重开，并核对非目标内容。中文、数字、英文、横向与旋转文字分别覆盖适用范围。目标 CAD 中的实际打开/编辑/保存、DXF 库操作、应用自身窗口和 DWG 往返是不同证据，分别报告，不能互相代替。
 
-Aggregate totals supplement, but never replace, per-DXF results.
+逐页查看比例、裁剪、字号、间距、插入点、基线、重叠、表框、图线完整性和保护区域；明确人工看过的页数。未解决的错字、碎段、漏项和残余图像必须披露。
 
-## G3 — LibreCAD edit/save gate
+## 不确定内容与人工成本
 
-Representative real DXFs must be opened in the target LibreCAD version.
+不进行无约束全页桥接，不按页名/固定坐标/特定文字写死答案，不静默猜改工程数字。候选补绘需要来源和不确定性标记，可独立关闭、修改、接受或撤销，不能混作实际观察。
 
-Required operation:
+完整任务的人工成本包括检查、纠错、所有漏项补绘、保存和最终核对。正确完整及节省人工的目标保持；没有真实操作计时则标未测，不能由转换速度、实体数或模型分数推导省工。
 
-1. select native Chinese, numeric, and English text where present;
-2. confirm entity type is `TEXT`;
-3. edit content;
-4. save a copy;
-5. close LibreCAD completely;
-6. reopen the copy;
-7. confirm entity type and edited Unicode content persist.
+## 平台与发布
 
-Current evidence: passed on two real DXFs for Chinese edit persistence. P1 and later phases must repeat this on changed outputs.
+平台交付由该平台实际程序证明：构建、正常输入转换、字体/图像依赖、窗口启闭及适用的安装/卸载。Linux 程序不代替 Windows 实测。正式发布须有对应的明确用户授权、实际验证范围及可恢复 Git 版本；开发构建可供试用，但不得标为完整产品验收。
 
-## G4 — Per-page visual gate
-
-Every real page and final DXF receives an independent visual result for:
-
-- global position, scale, and clipping;
-- text height, width, insertion, baseline, rotation, and overlap;
-- cell/border overflow;
-- vertical and rotated text;
-- ordinary text in symbol layers;
-- source-outline default visibility;
-- structure completeness;
-- repaired-line accuracy and protected-region crossings;
-- formal versus diagnostic display.
-
-Coverage must identify exactly which pages were human-inspected.
-
-## G5 — Regression safety gate
-
-The following contracts are non-negotiable:
-
-- no full-page topology repair;
-- no endpoint-only bridge acceptance;
-- full candidate repair path remains inside a valid structural region/corridor;
-- no text/logo/signature/protected-object crossing;
-- native text count does not decline without documented OCR evidence;
-- trusted native `TEXT` does not become outline/image geometry;
-- `replacement_safe` does not block text emission;
-- GUI, cache, and DXF use the same `FinalStructure`;
-- phase-12 baseline is not moved;
-- regression fixtures are not rewritten to conceal failure.
-
-## G6 — P1 geometry gate
-
-P1 additionally requires:
-
-- one audited geometry-creation path or an explicitly documented reason for multiple paths;
-- per-entity OCR content, bbox/quad, direction, confidence, metric source, height, width factor, insertion/alignment, rotation, predicted DXF bounds, overflow, center, and baseline diagnostics;
-- no systematic oversized text;
-- no broad text overlap;
-- no systematic cell/border overflow;
-- horizontal, 90°, and 270° samples pass;
-- abnormal boxes have explicit fallback/reason codes;
-- eligible native-text count and entity type are preserved;
-- user LibreCAD confirmation.
-
-## G7 — Structure-repair gate
-
-P4 additionally requires per-page:
-
-- precision, recall, and F1;
-- number and span of added lines;
-- text/logo/signature crossings;
-- open-space and page-wide erroneous bridges;
-- `REPAIRED_STRUCTURE` isolation and visibility control;
-- generation reason and source support for every repair.
-
-Recall improvement never permits a safety-contract failure.
-
-## G8 — Release gate
-
-Release requires all of the following:
-
-- P1 through P5 accepted;
-- complete P6 per-page and per-DXF evidence;
-- user approval;
-- clean repository/worktree evidence from a tag-capable Git client;
-- exact release commit and immutable tag;
-- CI/check-suite result verified;
-- installer and portable-package tests;
-- no open release blocker in [ISSUE_REGISTER.md](ISSUE_REGISTER.md).
-
-GitHub “mergeable” is not a release gate.
+旧 FinalStructure、固定阶段编号、单裁片账本及已退役实现的专属门槛不再控制新产品入口；上述通用质量要求继续有效。
