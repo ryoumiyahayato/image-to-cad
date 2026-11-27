@@ -1114,7 +1114,8 @@ class NativeJobManager:
                 raise ValueError("COMMIT_RECOVERY_ARTIFACT_CHANGED:" + name)
         from app.core.native_worker import _saved_candidate_gates
 
-        gates = _saved_candidate_gates(published, {"input_path": state["input_path"]})
+        gates = _saved_candidate_gates(published, {"input_path": state["input_path"],
+                                                  "source_stage_checkpoint": state.get("source_stage_checkpoint")})
         recovered = {
             "job_id": state["job_id"],
             "attempt": state["attempt"],
@@ -1321,6 +1322,13 @@ class NativeJobManager:
         audit = doc.audit()
         if audit.errors or audit.fixes:
             raise ValueError("Published DXF no longer passes a cold-read audit")
+        continuation_export = None
+        if state.get("source_stage_checkpoint") is not None:
+            from app.native_objects.source_proof_continuation import verify_saved_continuation_gate, AUDIT_NAME
+
+            continuation_export = verify_saved_continuation_gate(
+                source, source.parent / "evidence", state["source_stage_checkpoint"], state["input_path"],
+            )
         destination.parent.mkdir(parents=True, exist_ok=True)
         temporary = destination.parent / (
             "." + destination.name + ".export-" + uuid.uuid4().hex
@@ -1362,6 +1370,9 @@ class NativeJobManager:
             captured_source = companion / "task_input" / Path(state["input_path"]).name
             captured_source.parent.mkdir()
             shutil.copyfile(state["input_path"], captured_source)
+            if continuation_export is not None:
+                verify_saved_continuation_gate(companion / "result.dxf", companion / "evidence",
+                                              state["source_stage_checkpoint"], captured_source)
             copied_binding = verify_saved_review(
                 companion / "evidence/quality_review.json",
                 companion / "result.dxf",
@@ -1416,6 +1427,9 @@ class NativeJobManager:
                 "status": "AUDITED_CANDIDATE_WITH_EXPLICIT_PENDING_NOT_PRODUCT_GO",
                 "source_result_unchanged": True,
             }
+            if continuation_export is not None:
+                manifest.update(source_gate_mode=continuation_export["mode"],
+                                source_proof_audit_sha256=file_sha(companion / "evidence" / AUDIT_NAME))
             manifest_name = destination.stem + ".export.json"
             if (destination.parent / manifest_name).exists():
                 raise FileExistsError("Export manifest already exists")

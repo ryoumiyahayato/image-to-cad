@@ -1,7 +1,8 @@
 """Explicit, source-bound continuation of the complete pre-attached stage.
 
-No DXF is read here. Historical attachment results only identify the stage
-boundary to remove; every current attached/contact/numerical gate runs anew.
+Source assembly is the sole construction input. V2 historical saved CAD is
+read only by the complete proof validator. Historical attachment results
+identify the boundary to remove; current attached/contact/numerical gates rerun.
 """
 from __future__ import annotations
 
@@ -23,8 +24,8 @@ from .contracts import save_json
 from .execution import file_sha, read_json
 
 
-SCHEMA = "source-stage-checkpoint-pre-attached-v1"
-CAPTURE_SCHEMA = "captured-source-stage-checkpoint-v1"
+SCHEMA = "source-stage-checkpoint-pre-attached-v2"
+CAPTURE_SCHEMA = "captured-source-stage-checkpoint-v2"
 STAGES = ["text_and_raw_observations", "source_lines_and_candidates",
           "annotations", "complete_doors_and_finite_retirement_intervals",
           "complete_walls_and_remaining_lines", "connections",
@@ -32,12 +33,14 @@ STAGES = ["text_and_raw_observations", "source_lines_and_candidates",
           "text_contact_and_transverse_paths", "short_contact_text"]
 DOWNSTREAM = ["fresh_source_graph", "attached_ink", "all_prior_contacts",
               "joint_numerical_contract", "native_save", "saved_source_cold_read",
+              "saved_source_proof_continuation",
               "render", "current_input_quality_review", "independent_old_content_check"]
 _RERUN_MODULES = {
     "attached_stroke_graph.py", "attached_stroke_audit.py",
     "attached_stroke_numeric.py", "attached_stroke_ink.py",
     "attached_stroke_contacts.py", "independent_saved_geometry_audit.py",
     "raw_source_responsibility_audit.py", "source_stage_checkpoint.py",
+    "source_proof_continuation.py",
 }
 _SUPPLEMENTAL = ("app/geometry/source_filled_marks.py", "app/core/cancellation.py")
 _CONTINUATION_EXECUTORS = ("app/native_objects/pipeline.py", "app/core/native_objects_entry.py",
@@ -47,7 +50,7 @@ _NO_RESTORE_ROOT = {
     "completed_assembly.json", "completed_stages.json", "assembly.json",
     "import_manifest.json", "input_contract.json", "pipeline_trace.json",
     "pipeline_resources.json", "pipeline_failure.json", "cold_audit.json",
-    "source_stage_continuation.json", "import_preview.png", "job_config.json",
+    "source_stage_continuation.json", "source_proof_continuation_audit.json", "import_preview.png", "job_config.json",
     "raw_observation_usage.json", "runtime_privacy.json",
 }
 _REQUIRED_STATE = {"texts", "geometry", "annotations", "doors", "door_completion",
@@ -371,7 +374,7 @@ def _source_identity(source, parameters, stage, *, app_root=None):
             "working_roi_xyxy_px": list(prepared.working_roi)}
 
 
-def build_checkpoint(*, evidence, request, previous_source, environment, resources, source, output):
+def build_checkpoint(*, evidence, request, previous_source, environment, resources, source, output, historical_export=None):
     """Create a new explicit checkpoint from an attested completed source run."""
     evidence, previous_source, output = Path(evidence).resolve(), Path(previous_source).resolve(), Path(output).resolve()
     old_request, old_stage = read_json(request), read_json(evidence / "completed_stages.json")
@@ -420,16 +423,25 @@ def build_checkpoint(*, evidence, request, previous_source, environment, resourc
         restored.append(relative.as_posix())
     save_json(output / "upstream_state.json", state)
     copied.append(_record(output / "upstream_state.json", "upstream_state.json"))
+    from .source_proof_continuation import create_historical_capsule, validate_historical_capsule
+
+    historical_proof = create_historical_capsule(evidence, old_request, state, removed, output, historical_export)
+    copied.extend(historical_proof["artifacts"].values())
+    validate_historical_capsule(output, historical_proof, state, old_request, removed,
+                                [row for row in copied if row["path"].startswith("evidence/")])
     manifest = {"schema": SCHEMA, "boundary": "AFTER_SHORT_CONTACT_BEFORE_ATTACHED",
                 "source": identity, "historical_worker_algorithm": old_request["algorithm"],
                 "producer_closure": closure, "runtime_and_resources": dependencies,
                 "checkpoint_validator_sha256": file_sha(__file__),
                 "continuation_executor_sha256": executor_identity(),
+                "source_proof_reviewer_sha256": file_sha(Path(__file__).with_name("source_proof_continuation.py")),
+                "historical_saved_proof": historical_proof,
                 "upstream_state_sha256": digest(state), "restored_evidence_paths": restored,
                 "declared_raw_evidence_paths": raw_references,
                 "artifacts": copied, "reused_stages": STAGES, "downstream_required": DOWNSTREAM,
                 "excluded_historical_stage_object_ids": removed,
-                "old_DXF_read": False, "new_OCR_calls": 0,
+                "historical_DXF_read_for_proof_validation": True,
+                "old_DXF_entities_used_to_construct_output": False, "new_OCR_calls": 0,
                 "historical_CPU_BLAS_binary_dispatch": "NOT_RECORDED_NOT_INFERRED"}
     save_json(output / "manifest.json", manifest)
     return output / "manifest.json"
@@ -444,6 +456,8 @@ def verify_checkpoint(manifest_path, *, source, parameters, expected_sha256=None
              "SOURCE_STAGE_CONTRACT_UNSUPPORTED")
     _require(manifest.get("checkpoint_validator_sha256") == file_sha(__file__), "SOURCE_STAGE_VALIDATOR_CHANGED")
     _require(manifest.get("continuation_executor_sha256") == executor_identity(), "SOURCE_STAGE_CONTINUATION_EXECUTOR_CHANGED")
+    _require(manifest.get("source_proof_reviewer_sha256") == file_sha(Path(__file__).with_name("source_proof_continuation.py")),
+             "SOURCE_STAGE_PROOF_REVIEWER_CHANGED")
     _require(manifest["source"]["parameters"] == parameters and manifest["source"]["unit"] == "paper_mm",
              "SOURCE_STAGE_REQUEST_PARAMETERS_OR_UNITS_CHANGED")
     names = [row["path"] for row in manifest["artifacts"]]
@@ -472,8 +486,13 @@ def verify_checkpoint(manifest_path, *, source, parameters, expected_sha256=None
              "SOURCE_STAGE_RESTORE_ASSET_SET_CHANGED")
     _require(verify_declared_raw_files(state, path.parent / "evidence") == manifest["declared_raw_evidence_paths"],
              "SOURCE_STAGE_DECLARED_RAW_ASSETS_CHANGED")
+    from .source_proof_continuation import validate_historical_capsule
+
+    validate_historical_capsule(path.parent, manifest["historical_saved_proof"], state, old_request, removed,
+                                [row for row in manifest["artifacts"] if row["path"].startswith("evidence/")])
     _require(manifest["reused_stages"] == STAGES and manifest["downstream_required"] == DOWNSTREAM
-             and manifest["old_DXF_read"] is False, "SOURCE_STAGE_EXECUTION_BOUNDARY_CHANGED")
+             and manifest.get("historical_DXF_read_for_proof_validation") is True
+             and manifest.get("old_DXF_entities_used_to_construct_output") is False, "SOURCE_STAGE_EXECUTION_BOUNDARY_CHANGED")
     return manifest
 
 
@@ -527,13 +546,14 @@ def restore_for_pipeline(binding, job, prepared, output):
     stages = read_json(path.parent / "origin/completed_stages.json")
     stages.pop("assembly")
     save_json(output / "completed_stages.json", stages)
-    receipt = {"schema": "source-stage-continuation-execution-v1", "status": "UPSTREAM_RESTORED_DOWNSTREAM_NOT_RUN",
+    receipt = {"schema": "source-stage-continuation-execution-v2", "status": "UPSTREAM_RESTORED_DOWNSTREAM_NOT_RUN",
                "execution_mode": "SOURCE_STAGE_CHECKPOINT_CONTINUATION", "checkpoint_manifest_sha256": file_sha(path),
                "source": manifest["source"], "producer_closure": manifest["producer_closure"],
                "runtime_and_resources": manifest["runtime_and_resources"], "reused_stages": STAGES,
                "upstream_state_sha256": digest(state), "prior_object_count": len(state["objects"]),
                "downstream": {name: "NOT_RUN" for name in DOWNSTREAM},
-               "old_attached_result_reused": False, "old_DXF_read": False,
+               "old_attached_result_reused": False, "historical_DXF_read_for_proof_validation": True,
+               "old_DXF_entities_used_to_construct_output": False,
                "new_upstream_fits": 0, "new_OCR_calls": 0, "new_model_inferences": 0,
                "uncached_fresh_path": "RETAINED_WITH_KNOWN_HISTORICAL_GEOMETRY_DRIFT_LIMITATION"}
     save_json(output / "source_stage_continuation.json", receipt)
@@ -557,6 +577,7 @@ def main():
     create = commands.add_parser("create")
     for option in ("evidence", "request", "previous-source", "environment", "resources", "source", "output"):
         create.add_argument("--" + option, required=True, type=Path)
+    create.add_argument("--historical-export", type=Path)
     args = parser.parse_args()
     result = build_checkpoint(**{k: v for k, v in vars(args).items() if k != "command"})
     print(json.dumps({"manifest": str(result), "sha256": file_sha(result), "schema": SCHEMA}))

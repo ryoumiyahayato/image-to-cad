@@ -2119,6 +2119,21 @@ def run_native_objects(
         if source_stage_checkpoint is not None:
             update_execution(out, saved_source_cold_read={"status": "EXECUTED", "source_gate_pass": audit["source_gate_pass"],
                                                         "receipt_sha256": file_sha(out / "cold_audit.json")})
+        fresh_audit = audit
+        source_proof_audit = None
+        if source_stage_checkpoint is not None:
+            from .source_proof_continuation import audit_source_proof_continuation, AUDIT_NAME, MODE
+
+            progress("CONTINUE_COMPLETE_UPSTREAM_SOURCE_PROOF_AND_RECHECK_CURRENT_SAVE", 0.88)
+            source_proof_audit = audit_source_proof_continuation(
+                output_path, gray, roi, dpi, out, source_stage_checkpoint, input_path,
+            )
+            audit = source_proof_audit["effective_cold_audit"]
+            update_execution(out, saved_source_proof_continuation={
+                "status": "EXECUTED", "mode": MODE, "receipt": AUDIT_NAME,
+                "receipt_sha256": file_sha(out / AUDIT_NAME),
+                "fresh_source_gate_pass": fresh_audit["source_gate_pass"], "pass": source_proof_audit["pass"],
+            })
         progress("INDEPENDENT_DXF_MUPDF_RENDER", 0.9)
         preview = output_path.with_suffix(".png")
         render = render_saved(output_path, preview, roi, dpi)
@@ -2165,6 +2180,9 @@ def run_native_objects(
             "preview_path": str(preview),
             "evidence_dir": str(out),
             "source_gate_pass": audit["source_gate_pass"],
+            "fresh_source_gate_pass": fresh_audit["source_gate_pass"],
+            "source_gate_mode": source_proof_audit["mode"] if source_proof_audit else "FRESH_SOURCE_REPLAY",
+            "source_proof_audit_sha256": file_sha(out / AUDIT_NAME) if source_proof_audit else None,
             "native_modelspace_types": audit["formal_modelspace_types"],
             "expanded_native_types": audit["expanded_formal_types"],
             "room_block_definitions_are_unique": audit[

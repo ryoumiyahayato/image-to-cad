@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 from app.native_objects import independent_saved_geometry_audit as audit
+from app.native_objects import independent_source_proof_binding as source_proof_audit
 from app.native_objects import independent_stage_binding as stage_audit
 from app.native_objects.independent_stage_binding import (
     audit_stage_binding,
@@ -211,6 +212,7 @@ def main():
         "executed_at_utc": datetime.datetime.now(datetime.UTC).isoformat(), "errors": [],
         "checker_sha256": audit.sha256(Path(audit.__file__)), "runner_sha256": audit.sha256(Path(__file__)),
         "stage_checker_sha256": audit.sha256(Path(stage_audit.__file__)),
+        "source_proof_binding_checker_sha256": audit.sha256(Path(source_proof_audit.__file__)),
         "baseline_protection_status": "NOT_RUN", "stage_binding_status": "NOT_RUN",
         "actual_target_bindings_status": "NOT_RUN", "edit_isolation_status": "NOT_RUN",
         "target_object_ids": [], "verified_saved_target_ids": [], "inputs_unchanged": False,

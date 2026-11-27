@@ -77,6 +77,36 @@ modifying the producer receipt.
 from an evidence package. Their actual SHA must still match the original
 request/publication; relocation is not a way to replace evidence.
 
+The later v2 checkpoint contract is an explicit additional mode. Its historical
+DXF is read as immutable proof evidence; the new output is still constructed
+from complete source objects. The independent checker reads the five-file
+historical capsule, published provenance, complete proof projection, current
+recursive native contents, restored source assets, current direct samples and
+the complete fresh-check inventory. It rebinds retrace witnesses to actual
+current owner handles and exact native segment indices and rechecks their
+original source pixels. Unknown/missing checks, failed detailed checks, stale
+mode selection or use of a v1 capture for the v2 gate fail closed.
+
+Historical proof bodies use an explicit complete schema, including raw/reference
+replay records and nonempty detailed check maps. A bare `pass: true` body does
+not satisfy that schema. The current saved writer ledger must match actual
+entity handles, kinds, types and complete immediate block members, and retain
+the old upstream payload except for database handles. Portable font and license
+files are read from beside the actual DXF and compared to the original export
+SHA. Sidecar font identity (excluding its provenance source path), repair
+regions, native schema and serialization records remain exact too. These
+checks accompany the recursive saved-object comparison; they do not replace it.
+
+The worker publication, pipeline report and export must all explicitly select
+`SOURCE_CHECKPOINT_PROOF_CONTINUATION` and bind the same saved gate file. Its
+effective audit is a separate exact composition with a canonical core digest;
+the original fresh audit remains unchanged. Common acceptance separately
+reports `fresh_legacy_source_replay: FAIL_RETAINED` when applicable. It does not
+rename that failure to a fresh PASS, and continued upstream evidence does not
+authorize new attached candidates. The v2 original-pixel binding currently
+supports one raster frame with orientation zero and no explicit page/frame
+selector; other selections return an explicit unsupported result.
+
 ## Independent numerical execution bridge
 
 Pass the independently executed `verify-plan` CLI's `OUT.execution.json` as

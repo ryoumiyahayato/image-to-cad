@@ -139,6 +139,21 @@ def main():
             "binding_status": stage["status"], "contract_scope": stage.get("contract_scope"),
             "receipt_sha256": sha256(stage_path) if stage_path.is_file() else None}
         result["source_stage_checkpoint_binding"] = stage.get("source_stage_checkpoint_binding", {"status": "NOT_RUN"})
+        source_proof = result["source_stage_checkpoint_binding"].get("source_proof_continuation_binding")
+        if source_proof is not None:
+            legacy_result = source_proof.get("fresh_legacy_source_gate_pass")
+            result["upstream_source_proof_continuation"] = {
+                "binding_status": source_proof["status"], "mode": source_proof.get("mode", "NOT_ESTABLISHED"),
+                "complete_upstream_object_count": source_proof.get("complete_upstream_object_count"),
+                "reused_source_check_count": source_proof.get("reused_source_check_count"),
+                "actual_gate_sha256": source_proof.get("actual_gate_sha256"),
+                "current_direct_sample_check_count": source_proof.get("current_direct_sample_check_count"),
+                "fresh_legacy_source_replay": {"status": "FAIL_RETAINED" if legacy_result is False else
+                    "PASS" if legacy_result is True else "NOT_ESTABLISHED",
+                    "actual_receipt_sha256": source_proof.get("actual_fresh_sha256"),
+                    "failed_source_check_count": source_proof.get("fresh_legacy_failed_source_check_count")},
+                "new_candidate_source_authorized": False,
+            }
         result["actual_saved_geometry_and_edit_isolation"] = {
             "status": saved["status"], "protection": saved["baseline_protection_status"],
             "target_binding": saved["actual_target_bindings_status"],

@@ -8,6 +8,8 @@ The issue authorizes an independent experimental result. The coordinator will in
 
 - [Frozen numerical interface](NUMERICAL_INTERFACE_FROZEN.md): unique joint v3 plan, adoption, native and certificate identities; adopted paths and complete diagnostic candidates stay separate.
 - [Source-stage continuation contract](../../docs/native/SOURCE_STAGE_CHECKPOINT_CONTRACT_20261127.md): complete finite upstream state, source identity, producer closure, dependencies and explicit invalidation.
+- [Complete source-proof continuation contract](../../docs/native/SOURCE_PROOF_CONTINUATION_CONTRACT_20261127.md): the v2 checkpoint also binds the complete historical saved-source proof, independently verifies current native content and source samples, and preserves the fresh legacy cold result.
+- [First ordinary failure](../../docs/native/ISSUE61_FIRST_ORDINARY_FAILURE_20261127.md): the actual v1 run preserved all old objects but failed its fresh source-publication gate. Its output, original failure and execution identity remain separate from subsequent runs.
 - `app/native_objects/independent_stage_binding.py`: validates declared stage scope against the actual plan, adoption, worker request, publication and saved sidecar. A declaration selects what to check; it is not proof of source ownership.
 - `app/native_objects/independent_saved_geometry_audit.py`: compares complete old objects, including recursive named block contents, and records full-file additions, losses, changed objects and resources separately.
 - `experiments/issue60_common_acceptance/run_common_acceptance.py`: the shared, layered machine-readable entry. The directory name retains the imported tool's provenance; the current common report identifies joint v3.
@@ -23,11 +25,12 @@ PYTHONPATH=cad_photo_to_dxf python -m app.native_objects.source_stage_checkpoint
   --previous-source VERIFIED_OLD_APP_SOURCE \
   --environment VERIFIED_OLD_ENVIRONMENT \
   --resources VERIFIED_OLD_RESOURCES \
+  --historical-export VERIFIED_OLD_EXPORT_MANIFEST \
   --source ORIGINAL_SCAN \
   --output NEW_CHECKPOINT_DIRECTORY
 ```
 
-The builder reads no DXF. It restores the state after complete short-contact text and before attached-stroke discovery. It removes only the old attached stage's declared additions after checking their complete source bindings. It does not choose a checkpoint by a case coordinate, expected object ID, expected count or target answer.
+The v2 builder restores the source state after complete short-contact text and before attached-stroke discovery. It also reads the historical saved DXF solely to audit its complete native content and proof provenance; no old DXF entity supplies new geometry. It removes only the old attached stage's declared additions after checking their complete source bindings. It does not choose a checkpoint by a case coordinate, expected object ID, expected count or target answer. The original v1 implementation and failed run retain their literal no-DXF-read identity and are not upgraded in place.
 
 Pass the resulting manifest through the normal application task manager:
 
@@ -39,7 +42,9 @@ python cad_photo_to_dxf/main.py --headless --mode native-objects \
   --source-stage-checkpoint NEW_CHECKPOINT_DIRECTORY/manifest.json
 ```
 
-The actual worker request and published continuation receipt explicitly identify `SOURCE_STAGE_CHECKPOINT_CONTINUATION`. New source-graph discovery, attached ink, all-prior-object contacts, joint numerical checks, DXF save, source cold audit, render and current quality review still run. Independent old-content acceptance is a separate external check and is not falsely reported as having run inside the producer.
+The actual worker request and published continuation receipt explicitly identify `SOURCE_STAGE_CHECKPOINT_CONTINUATION`. New source-graph discovery, attached ink, all-prior-object contacts, joint numerical checks, DXF save, fresh source cold audit, complete source-proof continuation, render and current quality review still run. Independent old-content acceptance is a separate external check and is not falsely reported as having run inside the producer.
+
+V2 saved-source acceptance explicitly uses `SOURCE_CHECKPOINT_PROOF_CONTINUATION`. It checks the complete historical individual source proofs and their closed provenance, all current recursive native content and resources, current original-pixel measurements, every repeated segment and its actual source responsibility, and the new attached stage. The untouched `cold_audit.json` keeps its actual fresh result, including failures. A separate `source_proof_continuation_audit.json` records the effective gate. Worker publication, committed-result recovery and export revalidate that gate against current bytes; an isolated historical or current PASS boolean is insufficient. A v1 manifest cannot select this mode.
 
 Source bytes and decoded pixels, ROI/DPI/page/frame/orientation/units, finite source geometry and responsibility, endpoints/intervals, raw assets, relevant old producer files and original upstream pipeline AST must agree. Current continuation executor files and dependency code bytes are bound from checkpoint creation through capture and execution. Historical CPU/BLAS binary identity was not recorded and is not inferred.
 

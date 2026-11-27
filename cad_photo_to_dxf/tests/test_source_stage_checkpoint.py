@@ -131,6 +131,7 @@ def test_projection_refuses_changed_finite_member_or_incomplete_stage_boundary(c
 
 @pytest.fixture
 def packet(tmp_path, monkeypatch):
+    from app.native_objects import source_proof_continuation
     origin, previous_source = tmp_path / "legacy/evidence", tmp_path / "legacy/code"
     source = tmp_path / "source.bin"
     source.write_bytes(b"unaltered synthetic source samples")
@@ -164,6 +165,10 @@ def packet(tmp_path, monkeypatch):
         "source_sha256": checkpoint.file_sha(s), "working_array_sha256": checkpoint.file_sha(s),
         "cache_identity": {"source_sha256": checkpoint.file_sha(s)}, "parameters": p,
         "unit": "paper_mm", "scale_evidence": {"engineering_scale": "UNVERIFIED"}, "working_roi_xyxy_px": p["roi"]})
+    # Capsule semantics have their own real-DXF tests. This fixture isolates
+    # capture integrity from installed runtime and historical publication.
+    monkeypatch.setattr(source_proof_continuation, "create_historical_capsule", lambda *a, **k: {"artifacts": {}})
+    monkeypatch.setattr(source_proof_continuation, "validate_historical_capsule", lambda *a, **k: None)
     output = tmp_path / "packet"
     manifest = checkpoint.build_checkpoint(evidence=origin, request=request, previous_source=previous_source,
                                            environment=environment, resources=resources, source=source, output=output)

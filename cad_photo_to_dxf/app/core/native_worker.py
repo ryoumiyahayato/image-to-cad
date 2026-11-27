@@ -232,6 +232,15 @@ def _saved_candidate_gates(staging, request):
     dxf = staging / "result.dxf"
     evidence = staging / "evidence"
     cold = read_json(evidence / "cold_audit.json")
+    source_gate_mode = "FRESH_SOURCE_REPLAY"
+    source_proof_sha256 = None
+    if request.get("source_stage_checkpoint") is not None:
+        from app.native_objects.source_proof_continuation import verify_saved_continuation_gate, AUDIT_NAME, MODE
+
+        proof = verify_saved_continuation_gate(dxf, evidence, request["source_stage_checkpoint"], request["input_path"])
+        cold = proof["effective_cold_audit"]
+        source_gate_mode = MODE
+        source_proof_sha256 = file_sha(evidence / AUDIT_NAME)
     if (
         not cold.get("source_gate_pass")
         or cold.get("ezdxf_errors")
@@ -268,6 +277,8 @@ def _saved_candidate_gates(staging, request):
             review.get("summary", {}).get("requires_manual_review", True)
         ),
         "formal_entities": cold["formal_modelspace_types"],
+        "source_gate_mode": source_gate_mode,
+        "source_proof_audit_sha256": source_proof_sha256,
     }
 
 

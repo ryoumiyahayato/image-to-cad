@@ -101,7 +101,7 @@ def _geometry_from_path(path, kind):
     return None
 
 
-def _checkpoint_binding(*, dxf_path, request, publication, plan, adoption, scope,
+def _checkpoint_binding(*, dxf_path, metadata_path, source_path, request, publication, plan, adoption, scope,
                         source_root, manifest_path=None, continuation_path=None):
     """Bind captured upstream state to current files without executing producers.
 
@@ -113,20 +113,22 @@ def _checkpoint_binding(*, dxf_path, request, publication, plan, adoption, scope
     captured = request.get("source_stage_checkpoint")
     published = publication.get("evidence_files", {})
     if captured is None:
-        unexpected = continuation.exists() or "evidence/source_stage_continuation.json" in published or manifest_path is not None
+        unexpected = (continuation.exists() or "evidence/source_stage_continuation.json" in published
+                      or "evidence/source_proof_continuation_audit.json" in published or manifest_path is not None)
         return {"status": "FAIL" if unexpected else "NOT_APPLICABLE_FRESH_UPSTREAM_PATH",
                 "reason": "CONTINUATION_WITHOUT_CAPTURED_REQUEST" if unexpected else "NO_SOURCE_STAGE_CHECKPOINT_REQUESTED",
                 "scope": "Fresh upstream path is not represented as checkpoint continuation"}
     manifest = Path(manifest_path) if manifest_path else Path(captured["manifest_path"])
     before = {str(manifest): sha256(manifest), str(continuation): sha256(continuation)}
     value, receipt = _read(manifest), _read(continuation)
+    version = 2 if captured.get("schema") == "captured-source-stage-checkpoint-v2" else 1
     checks = {
         "current_joint_execution": scope == "CURRENT_JOINT_V3",
-        "captured_schema": captured.get("schema") == "captured-source-stage-checkpoint-v1",
+        "captured_schema": captured.get("schema") == f"captured-source-stage-checkpoint-v{version}",
         "captured_manifest_file_hash": captured.get("manifest_sha256") == before[str(manifest)],
-        "manifest_schema": value.get("schema") == "source-stage-checkpoint-pre-attached-v1"
+        "manifest_schema": value.get("schema") == f"source-stage-checkpoint-pre-attached-v{version}"
                            and value.get("boundary") == "AFTER_SHORT_CONTACT_BEFORE_ATTACHED",
-        "continuation_schema": receipt.get("schema") == "source-stage-continuation-execution-v1",
+        "continuation_schema": receipt.get("schema") == f"source-stage-continuation-execution-v{version}",
         "continuation_manifest_file_hash": receipt.get("checkpoint_manifest_sha256") == before[str(manifest)],
         "published_continuation_hash": published.get("evidence/source_stage_continuation.json") == before[str(continuation)],
         "explicit_execution_mode": captured.get("execution_mode") == receipt.get("execution_mode")
@@ -140,12 +142,17 @@ def _checkpoint_binding(*, dxf_path, request, publication, plan, adoption, scope
             ("source", "producer_closure", "runtime_and_resources", "upstream_state_sha256", "reused_stages")),
         "captured_execution_boundary": _same(captured.get("reused_stages"), value.get("reused_stages"))
                                        and _same(captured.get("downstream_required"), value.get("downstream_required")),
-        "no_old_dxf_or_attached_reuse": value.get("old_DXF_read") is False
-                                      and receipt.get("old_DXF_read") is False
-                                      and receipt.get("old_attached_result_reused") is False,
+        "old_attached_result_not_reused": receipt.get("old_attached_result_reused") is False,
         "no_upstream_refit_or_recognition": all(receipt.get(key) == 0 for key in
                                                ("new_upstream_fits", "new_OCR_calls", "new_model_inferences")),
     }
+    if version == 1:
+        checks["v1_no_historical_dxf_read"] = value.get("old_DXF_read") is False and receipt.get("old_DXF_read") is False
+        checks["v1_cannot_select_source_proof_gate"] = "evidence/source_proof_continuation_audit.json" not in published
+    else:
+        checks["v2_historical_dxf_is_validation_only"] = all(
+            row.get("historical_DXF_read_for_proof_validation") is True
+            and row.get("old_DXF_entities_used_to_construct_output") is False for row in (value, receipt))
     artifacts, names = [], []
     for row in value.get("artifacts", []):
         name = row.get("path")
@@ -216,12 +223,21 @@ def _checkpoint_binding(*, dxf_path, request, publication, plan, adoption, scope
             checks["cold_read_result_recorded_without_promotion"] = _read(path).get("source_gate_pass") == row.get("source_gate_pass")
     checks["current_render_executed"] = downstream.get("render") == "EXECUTED_CURRENT_SAVED_DXF"
     checks["upstream_independent_protection_not_claimed"] = downstream.get("independent_old_content_check") == "NOT_RUN"
+    source_proof = None
+    if version == 2:
+        from .independent_source_proof_binding import audit_source_proof_binding
+
+        source_proof = audit_source_proof_binding(dxf_path=dxf_path, metadata_path=metadata_path,
+            source_path=source_path, manifest_path=manifest, manifest=value, continuation=receipt,
+            publication=publication, request=request, source_root=source_root, plan=plan, adoption=adoption)
+        checks["v2_complete_source_proof_continuation_binding"] = source_proof["status"] == "PASS"
     after = {path: sha256(path) for path in before}
     checks["checkpoint_inputs_unchanged_during_check"] = before == after
     return {"status": "PASS" if all(checks.values()) else "FAIL", "checks": checks,
             "failed_checks": [key for key, okay in checks.items() if not okay],
             "manifest": _record(manifest), "continuation": _record(continuation),
             "checked_artifacts": artifacts, "inputs_before": before, "inputs_after": after,
+            "checkpoint_version": version, "source_proof_continuation_binding": source_proof,
             "prior_object_count": len(old_ids), "scope": "Source state / dependency / current execution binding only",
             "runtime_identity_bound_to_manifest": True,
             "runtime_environment_revalidated_by_this_checker": False,
@@ -378,7 +394,8 @@ def audit_stage_binding(*, dxf_path, metadata_path, source_path, roi, dpi,
             result["stage_execution_status"] = "HISTORICAL_PUBLISHED_STAGE_RECEIPT"
             result["historical_receipt_not_relabelled_current_execution"] = True
         result["source_stage_checkpoint_binding"] = _checkpoint_binding(
-            dxf_path=dxf_path, request=request, publication=publication, plan=plan, adoption=adoption,
+            dxf_path=dxf_path, metadata_path=metadata_path, source_path=source_path,
+            request=request, publication=publication, plan=plan, adoption=adoption,
             scope=scope, source_root=source_root, manifest_path=source_stage_manifest_path,
             continuation_path=source_stage_continuation_path)
         checks["source_stage_checkpoint_binding"] = result["source_stage_checkpoint_binding"]["status"] in (
