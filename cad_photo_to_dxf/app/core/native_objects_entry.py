@@ -66,6 +66,7 @@ def dispatch_native_objects(
     cancellation_token: CancellationToken | None = None,
     entrypoint: str = "ProductionProcessingService.process_native_objects",
     connection_checkpoint: dict | None = None,
+    source_stage_checkpoint: dict | None = None,
 ) -> dict:
     from app.core.processing import file_content_sha256
     from app.native_objects.job import make_job
@@ -154,6 +155,9 @@ def dispatch_native_objects(
     }
     if connection_checkpoint is not None:
         trace["connection_checkpoint"] = connection_checkpoint
+    if source_stage_checkpoint is not None:
+        trace["source_stage_checkpoint"] = source_stage_checkpoint
+        trace["execution_mode"] = "SOURCE_STAGE_CHECKPOINT_CONTINUATION"
 
     def save_trace():
         save_json(trace_path, trace)
@@ -187,6 +191,8 @@ def dispatch_native_objects(
         checkpoint_options = {}
         if connection_checkpoint is not None:
             checkpoint_options["connection_checkpoint"] = connection_checkpoint
+        if source_stage_checkpoint is not None:
+            checkpoint_options["source_stage_checkpoint"] = source_stage_checkpoint
         result = run_native_objects(
             source,
             target,

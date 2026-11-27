@@ -1150,6 +1150,7 @@ def run_native_objects(
     job_config=None,
     prepared_source=None,
     connection_checkpoint=None,
+    source_stage_checkpoint=None,
 ):
     """Called by the existing GUI/CLI's ProductionProcessingService."""
     cv2.setNumThreads(1)
@@ -1186,6 +1187,8 @@ def run_native_objects(
     ):
         raise ValueError("PIPELINE_PREPARED_SOURCE_IDENTITY_MISMATCH")
     if connection_checkpoint is not None:
+        if source_stage_checkpoint is not None:
+            raise ValueError("SELECT_ONE_EXPLICIT_SOURCE_CHECKPOINT_MODE")
         from .connection_checkpoint import run_connection_checkpoint
 
         return run_connection_checkpoint(
@@ -1258,7 +1261,10 @@ def run_native_objects(
         },
     )
     try:
-        restored_assembly = _completed_assembly_checkpoint(cache_dir, stage_identity)
+        # An explicit upstream continuation must always rerun the current
+        # downstream attached/contact/numeric stages, even on a resumed task.
+        restored_assembly = (None if source_stage_checkpoint is not None else
+                             _completed_assembly_checkpoint(cache_dir, stage_identity))
         if restored_assembly is not None:
             texts = restored_assembly["texts"]
             _restore_single_line_label_evidence(cache_dir, out, texts)
@@ -1333,641 +1339,670 @@ def run_native_objects(
             )
             progress("RESTORED_COMPLETE_ASSEMBLY_WITHOUT_REFITTING", 0.74)
         else:
-            progress("TEXT_REGIONS_AND_COMPLETE_GROUPS", 0.05)
-            text_cache = Path(cache_dir) / "text_ocr_cache" if cache_dir else None
-            if text_cache is not None and not text_cache.is_dir():
-                text_cache = None
-            texts, resume_evidence = _completed_text_checkpoint(
-                cache_dir,
-                source_sha,
-                roi,
-                gray.shape,
-                import_manifest["working_array_sha256"],
-            )
-            if texts is None:
-                restore_partial_ocr(out / "text")
-                texts = extract_text_regions(
-                    gray,
-                    roi,
-                    out / "text",
-                    progress_callback=_text_progress_adapter(progress),
-                    cache_dir=text_cache,
-                    dpi=dpi,
-                )
-            else:
-                save_json(out / "text_resume.json", resume_evidence)
-            # Save a portable stage result even when later assembly raises. This
-            # enables a genuine continuation without repeating completed OCR.
-            saved_text = (
-                _restore_completed_text_assets(
-                    cache_dir, out, resume_evidence["producer_row"]
-                )
-                if resume_evidence
-                else out / "completed_text.json"
-            )
-            if not resume_evidence:
-                save_json(saved_text, texts)
-            from . import text_regions
+            restored_upstream = None
+            if source_stage_checkpoint is not None:
+                from .source_stage_checkpoint import restore_for_pipeline
+                from .text_contact_partition import _source_graph
 
-            text_producer = (
-                copy.deepcopy(resume_evidence["producer_row"])
-                if resume_evidence
-                else {
-                    "producer_module": "app.native_objects.text_regions",
-                    "producer_sha256": hashlib.sha256(
-                        Path(text_regions.__file__).read_bytes()
-                    ).hexdigest(),
-                }
-            )
-            text_producer.update(
-                path=saved_text.relative_to(out).as_posix(),
-                sha256=hashlib.sha256(saved_text.read_bytes()).hexdigest(),
-            )
-            stage_manifest = {**stage_identity, "text": text_producer}
-            discovery = out / "text/discovery_observations.json"
-            if discovery.is_file():
-                stage_manifest["discovery"] = {
-                    "path": "text/discovery_observations.json",
-                    "sha256": hashlib.sha256(discovery.read_bytes()).hexdigest(),
-                }
-            elif resume_evidence:
-                previous = json.loads(Path(resume_evidence["manifest"]).read_text(encoding="utf-8"))
-                if previous.get("discovery"):
-                    discovery = _discovery_for_resume(cache_dir, out, texts)
+                progress("SOURCE_STAGE_CHECKPOINT_CONTINUATION", 0.05)
+                restored_upstream = restore_for_pipeline(
+                    source_stage_checkpoint, job, prepared, out,
+                )
+                texts = restored_upstream["texts"]
+                geometry = restored_upstream["geometry"]
+                annotations = restored_upstream["annotations"]
+                doors = restored_upstream["doors"]
+                door_completion = restored_upstream["door_completion"]
+                connections = restored_upstream["connections"]
+                circular_markers = restored_upstream["circular_markers"]
+                text_contact_completion = restored_upstream["text_contact_completion"]
+                carrier_reconciliation = restored_upstream["carrier_reconciliation"]
+                short_contact_completion = restored_upstream["short_contact_completion"]
+                walls = restored_upstream["walls"]
+                objects = restored_upstream["objects"]
+                issues = restored_upstream["issues"]
+                text_producer = restored_upstream["text_producer"]
+                text_objects = restored_upstream["text_objects"]
+                door_objects = door_completion["objects"]
+                door_conflicts = door_completion["uncertainties"]
+                progress("REBUILD_SOURCE_GRAPH_AFTER_UPSTREAM_CONTINUATION", 0.746)
+                contact_source_graph = _source_graph(gray, roi)
+            else:
+                progress("TEXT_REGIONS_AND_COMPLETE_GROUPS", 0.05)
+                text_cache = Path(cache_dir) / "text_ocr_cache" if cache_dir else None
+                if text_cache is not None and not text_cache.is_dir():
+                    text_cache = None
+                texts, resume_evidence = _completed_text_checkpoint(
+                    cache_dir,
+                    source_sha,
+                    roi,
+                    gray.shape,
+                    import_manifest["working_array_sha256"],
+                )
+                if texts is None:
+                    restore_partial_ocr(out / "text")
+                    texts = extract_text_regions(
+                        gray,
+                        roi,
+                        out / "text",
+                        progress_callback=_text_progress_adapter(progress),
+                        cache_dir=text_cache,
+                        dpi=dpi,
+                    )
+                else:
+                    save_json(out / "text_resume.json", resume_evidence)
+                # Save a portable stage result even when later assembly raises. This
+                # enables a genuine continuation without repeating completed OCR.
+                saved_text = (
+                    _restore_completed_text_assets(
+                        cache_dir, out, resume_evidence["producer_row"]
+                    )
+                    if resume_evidence
+                    else out / "completed_text.json"
+                )
+                if not resume_evidence:
+                    save_json(saved_text, texts)
+                from . import text_regions
+
+                text_producer = (
+                    copy.deepcopy(resume_evidence["producer_row"])
+                    if resume_evidence
+                    else {
+                        "producer_module": "app.native_objects.text_regions",
+                        "producer_sha256": hashlib.sha256(
+                            Path(text_regions.__file__).read_bytes()
+                        ).hexdigest(),
+                    }
+                )
+                text_producer.update(
+                    path=saved_text.relative_to(out).as_posix(),
+                    sha256=hashlib.sha256(saved_text.read_bytes()).hexdigest(),
+                )
+                stage_manifest = {**stage_identity, "text": text_producer}
+                discovery = out / "text/discovery_observations.json"
+                if discovery.is_file():
                     stage_manifest["discovery"] = {
                         "path": "text/discovery_observations.json",
                         "sha256": hashlib.sha256(discovery.read_bytes()).hexdigest(),
                     }
-            save_json(out / "completed_stages.json", stage_manifest)
-            checkpoint_artifact("completed_text", out / "completed_stages.json")
-            if resume_evidence:
-                progress("RESTORED_COMPLETE_TEXT_CHECKPOINT", 0.30)
-            if (
-                text_producer.get("producer_module", "app.native_objects.text_regions")
-                == "app.native_objects.text_regions"
-            ):
-                # This recovery is part of the real entry, not an external answer
-                # file. A resumed derived stage is never recognised again.
-                from .text_line_domains import refine_text_line_domains
+                elif resume_evidence:
+                    previous = json.loads(Path(resume_evidence["manifest"]).read_text(encoding="utf-8"))
+                    if previous.get("discovery"):
+                        discovery = _discovery_for_resume(cache_dir, out, texts)
+                        stage_manifest["discovery"] = {
+                            "path": "text/discovery_observations.json",
+                            "sha256": hashlib.sha256(discovery.read_bytes()).hexdigest(),
+                        }
+                save_json(out / "completed_stages.json", stage_manifest)
+                checkpoint_artifact("completed_text", out / "completed_stages.json")
+                if resume_evidence:
+                    progress("RESTORED_COMPLETE_TEXT_CHECKPOINT", 0.30)
+                if (
+                    text_producer.get("producer_module", "app.native_objects.text_regions")
+                    == "app.native_objects.text_regions"
+                ):
+                    # This recovery is part of the real entry, not an external answer
+                    # file. A resumed derived stage is never recognised again.
+                    from .text_line_domains import refine_text_line_domains
 
-                if text_cache is None:
-                    text_cache = out / "discovery_cache"
-                    text_cache.mkdir(parents=True, exist_ok=True)
-                    discovery = _discovery_for_resume(cache_dir, out, texts)
-                    save_json(
-                        text_cache / "observations.json",
-                        json.loads(discovery.read_text(encoding="utf-8")),
+                    if text_cache is None:
+                        text_cache = out / "discovery_cache"
+                        text_cache.mkdir(parents=True, exist_ok=True)
+                        discovery = _discovery_for_resume(cache_dir, out, texts)
+                        save_json(
+                            text_cache / "observations.json",
+                            json.loads(discovery.read_text(encoding="utf-8")),
+                        )
+                        save_json(
+                            text_cache / "manifest.json",
+                            {
+                                "source_array_sha256": texts["source_array_sha256"],
+                                "source_size_px": [gray.shape[1], gray.shape[0]],
+                                "roi_xyxy_px": list(roi),
+                                "coordinate_system": "source_pixels_top_left",
+                                "observations_file": "observations.json",
+                                "observations_sha256": hashlib.sha256(
+                                    (text_cache / "observations.json").read_bytes()
+                                ).hexdigest(),
+                            },
+                        )
+                    provenance = {
+                        "source_path": str(input_path),
+                        "source_sha256": source_sha,
+                        "text_path": str(saved_text),
+                        "text_sha256": hashlib.sha256(saved_text.read_bytes()).hexdigest(),
+                        "producer_sha256": text_producer["producer_sha256"],
+                        "manifest_path": str(out / "completed_stages.json"),
+                        "manifest_sha256": hashlib.sha256(
+                            (out / "completed_stages.json").read_bytes()
+                        ).hexdigest(),
+                        "text_evidence_dir": str(out / "text"),
+                    }
+                    texts = refine_text_line_domains(
+                        gray,
+                        texts,
+                        out / "text_domain_recovery",
+                        cache_dir=text_cache,
+                        upstream_provenance=provenance,
+                        progress_callback=_text_progress_adapter(progress),
+                        dpi=dpi,
                     )
+                    derived = json.loads(
+                        (out / "text_domain_recovery/completed_stages.json").read_text(encoding="utf-8")
+                    )
+                    derived["text"]["path"] = "text_domain_recovery/completed_text.json"
+                    derived.update(stage_identity)
+                    if stage_manifest.get("discovery"):
+                        derived["discovery"] = stage_manifest["discovery"]
+                    save_json(out / "completed_stages.json", derived)
+                    checkpoint_artifact(
+                        "completed_text_domains", out / "completed_stages.json"
+                    )
+                current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
+                current_producer = current_text_stage["text"].get("producer_module")
+                if current_producer not in (
+                    "app.native_objects.source_review",
+                    "app.native_objects.text_block_rescue",
+                    "app.native_objects.cross_engine_text",
+                    "app.native_objects.source_text_completion",
+                    "app.native_objects.single_line_labels",
+                    "app.native_objects.source_text_ownership",
+                ):
+                    from .text_block_rescue import refine_text_blocks
+
+                    discovery = _discovery_for_resume(cache_dir, out, texts)
+                    texts = refine_text_blocks(
+                        gray,
+                        texts,
+                        out / "text_block_rescue",
+                        source_sha=source_sha,
+                        upstream_path=out / current_text_stage["text"]["path"],
+                        observation_path=discovery,
+                        dpi=dpi,
+                        progress_callback=_text_progress_adapter(progress),
+                        completed_ocr_checkpoint=(
+                            Path(cache_dir) / "text_block_rescue"
+                            if cache_dir
+                            and (
+                                Path(cache_dir)
+                                / "text_block_rescue/policy_and_selection.json"
+                            ).is_file()
+                            else None
+                        ),
+                    )
+                    derived = json.loads(
+                        (out / "text_block_rescue/completed_stages.json").read_text(encoding="utf-8")
+                    )
+                    derived["text"]["path"] = "text_block_rescue/completed_text.json"
+                    derived.update(stage_identity)
+                    if current_text_stage.get("discovery"):
+                        derived["discovery"] = current_text_stage["discovery"]
+                    save_json(out / "completed_stages.json", derived)
+                    checkpoint_artifact(
+                        "completed_text_blocks", out / "completed_stages.json"
+                    )
+                current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
+                if current_text_stage["text"].get("producer_module") not in (
+                    "app.native_objects.source_review",
+                    "app.native_objects.cross_engine_text",
+                    "app.native_objects.source_text_completion",
+                    "app.native_objects.single_line_labels",
+                    "app.native_objects.source_text_ownership",
+                ):
+                    from .cross_engine_text import refine_cross_engine
+
+                    texts = refine_cross_engine(
+                        gray,
+                        texts,
+                        out / "cross_engine_text",
+                        source_sha=source_sha,
+                        upstream_path=out / current_text_stage["text"]["path"],
+                        dpi=dpi,
+                        progress_callback=_text_progress_adapter(progress),
+                    )
+                    derived = json.loads(
+                        (out / "cross_engine_text/completed_stages.json").read_text(encoding="utf-8")
+                    )
+                    derived["text"]["path"] = "cross_engine_text/completed_text.json"
+                    derived.update(stage_identity)
+                    if current_text_stage.get("discovery"):
+                        derived["discovery"] = current_text_stage["discovery"]
+                    save_json(out / "completed_stages.json", derived)
+                    checkpoint_artifact(
+                        "completed_cross_engine_text", out / "completed_stages.json"
+                    )
+                current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
+                if current_text_stage["text"].get("producer_module") not in (
+                    "app.native_objects.source_review",
+                    "app.native_objects.source_text_completion",
+                    "app.native_objects.single_line_labels",
+                    "app.native_objects.source_text_ownership",
+                ):
+                    from .source_text_completion import refine_source_text_completion
+
+                    progress("COMPLETE_BOUNDED_SOURCE_TEXT_QUEUE", 0.31)
+                    texts = refine_source_text_completion(
+                        gray,
+                        texts,
+                        out / "source_text_completion",
+                        source_sha=source_sha,
+                        upstream_path=out / current_text_stage["text"]["path"],
+                        evidence_root=out,
+                        dpi=dpi,
+                        progress_callback=_text_progress_adapter(progress),
+                        completed_ocr_checkpoint=(
+                            Path(cache_dir) / "source_text_completion"
+                            if cache_dir
+                            and (
+                                Path(cache_dir)
+                                / "source_text_completion/frozen_manifest.json"
+                            ).is_file()
+                            else None
+                        ),
+                    )
+                    derived = json.loads(
+                        (out / "source_text_completion/completed_stages.json").read_text(encoding="utf-8")
+                    )
+                    derived["text"]["path"] = "source_text_completion/completed_text.json"
+                    derived.update(stage_identity)
+                    if current_text_stage.get("discovery"):
+                        derived["discovery"] = current_text_stage["discovery"]
+                    save_json(out / "completed_stages.json", derived)
+                    checkpoint_artifact(
+                        "completed_bounded_source_text_queue", out / "completed_stages.json"
+                    )
+                texts = _complete_single_line_stage(
+                    gray, texts, out, source_sha, roi, dpi, progress
+                )
+                text_producer = copy.deepcopy(
+                    json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))["text"]
+                )
+                progress("TEXT_CONTRACT_TO_GEOMETRY", 0.32)
+                geometry = _completed_geometry_checkpoint(
+                    cache_dir, source_sha, roi, texts, gray, out / "geometry"
+                )
+                if geometry is None:
+                    geometry = extract_lines(gray, roi, texts, out / "geometry")
+                if text_producer.get("producer_module") not in (
+                    "app.native_objects.source_review",
+                    "app.native_objects.source_text_ownership",
+                ):
+                    from . import source_text_ownership
+
+                    responsibility_root = out / "text_geometry_ownership"
+                    original_fits = responsibility_root / "source_fitted_dictionary.json"
+                    save_json(original_fits, geometry)
+                    from . import geometry as geometry_module
+
+                    stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
+                    stage_manifest["geometry"] = {
+                        "path": "text_geometry_ownership/source_fitted_dictionary.json",
+                        "sha256": hashlib.sha256(original_fits.read_bytes()).hexdigest(),
+                        "producer_sha256": hashlib.sha256(
+                            Path(geometry_module.__file__).read_bytes()
+                        ).hexdigest(),
+                        "role": "SOURCE_FITTED_DICTIONARY_REQUIRES_CURRENT_TEXT_AND_DENSE_GATE",
+                        "current_text_responsibility_still_to_be_rechecked": True,
+                    }
+                    save_json(out / "completed_stages.json", stage_manifest)
+                    checkpoint_artifact(
+                        "completed_source_fitted_dictionary_before_ownership",
+                        out / "completed_stages.json",
+                    )
+                    texts, ownership_audit = (
+                        source_text_ownership.reconcile_source_text_ownership(
+                            texts, gray, roi, geometry, output_dir=responsibility_root,
+                            evidence_root=out,
+                        )
+                    )
+                    upstream_text_root = (out / text_producer["path"]).parent
+                    texts["region_evidence_roots"] = {
+                        r["id"]: relative_evidence_path(
+                            (
+                                upstream_text_root
+                                / texts.get("region_evidence_roots", {}).get(r["id"], ".")
+                            ).resolve(),
+                            responsibility_root,
+                        )
+                        for r in texts["regions"]
+                    }
+                    if texts.get("bbox_overlay"):
+                        texts["bbox_overlay"] = relative_evidence_path(
+                            upstream_text_root / texts["bbox_overlay"], responsibility_root
+                        )
+                    raw_checks = []
+                    for region in texts["regions"]:
+                        raw_root = (
+                            responsibility_root
+                            / texts["region_evidence_roots"][region["id"]]
+                        )
+                        for alt in region.get("completeness_evidence", {}).get(
+                            "alternatives", []
+                        ):
+                            artifact = alt.get("raw_artifact", {})
+                            raw = (
+                                raw_root / (artifact.get("path") or alt["raw_tsv"])
+                            ).resolve()
+                            if out.resolve() not in raw.parents or not raw.is_file():
+                                raise ValueError(
+                                    "OWNERSHIP_DERIVATION_RAW_REFERENCE_MISSING:" + str(raw)
+                                )
+                            actual = hashlib.sha256(raw.read_bytes()).hexdigest()
+                            if artifact.get("sha256") and artifact["sha256"] != actual:
+                                raise ValueError(
+                                    "OWNERSHIP_DERIVATION_RAW_HASH_CHANGED:" + str(raw)
+                                )
+                            raw_checks.append(
+                                {
+                                    "region_id": region["id"],
+                                    "path": raw.relative_to(out.resolve()).as_posix(),
+                                    "sha256": actual,
+                                }
+                            )
                     save_json(
-                        text_cache / "manifest.json",
+                        responsibility_root / "raw_reference_path_audit.json",
                         {
-                            "source_array_sha256": texts["source_array_sha256"],
-                            "source_size_px": [gray.shape[1], gray.shape[0]],
-                            "roi_xyxy_px": list(roi),
-                            "coordinate_system": "source_pixels_top_left",
-                            "observations_file": "observations.json",
-                            "observations_sha256": hashlib.sha256(
-                                (text_cache / "observations.json").read_bytes()
-                            ).hexdigest(),
+                            "all_references_resolve": True,
+                            "checked_references": raw_checks,
+                            "raw_bytes_rewritten": False,
+                            "recognition_decisions_changed": False,
                         },
                     )
-                provenance = {
-                    "source_path": str(input_path),
-                    "source_sha256": source_sha,
-                    "text_path": str(saved_text),
-                    "text_sha256": hashlib.sha256(saved_text.read_bytes()).hexdigest(),
-                    "producer_sha256": text_producer["producer_sha256"],
-                    "manifest_path": str(out / "completed_stages.json"),
-                    "manifest_sha256": hashlib.sha256(
-                        (out / "completed_stages.json").read_bytes()
-                    ).hexdigest(),
-                    "text_evidence_dir": str(out / "text"),
-                }
-                texts = refine_text_line_domains(
-                    gray,
-                    texts,
-                    out / "text_domain_recovery",
-                    cache_dir=text_cache,
-                    upstream_provenance=provenance,
-                    progress_callback=_text_progress_adapter(progress),
-                    dpi=dpi,
-                )
-                derived = json.loads(
-                    (out / "text_domain_recovery/completed_stages.json").read_text(encoding="utf-8")
-                )
-                derived["text"]["path"] = "text_domain_recovery/completed_text.json"
-                derived.update(stage_identity)
-                if stage_manifest.get("discovery"):
-                    derived["discovery"] = stage_manifest["discovery"]
-                save_json(out / "completed_stages.json", derived)
-                checkpoint_artifact(
-                    "completed_text_domains", out / "completed_stages.json"
-                )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
-            current_producer = current_text_stage["text"].get("producer_module")
-            if current_producer not in (
-                "app.native_objects.source_review",
-                "app.native_objects.text_block_rescue",
-                "app.native_objects.cross_engine_text",
-                "app.native_objects.source_text_completion",
-                "app.native_objects.single_line_labels",
-                "app.native_objects.source_text_ownership",
-            ):
-                from .text_block_rescue import refine_text_blocks
-
-                discovery = _discovery_for_resume(cache_dir, out, texts)
-                texts = refine_text_blocks(
-                    gray,
-                    texts,
-                    out / "text_block_rescue",
-                    source_sha=source_sha,
-                    upstream_path=out / current_text_stage["text"]["path"],
-                    observation_path=discovery,
-                    dpi=dpi,
-                    progress_callback=_text_progress_adapter(progress),
-                    completed_ocr_checkpoint=(
-                        Path(cache_dir) / "text_block_rescue"
-                        if cache_dir
-                        and (
-                            Path(cache_dir)
-                            / "text_block_rescue/policy_and_selection.json"
-                        ).is_file()
-                        else None
-                    ),
-                )
-                derived = json.loads(
-                    (out / "text_block_rescue/completed_stages.json").read_text(encoding="utf-8")
-                )
-                derived["text"]["path"] = "text_block_rescue/completed_text.json"
-                derived.update(stage_identity)
-                if current_text_stage.get("discovery"):
-                    derived["discovery"] = current_text_stage["discovery"]
-                save_json(out / "completed_stages.json", derived)
-                checkpoint_artifact(
-                    "completed_text_blocks", out / "completed_stages.json"
-                )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
-            if current_text_stage["text"].get("producer_module") not in (
-                "app.native_objects.source_review",
-                "app.native_objects.cross_engine_text",
-                "app.native_objects.source_text_completion",
-                "app.native_objects.single_line_labels",
-                "app.native_objects.source_text_ownership",
-            ):
-                from .cross_engine_text import refine_cross_engine
-
-                texts = refine_cross_engine(
-                    gray,
-                    texts,
-                    out / "cross_engine_text",
-                    source_sha=source_sha,
-                    upstream_path=out / current_text_stage["text"]["path"],
-                    dpi=dpi,
-                    progress_callback=_text_progress_adapter(progress),
-                )
-                derived = json.loads(
-                    (out / "cross_engine_text/completed_stages.json").read_text(encoding="utf-8")
-                )
-                derived["text"]["path"] = "cross_engine_text/completed_text.json"
-                derived.update(stage_identity)
-                if current_text_stage.get("discovery"):
-                    derived["discovery"] = current_text_stage["discovery"]
-                save_json(out / "completed_stages.json", derived)
-                checkpoint_artifact(
-                    "completed_cross_engine_text", out / "completed_stages.json"
-                )
-            current_text_stage = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
-            if current_text_stage["text"].get("producer_module") not in (
-                "app.native_objects.source_review",
-                "app.native_objects.source_text_completion",
-                "app.native_objects.single_line_labels",
-                "app.native_objects.source_text_ownership",
-            ):
-                from .source_text_completion import refine_source_text_completion
-
-                progress("COMPLETE_BOUNDED_SOURCE_TEXT_QUEUE", 0.31)
-                texts = refine_source_text_completion(
-                    gray,
-                    texts,
-                    out / "source_text_completion",
-                    source_sha=source_sha,
-                    upstream_path=out / current_text_stage["text"]["path"],
-                    evidence_root=out,
-                    dpi=dpi,
-                    progress_callback=_text_progress_adapter(progress),
-                    completed_ocr_checkpoint=(
-                        Path(cache_dir) / "source_text_completion"
-                        if cache_dir
-                        and (
-                            Path(cache_dir)
-                            / "source_text_completion/frozen_manifest.json"
-                        ).is_file()
-                        else None
-                    ),
-                )
-                derived = json.loads(
-                    (out / "source_text_completion/completed_stages.json").read_text(encoding="utf-8")
-                )
-                derived["text"]["path"] = "source_text_completion/completed_text.json"
-                derived.update(stage_identity)
-                if current_text_stage.get("discovery"):
-                    derived["discovery"] = current_text_stage["discovery"]
-                save_json(out / "completed_stages.json", derived)
-                checkpoint_artifact(
-                    "completed_bounded_source_text_queue", out / "completed_stages.json"
-                )
-            texts = _complete_single_line_stage(
-                gray, texts, out, source_sha, roi, dpi, progress
-            )
-            text_producer = copy.deepcopy(
-                json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))["text"]
-            )
-            progress("TEXT_CONTRACT_TO_GEOMETRY", 0.32)
-            geometry = _completed_geometry_checkpoint(
-                cache_dir, source_sha, roi, texts, gray, out / "geometry"
-            )
-            if geometry is None:
-                geometry = extract_lines(gray, roi, texts, out / "geometry")
-            if text_producer.get("producer_module") not in (
-                "app.native_objects.source_review",
-                "app.native_objects.source_text_ownership",
-            ):
-                from . import source_text_ownership
-
-                responsibility_root = out / "text_geometry_ownership"
-                original_fits = responsibility_root / "source_fitted_dictionary.json"
-                save_json(original_fits, geometry)
+                    validate_text_regions(texts, gray.shape, roi)
+                    saved_text = responsibility_root / "completed_text.json"
+                    save_json(saved_text, texts)
+                    dependencies = text_producer.get("dependency_producers", {})
+                    dependencies = (
+                        dict(dependencies)
+                        if isinstance(dependencies, dict)
+                        else {d["module"]: d["sha256"] for d in dependencies}
+                    )
+                    dependencies[text_producer["producer_module"]] = text_producer[
+                        "producer_sha256"
+                    ]
+                    text_producer = {
+                        "path": "text_geometry_ownership/completed_text.json",
+                        "sha256": hashlib.sha256(saved_text.read_bytes()).hexdigest(),
+                        "producer_module": "app.native_objects.source_text_ownership",
+                        "producer_sha256": hashlib.sha256(
+                            Path(source_text_ownership.__file__).read_bytes()
+                        ).hexdigest(),
+                        "dependency_producers": dependencies,
+                        "source_fitted_dictionary_path": "text_geometry_ownership/source_fitted_dictionary.json",
+                        "source_fitted_dictionary_sha256": hashlib.sha256(
+                            original_fits.read_bytes()
+                        ).hexdigest(),
+                        "source_pixels_modified": False,
+                        "transcription_decisions_modified": False,
+                    }
+                    stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
+                    stage_manifest["text"] = text_producer
+                    save_json(out / "completed_stages.json", stage_manifest)
+                    checkpoint_artifact(
+                        "completed_source_text_ownership", out / "completed_stages.json"
+                    )
+                    geometry = _reclassify_source_fitted_lines(
+                        geometry,
+                        texts,
+                        gray.shape,
+                        roi,
+                        original_dictionary_sha256=text_producer[
+                            "source_fitted_dictionary_sha256"
+                        ],
+                    )
+                    save_json(out / "geometry/lines_after_source_ownership.json", geometry)
+                geometry = _dense_line_gate(gray, roi, geometry, out / "geometry")
+                saved_geometry = out / "completed_geometry.json"
+                save_json(saved_geometry, geometry)
                 from . import geometry as geometry_module
 
                 stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
                 stage_manifest["geometry"] = {
-                    "path": "text_geometry_ownership/source_fitted_dictionary.json",
-                    "sha256": hashlib.sha256(original_fits.read_bytes()).hexdigest(),
+                    "path": "completed_geometry.json",
+                    "sha256": hashlib.sha256(saved_geometry.read_bytes()).hexdigest(),
                     "producer_sha256": hashlib.sha256(
                         Path(geometry_module.__file__).read_bytes()
                     ).hexdigest(),
-                    "role": "SOURCE_FITTED_DICTIONARY_REQUIRES_CURRENT_TEXT_AND_DENSE_GATE",
-                    "current_text_responsibility_still_to_be_rechecked": True,
                 }
                 save_json(out / "completed_stages.json", stage_manifest)
-                checkpoint_artifact(
-                    "completed_source_fitted_dictionary_before_ownership",
-                    out / "completed_stages.json",
+                checkpoint_artifact("completed_geometry", out / "completed_stages.json")
+                progress("COMPLETE_ROOM_ANNOTATIONS", 0.5)
+                annotations = assemble_annotations(
+                    gray, roi, texts, geometry["objects"], out / "annotations"
                 )
-                texts, ownership_audit = (
-                    source_text_ownership.reconcile_source_text_ownership(
-                        texts, gray, roi, geometry, output_dir=responsibility_root,
-                        evidence_root=out,
-                    )
+                progress("PRESERVE_AND_CHECK_NATIVE_DOOR", 0.57)
+                doors = _doors(gray, roi, input_path, out / "doors", cache_dir)
+                from .completion_stages import (
+                    complete_doors_with_responsibility,
+                    complete_connections_without_unresolved_retirement,
                 )
-                upstream_text_root = (out / text_producer["path"]).parent
-                texts["region_evidence_roots"] = {
-                    r["id"]: relative_evidence_path(
-                        (
-                            upstream_text_root
-                            / texts.get("region_evidence_roots", {}).get(r["id"], ".")
-                        ).resolve(),
-                        responsibility_root,
-                    )
-                    for r in texts["regions"]
-                }
-                if texts.get("bbox_overlay"):
-                    texts["bbox_overlay"] = relative_evidence_path(
-                        upstream_text_root / texts["bbox_overlay"], responsibility_root
-                    )
-                raw_checks = []
-                for region in texts["regions"]:
-                    raw_root = (
-                        responsibility_root
-                        / texts["region_evidence_roots"][region["id"]]
-                    )
-                    for alt in region.get("completeness_evidence", {}).get(
-                        "alternatives", []
-                    ):
-                        artifact = alt.get("raw_artifact", {})
-                        raw = (
-                            raw_root / (artifact.get("path") or alt["raw_tsv"])
-                        ).resolve()
-                        if out.resolve() not in raw.parents or not raw.is_file():
-                            raise ValueError(
-                                "OWNERSHIP_DERIVATION_RAW_REFERENCE_MISSING:" + str(raw)
-                            )
-                        actual = hashlib.sha256(raw.read_bytes()).hexdigest()
-                        if artifact.get("sha256") and artifact["sha256"] != actual:
-                            raise ValueError(
-                                "OWNERSHIP_DERIVATION_RAW_HASH_CHANGED:" + str(raw)
-                            )
-                        raw_checks.append(
-                            {
-                                "region_id": region["id"],
-                                "path": raw.relative_to(out.resolve()).as_posix(),
-                                "sha256": actual,
-                            }
-                        )
+                from .door_completion import retire_door_fragments
+
+                progress("COMPLETE_SOURCE_DOORS_AND_EDIT_RESPONSIBILITY", 0.59)
+                door_completion = complete_doors_with_responsibility(
+                    gray,
+                    roi,
+                    input_path,
+                    source_sha,
+                    geometry,
+                    doors["objects"],
+                    out / "door_completion",
+                    cache_dir,
+                )
+                door_objects = door_completion["objects"]
+                door_partition = retire_door_fragments(
+                    annotations["remaining_lines"], door_objects
+                )
                 save_json(
-                    responsibility_root / "raw_reference_path_audit.json",
+                    out / "door_completion/final_line_responsibility.json", door_partition
+                )
+                line_bank = door_partition["remaining_lines"]
+                door_conflicts = door_completion["uncertainties"]
+                progress("SOURCE_WALL_SPANS_CORNERS_OPENINGS", 0.63)
+                walls = assemble_walls(
+                    gray,
+                    roi,
+                    line_bank,
+                    out / "walls",
+                    candidate_lines=geometry.get("pre_dedup_line_candidates", []),
+                    candidate_groups=geometry.get("line_candidate_groups", []),
+                )
+                from .wall_partition_gate import enforce_partition_source_gate
+
+                walls = enforce_partition_source_gate(gray, line_bank, walls, out / "walls")
+                text_objects, text_issues = _text_objects(
+                    texts,
+                    set(annotations["consumed_text_group_ids"]),
+                    set(annotations.get("deferred_text_group_ids", [])),
+                    gray=gray,
+                )
+                save_json(
+                    out / "text_layout_audit.json",
                     {
-                        "all_references_resolve": True,
-                        "checked_references": raw_checks,
-                        "raw_bytes_rewritten": False,
-                        "recognition_decisions_changed": False,
+                        "source_sha256": source_sha,
+                        "recognition_decisions_and_source_masks_unchanged": True,
+                        "objects": [
+                            {
+                                "id": o["id"],
+                                "kind": o["kind"],
+                                "geometry": o["geometry"],
+                                "layout_evidence": o["source_evidence"].get("text_layout"),
+                            }
+                            for o in text_objects
+                        ],
                     },
                 )
-                validate_text_regions(texts, gray.shape, roi)
-                saved_text = responsibility_root / "completed_text.json"
-                save_json(saved_text, texts)
-                dependencies = text_producer.get("dependency_producers", {})
-                dependencies = (
-                    dict(dependencies)
-                    if isinstance(dependencies, dict)
-                    else {d["module"]: d["sha256"] for d in dependencies}
+                objects = (
+                    walls["remaining_lines"]
+                    + annotations["objects"]
+                    + walls["objects"]
+                    + door_objects
+                    + text_objects
                 )
-                dependencies[text_producer["producer_module"]] = text_producer[
-                    "producer_sha256"
-                ]
-                text_producer = {
-                    "path": "text_geometry_ownership/completed_text.json",
-                    "sha256": hashlib.sha256(saved_text.read_bytes()).hexdigest(),
-                    "producer_module": "app.native_objects.source_text_ownership",
-                    "producer_sha256": hashlib.sha256(
-                        Path(source_text_ownership.__file__).read_bytes()
-                    ).hexdigest(),
-                    "dependency_producers": dependencies,
-                    "source_fitted_dictionary_path": "text_geometry_ownership/source_fitted_dictionary.json",
-                    "source_fitted_dictionary_sha256": hashlib.sha256(
-                        original_fits.read_bytes()
-                    ).hexdigest(),
+                progress("WHOLE_SOURCE_CONNECTION_PATHS", 0.69)
+                # Fresh imports use the same raw-source verification as bounded
+                # continuation. A candidate mask alone is never a glyph verdict.
+                # Rotated working rasters retain the existing conservative rule
+                # until their raw-observation coordinate adapter is implemented.
+                verified_text_observations = None
+                if job.orientation_cw == 0:
+                    from .checkpoint_text_observations import (
+                        verify_current_job_observations,
+                    )
+
+                    verified_text_observations = verify_current_job_observations(
+                        texts, out, input_path, source_sha,
+                        {"roi": list(roi), "dpi": dpi, "orientation": 0,
+                         "page_number": job.page_number,
+                         "frame_number": job.frame_number},
+                        text_artifact_path=saved_text, gray=gray,
+                    )
+                save_json(out / "text_graph_source_verification.json", {
+                    "status": (
+                        "CURRENT_RAW_OBSERVATIONS_VERIFIED"
+                        if verified_text_observations and verified_text_observations.get("validated")
+                        else "KEEP_CONSERVATIVE_CANDIDATE_TEXT_PROTECTION"
+                    ),
+                    "verification": verified_text_observations,
+                    "new_OCR_calls": 0,
                     "source_pixels_modified": False,
-                    "transcription_decisions_modified": False,
-                }
-                stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
-                stage_manifest["text"] = text_producer
-                save_json(out / "completed_stages.json", stage_manifest)
-                checkpoint_artifact(
-                    "completed_source_text_ownership", out / "completed_stages.json"
-                )
-                geometry = _reclassify_source_fitted_lines(
-                    geometry,
-                    texts,
-                    gray.shape,
+                })
+                connections = complete_connections_without_unresolved_retirement(
+                    gray,
                     roi,
-                    original_dictionary_sha256=text_producer[
-                        "source_fitted_dictionary_sha256"
-                    ],
+                    source_sha,
+                    objects,
+                    out / "connections",
+                    cache_dir,
+                    text_regions=texts,
+                    verified_text_observations=verified_text_observations,
                 )
-                save_json(out / "geometry/lines_after_source_ownership.json", geometry)
-            geometry = _dense_line_gate(gray, roi, geometry, out / "geometry")
-            saved_geometry = out / "completed_geometry.json"
-            save_json(saved_geometry, geometry)
-            from . import geometry as geometry_module
+                retired_connection_lines = set(connections["retired_ids"])
+                objects = [obj for obj in objects if obj["id"] not in retired_connection_lines]
+                objects += connections["objects"]
+                progress("SOURCE_CIRCULAR_MARKERS_AND_INDEPENDENT_CHARACTERS", 0.71)
+                from .circular_marker_adoption import complete_circular_markers
 
-            stage_manifest = json.loads((out / "completed_stages.json").read_text(encoding="utf-8"))
-            stage_manifest["geometry"] = {
-                "path": "completed_geometry.json",
-                "sha256": hashlib.sha256(saved_geometry.read_bytes()).hexdigest(),
-                "producer_sha256": hashlib.sha256(
-                    Path(geometry_module.__file__).read_bytes()
-                ).hexdigest(),
-            }
-            save_json(out / "completed_stages.json", stage_manifest)
-            checkpoint_artifact("completed_geometry", out / "completed_stages.json")
-            progress("COMPLETE_ROOM_ANNOTATIONS", 0.5)
-            annotations = assemble_annotations(
-                gray, roi, texts, geometry["objects"], out / "annotations"
-            )
-            progress("PRESERVE_AND_CHECK_NATIVE_DOOR", 0.57)
-            doors = _doors(gray, roi, input_path, out / "doors", cache_dir)
-            from .completion_stages import (
-                complete_doors_with_responsibility,
-                complete_connections_without_unresolved_retirement,
-            )
-            from .door_completion import retire_door_fragments
-
-            progress("COMPLETE_SOURCE_DOORS_AND_EDIT_RESPONSIBILITY", 0.59)
-            door_completion = complete_doors_with_responsibility(
-                gray,
-                roi,
-                input_path,
-                source_sha,
-                geometry,
-                doors["objects"],
-                out / "door_completion",
-                cache_dir,
-            )
-            door_objects = door_completion["objects"]
-            door_partition = retire_door_fragments(
-                annotations["remaining_lines"], door_objects
-            )
-            save_json(
-                out / "door_completion/final_line_responsibility.json", door_partition
-            )
-            line_bank = door_partition["remaining_lines"]
-            door_conflicts = door_completion["uncertainties"]
-            progress("SOURCE_WALL_SPANS_CORNERS_OPENINGS", 0.63)
-            walls = assemble_walls(
-                gray,
-                roi,
-                line_bank,
-                out / "walls",
-                candidate_lines=geometry.get("pre_dedup_line_candidates", []),
-                candidate_groups=geometry.get("line_candidate_groups", []),
-            )
-            from .wall_partition_gate import enforce_partition_source_gate
-
-            walls = enforce_partition_source_gate(gray, line_bank, walls, out / "walls")
-            text_objects, text_issues = _text_objects(
-                texts,
-                set(annotations["consumed_text_group_ids"]),
-                set(annotations.get("deferred_text_group_ids", [])),
-                gray=gray,
-            )
-            save_json(
-                out / "text_layout_audit.json",
-                {
-                    "source_sha256": source_sha,
-                    "recognition_decisions_and_source_masks_unchanged": True,
-                    "objects": [
-                        {
-                            "id": o["id"],
-                            "kind": o["kind"],
-                            "geometry": o["geometry"],
-                            "layout_evidence": o["source_evidence"].get("text_layout"),
-                        }
-                        for o in text_objects
-                    ],
-                },
-            )
-            objects = (
-                walls["remaining_lines"]
-                + annotations["objects"]
-                + walls["objects"]
-                + door_objects
-                + text_objects
-            )
-            progress("WHOLE_SOURCE_CONNECTION_PATHS", 0.69)
-            # Fresh imports use the same raw-source verification as bounded
-            # continuation. A candidate mask alone is never a glyph verdict.
-            # Rotated working rasters retain the existing conservative rule
-            # until their raw-observation coordinate adapter is implemented.
-            verified_text_observations = None
-            if job.orientation_cw == 0:
-                from .checkpoint_text_observations import (
-                    verify_current_job_observations,
+                # Connection observations only seed source geometry. They carry no
+                # approval, glyph answer or ownership of an external connection.
+                round_observation_path = out / "connections/discovery/connections.json"
+                observed_rounds = (
+                    json.loads(round_observation_path.read_text(encoding="utf-8")).get(
+                        "round_boundary_observations"
+                    )
+                    if round_observation_path.is_file() else None
                 )
-
-                verified_text_observations = verify_current_job_observations(
-                    texts, out, input_path, source_sha,
-                    {"roi": list(roi), "dpi": dpi, "orientation": 0,
-                     "page_number": job.page_number,
-                     "frame_number": job.frame_number},
-                    text_artifact_path=saved_text, gray=gray,
+                circular_markers = complete_circular_markers(
+                    gray, roi, source_sha, objects, out / "circular_markers", dpi=dpi,
+                    text_regions=texts, observed_rounds=observed_rounds,
+                    progress_callback=lambda event: progress(
+                        "CIRCULAR_MARKER:" + event["stage"],
+                        0.71 + 0.025 * min(1.0, event["processed"] / max(1, event["total"])),
+                    ),
                 )
-            save_json(out / "text_graph_source_verification.json", {
-                "status": (
-                    "CURRENT_RAW_OBSERVATIONS_VERIFIED"
-                    if verified_text_observations and verified_text_observations.get("validated")
-                    else "KEEP_CONSERVATIVE_CANDIDATE_TEXT_PROTECTION"
-                ),
-                "verification": verified_text_observations,
-                "new_OCR_calls": 0,
-                "source_pixels_modified": False,
-            })
-            connections = complete_connections_without_unresolved_retirement(
-                gray,
-                roi,
-                source_sha,
-                objects,
-                out / "connections",
-                cache_dir,
-                text_regions=texts,
-                verified_text_observations=verified_text_observations,
-            )
-            retired_connection_lines = set(connections["retired_ids"])
-            objects = [obj for obj in objects if obj["id"] not in retired_connection_lines]
-            objects += connections["objects"]
-            progress("SOURCE_CIRCULAR_MARKERS_AND_INDEPENDENT_CHARACTERS", 0.71)
-            from .circular_marker_adoption import complete_circular_markers
+                retired_marker_members = set(circular_markers["retired_ids"])
+                objects = [obj for obj in objects if obj["id"] not in retired_marker_members]
+                objects += circular_markers["objects"]
+                endpoint_updates = {
+                    obj["id"]: obj for obj in circular_markers.get(
+                        "source_white_gap_protection", {}
+                    ).get("replacements", [])
+                }
+                endpoint_updates.update({
+                    obj["id"]: obj for obj in circular_markers.get(
+                        "external_endpoint_contacts", {}
+                    ).get("replacements", [])
+                })
+                objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
+                text_contact_completion = {}
+                # Graphic continuity is independently useful when the touching
+                # character remains unresolved.  Discover round-to-line paths
+                # from original pixels and independently supported receiving
+                # geometry, without making a text adoption a prerequisite.
+                from .structure_contact_geometry import plan_structure_contact_geometry
+                from .text_contact_partition import _source_graph
 
-            # Connection observations only seed source geometry. They carry no
-            # approval, glyph answer or ownership of an external connection.
-            round_observation_path = out / "connections/discovery/connections.json"
-            observed_rounds = (
-                json.loads(round_observation_path.read_text(encoding="utf-8")).get(
-                    "round_boundary_observations"
-                )
-                if round_observation_path.is_file() else None
-            )
-            circular_markers = complete_circular_markers(
-                gray, roi, source_sha, objects, out / "circular_markers", dpi=dpi,
-                text_regions=texts, observed_rounds=observed_rounds,
-                progress_callback=lambda event: progress(
-                    "CIRCULAR_MARKER:" + event["stage"],
-                    0.71 + 0.025 * min(1.0, event["processed"] / max(1, event["total"])),
-                ),
-            )
-            retired_marker_members = set(circular_markers["retired_ids"])
-            objects = [obj for obj in objects if obj["id"] not in retired_marker_members]
-            objects += circular_markers["objects"]
-            endpoint_updates = {
-                obj["id"]: obj for obj in circular_markers.get(
-                    "source_white_gap_protection", {}
-                ).get("replacements", [])
-            }
-            endpoint_updates.update({
-                obj["id"]: obj for obj in circular_markers.get(
-                    "external_endpoint_contacts", {}
-                ).get("replacements", [])
-            })
-            objects = [endpoint_updates.get(obj["id"], obj) for obj in objects]
-            text_contact_completion = {}
-            # Graphic continuity is independently useful when the touching
-            # character remains unresolved.  Discover round-to-line paths
-            # from original pixels and independently supported receiving
-            # geometry, without making a text adoption a prerequisite.
-            from .structure_contact_geometry import plan_structure_contact_geometry
-            from .text_contact_partition import _source_graph
-
-            progress("SOURCE_CONTACT_PATHS_TO_INDEPENDENT_RECEIVING_LINES", 0.738)
-            contact_source_graph = _source_graph(gray, roi)
-            structure_contact_plan = plan_structure_contact_geometry(
-                gray, roi, objects, source_graph=contact_source_graph,
-            )
-            # A terminal proposal only locates an existing receiver.  Prove
-            # complete old spans separately, then rediscover paths against
-            # the actual finite replacement and its current identity.
-            from .carrier_reconciliation import plan_existing_carrier_reconciliation
-
-            existing_ids = {obj["id"] for obj in objects}
-            receiving_ids = {
-                row["required_carrier_id"] for row in structure_contact_plan["paths"]
-                if row.get("path_role") == "ROUND_TO_CARRIER"
-                and row["required_carrier_id"] in existing_ids
-            }
-            # Competing old receiver expressions can themselves be the
-            # reason discovery stayed pending.  Only their source-qualified
-            # owner candidates enter the full-range reconciliation gate;
-            # a pending contact never authorizes retirement on its own.
-            receiving_ids.update(
-                owner["id"] for row in structure_contact_plan.get("pending", [])
-                if row.get("reason") == "COMPETING_EXISTING_CARRIER_OWNERS"
-                for owner in row.get("owners", []) if owner.get("id") in existing_ids
-            )
-            carrier_reconciliation = plan_existing_carrier_reconciliation(
-                gray, roi, objects, receiving_object_ids=sorted(receiving_ids),
-            )
-            save_json(out / "carrier_reconciliation/adoption.json", carrier_reconciliation)
-            retired_carriers = set(carrier_reconciliation["retired_ids"])
-            if retired_carriers or carrier_reconciliation["objects"]:
-                objects = [obj for obj in objects if obj["id"] not in retired_carriers]
-                objects += carrier_reconciliation["objects"]
+                progress("SOURCE_CONTACT_PATHS_TO_INDEPENDENT_RECEIVING_LINES", 0.738)
+                contact_source_graph = _source_graph(gray, roi)
                 structure_contact_plan = plan_structure_contact_geometry(
                     gray, roi, objects, source_graph=contact_source_graph,
                 )
-            contact_plans = list(texts.get("text_contact_geometry_plans", []))
-            contact_plans.append(structure_contact_plan)
-            if contact_plans:
-                progress("COMPLETE_INDEPENDENT_TEXT_CONTACT_PATHS", 0.74)
-                from .text_contact_adoption import complete_text_contact_paths
+                # A terminal proposal only locates an existing receiver.  Prove
+                # complete old spans separately, then rediscover paths against
+                # the actual finite replacement and its current identity.
+                from .carrier_reconciliation import plan_existing_carrier_reconciliation
 
-                text_contact_completion = complete_text_contact_paths(
-                    gray, roi, source_sha, objects,
-                    contact_plans, out / "text_contact",
+                existing_ids = {obj["id"] for obj in objects}
+                receiving_ids = {
+                    row["required_carrier_id"] for row in structure_contact_plan["paths"]
+                    if row.get("path_role") == "ROUND_TO_CARRIER"
+                    and row["required_carrier_id"] in existing_ids
+                }
+                # Competing old receiver expressions can themselves be the
+                # reason discovery stayed pending.  Only their source-qualified
+                # owner candidates enter the full-range reconciliation gate;
+                # a pending contact never authorizes retirement on its own.
+                receiving_ids.update(
+                    owner["id"] for row in structure_contact_plan.get("pending", [])
+                    if row.get("reason") == "COMPETING_EXISTING_CARRIER_OWNERS"
+                    for owner in row.get("owners", []) if owner.get("id") in existing_ids
                 )
-                retired_contact_parts = set(text_contact_completion["retired_ids"])
-                objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]
-                objects += text_contact_completion["objects"]
-                from .transverse_stroke_geometry import plan_transverse_stroke_geometry
-                from .text_contact_adoption import merge_contact_completions
+                carrier_reconciliation = plan_existing_carrier_reconciliation(
+                    gray, roi, objects, receiving_object_ids=sorted(receiving_ids),
+                )
+                save_json(out / "carrier_reconciliation/adoption.json", carrier_reconciliation)
+                retired_carriers = set(carrier_reconciliation["retired_ids"])
+                if retired_carriers or carrier_reconciliation["objects"]:
+                    objects = [obj for obj in objects if obj["id"] not in retired_carriers]
+                    objects += carrier_reconciliation["objects"]
+                    structure_contact_plan = plan_structure_contact_geometry(
+                        gray, roi, objects, source_graph=contact_source_graph,
+                    )
+                contact_plans = list(texts.get("text_contact_geometry_plans", []))
+                contact_plans.append(structure_contact_plan)
+                if contact_plans:
+                    progress("COMPLETE_INDEPENDENT_TEXT_CONTACT_PATHS", 0.74)
+                    from .text_contact_adoption import complete_text_contact_paths
 
-                transverse_plan = plan_transverse_stroke_geometry(
-                    gray, roi, objects, source_graph=contact_source_graph,
-                )
-                transverse_completion = complete_text_contact_paths(
-                    gray, roi, source_sha, objects, [transverse_plan],
-                    out / "transverse_strokes",
-                )
-                if transverse_completion["retired_ids"]:
-                    raise ValueError("TRANSVERSE_STROKE_MUST_PRESERVE_EXISTING_OBJECTS")
-                objects += transverse_completion["objects"]
-                text_contact_completion = merge_contact_completions(
-                    text_contact_completion, transverse_completion, out / "text_contact",
-                )
-            objects, circular_markers = _finalize_circle_relations(
-                gray, roi, objects, circular_markers, out / "circular_markers",
-            )
-            # Geometry is now final, including source-proved circle terminals.
-            # Complete only finite side glyphs of those adopted paths once;
-            # unresolved text never has to license a path before recognition.
-            from .short_contact_text import complete_short_contact_text
+                    text_contact_completion = complete_text_contact_paths(
+                        gray, roi, source_sha, objects,
+                        contact_plans, out / "text_contact",
+                    )
+                    retired_contact_parts = set(text_contact_completion["retired_ids"])
+                    objects = [obj for obj in objects if obj["id"] not in retired_contact_parts]
+                    objects += text_contact_completion["objects"]
+                    from .transverse_stroke_geometry import plan_transverse_stroke_geometry
+                    from .text_contact_adoption import merge_contact_completions
 
-            progress("COMPLETE_SHORT_TEXT_BESIDE_ADOPTED_PATHS", 0.745)
-            short_contact_completion = complete_short_contact_text(
-                gray, roi, source_sha, objects, texts, out / "short_contact_text",
-                dpi=dpi, source_graph=contact_source_graph,
-                contact_completion=text_contact_completion,
-            )
-            objects += short_contact_completion["objects"]
-            text_objects += short_contact_completion["objects"]
+                    transverse_plan = plan_transverse_stroke_geometry(
+                        gray, roi, objects, source_graph=contact_source_graph,
+                    )
+                    transverse_completion = complete_text_contact_paths(
+                        gray, roi, source_sha, objects, [transverse_plan],
+                        out / "transverse_strokes",
+                    )
+                    if transverse_completion["retired_ids"]:
+                        raise ValueError("TRANSVERSE_STROKE_MUST_PRESERVE_EXISTING_OBJECTS")
+                    objects += transverse_completion["objects"]
+                    text_contact_completion = merge_contact_completions(
+                        text_contact_completion, transverse_completion, out / "text_contact",
+                    )
+                objects, circular_markers = _finalize_circle_relations(
+                    gray, roi, objects, circular_markers, out / "circular_markers",
+                )
+                # Geometry is now final, including source-proved circle terminals.
+                # Complete only finite side glyphs of those adopted paths once;
+                # unresolved text never has to license a path before recognition.
+                from .short_contact_text import complete_short_contact_text
+
+                progress("COMPLETE_SHORT_TEXT_BESIDE_ADOPTED_PATHS", 0.745)
+                short_contact_completion = complete_short_contact_text(
+                    gray, roi, source_sha, objects, texts, out / "short_contact_text",
+                    dpi=dpi, source_graph=contact_source_graph,
+                    contact_completion=text_contact_completion,
+                )
+                objects += short_contact_completion["objects"]
+                text_objects += short_contact_completion["objects"]
             # Side strokes are a separate editing responsibility.  Their
             # source-graph stage sees only the finalized preceding objects;
             # it cannot retire them, license text, or grow the REVIEW layer.
@@ -1979,6 +2014,21 @@ def run_native_objects(
                 gray, roi, source_sha, objects, out / "attached_strokes",
                 source_graph=contact_source_graph,
             )
+            if source_stage_checkpoint is not None:
+                from .source_stage_checkpoint import update_execution
+
+                current_stage = {
+                    "status": "EXECUTED_CURRENT_PLANNER",
+                    "plan_sha256": file_sha(out / "attached_strokes/plan.json"),
+                    "adoption_sha256": file_sha(out / "attached_strokes/adoption.json"),
+                    "adopted_object_count": len(attached_stroke_completion["objects"]),
+                    "candidate_components": len(attached_stroke_completion["plan"]["components"]),
+                    "stage_execution": attached_stroke_completion.get("stage_execution"),
+                    "scope": "execution receipt only; no implied raw-ink or numerical PASS",
+                }
+                update_execution(out, fresh_source_graph="EXECUTED_REBUILT_FROM_UNCHANGED_PIXELS",
+                                 attached_ink=current_stage, all_prior_contacts=current_stage,
+                                 joint_numerical_contract=current_stage)
             if attached_stroke_completion.get("retired_ids") != []:
                 raise ValueError("ATTACHED_STROKE_MUST_PRESERVE_EXISTING_OBJECTS")
             restore_attached_stroke_evidence(out, attached_stroke_completion)
@@ -1987,25 +2037,26 @@ def run_native_objects(
             if len(added_ids) != len(set(added_ids)) or existing_ids.intersection(added_ids):
                 raise ValueError("ATTACHED_STROKE_DUPLICATE_OR_EXISTING_NATIVE_ID")
             objects += attached_stroke_completion["objects"]
-            issues = (
-                geometry["uncertainties"]
-                + annotations["uncertainties"]
-                + doors["uncertainties"]
-                + door_conflicts
-                + text_issues
-            )
-            issues += connections["uncertainties"]
-            issues += circular_markers["uncertainties"]
-            issues += short_contact_completion["pending"]
-            issues += text_contact_completion.get("uncertainties", [])
-            issues += carrier_reconciliation.get("uncertainties", [])
-            issues += walls.get("uncertainties", [])
-            issues += [
-                {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
-                for row in walls.get("partition_source_gate", {}).get(
-                    "failed_derived_fragments", []
+            if restored_upstream is None:
+                issues = (
+                    geometry["uncertainties"]
+                    + annotations["uncertainties"]
+                    + doors["uncertainties"]
+                    + door_conflicts
+                    + text_issues
                 )
-            ]
+                issues += connections["uncertainties"]
+                issues += circular_markers["uncertainties"]
+                issues += short_contact_completion["pending"]
+                issues += text_contact_completion.get("uncertainties", [])
+                issues += carrier_reconciliation.get("uncertainties", [])
+                issues += walls.get("uncertainties", [])
+                issues += [
+                    {"reason": "WALL_EDIT_PARTITION_REJECTED_SOURCE_GATE", **row}
+                    for row in walls.get("partition_source_gate", {}).get(
+                        "failed_derived_fragments", []
+                    )
+                ]
             save_json(
                 out / "assembly.json",
                 {
@@ -2061,8 +2112,13 @@ def run_native_objects(
             checkpoint_artifact("completed_assembly", out / "completed_stages.json")
         progress("ACTUAL_NATIVE_DXF_SAVE", 0.75)
         export_objects(objects, output_path, roi, dpi, source_sha)
+        if source_stage_checkpoint is not None:
+            update_execution(out, native_save={"status": "EXECUTED", "dxf_sha256": file_sha(output_path)})
         progress("SAVED_DXF_COLD_READ_AND_SOURCE_AUDIT", 0.82)
         audit = cold_audit(output_path, gray, roi, dpi, out / "cold_audit.json")
+        if source_stage_checkpoint is not None:
+            update_execution(out, saved_source_cold_read={"status": "EXECUTED", "source_gate_pass": audit["source_gate_pass"],
+                                                        "receipt_sha256": file_sha(out / "cold_audit.json")})
         progress("INDEPENDENT_DXF_MUPDF_RENDER", 0.9)
         preview = output_path.with_suffix(".png")
         render = render_saved(output_path, preview, roi, dpi)
@@ -2073,6 +2129,8 @@ def run_native_objects(
             dpi,
             True,
         )
+        if source_stage_checkpoint is not None:
+            update_execution(out, render="EXECUTED_CURRENT_SAVED_DXF")
         _repair_index(gray, roi, objects, issues, out / "repair")
         progress("CURRENT_INPUT_BIDIRECTIONAL_QUALITY_REVIEW", 0.94)
         from .quality_review import run_quality_review
@@ -2093,6 +2151,8 @@ def run_native_objects(
         checkpoint_artifact(
             "completed_current_input_review", out / "quality_review.json"
         )
+        if source_stage_checkpoint is not None:
+            update_execution(out, current_input_quality_review={"status": "EXECUTED", "receipt_sha256": file_sha(out / "quality_review.json")})
         passed = _saved_dxf_accepted(audit)
         report = {
             "status": "LOCAL_NATIVE_CANDIDATE_PENDING_SOURCE_QA_AND_CAD_UAT"
@@ -2178,6 +2238,17 @@ def run_native_objects(
             source_to_working_to_CAD=import_manifest["coordinates"],
             original_source_unchanged=file_sha(input_path) == source_sha,
         )
+        if source_stage_checkpoint is not None:
+            continuation = json.loads((out / "source_stage_continuation.json").read_text(encoding="utf-8"))
+            report["source_stage_continuation"] = {
+                "execution_mode": continuation["execution_mode"],
+                "checkpoint_manifest_sha256": continuation["checkpoint_manifest_sha256"],
+                "receipt": "source_stage_continuation.json",
+                "receipt_sha256": file_sha(out / "source_stage_continuation.json"),
+                "upstream_reused_stages": continuation["reused_stages"],
+                "downstream": continuation["downstream"],
+                "uncached_fresh_preservation_claimed": False,
+            }
         report.update(
             quality_path=str(out / "quality_review.json"),
             quality_summary=quality["summary"],

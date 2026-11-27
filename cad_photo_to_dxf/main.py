@@ -52,6 +52,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--native-cache", type=Path, help=argparse.SUPPRESS)
     parser.add_argument("--connection-checkpoint", type=Path,
                         help="Native mode: controlled source checkpoint JSON for bounded connection reconstruction; no OCR rerun")
+    parser.add_argument("--source-stage-checkpoint", type=Path,
+                        help="Native mode: explicit complete pre-attached source-stage continuation manifest; upstream source fits are reused and current attached gates rerun")
     parser.add_argument("--jobs-dir", type=Path,
                         help="Native mode: persisted task directory (default: OUTPUT-parent/native-jobs)")
     for flag, default, help_text in (
@@ -121,7 +123,7 @@ def run_headless(args: argparse.Namespace) -> int:
         return run_native_headless(args)
     native_options = ("roi", "dpi", "evidence_dir", "native_cache", "page", "frame",
                       "orientation", "job_id", "temp_dir", "resource_report", "jobs_dir",
-                      "connection_checkpoint")
+                      "connection_checkpoint", "source_stage_checkpoint")
     if any(getattr(args, name, None) is not None for name in native_options):
         raise ValueError("Native ROI/DPI/page/frame/job/cache options require --mode native-objects")
     if args.preview is None:
@@ -384,6 +386,8 @@ def run_native_headless(args: argparse.Namespace) -> int:
     }
     if args.connection_checkpoint is not None:
         request["connection_checkpoint"] = args.connection_checkpoint
+    if getattr(args, "source_stage_checkpoint", None) is not None:
+        request["source_stage_checkpoint"] = args.source_stage_checkpoint
     state = manager.create(request)
     job_id = state["job_id"]
     print(f"Engine: native-objects; product status: {PRODUCT_STATUS}", flush=True)

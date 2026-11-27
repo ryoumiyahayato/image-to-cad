@@ -365,6 +365,7 @@ class NativeJobManager:
             "limits",
             "validation_controls",
             "connection_checkpoint",
+            "source_stage_checkpoint",
         }
         extra = set(values) - allowed
         if extra:
@@ -432,11 +433,20 @@ class NativeJobManager:
             "language": language,
         }
         connection_checkpoint = None
+        if values.get("connection_checkpoint") is not None and values.get("source_stage_checkpoint") is not None:
+            raise ValueError("SELECT_ONE_EXPLICIT_SOURCE_CHECKPOINT_MODE")
         if values.get("connection_checkpoint") is not None:
             from app.native_objects.connection_checkpoint import capture_checkpoint
 
             connection_checkpoint = capture_checkpoint(
                 values["connection_checkpoint"], directory, before, parameters
+            )
+        source_stage_checkpoint = None
+        if values.get("source_stage_checkpoint") is not None:
+            from app.native_objects.source_stage_checkpoint import capture_checkpoint as capture_source_stage
+
+            source_stage_checkpoint = capture_source_stage(
+                values["source_stage_checkpoint"], directory, before, parameters
             )
         from app.native_objects.observation_cache import (
             ENVIRONMENT_VARIABLE,
@@ -484,6 +494,8 @@ class NativeJobManager:
         }
         if connection_checkpoint is not None:
             state["connection_checkpoint"] = connection_checkpoint
+        if source_stage_checkpoint is not None:
+            state["source_stage_checkpoint"] = source_stage_checkpoint
         atomic_json(
             directory / "input_manifest.json",
             {
@@ -735,6 +747,8 @@ class NativeJobManager:
             request["revision_import"] = revision
             if state.get("connection_checkpoint") is not None:
                 request["connection_checkpoint"] = state["connection_checkpoint"]
+            if state.get("source_stage_checkpoint") is not None:
+                request["source_stage_checkpoint"] = state["source_stage_checkpoint"]
             path = directory / "request.json"
             atomic_json(path, request)
             command = worker_command(

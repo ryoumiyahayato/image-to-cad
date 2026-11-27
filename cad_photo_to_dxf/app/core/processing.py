@@ -386,6 +386,7 @@ class ProductionProcessingService:
         cancellation_token: CancellationToken | None = None,
         entrypoint: str = "ProductionProcessingService.process_native_objects",
         connection_checkpoint: dict | None = None,
+        source_stage_checkpoint: dict | None = None,
     ) -> dict:
         """Explicit native-object mode; failures never enter the legacy trace."""
         from app.core.native_objects_entry import dispatch_native_objects
@@ -393,6 +394,8 @@ class ProductionProcessingService:
         checkpoint_options = {}
         if connection_checkpoint is not None:
             checkpoint_options["connection_checkpoint"] = connection_checkpoint
+        if source_stage_checkpoint is not None:
+            checkpoint_options["source_stage_checkpoint"] = source_stage_checkpoint
         return dispatch_native_objects(
             input_path, output_path, roi, dpi=dpi,
             progress_callback=progress_callback, evidence_dir=evidence_dir,

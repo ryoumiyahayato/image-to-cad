@@ -16,6 +16,7 @@ import ezdxf
 from ezdxf.tools.text_size import text_size
 
 from .contracts import save_json
+from . import attached_stroke_numeric as numerical
 from .single_line_text_audit import (
     _expected_attributes,
     _same,
@@ -26,9 +27,9 @@ from .text_contact_audit import _neighbor_matches, _primitive_matches
 
 
 FIELD = "attached_stroke_graph"
-ADOPTION_SCHEMA = "source-attached-stroke-adoption-v2"
-PLAN_SCHEMA = "source-attached-stroke-graph-plan-v2"
-EVIDENCE_SCHEMA = "source-attached-stroke-native-v2"
+ADOPTION_SCHEMA = numerical.ADOPTION_SCHEMA
+PLAN_SCHEMA = numerical.PLAN_SCHEMA
+EVIDENCE_SCHEMA = numerical.EVIDENCE_SCHEMA
 
 
 def _sha(path):
@@ -317,6 +318,19 @@ def cold_attached_stroke_bindings(path, doc, gray, roi, dpi, evidence_root):
         if (plan.get("schema") != PLAN_SCHEMA
                 or receipt.get("prior_object_bindings") != plan.get("prior_object_bindings")):
             raise ValueError("ATTACHED_STROKE_SOURCE_PLAN_OR_PRIOR_BINDINGS_CHANGED")
+        stage = receipt.get("stage_execution")
+        if (not isinstance(stage, dict) or stage.get("stage") != "complete_attached_strokes"
+                or stage.get("status") != "EXECUTED"
+                or stage.get("source_graph_input") not in ("REBUILT_FROM_ORIGINAL", "CALLER_SUPPLIED_BOUND_ORIGINAL_GRAPH")
+                or type(stage.get("adopted_path_count")) is not int
+                or type(stage.get("candidate_path_count")) is not int
+                or stage.get("adopted_path_count") != len(plan["paths"])
+                or stage.get("candidate_path_count") != sum(len(row.get("candidate_paths", [])) for row in plan["components"])
+                or stage.get("producer_sha256") != plan.get("producer_sha256")
+                or stage.get("additional_producer_sha256") != plan.get("additional_producer_sha256")
+                or stage.get("joint_contract") != plan.get("joint_contract")):
+            raise ValueError("ATTACHED_STROKE_JOINT_STAGE_EXECUTION_RECEIPT_INVALID")
+        report["stage_execution"] = stage
         saved_plan = json.loads((root / "attached_strokes/plan.json").read_text(encoding="utf-8"))
         if saved_plan != plan:
             raise ValueError("ATTACHED_STROKE_SAVED_PLAN_DIFFERS_FROM_ADOPTION")
@@ -353,7 +367,11 @@ def cold_attached_stroke_bindings(path, doc, gray, roi, dpi, evidence_root):
         report["plan_replay"] = replay
         if not isinstance(replay, dict) or replay.get("pass") is not True:
             raise ValueError("ATTACHED_STROKE_COMPLETE_SOURCE_PLAN_REPLAY_FAILED")
-        if replay.get("replayed_paths") != plan.get("paths"):
+        path_comparison = numerical.compare_path_records(
+            plan["paths"], replay.get("replayed_paths"), plan["numerical_diagnostics"],
+        )
+        report["complete_path_replay"] = path_comparison
+        if replay.get("saved_plan_sha256") != _digest(plan) or not path_comparison["pass"]:
             raise ValueError("ATTACHED_STROKE_COMPLETE_PATH_SET_REPLAY_DIFFERS")
         report["published_export"] = _published_export_binding(path, metadata_path, metadata, root)
         global_check["pass"] = True

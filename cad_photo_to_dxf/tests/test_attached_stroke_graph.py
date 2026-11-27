@@ -132,7 +132,7 @@ def _graph_geometry(context):
 
 def test_complete_attached_network_preserves_real_free_and_attached_boundaries(tmp_path):
     gray, context, prior, _, plan = _plan(tmp_path)
-    assert plan["schema"] == "source-attached-stroke-graph-plan-v2"
+    assert plan["schema"] == "source-attached-stroke-joint-plan-v3"
     assert len(plan["paths"]) == 4, (plan["components"], plan["pending"])
     proofs = [terminal["attached_raw_ink_responsibility"] for row in plan["paths"]
               for terminal in row["endpoint_evidence"] if "attached_raw_ink_responsibility" in terminal]
@@ -355,7 +355,9 @@ def test_new_responsibility_receipts_are_part_of_exact_source_replay(tmp_path, c
         del terminal["attached_raw_ink_responsibility"]
     replay = attached.verify_attached_stroke_graph_plan(gray, ROI, plan, source_graph=context)
     assert not replay["pass"]
-    assert replay["reason"] == "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH"
+    expected_reason = ("ATTACHED_GRAPH_JOINT_PRODUCER_OR_CONTRACT_CHANGED" if change == "producer"
+                       else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH")
+    assert replay["reason"] == expected_reason
 
 
 def _native_entities(doc):

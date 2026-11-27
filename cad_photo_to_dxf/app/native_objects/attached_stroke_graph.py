@@ -22,16 +22,17 @@ from scipy.ndimage import label
 from . import connections as paths
 from . import attached_stroke_contacts as prior_contacts
 from . import attached_stroke_ink as attached_ink
+from . import attached_stroke_numeric as numerical
 from . import text_contact_geometry as contact
 from . import transverse_stroke_geometry as transverse
 from .circle_endpoint_contacts import _segment_cells
 from .contracts import save_json, stable_id
 
 
-SCHEMA = "source-attached-stroke-graph-plan-v2"
+SCHEMA = numerical.PLAN_SCHEMA
 FIELD = "attached_stroke_graph"
 POLICY = {
-    "version": "finite-attached-source-tree-decompositions-v2",
+    "version": "finite-attached-source-tree-decompositions-joint-v3",
     "finite_direction_spans_px": [6.0, 8.0, 12.0],
     "minimum_observed_direction_chord_px": 4.0,
     "maximum_pair_deviation_deg": 20.0,
@@ -64,6 +65,7 @@ POLICY = {
     "attached_endpoint_raw_ink_policy": attached_ink.POLICY["version"],
     "all_prior_native_contact_policy": prior_contacts.POLICY["version"],
     "failed_complete_candidates_and_receipts_retained": True,
+    "numerical_diagnostics_policy": numerical.CONTRACT,
 }
 
 
@@ -693,7 +695,10 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
     result = {"schema": SCHEMA, "policy": deepcopy(POLICY),
               "producer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
               "additional_producer_sha256": {"attached_stroke_ink.py": attached_ink.producer_sha256(),
-                                              "attached_stroke_contacts.py": prior_contacts.producer_sha256()},
+                                              "attached_stroke_contacts.py": prior_contacts.producer_sha256(),
+                                              "attached_stroke_numeric.py": numerical.contract_identity()["module_sha256"]},
+              "joint_contract": numerical.joint_contract_identity(),
+              "numerical_contract": numerical.contract_identity(),
               "roi_xyxy_px": list(map(int, roi)), "original_source_crop_xyxy_px": context.crop_bbox,
               "original_source_crop_array_sha256": context.source_crop_hash,
               "prior_object_bindings": bindings, "prior_object_bindings_sha256": _digest(bindings),
@@ -803,6 +808,9 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                 record["selected_decomposition_index"] = selected["index"]
                 record["candidate_paths"] = rows
                 record["candidate_status"] = "GEOMETRY_CANDIDATES_NOT_FORMAL_OBJECTS"
+                for row in rows:
+                    row["component_id"] = record["component_id"]
+                    row["component_path_ids"] = [item["stroke_id"] for item in rows]
                 raw_checks = []
                 for row in rows:
                     for terminal in row["endpoint_evidence"]:
@@ -854,6 +862,23 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                     if len(companions) < POLICY["minimum_parallel_crossing_companions"]:
                         failed_gates.append("NO_INDEPENDENT_COMPLETE_PARALLEL_CROSSING_COMPANION")
                     row["parallel_crossing_companion_ids"] = [r["stroke_id"] for r in companions]
+                # The numerical scope reads candidate_paths in place. It does
+                # not turn complete but source-pending rows into adopted paths.
+                try:
+                    certificate = numerical.guard_candidate_component(_plain(record), _plain(rows), POLICY)
+                    record["numerical_status"] = "CERTIFIED_DIAGNOSTICS_ONLY"
+                    record["numerical_adoption_gate"] = {
+                        "pass": True, "certificate_sha256": _digest(certificate),
+                        "source_adoption_authorized": False,
+                        "candidate_scope_only": True,
+                    }
+                except numerical.NumericalUnresolved as exc:
+                    record["numerical_status"] = "PENDING"
+                    record["numerical_failure_evidence"] = {
+                        "reason": str(exc), "evidence": exc.evidence,
+                        "source_adoption_authorized": False,
+                    }
+                    failed_gates.append("NUMERIC_COMPONENT_DIAGNOSTICS_OR_DECISIONS_UNRESOLVED")
                 record["failed_adoption_gates"] = sorted(set(failed_gates))
                 if failed_gates:
                     selected["native_geometry_stage"] = "PENDING_COMPLETE_CANDIDATE_RESPONSIBILITY"
@@ -874,17 +899,43 @@ def plan_attached_stroke_graph(gray, roi, prior_objects, *, source_graph=None):
                 record["reason"] = str(exc)
                 result["pending"].append({"component_id": record["component_id"], "reason": str(exc),
                                           "source_graph_edge_ids": component["edges"]})
-    return _plain(result)
+    result = _plain(result)
+    result["numerical_diagnostics"] = numerical.build_certificate(result)
+    return result
 
 
 def verify_attached_stroke_graph_plan(gray, roi, plan, *, source_graph=None):
-    if plan.get("schema") != SCHEMA or plan.get("prior_object_bindings_sha256") != _digest(plan.get("prior_object_bindings")):
-        return {"pass": False, "reason": "ATTACHED_GRAPH_PRIOR_BINDING_INTEGRITY_FAILED", "checks": {"prior_bindings": False}}
     try:
+        if not isinstance(plan, dict) or plan.get("schema") != SCHEMA:
+            return {"pass": False, "reason": "HISTORICAL_OR_UNKNOWN_PLAN_IS_NOT_JOINT_EXECUTION",
+                    "checks": {"joint_contract_version": False},
+                    "legacy_compatibility_entry": "attached_stroke_numeric.compare_legacy_plans"}
+        if plan.get("prior_object_bindings_sha256") != _digest(plan.get("prior_object_bindings")):
+            return {"pass": False, "reason": "ATTACHED_GRAPH_PRIOR_BINDING_INTEGRITY_FAILED",
+                    "checks": {"prior_bindings": False}}
+        producer = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+        expected_additional = {"attached_stroke_ink.py": attached_ink.producer_sha256(),
+                               "attached_stroke_contacts.py": prior_contacts.producer_sha256(),
+                               "attached_stroke_numeric.py": numerical.contract_identity()["module_sha256"]}
+        if (plan.get("producer_sha256") != producer
+                or plan.get("additional_producer_sha256") != expected_additional
+                or plan.get("joint_contract") != numerical.joint_contract_identity()
+                or plan.get("numerical_contract") != numerical.contract_identity()):
+            return {"pass": False, "reason": "ATTACHED_GRAPH_JOINT_PRODUCER_OR_CONTRACT_CHANGED",
+                    "checks": {"current_joint_producers": False}}
         replay = plan_attached_stroke_graph(gray, roi, plan["prior_object_bindings"], source_graph=source_graph)
-        checks = {key: plan.get(key) == value for key, value in replay.items()}
+        comparison = numerical.compare_plans(plan, replay, expected_schema=SCHEMA,
+                                              expected_producer_sha256=producer)
+        checks = {"current_joint_contract": plan.get("joint_contract") == numerical.joint_contract_identity(),
+                  "current_numerical_contract": plan.get("numerical_contract") == numerical.contract_identity(),
+                  "current_additional_producers": plan.get("additional_producer_sha256") == expected_additional,
+                  "source_derived_diagnostic_certificate": plan.get("numerical_diagnostics") == comparison.get("certificate"),
+                  "strict_values_and_bounded_diagnostics": comparison["pass"]}
         return {"pass": all(checks.values()), "checks": checks,
-                "reason": "EXACT_ATTACHED_GRAPH_SOURCE_REPLAY" if all(checks.values()) else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH",
+                "reason": "ATTACHED_GRAPH_JOINT_V3_SOURCE_REPLAY" if all(checks.values()) else "ATTACHED_GRAPH_SOURCE_REPLAY_MISMATCH",
+                "saved_plan_sha256": _digest(plan), "numerical_comparison": comparison,
+                "numeric_adoption_status": comparison.get("numeric_adoption_status"),
+                "source_graph_rebuilt_from_original": source_graph is None,
                 "replayed_paths": replay["paths"], "new_OCR_calls": 0}
     except (ValueError, KeyError, TypeError) as exc:
         return {"pass": False, "checks": {}, "reason": "ATTACHED_GRAPH_SOURCE_REPLAY_ERROR", "detail": str(exc)}
@@ -903,17 +954,27 @@ def complete_attached_strokes(gray, roi, source_sha, objects, out, *, source_gra
                                    "original_source_crop_xyxy_px": plan["original_source_crop_xyxy_px"],
                                    "original_source_crop_array_sha256": plan["original_source_crop_array_sha256"],
                                    "source_pixels_modified": False,
-                                   FIELD: {"schema": "source-attached-stroke-native-v2", "source_sha256": source_sha,
+                                   FIELD: {"schema": numerical.EVIDENCE_SCHEMA, "source_sha256": source_sha,
                                            "plan_sha256": key, "path_index": index, "path_sha256": _digest(row), "path": deepcopy(row)}},
                "editing_scope": "one complete independent source stroke; attached and crossing strokes remain separate",
                "status": "SOURCE_SUPPORTED_COMPLETE_ATTACHED_GRAPH_STROKE"}
         adopted.append(obj)
         decisions.append({"id": obj["id"], "adopted": True, "decision": "ADD_COMPLETE_INDEPENDENT_GRAPH_STROKE",
                           "component_id": row["component_id"], "native_kind": kind, "retired_ids": []})
-    result = {"schema": "source-attached-stroke-adoption-v2", "source_sha256": source_sha,
+    result = {"schema": numerical.ADOPTION_SCHEMA, "source_sha256": source_sha,
               "roi_xyxy_px": list(roi), "plan": plan, "objects": adopted,
               "prior_object_bindings": plan["prior_object_bindings"], "decisions": decisions,
               "retired_ids": [], "pending": deepcopy(plan["pending"]), "new_OCR_calls": 0}
+    result["stage_execution"] = {
+        "stage": "complete_attached_strokes", "status": "EXECUTED",
+        "source_graph_input": ("REBUILT_FROM_ORIGINAL" if source_graph is None
+                               else "CALLER_SUPPLIED_BOUND_ORIGINAL_GRAPH"),
+        "adopted_path_count": len(plan["paths"]),
+        "candidate_path_count": sum(len(component.get("candidate_paths", [])) for component in plan["components"]),
+        "producer_sha256": plan["producer_sha256"],
+        "additional_producer_sha256": deepcopy(plan["additional_producer_sha256"]),
+        "joint_contract": deepcopy(plan["joint_contract"]),
+    }
     save_json(Path(out) / "plan.json", plan)
     save_json(Path(out) / "adoption.json", result)
     return result

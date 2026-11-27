@@ -157,6 +157,11 @@ def _validate_request(path):
             request["source_sha256"],
             request["parameters"],
         )
+    if request.get("source_stage_checkpoint") is not None:
+        from app.native_objects.source_stage_checkpoint import verify_captured_checkpoint as verify_source_stage
+
+        verify_source_stage(request["source_stage_checkpoint"], job,
+                            request["source_sha256"], request["parameters"])
     from app.native_objects.observation_cache import (
         ENVIRONMENT_VARIABLE,
         verify_binding,
@@ -373,6 +378,8 @@ def worker_run(request_path):
             checkpoint_options = {}
             if request.get("connection_checkpoint") is not None:
                 checkpoint_options["connection_checkpoint"] = request["connection_checkpoint"]
+            if request.get("source_stage_checkpoint") is not None:
+                checkpoint_options["source_stage_checkpoint"] = request["source_stage_checkpoint"]
             result = ProductionProcessingService.process_native_objects(
                 request["input_path"],
                 staging / "result.dxf",
