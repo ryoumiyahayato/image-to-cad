@@ -84,6 +84,43 @@ remain visible. A wedge or block label does not decide whether the new model
 passes. The baseline must still produce four actual adopted objects and
 three proved attachments; zero adoption fails that positive control.
 
+### Separate completed checkpoints
+
+The default invocation still executes all eight cases in their original
+order. For serial execution with a completed artifact checkpoint between
+cases, first execute the baseline and then select another original name:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python -B experiments/issue63_bounded_source/run_probes.py \
+  --case baseline --output /tmp/issue63-baseline-NEW
+
+PYTHONDONTWRITEBYTECODE=1 python -B experiments/issue63_bounded_source/run_probes.py \
+  --case one_pixel_cap --baseline-reference /tmp/issue63-baseline-NEW \
+  --output /tmp/issue63-one-pixel-cap-NEW
+```
+
+Every invocation constructs and verifies all eight original source arrays
+before selecting its execution case. `FROZEN_VARIANTS.json` retains all
+eight authored variants and hashes, and explicitly records the selected
+`execution_variants`. A single-case `SUMMARY.json` reports original count 8,
+planned count 1 and exactly one result; it does not claim an eight-case pass.
+
+A non-baseline case requires a completed single-baseline reference from the
+same clean commit/tree, complete source file hashes and producer maps. Its
+root and nested manifests, exact baseline input, four adopted objects,
+three proved attachments and successful independent saved/source replay
+are checked before the new graph starts. Missing, modified, incomplete or
+different-tree references are refused. All reference files, including its
+root manifest, are bound before and after the new case.
+
+The reference supplies only the original comparison expressions for the
+baseline skeleton, graph, candidate representations and component proof
+hashes. Every selected case still constructs its own graph, owner, plan,
+saved output and independent source audit. Reference geometry or PASS values
+are never supplied as source, owner or adoption evidence. Preserve each
+completed case and its writer-exit/readback receipts before starting the
+next; neither a partial case nor a progress file is a completion receipt.
+
 `FRESH_BRANCH_RESPONSIBILITY.json` records actual new external-arm source
 chains, their four-or-more-port junction, independent free terminal, and
 saved native owners. Thin/long arm controls must have this fresh graph

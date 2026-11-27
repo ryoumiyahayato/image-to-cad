@@ -41,7 +41,7 @@ from run_source_stage import (
 )
 
 SCHEMA = "issue63-bounded-source-eight-original-probes-v1"
-SCRIPT_VERSION = "fresh-source-shared-coordinate-saved-audit-v1"
+SCRIPT_VERSION = "fresh-source-shared-coordinate-saved-audit-v2-per-case-checkpoints"
 EXPECTED_PLAN_SCHEMA = "source-attached-stroke-graph-plan-v4-bounded-source"
 EXPECTED_COMPONENT_SCHEMA = "source-finite-component-responsibility-v2-bounded-field"
 DEFAULT_REPO = Path(__file__).resolve().parents[2]
@@ -56,6 +56,14 @@ EXPECTED_SOURCE_HASHES = {
     "existing_long_tail_control": "4a1d23b02d611b366ce6b2a887fd88ffd7ed305a139da0ee52d6350d5991cb5d",
 }
 DPI = 200
+EXPECTED_ADDITIONAL_PRODUCERS = (
+    "attached_stroke_ink.py", "attached_stroke_component.py", "finite_component_source_audit.py",
+    "finite_component_saved_reader.py", "circular_markers.py", "connections.py",
+    "text_contact_geometry.py", "transverse_stroke_geometry.py", "bounded_source_component.py",
+    "bounded_stroke_field_v2.py", "bounded_stroke_field.py", "finite_source_junction.py",
+    "finite_source_ports.py", "finite_circle_source.py", "attached_stroke_width_exact.py",
+    "attached_stroke_contacts.py",
+)
 
 
 def plain(value):
@@ -135,6 +143,181 @@ def git_identity(repo):
     return {"head": read("rev-parse", "HEAD"), "head_tree": read("rev-parse", "HEAD^{tree}"),
             "worktree_dirty": bool(read("status", "--porcelain")),
             "uncommitted_execution_is_bound_by_exact_source_file_hashes": True}
+
+
+def select_prepared_variants(prepared, selected_case):
+    """Verify all eight original arrays before selecting any execution scope."""
+    names = [variant["name"] for variant, _ in prepared]
+    actual = {variant["name"]: array_sha(gray) for variant, gray in prepared}
+    if names != [row["name"] for row in variants()] or actual != EXPECTED_SOURCE_HASHES:
+        raise ValueError("ALL_EIGHT_ORIGINAL_SOURCE_ARRAYS_MUST_MATCH_BEFORE_CASE_SELECTION")
+    if selected_case is not None and selected_case not in EXPECTED_SOURCE_HASHES:
+        raise ValueError("UNKNOWN_ORIGINAL_PROBE_CASE")
+    return [(variant, gray) for variant, gray in prepared
+            if selected_case is None or variant["name"] == selected_case]
+
+
+def reference_inventory(directory):
+    """Hash every reference byte, including manifests omitted by the root map."""
+    if not directory.is_dir() or directory.is_symlink():
+        raise ValueError("BASELINE_REFERENCE_MUST_BE_A_PLAIN_COMPLETED_DIRECTORY")
+    paths = sorted(directory.rglob("*"))
+    if any(path.is_symlink() for path in paths):
+        raise ValueError("BASELINE_REFERENCE_SYMLINKS_ARE_NOT_ACCEPTED")
+    return {path.relative_to(directory).as_posix(): {
+        "size_bytes": path.stat().st_size, "sha256": file_sha(path)}
+        for path in paths if path.is_file()}
+
+
+def validate_reference_manifests(directory, inventory):
+    """The root map excludes named manifests; each case map includes its files."""
+    manifests = [name for name in inventory if Path(name).name == "FILE_MANIFEST.json"]
+    if "FILE_MANIFEST.json" not in manifests or "baseline/FILE_MANIFEST.json" not in manifests:
+        raise ValueError("BASELINE_REFERENCE_COMPLETE_ROOT_AND_CASE_MANIFESTS_REQUIRED")
+    for name in manifests:
+        path = directory / name
+        rows = json.loads(path.read_text(encoding="utf-8"))["files"]
+        if isinstance(rows, list):
+            recorded = {row["path"]: {key: row[key] for key in ("size_bytes", "sha256")} for row in rows}
+            if len(recorded) != len(rows):
+                raise ValueError("BASELINE_REFERENCE_DUPLICATE_MANIFEST_PATH")
+        elif isinstance(rows, dict):
+            recorded = rows
+        else:
+            raise ValueError("BASELINE_REFERENCE_INVALID_MANIFEST")
+        prefix = path.parent.relative_to(directory)
+        expected = {}
+        for relative, identity in inventory.items():
+            item = Path(relative)
+            if not item.is_relative_to(prefix) or relative == name:
+                continue
+            if name == "FILE_MANIFEST.json" and item.name == "FILE_MANIFEST.json":
+                continue
+            expected[item.relative_to(prefix).as_posix()] = identity
+        if recorded != expected:
+            raise ValueError("BASELINE_REFERENCE_MANIFEST_FILE_SET_OR_BYTES_MISMATCH:" + name)
+    return manifests
+
+
+def load_baseline_reference(directory, repo, attached, source_files_now, source_git_now, baseline, roi):
+    """Load comparison diagnostics only after a completed same-tree baseline gate.
+
+    Nothing returned here is supplied to an owner, planner, source graph or
+    adoption decision. The baseline is not an alternative source certificate.
+    """
+    import numpy as np
+    from PIL import Image
+
+    inventory = reference_inventory(directory)
+    manifests = validate_reference_manifests(directory, inventory)
+
+    def load(relative):
+        return json.loads((directory / relative).read_text(encoding="utf-8"))
+
+    frozen, summary, entry = (load(name) for name in ("FROZEN_VARIANTS.json", "SUMMARY.json", "EXECUTION_ENTRY.json"))
+    result, strict, identity = (load("baseline/" + name) for name in ("result.json", "strict_replay.json", "input_identity.json"))
+    plan = load("baseline/evidence/attached_strokes/plan.json")
+    graph, responsibility = load("baseline/fresh_graph.json"), load("baseline/responsibility_summary.json")
+    branches = load("baseline/FRESH_BRANCH_RESPONSIBILITY.json")
+    saved = load("baseline/saved_files.json")
+    input_hash_check = load("ORIGINAL_SOURCE_HASH_CHECK.json")
+    expected_producers = {name: file_sha(repo / "cad_photo_to_dxf/app/native_objects" / name)
+                          for name in EXPECTED_ADDITIONAL_PRODUCERS}
+    expected_impl = implementation_identity(attached, plan)
+    with Image.open(directory / "baseline/source.png") as image:
+        saved_source = np.asarray(image.convert("L"))
+    recomputed_responsibility = plain(responsibility_summary(plan, baseline, []))
+    compact_results = summary.get("results", [])
+    canonical_baseline = variants()[0]
+    snapshots = entry.get("entries", [])
+    expected_entrypoints = {name for name in source_files_now
+                            if Path(name).parent == Path("experiments/issue63_bounded_source") and name.endswith(".py")}
+    checks = {
+        "same_current_clean_git_identity": source_git_now.get("worktree_dirty") is False
+            and frozen.get("source_git") == entry.get("git") == source_git_now
+            and summary.get("source_git_before") == summary.get("source_git_after") == source_git_now,
+        "same_complete_source_file_hashes": bool(source_files_now)
+            and frozen.get("source_files_sha256") == summary.get("source_files_sha256_before")
+            == summary.get("source_files_sha256_after") == strict.get("source_files_sha256") == source_files_now,
+        "same_script_version_and_schemas": frozen.get("schema") == summary.get("schema") == SCHEMA
+            and frozen.get("script_version") == summary.get("script_version") == SCRIPT_VERSION
+            and plan.get("schema") == EXPECTED_PLAN_SCHEMA,
+        "all_eight_original_inputs_and_authored_variants_bound": frozen.get("variants") == plain(variants())
+            and frozen.get("variant_array_sha256") == frozen.get("original_variant_array_sha256") == EXPECTED_SOURCE_HASHES
+            and frozen.get("all_original_source_hashes_match") is True
+            and input_hash_check.get("pass") is True
+            and input_hash_check.get("all_original_sources_built_before_selection") is True
+            and input_hash_check.get("original_variant_count") == len(EXPECTED_SOURCE_HASHES)
+            and input_hash_check.get("actual_source_array_sha256") == input_hash_check.get("expected_source_array_sha256")
+            == EXPECTED_SOURCE_HASHES,
+        "single_baseline_execution_scope": frozen.get("execution_variants") == summary.get("execution_variants") == ["baseline"]
+            and frozen.get("original_variant_count") == summary.get("original_variant_count") == len(EXPECTED_SOURCE_HASHES)
+            and frozen.get("planned_variant_count") == summary.get("planned_variant_count") == 1
+            and summary.get("execution_scope") == "SINGLE_ORIGINAL_CASE"
+            and entry.get("arguments", {}).get("case") == "baseline"
+            and entry.get("arguments", {}).get("baseline_reference") is None,
+        "completed_successful_reference": summary.get("run_completed") is True and summary.get("pass") is True
+            and summary.get("source_files_unchanged") is True and summary.get("source_git_unchanged") is True
+            and summary.get("all_strict_source_and_saved_replays_pass") is True
+            and summary.get("all_input_and_graph_integrity_checks_pass") is True
+            and summary.get("all_current_control_gates_pass") is True,
+        "one_complete_baseline_result": len(compact_results) == 1 and compact_results[0].get("name") == "baseline"
+            and all(result.get(key) == value for key, value in compact_results[0].items())
+            and result.get("name") == "baseline" and result.get("status") == "ADOPTED_COMPONENT"
+            and result.get("adopted_count") == 4 and result.get("strict_replay_exit_code") == 0
+            and result.get("strict_source_and_saved_replay_pass") is True and result.get("evidence_integrity_pass") is True,
+        "complete_baseline_input_bytes": identity.get("name") == "baseline" and identity.get("roi") == list(roi)
+            and identity.get("dpi") == DPI and identity.get("added_original_black_pixels_px") == []
+            and identity.get("removed_original_black_pixels_px") == []
+            and identity.get("source_png_sha256") == file_sha(directory / "baseline/source.png")
+            and identity.get("source_array_sha256") == result.get("source_array_sha256") == EXPECTED_SOURCE_HASHES["baseline"]
+            and array_sha(saved_source) == EXPECTED_SOURCE_HASHES["baseline"] and np.array_equal(saved_source, baseline),
+        "current_exact_producer_maps": plan.get("producer_sha256") == file_sha(attached.__file__)
+            and plan.get("additional_producer_sha256") == expected_producers
+            and result.get("implementation") == strict.get("implementation") == expected_impl
+            and frozen.get("implementation") == summary.get("implementation") == implementation_identity(attached)
+            and summary.get("script_sha256") == file_sha(__file__),
+        "strict_fresh_source_and_saved_acceptance": strict.get("pass") is True
+            and strict.get("fresh_source_graph_requested") is True
+            and bool(strict.get("checks")) and all(value is True for value in strict["checks"].values())
+            and strict.get("plan_file_sha256") == file_sha(directory / "baseline/evidence/attached_strokes/plan.json")
+            and strict.get("actual_saved_plan_fields") == strict.get("actually_compared_fields") == sorted(plan)
+            and strict.get("verification", {}).get("pass") is True
+            and set(strict.get("verification", {}).get("checks", {})) == set(plan)
+            and all(value is True for value in strict["verification"]["checks"].values())
+            and strict.get("saved_dxf", {}).get("pass") is True
+            and strict.get("saved_dxf", {}).get("adopted_count") == 4
+            and strict.get("saved_dxf", {}).get("actual_saved_source_audit", {}).get("acceptance_pass") is True,
+        "four_objects_three_proved_attachments": responsibility == recomputed_responsibility
+            and responsibility.get("endpoint_reference_count") == 3
+            and len(plan.get("paths", [])) == saved.get("adopted_count") == 4
+            and result.get("current_control_gate") == current_control_gate(canonical_baseline, result, responsibility, branches, strict)
+            and result.get("current_control_gate", {}).get("pass") is True,
+        "actual_saved_file_bytes_bound": saved.get("actual_adopted_dxf_sha256")
+            == strict.get("saved_dxf", {}).get("actual_dxf_sha256") == file_sha(directory / "baseline/actual_adopted.dxf")
+            and saved.get("prior_dxf_sha256") == file_sha(directory / "baseline/prior.dxf"),
+        "entrypoint_snapshots_match_current_files": len(snapshots) == len(expected_entrypoints)
+            and {row["source"] for row in snapshots} == expected_entrypoints and all(
+            inventory.get(row["snapshot"], {}).get("sha256") == row["sha256"]
+            == source_files_now.get(row["source"]) for row in snapshots),
+        "baseline_source_graph_bound": graph.get("schema") == "issue63-fresh-synthetic-source-graph-v1"
+            and graph.get("roi") == list(roi) and graph.get("crop_bbox") == plan.get("original_source_crop_xyxy_px")
+            and graph.get("crop_array_sha256") == plan.get("original_source_crop_array_sha256"),
+    }
+    if not all(checks.values()):
+        raise ValueError("BASELINE_REFERENCE_GATE_FAILED:" + json.dumps(checks, sort_keys=True))
+    comparisons = {"graph": {tuple(point) for point in graph["skeleton_points_px"]}, "graph_record": graph,
+        "geometry": [path["representation"] for path in all_candidates(plan)],
+        "proofs": [component.get("proof_sha256") for component in responsibility["components"]]}
+    receipt = {"schema": "issue63-completed-baseline-comparison-reference-v1", "directory": str(directory),
+        "pass": True, "checks": checks, "files": inventory, "root_manifest_sha256": inventory["FILE_MANIFEST.json"]["sha256"],
+        "validated_manifests": manifests, "source_git": source_git_now, "source_files_sha256": source_files_now,
+        "original_baseline_source_array_sha256": EXPECTED_SOURCE_HASHES["baseline"],
+        "comparison_only": True, "used_as_source_graph_owner_plan_or_adoption_input": False,
+        "comparison_expressions": ["set(tuple(point) for point in fresh_graph['skeleton_points_px'])",
+            "[path['representation'] for path in all_candidates(plan)]",
+            "[component.get('proof_sha256') for component in responsibility['components']]"]}
+    return comparisons, receipt
 
 
 def graph_snapshot(context):
@@ -586,6 +769,7 @@ def run_suite(args):
     if not readiness["ready"]:
         raise ValueError("V2_BOUND_SOURCE_INTERFACES_NOT_READY")
     declared, before, baseline = variants(), source_hashes(args.repo), _source()
+    source_git_before = git_identity(args.repo)
     resources_before = resource_snapshot(args.output)
     prepared = []
     for variant in declared:
@@ -594,10 +778,19 @@ def run_suite(args):
             gray[y, x] = 0
         prepared.append((variant, gray))
     actual_hashes = {variant["name"]: array_sha(gray) for variant, gray in prepared}
+    write_json(args.output / "ORIGINAL_SOURCE_HASH_CHECK.json", {
+        "all_original_sources_built_before_selection": True, "original_variant_count": len(declared),
+        "actual_source_array_sha256": actual_hashes, "expected_source_array_sha256": EXPECTED_SOURCE_HASHES,
+        "pass": actual_hashes == EXPECTED_SOURCE_HASHES})
+    execution = select_prepared_variants(prepared, args.case)
+    execution_names = [variant["name"] for variant, _ in execution]
+    execution_scope = "ALL_EIGHT_ORIGINAL_CASES" if args.case is None else "SINGLE_ORIGINAL_CASE"
     write_json(args.output / "FROZEN_VARIANTS.json", {"schema": SCHEMA, "script_version": SCRIPT_VERSION, "variants": declared,
+               "execution_variants": execution_names, "original_variant_count": len(declared),
+               "planned_variant_count": len(execution), "execution_scope": execution_scope,
                "variant_array_sha256": actual_hashes, "original_variant_array_sha256": EXPECTED_SOURCE_HASHES,
                "all_original_source_hashes_match": actual_hashes == EXPECTED_SOURCE_HASHES,
-               "source_files_sha256": before, "source_git": git_identity(args.repo),
+               "source_files_sha256": before, "source_git": source_git_before,
                "implementation": implementation_identity(attached), "fresh_graph_and_owner_for_every_case": True,
                "saved_dxf_and_new_process_cold_read_for_every_case": True,
                "fresh_source_audits_per_case": "EACH_NONEMPTY_PAPER_TARGET_SET_RECORDED_PER_CASE",
@@ -606,7 +799,14 @@ def run_suite(args):
     if actual_hashes != EXPECTED_SOURCE_HASHES or attached.SCHEMA != EXPECTED_PLAN_SCHEMA:
         raise ValueError("ORIGINAL_SYNTHETIC_SOURCES_OR_NEW_PLAN_SCHEMA_MISMATCH")
     summaries, baseline_graph, baseline_graph_record, baseline_geometry, baseline_proofs = [], None, None, None, None
-    for index, (variant, gray) in enumerate(prepared):
+    reference_before = None
+    if args.baseline_reference is not None:
+        comparisons, reference_before = load_baseline_reference(
+            args.baseline_reference, args.repo, attached, before, source_git_before, baseline, ROI)
+        write_json(args.output / "BASELINE_REFERENCE_BEFORE.json", reference_before)
+        baseline_graph, baseline_graph_record = comparisons["graph"], comparisons["graph_record"]
+        baseline_geometry, baseline_proofs = comparisons["geometry"], comparisons["proofs"]
+    for index, (variant, gray) in enumerate(execution):
         started = time.perf_counter()
         case = args.output / variant["name"]
         case.mkdir()
@@ -631,7 +831,7 @@ def run_suite(args):
             left, top, right, bottom = context.crop_bbox
             row["fresh_graph_crop_matches_variant"] = context.source_crop_hash == array_sha(gray[top:bottom, left:right])
             skeleton = {tuple(point) for point in graph["skeleton_points_px"]}
-            if index == 0:
+            if variant["name"] == "baseline":
                 baseline_graph = skeleton
                 baseline_graph_record = graph
             row["skeleton_identical_to_baseline"] = skeleton == baseline_graph
@@ -668,7 +868,7 @@ def run_suite(args):
             write_json(case / "MODEL_RECEIPTS.json", model_receipts(plan))
             geometry = [path["representation"] for path in all_candidates(plan)]
             proofs = [component.get("proof_sha256") for component in responsibility["components"]]
-            if index == 0:
+            if variant["name"] == "baseline":
                 baseline_geometry, baseline_proofs = geometry, proofs
             row.update(candidate_geometry_identical_to_baseline=geometry == baseline_geometry,
                        component_proofs_identical_to_baseline=proofs == baseline_proofs,
@@ -684,7 +884,7 @@ def run_suite(args):
             print(json.dumps({"case": variant["name"], "stage": "NEW_PROCESS_SAVED_DXF_AND_SOURCE_REPLAY"}), flush=True)
             log_path = args.output.parent / (args.output.name + "-" + variant["name"] + "-strict_replay.log")
             with log_path.open("x", encoding="utf-8") as log:
-                replay = subprocess.run([sys.executable, str(Path(__file__).resolve()), "--repo", str(args.repo),
+                replay = subprocess.run([sys.executable, "-B", str(Path(__file__).resolve()), "--repo", str(args.repo),
                                          "--strict-replay-case", str(case)], stdout=log, stderr=subprocess.STDOUT,
                                         timeout=args.replay_timeout_seconds, check=False)
             row["strict_replay_exit_code"] = replay.returncode
@@ -722,10 +922,36 @@ def run_suite(args):
         compact = {key: row.get(key) for key in keys}
         summaries.append(compact)
         print(json.dumps(plain(compact), ensure_ascii=False), flush=True)
-        write_json(args.output / f"PROGRESS_{index + 1:02d}.json", {"results": summaries, "planned_variant_count": len(declared)})
+        write_json(args.output / f"PROGRESS_{index + 1:02d}.json", {"results": summaries,
+            "original_variant_count": len(declared), "planned_variant_count": len(execution),
+            "execution_variants": execution_names, "execution_scope": execution_scope})
     after = source_hashes(args.repo)
-    summary = {"schema": SCHEMA, "script_version": SCRIPT_VERSION, "run_completed": True, "planned_variant_count": len(declared), "results": summaries,
+    source_git_after = git_identity(args.repo)
+    reference_result = {"required": args.baseline_reference is not None,
+        "status": "IN_RUN_BASELINE_COMPARISON" if args.baseline_reference is None else "EXTERNAL_COMPLETED_BASELINE_COMPARISON",
+        "pass": True, "comparison_only": True, "used_as_source_graph_owner_plan_or_adoption_input": False}
+    if reference_before is not None:
+        reference_after = {"directory": str(args.baseline_reference), "pass": False}
+        try:
+            reference_after["files"] = reference_inventory(args.baseline_reference)
+            reference_after["validated_manifests"] = validate_reference_manifests(args.baseline_reference, reference_after["files"])
+            reference_after["root_manifest_sha256"] = reference_after["files"]["FILE_MANIFEST.json"]["sha256"]
+            reference_after["pass"] = reference_before["files"] == reference_after["files"]
+        except Exception as exc:  # noqa: BLE001 - Keep changed or removed reference bytes as a failed gate.
+            reference_after["error"] = {"type": type(exc).__name__, "message": str(exc)}
+        write_json(args.output / "BASELINE_REFERENCE_AFTER.json", reference_after)
+        reference_result.update(directory=str(args.baseline_reference), pass_before=reference_before["pass"],
+            pass_after=reference_after["pass"], source_files_sha256=reference_before["source_files_sha256"],
+            before_receipt="BASELINE_REFERENCE_BEFORE.json", after_receipt="BASELINE_REFERENCE_AFTER.json",
+            root_manifest_sha256_before=reference_before["root_manifest_sha256"],
+            root_manifest_sha256_after=reference_after.get("root_manifest_sha256"))
+        reference_result["pass"] = reference_before["pass"] and reference_after["pass"]
+    summary = {"schema": SCHEMA, "script_version": SCRIPT_VERSION, "run_completed": True,
+               "original_variant_count": len(declared), "planned_variant_count": len(execution),
+               "execution_variants": execution_names, "execution_scope": execution_scope, "results": summaries,
                "source_files_sha256_before": before, "source_files_sha256_after": after, "source_files_unchanged": before == after,
+               "source_git_before": source_git_before, "source_git_after": source_git_after,
+               "source_git_unchanged": source_git_before == source_git_after, "baseline_reference": reference_result,
                "all_strict_source_and_saved_replays_pass": all(row.get("strict_source_and_saved_replay_pass") is True for row in summaries),
                "all_input_and_graph_integrity_checks_pass": all(row.get("evidence_integrity_pass") is True for row in summaries),
                "all_original_expectations_satisfied": all(row["expectation"]["satisfied"] for row in summaries),
@@ -736,7 +962,9 @@ def run_suite(args):
                "independent_physical_source_certificate": "SEPARATE_ACCEPTANCE_REQUIRED",
                "implementation": implementation_identity(attached), "script_sha256": file_sha(__file__)}
     summary.update(resources_before=resources_before, resources_after=resource_snapshot(args.output))
-    summary["pass"] = (before == after and summary["all_strict_source_and_saved_replays_pass"]
+    summary["pass"] = (before == after and source_git_before == source_git_after and reference_result["pass"]
+                       and [row["name"] for row in summaries] == execution_names
+                       and summary["all_strict_source_and_saved_replays_pass"]
                        and summary["all_input_and_graph_integrity_checks_pass"] and summary["all_current_control_gates_pass"])
     write_json(args.output / "SUMMARY.json", summary)
     return 0 if summary["pass"] else 1
@@ -748,10 +976,16 @@ def main():
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--output", type=Path)
     group.add_argument("--strict-replay-case", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--case", choices=list(EXPECTED_SOURCE_HASHES),
+                        help="Execute one original case after verifying all eight original source arrays.")
+    parser.add_argument("--baseline-reference", type=Path,
+                        help="Completed same-tree single-baseline output; comparison diagnostics only.")
     parser.add_argument("--replay-timeout-seconds", type=float, default=300)
     args = parser.parse_args()
     args.repo = args.repo.resolve()
     if args.strict_replay_case is not None:
+        if args.case is not None or args.baseline_reference is not None:
+            parser.error("Case selection and baseline references are not cold-replay arguments.")
         case = args.strict_replay_case.resolve()
         configure(args.repo, case)
         try:
@@ -764,6 +998,13 @@ def main():
                            "message": str(exc), "traceback": traceback.format_exc()})
             raise
     args.output = args.output.resolve()
+    needs_reference = args.case is not None and args.case != "baseline"
+    if needs_reference != (args.baseline_reference is not None):
+        parser.error("Exactly the non-baseline --case runs require --baseline-reference.")
+    if args.baseline_reference is not None:
+        args.baseline_reference = args.baseline_reference.resolve()
+        if args.output.is_relative_to(args.baseline_reference) or args.baseline_reference.is_relative_to(args.output):
+            parser.error("Output and baseline reference must be separate directories.")
     if args.output.exists():
         parser.error("Output must be a new directory; previous evidence is never overwritten.")
     if args.replay_timeout_seconds <= 0:
