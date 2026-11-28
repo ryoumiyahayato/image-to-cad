@@ -23,23 +23,35 @@ def _restore_crossing_evidence(source, paper, lines):
     This source witness is independent of the glyph/geometry fitter. Even a
     glyph ownership regression claiming the entire quad cannot hide a ruled line.
     """
-    for line in lines:
-        quad = np.asarray(line.quad)
+    if not lines:
+        return
+    quads = [np.asarray(line.quad) for line in lines]
+    observations = np.zeros(paper.shape, np.uint8)
+    for quad in quads:
+        cv2.fillConvexPoly(observations, np.rint(quad).astype(np.int32), 1)
+    for quad in quads:
         pad = max(3, int(np.ceil(np.linalg.norm(quad[3]-quad[0]) / 2)))
+        wing = pad - 1
         x0, y0 = np.maximum(0, np.floor(quad.min(axis=0)).astype(int)-pad)
         x1, y1 = np.minimum(paper.shape[::-1], np.ceil(quad.max(axis=0)).astype(int)+pad+1)
         raw = paper[y0:y1, x0:x1] == 0
         target = source[y0:y1, x0:x1]
+        covered = observations[y0:y1, x0:x1]
         region = np.zeros(raw.shape, np.uint8)
         cv2.fillConvexPoly(region, np.rint(quad - (x0, y0)).astype(np.int32), 1)
-        for ink, box, dest in ((raw, region, target), (raw.T, region.T, target.T)):
+        for ink, box, text, dest in ((raw, region, covered, target),
+                                    (raw.T, region.T, covered.T, target.T)):
             for row in np.flatnonzero(box.any(axis=1)):
                 hits = np.flatnonzero(box[row])
                 edges = np.flatnonzero(np.diff(np.pad(ink[row], 1))).reshape(-1, 2)
                 for start, end in edges:
-                    if start <= hits[-1] and end > hits[0] and (
-                        start <= hits[0]-pad+1 or end >= hits[-1]+pad
-                    ):
+                    if start > hits[-1] or end <= hits[0]:
+                        continue
+                    # A neighboring OCR line can overlap this box. Its glyphs
+                    # are not exterior evidence of a crossing rule.
+                    before = start <= hits[0]-wing and not text[row, start:start+wing].any()
+                    after = end > hits[-1]+wing and not text[row, end-wing:end].any()
+                    if before or after:
                         dest[row, start:end] = 255
 
 

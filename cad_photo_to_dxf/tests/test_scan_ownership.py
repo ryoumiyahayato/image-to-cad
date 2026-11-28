@@ -12,7 +12,7 @@ from PIL import Image
 from app.core import scan_conversion
 from app.core.conversion import convert_document
 from app.core.dxf_preview import render_dxf
-from app.core.scan_quality import check_saved_scan, source_reference
+from app.core.scan_quality import _restore_crossing_evidence, check_saved_scan, source_reference
 from app.core.scan_residuals import EXTRA_COLOR, MISSING_COLOR, scan_residual_path
 from app.geometry.scan_ownership import _continuous_rules
 from app.ocr.line_recognition import RecognizedLine
@@ -29,6 +29,18 @@ def _convert(tmp_path, image, name="scan", **kwargs):
 
 def _recognition(monkeypatch, lines):
     monkeypatch.setattr(scan_conversion, "recognize_lines", lambda *_args, **_kw: lines)
+
+
+def test_crossing_evidence_uses_exterior_ink_beyond_neighboring_ocr_boxes():
+    paper = np.full((92, 86), 255, np.uint8)
+    paper[31, 23:42] = 0
+    paper[50, 8:70] = 0
+    lines = [RecognizedLine("FIRST", .98, ((42, 16), (42, 72), (22, 72), (22, 16))),
+             RecognizedLine("SECOND", .98, ((56, 16), (56, 72), (38, 72), (38, 16)))]
+    reference = np.zeros_like(paper)
+    _restore_crossing_evidence(reference, paper, lines)
+    assert not np.any(reference[31])
+    assert np.all(reference[50, 22:57] == 255)
 
 
 @pytest.mark.parametrize("slope", [0, 0.28])
@@ -294,6 +306,52 @@ def test_ocr_last_tile_is_anchored_at_page_edge(monkeypatch):
     page = np.zeros((230, 3600, 3), np.uint8)
     assert line_recognition.recognize_lines(page) == []
     assert sizes == [(230, 3600), (230, 2048), (230, 2048)]
+
+
+@pytest.mark.parametrize(("turns", "confidence", "layer"), [
+    (1, .98, "TEXT"), (3, .98, "TEXT"), (3, .60, "SUGGEST_REPAIR"),
+])
+def test_rotated_ocr_exports_editable_text_in_its_reading_direction(tmp_path, monkeypatch,
+                                                            turns, confidence, layer):
+    from rapidocr import RapidOCR
+
+    from app.ocr.rapidocr_orientation import OrientedRapidOCR
+
+    label = np.full((34, 132, 3), 255, np.uint8)
+    cv2.putText(label, "WEST WING", (2, 24), cv2.FONT_HERSHEY_SIMPLEX, .68, (0, 0, 0), 2)
+    image = np.full((212, 160, 3), 255, np.uint8)
+    image[36:168, 60:94] = np.rot90(label, -turns)
+    cv2.line(image, (20, 98), (139, 98), (0, 0, 0), 1)
+    box = np.float32([(60, 36), (94, 36), (94, 168), (60, 168)])
+
+    def run_ocr_steps(_engine, _image, _record):
+        return (SimpleNamespace(boxes=np.array([box])),
+                SimpleNamespace(cls_res=[("0" if turns == 1 else "180", .99)]),
+                SimpleNamespace(txts=["WEST WING"], scores=[confidence]), [label])
+
+    monkeypatch.setattr(RapidOCR, "run_ocr_steps", run_ocr_steps)
+    oriented = OrientedRapidOCR.__new__(OrientedRapidOCR)
+    oriented.text_cls = SimpleNamespace(cls_thresh=.9)
+
+    def engine(tile, **_kwargs):
+        detections, _, readings, _ = oriented.run_ocr_steps(tile, {})
+        return SimpleNamespace(boxes=detections.boxes, txts=readings.txts, scores=readings.scores)
+
+    monkeypatch.setattr(line_recognition, "_engine", lambda: engine)
+    page, doc = _convert(tmp_path, image)
+    entity, = doc.modelspace().query("TEXT")
+    assert entity.dxf.text == "WEST WING" and entity.dxf.layer == layer
+    assert entity.dxf.rotation == (-90 if turns == 1 else 90)
+    scale = 25.4 / 300
+    assert entity.dxf.height == pytest.approx(34 * .80 * scale)
+    crossing, = doc.modelspace().query('LINE[layer=="GEOMETRY"]')
+    start, end = sorted((tuple(crossing.dxf.start), tuple(crossing.dxf.end)))
+    assert start[:2] == pytest.approx((20 * scale, 114 * scale))
+    assert end[:2] == pytest.approx((139 * scale, 114 * scale))
+    assert page["quality"]["text"]["outside_box"] == []
+    assert doc.layers.get("SUGGEST_REPAIR").is_frozen()
+    assert doc.layers.get("REVIEW_SOURCE").is_frozen()
+    assert not doc.audit().errors
 
 
 def test_ocr_recovers_native_small_ink_across_tiles_without_duplicate_text(monkeypatch):
