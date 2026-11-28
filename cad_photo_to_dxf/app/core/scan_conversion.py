@@ -21,7 +21,7 @@ from app.export.product_fonts import install_text_style, text_width_factor
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
 from app.geometry.scan_geometry import extract_scan_geometry
 from app.geometry.scan_ownership import emblem_ink, glyph_ink, protected_ink
-from app.ocr.line_recognition import recognize_lines
+from app.ocr.line_recognition import recognize_lines, reread_source_lines
 
 
 def _load(source, page_index):
@@ -164,6 +164,10 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             lines = recognize_lines(view, recovery=recovery, min_text_confidence=min_text_confidence,
                                     cancellation_token=cancellation_token,
                                     progress_callback=progress_callback)
+            if lines and max(image.shape[:2]) > 2560:
+                original_gray = prepared.gray.copy()
+                original_gray[protected > 0] = 255
+                lines = reread_source_lines(lines, original_gray, cancellation_token=cancellation_token)
         except ProcessingCancelled:
             raise
         except Exception as exc:

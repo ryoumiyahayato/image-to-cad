@@ -5,7 +5,7 @@ recognition certificate participates in this route.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 import sys
 from typing import Any
@@ -71,6 +71,50 @@ def _same_area(a: RecognizedLine, b: RecognizedLine) -> bool:
 
 def _normalized_text(text):
     return " ".join(str(text).split())
+
+
+def _read_crop(engine, image):
+    result = engine(image, use_det=False, use_cls=False, use_rec=True)
+    if (result is None or result.txts is None or result.scores is None
+            or not len(result.txts) or not len(result.scores)):
+        return "", 0.0
+    score = float(result.scores[0])
+    return _normalized_text(result.txts[0]), score if np.isfinite(score) else 0.0
+
+
+def reread_source_lines(lines, gray, *, cancellation_token=None):
+    """Check large-sheet detections using their original, uninpainted pixels."""
+    if not lines or max(gray.shape) <= 2560:
+        return lines
+    engine = _engine()
+    checked = []
+    for line in lines:
+        checkpoint(cancellation_token)
+        checked.append(line)
+        if line.confidence > 0.975 or any(char.isdecimal() for char in line.text):
+            continue
+        quad = np.float32(line.quad)
+        width = round(np.linalg.norm(quad[1] - quad[0]))
+        height = round(np.linalg.norm(quad[3] - quad[0]))
+        if not 4 <= height <= 160 or not height <= width <= 2400:
+            continue
+        threshold = max(0.85, line.confidence + 0.025)
+        readings = []
+        for margin in (0.10, 0.18):
+            pad = max(2, round(height * margin))
+            rect = np.float32([(pad, pad), (width+pad, pad),
+                               (width+pad, height+pad), (pad, height+pad)])
+            transform = cv2.getPerspectiveTransform(quad, rect)
+            crop = cv2.warpPerspective(gray, transform, (width+2*pad, height+2*pad),
+                                       flags=cv2.INTER_CUBIC, borderValue=255)
+            text, score = _read_crop(engine, crop)
+            if (score < threshold or not any(char.isalpha() for char in text)
+                    or any(char.isdecimal() for char in text)):
+                break
+            readings.append((text, score))
+        if len(readings) == 2 and readings[0][0] == readings[1][0]:
+            checked[-1] = replace(line, text=readings[0][0], confidence=min(r[1] for r in readings))
+    return checked
 
 
 def _tile_starts(size, side, overlap):
@@ -139,14 +183,10 @@ def _recover_small_lines(engine, image, ink, *, cancellation_token=None):
                                  (w+round(0.4*h), h), flags=cv2.INTER_CUBIC, borderValue=255)
         observations = []
         for view in (crop, upright):
-            result = engine(view, use_det=False, use_cls=False, use_rec=True)
-            if (result is not None and result.txts is not None and result.scores is not None
-                    and len(result.txts) and len(result.scores)):
-                text = _normalized_text(result.txts[0])
-                score = float(result.scores[0])
-                # Exclude isolated recognition fragments from proposed lines.
-                if sum(c.isalnum() for c in text) >= 4 and np.isfinite(score) and score >= 0.65:
-                    observations.append((score, text))
+            text, score = _read_crop(engine, view)
+            # Exclude isolated recognition fragments from proposed lines.
+            if sum(c.isalnum() for c in text) >= 4 and score >= 0.65:
+                observations.append((score, text))
         if observations:
             score, text = max(observations)
             quad = ((float(x0), float(y0)), (float(x1), float(y0)),

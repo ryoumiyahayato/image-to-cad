@@ -252,6 +252,32 @@ def test_ocr_recovers_native_small_ink_across_tiles_without_duplicate_text(monke
     assert 182 <= recovered.bbox[3] <= 189
 
 
+def test_source_reread_requires_agreement_and_does_not_rewrite_dimensions(monkeypatch):
+    image = np.full((140, 2800), 249, np.uint8)
+    rows = [("MSSING NOTE", .64), ("OLD LABEL", .75), ("SMALL NOTE", .87),
+            ("125 mm", .65), ("GRADE", .78)]
+    original = []
+    for index, (text, score) in enumerate(rows):
+        top = 10 + index * 24
+        original.append(RecognizedLine(text, score,
+                                       ((50, top), (180, top), (180, top+20), (50, top+20))))
+    readings = iter([("MISSING NOTE", .97), ("MISSING NOTE", .96),
+                     ("NEW LABEL", .95), ("OTHER LABEL", .98),
+                     ("SMALL N0TE", .98), ("7RADE", .98)])
+
+    def engine(tile, *, use_det, use_cls, use_rec):
+        assert not use_det and not use_cls and use_rec
+        assert tile.shape[0] in (24, 28)
+        text, score = next(readings)
+        return SimpleNamespace(txts=[text], scores=[score])
+
+    monkeypatch.setattr(line_recognition, "_engine", lambda: engine)
+    recovered, *unchanged = line_recognition.reread_source_lines(original, image)
+    assert recovered == RecognizedLine("MISSING NOTE", .96, original[0].quad)
+    assert unchanged == original[1:]
+    assert next(readings, None) is None
+
+
 def test_axis_aligned_rule_profile_does_not_lose_ink_or_fill_gap_at_text():
     ink = np.zeros((90, 225), np.uint8)
     ink[40, 20:113] = 255
