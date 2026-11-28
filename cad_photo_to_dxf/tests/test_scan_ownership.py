@@ -263,3 +263,6 @@ def test_axis_aligned_rule_profile_does_not_lose_ink_or_fill_gap_at_text():
     assert np.array_equal(rules[40], ink[40])
     assert not np.any(rules[:40])
     assert rules[40, 113] == 0
+
+    quad[23:66, :80] = 255
+    assert not _continuous_rules(ink, quad, 116, crossing_only=True).any()
