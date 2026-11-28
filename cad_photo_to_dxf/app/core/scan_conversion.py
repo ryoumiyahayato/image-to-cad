@@ -13,7 +13,9 @@ from ezdxf.tools.text_size import text_size
 
 from app.core.cancellation import checkpoint, report_progress, ProcessingCancelled
 from app.core.perspective import auto_correct, warp_perspective
-from app.core.scan_drafting import resolve_page, save_drafting_evidence
+from app.core.scan_drafting import (
+    REPAIR_LAYER, resolve_page, save_drafting_evidence, save_repair_evidence, suggest_repairs,
+)
 from app.core.scan_quality import check_saved_scan, source_reference
 from app.export.product_fonts import install_text_style, text_width_factor
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
@@ -152,7 +154,14 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     lines, ocr_error = [], None
     if enable_ocr:
         try:
-            lines = recognize_lines(_ocr_view(image, prepared.binary, protected, dpi),
+            view = _ocr_view(image, prepared.binary, protected, dpi)
+            recovery = None
+            if not prepared.clean_digital and max(image.shape[:2]) > 2560:
+                recovery_ink = cv2.bitwise_not(prepared.binary | protected)
+                recovery_image = prepared.normalized.copy()
+                recovery_image[protected > 0] = 255
+                recovery = recovery_image, recovery_ink
+            lines = recognize_lines(view, recovery=recovery, min_text_confidence=min_text_confidence,
                                     cancellation_token=cancellation_token,
                                     progress_callback=progress_callback)
         except ProcessingCancelled:
@@ -175,14 +184,19 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     geometry, symbols, drafting = resolve_page(candidates, geometry_input, accepted, dpi=dpi,
                                                source_binary=source_ink,
                                                cancellation_token=cancellation_token)
+    repairs = suggest_repairs(candidates, prepared.binary, cancellation_token=cancellation_token)
+    drafting["repair_suggestions"] = len(repairs)
+    if repairs:
+        warnings.append(f"{len(repairs)}处补绘建议写入默认关闭的 {REPAIR_LAYER} 图层。")
     doc = ezdxf.new("R2013", setup=False)
     doc.units = ezdxf.units.MM
     doc.header["$MEASUREMENT"] = 1
     doc.header["$LWDISPLAY"] = True
     doc.set_raster_variables(frame=0, quality=1, units="mm")
-    for layer in ("GEOMETRY","TEXT","PROTECTED_GRAPHICS","REVIEW_SOURCE"):
+    for layer in ("GEOMETRY","TEXT","PROTECTED_GRAPHICS","REVIEW_SOURCE", REPAIR_LAYER):
         doc.layers.new(layer,dxfattribs={"color":7})
     doc.layers.get("REVIEW_SOURCE").off()
+    doc.layers.get(REPAIR_LAYER).off()
     style = install_text_style(doc,output,[line.text for line in accepted])
     warnings.extend(style["warnings"])
     resources = list(style["resources"])
@@ -204,6 +218,8 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             native = msp.add_arc(point(shape["center"]),shape["radius"]*scale,
                                  shape["start_angle"],shape["end_angle"],dxfattribs=attrs)
         else:
+            if "const_width_px" in shape:
+                attrs.update(const_width=shape["const_width_px"]*scale, lineweight=0)
             native = msp.add_lwpolyline([point(p) for p in shape["points"]],
                                        close=shape.get("closed",False),dxfattribs=attrs)
         geometry_entities.append(native)
@@ -226,6 +242,7 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
                            geometry_entities, text_entities, source=source, page_index=page_index,
                            image_size=(width, height), dpi=dpi, drawing_scale=drawing_scale,
                            perspective_corrected=corrected, cancellation_token=cancellation_token)
+    save_repair_evidence(msp, repairs, point, page_index, cancellation_token=cancellation_token)
     # Separate connected graphic groups remain independently movable IMAGEs.
     groups = cv2.dilate(protected,np.ones((7,7),np.uint8))
     # A seal's lettering need not touch its ring. Overlapping component bounds

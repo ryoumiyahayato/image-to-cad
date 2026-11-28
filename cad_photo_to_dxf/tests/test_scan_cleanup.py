@@ -51,6 +51,19 @@ def test_manual_protection_keeps_selected_ink_while_cleanup_runs_elsewhere():
     assert np.count_nonzero(protected) == 30*12
 
 
+def test_faint_rule_without_dark_seed_retains_only_observed_ink():
+    image = np.full((150, 280), 246, np.uint8)
+    image[40, 20:105] = 212
+    image[40, 108:220] = 212
+    image[75:81, 20:130] = 212  # broad pale mark
+    image[100, 150] = 212
+    binary = prepare_scan_page(image).binary
+    assert np.all(binary[40, 20:105] == 0)
+    assert np.all(binary[40, 108:220] == 0)
+    assert np.all(binary[40, 105:108] == 255)
+    assert binary[78, 60] == binary[100, 150] == 255
+
+
 def test_clean_digital_and_explicit_threshold_keep_their_ink():
     digital = np.full((96, 128), 255, np.uint8)
     digital[20:65, 50] = 0

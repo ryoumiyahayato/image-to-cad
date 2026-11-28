@@ -1,4 +1,6 @@
 """Ordinary entry, saved-file mutations and the default offscreen preview."""
+from types import SimpleNamespace
+
 import cv2
 import ezdxf
 import numpy as np
@@ -9,6 +11,7 @@ from app.core import scan_conversion
 from app.core.conversion import convert_document
 from app.core.dxf_preview import render_dxf
 from app.core.scan_quality import check_saved_scan, source_reference
+from app.geometry.scan_ownership import _continuous_rules
 from app.ocr.line_recognition import RecognizedLine
 from app.ocr import line_recognition
 
@@ -220,3 +223,43 @@ def test_ocr_last_tile_is_anchored_at_page_edge(monkeypatch):
     page = np.zeros((230, 3600, 3), np.uint8)
     assert line_recognition.recognize_lines(page) == []
     assert sizes == [(230, 3600), (230, 2048), (230, 2048)]
+
+
+def test_ocr_recovers_native_small_ink_across_tiles_without_duplicate_text(monkeypatch):
+    image = np.full((260, 3000), 249, np.uint8)
+    for x, y in ((1475, 115), (2745, 183)):
+        cv2.putText(image, "SMALL NOTE", (x, y), cv2.FONT_HERSHEY_SIMPLEX, .45, 75, 1)
+    expected = ((1472, 100), (1566, 100), (1566, 120), (1472, 120))
+    calls = 0
+
+    def engine(tile, *, use_det, **kwargs):
+        nonlocal calls
+        if not use_det:
+            assert tile.shape[0] < 32
+            return SimpleNamespace(txts=["SMALL NOTE"], scores=np.array([.94]))
+        calls += 1
+        if calls == 1:
+            return SimpleNamespace(boxes=[expected], txts=["EXISTING NOTE"], scores=[.92])
+        return None
+
+    monkeypatch.setattr(line_recognition, "_engine", lambda: engine)
+    ink = np.uint8(image < 200) * 255
+    existing, recovered = line_recognition.recognize_lines(image, recovery=(image, ink))
+    assert existing.text == "EXISTING NOTE"
+    assert recovered.text == "SMALL NOTE"
+    assert recovered.confidence == .94
+    assert 2740 <= recovered.bbox[0] <= 2750
+    assert 182 <= recovered.bbox[3] <= 189
+
+
+def test_axis_aligned_rule_profile_does_not_lose_ink_or_fill_gap_at_text():
+    ink = np.zeros((90, 225), np.uint8)
+    ink[40, 20:113] = 255
+    ink[40, 114:210] = 255
+    cv2.putText(ink, "L", (91, 40), cv2.FONT_HERSHEY_SIMPLEX, .8, 255, 1)
+    quad = np.zeros_like(ink)
+    quad[23:66, 80:145] = 255
+    rules = _continuous_rules(ink, quad, 116, crossing_only=True)
+    assert np.array_equal(rules[40], ink[40])
+    assert not np.any(rules[:40])
+    assert rules[40, 113] == 0

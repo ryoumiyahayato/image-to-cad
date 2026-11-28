@@ -133,6 +133,47 @@ def test_table_rules_span_the_grid_and_keep_exact_intersections(tmp_path, origin
     assert len(doc.groups) == 0, "A whole table is not an equipment symbol"
 
 
+def test_wide_source_rule_round_trips_with_native_width(tmp_path):
+    image = np.full((260, 500, 3), 255, np.uint8)
+    image[70:110, 60:440] = 0
+    page, doc = _convert(tmp_path, image, scale=5)
+    wide = doc.modelspace().query('LWPOLYLINE[layer=="GEOMETRY"]')
+    assert wide and all(entity.dxf.const_width > 30 * 25.4 / 300 * 5 for entity in wide)
+    assert all(_evidence(entity)["source_indices"] for entity in wide)
+    checks = page["quality"]["geometry"]
+    assert checks["missing_pixels"] < 1600
+    assert checks["extra_pixels"] == checks["outside_page_entities"] == 0
+    assert checks["tolerance_px"] == 1
+
+
+def test_repair_alternatives_are_hidden_and_excluded_from_saved_quality(tmp_path):
+    image = np.full((150, 180, 3), 255, np.uint8)
+    for first, last in (((20, 76), (76, 76)), ((81, 76), (150, 76)), ((79, 25), (79, 73))):
+        cv2.line(image, first, last, (0, 0, 0), 1)
+    page, doc = _convert(tmp_path, image)
+    layer = doc.layers.get("SUGGEST_REPAIR")
+    assert layer.is_off()
+    assert doc.layers.get("REVIEW_SOURCE").is_off()
+    formal = [_pixel_ends(line, 150) for line in doc.modelspace().query('LINE[layer=="GEOMETRY"]')]
+    assert len(formal) == 3
+    assert _has_line(formal, (20, 76), (76, 76))
+    assert _has_line(formal, (81, 76), (150, 76))
+    proposals = doc.modelspace().query('LWPOLYLINE[layer=="SUGGEST_REPAIR"]')
+    evidence = [_evidence(proposal) for proposal in proposals]
+    assert page["drafting"]["repair_suggestions"] == len(proposals) == 3
+    assert [record["reason"] for record in evidence].count("possible_junction") == 2
+    assert [record["reason"] for record in evidence].count("broken_stroke") == 1
+    for entity, record in zip(proposals, evidence):
+        assert entity.get_xdata("IMAGE_TO_CAD")[2].value == "suggest_repair"
+        assert record["uncertainty"] == "unconfirmed"
+        assert len(record["source_indices"]) == 2
+    reference = source_reference(image, np.zeros(image.shape[:2], np.uint8), [], [])
+    layer.on()
+    doc.saveas(page["output"])
+    checks, _ = check_saved_scan(page["output"], reference, [], dpi=300)
+    assert checks == page["quality"]
+
+
 @pytest.mark.parametrize("length,rise", [(60, 2), (100, 8)])
 @pytest.mark.parametrize("major,sign", [(0, 1), (0, -1), (1, 1), (1, -1)])
 def test_shallow_drawn_incline_keeps_its_direction(tmp_path, length, rise, major, sign):

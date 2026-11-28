@@ -89,8 +89,9 @@ def _continuous_rules(ink, region, span, *, crossing_only=False):
                                 minLineLength=radius * 2, maxLineGap=2)
     if proposals is not None:
         for x0, y0, x1, y1 in proposals[:, 0]:
-            if x0 != x1 and y0 != y1:
-                rules |= _inclined_run(ink, region, (x0, y0, x1, y1), span)
+            # An axis-aligned proposal can also be a rule whose raster edge
+            # steps at a glyph crossing. Use its measured exterior profile.
+            rules |= _inclined_run(ink, region, (x0, y0, x1, y1), span)
     return rules
 
 

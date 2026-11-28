@@ -78,7 +78,7 @@ def _background_estimate(gray: np.ndarray) -> np.ndarray:
 
 
 def _retain_connected_ink(strong: np.ndarray, weak: np.ndarray) -> np.ndarray:
-    """Retain weak edge pixels connected to dark ink using bounded-memory tiles."""
+    """Keep seeded ink and coherent faint strokes using bounded-memory tiles."""
 
     height, width = weak.shape
     retained = np.zeros((height, width), dtype=bool)
@@ -109,6 +109,19 @@ def _retain_connected_ink(strong: np.ndarray, weak: np.ndarray) -> np.ndarray:
                 keep_label[np.unique(labels[strong_tile])] = True
             keep_label[0] = False
             keep_label &= stats[:, cv2.CC_STAT_AREA] >= 2
+            # An isolated faint rule may have no dark seed. Require a long,
+            # thin, nearly straight component, with no added gap pixels.
+            long_side = stats[:, 2:4].max(axis=1)
+            area = stats[:, cv2.CC_STAT_AREA]
+            plausible = np.flatnonzero(~keep_label & (long_side >= 24)
+                                      & (area >= long_side) & (area <= 4*long_side))
+            for index in plausible[plausible != 0]:
+                x, y, w, h = stats[index, :4]
+                rows, cols = np.nonzero(labels[y:y+h, x:x+w] == index)
+                _, thickness = sorted(cv2.minAreaRect(np.column_stack(
+                    (cols, rows)).astype(np.float32))[1], reverse=True)
+                if thickness <= 3.0:
+                    keep_label[index] = True
 
             local_core = keep_label[
                 labels[
@@ -128,8 +141,8 @@ def _clean_scanned_page(
     """Recover ink from stained, folded, taped, or unevenly exposed paper.
 
     Broad paper shading is divided out first. A two-level connected-component gate
-    then retains weak antialiasing only when it belongs to a component containing
-    genuinely dark ink. The component pass is tiled so large architectural sheets
+    then retains weak antialiasing on seeded components and coherent faint rules.
+    The component pass is tiled so large architectural sheets
     do not allocate a page-sized 32-bit labels array.
     """
 

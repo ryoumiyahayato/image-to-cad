@@ -9,6 +9,7 @@ import ezdxf
 from ezdxf.disassemble import make_primitive
 from ezdxf.lldxf.encoding import decode_dxf_unicode
 from ezdxf.path import make_path
+from ezdxf.render.trace import TraceBuilder
 import numpy as np
 
 from app.core.dxf_preview import resolve_drawing_fonts
@@ -108,6 +109,18 @@ def check_saved_scan(output, reference, accepted, *, dpi, drawing_scale=1.0):
             if len(corners):
                 saved_text.append((decode_dxf_unicode(entity.plain_text()), corners[:4]))
         elif kind in ("LINE", "LWPOLYLINE", "CIRCLE", "ARC"):
+            if kind == "LWPOLYLINE" and entity.has_width:
+                trace = TraceBuilder.from_polyline(entity)
+                faces = trace.faces_wcs(entity.ocs(), entity.dxf.elevation)
+                exceeds_page = False
+                for face in faces:
+                    points = _source_points(face, model_per_pixel, height)
+                    exceeds_page |= bool(np.any((points < -0.5)
+                                                | (points > (width-0.5, height-0.5))))
+                    cv2.fillConvexPoly(drawn, np.rint(points * 16).astype(np.int32),
+                                       255, shift=4)
+                outside += int(exceeds_page)
+                continue
             path = make_path(entity)
             vertices = path.flattening(model_per_pixel * 0.2)
             points = _source_points(vertices, model_per_pixel, height)
