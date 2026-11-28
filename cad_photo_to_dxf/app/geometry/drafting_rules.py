@@ -534,7 +534,7 @@ def resolve_geometry(records, binary, *, dpi=300.0, source_binary=None, cancella
                     record = proposed
                     stats["aligned_segments"] += 1
             lines.append(record)
-        elif kind == "LWPOLYLINE":
+        elif kind == "LWPOLYLINE" and "const_width_px" not in record:
             frame = _orthogonal_path(record, support)
             if frame is None:
                 others.append(record)

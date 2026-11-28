@@ -118,6 +118,44 @@ def _line(points):
     return [list(center+axis*extent.min()), list(center+axis*extent.max())]
 
 
+def _wide_runs(points, distances, ink):
+    """Fit editable wide centerlines only where the source supports the band."""
+    run = cv2.approxPolyDP(points.astype(np.float32), 1.5, False).reshape(-1, 2)
+    for start, end in zip(run[:-1], run[1:]):
+        delta = end - start
+        length = np.linalg.norm(delta)
+        if length < 24:
+            continue
+        axis = delta / length
+        normal = np.array([-axis[1], axis[0]])
+        sections = np.linspace(start, end, int(np.ceil(length / 192)) + 1)
+        for first, last in zip(sections[:-1], sections[1:]):
+            stations = np.rint(np.linspace(first, last, 16)).astype(int)
+            width = int(2 * np.quantile(distances[stations[:, 1], stations[:, 0]], 0.2))
+            if width < 18 or np.linalg.norm(last - first) < 1.5 * width:
+                continue
+            for fitted_width in range(width, max(16, width - 8), -2):
+                offset = normal * fitted_width / 2
+                corners = np.asarray((first + offset, last + offset,
+                                      last - offset, first - offset))
+                low = np.floor(corners.min(axis=0)).astype(int)
+                high = np.ceil(corners.max(axis=0)).astype(int) + 1
+                if np.any(low < 0) or np.any(high > ink.shape[::-1]):
+                    continue
+                x, y = low
+                right, bottom = high
+                patch = ink[y:bottom, x:right]
+                painted = np.zeros_like(patch)
+                cv2.fillConvexPoly(painted, np.rint((corners - low)*16).astype(np.int32),
+                                   1, shift=4)
+                if np.any(painted > patch):
+                    continue
+                yield {"type": "LWPOLYLINE", "points": [first.tolist(), last.tolist()],
+                       "const_width_px": fitted_width, "stroke_width": fitted_width,
+                       "source_path": np.asarray((first, last)), "endpoint_degrees": (2, 2)}
+                break
+
+
 def extract_scan_geometry(binary, *, cancellation_token=None):
     """Return editable finite geometry plus a source-pixel coverage mask.
 
@@ -138,7 +176,13 @@ def extract_scan_geometry(binary, *, cancellation_token=None):
         attached = max(degrees_at_ends) > 2
         # A link at a junction has topological support even below one pen width.
         # An isolated mark needs an elongated trace to distinguish it from dust.
-        if width > 30 or (not attached and length < 1.5 * width):
+        if width > 30:
+            for record in _wide_runs(points, distance, ink):
+                records.append(record)
+                trace = np.rint(record["points"]).astype(np.int32)
+                cv2.line(coverage, tuple(trace[0]), tuple(trace[1]), 255, record["const_width_px"])
+            continue
+        if not attached and length < 1.5 * width:
             continue
         closed = bool(np.array_equal(points[0],points[-1]))
         shape = _circle(points, closed, width)

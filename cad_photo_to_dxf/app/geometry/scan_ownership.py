@@ -20,11 +20,11 @@ def _polygon(shape, points):
     return region
 
 
-def _inclined_run(ink, region, endpoints, span):
+def _inclined_run(ink, region, endpoints, span, *, split_axis=False):
     """Measure the pen on uncontested cross sections, then follow actual ink."""
     x0, y0, x1, y1 = endpoints
     if abs(y1-y0) > abs(x1-x0):
-        return _inclined_run(ink.T, region.T, (y0, x0, y1, x1), span).T
+        return _inclined_run(ink.T, region.T, (y0, x0, y1, x1), span, split_axis=split_axis).T
     result = np.zeros_like(ink)
     x = np.arange(ink.shape[1])
     slope = (y1-y0) / (x1-x0)
@@ -52,6 +52,17 @@ def _inclined_run(ink, region, endpoints, span):
     fitted = slope * x + intercept
     if np.quantile(abs(mid[measure] - fitted[measure]), 0.9) > 0.8:
         return result
+    if split_axis:
+        # A long glyph stroke can resemble a short rule where it extends
+        # beyond the OCR box. Require exterior wings and a real interruption
+        # within the box that prevents the ordinary directional opening.
+        inside = region[np.rint(fitted).astype(int).clip(0, ink.shape[0]-1), x] != 0
+        box = np.flatnonzero(inside)
+        interrupted = box[~valid[box]]
+        if (not 1 <= len(interrupted) <= 2 or np.ptp(interrupted) > 1
+                or min(x0, x1) > box[0]-3 or max(x0, x1) < box[-1]+3
+                or measure[:box[0]].sum() < 3 or measure[box[-1]+1:].sum() < 3):
+            return result
     # Pixel centres fluctuate with raster phase. Keep measured narrow sections;
     # at a merged glyph use only the band supported on the exterior sections.
     measured_band = (offset >= top) & (offset <= bottom) & measure
@@ -89,8 +100,9 @@ def _continuous_rules(ink, region, span, *, crossing_only=False):
                                 minLineLength=radius * 2, maxLineGap=2)
     if proposals is not None:
         for x0, y0, x1, y1 in proposals[:, 0]:
-            if x0 != x1 and y0 != y1:
-                rules |= _inclined_run(ink, region, (x0, y0, x1, y1), span)
+            # Both halves of a broken rule can be shorter than the opening kernel.
+            axis_aligned = x0 == x1 or y0 == y1
+            rules |= _inclined_run(ink, region, (x0, y0, x1, y1), span, split_axis=axis_aligned)
     return rules
 
 

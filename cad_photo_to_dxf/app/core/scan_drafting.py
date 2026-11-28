@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 
 import numpy as np
+from scipy.spatial import cKDTree
 
 from app.core.cancellation import checkpoint
 from app.geometry.drafting_rules import PACK_NAME, PACK_VERSION, resolve_geometry
@@ -15,6 +16,7 @@ from app.geometry.scan_symbols import assemble_symbols
 
 
 APPID = "IMAGE_TO_CAD"
+REPAIR_LAYER = "SUGGEST_REPAIR"
 
 
 def resolve_page(candidates, binary, texts, *, dpi, source_binary=None, cancellation_token=None):
@@ -24,6 +26,70 @@ def resolve_page(candidates, binary, texts, *, dpi, source_binary=None, cancella
     symbols = assemble_symbols(geometry, texts, cancellation_token=cancellation_token)
     return geometry, symbols, {"pack": PACK_NAME, "version": PACK_VERSION,
                                "geometry": stats, "symbol_groups": len(symbols)}
+
+
+def suggest_repairs(candidates, source_binary, *, cancellation_token=None):
+    """Propose local continuations between free ends with observed source wings."""
+    ends = []
+    for index, record in enumerate(candidates):
+        if index % 256 == 0:
+            checkpoint(cancellation_token)
+        path = record["source_path"]
+        width = record["stroke_width"]
+        if len(path) < 13 or width > 12:
+            continue
+        for degree, wing in zip(record["endpoint_degrees"], (path, path[::-1])):
+            if degree != 1:
+                continue
+            tangent = wing[0] - wing[8]
+            length = np.linalg.norm(tangent)
+            if length >= 6 and np.max(np.linalg.norm(
+                wing[:9] - (wing[0] - np.outer(np.linspace(0, 1, 9), tangent)), axis=1
+            )) <= 1.5:
+                ends.append((index, wing[0], tangent / length, width))
+    if len(ends) < 2:
+        return []
+    pairs = cKDTree([end[1] for end in ends]).query_pairs(12, output_type="ndarray")
+    repairs = []
+    for pair_index, (i, j) in enumerate(pairs):
+        if pair_index % 256 == 0:
+            checkpoint(cancellation_token)
+        first, start, forward, width = ends[i]
+        second, stop, backward, other_width = ends[j]
+        if first == second or max(width, other_width) > 1.6 * min(width, other_width):
+            continue
+        delta = stop - start
+        gap = np.linalg.norm(delta)
+        limit = min(12, max(6, 2 * min(width, other_width)))
+        if not 3 <= gap <= limit:
+            continue
+        if min(forward @ delta, -backward @ delta) >= 0.94 * gap:
+            points = np.asarray((start, stop))
+            reason = "broken_stroke"
+        else:
+            # Nonparallel source wings can meet at a missing corner. Extend
+            # each only along its observed direction and within this gap.
+            axes = np.column_stack((forward, -backward))
+            if abs(np.linalg.det(axes)) < 0.5:
+                continue
+            reach = np.linalg.solve(axes, delta)
+            if min(reach) < 1.5 or reach.sum() > limit:
+                continue
+            corner = start + reach[0] * forward
+            points = np.asarray((start, corner, stop))
+            reason = "possible_junction"
+        spans = [np.linspace(a, b, int(np.ceil(np.linalg.norm(b-a)))+1)
+                 for a, b in zip(points[:-1], points[1:])]
+        xs, ys = np.unique(np.rint(np.concatenate(spans)).astype(int), axis=0).T
+        if np.any(xs < 0) or np.any(ys < 0) or np.any(xs >= source_binary.shape[1]) or np.any(
+            ys >= source_binary.shape[0]
+        ):
+            continue
+        if np.count_nonzero(source_binary[ys, xs]) < max(2, len(xs)-3):
+            continue
+        repairs.append({"points": points.tolist(), "source_indices": [first, second],
+                        "reason": reason})
+    return repairs
 
 
 def _record_json(record, data):
@@ -93,3 +159,16 @@ def save_drafting_evidence(doc, candidates, geometry, texts, symbols,
             "kind": symbol["kind"], "source_bounds_px": symbol["bounds"],
             "rules": ["frame_label_assembly"],
             "leader_handles": [geometry_entities[i].dxf.handle for i in symbol["leader_indices"]]})
+
+
+def save_repair_evidence(msp, repairs, point, page_index, *, cancellation_token=None):
+    for repair in repairs:
+        checkpoint(cancellation_token)
+        entity = msp.add_lwpolyline([point(p) for p in repair["points"]],
+                                   dxfattribs={"layer": REPAIR_LAYER, "lineweight": 0})
+        _attach(entity, page_index, "suggest_repair", {
+            "source_indices": repair["source_indices"],
+            "path_px": repair["points"],
+            "reason": repair["reason"],
+            "uncertainty": "unconfirmed",
+        })
