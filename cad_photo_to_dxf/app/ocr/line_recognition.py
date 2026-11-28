@@ -84,8 +84,12 @@ def recognize_lines(image, *, cancellation_token=None, progress_callback=None):
     jobs = [(0, 0, width, height)]
     if max(width, height) > 2560:
         side, overlap = 2048, 256
-        for top in range(0, height, side-overlap):
-            for left in range(0, width, side-overlap):
+        def starts(size):
+            last = max(0, size - side)
+            return [*range(0, last, side-overlap), last]
+
+        for top in starts(height):
+            for left in starts(width):
                 jobs.append((left, top, min(width, left+side), min(height, top+side)))
     candidates = []
     engine = _engine()

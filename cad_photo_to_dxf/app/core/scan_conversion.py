@@ -9,14 +9,16 @@ import cv2
 import ezdxf
 import numpy as np
 from PIL import Image, ImageOps
+from ezdxf.tools.text_size import text_size
 
 from app.core.cancellation import checkpoint, report_progress, ProcessingCancelled
 from app.core.perspective import auto_correct, warp_perspective
+from app.core.scan_quality import check_saved_scan, source_reference
 from app.export.product_fonts import install_text_style, text_width_factor
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
 from app.geometry.scan_geometry import extract_scan_geometry
+from app.geometry.scan_ownership import emblem_ink, glyph_ink, protected_ink
 from app.ocr.line_recognition import recognize_lines
-from app.ocr.signature_overlay import detect_signature_regions
 
 
 def _load(source, page_index):
@@ -30,31 +32,26 @@ def _load(source, page_index):
     return np.ascontiguousarray(rgb[:, :, ::-1])
 
 
-def _graphic_mask(image, binary):
-    """Retain colored marks and handwriting-like groups before OCR/vectorization.
-
-    This is conservative graphic protection, not a signature authenticity or
-    semantic classifier. Remaining unmodelled ink is retained separately too.
-    """
-    mask = np.zeros(binary.shape, np.uint8)
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    color = np.uint8((hsv[:, :, 1] > 70) & (hsv[:, :, 2] > 35)) * 255
-    grouped = cv2.morphologyEx(color, cv2.MORPH_CLOSE, np.ones((11,11), np.uint8))
-    n, labels, stats, _ = cv2.connectedComponentsWithStats(grouped, connectivity=8)
-    for i in range(1, n):
-        x, y, w, h, area = stats[i]
-        if area < 30 or w < 8 or h < 8:
-            continue
-        # Long ordinary colored labels stay eligible for text recognition.
-        if w > 5*h or h > 5*w:
-            continue
-        selected = labels[y:y+h,x:x+w] == i
-        mask[y:y+h,x:x+w][selected] = 255
-    for region in detect_signature_regions(binary):
-        x, y, w, h = region.bbox
-        target = mask[y:y+h,x:x+w]
-        target[region.mask > 0] = 255
-    return cv2.dilate(mask, np.ones((3,3), np.uint8))
+def _ocr_view(image, binary, protected, dpi):
+    """Remove long table rules from the recognition view, preserving glyph crossings."""
+    ink = cv2.bitwise_not(binary)
+    _, _, stats, _ = cv2.connectedComponentsWithStats(ink)
+    boxes = stats[1:]
+    heights = boxes[(boxes[:, 4] > 4) & (boxes[:, 2] < 3*boxes[:, 3])
+                    & (boxes[:, 3] < 4*boxes[:, 2]), 3]
+    # On a sparse page the only text may already be attached to the ruling.
+    # Use paper text height as a fallback so a tall digit stem survives.
+    height = np.quantile(heights, 0.75) if heights.size else 2.5 * dpi / 25.4
+    span = max(31, round(2.5 * height)) | 1
+    rules = np.zeros_like(ink)
+    for size in ((span, 1), (1, span)):
+        rules |= cv2.morphologyEx(ink, cv2.MORPH_OPEN, cv2.getStructuringElement(cv2.MORPH_RECT, size))
+    view = image.copy()
+    view[protected > 0] = 255
+    if rules.any():
+        view = cv2.inpaint(view, rules, 2, cv2.INPAINT_TELEA)
+        view[protected > 0] = 255
+    return view
 
 
 def _add_source_image(doc, msp, image, mask, output, suffix, layer, scale):
@@ -67,9 +64,17 @@ def _add_source_image(doc, msp, image, mask, output, suffix, layer, scale):
     opacity = (paper_ink_alpha(image, (x0,y0,x1,y1))
                if layer == "PROTECTED_GRAPHICS" else 255-gray)
     alpha = np.where(mask[y0:y1,x0:x1] > 0, opacity, 0).astype(np.uint8)
+    rgba = np.zeros((y1-y0,x1-x0,4), np.uint8)
+    if layer == "PROTECTED_GRAPHICS":
+        rgb = image[y0:y1, x0:x1, ::-1]
+        colored = (np.ptp(rgb, axis=2) > 12) & (mask[y0:y1,x0:x1] > 0)
+        # Unmix coloured ink from white paper so antialiased edges stay transparent.
+        pigment = 255 - rgb.min(axis=2)
+        alpha[colored] = pigment[colored]
+        rgba[colored, :3] = np.rint(255 - (255-rgb[colored]).astype(float) * 255
+                                    / np.maximum(1, pigment[colored, None])).clip(0, 255)
     if not alpha.any():
         return None
-    rgba = np.zeros((y1-y0,x1-x0,4), np.uint8)
     rgba[:,:,3] = alpha
     folder = output.parent / (output.stem + "_assets")
     folder.mkdir(parents=True, exist_ok=True)
@@ -89,13 +94,14 @@ def _literal_text(text):
 
 def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=None,
                  enable_ocr=True, perspective=False, corners=None,
-                 preserve_regions=(), min_text_confidence=0.70, preview_path=None,
+                 preserve_regions=(), min_text_confidence=0.70, preview_path=None, drawing_scale=1.0,
                  cancellation_token=None, progress_callback=None):
     """Save a single raster page as an ordinary editable R2013 DXF.
 
     ``image`` is an optional BGR/gray array supplied by the scanned-PDF router.
     ``preserve_regions`` contains source-image (x0,y0,x1,y1) rectangles. All
-    dimensions are paper millimetres at ``dpi``; no engineering scale is guessed.
+    paper dimensions and pen widths use ``dpi``. Model coordinates also use
+    the supplied paper-to-model ``drawing_scale``.
     """
     if isinstance(dpi, bool) or not isfinite(float(dpi)) or dpi <= 0:
         raise ValueError("DPI must be a positive finite number")
@@ -141,15 +147,12 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     checkpoint(cancellation_token)
     report_progress(progress_callback,"cleanup",0.05)
     prepared = prepare_scan_page(image, protected_mask=manual)
-    automatic = _graphic_mask(image, prepared.binary)
-    automatic &= np.uint8(prepared.gray < 250)*255
-    protected = cv2.max(automatic, manual)
-    ocr_image = image.copy()
-    ocr_image[protected > 0] = 255
+    protected = protected_ink(image, prepared.binary, manual)
     lines, ocr_error = [], None
     if enable_ocr:
         try:
-            lines = recognize_lines(ocr_image, cancellation_token=cancellation_token,
+            lines = recognize_lines(_ocr_view(image, prepared.binary, protected, dpi),
+                                    cancellation_token=cancellation_token,
                                     progress_callback=progress_callback)
         except ProcessingCancelled:
             raise
@@ -158,35 +161,36 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             warnings.append(ocr_error)
     accepted = [line for line in lines if line.confidence >= min_text_confidence]
     uncertain = [line for line in lines if line.confidence < min_text_confidence]
-    text_mask = np.zeros(prepared.binary.shape,np.uint8)
-    uncertain_mask = np.zeros_like(text_mask)
-    for line in lines:
-        target = text_mask if line.confidence >= min_text_confidence else uncertain_mask
-        cv2.fillConvexPoly(target,np.rint(line.quad).astype(np.int32),255)
-    text_mask = cv2.dilate(text_mask,np.ones((3,3),np.uint8))
-    geometry_input = prepared.binary.copy()
-    geometry_input[(protected > 0)|(text_mask > 0)|(uncertain_mask > 0)] = 255
+    source_ink = cv2.bitwise_or(prepared.binary, protected)
+    glyphs = glyph_ink(source_ink, lines)
+    emblems = emblem_ink(image, prepared.binary, glyphs)
+    protected |= emblems
+    geometry_input = source_ink | glyphs | emblems
     report_progress(progress_callback,"geometry",0.50)
-    geometry, coverage, geometry_warnings = extract_scan_geometry(
+    geometry, _, geometry_warnings = extract_scan_geometry(
         geometry_input, cancellation_token=cancellation_token)
     warnings.extend(geometry_warnings)
     doc = ezdxf.new("R2013", setup=False)
     doc.units = ezdxf.units.MM
     doc.header["$MEASUREMENT"] = 1
-    doc.header["$LWDISPLAY"] = False
+    doc.header["$LWDISPLAY"] = True
     doc.set_raster_variables(frame=0, quality=1, units="mm")
     for layer in ("GEOMETRY","TEXT","PROTECTED_GRAPHICS","REVIEW_SOURCE"):
         doc.layers.new(layer,dxfattribs={"color":7})
+    doc.layers.get("REVIEW_SOURCE").off()
     style = install_text_style(doc,output,[line.text for line in accepted])
     warnings.extend(style["warnings"])
     resources = list(style["resources"])
     msp = doc.modelspace()
-    scale = 25.4/float(dpi)
+    paper_mm_per_px = 25.4 / float(dpi)
+    scale = paper_mm_per_px * drawing_scale
     height,width = image.shape[:2]
     def point(p):
         return float(p[0])*scale, (height-float(p[1]))*scale
     for shape in geometry:
-        attrs = {"layer":"GEOMETRY","color":256}
+        pen = 100 * paper_mm_per_px * shape["stroke_width"]
+        lineweight = min((13, 25, 50, 100), key=lambda weight: abs(weight - pen))
+        attrs = {"layer":"GEOMETRY","color":256,"lineweight":lineweight}
         kind = shape["type"]
         if kind == "LINE":
             msp.add_line(point(shape["points"][0]),point(shape["points"][1]),dxfattribs=attrs)
@@ -204,10 +208,14 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
         text_width = float(np.linalg.norm(q[1]-q[0]))*scale
         baseline = q[3]+0.12*(q[0]-q[3])
         rotation = degrees(atan2(-(q[1,1]-q[0,1]),q[1,0]-q[0,0]))
-        msp.add_text(_literal_text(line.text),dxfattribs={
+        native = msp.add_text(_literal_text(line.text),dxfattribs={
             "layer":"TEXT","style":style["style"],"height":text_height,
             "width":text_width_factor(line.text,style["font_path"],text_height,text_width),
             "insert":point(baseline),"rotation":rotation,"color":256})
+        if not style["font_path"]:
+            measured = text_size(native).width
+            if measured > 0:
+                native.dxf.width = text_width / measured
     # Separate connected graphic groups remain independently movable IMAGEs.
     groups = cv2.dilate(protected,np.ones((7,7),np.uint8))
     # A seal's lettering need not touch its ring. Overlapping component bounds
@@ -227,17 +235,24 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
         if asset:
             resources.append(asset)
             protected_count += 1
-    residual = np.uint8((prepared.binary < 128)&(coverage == 0)&(text_mask == 0)&(protected == 0))*255
-    residual_pixels = int(np.count_nonzero(residual))
-    asset = _add_source_image(doc,msp,image,residual,output,"unresolved-ink","REVIEW_SOURCE",scale)
-    if asset:
-        resources.append(asset)
-        warnings.append("未转换的墨迹保留在 REVIEW_SOURCE 透明图像层，可对照补字补线。")
-    if uncertain:
-        warnings.append(f"{len(uncertain)}行低置信度文字保留原图，未用猜测文字替换。")
     checkpoint(cancellation_token)
     report_progress(progress_callback,"save",0.90)
     doc.saveas(output)
+    reference = source_reference(image, manual, accepted, uncertain)
+    quality, residual = check_saved_scan(output, reference, accepted, dpi=dpi, drawing_scale=drawing_scale)
+    asset = _add_source_image(doc,msp,image,residual,output,"unresolved-ink","REVIEW_SOURCE",scale)
+    if asset:
+        resources.append(asset)
+        warnings.append("未转换的墨迹保留在默认关闭的 REVIEW_SOURCE 图层。")
+        doc.saveas(output)
+        quality, residual = check_saved_scan(output, reference, accepted, dpi=dpi, drawing_scale=drawing_scale)
+    residual_pixels = cv2.countNonZero(residual)
+    if uncertain:
+        warnings.append(f"{len(uncertain)}行低置信度文字保留原图，未用猜测文字替换。")
+    if quality["geometry"]["extra_pixels"] or quality["geometry"]["outside_page_entities"]:
+        warnings.append("保存后的 DXF 含有超出来源支持范围的几何。")
+    if any(quality["text"][k] for k in ("missing_or_changed", "outside_box", "unexpected_lines")):
+        warnings.append("保存后的 DXF 存在文字内容或框内排版偏差。")
     # Reopen the actual saved file; resources remain relative and portable.
     saved = ezdxf.readfile(output)
     audit = saved.audit()
@@ -251,11 +266,11 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             "preview":str(preview_path) if preview_path else None,
             "counts":dict(Counter(entity.dxftype() for entity in saved.modelspace())),
             "source":str(source),"page_index":page_index,"source_size_px":[width,height],
-            "page_size_mm":[width*scale,height*scale],"dpi":float(dpi),
+            "page_size_mm":[width*paper_mm_per_px,height*paper_mm_per_px],"dpi":float(dpi),
             "engineering_scale":"UNVERIFIED","perspective_corrected":corrected,
             "ocr":{"enabled":bool(enable_ocr),"error":ocr_error,
                    "editable_lines":[{"text":x.text,"confidence":x.confidence,"quad":x.quad} for x in accepted],
                    "uncertain_lines":[{"text":x.text,"confidence":x.confidence,"quad":x.quad} for x in uncertain]},
             "protected_graphics":protected_count,"unresolved_ink_pixels":residual_pixels,
-            "resources":resources,"warnings":warnings,
+            "quality":quality,"resources":resources,"warnings":warnings,
             "status":"COMPLETED_WITH_REVIEW" if warnings or residual_pixels else "COMPLETED"}

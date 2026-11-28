@@ -136,7 +136,7 @@ def convert_document(
                 result = convert_scan(
                     source, destination, image=image, page_index=number - 1,
                     dpi=actual_dpi, enable_ocr=enable_ocr, perspective=False,
-                    preserve_regions=preserve_regions,
+                    preserve_regions=preserve_regions, drawing_scale=drawing_scale,
                     cancellation_token=cancellation_token, progress_callback=progress,
                 )
                 result["route"] = "scan-pdf"
@@ -151,11 +151,11 @@ def convert_document(
             result = convert_scan(
                 source, destination, dpi=float(dpi), page_index=number - 1,
                 enable_ocr=enable_ocr, perspective=perspective,
-                preserve_regions=preserve_regions,
+                preserve_regions=preserve_regions, drawing_scale=drawing_scale,
                 cancellation_token=cancellation_token, progress_callback=progress,
             )
         checkpoint(cancellation_token)
-        if drawing_scale != 1:
+        if drawing_scale != 1 and result["route"] == "vector":
             import ezdxf
             from ezdxf.math import Matrix44
             saved = ezdxf.readfile(destination)
