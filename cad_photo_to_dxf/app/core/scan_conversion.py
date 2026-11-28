@@ -13,6 +13,7 @@ from ezdxf.tools.text_size import text_size
 
 from app.core.cancellation import checkpoint, report_progress, ProcessingCancelled
 from app.core.perspective import auto_correct, warp_perspective
+from app.core.scan_drafting import resolve_page, save_drafting_evidence
 from app.core.scan_quality import check_saved_scan, source_reference
 from app.export.product_fonts import install_text_style, text_width_factor
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
@@ -167,9 +168,13 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     protected |= emblems
     geometry_input = source_ink | glyphs | emblems
     report_progress(progress_callback,"geometry",0.50)
-    geometry, _, geometry_warnings = extract_scan_geometry(
+    candidates, _, geometry_warnings = extract_scan_geometry(
         geometry_input, cancellation_token=cancellation_token)
     warnings.extend(geometry_warnings)
+    report_progress(progress_callback,"drafting",0.70)
+    geometry, symbols, drafting = resolve_page(candidates, geometry_input, accepted, dpi=dpi,
+                                               source_binary=source_ink,
+                                               cancellation_token=cancellation_token)
     doc = ezdxf.new("R2013", setup=False)
     doc.units = ezdxf.units.MM
     doc.header["$MEASUREMENT"] = 1
@@ -187,21 +192,21 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     height,width = image.shape[:2]
     def point(p):
         return float(p[0])*scale, (height-float(p[1]))*scale
+    geometry_entities, text_entities = [], []
     for shape in geometry:
-        pen = 100 * paper_mm_per_px * shape["stroke_width"]
-        lineweight = min((13, 25, 50, 100), key=lambda weight: abs(weight - pen))
-        attrs = {"layer":"GEOMETRY","color":256,"lineweight":lineweight}
+        attrs = {"layer":"GEOMETRY","color":256,"lineweight":shape["lineweight"]}
         kind = shape["type"]
         if kind == "LINE":
-            msp.add_line(point(shape["points"][0]),point(shape["points"][1]),dxfattribs=attrs)
+            native = msp.add_line(point(shape["points"][0]),point(shape["points"][1]),dxfattribs=attrs)
         elif kind == "CIRCLE":
-            msp.add_circle(point(shape["center"]),shape["radius"]*scale,dxfattribs=attrs)
+            native = msp.add_circle(point(shape["center"]),shape["radius"]*scale,dxfattribs=attrs)
         elif kind == "ARC":
-            msp.add_arc(point(shape["center"]),shape["radius"]*scale,
-                        shape["start_angle"],shape["end_angle"],dxfattribs=attrs)
+            native = msp.add_arc(point(shape["center"]),shape["radius"]*scale,
+                                 shape["start_angle"],shape["end_angle"],dxfattribs=attrs)
         else:
-            msp.add_lwpolyline([point(p) for p in shape["points"]],
-                               close=shape.get("closed",False),dxfattribs=attrs)
+            native = msp.add_lwpolyline([point(p) for p in shape["points"]],
+                                       close=shape.get("closed",False),dxfattribs=attrs)
+        geometry_entities.append(native)
     for line in accepted:
         q = np.asarray(line.quad)
         text_height = max(1.0,0.80*float(np.linalg.norm(q[3]-q[0])))*scale
@@ -216,6 +221,11 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             measured = text_size(native).width
             if measured > 0:
                 native.dxf.width = text_width / measured
+        text_entities.append(native)
+    save_drafting_evidence(doc, candidates, geometry, accepted, symbols,
+                           geometry_entities, text_entities, source=source, page_index=page_index,
+                           image_size=(width, height), dpi=dpi, drawing_scale=drawing_scale,
+                           perspective_corrected=corrected, cancellation_token=cancellation_token)
     # Separate connected graphic groups remain independently movable IMAGEs.
     groups = cv2.dilate(protected,np.ones((7,7),np.uint8))
     # A seal's lettering need not touch its ring. Overlapping component bounds
@@ -272,5 +282,5 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
                    "editable_lines":[{"text":x.text,"confidence":x.confidence,"quad":x.quad} for x in accepted],
                    "uncertain_lines":[{"text":x.text,"confidence":x.confidence,"quad":x.quad} for x in uncertain]},
             "protected_graphics":protected_count,"unresolved_ink_pixels":residual_pixels,
-            "quality":quality,"resources":resources,"warnings":warnings,
+            "quality":quality,"drafting":drafting,"resources":resources,"warnings":warnings,
             "status":"COMPLETED_WITH_REVIEW" if warnings or residual_pixels else "COMPLETED"}
