@@ -48,6 +48,7 @@ from app.core.conversion import (
     convert_document,
     inspect_document,
 )
+from app.core.scan_residuals import describe_geometry_residuals, scan_residual_path
 
 
 def protected_source_rect(rect, image_rect, source_size):
@@ -302,10 +303,13 @@ class MainWindow(QMainWindow):
         left.addWidget(self.open_output_button)
         left.addWidget(self.font_button)
         self.source_view, self.result_view = PreviewView(), PreviewView()
+        self.residual_view = PreviewView()
         self.source_view.region_selected.connect(self._region_selected)
         self.tabs = QTabWidget()
         self.tabs.addTab(self.source_view, "原图")
         self.tabs.addTab(self.result_view, "已保存 DXF")
+        self.residual_tab = self.tabs.addTab(self.residual_view, "几何残差（橙漏／蓝多）")
+        self.tabs.setTabEnabled(self.residual_tab, False)
         splitter = QSplitter()
         splitter.addWidget(panel)
         splitter.addWidget(self.tabs)
@@ -350,7 +354,7 @@ class MainWindow(QMainWindow):
         source = Path(details["input"])
         self._results = []
         self.result_pages.clear()
-        self.result_view.scene().clear()
+        self.show_result(-1)
         self.result_log.clear()
         self.open_output_button.setEnabled(False)
         self.input_edit.setText(str(source))
@@ -458,7 +462,7 @@ class MainWindow(QMainWindow):
         self.result_log.clear()
         self._results = []
         self.result_pages.clear()
-        self.result_view.scene().clear()
+        self.show_result(-1)
         self.open_output_button.setEnabled(False)
         self.progress_bar.setValue(0)
         self._set_busy(True)
@@ -488,6 +492,9 @@ class MainWindow(QMainWindow):
             self.result_log.append(
                 f"第 {page['page_number']} 页\n{page['output']}\n实体：{page.get('counts', {})}\n"
             )
+            if geometry := page.get("quality", {}).get("geometry"):
+                missing, extra = describe_geometry_residuals(geometry)
+                self.result_log.append(f"几何漏画 {missing} · 几何多画 {extra}")
         for warning in result["warnings"]:
             self.result_log.append(warning)
         self.result_log.append(f"耗时 {result['elapsed_seconds']:.1f} 秒\n报告：{result['report']}")
@@ -498,8 +505,20 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("转换完成；请检查文字和局部几何")
 
     def show_result(self, index):
-        if 0 <= index < len(self._results) and self._results[index].get("preview"):
-            self.result_view.set_pixmap(QPixmap(self._results[index]["preview"]))
+        page = self._results[index] if 0 <= index < len(self._results) else {}
+        show_residual = self.tabs.currentWidget() is self.residual_view
+        self.result_view.scene().clear()
+        self.residual_view.scene().clear()
+        if preview := page.get("preview"):
+            self.result_view.set_pixmap(QPixmap(preview))
+        residual = QPixmap()
+        if page.get("quality", {}).get("geometry"):
+            residual = QPixmap(str(scan_residual_path(page["output"])))
+        available = not residual.isNull()
+        if available:
+            self.residual_view.set_pixmap(residual)
+        self.tabs.setTabEnabled(self.residual_tab, available)
+        if page and not (show_residual and available):
             self.tabs.setCurrentWidget(self.result_view)
 
     def _failed(self, message):

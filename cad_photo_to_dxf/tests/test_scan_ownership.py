@@ -1,4 +1,6 @@
 """Ordinary entry, saved-file mutations and the default offscreen preview."""
+import sys
+from io import BytesIO, TextIOWrapper
 from types import SimpleNamespace
 
 import cv2
@@ -11,9 +13,11 @@ from app.core import scan_conversion
 from app.core.conversion import convert_document
 from app.core.dxf_preview import render_dxf
 from app.core.scan_quality import check_saved_scan, source_reference
+from app.core.scan_residuals import EXTRA_COLOR, MISSING_COLOR, scan_residual_path
 from app.geometry.scan_ownership import _continuous_rules
 from app.ocr.line_recognition import RecognizedLine
 from app.ocr import line_recognition
+from main import build_parser, run_headless
 
 
 def _convert(tmp_path, image, name="scan", **kwargs):
@@ -201,6 +205,70 @@ def test_missing_output_cannot_be_hidden_by_fitter_coverage(tmp_path, monkeypatc
     page, _ = _convert(tmp_path, image)
     assert page["status"] == "COMPLETED_WITH_REVIEW"
     assert page["quality"]["geometry"]["missing_pixels"] == page["unresolved_ink_pixels"] == 240
+
+
+def test_full_page_overlay_locates_both_directions_from_saved_dxf(tmp_path, monkeypatch):
+    image = np.full((100, 260, 3), 255, np.uint8)
+    cv2.line(image, (10, 30), (249, 30), (0, 0, 0), 1)
+    resolve_page = scan_conversion.resolve_page
+
+    def offset_rule(*args, **kwargs):
+        geometry, symbols, stats = resolve_page(*args, **kwargs)
+        rule, = geometry
+        rule["points"] = [[x, y + 25] for x, y in rule["points"]]
+        rule["lineweight"] = 0
+        return geometry, symbols, stats
+
+    monkeypatch.setattr(scan_conversion, "resolve_page", offset_rule)
+    page, doc = _convert(tmp_path, image, enable_ocr=False, drawing_scale=100)
+    with Image.open(scan_residual_path(page["output"])) as overlay:
+        assert overlay.size == (260, 100)
+        pixels = np.asarray(overlay.convert("RGB"))
+    missing = np.all(pixels == MISSING_COLOR, axis=2)
+    extra = np.all(pixels == EXTRA_COLOR, axis=2)
+    assert missing[30, 120] and not extra[30, 120]
+    assert extra[55, 120] and not missing[55, 120]
+    geometry = page["quality"]["geometry"]
+    assert np.count_nonzero(missing) == geometry["missing_pixels"] == 240
+    assert np.count_nonzero(extra) == geometry["extra_pixels"] == 240
+    assert geometry["tolerance_px"] == 1
+    assert doc.layers.get("REVIEW_SOURCE").is_off()
+    assert doc.layers.get("SUGGEST_REPAIR").is_off()
+    assert not any("geometry-residual.png" in item.dxf.filename
+                   for item in doc.objects.query("IMAGEDEF"))
+
+
+def test_scan_residual_cannot_overwrite_input_or_preview(tmp_path):
+    output = tmp_path / "scan.dxf"
+    residual = scan_residual_path(output)
+    residual.parent.mkdir()
+    Image.new("RGB", (60, 40), "white").save(residual)
+    with pytest.raises(ValueError, match="几何残差"):
+        convert_document(residual, output, enable_ocr=False)
+    source = tmp_path / "input.png"
+    Image.new("RGB", (60, 40), "white").save(source)
+    with pytest.raises(ValueError, match="几何残差"):
+        convert_document(source, output, enable_ocr=False, preview_path=residual, overwrite=True)
+    assert not output.exists()
+    with Image.open(residual) as image:
+        assert image.size == (60, 40)
+
+
+def test_cli_reports_geometry_residuals_on_legacy_windows_stdout(tmp_path, monkeypatch):
+    source = tmp_path / "input.png"
+    output = tmp_path / "output.dxf"
+    Image.new("RGB", (60, 40), "white").save(source)
+    arguments = build_parser().parse_args(
+        ["--input", str(source), "--output", str(output), "--no-ocr"])
+    buffer = BytesIO()
+    with TextIOWrapper(buffer, encoding="cp1252") as stdout, monkeypatch.context() as redirect:
+        redirect.setattr(sys, "stdout", stdout)
+        assert run_headless(arguments) == 0
+        stdout.flush()
+        console_text = buffer.getvalue().decode("cp1252")
+    assert "Geometry residuals: missing 0 px; extra 0 px" in console_text
+    assert f"Residual map (orange missing, blue extra): {scan_residual_path(output)}" in console_text
+    assert scan_residual_path(output).is_file()
 
 
 def test_review_only_page_has_a_blank_default_preview(tmp_path, monkeypatch):

@@ -6,6 +6,7 @@ from pathlib import Path
 import time
 
 from app.core.cancellation import checkpoint, report_progress
+from app.core.scan_residuals import scan_residual_path
 
 SUPPORTED_EXTENSIONS = {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp"}
 MAX_RENDER_PIXELS = 32_000_000
@@ -106,8 +107,10 @@ def convert_document(
     ]
     report_file = Path(report_path).expanduser().resolve() if report_path else output.with_suffix(".report.json")
     artifacts = destinations + previews + [report_file]
-    if len(set(artifacts)) != len(artifacts) or source in artifacts:
+    reserved = set(artifacts)
+    if len(reserved) != len(artifacts) or source in reserved:
         raise ValueError("DXF、预览和报告必须使用不同路径")
+    reserved.add(source)
     for path in artifacts:
         if path.exists() and not overwrite:
             raise FileExistsError(f"文件已存在：{path}；请更换输出名称或启用覆盖")
@@ -121,10 +124,15 @@ def convert_document(
                             (index + fraction) / len(selected))
 
         progress("读取输入", 0.0)
+        pdf_page = None
         if document["kind"] == "pdf":
             from app.core.pdf_conversion import convert_pdf_page, inspect_pdf_page
-            page = inspect_pdf_page(source, number)
-            if page["route"] == "vector":
+            pdf_page = inspect_pdf_page(source, number)
+        if pdf_page is None or pdf_page["route"] != "vector":
+            if scan_residual_path(destination).resolve() in reserved:
+                raise ValueError("输入、DXF、预览和报告路径不能与扫描几何残差图重名")
+        if pdf_page is not None:
+            if pdf_page["route"] == "vector":
                 result = convert_pdf_page(
                     source, destination, page_number=number, overwrite=overwrite,
                     write_report=False,

@@ -89,3 +89,31 @@ def test_drag_survives_zoom_and_selection_clears_on_dpi_page_input(application, 
     gui.load_input(source)
     assert gui._preserve_regions == [] and gui.protect_button.isEnabled()
     gui.close()
+
+
+def test_residual_tab_tracks_scanned_pages_in_a_mixed_document(application, tmp_path):
+    source = tmp_path / "mixed.pdf"
+    pixels = BytesIO()
+    Image.new("RGB", (120, 90), "white").save(pixels, format="PNG")
+    with pymupdf.open() as document:
+        page = document.new_page(width=120, height=90)
+        page.draw_line((10, 10), (100, 50))
+        page = document.new_page(width=120, height=90)
+        page.insert_image(page.rect, stream=pixels.getvalue())
+        document.save(source)
+    result = conversion.convert_document(source, tmp_path / "mixed.dxf", dpi=72, enable_ocr=False)
+
+    gui = window.MainWindow()
+    gui._completed(result)
+    assert not gui.tabs.isTabEnabled(gui.residual_tab)
+    gui.result_pages.setCurrentIndex(1)
+    assert gui.tabs.isTabEnabled(gui.residual_tab)
+    gui.tabs.setCurrentIndex(gui.residual_tab)
+    assert gui.tabs.currentWidget() is gui.residual_view
+    assert gui.residual_view.sceneRect().size().toTuple() == (120.0, 90.0)
+    assert "几何漏画 0 px" in gui.result_log.toPlainText()
+    gui.result_pages.setCurrentIndex(0)
+    assert gui.tabs.currentWidget() is gui.result_view
+    assert not gui.tabs.isTabEnabled(gui.residual_tab)
+    assert not gui.residual_view.scene().items()
+    gui.close()

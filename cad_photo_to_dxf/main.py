@@ -33,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def run_headless(args) -> int:
     from app.core.conversion import convert_document
+    from app.core.scan_residuals import describe_geometry_residuals, scan_residual_path
     if args.input is None:
         raise ValueError("--headless 需要 --input")
 
@@ -51,6 +52,10 @@ def run_headless(args) -> int:
         print(f"Route: {page['route']}; entities: {page.get('counts', {})}")
         if page.get("preview"):
             print(f"Preview: {page['preview']}")
+        if geometry := page.get("quality", {}).get("geometry"):
+            missing, extra = describe_geometry_residuals(geometry)
+            print(f"Geometry residuals: missing {missing}; extra {extra}")
+            print(f"Residual map (orange missing, blue extra): {scan_residual_path(page['output'])}")
     print(f"Report: {result['report']}")
     for warning in result["warnings"]:
         print(f"Warning: {warning}", file=sys.stderr)

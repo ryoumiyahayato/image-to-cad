@@ -16,7 +16,8 @@ from app.core.perspective import auto_correct, warp_perspective
 from app.core.scan_drafting import (
     REPAIR_LAYER, resolve_page, save_drafting_evidence, save_repair_evidence, suggest_repairs,
 )
-from app.core.scan_quality import check_saved_scan, source_reference
+from app.core.scan_quality import measure_saved_scan, source_reference
+from app.core.scan_residuals import save_geometry_residuals, scan_residual_path
 from app.export.product_fonts import install_text_style, text_width_factor
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
 from app.geometry.scan_geometry import extract_scan_geometry
@@ -111,8 +112,13 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     if not 0 <= min_text_confidence <= 1:
         raise ValueError("Text confidence must be between zero and one")
     output = Path(output_path).resolve()
-    output.parent.mkdir(parents=True, exist_ok=True)
     source = Path(source_path)
+    residual_output = scan_residual_path(output).resolve()
+    if residual_output == source.resolve() or (
+        preview_path is not None and residual_output == Path(preview_path).resolve()
+    ):
+        raise ValueError("输入和预览路径不能与扫描几何残差图重名")
+    output.parent.mkdir(parents=True, exist_ok=True)
     if image is None:
         image = _load(source, page_index)
     else:
@@ -269,14 +275,19 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     checkpoint(cancellation_token)
     report_progress(progress_callback,"save",0.90)
     doc.saveas(output)
-    reference = source_reference(image, manual, accepted, uncertain)
-    quality, residual = check_saved_scan(output, reference, accepted, dpi=dpi, drawing_scale=drawing_scale)
+    reference, pending = source_reference(image, manual, accepted, uncertain)
+    quality, missing, extra = measure_saved_scan(output, reference, accepted, dpi=dpi,
+                                                 drawing_scale=drawing_scale)
+    residual = missing | pending
     asset = _add_source_image(doc,msp,image,residual,output,"unresolved-ink","REVIEW_SOURCE",scale)
     if asset:
         resources.append(asset)
         warnings.append("未转换的墨迹保留在默认关闭的 REVIEW_SOURCE 图层。")
         doc.saveas(output)
-        quality, residual = check_saved_scan(output, reference, accepted, dpi=dpi, drawing_scale=drawing_scale)
+        del missing, extra, residual
+        quality, missing, extra = measure_saved_scan(output, reference, accepted, dpi=dpi,
+                                                     drawing_scale=drawing_scale)
+        residual = missing | pending
     residual_pixels = cv2.countNonZero(residual)
     if uncertain:
         warnings.append(f"{len(uncertain)}行低置信度文字保留原图，未用猜测文字替换。")
@@ -289,6 +300,7 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     audit = saved.audit()
     if audit.errors:
         raise ValueError(f"Saved DXF contains {len(audit.errors)} structural errors")
+    save_geometry_residuals(output, image, missing, extra)
     if preview_path is not None:
         from app.core.dxf_preview import render_dxf
         render_dxf(output,preview_path)
