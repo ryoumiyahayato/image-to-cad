@@ -33,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def run_headless(args) -> int:
     from app.core.conversion import convert_document
-    from app.core.scan_residuals import format_geometry_residuals, scan_residual_path
+    from app.core.scan_residuals import describe_geometry_residuals, scan_residual_path
     if args.input is None:
         raise ValueError("--headless 需要 --input")
 
@@ -53,8 +53,9 @@ def run_headless(args) -> int:
         if page.get("preview"):
             print(f"Preview: {page['preview']}")
         if geometry := page.get("quality", {}).get("geometry"):
-            print(format_geometry_residuals(geometry))
-            print(f"几何残差图（橙色漏画，蓝色多画）：{scan_residual_path(page['output'])}")
+            missing, extra = describe_geometry_residuals(geometry)
+            print(f"Geometry residuals: missing {missing}; extra {extra}")
+            print(f"Residual map (orange missing, blue extra): {scan_residual_path(page['output'])}")
     print(f"Report: {result['report']}")
     for warning in result["warnings"]:
         print(f"Warning: {warning}", file=sys.stderr)

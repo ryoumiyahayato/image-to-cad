@@ -48,7 +48,7 @@ from app.core.conversion import (
     convert_document,
     inspect_document,
 )
-from app.core.scan_residuals import format_geometry_residuals, scan_residual_path
+from app.core.scan_residuals import describe_geometry_residuals, scan_residual_path
 
 
 def protected_source_rect(rect, image_rect, source_size):
@@ -493,7 +493,8 @@ class MainWindow(QMainWindow):
                 f"第 {page['page_number']} 页\n{page['output']}\n实体：{page.get('counts', {})}\n"
             )
             if geometry := page.get("quality", {}).get("geometry"):
-                self.result_log.append(format_geometry_residuals(geometry))
+                missing, extra = describe_geometry_residuals(geometry)
+                self.result_log.append(f"几何漏画 {missing} · 几何多画 {extra}")
         for warning in result["warnings"]:
             self.result_log.append(warning)
         self.result_log.append(f"耗时 {result['elapsed_seconds']:.1f} 秒\n报告：{result['report']}")

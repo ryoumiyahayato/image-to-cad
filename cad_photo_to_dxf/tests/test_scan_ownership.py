@@ -1,4 +1,6 @@
 """Ordinary entry, saved-file mutations and the default offscreen preview."""
+import sys
+from io import BytesIO, TextIOWrapper
 from types import SimpleNamespace
 
 import cv2
@@ -15,6 +17,7 @@ from app.core.scan_residuals import EXTRA_COLOR, MISSING_COLOR, scan_residual_pa
 from app.geometry.scan_ownership import _continuous_rules
 from app.ocr.line_recognition import RecognizedLine
 from app.ocr import line_recognition
+from main import build_parser, run_headless
 
 
 def _convert(tmp_path, image, name="scan", **kwargs):
@@ -249,6 +252,23 @@ def test_scan_residual_cannot_overwrite_input_or_preview(tmp_path):
     assert not output.exists()
     with Image.open(residual) as image:
         assert image.size == (60, 40)
+
+
+def test_cli_reports_geometry_residuals_on_legacy_windows_stdout(tmp_path, monkeypatch):
+    source = tmp_path / "input.png"
+    output = tmp_path / "output.dxf"
+    Image.new("RGB", (60, 40), "white").save(source)
+    arguments = build_parser().parse_args(
+        ["--input", str(source), "--output", str(output), "--no-ocr"])
+    buffer = BytesIO()
+    with TextIOWrapper(buffer, encoding="cp1252") as stdout, monkeypatch.context() as redirect:
+        redirect.setattr(sys, "stdout", stdout)
+        assert run_headless(arguments) == 0
+        stdout.flush()
+        console_text = buffer.getvalue().decode("cp1252")
+    assert "Geometry residuals: missing 0 px; extra 0 px" in console_text
+    assert f"Residual map (orange missing, blue extra): {scan_residual_path(output)}" in console_text
+    assert scan_residual_path(output).is_file()
 
 
 def test_review_only_page_has_a_blank_default_preview(tmp_path, monkeypatch):

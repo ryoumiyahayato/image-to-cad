@@ -12,14 +12,14 @@ def scan_residual_path(output):
     return output.parent / (output.stem + "_assets") / "geometry-residual.png"
 
 
-def format_geometry_residuals(geometry):
+def describe_geometry_residuals(geometry):
     def describe(count, total):
-        ratio = f"（{count / total:.2%}）" if total else ""
+        ratio = f" ({count / total:.2%})" if total else ""
         return f"{count:,} px{ratio}"
 
     missing = describe(geometry["missing_pixels"], geometry["source_pixels"])
     extra = describe(geometry["extra_pixels"], geometry["drawn_pixels"])
-    return f"几何漏画 {missing} · 几何多画 {extra}"
+    return missing, extra
 
 
 def save_geometry_residuals(output, image, missing, extra):
