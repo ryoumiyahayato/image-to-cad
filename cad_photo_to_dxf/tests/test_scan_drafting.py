@@ -152,8 +152,8 @@ def test_repair_alternatives_are_hidden_and_excluded_from_saved_quality(tmp_path
         cv2.line(image, first, last, (0, 0, 0), 1)
     page, doc = _convert(tmp_path, image)
     layer = doc.layers.get("SUGGEST_REPAIR")
-    assert layer.is_off()
-    assert doc.layers.get("REVIEW_SOURCE").is_off()
+    assert layer.is_frozen()
+    assert doc.layers.get("REVIEW_SOURCE").is_frozen()
     formal = [_pixel_ends(line, 150) for line in doc.modelspace().query('LINE[layer=="GEOMETRY"]')]
     assert len(formal) == 3
     assert _has_line(formal, (20, 76), (76, 76))
@@ -168,7 +168,7 @@ def test_repair_alternatives_are_hidden_and_excluded_from_saved_quality(tmp_path
         assert record["uncertainty"] == "unconfirmed"
         assert len(record["source_indices"]) == 2
     reference = source_reference(image, np.zeros(image.shape[:2], np.uint8), [], [])
-    layer.on()
+    layer.thaw()
     doc.saveas(page["output"])
     checks, _ = check_saved_scan(page["output"], reference, [], dpi=300)
     assert checks == page["quality"]
@@ -363,8 +363,10 @@ def test_low_confidence_observation_does_not_offset_symbol_text_members(tmp_path
     assert len(doc.groups) == 1
     _, group = next(iter(doc.groups))
     assert [e.dxf.text for e in group if e.dxftype() == "TEXT"] == ["R"]
-    assert [e.dxf.text for e in doc.modelspace().query("TEXT")] == ["R"]
-    formal_text, = doc.modelspace().query("TEXT")
+    formal_text, = doc.modelspace().query('TEXT[layer=="TEXT"]')
+    candidate, = doc.modelspace().query('TEXT[layer=="SUGGEST_REPAIR"]')
+    assert formal_text.dxf.text == "R"
+    assert candidate.dxf.text == "Q"
     assert _evidence(formal_text)["text_index"] == 0
     assert _evidence(formal_text)["quad_px"] == [list(point) for point in observed[1].quad]
     assert page["quality"]["text"]["missing_or_changed"] == []

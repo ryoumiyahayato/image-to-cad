@@ -1,4 +1,5 @@
 """Saved-file behavior of the ordinary scan route; no archived fixture graphs."""
+import json
 from pathlib import Path
 
 import cv2
@@ -7,9 +8,11 @@ import numpy as np
 from PIL import Image
 from ezdxf.enums import TextEntityAlignment
 from ezdxf.fonts import fonts
+from ezdxf.lldxf.encoding import decode_dxf_unicode
 
 from app.core import scan_conversion
-from app.core.dxf_preview import resolve_drawing_fonts
+from app.core.dxf_preview import render_dxf, resolve_drawing_fonts
+from app.core.scan_quality import measure_saved_scan, source_reference
 from app.geometry.scan_cell_layout import _cell_slots, _fit_text
 from app.geometry.scan_geometry import extract_scan_geometry
 from app.ocr.line_recognition import RecognizedLine
@@ -66,16 +69,55 @@ def test_normal_words_and_graphics_survive_actual_save_edit_reopen(tmp_path,monk
     assert Path(result['output']) == output
 
 
-def test_low_confidence_text_retains_original_ink_in_image(tmp_path,monkeypatch):
-    image = np.full((200,400,3),255,np.uint8)
-    cv2.putText(image,"UNCLEAR",(30,90),cv2.FONT_HERSHEY_SIMPLEX,1,(0,0,0),2)
-    observed = RecognizedLine("UNCLEAR",0.55,((25,55),(190,55),(190,98),(25,98)))
-    monkeypatch.setattr(scan_conversion,"recognize_lines",lambda *a,**k:[observed])
-    result = scan_conversion.convert_scan('memory.png',tmp_path/'low.dxf',image=image)
-    doc = ezdxf.readfile(result['output'])
-    assert not list(doc.modelspace().query('TEXT'))
-    assert list(doc.modelspace().query('IMAGE[layer=="REVIEW_SOURCE"]'))
-    assert result['ocr']['uncertain_lines'][0]['text'] == 'UNCLEAR'
+def test_uncertain_text_remains_editable_in_review_and_keeps_source_ink(tmp_path, monkeypatch):
+    image = np.full((200, 400, 3), 255, np.uint8)
+    cv2.putText(image, "UNCLEAR 50%", (30, 90), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+    cv2.line(image, (25, 106), (350, 106), (0, 0, 0), 2)
+    cv2.putText(image, "LINE B-4", (30, 159), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2)
+    observed = RecognizedLine("回路 50%^", 0.55, ((25, 55), (266, 55), (266, 98), (25, 98)))
+    accepted = RecognizedLine("LINE B-4", 0.92, ((25, 130), (194, 130), (194, 165), (25, 165)))
+    monkeypatch.setattr(scan_conversion, "recognize_lines", lambda *a, **k: [observed, accepted])
+    output, preview = tmp_path / "low.dxf", tmp_path / "formal.png"
+    result = scan_conversion.convert_scan("memory.png", output, image=image, page_index=2, preview_path=preview)
+    doc = ezdxf.readfile(output)
+    formal, = doc.modelspace().query('TEXT[layer=="TEXT"]')
+    review, = doc.modelspace().query('TEXT[layer=="SUGGEST_REPAIR"]')
+    assert formal.dxf.text == accepted.text
+    assert decode_dxf_unicode(review.plain_text()) == observed.text
+    assert result["quality"]["text"]["native_lines"] == 1
+    assert result["drafting"]["repair_suggestions"] == 1
+    assert result["ocr"]["uncertain_lines"][0]["text"] == observed.text
+    assert doc.layers.get("SUGGEST_REPAIR").is_frozen()
+    assert doc.layers.get("REVIEW_SOURCE").is_frozen()
+    source_image, = doc.modelspace().query('IMAGE[layer=="REVIEW_SOURCE"]')
+    asset = output.parent / source_image.image_def.dxf.filename
+    assert np.asarray(Image.open(asset))[:, :, 3].any()
+    assert review.get_xdata("IMAGE_TO_CAD")[2].value == "suggest_repair"
+    record = review.get_extension_dict()["SOURCE_EVIDENCE"]
+    evidence = json.loads("".join(tag.value for tag in record.tags))
+    assert evidence == {
+        "page_index": 2, "role": "suggest_repair", "reason": "low_confidence_text", "uncertainty": "unconfirmed",
+        "quad_px": [list(p) for p in observed.quad], "confidence": 0.55, "candidate_text": observed.text,
+    }
+
+    grid = [(line.dxf.start, line.dxf.end) for line in doc.modelspace().query('LINE[layer=="GEOMETRY"]')]
+    assert grid
+    review.dxf.text = r"回路 60%\U+005E"
+    review.translate(1, 0, 0)
+    doc.layers.get("SUGGEST_REPAIR").thaw()
+    edited_output = tmp_path / "edited.dxf"
+    doc.saveas(edited_output)
+    shown = tmp_path / "shown.png"
+    render_dxf(edited_output, shown)
+    assert not np.array_equal(np.asarray(Image.open(preview)), np.asarray(Image.open(shown)))
+    reopened = ezdxf.readfile(edited_output)
+    edited, = reopened.modelspace().query('TEXT[layer=="SUGGEST_REPAIR"]')
+    assert decode_dxf_unicode(edited.plain_text()) == "回路 60%^"
+    assert edited.dxf.insert.isclose(review.dxf.insert)
+    assert grid == [(line.dxf.start, line.dxf.end) for line in reopened.modelspace().query('LINE[layer=="GEOMETRY"]')]
+    reference, _ = source_reference(image, np.zeros(image.shape[:2], np.uint8), [accepted], [observed])
+    quality, _, _ = measure_saved_scan(edited_output, reference, [accepted], dpi=300)
+    assert quality == result["quality"]
 
 
 def test_scan_cell_layout_keeps_native_lines_and_grid_on_save(tmp_path, monkeypatch):
@@ -126,7 +168,7 @@ def test_scan_cell_layout_keeps_native_lines_and_grid_on_save(tmp_path, monkeypa
         assert (210 - 134) * scale < low.y < high.y < (210 - 51) * scale
     assert limits[0][0].y > limits[1][1].y
     assert any(ink_bounds(old) != bounds for old, bounds in zip(old_texts, limits))
-    assert all(doc.layers.get(name).is_off() for name in ("REVIEW_SOURCE", "SUGGEST_REPAIR"))
+    assert all(doc.layers.get(name).is_frozen() for name in ("REVIEW_SOURCE", "SUGGEST_REPAIR"))
 
     # Reload the untouched style path before doing the saved-file edit.
     doc.styles.get("wqy-unicode").dxf.font = style_font

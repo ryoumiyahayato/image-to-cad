@@ -108,15 +108,18 @@ def test_red_text_and_separate_graphics_reach_default_preview(tmp_path, monkeypa
                 RecognizedLine("BLUR", .55, ((285, 182), (395, 182), (395, 220), (285, 220)))]
     monkeypatch.setattr(scan_conversion, "recognize_lines", observe)
     page, doc = _convert(tmp_path, image, preserve_regions=[(330, 70, 390, 130)])
-    assert [e.dxf.text for e in doc.modelspace().query("TEXT")] == ["12"]
+    formal, = doc.modelspace().query('TEXT[layer=="TEXT"]')
+    candidate, = doc.modelspace().query('TEXT[layer=="SUGGEST_REPAIR"]')
+    assert formal.dxf.text == "12"
+    assert candidate.dxf.text == "BLUR"
     assert len(doc.modelspace().query('IMAGE[layer=="PROTECTED_GRAPHICS"]')) == 3
-    assert doc.layers.get("REVIEW_SOURCE").is_off()
+    assert doc.layers.get("REVIEW_SOURCE").is_frozen()
     review, = doc.modelspace().query('IMAGE[layer=="REVIEW_SOURCE"]')
     assert review.image_def.dxf.filename.endswith("unresolved-ink.png")
     preview = np.asarray(Image.open(page["preview"]).convert("RGB"))
     assert np.count_nonzero(preview[:, :, 0].astype(int) - preview[:, :, 2] > 80) > 20
     # Force the diagnostic layer on, then remove it. Both default renders must match.
-    doc.layers.get("REVIEW_SOURCE").on()
+    doc.layers.get("REVIEW_SOURCE").thaw()
     doc.saveas(page["output"])
     render_dxf(page["output"], tmp_path / "layer-on.png")
     doc.modelspace().delete_entity(review)
@@ -232,8 +235,8 @@ def test_full_page_overlay_locates_both_directions_from_saved_dxf(tmp_path, monk
     assert np.count_nonzero(missing) == geometry["missing_pixels"] == 240
     assert np.count_nonzero(extra) == geometry["extra_pixels"] == 240
     assert geometry["tolerance_px"] == 1
-    assert doc.layers.get("REVIEW_SOURCE").is_off()
-    assert doc.layers.get("SUGGEST_REPAIR").is_off()
+    assert doc.layers.get("REVIEW_SOURCE").is_frozen()
+    assert doc.layers.get("SUGGEST_REPAIR").is_frozen()
     assert not any("geometry-residual.png" in item.dxf.filename
                    for item in doc.objects.query("IMAGEDEF"))
 
