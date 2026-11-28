@@ -7,7 +7,6 @@ import cv2
 import numpy as np
 
 from app.core.cancellation import checkpoint
-from app.geometry.line_detect import LineDetectionParams, detect_lines
 
 
 def thin_ink(mask, cancellation_token=None):
@@ -36,43 +35,44 @@ def thin_ink(mask, cancellation_token=None):
 
 
 def _paths(skeleton):
-    pixels = set(map(tuple, np.argwhere(skeleton > 0).tolist()))
-    neighbours = {}
-    for y, x in pixels:
-        adjacent = []
-        for dy, dx in ((-1,0), (0,1), (1,0), (0,-1), (-1,-1), (-1,1), (1,1), (1,-1)):
-            p = y+dy, x+dx
-            if p not in pixels:
-                continue
-            # A diagonal next to an existing cardinal link is a raster corner,
-            # not a third geometric arm.
-            if dy and dx and ((y+dy, x) in pixels or (y, x+dx) in pixels):
-                continue
-            adjacent.append(p)
-        neighbours[y, x] = adjacent
-    visited = set()
-    paths = []
-    nodes = sorted(p for p in pixels if len(neighbours[p]) != 2)
-    for start in nodes + sorted(pixels):
-        for following in neighbours[start]:
-            edge = tuple(sorted((start, following)))
-            if edge in visited:
-                continue
-            points = [start]
-            previous, current = start, following
-            visited.add(edge)
-            while True:
-                points.append(current)
-                if current == start or len(neighbours[current]) != 2:
-                    break
-                nxt = next(p for p in neighbours[current] if p != previous)
-                edge = tuple(sorted((current, nxt)))
-                if edge in visited:
-                    break
-                visited.add(edge)
-                previous, current = current, nxt
-            paths.append(np.asarray([(x,y) for y,x in points], dtype=np.float64))
-    return paths
+    """Stream source paths and endpoint degrees, including short junction edges.
+
+    Two byte maps bound graph storage by page size even on dense pages.
+    """
+    # Opposite directions are four slots apart.
+    directions = ((0, 1), (1, 1), (1, 0), (1, -1),
+                  (0, -1), (-1, -1), (-1, 0), (-1, 1))
+    ink = np.pad(skeleton, 1)
+    h, w = skeleton.shape
+    links = np.zeros_like(skeleton)
+    degree = np.zeros_like(skeleton)
+    for i, (dy, dx) in enumerate(directions):
+        adjacent = skeleton & ink[1+dy:1+dy+h, 1+dx:1+dx+w]
+        if dx and dy:
+            adjacent &= 1 - (ink[1+dy:1+dy+h, 1:1+w] | ink[1:1+h, 1+dx:1+dx+w])
+        links |= adjacent << i
+        degree += adjacent
+
+    def walk(y, x):
+        start_degree = int(degree[y, x])
+        points = [(x, y)]
+        while links[y, x]:
+            edges = int(links[y, x])
+            i = (edges & -edges).bit_length() - 1
+            dy, dx = directions[i]
+            links[y, x] ^= 1 << i
+            y, x = y + dy, x + dx
+            links[y, x] ^= 1 << ((i+4) % 8)
+            points.append((x, y))
+            if degree[y, x] != 2:
+                break
+        return np.asarray(points, dtype=float), (start_degree, int(degree[y, x]))
+
+    for junctions in (True, False):
+        starts = (links > 0) & (degree != 2) if junctions else links > 0
+        for y, x in zip(*np.nonzero(starts)):
+            while links[y, x]:
+                yield walk(int(y), int(x))
 
 
 def _circle(points, closed, width):
@@ -121,8 +121,7 @@ def _line(points):
 def extract_scan_geometry(binary, *, cancellation_token=None):
     """Return editable finite geometry plus a source-pixel coverage mask.
 
-    Short or unresolved ink is left unclaimed, so the caller can retain it as
-    transparent source imagery instead of deleting it or inventing a line.
+    Coverage describes fitted source paths only. Delivery checks rasterize the DXF.
     """
     ink = np.uint8(binary < 128)
     distance = cv2.distanceTransform(ink, cv2.DIST_L2, 3)
@@ -130,30 +129,16 @@ def extract_scan_geometry(binary, *, cancellation_token=None):
     records = []
     coverage = np.zeros(ink.shape, dtype=np.uint8)
     warnings = []
-    if np.count_nonzero(skeleton) > 500000:
-        # Bound graph memory on very dense sheets. The preserved detector uses
-        # Hough/LSD proposals and distance-transform centers; unresolved ink is
-        # retained by the caller rather than producing an unbounded path graph.
-        proposals = detect_lines(binary, LineDetectionParams(max_line_gap=0, min_center_width=2.0),
-                                 cancellation_token=cancellation_token)
-        for item in proposals:
-            points = np.asarray([[item.x1,item.y1],[item.x2,item.y2]])
-            records.append({"type":"LINE", "points":points.tolist(), "stroke_width":item.width})
-            cv2.polylines(coverage,[np.rint(points).astype(np.int32)],False,255,max(1,round(item.width)))
-        warnings.append("密集图纸达到中心线图上限，使用Hough/LSD有限直线；其余墨迹保留为图像。")
-        return records, coverage, warnings
-    for index, points in enumerate(_paths(skeleton)):
+    for index, (points, degrees_at_ends) in enumerate(_paths(skeleton)):
         if index % 256 == 0:
             checkpoint(cancellation_token)
-        if len(points) < 2:
-            continue
-        length = np.linalg.norm(np.diff(points,axis=0),axis=1).sum()
-        if length < 8:
-            continue
-        coords = np.rint(points).astype(np.int32)
+        length = np.linalg.norm(np.diff(points, axis=0), axis=1).sum()
+        coords = points.astype(np.int32)
         width = float(max(1.0, 2*np.median(distance[coords[:,1],coords[:,0]])-1))
-        # Filled marks and broad irregular graphics remain raster resources.
-        if width > 30 or length < max(8, width*3):
+        attached = max(degrees_at_ends) > 2
+        # A link at a junction has topological support even below one pen width.
+        # An isolated mark needs an elongated trace to distinguish it from dust.
+        if width > 30 or (not attached and length < 1.5 * width):
             continue
         closed = bool(np.array_equal(points[0],points[-1]))
         shape = _circle(points, closed, width)
