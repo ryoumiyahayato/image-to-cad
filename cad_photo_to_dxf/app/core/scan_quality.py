@@ -89,7 +89,12 @@ def _check_text(observed, saved):
 
 
 def check_saved_scan(output, reference, accepted, *, dpi, drawing_scale=1.0):
-    source, uncertain = reference
+    quality, missing, _ = measure_saved_scan(output, reference[0], accepted, dpi=dpi,
+                                             drawing_scale=drawing_scale)
+    return quality, missing | reference[1]
+
+
+def measure_saved_scan(output, source, accepted, *, dpi, drawing_scale=1.0):
     doc = ezdxf.readfile(output)
     if accepted:
         resolve_drawing_fonts(doc, Path(output).parent)
@@ -143,4 +148,4 @@ def check_saved_scan(output, reference, accepted, *, dpi, drawing_scale=1.0):
     geometry = {"source_pixels": cv2.countNonZero(source), "drawn_pixels": cv2.countNonZero(drawn),
                 "missing_pixels": cv2.countNonZero(missing), "extra_pixels": cv2.countNonZero(extra),
                 "outside_page_entities": outside, "tolerance_px": 1}
-    return {"geometry": geometry, "text": _check_text(accepted, saved_text)}, missing | uncertain
+    return {"geometry": geometry, "text": _check_text(accepted, saved_text)}, missing, extra
