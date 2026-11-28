@@ -19,6 +19,7 @@ from app.core.scan_drafting import (
 from app.core.scan_quality import measure_saved_scan, source_reference
 from app.core.scan_residuals import save_geometry_residuals, scan_residual_path
 from app.export.product_fonts import install_text_style, text_width_factor
+from app.geometry.scan_cell_layout import place_cell_text
 from app.geometry.scan_cleanup import paper_ink_alpha, prepare_scan_page
 from app.geometry.scan_geometry import extract_scan_geometry
 from app.geometry.scan_ownership import emblem_ink, glyph_ink, protected_ink
@@ -248,6 +249,10 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
             if measured > 0:
                 native.dxf.width = text_width / measured
         text_entities.append(native)
+    if text_entities:
+        place_cell_text(geometry_input, geometry, accepted, symbols, text_entities, style["font_path"],
+                        dpi=dpi, scale=scale,
+                        cancellation_token=cancellation_token)
     save_drafting_evidence(doc, candidates, geometry, accepted, symbols,
                            geometry_entities, text_entities, source=source, page_index=page_index,
                            image_size=(width, height), dpi=dpi, drawing_scale=drawing_scale,
