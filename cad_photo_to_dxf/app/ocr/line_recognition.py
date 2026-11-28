@@ -18,6 +18,8 @@ from app.core.cancellation import checkpoint, report_progress
 
 @dataclass(frozen=True)
 class RecognizedLine:
+    """The quad starts at the text's upper-left and follows its reading direction."""
+
     text: str
     confidence: float
     quad: tuple[tuple[float, float], ...]
@@ -37,7 +39,7 @@ def _engine():
     if _ENGINE is None:
         from app.core.offline_runtime import private_onnxruntime
         private_onnxruntime()
-        from rapidocr import RapidOCR
+        from app.ocr.rapidocr_orientation import OrientedRapidOCR
         params = {
             "Global.text_score": 0.50,
             "Global.max_side_len": 2560,
@@ -57,7 +59,7 @@ def _engine():
             if missing:
                 raise FileNotFoundError("Offline OCR models are missing: " + ", ".join(missing))
             params.update({role+".model_path":str(models/name) for role,name in names.items()})
-        _ENGINE = RapidOCR(params=params)
+        _ENGINE = OrientedRapidOCR(params=params)
     return _ENGINE
 
 
