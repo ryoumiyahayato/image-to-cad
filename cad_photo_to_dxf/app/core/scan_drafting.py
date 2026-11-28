@@ -172,3 +172,13 @@ def save_repair_evidence(msp, repairs, point, page_index, *, cancellation_token=
             "reason": repair["reason"],
             "uncertainty": "unconfirmed",
         })
+
+
+def save_text_repair_evidence(entity, line, page_index):
+    _attach(entity, page_index, "suggest_repair", {
+        "reason": "low_confidence_text",
+        "uncertainty": "unconfirmed",
+        "quad_px": line.quad,
+        "candidate_text": line.text,
+        "confidence": float(line.confidence),
+    })

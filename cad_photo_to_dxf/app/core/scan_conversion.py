@@ -14,7 +14,8 @@ from ezdxf.tools.text_size import text_size
 from app.core.cancellation import checkpoint, report_progress, ProcessingCancelled
 from app.core.perspective import auto_correct, warp_perspective
 from app.core.scan_drafting import (
-    REPAIR_LAYER, resolve_page, save_drafting_evidence, save_repair_evidence, suggest_repairs,
+    REPAIR_LAYER, resolve_page, save_drafting_evidence, save_repair_evidence,
+    save_text_repair_evidence, suggest_repairs,
 )
 from app.core.scan_quality import measure_saved_scan, source_reference
 from app.core.scan_residuals import save_geometry_residuals, scan_residual_path
@@ -93,8 +94,26 @@ def _add_source_image(doc, msp, image, mask, output, suffix, layer, scale):
 
 
 def _literal_text(text):
-    # DXF TEXT percent controls must not reinterpret a literal OCR sequence.
-    return text.replace("%", r"\U+0025")
+    # Keep OCR punctuation literal when DXF readers decode TEXT control sequences.
+    return text.replace("%", r"\U+0025").replace("^", r"\U+005E")
+
+
+def _add_native_text(modelspace, line, style, point, scale, *, layer):
+    q = np.asarray(line.quad)
+    height = max(1.0, 0.80 * float(np.linalg.norm(q[3] - q[0]))) * scale
+    width = float(np.linalg.norm(q[1] - q[0])) * scale
+    baseline = q[3] + 0.12 * (q[0] - q[3])
+    rotation = degrees(atan2(-(q[1, 1] - q[0, 1]), q[1, 0] - q[0, 0]))
+    entity = modelspace.add_text(_literal_text(line.text), dxfattribs={
+        "layer": layer, "style": style["style"], "height": height,
+        "width": text_width_factor(line.text, style["font_path"], height, width),
+        "insert": point(baseline), "rotation": rotation, "color": 256,
+    })
+    if not style["font_path"] and width > 0:
+        measured = text_size(entity).width
+        if measured > 0:
+            entity.dxf.width = width / measured
+    return entity
 
 
 def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=None,
@@ -196,9 +215,9 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
                                                source_binary=source_ink,
                                                cancellation_token=cancellation_token)
     repairs = suggest_repairs(candidates, prepared.binary, cancellation_token=cancellation_token)
-    drafting["repair_suggestions"] = len(repairs)
-    if repairs:
-        warnings.append(f"{len(repairs)}处补绘建议写入默认关闭的 {REPAIR_LAYER} 图层。")
+    drafting["repair_suggestions"] = len(repairs) + len(uncertain)
+    if drafting["repair_suggestions"]:
+        warnings.append(f"{drafting['repair_suggestions']}处补绘建议写入默认关闭的 {REPAIR_LAYER} 图层。")
     doc = ezdxf.new("R2013", setup=False)
     doc.units = ezdxf.units.MM
     doc.header["$MEASUREMENT"] = 1
@@ -206,9 +225,10 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
     doc.set_raster_variables(frame=0, quality=1, units="mm")
     for layer in ("GEOMETRY","TEXT","PROTECTED_GRAPHICS","REVIEW_SOURCE", REPAIR_LAYER):
         doc.layers.new(layer,dxfattribs={"color":7})
-    doc.layers.get("REVIEW_SOURCE").off()
-    doc.layers.get(REPAIR_LAYER).off()
-    style = install_text_style(doc,output,[line.text for line in accepted])
+    # A frozen layer stays hidden in CAD editors that discard the DXF off flag.
+    doc.layers.get("REVIEW_SOURCE").freeze()
+    doc.layers.get(REPAIR_LAYER).freeze()
+    style = install_text_style(doc, output, (line.text for line in lines))
     warnings.extend(style["warnings"])
     resources = list(style["resources"])
     msp = doc.modelspace()
@@ -235,20 +255,7 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
                                        close=shape.get("closed",False),dxfattribs=attrs)
         geometry_entities.append(native)
     for line in accepted:
-        q = np.asarray(line.quad)
-        text_height = max(1.0,0.80*float(np.linalg.norm(q[3]-q[0])))*scale
-        text_width = float(np.linalg.norm(q[1]-q[0]))*scale
-        baseline = q[3]+0.12*(q[0]-q[3])
-        rotation = degrees(atan2(-(q[1,1]-q[0,1]),q[1,0]-q[0,0]))
-        native = msp.add_text(_literal_text(line.text),dxfattribs={
-            "layer":"TEXT","style":style["style"],"height":text_height,
-            "width":text_width_factor(line.text,style["font_path"],text_height,text_width),
-            "insert":point(baseline),"rotation":rotation,"color":256})
-        if not style["font_path"]:
-            measured = text_size(native).width
-            if measured > 0:
-                native.dxf.width = text_width / measured
-        text_entities.append(native)
+        text_entities.append(_add_native_text(msp, line, style, point, scale, layer="TEXT"))
     if text_entities:
         place_cell_text(geometry_input, geometry, accepted, symbols, text_entities, style["font_path"],
                         dpi=dpi, scale=scale,
@@ -258,6 +265,10 @@ def convert_scan(source_path, output_path, *, dpi=300.0, page_index=0, image=Non
                            image_size=(width, height), dpi=dpi, drawing_scale=drawing_scale,
                            perspective_corrected=corrected, cancellation_token=cancellation_token)
     save_repair_evidence(msp, repairs, point, page_index, cancellation_token=cancellation_token)
+    for line in uncertain:
+        checkpoint(cancellation_token)
+        entity = _add_native_text(msp, line, style, point, scale, layer=REPAIR_LAYER)
+        save_text_repair_evidence(entity, line, page_index)
     # Separate connected graphic groups remain independently movable IMAGEs.
     groups = cv2.dilate(protected,np.ones((7,7),np.uint8))
     # A seal's lettering need not touch its ring. Overlapping component bounds
