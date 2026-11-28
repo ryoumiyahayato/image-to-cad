@@ -152,6 +152,10 @@ def extract_scan_geometry(binary, *, cancellation_token=None):
                 continue
             shape = {"type":"LWPOLYLINE", "points":simplified.tolist(), "closed":closed}
         shape["stroke_width"] = width
+        # Keep the observed chain and its junctions for the drafting decision
+        # stage. These in-memory witnesses are not a saved checkpoint/cache.
+        shape["source_path"] = points
+        shape["endpoint_degrees"] = degrees_at_ends
         records.append(shape)
         cv2.polylines(coverage,[coords],closed,255,max(1,int(np.ceil(width+2))))
     return records, coverage, warnings
